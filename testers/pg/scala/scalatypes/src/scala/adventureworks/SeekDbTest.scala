@@ -4,7 +4,7 @@ import adventureworks.person.businessentity.*
 import org.junit.Assert.*
 import org.junit.Test
 import dev.typr.foundations.PgTypes
-import dev.typr.foundations.scala.SqlExpr
+import dev.typr.dslsc.SqlExpr
 
 import java.time.LocalDateTime
 import java.util.UUID
@@ -33,7 +33,7 @@ class SeekDbTest {
         .maybeSeek(
           f => f.businessentityid.asc,
           Option.empty[BusinessentityId],
-          (v: BusinessentityId) => SqlExpr.ConstReq(v, BusinessentityId.pgType)
+          (v: BusinessentityId) => SqlExpr.ConstReq(v, BusinessentityId.pgType.underlying)
         )
         .maybeSeek(f => f.rowguid.asc, Option.empty[UUID], (v: UUID) => SqlExpr.ConstReq(v, PgTypes.uuid))
         .limit(limit)
@@ -47,7 +47,7 @@ class SeekDbTest {
         .maybeSeek(
           f => f.businessentityid.asc,
           Some(lastRow.businessentityid),
-          (v: BusinessentityId) => SqlExpr.ConstReq(v, BusinessentityId.pgType)
+          (v: BusinessentityId) => SqlExpr.ConstReq(v, BusinessentityId.pgType.underlying)
         )
         .maybeSeek(f => f.rowguid.asc, Some(lastRow.rowguid), (v: UUID) => SqlExpr.ConstReq(v, PgTypes.uuid))
         .limit(limit)
@@ -88,7 +88,7 @@ class SeekDbTest {
         .maybeSeek(
           f => f.businessentityid.asc,
           Option.empty[BusinessentityId],
-          (v: BusinessentityId) => SqlExpr.ConstReq(v, BusinessentityId.pgType)
+          (v: BusinessentityId) => SqlExpr.ConstReq(v, BusinessentityId.pgType.underlying)
         )
         .maybeSeek(f => f.rowguid.asc, Option.empty[UUID], (v: UUID) => SqlExpr.ConstReq(v, PgTypes.uuid))
         .limit(limit)
@@ -102,7 +102,7 @@ class SeekDbTest {
         .maybeSeek(
           f => f.businessentityid.asc,
           Some(lastRow.businessentityid),
-          (v: BusinessentityId) => SqlExpr.ConstReq(v, BusinessentityId.pgType)
+          (v: BusinessentityId) => SqlExpr.ConstReq(v, BusinessentityId.pgType.underlying)
         )
         .maybeSeek(f => f.rowguid.asc, Some(lastRow.rowguid), (v: UUID) => SqlExpr.ConstReq(v, PgTypes.uuid))
         .limit(limit)

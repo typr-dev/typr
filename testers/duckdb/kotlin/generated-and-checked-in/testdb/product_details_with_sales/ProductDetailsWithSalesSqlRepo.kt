@@ -5,16 +5,16 @@
  */
 package testdb.product_details_with_sales
 
+import dev.typr.foundationskt.ConnectionRead
 import java.math.BigDecimal
-import java.sql.Connection
 import kotlin.collections.List
 
 interface ProductDetailsWithSalesSqlRepo {
   abstract fun apply(
-    productIds: Array<Int>?,
-    skuPattern: String?,
+    productIds: List<Int>?,
+    skuPattern: kotlin.String?,
     minPrice: BigDecimal?,
     maxPrice: BigDecimal?,
-    c: Connection
+    c: ConnectionRead
   ): List<ProductDetailsWithSalesSqlRow>
 }

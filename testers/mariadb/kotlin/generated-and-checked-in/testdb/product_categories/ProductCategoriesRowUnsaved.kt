@@ -29,10 +29,10 @@ data class ProductCategoriesRowUnsaved(
   /** Default: 0
 
     */
-  @field:JsonProperty("sort_order") val sortOrder: Defaulted<Short> = UseDefault()
+  @field:JsonProperty("sort_order") val sortOrder: Defaulted<kotlin.Short> = UseDefault()
 ) {
   fun toRow(
     isPrimaryDefault: () -> /* user-picked */ IsPrimary,
-    sortOrderDefault: () -> Short
+    sortOrderDefault: () -> kotlin.Short
   ): ProductCategoriesRow = ProductCategoriesRow(productId = productId, categoryId = categoryId, isPrimary = isPrimary.getOrElse(isPrimaryDefault), sortOrder = sortOrder.getOrElse(sortOrderDefault))
 }

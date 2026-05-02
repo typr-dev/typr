@@ -5,17 +5,18 @@
  */
 package oracledb.employees
 
-import dev.typr.foundations.scala.DeleteBuilder
-import dev.typr.foundations.scala.SelectBuilder
-import dev.typr.foundations.scala.UpdateBuilder
-import java.sql.Connection
+import dev.typr.dslsc.DeleteBuilder
+import dev.typr.dslsc.SelectBuilder
+import dev.typr.dslsc.UpdateBuilder
+import dev.typr.foundationssc.Connection
+import dev.typr.foundationssc.ConnectionRead
 
 trait EmployeesRepo {
   def delete: DeleteBuilder[EmployeesFields, EmployeesRow]
 
   def deleteById(compositeId: EmployeesId)(using c: Connection): Boolean
 
-  def deleteByIds(compositeIds: Array[EmployeesId])(using c: Connection): Int
+  def deleteByIds(compositeIds: List[EmployeesId])(using c: Connection): Int
 
   def insert(unsaved: EmployeesRow)(using c: Connection): EmployeesId
 
@@ -23,13 +24,13 @@ trait EmployeesRepo {
 
   def select: SelectBuilder[EmployeesFields, EmployeesRow]
 
-  def selectAll(using c: Connection): List[EmployeesRow]
+  def selectAll(using c: ConnectionRead): List[EmployeesRow]
 
-  def selectById(compositeId: EmployeesId)(using c: Connection): Option[EmployeesRow]
+  def selectById(compositeId: EmployeesId)(using c: ConnectionRead): Option[EmployeesRow]
 
-  def selectByIds(compositeIds: Array[EmployeesId])(using c: Connection): List[EmployeesRow]
+  def selectByIds(compositeIds: List[EmployeesId])(using c: ConnectionRead): List[EmployeesRow]
 
-  def selectByIdsTracked(compositeIds: Array[EmployeesId])(using c: Connection): Map[EmployeesId, EmployeesRow]
+  def selectByIdsTracked(compositeIds: List[EmployeesId])(using c: ConnectionRead): Map[EmployeesId, EmployeesRow]
 
   def update: UpdateBuilder[EmployeesFields, EmployeesRow]
 

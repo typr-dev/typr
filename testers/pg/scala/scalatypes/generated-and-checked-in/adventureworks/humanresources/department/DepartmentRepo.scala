@@ -5,17 +5,18 @@
  */
 package adventureworks.humanresources.department
 
-import dev.typr.foundations.scala.DeleteBuilder
-import dev.typr.foundations.scala.SelectBuilder
-import dev.typr.foundations.scala.UpdateBuilder
-import java.sql.Connection
+import dev.typr.dslsc.DeleteBuilder
+import dev.typr.dslsc.SelectBuilder
+import dev.typr.dslsc.UpdateBuilder
+import dev.typr.foundationssc.Connection
+import dev.typr.foundationssc.ConnectionRead
 
 trait DepartmentRepo {
   def delete: DeleteBuilder[DepartmentFields, DepartmentRow]
 
   def deleteById(departmentid: DepartmentId)(using c: Connection): Boolean
 
-  def deleteByIds(departmentids: Array[DepartmentId])(using c: Connection): Int
+  def deleteByIds(departmentids: List[DepartmentId])(using c: Connection): Int
 
   def insert(unsaved: DepartmentRow)(using c: Connection): DepartmentRow
 
@@ -34,13 +35,13 @@ trait DepartmentRepo {
 
   def select: SelectBuilder[DepartmentFields, DepartmentRow]
 
-  def selectAll(using c: Connection): List[DepartmentRow]
+  def selectAll(using c: ConnectionRead): List[DepartmentRow]
 
-  def selectById(departmentid: DepartmentId)(using c: Connection): Option[DepartmentRow]
+  def selectById(departmentid: DepartmentId)(using c: ConnectionRead): Option[DepartmentRow]
 
-  def selectByIds(departmentids: Array[DepartmentId])(using c: Connection): List[DepartmentRow]
+  def selectByIds(departmentids: List[DepartmentId])(using c: ConnectionRead): List[DepartmentRow]
 
-  def selectByIdsTracked(departmentids: Array[DepartmentId])(using c: Connection): Map[DepartmentId, DepartmentRow]
+  def selectByIdsTracked(departmentids: List[DepartmentId])(using c: ConnectionRead): Map[DepartmentId, DepartmentRow]
 
   def update: UpdateBuilder[DepartmentFields, DepartmentRow]
 

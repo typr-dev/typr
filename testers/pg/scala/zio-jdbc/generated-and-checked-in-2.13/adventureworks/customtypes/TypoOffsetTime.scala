@@ -56,7 +56,7 @@ object TypoOffsetTime {
     )
   }
 
-  implicit lazy val bijection: Bijection[TypoOffsetTime, OffsetTime] = Bijection.apply[TypoOffsetTime, OffsetTime](_.value)(TypoOffsetTime.apply)
+  implicit lazy val bijection: Bijection[TypoOffsetTime, OffsetTime] = Bijection[TypoOffsetTime, OffsetTime](_.value)(TypoOffsetTime.apply)
 
   implicit lazy val jdbcDecoder: JdbcDecoder[TypoOffsetTime] = {
     JdbcDecoder[TypoOffsetTime](

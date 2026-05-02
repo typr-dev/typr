@@ -5,25 +5,21 @@
  */
 package adventureworks.public
 
-import dev.typr.foundations.PgRead
-import dev.typr.foundations.PgStruct
-import dev.typr.foundations.PgType
-import dev.typr.foundations.kotlin.KotlinDbTypes
-import java.util.Optional
+import dev.typr.foundationskt.PgType
+import dev.typr.foundationskt.PgTypes
+import dev.typr.foundationskt.RowCodec
+import kotlin.collections.List
 
 /** PostgreSQL composite type: public.point_2d */
 data class Point2d(
-  val x: Double?,
-  val y: Double?
+  val x: kotlin.Double?,
+  val y: kotlin.Double?
 ) {
   companion object {
-    val pgStruct: PgStruct<Point2d> =
-      PgStruct.builder<Point2d>("public.point_2d").optField("x", KotlinDbTypes.PgTypes.float8, { v: Point2d -> Optional.ofNullable(v.x) }).optField("y", KotlinDbTypes.PgTypes.float8, { v: Point2d -> Optional.ofNullable(v.y) }).build({ arr -> Point2d(arr[0] as? Double, arr[1] as? Double) })
-
     val pgType: PgType<Point2d> =
-      pgStruct.asType()
+      PgTypes.compositeOf("public.point_2d", RowCodec.namedBuilder<Point2d>().field("x", PgTypes.float8.opt(), { v: Point2d -> v.x }).field("y", PgTypes.float8.opt(), { v: Point2d -> v.y }).build({ t0, t1 -> Point2d(t0, t1) }))
 
-    val pgTypeArray: PgType<Array<Point2d>> =
-      pgType.array(PgRead.readCompositeArray(pgType.pgCompositeText(), { n -> arrayOfNulls<Point2d>(n) }), { n -> arrayOfNulls<Point2d>(n) })
+    val pgTypeArray: PgType<List<Point2d>> =
+      pgType.array()
   }
 }

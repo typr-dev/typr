@@ -24,7 +24,7 @@ object SalariedFlag {
 
   given arrayToStatement: ToStatement[Array[SalariedFlag]] = Flag.arrayToStatement.contramap(_.map(_.value))
 
-  given bijection: Bijection[SalariedFlag, Flag] = Bijection.apply[SalariedFlag, Flag](_.value)(SalariedFlag.apply)
+  given bijection: Bijection[SalariedFlag, Flag] = Bijection[SalariedFlag, Flag](_.value)(SalariedFlag.apply)
 
   given column: Column[SalariedFlag] = Flag.column.map(SalariedFlag.apply)
 

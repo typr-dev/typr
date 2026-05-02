@@ -5,33 +5,32 @@
  */
 package testdb.all_scalar_types
 
-import dev.typr.foundations.DuckDbTypes
-import dev.typr.foundations.RowParser
+import dev.typr.dsl.FieldsBase
+import dev.typr.dsl.Path
+import dev.typr.dsl.SqlExpr.FieldLike
+import dev.typr.dslsc.RelationStructure
+import dev.typr.dslsc.SqlExpr
+import dev.typr.dslsc.SqlExpr.Field
+import dev.typr.dslsc.SqlExpr.IdField
+import dev.typr.dslsc.SqlExpr.OptField
+import dev.typr.dslsc.TupleExpr26
+import dev.typr.foundations.RowCodec
 import dev.typr.foundations.data.Json
 import dev.typr.foundations.data.Uint1
 import dev.typr.foundations.data.Uint2
 import dev.typr.foundations.data.Uint4
 import dev.typr.foundations.data.Uint8
-import dev.typr.foundations.dsl.FieldsBase
-import dev.typr.foundations.dsl.Path
-import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.scala.RelationStructure
-import dev.typr.foundations.scala.ScalaDbTypes
-import dev.typr.foundations.scala.SqlExpr
-import dev.typr.foundations.scala.SqlExpr.Field
-import dev.typr.foundations.scala.SqlExpr.IdField
-import dev.typr.foundations.scala.SqlExpr.OptField
-import dev.typr.foundations.scala.TupleExpr26
+import dev.typr.foundationssc.DuckDbTypes
 import java.math.BigInteger
 import java.time.Duration
+import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
-import java.time.OffsetDateTime
 import java.util.UUID
 import testdb.Mood
 
-class AllScalarTypesFields(val `_path`: java.util.List[Path]) extends TupleExpr26[AllScalarTypesId, Byte, Short, Int, Long, BigInteger, Uint1, Uint2, Uint4, Uint8, Float, Double, BigDecimal, Boolean, String, String, Array[Byte], LocalDate, LocalTime, LocalDateTime, OffsetDateTime, Duration, UUID, Json, Mood, String] with RelationStructure[AllScalarTypesFields, AllScalarTypesRow]  with FieldsBase[AllScalarTypesRow] {
+class AllScalarTypesFields(val `_path`: java.util.List[Path]) extends TupleExpr26[AllScalarTypesId, Byte, Short, Int, Long, BigInteger, Uint1, Uint2, Uint4, Uint8, Float, Double, BigDecimal, Boolean, String, String, Array[Byte], LocalDate, LocalTime, LocalDateTime, Instant, Duration, UUID, Json, Mood, String] with RelationStructure[AllScalarTypesFields, AllScalarTypesRow]  with FieldsBase[AllScalarTypesRow] {
   def id: IdField[AllScalarTypesId, AllScalarTypesRow] = {
     new IdField[AllScalarTypesId, AllScalarTypesRow](
       _path,
@@ -40,7 +39,7 @@ class AllScalarTypesFields(val `_path`: java.util.List[Path]) extends TupleExpr2
       None,
       Some("INTEGER"),
       (row, value) => row.copy(id = value),
-      AllScalarTypesId.duckDbType
+      AllScalarTypesId.duckDbType.underlying
     )
   }
 
@@ -52,7 +51,7 @@ class AllScalarTypesFields(val `_path`: java.util.List[Path]) extends TupleExpr2
       None,
       Some("TINYINT"),
       (row, value) => row.copy(colTinyint = value),
-      ScalaDbTypes.DuckDbTypes.tinyint
+      DuckDbTypes.tinyint.underlying
     )
   }
 
@@ -64,7 +63,7 @@ class AllScalarTypesFields(val `_path`: java.util.List[Path]) extends TupleExpr2
       None,
       Some("SMALLINT"),
       (row, value) => row.copy(colSmallint = value),
-      ScalaDbTypes.DuckDbTypes.smallint
+      DuckDbTypes.smallint.underlying
     )
   }
 
@@ -76,7 +75,7 @@ class AllScalarTypesFields(val `_path`: java.util.List[Path]) extends TupleExpr2
       None,
       Some("INTEGER"),
       (row, value) => row.copy(colInteger = value),
-      ScalaDbTypes.DuckDbTypes.integer
+      DuckDbTypes.integer.underlying
     )
   }
 
@@ -88,7 +87,7 @@ class AllScalarTypesFields(val `_path`: java.util.List[Path]) extends TupleExpr2
       None,
       Some("BIGINT"),
       (row, value) => row.copy(colBigint = value),
-      ScalaDbTypes.DuckDbTypes.bigint
+      DuckDbTypes.bigint.underlying
     )
   }
 
@@ -100,7 +99,7 @@ class AllScalarTypesFields(val `_path`: java.util.List[Path]) extends TupleExpr2
       None,
       Some("HUGEINT"),
       (row, value) => row.copy(colHugeint = value),
-      DuckDbTypes.hugeint
+      DuckDbTypes.hugeint.underlying
     )
   }
 
@@ -112,7 +111,7 @@ class AllScalarTypesFields(val `_path`: java.util.List[Path]) extends TupleExpr2
       None,
       Some("UTINYINT"),
       (row, value) => row.copy(colUtinyint = value),
-      DuckDbTypes.utinyint
+      DuckDbTypes.utinyint.underlying
     )
   }
 
@@ -124,7 +123,7 @@ class AllScalarTypesFields(val `_path`: java.util.List[Path]) extends TupleExpr2
       None,
       Some("USMALLINT"),
       (row, value) => row.copy(colUsmallint = value),
-      DuckDbTypes.usmallint
+      DuckDbTypes.usmallint.underlying
     )
   }
 
@@ -136,7 +135,7 @@ class AllScalarTypesFields(val `_path`: java.util.List[Path]) extends TupleExpr2
       None,
       Some("UINTEGER"),
       (row, value) => row.copy(colUinteger = value),
-      DuckDbTypes.uinteger
+      DuckDbTypes.uinteger.underlying
     )
   }
 
@@ -148,7 +147,7 @@ class AllScalarTypesFields(val `_path`: java.util.List[Path]) extends TupleExpr2
       None,
       Some("UBIGINT"),
       (row, value) => row.copy(colUbigint = value),
-      DuckDbTypes.ubigint
+      DuckDbTypes.ubigint.underlying
     )
   }
 
@@ -160,7 +159,7 @@ class AllScalarTypesFields(val `_path`: java.util.List[Path]) extends TupleExpr2
       None,
       Some("FLOAT"),
       (row, value) => row.copy(colFloat = value),
-      ScalaDbTypes.DuckDbTypes.float_
+      DuckDbTypes.float_.underlying
     )
   }
 
@@ -172,7 +171,7 @@ class AllScalarTypesFields(val `_path`: java.util.List[Path]) extends TupleExpr2
       None,
       Some("DOUBLE"),
       (row, value) => row.copy(colDouble = value),
-      ScalaDbTypes.DuckDbTypes.double_
+      DuckDbTypes.double_.underlying
     )
   }
 
@@ -184,7 +183,7 @@ class AllScalarTypesFields(val `_path`: java.util.List[Path]) extends TupleExpr2
       None,
       Some("DECIMAL(10,2)"),
       (row, value) => row.copy(colDecimal = value),
-      ScalaDbTypes.DuckDbTypes.numeric
+      DuckDbTypes.numeric.underlying
     )
   }
 
@@ -196,7 +195,7 @@ class AllScalarTypesFields(val `_path`: java.util.List[Path]) extends TupleExpr2
       None,
       None,
       (row, value) => row.copy(colBoolean = value),
-      ScalaDbTypes.DuckDbTypes.boolean_
+      DuckDbTypes.boolean_.underlying
     )
   }
 
@@ -208,7 +207,7 @@ class AllScalarTypesFields(val `_path`: java.util.List[Path]) extends TupleExpr2
       None,
       None,
       (row, value) => row.copy(colVarchar = value),
-      DuckDbTypes.varchar
+      DuckDbTypes.varchar.underlying
     )
   }
 
@@ -220,7 +219,7 @@ class AllScalarTypesFields(val `_path`: java.util.List[Path]) extends TupleExpr2
       None,
       None,
       (row, value) => row.copy(colText = value),
-      DuckDbTypes.varchar
+      DuckDbTypes.varchar.underlying
     )
   }
 
@@ -232,7 +231,7 @@ class AllScalarTypesFields(val `_path`: java.util.List[Path]) extends TupleExpr2
       None,
       Some("BLOB"),
       (row, value) => row.copy(colBlob = value),
-      DuckDbTypes.blob
+      DuckDbTypes.blob.underlying
     )
   }
 
@@ -244,7 +243,7 @@ class AllScalarTypesFields(val `_path`: java.util.List[Path]) extends TupleExpr2
       None,
       Some("DATE"),
       (row, value) => row.copy(colDate = value),
-      DuckDbTypes.date
+      DuckDbTypes.date.underlying
     )
   }
 
@@ -256,7 +255,7 @@ class AllScalarTypesFields(val `_path`: java.util.List[Path]) extends TupleExpr2
       None,
       Some("TIME"),
       (row, value) => row.copy(colTime = value),
-      DuckDbTypes.time
+      DuckDbTypes.time.underlying
     )
   }
 
@@ -268,19 +267,19 @@ class AllScalarTypesFields(val `_path`: java.util.List[Path]) extends TupleExpr2
       None,
       Some("TIMESTAMP"),
       (row, value) => row.copy(colTimestamp = value),
-      DuckDbTypes.timestamp
+      DuckDbTypes.timestamp.underlying
     )
   }
 
-  def colTimestamptz: OptField[OffsetDateTime, AllScalarTypesRow] = {
-    new OptField[OffsetDateTime, AllScalarTypesRow](
+  def colTimestamptz: OptField[Instant, AllScalarTypesRow] = {
+    new OptField[Instant, AllScalarTypesRow](
       _path,
       "col_timestamptz",
       _.colTimestamptz,
       None,
       Some("TIMESTAMP WITH TIME ZONE"),
       (row, value) => row.copy(colTimestamptz = value),
-      DuckDbTypes.timestamptz
+      DuckDbTypes.timestamptz.underlying
     )
   }
 
@@ -292,7 +291,7 @@ class AllScalarTypesFields(val `_path`: java.util.List[Path]) extends TupleExpr2
       None,
       Some("INTERVAL"),
       (row, value) => row.copy(colInterval = value),
-      DuckDbTypes.interval
+      DuckDbTypes.interval.underlying
     )
   }
 
@@ -304,7 +303,7 @@ class AllScalarTypesFields(val `_path`: java.util.List[Path]) extends TupleExpr2
       None,
       Some("UUID"),
       (row, value) => row.copy(colUuid = value),
-      DuckDbTypes.uuid
+      DuckDbTypes.uuid.underlying
     )
   }
 
@@ -316,7 +315,7 @@ class AllScalarTypesFields(val `_path`: java.util.List[Path]) extends TupleExpr2
       None,
       Some("JSON"),
       (row, value) => row.copy(colJson = value),
-      DuckDbTypes.json
+      DuckDbTypes.json.underlying
     )
   }
 
@@ -328,7 +327,7 @@ class AllScalarTypesFields(val `_path`: java.util.List[Path]) extends TupleExpr2
       None,
       Some("mood"),
       (row, value) => row.copy(colMood = value),
-      Mood.duckDbType
+      Mood.duckDbType.underlying
     )
   }
 
@@ -340,13 +339,13 @@ class AllScalarTypesFields(val `_path`: java.util.List[Path]) extends TupleExpr2
       None,
       None,
       (row, value) => row.copy(colNotNull = value),
-      DuckDbTypes.varchar
+      DuckDbTypes.varchar.underlying
     )
   }
 
   override def columns: java.util.List[FieldLike[?, AllScalarTypesRow]] = java.util.List.of(this.id.underlying, this.colTinyint.underlying, this.colSmallint.underlying, this.colInteger.underlying, this.colBigint.underlying, this.colHugeint.underlying, this.colUtinyint.underlying, this.colUsmallint.underlying, this.colUinteger.underlying, this.colUbigint.underlying, this.colFloat.underlying, this.colDouble.underlying, this.colDecimal.underlying, this.colBoolean.underlying, this.colVarchar.underlying, this.colText.underlying, this.colBlob.underlying, this.colDate.underlying, this.colTime.underlying, this.colTimestamp.underlying, this.colTimestamptz.underlying, this.colInterval.underlying, this.colUuid.underlying, this.colJson.underlying, this.colMood.underlying, this.colNotNull.underlying)
 
-  override def rowParser: RowParser[AllScalarTypesRow] = AllScalarTypesRow._rowParser.underlying
+  override def rowCodec: RowCodec[AllScalarTypesRow] = AllScalarTypesRow.rowCodec.underlying
 
   override def withPaths(`_path`: java.util.List[Path]): RelationStructure[AllScalarTypesFields, AllScalarTypesRow] = new AllScalarTypesFields(`_path`)
 
@@ -390,7 +389,7 @@ class AllScalarTypesFields(val `_path`: java.util.List[Path]) extends TupleExpr2
 
   override def `_20`: SqlExpr[LocalDateTime] = colTimestamp
 
-  override def `_21`: SqlExpr[OffsetDateTime] = colTimestamptz
+  override def `_21`: SqlExpr[Instant] = colTimestamptz
 
   override def `_22`: SqlExpr[Duration] = colInterval
 

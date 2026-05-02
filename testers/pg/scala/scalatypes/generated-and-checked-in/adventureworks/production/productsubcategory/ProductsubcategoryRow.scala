@@ -8,11 +8,11 @@ package adventureworks.production.productsubcategory
 import adventureworks.customtypes.Defaulted
 import adventureworks.production.productcategory.ProductcategoryId
 import adventureworks.public.Name
+import dev.typr.dslsc.RowCodecs
 import dev.typr.foundations.PgText
-import dev.typr.foundations.PgTypes
 import dev.typr.foundations.Tuple.Tuple5
-import dev.typr.foundations.scala.RowParser
-import dev.typr.foundations.scala.RowParsers
+import dev.typr.foundationssc.PgTypes
+import dev.typr.foundationssc.RowCodec
 import java.time.LocalDateTime
 import java.util.UUID
 
@@ -64,7 +64,7 @@ case class ProductsubcategoryRow(
 }
 
 object ProductsubcategoryRow {
-  val `_rowParser`: RowParser[ProductsubcategoryRow] = RowParsers.of(ProductsubcategoryId.pgType, ProductcategoryId.pgType, Name.pgType, PgTypes.uuid, PgTypes.timestamp)(ProductsubcategoryRow.apply)(row => Array[Any](row.productsubcategoryid, row.productcategoryid, row.name, row.rowguid, row.modifieddate))
+  given pgText: PgText[ProductsubcategoryRow] = PgText.from(rowCodec.underlying)
 
-  given pgText: PgText[ProductsubcategoryRow] = PgText.from(`_rowParser`.underlying)
+  val rowCodec: RowCodec[ProductsubcategoryRow] = RowCodecs.of(ProductsubcategoryId.pgType, ProductcategoryId.pgType, Name.pgType, PgTypes.uuid, PgTypes.timestamp)(ProductsubcategoryRow.apply)(row => Array[Any](row.productsubcategoryid, row.productcategoryid, row.name, row.rowguid, row.modifieddate))
 }

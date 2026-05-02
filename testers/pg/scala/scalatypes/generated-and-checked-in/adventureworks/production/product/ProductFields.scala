@@ -16,19 +16,18 @@ import adventureworks.production.unitmeasure.UnitmeasureId
 import adventureworks.production.unitmeasure.UnitmeasureRow
 import adventureworks.public.Flag
 import adventureworks.public.Name
-import dev.typr.foundations.PgTypes
-import dev.typr.foundations.RowParser
-import dev.typr.foundations.dsl.FieldsBase
-import dev.typr.foundations.dsl.Path
-import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.scala.ForeignKey
-import dev.typr.foundations.scala.RelationStructure
-import dev.typr.foundations.scala.ScalaDbTypes
-import dev.typr.foundations.scala.SqlExpr
-import dev.typr.foundations.scala.SqlExpr.Field
-import dev.typr.foundations.scala.SqlExpr.IdField
-import dev.typr.foundations.scala.SqlExpr.OptField
-import dev.typr.foundations.scala.TupleExpr25
+import dev.typr.dsl.FieldsBase
+import dev.typr.dsl.Path
+import dev.typr.dsl.SqlExpr.FieldLike
+import dev.typr.dslsc.ForeignKey
+import dev.typr.dslsc.RelationStructure
+import dev.typr.dslsc.SqlExpr
+import dev.typr.dslsc.SqlExpr.Field
+import dev.typr.dslsc.SqlExpr.IdField
+import dev.typr.dslsc.SqlExpr.OptField
+import dev.typr.dslsc.TupleExpr25
+import dev.typr.foundations.RowCodec
+import dev.typr.foundationssc.PgTypes
 import java.time.LocalDateTime
 import java.util.UUID
 
@@ -41,7 +40,7 @@ class ProductFields(val `_path`: java.util.List[Path]) extends TupleExpr25[Produ
       None,
       Some("int4"),
       (row, value) => row.copy(productid = value),
-      ProductId.pgType
+      ProductId.pgType.underlying
     )
   }
 
@@ -53,7 +52,7 @@ class ProductFields(val `_path`: java.util.List[Path]) extends TupleExpr25[Produ
       None,
       Some("varchar"),
       (row, value) => row.copy(name = value),
-      Name.pgType
+      Name.pgType.underlying
     )
   }
 
@@ -65,7 +64,7 @@ class ProductFields(val `_path`: java.util.List[Path]) extends TupleExpr25[Produ
       None,
       None,
       (row, value) => row.copy(productnumber = value),
-      PgTypes.text
+      PgTypes.text.underlying
     )
   }
 
@@ -77,7 +76,7 @@ class ProductFields(val `_path`: java.util.List[Path]) extends TupleExpr25[Produ
       None,
       Some("bool"),
       (row, value) => row.copy(makeflag = value),
-      Flag.pgType
+      Flag.pgType.underlying
     )
   }
 
@@ -89,7 +88,7 @@ class ProductFields(val `_path`: java.util.List[Path]) extends TupleExpr25[Produ
       None,
       Some("bool"),
       (row, value) => row.copy(finishedgoodsflag = value),
-      Flag.pgType
+      Flag.pgType.underlying
     )
   }
 
@@ -101,7 +100,7 @@ class ProductFields(val `_path`: java.util.List[Path]) extends TupleExpr25[Produ
       None,
       None,
       (row, value) => row.copy(color = value),
-      PgTypes.text
+      PgTypes.text.underlying
     )
   }
 
@@ -113,7 +112,7 @@ class ProductFields(val `_path`: java.util.List[Path]) extends TupleExpr25[Produ
       None,
       Some("int2"),
       (row, value) => row.copy(safetystocklevel = value),
-      ScalaDbTypes.PgTypes.int2
+      PgTypes.int2.underlying
     )
   }
 
@@ -125,7 +124,7 @@ class ProductFields(val `_path`: java.util.List[Path]) extends TupleExpr25[Produ
       None,
       Some("int2"),
       (row, value) => row.copy(reorderpoint = value),
-      ScalaDbTypes.PgTypes.int2
+      PgTypes.int2.underlying
     )
   }
 
@@ -137,7 +136,7 @@ class ProductFields(val `_path`: java.util.List[Path]) extends TupleExpr25[Produ
       None,
       Some("numeric"),
       (row, value) => row.copy(standardcost = value),
-      ScalaDbTypes.PgTypes.numeric
+      PgTypes.numeric.underlying
     )
   }
 
@@ -149,7 +148,7 @@ class ProductFields(val `_path`: java.util.List[Path]) extends TupleExpr25[Produ
       None,
       Some("numeric"),
       (row, value) => row.copy(listprice = value),
-      ScalaDbTypes.PgTypes.numeric
+      PgTypes.numeric.underlying
     )
   }
 
@@ -161,7 +160,7 @@ class ProductFields(val `_path`: java.util.List[Path]) extends TupleExpr25[Produ
       None,
       None,
       (row, value) => row.copy(size = value),
-      PgTypes.text
+      PgTypes.text.underlying
     )
   }
 
@@ -173,7 +172,7 @@ class ProductFields(val `_path`: java.util.List[Path]) extends TupleExpr25[Produ
       None,
       Some("bpchar"),
       (row, value) => row.copy(sizeunitmeasurecode = value),
-      UnitmeasureId.pgType
+      UnitmeasureId.pgType.underlying
     )
   }
 
@@ -185,7 +184,7 @@ class ProductFields(val `_path`: java.util.List[Path]) extends TupleExpr25[Produ
       None,
       Some("bpchar"),
       (row, value) => row.copy(weightunitmeasurecode = value),
-      UnitmeasureId.pgType
+      UnitmeasureId.pgType.underlying
     )
   }
 
@@ -197,7 +196,7 @@ class ProductFields(val `_path`: java.util.List[Path]) extends TupleExpr25[Produ
       None,
       Some("numeric"),
       (row, value) => row.copy(weight = value),
-      ScalaDbTypes.PgTypes.numeric
+      PgTypes.numeric.underlying
     )
   }
 
@@ -209,7 +208,7 @@ class ProductFields(val `_path`: java.util.List[Path]) extends TupleExpr25[Produ
       None,
       Some("int4"),
       (row, value) => row.copy(daystomanufacture = value),
-      ScalaDbTypes.PgTypes.int4
+      PgTypes.int4.underlying
     )
   }
 
@@ -221,7 +220,7 @@ class ProductFields(val `_path`: java.util.List[Path]) extends TupleExpr25[Produ
       None,
       Some("bpchar"),
       (row, value) => row.copy(productline = value),
-      PgTypes.bpchar
+      PgTypes.bpchar.underlying
     )
   }
 
@@ -233,7 +232,7 @@ class ProductFields(val `_path`: java.util.List[Path]) extends TupleExpr25[Produ
       None,
       Some("bpchar"),
       (row, value) => row.copy(`class` = value),
-      PgTypes.bpchar
+      PgTypes.bpchar.underlying
     )
   }
 
@@ -245,7 +244,7 @@ class ProductFields(val `_path`: java.util.List[Path]) extends TupleExpr25[Produ
       None,
       Some("bpchar"),
       (row, value) => row.copy(style = value),
-      PgTypes.bpchar
+      PgTypes.bpchar.underlying
     )
   }
 
@@ -257,7 +256,7 @@ class ProductFields(val `_path`: java.util.List[Path]) extends TupleExpr25[Produ
       None,
       Some("int4"),
       (row, value) => row.copy(productsubcategoryid = value),
-      ProductsubcategoryId.pgType
+      ProductsubcategoryId.pgType.underlying
     )
   }
 
@@ -269,7 +268,7 @@ class ProductFields(val `_path`: java.util.List[Path]) extends TupleExpr25[Produ
       None,
       Some("int4"),
       (row, value) => row.copy(productmodelid = value),
-      ProductmodelId.pgType
+      ProductmodelId.pgType.underlying
     )
   }
 
@@ -281,7 +280,7 @@ class ProductFields(val `_path`: java.util.List[Path]) extends TupleExpr25[Produ
       None,
       Some("timestamp"),
       (row, value) => row.copy(sellstartdate = value),
-      PgTypes.timestamp
+      PgTypes.timestamp.underlying
     )
   }
 
@@ -293,7 +292,7 @@ class ProductFields(val `_path`: java.util.List[Path]) extends TupleExpr25[Produ
       None,
       Some("timestamp"),
       (row, value) => row.copy(sellenddate = value),
-      PgTypes.timestamp
+      PgTypes.timestamp.underlying
     )
   }
 
@@ -305,7 +304,7 @@ class ProductFields(val `_path`: java.util.List[Path]) extends TupleExpr25[Produ
       None,
       Some("timestamp"),
       (row, value) => row.copy(discontinueddate = value),
-      PgTypes.timestamp
+      PgTypes.timestamp.underlying
     )
   }
 
@@ -317,7 +316,7 @@ class ProductFields(val `_path`: java.util.List[Path]) extends TupleExpr25[Produ
       None,
       Some("uuid"),
       (row, value) => row.copy(rowguid = value),
-      PgTypes.uuid
+      PgTypes.uuid.underlying
     )
   }
 
@@ -329,7 +328,7 @@ class ProductFields(val `_path`: java.util.List[Path]) extends TupleExpr25[Produ
       None,
       Some("timestamp"),
       (row, value) => row.copy(modifieddate = value),
-      PgTypes.timestamp
+      PgTypes.timestamp.underlying
     )
   }
 
@@ -343,7 +342,7 @@ class ProductFields(val `_path`: java.util.List[Path]) extends TupleExpr25[Produ
 
   override def columns: java.util.List[FieldLike[?, ProductRow]] = java.util.List.of(this.productid.underlying, this.name.underlying, this.productnumber.underlying, this.makeflag.underlying, this.finishedgoodsflag.underlying, this.color.underlying, this.safetystocklevel.underlying, this.reorderpoint.underlying, this.standardcost.underlying, this.listprice.underlying, this.size.underlying, this.sizeunitmeasurecode.underlying, this.weightunitmeasurecode.underlying, this.weight.underlying, this.daystomanufacture.underlying, this.productline.underlying, this.`class`.underlying, this.style.underlying, this.productsubcategoryid.underlying, this.productmodelid.underlying, this.sellstartdate.underlying, this.sellenddate.underlying, this.discontinueddate.underlying, this.rowguid.underlying, this.modifieddate.underlying)
 
-  override def rowParser: RowParser[ProductRow] = ProductRow._rowParser.underlying
+  override def rowCodec: RowCodec[ProductRow] = ProductRow.rowCodec.underlying
 
   override def withPaths(`_path`: java.util.List[Path]): RelationStructure[ProductFields, ProductRow] = new ProductFields(`_path`)
 

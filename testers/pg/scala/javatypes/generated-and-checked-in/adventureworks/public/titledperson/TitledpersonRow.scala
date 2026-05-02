@@ -8,10 +8,10 @@ package adventureworks.public.titledperson
 import adventureworks.public.title.TitleId
 import adventureworks.public.title_domain.TitleDomainId
 import com.fasterxml.jackson.annotation.JsonProperty
+import dev.typr.dsl.RowCodecs
 import dev.typr.foundations.PgText
 import dev.typr.foundations.PgTypes
-import dev.typr.foundations.RowParser
-import dev.typr.foundations.RowParsers
+import dev.typr.foundations.RowCodec
 import dev.typr.foundations.Tuple.Tuple3
 
 /** Table: public.titledperson */
@@ -30,7 +30,7 @@ case class TitledpersonRow(
 }
 
 object TitledpersonRow {
-  val `_rowParser`: RowParser[TitledpersonRow] = RowParsers.of(TitleDomainId.pgType, TitleId.pgType, PgTypes.text, TitledpersonRow.apply, row => Array[Any](row.titleShort, row.title, row.name))
+  given pgText: PgText[TitledpersonRow] = PgText.from(rowCodec)
 
-  given pgText: PgText[TitledpersonRow] = PgText.from(`_rowParser`)
+  val rowCodec: RowCodec[TitledpersonRow] = RowCodecs.of(TitleDomainId.pgType, TitleId.pgType, PgTypes.text, TitledpersonRow.apply, row => Array[Any](row.titleShort, row.title, row.name))
 }

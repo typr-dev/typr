@@ -6,9 +6,9 @@
 package oracledb.employees
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import dev.typr.dsl.RowCodecs
 import dev.typr.foundations.OracleTypes
-import dev.typr.foundations.RowParser
-import dev.typr.foundations.RowParsers
+import dev.typr.foundations.RowCodec
 import dev.typr.foundations.Tuple.Tuple7
 import java.time.LocalDateTime
 import java.util.Optional
@@ -65,8 +65,6 @@ case class EmployeesRow(
 }
 
 object EmployeesRow {
-  val `_rowParser`: RowParser[EmployeesRow] = RowParsers.of(OracleTypes.number, OracleTypes.varchar2, OracleTypes.varchar2, OracleTypes.varchar2, OracleTypes.varchar2, MoneyT.oracleType.opt(), OracleTypes.date, EmployeesRow.apply, row => Array[Any](row.empNumber, row.empSuffix, row.deptCode, row.deptRegion, row.empName, row.salary, row.hireDate))
-
   def apply(
     compositeId: EmployeesId,
     deptCode: String,
@@ -85,4 +83,6 @@ object EmployeesRow {
       hireDate
     )
   }
+
+  val rowCodec: RowCodec[EmployeesRow] = RowCodecs.of(OracleTypes.number, OracleTypes.varchar2, OracleTypes.varchar2, OracleTypes.varchar2, OracleTypes.varchar2, MoneyT.oracleType.opt, OracleTypes.date, EmployeesRow.apply, row => Array[Any](row.empNumber, row.empSuffix, row.deptCode, row.deptRegion, row.empName, row.salary, row.hireDate))
 }

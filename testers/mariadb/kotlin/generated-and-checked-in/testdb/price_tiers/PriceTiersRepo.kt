@@ -5,10 +5,11 @@
  */
 package testdb.price_tiers
 
-import dev.typr.foundations.kotlin.DeleteBuilder
-import dev.typr.foundations.kotlin.SelectBuilder
-import dev.typr.foundations.kotlin.UpdateBuilder
-import java.sql.Connection
+import dev.typr.dslkt.DeleteBuilder
+import dev.typr.dslkt.SelectBuilder
+import dev.typr.dslkt.UpdateBuilder
+import dev.typr.foundationskt.Connection
+import dev.typr.foundationskt.ConnectionRead
 import kotlin.collections.Iterator
 import kotlin.collections.List
 import kotlin.collections.Map
@@ -19,10 +20,10 @@ interface PriceTiersRepo {
   abstract fun deleteById(
     tierId: PriceTiersId,
     c: Connection
-  ): Boolean
+  ): kotlin.Boolean
 
   abstract fun deleteByIds(
-    tierIds: Array<PriceTiersId>,
+    tierIds: List<PriceTiersId>,
     c: Connection
   ): Int
 
@@ -38,21 +39,21 @@ interface PriceTiersRepo {
 
   abstract fun select(): SelectBuilder<PriceTiersFields, PriceTiersRow>
 
-  abstract fun selectAll(c: Connection): List<PriceTiersRow>
+  abstract fun selectAll(c: ConnectionRead): List<PriceTiersRow>
 
   abstract fun selectById(
     tierId: PriceTiersId,
-    c: Connection
+    c: ConnectionRead
   ): PriceTiersRow?
 
   abstract fun selectByIds(
-    tierIds: Array<PriceTiersId>,
-    c: Connection
+    tierIds: List<PriceTiersId>,
+    c: ConnectionRead
   ): List<PriceTiersRow>
 
   abstract fun selectByIdsTracked(
-    tierIds: Array<PriceTiersId>,
-    c: Connection
+    tierIds: List<PriceTiersId>,
+    c: ConnectionRead
   ): Map<PriceTiersId, PriceTiersRow>
 
   abstract fun update(): UpdateBuilder<PriceTiersFields, PriceTiersRow>
@@ -60,7 +61,7 @@ interface PriceTiersRepo {
   abstract fun update(
     row: PriceTiersRow,
     c: Connection
-  ): Boolean
+  ): kotlin.Boolean
 
   abstract fun upsert(
     unsaved: PriceTiersRow,

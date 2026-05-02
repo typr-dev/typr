@@ -5,89 +5,90 @@
  */
 package adventureworks.public.issue142
 
+import dev.typr.dsl.DeleteBuilder
+import dev.typr.dsl.Dialect
+import dev.typr.dsl.SelectBuilder
+import dev.typr.dsl.UpdateBuilder
+import dev.typr.foundations.Connection
+import dev.typr.foundations.ConnectionRead
 import dev.typr.foundations.Fragment
-import dev.typr.foundations.dsl.DeleteBuilder
-import dev.typr.foundations.dsl.Dialect
-import dev.typr.foundations.dsl.SelectBuilder
-import dev.typr.foundations.dsl.UpdateBuilder
-import dev.typr.foundations.streamingInsert
-import java.sql.Connection
+import dev.typr.foundations.StreamingInsert
 import java.util.HashMap
 import java.util.Optional
-import dev.typr.foundations.Fragment.interpolate
+import dev.typr.foundations.Fragment.concat
 
 class Issue142RepoImpl extends Issue142Repo {
   override def delete: DeleteBuilder[Issue142Fields, Issue142Row] = DeleteBuilder.of(""""public"."issue142"""", Issue142Fields.structure, Dialect.POSTGRESQL)
 
-  override def deleteById(tabellkode: Issue142Id)(using c: Connection): java.lang.Boolean = interpolate(Fragment.lit("""delete from "public"."issue142" where "tabellkode" = """), Fragment.encode(Issue142Id.pgType, tabellkode), Fragment.lit("")).update().runUnchecked(c) > 0
+  override def deleteById(tabellkode: Issue142Id)(using c: Connection): java.lang.Boolean = concat(Fragment.of("""delete from "public"."issue142" where "tabellkode" = """), Fragment.encode(Issue142Id.pgType, tabellkode), Fragment.of("")).update().run(c) > 0
 
-  override def deleteByIds(tabellkodes: Array[Issue142Id])(using c: Connection): Integer = {
-    interpolate(Fragment.lit("""delete
+  override def deleteByIds(tabellkodes: java.util.List[Issue142Id])(using c: Connection): Integer = {
+    concat(Fragment.of("""delete
     from "public"."issue142"
-    where "tabellkode" = ANY("""), Fragment.encode(Issue142Id.pgTypeArray, tabellkodes), Fragment.lit(")"))
+    where "tabellkode" = ANY("""), Fragment.encode(Issue142Id.pgType.array(), tabellkodes), Fragment.of(")"))
       .update()
-      .runUnchecked(c)
+      .run(c)
   }
 
   override def insert(unsaved: Issue142Row)(using c: Connection): Issue142Row = {
-  interpolate(Fragment.lit("""insert into "public"."issue142"("tabellkode")
-    values ("""), Fragment.encode(Issue142Id.pgType, unsaved.tabellkode), Fragment.lit(""")
+  concat(Fragment.of("""insert into "public"."issue142"("tabellkode")
+    values ("""), Fragment.encode(Issue142Id.pgType, unsaved.tabellkode), Fragment.of(""")
     RETURNING "tabellkode"
     """))
-    .updateReturning(Issue142Row.`_rowParser`.exactlyOne()).runUnchecked(c)
+    .updateReturning(Issue142Row.rowCodec.exactlyOne()).run(c)
   }
 
   override def insertStreaming(
     unsaved: java.util.Iterator[Issue142Row],
     batchSize: Integer = 10000
-  )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "public"."issue142"("tabellkode") FROM STDIN""", batchSize, unsaved, c, Issue142Row.pgText)
+  )(using c: Connection): java.lang.Long = StreamingInsert.of(s"""COPY "public"."issue142"("tabellkode") FROM STDIN""", batchSize, unsaved, Issue142Row.pgText).run(c)
 
-  override def select: SelectBuilder[Issue142Fields, Issue142Row] = SelectBuilder.of(""""public"."issue142"""", Issue142Fields.structure, Issue142Row.`_rowParser`, Dialect.POSTGRESQL)
+  override def select: SelectBuilder[Issue142Fields, Issue142Row] = SelectBuilder.of(""""public"."issue142"""", Issue142Fields.structure, Issue142Row.rowCodec, Dialect.POSTGRESQL)
 
-  override def selectAll(using c: Connection): java.util.List[Issue142Row] = {
-    interpolate(Fragment.lit("""select "tabellkode"
+  override def selectAll(using c: ConnectionRead): java.util.List[Issue142Row] = {
+    concat(Fragment.of("""select "tabellkode"
     from "public"."issue142"
-    """)).query(Issue142Row.`_rowParser`.all()).runUnchecked(c)
+    """)).query(Issue142Row.rowCodec.all()).run(c)
   }
 
-  override def selectById(tabellkode: Issue142Id)(using c: Connection): Optional[Issue142Row] = {
-    interpolate(Fragment.lit("""select "tabellkode"
+  override def selectById(tabellkode: Issue142Id)(using c: ConnectionRead): Optional[Issue142Row] = {
+    concat(Fragment.of("""select "tabellkode"
     from "public"."issue142"
-    where "tabellkode" = """), Fragment.encode(Issue142Id.pgType, tabellkode), Fragment.lit("")).query(Issue142Row.`_rowParser`.first()).runUnchecked(c)
+    where "tabellkode" = """), Fragment.encode(Issue142Id.pgType, tabellkode), Fragment.of("")).query(Issue142Row.rowCodec.first()).run(c)
   }
 
-  override def selectByIds(tabellkodes: Array[Issue142Id])(using c: Connection): java.util.List[Issue142Row] = {
-    interpolate(Fragment.lit("""select "tabellkode"
+  override def selectByIds(tabellkodes: java.util.List[Issue142Id])(using c: ConnectionRead): java.util.List[Issue142Row] = {
+    concat(Fragment.of("""select "tabellkode"
     from "public"."issue142"
-    where "tabellkode" = ANY("""), Fragment.encode(Issue142Id.pgTypeArray, tabellkodes), Fragment.lit(")")).query(Issue142Row.`_rowParser`.all()).runUnchecked(c)
+    where "tabellkode" = ANY("""), Fragment.encode(Issue142Id.pgType.array(), tabellkodes), Fragment.of(")")).query(Issue142Row.rowCodec.all()).run(c)
   }
 
-  override def selectByIdsTracked(tabellkodes: Array[Issue142Id])(using c: Connection): java.util.Map[Issue142Id, Issue142Row] = {
+  override def selectByIdsTracked(tabellkodes: java.util.List[Issue142Id])(using c: ConnectionRead): java.util.Map[Issue142Id, Issue142Row] = {
     val ret: HashMap[Issue142Id, Issue142Row] = new HashMap[Issue142Id, Issue142Row]()
     selectByIds(tabellkodes)(using c).forEach(row => ret.put(row.tabellkode, row): @scala.annotation.nowarn)
     return ret
   }
 
-  override def update: UpdateBuilder[Issue142Fields, Issue142Row] = UpdateBuilder.of(""""public"."issue142"""", Issue142Fields.structure, Issue142Row.`_rowParser`, Dialect.POSTGRESQL)
+  override def update: UpdateBuilder[Issue142Fields, Issue142Row] = UpdateBuilder.of(""""public"."issue142"""", Issue142Fields.structure, Issue142Row.rowCodec, Dialect.POSTGRESQL)
 
   override def upsert(unsaved: Issue142Row)(using c: Connection): Issue142Row = {
-  interpolate(Fragment.lit("""insert into "public"."issue142"("tabellkode")
-    values ("""), Fragment.encode(Issue142Id.pgType, unsaved.tabellkode), Fragment.lit(""")
+  concat(Fragment.of("""insert into "public"."issue142"("tabellkode")
+    values ("""), Fragment.encode(Issue142Id.pgType, unsaved.tabellkode), Fragment.of(""")
     on conflict ("tabellkode")
     do update set "tabellkode" = EXCLUDED."tabellkode"
     returning "tabellkode""""))
-    .updateReturning(Issue142Row.`_rowParser`.exactlyOne())
-    .runUnchecked(c)
+    .updateReturning(Issue142Row.rowCodec.exactlyOne())
+    .run(c)
   }
 
   override def upsertBatch(unsaved: java.util.Iterator[Issue142Row])(using c: Connection): java.util.List[Issue142Row] = {
-    interpolate(Fragment.lit("""insert into "public"."issue142"("tabellkode")
+    concat(Fragment.of("""insert into "public"."issue142"("tabellkode")
     values (?)
     on conflict ("tabellkode")
     do update set "tabellkode" = EXCLUDED."tabellkode"
     returning "tabellkode""""))
-      .updateManyReturning(Issue142Row.`_rowParser`, unsaved)
-    .runUnchecked(c)
+      .updateManyReturning(Issue142Row.rowCodec, unsaved)
+    .run(c)
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
@@ -95,13 +96,13 @@ class Issue142RepoImpl extends Issue142Repo {
     unsaved: java.util.Iterator[Issue142Row],
     batchSize: Integer = 10000
   )(using c: Connection): Integer = {
-    interpolate(Fragment.lit("""create temporary table issue142_TEMP (like "public"."issue142") on commit drop""")).update().runUnchecked(c): @scala.annotation.nowarn
-    streamingInsert.insertUnchecked(s"""copy issue142_TEMP("tabellkode") from stdin""", batchSize, unsaved, c, Issue142Row.pgText): @scala.annotation.nowarn
-    return interpolate(Fragment.lit("""insert into "public"."issue142"("tabellkode")
+    concat(Fragment.of("""create temporary table issue142_TEMP (like "public"."issue142") on commit drop""")).update().run(c): @scala.annotation.nowarn
+    StreamingInsert.of(s"""copy issue142_TEMP("tabellkode") from stdin""", batchSize, unsaved, Issue142Row.pgText).run(c): @scala.annotation.nowarn
+    return concat(Fragment.of("""insert into "public"."issue142"("tabellkode")
     select * from issue142_TEMP
     on conflict ("tabellkode")
     do nothing
     ;
-    drop table issue142_TEMP;""")).update().runUnchecked(c)
+    drop table issue142_TEMP;""")).update().run(c)
   }
 }

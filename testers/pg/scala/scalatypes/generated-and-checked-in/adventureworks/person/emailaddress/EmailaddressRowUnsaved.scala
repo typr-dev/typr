@@ -9,9 +9,7 @@ import adventureworks.customtypes.Defaulted
 import adventureworks.customtypes.Defaulted.UseDefault
 import adventureworks.person.businessentity.BusinessentityId
 import dev.typr.foundations.PgText
-import dev.typr.foundations.PgTypes
-import dev.typr.foundations.scala.DbTypeOps
-import dev.typr.foundations.scala.ScalaDbTypes
+import dev.typr.foundationssc.PgTypes
 import java.time.LocalDateTime
 import java.util.UUID
 
@@ -48,5 +46,5 @@ case class EmailaddressRowUnsaved(
 }
 
 object EmailaddressRowUnsaved {
-  given pgText: PgText[EmailaddressRowUnsaved] = PgText.instance((row, sb) => { BusinessentityId.pgType.text.unsafeEncode(row.businessentityid, sb); sb.append(PgText.DELIMETER); PgTypes.text.nullable.text.unsafeEncode(row.emailaddress, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using ScalaDbTypes.PgTypes.int4.text).unsafeEncode(row.emailaddressid, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using PgTypes.uuid.text).unsafeEncode(row.rowguid, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using PgTypes.timestamp.text).unsafeEncode(row.modifieddate, sb) })
+  given pgText: PgText[EmailaddressRowUnsaved] = PgText.instance((row, sb) => { BusinessentityId.pgType.pgText().unsafeEncode(row.businessentityid, sb); sb.append(PgText.DELIMETER); PgTypes.text.opt.pgText().unsafeEncode(row.emailaddress, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using PgTypes.int4.pgText()).unsafeEncode(row.emailaddressid, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using PgTypes.uuid.pgText()).unsafeEncode(row.rowguid, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using PgTypes.timestamp.pgText()).unsafeEncode(row.modifieddate, sb) })
 }

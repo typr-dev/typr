@@ -12,20 +12,19 @@ import adventureworks.public.NameStyle
 import adventureworks.userdefined.FirstName
 import adventureworks.userdefined.LastName
 import adventureworks.userdefined.MiddleName
-import dev.typr.foundations.PgTypes
-import dev.typr.foundations.RowParser
+import dev.typr.dsl.FieldsBase
+import dev.typr.dsl.Path
+import dev.typr.dsl.SqlExpr.FieldLike
+import dev.typr.dslsc.ForeignKey
+import dev.typr.dslsc.RelationStructure
+import dev.typr.dslsc.SqlExpr
+import dev.typr.dslsc.SqlExpr.Field
+import dev.typr.dslsc.SqlExpr.IdField
+import dev.typr.dslsc.SqlExpr.OptField
+import dev.typr.dslsc.TupleExpr13
+import dev.typr.foundations.RowCodec
 import dev.typr.foundations.data.Xml
-import dev.typr.foundations.dsl.FieldsBase
-import dev.typr.foundations.dsl.Path
-import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.scala.ForeignKey
-import dev.typr.foundations.scala.RelationStructure
-import dev.typr.foundations.scala.ScalaDbTypes
-import dev.typr.foundations.scala.SqlExpr
-import dev.typr.foundations.scala.SqlExpr.Field
-import dev.typr.foundations.scala.SqlExpr.IdField
-import dev.typr.foundations.scala.SqlExpr.OptField
-import dev.typr.foundations.scala.TupleExpr13
+import dev.typr.foundationssc.PgTypes
 import java.time.LocalDateTime
 import java.util.UUID
 
@@ -38,7 +37,7 @@ class PersonFields(val `_path`: java.util.List[Path]) extends TupleExpr13[Busine
       None,
       Some("int4"),
       (row, value) => row.copy(businessentityid = value),
-      BusinessentityId.pgType
+      BusinessentityId.pgType.underlying
     )
   }
 
@@ -50,7 +49,7 @@ class PersonFields(val `_path`: java.util.List[Path]) extends TupleExpr13[Busine
       None,
       Some("bpchar"),
       (row, value) => row.copy(persontype = value),
-      PgTypes.bpchar
+      PgTypes.bpchar.underlying
     )
   }
 
@@ -62,7 +61,7 @@ class PersonFields(val `_path`: java.util.List[Path]) extends TupleExpr13[Busine
       None,
       Some("bool"),
       (row, value) => row.copy(namestyle = value),
-      NameStyle.pgType
+      NameStyle.pgType.underlying
     )
   }
 
@@ -74,7 +73,7 @@ class PersonFields(val `_path`: java.util.List[Path]) extends TupleExpr13[Busine
       None,
       None,
       (row, value) => row.copy(title = value),
-      PgTypes.text
+      PgTypes.text.underlying
     )
   }
 
@@ -86,7 +85,7 @@ class PersonFields(val `_path`: java.util.List[Path]) extends TupleExpr13[Busine
       None,
       Some("varchar"),
       (row, value) => row.copy(firstname = value),
-      FirstName.pgType
+      FirstName.pgType.underlying
     )
   }
 
@@ -98,7 +97,7 @@ class PersonFields(val `_path`: java.util.List[Path]) extends TupleExpr13[Busine
       None,
       Some("varchar"),
       (row, value) => row.copy(middlename = value),
-      MiddleName.pgType
+      MiddleName.pgType.underlying
     )
   }
 
@@ -110,7 +109,7 @@ class PersonFields(val `_path`: java.util.List[Path]) extends TupleExpr13[Busine
       None,
       Some("varchar"),
       (row, value) => row.copy(lastname = value),
-      LastName.pgType
+      LastName.pgType.underlying
     )
   }
 
@@ -122,7 +121,7 @@ class PersonFields(val `_path`: java.util.List[Path]) extends TupleExpr13[Busine
       None,
       None,
       (row, value) => row.copy(suffix = value),
-      PgTypes.text
+      PgTypes.text.underlying
     )
   }
 
@@ -134,7 +133,7 @@ class PersonFields(val `_path`: java.util.List[Path]) extends TupleExpr13[Busine
       None,
       Some("int4"),
       (row, value) => row.copy(emailpromotion = value),
-      ScalaDbTypes.PgTypes.int4
+      PgTypes.int4.underlying
     )
   }
 
@@ -146,7 +145,7 @@ class PersonFields(val `_path`: java.util.List[Path]) extends TupleExpr13[Busine
       None,
       Some("xml"),
       (row, value) => row.copy(additionalcontactinfo = value),
-      PgTypes.xml
+      PgTypes.xml.underlying
     )
   }
 
@@ -158,7 +157,7 @@ class PersonFields(val `_path`: java.util.List[Path]) extends TupleExpr13[Busine
       None,
       Some("xml"),
       (row, value) => row.copy(demographics = value),
-      PgTypes.xml
+      PgTypes.xml.underlying
     )
   }
 
@@ -170,7 +169,7 @@ class PersonFields(val `_path`: java.util.List[Path]) extends TupleExpr13[Busine
       None,
       Some("uuid"),
       (row, value) => row.copy(rowguid = value),
-      PgTypes.uuid
+      PgTypes.uuid.underlying
     )
   }
 
@@ -182,7 +181,7 @@ class PersonFields(val `_path`: java.util.List[Path]) extends TupleExpr13[Busine
       None,
       Some("timestamp"),
       (row, value) => row.copy(modifieddate = value),
-      PgTypes.timestamp
+      PgTypes.timestamp.underlying
     )
   }
 
@@ -190,7 +189,7 @@ class PersonFields(val `_path`: java.util.List[Path]) extends TupleExpr13[Busine
 
   override def columns: java.util.List[FieldLike[?, PersonRow]] = java.util.List.of(this.businessentityid.underlying, this.persontype.underlying, this.namestyle.underlying, this.title.underlying, this.firstname.underlying, this.middlename.underlying, this.lastname.underlying, this.suffix.underlying, this.emailpromotion.underlying, this.additionalcontactinfo.underlying, this.demographics.underlying, this.rowguid.underlying, this.modifieddate.underlying)
 
-  override def rowParser: RowParser[PersonRow] = PersonRow._rowParser.underlying
+  override def rowCodec: RowCodec[PersonRow] = PersonRow.rowCodec.underlying
 
   override def withPaths(`_path`: java.util.List[Path]): RelationStructure[PersonFields, PersonRow] = new PersonFields(`_path`)
 

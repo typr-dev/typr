@@ -6,18 +6,17 @@
 package adventureworks.production.productsubcategory
 
 import com.fasterxml.jackson.annotation.JsonValue
-import dev.typr.foundations.PgType
-import dev.typr.foundations.PgTypes
-import dev.typr.foundations.scala.Bijection
-import dev.typr.foundations.scala.ScalaDbTypes
+import dev.typr.dslsc.Bijection
+import dev.typr.foundationssc.PgType
+import dev.typr.foundationssc.PgTypes
 
 /** Type for the primary key of table `production.productsubcategory` */
 case class ProductsubcategoryId(@JsonValue value: Int) extends scala.AnyVal
 
 object ProductsubcategoryId {
-  given bijection: Bijection[ProductsubcategoryId, Int] = Bijection.apply[ProductsubcategoryId, Int](_.value)(ProductsubcategoryId.apply)
+  given bijection: Bijection[ProductsubcategoryId, Int] = Bijection.of[ProductsubcategoryId, Int](_.value, ProductsubcategoryId.apply)
 
-  given pgType: PgType[ProductsubcategoryId] = ScalaDbTypes.PgTypes.int4.bimap(ProductsubcategoryId.apply, _.value)
+  given pgType: PgType[ProductsubcategoryId] = PgTypes.int4.to(Bijection.of(ProductsubcategoryId.apply, _.value))
 
-  given pgTypeArray: PgType[Array[ProductsubcategoryId]] = PgTypes.int4ArrayUnboxed.bimap(xs => xs.map(ProductsubcategoryId.apply), xs => xs.map(_.value))
+  given pgTypeArray: PgType[List[ProductsubcategoryId]] = pgType.array
 }

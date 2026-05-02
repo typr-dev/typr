@@ -43,7 +43,7 @@ data class PrecisionTypesRowUnsaved(
   @field:JsonProperty("TS3") val ts3: LocalDateTime3,
   @field:JsonProperty("TS6") val ts6: LocalDateTime6,
   @field:JsonProperty("TS9") val ts9: LocalDateTime9,
-  /** Default: "TYPR"."ISEQ$$_72873".nextval */
+  /** Default: "TYPR"."ISEQ$$_72863".nextval */
   @field:JsonProperty("ID") val id: Defaulted<PrecisionTypesId> = UseDefault()
 ) {
   fun toRow(idDefault: () -> PrecisionTypesId): PrecisionTypesRow = PrecisionTypesRow(id = id.getOrElse(idDefault), string10 = string10, string20 = string20, string50 = string50, string100 = string100, string255 = string255, char10 = char10, number52 = number52, number102 = number102, number184 = number184, number50 = number50, number100 = number100, number180 = number180, ts0 = ts0, ts3 = ts3, ts6 = ts6, ts9 = ts9)

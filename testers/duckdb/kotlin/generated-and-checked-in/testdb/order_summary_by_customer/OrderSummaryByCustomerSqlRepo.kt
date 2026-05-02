@@ -5,15 +5,15 @@
  */
 package testdb.order_summary_by_customer
 
+import dev.typr.foundationskt.ConnectionRead
 import java.math.BigDecimal
-import java.sql.Connection
 import kotlin.collections.List
 
 interface OrderSummaryByCustomerSqlRepo {
   abstract fun apply(
-    customerIds: Array<Int>?,
+    customerIds: List<Int>?,
     minTotal: BigDecimal?,
     minOrderCount: Int?,
-    c: Connection
+    c: ConnectionRead
   ): List<OrderSummaryByCustomerSqlRow>
 }

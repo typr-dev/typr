@@ -5,26 +5,22 @@
  */
 package adventureworks.public
 
-import dev.typr.foundations.PgRead
-import dev.typr.foundations.PgStruct
-import dev.typr.foundations.PgType
-import dev.typr.foundations.PgTypes
-import java.util.Optional
+import dev.typr.foundationskt.PgType
+import dev.typr.foundationskt.PgTypes
+import dev.typr.foundationskt.RowCodec
+import kotlin.collections.List
 
 /** PostgreSQL composite type: public.nullable_test */
 data class NullableTest(
-  val alwaysPresent: String?,
-  val oftenNull: String?,
-  val emptyVsNull: String?
+  val alwaysPresent: kotlin.String?,
+  val oftenNull: kotlin.String?,
+  val emptyVsNull: kotlin.String?
 ) {
   companion object {
-    val pgStruct: PgStruct<NullableTest> =
-      PgStruct.builder<NullableTest>("public.nullable_test").optField("alwaysPresent", PgTypes.text, { v: NullableTest -> Optional.ofNullable(v.alwaysPresent) }).optField("oftenNull", PgTypes.text, { v: NullableTest -> Optional.ofNullable(v.oftenNull) }).optField("emptyVsNull", PgTypes.text, { v: NullableTest -> Optional.ofNullable(v.emptyVsNull) }).build({ arr -> NullableTest(arr[0] as? String, arr[1] as? String, arr[2] as? String) })
-
     val pgType: PgType<NullableTest> =
-      pgStruct.asType()
+      PgTypes.compositeOf("public.nullable_test", RowCodec.namedBuilder<NullableTest>().field("alwaysPresent", PgTypes.text.opt(), { v: NullableTest -> v.alwaysPresent }).field("oftenNull", PgTypes.text.opt(), { v: NullableTest -> v.oftenNull }).field("emptyVsNull", PgTypes.text.opt(), { v: NullableTest -> v.emptyVsNull }).build({ t0, t1, t2 -> NullableTest(t0, t1, t2) }))
 
-    val pgTypeArray: PgType<Array<NullableTest>> =
-      pgType.array(PgRead.readCompositeArray(pgType.pgCompositeText(), { n -> arrayOfNulls<NullableTest>(n) }), { n -> arrayOfNulls<NullableTest>(n) })
+    val pgTypeArray: PgType<List<NullableTest>> =
+      pgType.array()
   }
 }

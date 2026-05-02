@@ -7,11 +7,11 @@ package adventureworks.person.password
 
 import adventureworks.customtypes.Defaulted
 import adventureworks.person.businessentity.BusinessentityId
+import dev.typr.dslsc.RowCodecs
 import dev.typr.foundations.PgText
-import dev.typr.foundations.PgTypes
 import dev.typr.foundations.Tuple.Tuple5
-import dev.typr.foundations.scala.RowParser
-import dev.typr.foundations.scala.RowParsers
+import dev.typr.foundationssc.PgTypes
+import dev.typr.foundationssc.RowCodec
 import java.time.LocalDateTime
 import java.util.UUID
 
@@ -58,7 +58,7 @@ case class PasswordRow(
 }
 
 object PasswordRow {
-  val `_rowParser`: RowParser[PasswordRow] = RowParsers.of(BusinessentityId.pgType, PgTypes.text, PgTypes.text, PgTypes.uuid, PgTypes.timestamp)(PasswordRow.apply)(row => Array[Any](row.businessentityid, row.passwordhash, row.passwordsalt, row.rowguid, row.modifieddate))
+  given pgText: PgText[PasswordRow] = PgText.from(rowCodec.underlying)
 
-  given pgText: PgText[PasswordRow] = PgText.from(`_rowParser`.underlying)
+  val rowCodec: RowCodec[PasswordRow] = RowCodecs.of(BusinessentityId.pgType, PgTypes.text, PgTypes.text, PgTypes.uuid, PgTypes.timestamp)(PasswordRow.apply)(row => Array[Any](row.businessentityid, row.passwordhash, row.passwordsalt, row.rowguid, row.modifieddate))
 }

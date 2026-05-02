@@ -5,17 +5,18 @@
  */
 package testdb.distinct_type_test
 
-import dev.typr.foundations.scala.DeleteBuilder
-import dev.typr.foundations.scala.DeleteBuilderMock
-import dev.typr.foundations.scala.DeleteParams
-import dev.typr.foundations.scala.SelectBuilder
-import dev.typr.foundations.scala.SelectBuilderMock
-import dev.typr.foundations.scala.SelectParams
-import dev.typr.foundations.scala.UpdateBuilder
-import dev.typr.foundations.scala.UpdateBuilderMock
-import dev.typr.foundations.scala.UpdateParams
+import dev.typr.dslsc.DeleteBuilder
+import dev.typr.dslsc.DeleteBuilderMock
+import dev.typr.dslsc.DeleteParams
+import dev.typr.dslsc.SelectBuilder
+import dev.typr.dslsc.SelectBuilderMock
+import dev.typr.dslsc.SelectParams
+import dev.typr.dslsc.UpdateBuilder
+import dev.typr.dslsc.UpdateBuilderMock
+import dev.typr.dslsc.UpdateParams
+import dev.typr.foundationssc.Connection
+import dev.typr.foundationssc.ConnectionRead
 import java.lang.RuntimeException
-import java.sql.Connection
 
 case class DistinctTypeTestRepoMock(
   toRow: DistinctTypeTestRowUnsaved => DistinctTypeTestRow,
@@ -25,7 +26,7 @@ case class DistinctTypeTestRepoMock(
 
   override def deleteById(id: DistinctTypeTestId)(using c: Connection): Boolean = map.remove(id).isDefined
 
-  override def deleteByIds(ids: Array[DistinctTypeTestId])(using c: Connection): Int = {
+  override def deleteByIds(ids: List[DistinctTypeTestId])(using c: Connection): Int = {
     var count = 0
     ids.foreach { id => if (map.remove(id).isDefined) {
       count = count + 1
@@ -45,13 +46,13 @@ case class DistinctTypeTestRepoMock(
 
   override def select: SelectBuilder[DistinctTypeTestFields, DistinctTypeTestRow] = SelectBuilderMock(DistinctTypeTestFields.structure, () => map.values.toList, SelectParams.empty())
 
-  override def selectAll(using c: Connection): List[DistinctTypeTestRow] = map.values.toList
+  override def selectAll(using c: ConnectionRead): List[DistinctTypeTestRow] = map.values.toList
 
-  override def selectById(id: DistinctTypeTestId)(using c: Connection): Option[DistinctTypeTestRow] = map.get(id)
+  override def selectById(id: DistinctTypeTestId)(using c: ConnectionRead): Option[DistinctTypeTestRow] = map.get(id)
 
-  override def selectByIds(ids: Array[DistinctTypeTestId])(using c: Connection): List[DistinctTypeTestRow] = ids.flatMap(map.get(_)).toList
+  override def selectByIds(ids: List[DistinctTypeTestId])(using c: ConnectionRead): List[DistinctTypeTestRow] = ids.flatMap(map.get(_)).toList
 
-  override def selectByIdsTracked(ids: Array[DistinctTypeTestId])(using c: Connection): Map[DistinctTypeTestId, DistinctTypeTestRow] = selectByIds(ids)(using c).map(x => (((row: DistinctTypeTestRow) => row.id).apply(x), x)).toMap
+  override def selectByIdsTracked(ids: List[DistinctTypeTestId])(using c: ConnectionRead): Map[DistinctTypeTestId, DistinctTypeTestRow] = selectByIds(ids)(using c).map(x => (((row: DistinctTypeTestRow) => row.id).apply(x), x)).toMap
 
   override def update: UpdateBuilder[DistinctTypeTestFields, DistinctTypeTestRow] = UpdateBuilderMock(DistinctTypeTestFields.structure, () => map.values.toList, UpdateParams.empty(), row => row)
 

@@ -6,12 +6,12 @@
 package oracledb.precisetypes
 
 import com.fasterxml.jackson.annotation.JsonValue
+import dev.typr.dsl.RowCodecs
+import dev.typr.foundations.Bijection
 import dev.typr.foundations.OracleType
 import dev.typr.foundations.OracleTypes
-import dev.typr.foundations.RowParser
-import dev.typr.foundations.RowParsers
+import dev.typr.foundations.RowCodec
 import dev.typr.foundations.data.precise.DecimalN
-import dev.typr.foundations.dsl.Bijection
 import java.lang.IllegalArgumentException
 import java.math.RoundingMode
 import java.util.Optional
@@ -35,9 +35,7 @@ case class Decimal5_2 private(@JsonValue value: java.math.BigDecimal) extends De
 object Decimal5_2 {
   given Zero: Decimal5_2 = new Decimal5_2(java.math.BigDecimal.ZERO)
 
-  given `_rowParser`: RowParser[Decimal5_2] = RowParsers.of(OracleTypes.number.bimap(Decimal5_2.apply, _.value), x => x, id => Array[Any](id))
-
-  given bijection: Bijection[Decimal5_2, java.math.BigDecimal] = Bijection.apply[Decimal5_2, java.math.BigDecimal](_.value)(Decimal5_2.apply)
+  given bijection: Bijection[Decimal5_2, java.math.BigDecimal] = Bijection.of[Decimal5_2, java.math.BigDecimal](_.value, Decimal5_2.apply)
 
   def of(value: java.math.BigDecimal): Optional[Decimal5_2] = { val scaled = value.setScale(2, RoundingMode.HALF_UP); if (scaled.precision <= 5) Optional.of(new Decimal5_2(scaled)) else Optional.empty() }
 
@@ -47,7 +45,9 @@ object Decimal5_2 {
 
   def of(value: java.lang.Double): Optional[Decimal5_2] = Decimal5_2.of(java.math.BigDecimal.valueOf(value))
 
-  given oracleType: OracleType[Decimal5_2] = OracleTypes.number.bimap(Decimal5_2.apply, _.value)
+  given oracleType: OracleType[Decimal5_2] = OracleTypes.number.to(Bijection.of(Decimal5_2.apply, _.value))
+
+  given rowCodec: RowCodec[Decimal5_2] = RowCodecs.of(OracleTypes.number.to(Bijection.of(Decimal5_2.apply, _.value)), x => x, id => Array[Any](id))
 
   def unsafeForce(value: java.math.BigDecimal): Decimal5_2 = { val scaled = value.setScale(2, RoundingMode.HALF_UP); if (scaled.precision > 5) throw new IllegalArgumentException("Value exceeds precision(5, 2)"); new Decimal5_2(scaled) }
 }

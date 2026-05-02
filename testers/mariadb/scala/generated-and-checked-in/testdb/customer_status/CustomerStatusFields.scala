@@ -5,16 +5,16 @@
  */
 package testdb.customer_status
 
-import dev.typr.foundations.MariaTypes
-import dev.typr.foundations.RowParser
-import dev.typr.foundations.dsl.FieldsBase
-import dev.typr.foundations.dsl.Path
-import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.scala.RelationStructure
-import dev.typr.foundations.scala.SqlExpr
-import dev.typr.foundations.scala.SqlExpr.Field
-import dev.typr.foundations.scala.SqlExpr.IdField
-import dev.typr.foundations.scala.TupleExpr3
+import dev.typr.dsl.FieldsBase
+import dev.typr.dsl.Path
+import dev.typr.dsl.SqlExpr.FieldLike
+import dev.typr.dslsc.RelationStructure
+import dev.typr.dslsc.SqlExpr
+import dev.typr.dslsc.SqlExpr.Field
+import dev.typr.dslsc.SqlExpr.IdField
+import dev.typr.dslsc.TupleExpr3
+import dev.typr.foundations.RowCodec
+import dev.typr.foundationssc.MariaTypes
 import testdb.userdefined.IsActive
 
 class CustomerStatusFields(val `_path`: java.util.List[Path]) extends TupleExpr3[CustomerStatusId, String, /* user-picked */ IsActive] with RelationStructure[CustomerStatusFields, CustomerStatusRow]  with FieldsBase[CustomerStatusRow] {
@@ -26,7 +26,7 @@ class CustomerStatusFields(val `_path`: java.util.List[Path]) extends TupleExpr3
       None,
       None,
       (row, value) => row.copy(statusCode = value),
-      CustomerStatusId.mariaType
+      CustomerStatusId.mariaType.underlying
     )
   }
 
@@ -38,7 +38,7 @@ class CustomerStatusFields(val `_path`: java.util.List[Path]) extends TupleExpr3
       None,
       None,
       (row, value) => row.copy(description = value),
-      MariaTypes.varchar
+      MariaTypes.varchar.underlying
     )
   }
 
@@ -50,13 +50,13 @@ class CustomerStatusFields(val `_path`: java.util.List[Path]) extends TupleExpr3
       None,
       None,
       (row, value) => row.copy(isActive = value),
-      IsActive.mariaType
+      IsActive.mariaType.underlying
     )
   }
 
   override def columns: java.util.List[FieldLike[?, CustomerStatusRow]] = java.util.List.of(this.statusCode.underlying, this.description.underlying, this.isActive.underlying)
 
-  override def rowParser: RowParser[CustomerStatusRow] = CustomerStatusRow._rowParser.underlying
+  override def rowCodec: RowCodec[CustomerStatusRow] = CustomerStatusRow.rowCodec.underlying
 
   override def withPaths(`_path`: java.util.List[Path]): RelationStructure[CustomerStatusFields, CustomerStatusRow] = new CustomerStatusFields(`_path`)
 

@@ -5,14 +5,14 @@
  */
 package testdb.precision_types_null
 
-import dev.typr.foundations.SqlServerTypes
-import dev.typr.foundations.scala.DbTypeOps
-import dev.typr.foundations.scala.DeleteBuilder
-import dev.typr.foundations.scala.Dialect
-import dev.typr.foundations.scala.Fragment
-import dev.typr.foundations.scala.SelectBuilder
-import dev.typr.foundations.scala.UpdateBuilder
-import java.sql.Connection
+import dev.typr.dslsc.DeleteBuilder
+import dev.typr.dslsc.Dialect
+import dev.typr.dslsc.SelectBuilder
+import dev.typr.dslsc.UpdateBuilder
+import dev.typr.foundationssc.Connection
+import dev.typr.foundationssc.ConnectionRead
+import dev.typr.foundationssc.Fragment
+import dev.typr.foundationssc.SqlServerTypes
 import scala.collection.mutable.ListBuffer
 import testdb.precisetypes.Binary10
 import testdb.precisetypes.Binary32
@@ -33,154 +33,154 @@ import testdb.precisetypes.String100
 import testdb.precisetypes.String20
 import testdb.precisetypes.String255
 import testdb.precisetypes.String50
-import dev.typr.foundations.scala.Fragment.sql
+import dev.typr.foundationssc.Fragment.sql
 
 class PrecisionTypesNullRepoImpl extends PrecisionTypesNullRepo {
   override def delete: DeleteBuilder[PrecisionTypesNullFields, PrecisionTypesNullRow] = DeleteBuilder.of("[precision_types_null]", PrecisionTypesNullFields.structure, Dialect.SQLSERVER)
 
-  override def deleteById(id: PrecisionTypesNullId)(using c: Connection): Boolean = sql"delete from [precision_types_null] where [id] = ${Fragment.encode(PrecisionTypesNullId.sqlServerType, id)}".update().runUnchecked(c) > 0
+  override def deleteById(id: PrecisionTypesNullId)(using c: Connection): Boolean = sql"delete from [precision_types_null] where [id] = ${Fragment.encode(PrecisionTypesNullId.sqlServerType, id)}".update().run(using c) > 0
 
-  override def deleteByIds(ids: Array[PrecisionTypesNullId])(using c: Connection): Int = {
+  override def deleteByIds(ids: List[PrecisionTypesNullId])(using c: Connection): Int = {
     val fragments: ListBuffer[Fragment] = ListBuffer()
     ids.foreach { id => fragments.addOne(Fragment.encode(PrecisionTypesNullId.sqlServerType, id)): @scala.annotation.nowarn }
-    return Fragment.interpolate(Fragment.lit("delete from [precision_types_null] where [id] in ("), Fragment.comma(fragments), Fragment.lit(")")).update().runUnchecked(c)
+    return Fragment.concat(Fragment.of("delete from [precision_types_null] where [id] in ("), Fragment.comma(fragments), Fragment.of(")")).update().run(using c)
   }
 
   override def insert(unsaved: PrecisionTypesNullRow)(using c: Connection): PrecisionTypesNullRow = {
   sql"""insert into [precision_types_null]([string10], [string20], [string50], [string100], [string255], [nstring10], [nstring50], [nstring255], [char10], [nchar10], [decimal5_2], [decimal10_2], [decimal18_4], [numeric8_2], [numeric12_4], [binary10], [binary32], [time0], [time3], [time7], [datetime2_0], [datetime2_3], [datetime2_7], [dto0], [dto3], [dto7])
     OUTPUT INSERTED.[id], INSERTED.[string10], INSERTED.[string20], INSERTED.[string50], INSERTED.[string100], INSERTED.[string255], INSERTED.[nstring10], INSERTED.[nstring50], INSERTED.[nstring255], INSERTED.[char10], INSERTED.[nchar10], INSERTED.[decimal5_2], INSERTED.[decimal10_2], INSERTED.[decimal18_4], INSERTED.[numeric8_2], INSERTED.[numeric12_4], INSERTED.[binary10], INSERTED.[binary32], INSERTED.[time0], INSERTED.[time3], INSERTED.[time7], INSERTED.[datetime2_0], INSERTED.[datetime2_3], INSERTED.[datetime2_7], INSERTED.[dto0], INSERTED.[dto3], INSERTED.[dto7]
-    values (${Fragment.encode(String10.sqlServerType.nullable, unsaved.string10)}, ${Fragment.encode(String20.sqlServerType.nullable, unsaved.string20)}, ${Fragment.encode(String50.sqlServerType.nullable, unsaved.string50)}, ${Fragment.encode(String100.sqlServerType.nullable, unsaved.string100)}, ${Fragment.encode(String255.sqlServerType.nullable, unsaved.string255)}, ${Fragment.encode(String10.sqlServerType.nullable, unsaved.nstring10)}, ${Fragment.encode(String50.sqlServerType.nullable, unsaved.nstring50)}, ${Fragment.encode(String255.sqlServerType.nullable, unsaved.nstring255)}, ${Fragment.encode(PaddedString10.sqlServerType.nullable, unsaved.char10)}, ${Fragment.encode(PaddedString10.sqlServerType.nullable, unsaved.nchar10)}, ${Fragment.encode(Decimal5_2.sqlServerType.nullable, unsaved.decimal52)}, ${Fragment.encode(Decimal10_2.sqlServerType.nullable, unsaved.decimal102)}, ${Fragment.encode(Decimal18_4.sqlServerType.nullable, unsaved.decimal184)}, ${Fragment.encode(Decimal8_2.sqlServerType.nullable, unsaved.numeric82)}, ${Fragment.encode(Decimal12_4.sqlServerType.nullable, unsaved.numeric124)}, ${Fragment.encode(Binary10.sqlServerType.nullable, unsaved.binary10)}, ${Fragment.encode(Binary32.sqlServerType.nullable, unsaved.binary32)}, ${Fragment.encode(SqlServerTypes.time.nullable, unsaved.time0)}, ${Fragment.encode(LocalTime3.sqlServerType.nullable, unsaved.time3)}, ${Fragment.encode(LocalTime7.sqlServerType.nullable, unsaved.time7)}, ${Fragment.encode(SqlServerTypes.datetime2.nullable, unsaved.datetime20)}, ${Fragment.encode(LocalDateTime3.sqlServerType.nullable, unsaved.datetime23)}, ${Fragment.encode(LocalDateTime7.sqlServerType.nullable, unsaved.datetime27)}, ${Fragment.encode(SqlServerTypes.datetimeoffset.nullable, unsaved.dto0)}, ${Fragment.encode(OffsetDateTime3.sqlServerType.nullable, unsaved.dto3)}, ${Fragment.encode(OffsetDateTime7.sqlServerType.nullable, unsaved.dto7)})
+    values (${Fragment.encode(String10.sqlServerType.opt, unsaved.string10)}, ${Fragment.encode(String20.sqlServerType.opt, unsaved.string20)}, ${Fragment.encode(String50.sqlServerType.opt, unsaved.string50)}, ${Fragment.encode(String100.sqlServerType.opt, unsaved.string100)}, ${Fragment.encode(String255.sqlServerType.opt, unsaved.string255)}, ${Fragment.encode(String10.sqlServerType.opt, unsaved.nstring10)}, ${Fragment.encode(String50.sqlServerType.opt, unsaved.nstring50)}, ${Fragment.encode(String255.sqlServerType.opt, unsaved.nstring255)}, ${Fragment.encode(PaddedString10.sqlServerType.opt, unsaved.char10)}, ${Fragment.encode(PaddedString10.sqlServerType.opt, unsaved.nchar10)}, ${Fragment.encode(Decimal5_2.sqlServerType.opt, unsaved.decimal52)}, ${Fragment.encode(Decimal10_2.sqlServerType.opt, unsaved.decimal102)}, ${Fragment.encode(Decimal18_4.sqlServerType.opt, unsaved.decimal184)}, ${Fragment.encode(Decimal8_2.sqlServerType.opt, unsaved.numeric82)}, ${Fragment.encode(Decimal12_4.sqlServerType.opt, unsaved.numeric124)}, ${Fragment.encode(Binary10.sqlServerType.opt, unsaved.binary10)}, ${Fragment.encode(Binary32.sqlServerType.opt, unsaved.binary32)}, ${Fragment.encode(SqlServerTypes.time.opt, unsaved.time0)}, ${Fragment.encode(LocalTime3.sqlServerType.opt, unsaved.time3)}, ${Fragment.encode(LocalTime7.sqlServerType.opt, unsaved.time7)}, ${Fragment.encode(SqlServerTypes.datetime2.opt, unsaved.datetime20)}, ${Fragment.encode(LocalDateTime3.sqlServerType.opt, unsaved.datetime23)}, ${Fragment.encode(LocalDateTime7.sqlServerType.opt, unsaved.datetime27)}, ${Fragment.encode(SqlServerTypes.datetimeoffset.opt, unsaved.dto0)}, ${Fragment.encode(OffsetDateTime3.sqlServerType.opt, unsaved.dto3)}, ${Fragment.encode(OffsetDateTime7.sqlServerType.opt, unsaved.dto7)})
     """
-    .updateReturning(PrecisionTypesNullRow.`_rowParser`.exactlyOne()).runUnchecked(c)
+    .updateReturning(PrecisionTypesNullRow.rowCodec.exactlyOne()).run(using c)
   }
 
   override def insert(unsaved: PrecisionTypesNullRowUnsaved)(using c: Connection): PrecisionTypesNullRow = {
     val columns: ListBuffer[Fragment] = ListBuffer()
     val values: ListBuffer[Fragment] = ListBuffer()
-    columns.addOne(Fragment.lit("[string10]")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(String10.sqlServerType.nullable, unsaved.string10)}"): @scala.annotation.nowarn
-    columns.addOne(Fragment.lit("[string20]")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(String20.sqlServerType.nullable, unsaved.string20)}"): @scala.annotation.nowarn
-    columns.addOne(Fragment.lit("[string50]")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(String50.sqlServerType.nullable, unsaved.string50)}"): @scala.annotation.nowarn
-    columns.addOne(Fragment.lit("[string100]")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(String100.sqlServerType.nullable, unsaved.string100)}"): @scala.annotation.nowarn
-    columns.addOne(Fragment.lit("[string255]")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(String255.sqlServerType.nullable, unsaved.string255)}"): @scala.annotation.nowarn
-    columns.addOne(Fragment.lit("[nstring10]")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(String10.sqlServerType.nullable, unsaved.nstring10)}"): @scala.annotation.nowarn
-    columns.addOne(Fragment.lit("[nstring50]")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(String50.sqlServerType.nullable, unsaved.nstring50)}"): @scala.annotation.nowarn
-    columns.addOne(Fragment.lit("[nstring255]")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(String255.sqlServerType.nullable, unsaved.nstring255)}"): @scala.annotation.nowarn
-    columns.addOne(Fragment.lit("[char10]")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(PaddedString10.sqlServerType.nullable, unsaved.char10)}"): @scala.annotation.nowarn
-    columns.addOne(Fragment.lit("[nchar10]")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(PaddedString10.sqlServerType.nullable, unsaved.nchar10)}"): @scala.annotation.nowarn
-    columns.addOne(Fragment.lit("[decimal5_2]")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(Decimal5_2.sqlServerType.nullable, unsaved.decimal52)}"): @scala.annotation.nowarn
-    columns.addOne(Fragment.lit("[decimal10_2]")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(Decimal10_2.sqlServerType.nullable, unsaved.decimal102)}"): @scala.annotation.nowarn
-    columns.addOne(Fragment.lit("[decimal18_4]")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(Decimal18_4.sqlServerType.nullable, unsaved.decimal184)}"): @scala.annotation.nowarn
-    columns.addOne(Fragment.lit("[numeric8_2]")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(Decimal8_2.sqlServerType.nullable, unsaved.numeric82)}"): @scala.annotation.nowarn
-    columns.addOne(Fragment.lit("[numeric12_4]")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(Decimal12_4.sqlServerType.nullable, unsaved.numeric124)}"): @scala.annotation.nowarn
-    columns.addOne(Fragment.lit("[binary10]")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(Binary10.sqlServerType.nullable, unsaved.binary10)}"): @scala.annotation.nowarn
-    columns.addOne(Fragment.lit("[binary32]")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(Binary32.sqlServerType.nullable, unsaved.binary32)}"): @scala.annotation.nowarn
-    columns.addOne(Fragment.lit("[time0]")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(SqlServerTypes.time.nullable, unsaved.time0)}"): @scala.annotation.nowarn
-    columns.addOne(Fragment.lit("[time3]")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(LocalTime3.sqlServerType.nullable, unsaved.time3)}"): @scala.annotation.nowarn
-    columns.addOne(Fragment.lit("[time7]")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(LocalTime7.sqlServerType.nullable, unsaved.time7)}"): @scala.annotation.nowarn
-    columns.addOne(Fragment.lit("[datetime2_0]")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(SqlServerTypes.datetime2.nullable, unsaved.datetime20)}"): @scala.annotation.nowarn
-    columns.addOne(Fragment.lit("[datetime2_3]")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(LocalDateTime3.sqlServerType.nullable, unsaved.datetime23)}"): @scala.annotation.nowarn
-    columns.addOne(Fragment.lit("[datetime2_7]")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(LocalDateTime7.sqlServerType.nullable, unsaved.datetime27)}"): @scala.annotation.nowarn
-    columns.addOne(Fragment.lit("[dto0]")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(SqlServerTypes.datetimeoffset.nullable, unsaved.dto0)}"): @scala.annotation.nowarn
-    columns.addOne(Fragment.lit("[dto3]")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(OffsetDateTime3.sqlServerType.nullable, unsaved.dto3)}"): @scala.annotation.nowarn
-    columns.addOne(Fragment.lit("[dto7]")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(OffsetDateTime7.sqlServerType.nullable, unsaved.dto7)}"): @scala.annotation.nowarn
+    columns.addOne(Fragment.of("[string10]")): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(String10.sqlServerType.opt, unsaved.string10)}"): @scala.annotation.nowarn
+    columns.addOne(Fragment.of("[string20]")): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(String20.sqlServerType.opt, unsaved.string20)}"): @scala.annotation.nowarn
+    columns.addOne(Fragment.of("[string50]")): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(String50.sqlServerType.opt, unsaved.string50)}"): @scala.annotation.nowarn
+    columns.addOne(Fragment.of("[string100]")): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(String100.sqlServerType.opt, unsaved.string100)}"): @scala.annotation.nowarn
+    columns.addOne(Fragment.of("[string255]")): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(String255.sqlServerType.opt, unsaved.string255)}"): @scala.annotation.nowarn
+    columns.addOne(Fragment.of("[nstring10]")): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(String10.sqlServerType.opt, unsaved.nstring10)}"): @scala.annotation.nowarn
+    columns.addOne(Fragment.of("[nstring50]")): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(String50.sqlServerType.opt, unsaved.nstring50)}"): @scala.annotation.nowarn
+    columns.addOne(Fragment.of("[nstring255]")): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(String255.sqlServerType.opt, unsaved.nstring255)}"): @scala.annotation.nowarn
+    columns.addOne(Fragment.of("[char10]")): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(PaddedString10.sqlServerType.opt, unsaved.char10)}"): @scala.annotation.nowarn
+    columns.addOne(Fragment.of("[nchar10]")): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(PaddedString10.sqlServerType.opt, unsaved.nchar10)}"): @scala.annotation.nowarn
+    columns.addOne(Fragment.of("[decimal5_2]")): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(Decimal5_2.sqlServerType.opt, unsaved.decimal52)}"): @scala.annotation.nowarn
+    columns.addOne(Fragment.of("[decimal10_2]")): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(Decimal10_2.sqlServerType.opt, unsaved.decimal102)}"): @scala.annotation.nowarn
+    columns.addOne(Fragment.of("[decimal18_4]")): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(Decimal18_4.sqlServerType.opt, unsaved.decimal184)}"): @scala.annotation.nowarn
+    columns.addOne(Fragment.of("[numeric8_2]")): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(Decimal8_2.sqlServerType.opt, unsaved.numeric82)}"): @scala.annotation.nowarn
+    columns.addOne(Fragment.of("[numeric12_4]")): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(Decimal12_4.sqlServerType.opt, unsaved.numeric124)}"): @scala.annotation.nowarn
+    columns.addOne(Fragment.of("[binary10]")): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(Binary10.sqlServerType.opt, unsaved.binary10)}"): @scala.annotation.nowarn
+    columns.addOne(Fragment.of("[binary32]")): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(Binary32.sqlServerType.opt, unsaved.binary32)}"): @scala.annotation.nowarn
+    columns.addOne(Fragment.of("[time0]")): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(SqlServerTypes.time.opt, unsaved.time0)}"): @scala.annotation.nowarn
+    columns.addOne(Fragment.of("[time3]")): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(LocalTime3.sqlServerType.opt, unsaved.time3)}"): @scala.annotation.nowarn
+    columns.addOne(Fragment.of("[time7]")): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(LocalTime7.sqlServerType.opt, unsaved.time7)}"): @scala.annotation.nowarn
+    columns.addOne(Fragment.of("[datetime2_0]")): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(SqlServerTypes.datetime2.opt, unsaved.datetime20)}"): @scala.annotation.nowarn
+    columns.addOne(Fragment.of("[datetime2_3]")): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(LocalDateTime3.sqlServerType.opt, unsaved.datetime23)}"): @scala.annotation.nowarn
+    columns.addOne(Fragment.of("[datetime2_7]")): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(LocalDateTime7.sqlServerType.opt, unsaved.datetime27)}"): @scala.annotation.nowarn
+    columns.addOne(Fragment.of("[dto0]")): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(SqlServerTypes.datetimeoffset.opt, unsaved.dto0)}"): @scala.annotation.nowarn
+    columns.addOne(Fragment.of("[dto3]")): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(OffsetDateTime3.sqlServerType.opt, unsaved.dto3)}"): @scala.annotation.nowarn
+    columns.addOne(Fragment.of("[dto7]")): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(OffsetDateTime7.sqlServerType.opt, unsaved.dto7)}"): @scala.annotation.nowarn
     val q: Fragment = {
       sql"""insert into [precision_types_null](${Fragment.comma(columns)})
       OUTPUT INSERTED.[id], INSERTED.[string10], INSERTED.[string20], INSERTED.[string50], INSERTED.[string100], INSERTED.[string255], INSERTED.[nstring10], INSERTED.[nstring50], INSERTED.[nstring255], INSERTED.[char10], INSERTED.[nchar10], INSERTED.[decimal5_2], INSERTED.[decimal10_2], INSERTED.[decimal18_4], INSERTED.[numeric8_2], INSERTED.[numeric12_4], INSERTED.[binary10], INSERTED.[binary32], INSERTED.[time0], INSERTED.[time3], INSERTED.[time7], INSERTED.[datetime2_0], INSERTED.[datetime2_3], INSERTED.[datetime2_7], INSERTED.[dto0], INSERTED.[dto3], INSERTED.[dto7]
       values (${Fragment.comma(values)})
       """
     }
-    return q.updateReturning(PrecisionTypesNullRow.`_rowParser`.exactlyOne()).runUnchecked(c)
+    return q.updateReturning(PrecisionTypesNullRow.rowCodec.exactlyOne()).run(using c)
   }
 
-  override def select: SelectBuilder[PrecisionTypesNullFields, PrecisionTypesNullRow] = SelectBuilder.of("[precision_types_null]", PrecisionTypesNullFields.structure, PrecisionTypesNullRow.`_rowParser`, Dialect.SQLSERVER)
+  override def select: SelectBuilder[PrecisionTypesNullFields, PrecisionTypesNullRow] = SelectBuilder.of("[precision_types_null]", PrecisionTypesNullFields.structure, PrecisionTypesNullRow.rowCodec, Dialect.SQLSERVER)
 
-  override def selectAll(using c: Connection): List[PrecisionTypesNullRow] = {
+  override def selectAll(using c: ConnectionRead): List[PrecisionTypesNullRow] = {
     sql"""select [id], [string10], [string20], [string50], [string100], [string255], [nstring10], [nstring50], [nstring255], [char10], [nchar10], [decimal5_2], [decimal10_2], [decimal18_4], [numeric8_2], [numeric12_4], [binary10], [binary32], [time0], [time3], [time7], [datetime2_0], [datetime2_3], [datetime2_7], [dto0], [dto3], [dto7]
     from [precision_types_null]
-    """.query(PrecisionTypesNullRow.`_rowParser`.all()).runUnchecked(c)
+    """.query(PrecisionTypesNullRow.rowCodec.all()).run(using c)
   }
 
-  override def selectById(id: PrecisionTypesNullId)(using c: Connection): Option[PrecisionTypesNullRow] = {
+  override def selectById(id: PrecisionTypesNullId)(using c: ConnectionRead): Option[PrecisionTypesNullRow] = {
     sql"""select [id], [string10], [string20], [string50], [string100], [string255], [nstring10], [nstring50], [nstring255], [char10], [nchar10], [decimal5_2], [decimal10_2], [decimal18_4], [numeric8_2], [numeric12_4], [binary10], [binary32], [time0], [time3], [time7], [datetime2_0], [datetime2_3], [datetime2_7], [dto0], [dto3], [dto7]
     from [precision_types_null]
-    where [id] = ${Fragment.encode(PrecisionTypesNullId.sqlServerType, id)}""".query(PrecisionTypesNullRow.`_rowParser`.first()).runUnchecked(c)
+    where [id] = ${Fragment.encode(PrecisionTypesNullId.sqlServerType, id)}""".query(PrecisionTypesNullRow.rowCodec.first()).run(using c)
   }
 
-  override def selectByIds(ids: Array[PrecisionTypesNullId])(using c: Connection): List[PrecisionTypesNullRow] = {
+  override def selectByIds(ids: List[PrecisionTypesNullId])(using c: ConnectionRead): List[PrecisionTypesNullRow] = {
     val fragments: ListBuffer[Fragment] = ListBuffer()
     ids.foreach { id => fragments.addOne(Fragment.encode(PrecisionTypesNullId.sqlServerType, id)): @scala.annotation.nowarn }
-    return Fragment.interpolate(Fragment.lit("select [id], [string10], [string20], [string50], [string100], [string255], [nstring10], [nstring50], [nstring255], [char10], [nchar10], [decimal5_2], [decimal10_2], [decimal18_4], [numeric8_2], [numeric12_4], [binary10], [binary32], [time0], [time3], [time7], [datetime2_0], [datetime2_3], [datetime2_7], [dto0], [dto3], [dto7] from [precision_types_null] where [id] in ("), Fragment.comma(fragments), Fragment.lit(")")).query(PrecisionTypesNullRow.`_rowParser`.all()).runUnchecked(c)
+    return Fragment.concat(Fragment.of("select [id], [string10], [string20], [string50], [string100], [string255], [nstring10], [nstring50], [nstring255], [char10], [nchar10], [decimal5_2], [decimal10_2], [decimal18_4], [numeric8_2], [numeric12_4], [binary10], [binary32], [time0], [time3], [time7], [datetime2_0], [datetime2_3], [datetime2_7], [dto0], [dto3], [dto7] from [precision_types_null] where [id] in ("), Fragment.comma(fragments), Fragment.of(")")).query(PrecisionTypesNullRow.rowCodec.all()).run(using c)
   }
 
-  override def selectByIdsTracked(ids: Array[PrecisionTypesNullId])(using c: Connection): Map[PrecisionTypesNullId, PrecisionTypesNullRow] = {
+  override def selectByIdsTracked(ids: List[PrecisionTypesNullId])(using c: ConnectionRead): Map[PrecisionTypesNullId, PrecisionTypesNullRow] = {
     val ret: scala.collection.mutable.Map[PrecisionTypesNullId, PrecisionTypesNullRow] = scala.collection.mutable.Map.empty[PrecisionTypesNullId, PrecisionTypesNullRow]
     selectByIds(ids)(using c).foreach(row => ret.put(row.id, row): @scala.annotation.nowarn)
     return ret.toMap
   }
 
-  override def update: UpdateBuilder[PrecisionTypesNullFields, PrecisionTypesNullRow] = UpdateBuilder.of("[precision_types_null]", PrecisionTypesNullFields.structure, PrecisionTypesNullRow.`_rowParser`, Dialect.SQLSERVER)
+  override def update: UpdateBuilder[PrecisionTypesNullFields, PrecisionTypesNullRow] = UpdateBuilder.of("[precision_types_null]", PrecisionTypesNullFields.structure, PrecisionTypesNullRow.rowCodec, Dialect.SQLSERVER)
 
   override def update(row: PrecisionTypesNullRow)(using c: Connection): Boolean = {
     val id: PrecisionTypesNullId = row.id
     return sql"""update [precision_types_null]
-    set [string10] = ${Fragment.encode(String10.sqlServerType.nullable, row.string10)},
-    [string20] = ${Fragment.encode(String20.sqlServerType.nullable, row.string20)},
-    [string50] = ${Fragment.encode(String50.sqlServerType.nullable, row.string50)},
-    [string100] = ${Fragment.encode(String100.sqlServerType.nullable, row.string100)},
-    [string255] = ${Fragment.encode(String255.sqlServerType.nullable, row.string255)},
-    [nstring10] = ${Fragment.encode(String10.sqlServerType.nullable, row.nstring10)},
-    [nstring50] = ${Fragment.encode(String50.sqlServerType.nullable, row.nstring50)},
-    [nstring255] = ${Fragment.encode(String255.sqlServerType.nullable, row.nstring255)},
-    [char10] = ${Fragment.encode(PaddedString10.sqlServerType.nullable, row.char10)},
-    [nchar10] = ${Fragment.encode(PaddedString10.sqlServerType.nullable, row.nchar10)},
-    [decimal5_2] = ${Fragment.encode(Decimal5_2.sqlServerType.nullable, row.decimal52)},
-    [decimal10_2] = ${Fragment.encode(Decimal10_2.sqlServerType.nullable, row.decimal102)},
-    [decimal18_4] = ${Fragment.encode(Decimal18_4.sqlServerType.nullable, row.decimal184)},
-    [numeric8_2] = ${Fragment.encode(Decimal8_2.sqlServerType.nullable, row.numeric82)},
-    [numeric12_4] = ${Fragment.encode(Decimal12_4.sqlServerType.nullable, row.numeric124)},
-    [binary10] = ${Fragment.encode(Binary10.sqlServerType.nullable, row.binary10)},
-    [binary32] = ${Fragment.encode(Binary32.sqlServerType.nullable, row.binary32)},
-    [time0] = ${Fragment.encode(SqlServerTypes.time.nullable, row.time0)},
-    [time3] = ${Fragment.encode(LocalTime3.sqlServerType.nullable, row.time3)},
-    [time7] = ${Fragment.encode(LocalTime7.sqlServerType.nullable, row.time7)},
-    [datetime2_0] = ${Fragment.encode(SqlServerTypes.datetime2.nullable, row.datetime20)},
-    [datetime2_3] = ${Fragment.encode(LocalDateTime3.sqlServerType.nullable, row.datetime23)},
-    [datetime2_7] = ${Fragment.encode(LocalDateTime7.sqlServerType.nullable, row.datetime27)},
-    [dto0] = ${Fragment.encode(SqlServerTypes.datetimeoffset.nullable, row.dto0)},
-    [dto3] = ${Fragment.encode(OffsetDateTime3.sqlServerType.nullable, row.dto3)},
-    [dto7] = ${Fragment.encode(OffsetDateTime7.sqlServerType.nullable, row.dto7)}
-    where [id] = ${Fragment.encode(PrecisionTypesNullId.sqlServerType, id)}""".update().runUnchecked(c) > 0
+    set [string10] = ${Fragment.encode(String10.sqlServerType.opt, row.string10)},
+    [string20] = ${Fragment.encode(String20.sqlServerType.opt, row.string20)},
+    [string50] = ${Fragment.encode(String50.sqlServerType.opt, row.string50)},
+    [string100] = ${Fragment.encode(String100.sqlServerType.opt, row.string100)},
+    [string255] = ${Fragment.encode(String255.sqlServerType.opt, row.string255)},
+    [nstring10] = ${Fragment.encode(String10.sqlServerType.opt, row.nstring10)},
+    [nstring50] = ${Fragment.encode(String50.sqlServerType.opt, row.nstring50)},
+    [nstring255] = ${Fragment.encode(String255.sqlServerType.opt, row.nstring255)},
+    [char10] = ${Fragment.encode(PaddedString10.sqlServerType.opt, row.char10)},
+    [nchar10] = ${Fragment.encode(PaddedString10.sqlServerType.opt, row.nchar10)},
+    [decimal5_2] = ${Fragment.encode(Decimal5_2.sqlServerType.opt, row.decimal52)},
+    [decimal10_2] = ${Fragment.encode(Decimal10_2.sqlServerType.opt, row.decimal102)},
+    [decimal18_4] = ${Fragment.encode(Decimal18_4.sqlServerType.opt, row.decimal184)},
+    [numeric8_2] = ${Fragment.encode(Decimal8_2.sqlServerType.opt, row.numeric82)},
+    [numeric12_4] = ${Fragment.encode(Decimal12_4.sqlServerType.opt, row.numeric124)},
+    [binary10] = ${Fragment.encode(Binary10.sqlServerType.opt, row.binary10)},
+    [binary32] = ${Fragment.encode(Binary32.sqlServerType.opt, row.binary32)},
+    [time0] = ${Fragment.encode(SqlServerTypes.time.opt, row.time0)},
+    [time3] = ${Fragment.encode(LocalTime3.sqlServerType.opt, row.time3)},
+    [time7] = ${Fragment.encode(LocalTime7.sqlServerType.opt, row.time7)},
+    [datetime2_0] = ${Fragment.encode(SqlServerTypes.datetime2.opt, row.datetime20)},
+    [datetime2_3] = ${Fragment.encode(LocalDateTime3.sqlServerType.opt, row.datetime23)},
+    [datetime2_7] = ${Fragment.encode(LocalDateTime7.sqlServerType.opt, row.datetime27)},
+    [dto0] = ${Fragment.encode(SqlServerTypes.datetimeoffset.opt, row.dto0)},
+    [dto3] = ${Fragment.encode(OffsetDateTime3.sqlServerType.opt, row.dto3)},
+    [dto7] = ${Fragment.encode(OffsetDateTime7.sqlServerType.opt, row.dto7)}
+    where [id] = ${Fragment.encode(PrecisionTypesNullId.sqlServerType, id)}""".update().run(using c) > 0
   }
 
   override def upsert(unsaved: PrecisionTypesNullRow)(using c: Connection): PrecisionTypesNullRow = {
   sql"""MERGE INTO [precision_types_null] AS target
-    USING (VALUES (${Fragment.encode(PrecisionTypesNullId.sqlServerType, unsaved.id)}, ${Fragment.encode(String10.sqlServerType.nullable, unsaved.string10)}, ${Fragment.encode(String20.sqlServerType.nullable, unsaved.string20)}, ${Fragment.encode(String50.sqlServerType.nullable, unsaved.string50)}, ${Fragment.encode(String100.sqlServerType.nullable, unsaved.string100)}, ${Fragment.encode(String255.sqlServerType.nullable, unsaved.string255)}, ${Fragment.encode(String10.sqlServerType.nullable, unsaved.nstring10)}, ${Fragment.encode(String50.sqlServerType.nullable, unsaved.nstring50)}, ${Fragment.encode(String255.sqlServerType.nullable, unsaved.nstring255)}, ${Fragment.encode(PaddedString10.sqlServerType.nullable, unsaved.char10)}, ${Fragment.encode(PaddedString10.sqlServerType.nullable, unsaved.nchar10)}, ${Fragment.encode(Decimal5_2.sqlServerType.nullable, unsaved.decimal52)}, ${Fragment.encode(Decimal10_2.sqlServerType.nullable, unsaved.decimal102)}, ${Fragment.encode(Decimal18_4.sqlServerType.nullable, unsaved.decimal184)}, ${Fragment.encode(Decimal8_2.sqlServerType.nullable, unsaved.numeric82)}, ${Fragment.encode(Decimal12_4.sqlServerType.nullable, unsaved.numeric124)}, ${Fragment.encode(Binary10.sqlServerType.nullable, unsaved.binary10)}, ${Fragment.encode(Binary32.sqlServerType.nullable, unsaved.binary32)}, ${Fragment.encode(SqlServerTypes.time.nullable, unsaved.time0)}, ${Fragment.encode(LocalTime3.sqlServerType.nullable, unsaved.time3)}, ${Fragment.encode(LocalTime7.sqlServerType.nullable, unsaved.time7)}, ${Fragment.encode(SqlServerTypes.datetime2.nullable, unsaved.datetime20)}, ${Fragment.encode(LocalDateTime3.sqlServerType.nullable, unsaved.datetime23)}, ${Fragment.encode(LocalDateTime7.sqlServerType.nullable, unsaved.datetime27)}, ${Fragment.encode(SqlServerTypes.datetimeoffset.nullable, unsaved.dto0)}, ${Fragment.encode(OffsetDateTime3.sqlServerType.nullable, unsaved.dto3)}, ${Fragment.encode(OffsetDateTime7.sqlServerType.nullable, unsaved.dto7)})) AS source([id], [string10], [string20], [string50], [string100], [string255], [nstring10], [nstring50], [nstring255], [char10], [nchar10], [decimal5_2], [decimal10_2], [decimal18_4], [numeric8_2], [numeric12_4], [binary10], [binary32], [time0], [time3], [time7], [datetime2_0], [datetime2_3], [datetime2_7], [dto0], [dto3], [dto7])
+    USING (VALUES (${Fragment.encode(PrecisionTypesNullId.sqlServerType, unsaved.id)}, ${Fragment.encode(String10.sqlServerType.opt, unsaved.string10)}, ${Fragment.encode(String20.sqlServerType.opt, unsaved.string20)}, ${Fragment.encode(String50.sqlServerType.opt, unsaved.string50)}, ${Fragment.encode(String100.sqlServerType.opt, unsaved.string100)}, ${Fragment.encode(String255.sqlServerType.opt, unsaved.string255)}, ${Fragment.encode(String10.sqlServerType.opt, unsaved.nstring10)}, ${Fragment.encode(String50.sqlServerType.opt, unsaved.nstring50)}, ${Fragment.encode(String255.sqlServerType.opt, unsaved.nstring255)}, ${Fragment.encode(PaddedString10.sqlServerType.opt, unsaved.char10)}, ${Fragment.encode(PaddedString10.sqlServerType.opt, unsaved.nchar10)}, ${Fragment.encode(Decimal5_2.sqlServerType.opt, unsaved.decimal52)}, ${Fragment.encode(Decimal10_2.sqlServerType.opt, unsaved.decimal102)}, ${Fragment.encode(Decimal18_4.sqlServerType.opt, unsaved.decimal184)}, ${Fragment.encode(Decimal8_2.sqlServerType.opt, unsaved.numeric82)}, ${Fragment.encode(Decimal12_4.sqlServerType.opt, unsaved.numeric124)}, ${Fragment.encode(Binary10.sqlServerType.opt, unsaved.binary10)}, ${Fragment.encode(Binary32.sqlServerType.opt, unsaved.binary32)}, ${Fragment.encode(SqlServerTypes.time.opt, unsaved.time0)}, ${Fragment.encode(LocalTime3.sqlServerType.opt, unsaved.time3)}, ${Fragment.encode(LocalTime7.sqlServerType.opt, unsaved.time7)}, ${Fragment.encode(SqlServerTypes.datetime2.opt, unsaved.datetime20)}, ${Fragment.encode(LocalDateTime3.sqlServerType.opt, unsaved.datetime23)}, ${Fragment.encode(LocalDateTime7.sqlServerType.opt, unsaved.datetime27)}, ${Fragment.encode(SqlServerTypes.datetimeoffset.opt, unsaved.dto0)}, ${Fragment.encode(OffsetDateTime3.sqlServerType.opt, unsaved.dto3)}, ${Fragment.encode(OffsetDateTime7.sqlServerType.opt, unsaved.dto7)})) AS source([id], [string10], [string20], [string50], [string100], [string255], [nstring10], [nstring50], [nstring255], [char10], [nchar10], [decimal5_2], [decimal10_2], [decimal18_4], [numeric8_2], [numeric12_4], [binary10], [binary32], [time0], [time3], [time7], [datetime2_0], [datetime2_3], [datetime2_7], [dto0], [dto3], [dto7])
     ON target.[id] = source.[id]
     WHEN MATCHED THEN UPDATE SET [string10] = source.[string10],
     [string20] = source.[string20],
@@ -208,10 +208,10 @@ class PrecisionTypesNullRepoImpl extends PrecisionTypesNullRepo {
     [dto0] = source.[dto0],
     [dto3] = source.[dto3],
     [dto7] = source.[dto7]
-    WHEN NOT MATCHED THEN INSERT ([id], [string10], [string20], [string50], [string100], [string255], [nstring10], [nstring50], [nstring255], [char10], [nchar10], [decimal5_2], [decimal10_2], [decimal18_4], [numeric8_2], [numeric12_4], [binary10], [binary32], [time0], [time3], [time7], [datetime2_0], [datetime2_3], [datetime2_7], [dto0], [dto3], [dto7]) VALUES (${Fragment.encode(PrecisionTypesNullId.sqlServerType, unsaved.id)}, ${Fragment.encode(String10.sqlServerType.nullable, unsaved.string10)}, ${Fragment.encode(String20.sqlServerType.nullable, unsaved.string20)}, ${Fragment.encode(String50.sqlServerType.nullable, unsaved.string50)}, ${Fragment.encode(String100.sqlServerType.nullable, unsaved.string100)}, ${Fragment.encode(String255.sqlServerType.nullable, unsaved.string255)}, ${Fragment.encode(String10.sqlServerType.nullable, unsaved.nstring10)}, ${Fragment.encode(String50.sqlServerType.nullable, unsaved.nstring50)}, ${Fragment.encode(String255.sqlServerType.nullable, unsaved.nstring255)}, ${Fragment.encode(PaddedString10.sqlServerType.nullable, unsaved.char10)}, ${Fragment.encode(PaddedString10.sqlServerType.nullable, unsaved.nchar10)}, ${Fragment.encode(Decimal5_2.sqlServerType.nullable, unsaved.decimal52)}, ${Fragment.encode(Decimal10_2.sqlServerType.nullable, unsaved.decimal102)}, ${Fragment.encode(Decimal18_4.sqlServerType.nullable, unsaved.decimal184)}, ${Fragment.encode(Decimal8_2.sqlServerType.nullable, unsaved.numeric82)}, ${Fragment.encode(Decimal12_4.sqlServerType.nullable, unsaved.numeric124)}, ${Fragment.encode(Binary10.sqlServerType.nullable, unsaved.binary10)}, ${Fragment.encode(Binary32.sqlServerType.nullable, unsaved.binary32)}, ${Fragment.encode(SqlServerTypes.time.nullable, unsaved.time0)}, ${Fragment.encode(LocalTime3.sqlServerType.nullable, unsaved.time3)}, ${Fragment.encode(LocalTime7.sqlServerType.nullable, unsaved.time7)}, ${Fragment.encode(SqlServerTypes.datetime2.nullable, unsaved.datetime20)}, ${Fragment.encode(LocalDateTime3.sqlServerType.nullable, unsaved.datetime23)}, ${Fragment.encode(LocalDateTime7.sqlServerType.nullable, unsaved.datetime27)}, ${Fragment.encode(SqlServerTypes.datetimeoffset.nullable, unsaved.dto0)}, ${Fragment.encode(OffsetDateTime3.sqlServerType.nullable, unsaved.dto3)}, ${Fragment.encode(OffsetDateTime7.sqlServerType.nullable, unsaved.dto7)})
+    WHEN NOT MATCHED THEN INSERT ([id], [string10], [string20], [string50], [string100], [string255], [nstring10], [nstring50], [nstring255], [char10], [nchar10], [decimal5_2], [decimal10_2], [decimal18_4], [numeric8_2], [numeric12_4], [binary10], [binary32], [time0], [time3], [time7], [datetime2_0], [datetime2_3], [datetime2_7], [dto0], [dto3], [dto7]) VALUES (${Fragment.encode(PrecisionTypesNullId.sqlServerType, unsaved.id)}, ${Fragment.encode(String10.sqlServerType.opt, unsaved.string10)}, ${Fragment.encode(String20.sqlServerType.opt, unsaved.string20)}, ${Fragment.encode(String50.sqlServerType.opt, unsaved.string50)}, ${Fragment.encode(String100.sqlServerType.opt, unsaved.string100)}, ${Fragment.encode(String255.sqlServerType.opt, unsaved.string255)}, ${Fragment.encode(String10.sqlServerType.opt, unsaved.nstring10)}, ${Fragment.encode(String50.sqlServerType.opt, unsaved.nstring50)}, ${Fragment.encode(String255.sqlServerType.opt, unsaved.nstring255)}, ${Fragment.encode(PaddedString10.sqlServerType.opt, unsaved.char10)}, ${Fragment.encode(PaddedString10.sqlServerType.opt, unsaved.nchar10)}, ${Fragment.encode(Decimal5_2.sqlServerType.opt, unsaved.decimal52)}, ${Fragment.encode(Decimal10_2.sqlServerType.opt, unsaved.decimal102)}, ${Fragment.encode(Decimal18_4.sqlServerType.opt, unsaved.decimal184)}, ${Fragment.encode(Decimal8_2.sqlServerType.opt, unsaved.numeric82)}, ${Fragment.encode(Decimal12_4.sqlServerType.opt, unsaved.numeric124)}, ${Fragment.encode(Binary10.sqlServerType.opt, unsaved.binary10)}, ${Fragment.encode(Binary32.sqlServerType.opt, unsaved.binary32)}, ${Fragment.encode(SqlServerTypes.time.opt, unsaved.time0)}, ${Fragment.encode(LocalTime3.sqlServerType.opt, unsaved.time3)}, ${Fragment.encode(LocalTime7.sqlServerType.opt, unsaved.time7)}, ${Fragment.encode(SqlServerTypes.datetime2.opt, unsaved.datetime20)}, ${Fragment.encode(LocalDateTime3.sqlServerType.opt, unsaved.datetime23)}, ${Fragment.encode(LocalDateTime7.sqlServerType.opt, unsaved.datetime27)}, ${Fragment.encode(SqlServerTypes.datetimeoffset.opt, unsaved.dto0)}, ${Fragment.encode(OffsetDateTime3.sqlServerType.opt, unsaved.dto3)}, ${Fragment.encode(OffsetDateTime7.sqlServerType.opt, unsaved.dto7)})
     OUTPUT INSERTED.[id], INSERTED.[string10], INSERTED.[string20], INSERTED.[string50], INSERTED.[string100], INSERTED.[string255], INSERTED.[nstring10], INSERTED.[nstring50], INSERTED.[nstring255], INSERTED.[char10], INSERTED.[nchar10], INSERTED.[decimal5_2], INSERTED.[decimal10_2], INSERTED.[decimal18_4], INSERTED.[numeric8_2], INSERTED.[numeric12_4], INSERTED.[binary10], INSERTED.[binary32], INSERTED.[time0], INSERTED.[time3], INSERTED.[time7], INSERTED.[datetime2_0], INSERTED.[datetime2_3], INSERTED.[datetime2_7], INSERTED.[dto0], INSERTED.[dto3], INSERTED.[dto7];"""
-    .updateReturning(PrecisionTypesNullRow.`_rowParser`.exactlyOne())
-    .runUnchecked(c)
+    .updateReturning(PrecisionTypesNullRow.rowCodec.exactlyOne())
+    .run(using c)
   }
 
   override def upsertBatch(unsaved: Iterator[PrecisionTypesNullRow])(using c: Connection): List[PrecisionTypesNullRow] = {
@@ -246,7 +246,7 @@ class PrecisionTypesNullRepoImpl extends PrecisionTypesNullRepo {
     [dto7] = source.[dto7]
     WHEN NOT MATCHED THEN INSERT ([id], [string10], [string20], [string50], [string100], [string255], [nstring10], [nstring50], [nstring255], [char10], [nchar10], [decimal5_2], [decimal10_2], [decimal18_4], [numeric8_2], [numeric12_4], [binary10], [binary32], [time0], [time3], [time7], [datetime2_0], [datetime2_3], [datetime2_7], [dto0], [dto3], [dto7]) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     OUTPUT INSERTED.[id], INSERTED.[string10], INSERTED.[string20], INSERTED.[string50], INSERTED.[string100], INSERTED.[string255], INSERTED.[nstring10], INSERTED.[nstring50], INSERTED.[nstring255], INSERTED.[char10], INSERTED.[nchar10], INSERTED.[decimal5_2], INSERTED.[decimal10_2], INSERTED.[decimal18_4], INSERTED.[numeric8_2], INSERTED.[numeric12_4], INSERTED.[binary10], INSERTED.[binary32], INSERTED.[time0], INSERTED.[time3], INSERTED.[time7], INSERTED.[datetime2_0], INSERTED.[datetime2_3], INSERTED.[datetime2_7], INSERTED.[dto0], INSERTED.[dto3], INSERTED.[dto7];"""
-      .updateReturningEach(PrecisionTypesNullRow.`_rowParser`, unsaved)
-    .runUnchecked(c)
+      .updateReturningEach(PrecisionTypesNullRow.rowCodec, unsaved)
+    .run(using c)
   }
 }

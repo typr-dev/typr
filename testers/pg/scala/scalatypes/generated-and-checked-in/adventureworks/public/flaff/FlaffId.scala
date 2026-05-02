@@ -7,11 +7,10 @@ package adventureworks.public.flaff
 
 import adventureworks.public.ShortText
 import com.fasterxml.jackson.annotation.JsonProperty
-import dev.typr.foundations.PgTypes
+import dev.typr.dslsc.RowCodecs
 import dev.typr.foundations.Tuple.Tuple4
-import dev.typr.foundations.scala.RowParser
-import dev.typr.foundations.scala.RowParsers
-import dev.typr.foundations.scala.ScalaDbTypes
+import dev.typr.foundationssc.PgTypes
+import dev.typr.foundationssc.RowCodec
 
 /** Type for the composite primary key of table `public.flaff` */
 case class FlaffId(
@@ -30,5 +29,5 @@ case class FlaffId(
 }
 
 object FlaffId {
-  val `_rowParser`: RowParser[FlaffId] = RowParsers.of(ShortText.pgType, PgTypes.text, ScalaDbTypes.PgTypes.int4, ShortText.pgType)(FlaffId.apply)(row => Array[Any](row.code, row.anotherCode, row.someNumber, row.specifier))
+  val rowCodec: RowCodec[FlaffId] = RowCodecs.of(ShortText.pgType, PgTypes.text, PgTypes.int4, ShortText.pgType)(FlaffId.apply)(row => Array[Any](row.code, row.anotherCode, row.someNumber, row.specifier))
 }

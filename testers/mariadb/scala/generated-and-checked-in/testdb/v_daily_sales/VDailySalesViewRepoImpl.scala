@@ -5,17 +5,17 @@
  */
 package testdb.v_daily_sales
 
-import dev.typr.foundations.scala.Dialect
-import dev.typr.foundations.scala.SelectBuilder
-import java.sql.Connection
-import dev.typr.foundations.scala.Fragment.sql
+import dev.typr.dslsc.Dialect
+import dev.typr.dslsc.SelectBuilder
+import dev.typr.foundationssc.ConnectionRead
+import dev.typr.foundationssc.Fragment.sql
 
 class VDailySalesViewRepoImpl extends VDailySalesViewRepo {
-  override def select: SelectBuilder[VDailySalesViewFields, VDailySalesViewRow] = SelectBuilder.of("`v_daily_sales`", VDailySalesViewFields.structure, VDailySalesViewRow.`_rowParser`, Dialect.MARIADB)
+  override def select: SelectBuilder[VDailySalesViewFields, VDailySalesViewRow] = SelectBuilder.of("`v_daily_sales`", VDailySalesViewFields.structure, VDailySalesViewRow.rowCodec, Dialect.MARIADB)
 
-  override def selectAll(using c: Connection): List[VDailySalesViewRow] = {
+  override def selectAll(using c: ConnectionRead): List[VDailySalesViewRow] = {
     sql"""select `order_date`, `order_count`, `unique_customers`, `items_sold`, `gross_sales`, `total_discounts`, `total_shipping`, `total_tax`, `net_sales`, `avg_order_value`
     from `v_daily_sales`
-    """.query(VDailySalesViewRow.`_rowParser`.all()).runUnchecked(c)
+    """.query(VDailySalesViewRow.rowCodec.all()).run(using c)
   }
 }

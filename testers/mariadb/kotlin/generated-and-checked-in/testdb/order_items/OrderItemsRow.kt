@@ -6,13 +6,11 @@
 package testdb.order_items
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import dev.typr.foundations.MariaTypes
+import dev.typr.dslkt.RowCodecs
 import dev.typr.foundations.Tuple.Tuple13
 import dev.typr.foundations.data.Uint2
-import dev.typr.foundations.kotlin.KotlinDbTypes
-import dev.typr.foundations.kotlin.RowParser
-import dev.typr.foundations.kotlin.RowParsers
-import dev.typr.foundations.kotlin.nullable
+import dev.typr.foundationskt.MariaTypes
+import dev.typr.foundationskt.RowCodec
 import java.math.BigDecimal
 import testdb.customtypes.Defaulted
 import testdb.orders.OrdersId
@@ -36,9 +34,9 @@ data class OrderItemsRow(
     */
   @field:JsonProperty("product_id") val productId: ProductsId,
   /**  */
-  val sku: String,
+  val sku: kotlin.String,
   /**  */
-  @field:JsonProperty("product_name") val productName: String,
+  @field:JsonProperty("product_name") val productName: kotlin.String,
   /**  */
   val quantity: Uint2,
   /**  */
@@ -56,7 +54,7 @@ data class OrderItemsRow(
   /** 
     * Default: 'pending'
     */
-  @field:JsonProperty("fulfillment_status") val fulfillmentStatus: String,
+  @field:JsonProperty("fulfillment_status") val fulfillmentStatus: kotlin.String,
   /** 
     * Default: NULL
     * Points to [testdb.warehouses.WarehousesRow.warehouseId]
@@ -65,25 +63,25 @@ data class OrderItemsRow(
   /** 
     * Default: NULL
     */
-  val notes: String?
-) : Tuple13<OrderItemsId, OrdersId, ProductsId, String, String, Uint2, BigDecimal, BigDecimal, BigDecimal, BigDecimal, String, WarehousesId?, String?> {
+  val notes: kotlin.String?
+) : Tuple13<OrderItemsId, OrdersId, ProductsId, kotlin.String, kotlin.String, Uint2, BigDecimal, BigDecimal, BigDecimal, BigDecimal, kotlin.String, WarehousesId?, kotlin.String?> {
   override fun _1(): OrderItemsId = itemId
 
   override fun _10(): BigDecimal = lineTotal
 
-  override fun _11(): String = fulfillmentStatus
+  override fun _11(): kotlin.String = fulfillmentStatus
 
   override fun _12(): WarehousesId? = warehouseId
 
-  override fun _13(): String? = notes
+  override fun _13(): kotlin.String? = notes
 
   override fun _2(): OrdersId = orderId
 
   override fun _3(): ProductsId = productId
 
-  override fun _4(): String = sku
+  override fun _4(): kotlin.String = sku
 
-  override fun _5(): String = productName
+  override fun _5(): kotlin.String = productName
 
   override fun _6(): Uint2 = quantity
 
@@ -98,12 +96,12 @@ data class OrderItemsRow(
   fun toUnsavedRow(
     discountAmount: Defaulted<BigDecimal> = Defaulted.Provided(this.discountAmount),
     taxAmount: Defaulted<BigDecimal> = Defaulted.Provided(this.taxAmount),
-    fulfillmentStatus: Defaulted<String> = Defaulted.Provided(this.fulfillmentStatus),
+    fulfillmentStatus: Defaulted<kotlin.String> = Defaulted.Provided(this.fulfillmentStatus),
     warehouseId: Defaulted<WarehousesId?> = Defaulted.Provided(this.warehouseId),
-    notes: Defaulted<String?> = Defaulted.Provided(this.notes)
+    notes: Defaulted<kotlin.String?> = Defaulted.Provided(this.notes)
   ): OrderItemsRowUnsaved = OrderItemsRowUnsaved(orderId, productId, sku, productName, quantity, unitPrice, lineTotal, discountAmount, taxAmount, fulfillmentStatus, warehouseId, notes)
 
   companion object {
-    val _rowParser: RowParser<OrderItemsRow> = RowParsers.of(OrderItemsId.mariaType, OrdersId.mariaType, ProductsId.mariaType, MariaTypes.varchar, MariaTypes.varchar, MariaTypes.smallintUnsigned, KotlinDbTypes.MariaTypes.numeric, KotlinDbTypes.MariaTypes.numeric, KotlinDbTypes.MariaTypes.numeric, KotlinDbTypes.MariaTypes.numeric, MariaTypes.text, WarehousesId.mariaType.nullable(), MariaTypes.tinytext.nullable(), { t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12 -> OrderItemsRow(t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12) }, { row -> arrayOf<Any?>(row.itemId, row.orderId, row.productId, row.sku, row.productName, row.quantity, row.unitPrice, row.discountAmount, row.taxAmount, row.lineTotal, row.fulfillmentStatus, row.warehouseId, row.notes) })
+    val rowCodec: RowCodec<OrderItemsRow> = RowCodecs.of(OrderItemsId.mariaType, OrdersId.mariaType, ProductsId.mariaType, MariaTypes.varchar, MariaTypes.varchar, MariaTypes.smallintUnsigned, MariaTypes.numeric, MariaTypes.numeric, MariaTypes.numeric, MariaTypes.numeric, MariaTypes.text, WarehousesId.mariaType.opt(), MariaTypes.tinytext.opt(), { t0: OrderItemsId, t1: OrdersId, t2: ProductsId, t3: kotlin.String, t4: kotlin.String, t5: Uint2, t6: BigDecimal, t7: BigDecimal, t8: BigDecimal, t9: BigDecimal, t10: kotlin.String, t11: WarehousesId?, t12: kotlin.String? -> OrderItemsRow(t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12) }, { row: OrderItemsRow -> arrayOf<Any?>(row.itemId, row.orderId, row.productId, row.sku, row.productName, row.quantity, row.unitPrice, row.discountAmount, row.taxAmount, row.lineTotal, row.fulfillmentStatus, row.warehouseId, row.notes) })
   }
 }

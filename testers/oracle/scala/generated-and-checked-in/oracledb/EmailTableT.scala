@@ -5,6 +5,7 @@
  */
 package oracledb
 
+import dev.typr.foundations.Bijection
 import dev.typr.foundations.OracleNestedTable
 import dev.typr.foundations.OracleType
 import dev.typr.foundations.OracleTypes
@@ -13,5 +14,5 @@ import dev.typr.foundations.OracleTypes
 case class EmailTableT(value: Array[String])
 
 object EmailTableT {
-  val oracleType: OracleType[EmailTableT] = OracleNestedTable.of("EMAIL_TABLE_T", OracleTypes.varchar2).bimap(list => new EmailTableT(list.toArray(new Array[String](0))), wrapper => java.util.List.of(wrapper.value*))
+  val oracleType: OracleType[EmailTableT] = OracleNestedTable.of("EMAIL_TABLE_T", OracleTypes.varchar2).to(Bijection.of(list => new EmailTableT(list.toArray(new Array[String](0))), wrapper => java.util.List.of(wrapper.value*)))
 }

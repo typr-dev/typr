@@ -6,12 +6,11 @@
 package testdb.product_images
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import dev.typr.foundations.MariaTypes
+import dev.typr.dslsc.RowCodecs
 import dev.typr.foundations.Tuple.Tuple8
 import dev.typr.foundations.data.Uint1
-import dev.typr.foundations.scala.DbTypeOps
-import dev.typr.foundations.scala.RowParser
-import dev.typr.foundations.scala.RowParsers
+import dev.typr.foundationssc.MariaTypes
+import dev.typr.foundationssc.RowCodec
 import testdb.customtypes.Defaulted
 import testdb.products.ProductsId
 import testdb.userdefined.IsPrimary
@@ -89,5 +88,5 @@ case class ProductImagesRow(
 }
 
 object ProductImagesRow {
-  val `_rowParser`: RowParser[ProductImagesRow] = RowParsers.of(ProductImagesId.mariaType, ProductsId.mariaType, MariaTypes.varchar, MariaTypes.varchar.nullable, MariaTypes.varchar.nullable, MariaTypes.tinyintUnsigned, IsPrimary.mariaType, MariaTypes.longblob.nullable)(ProductImagesRow.apply)(row => Array[Any](row.imageId, row.productId, row.imageUrl, row.thumbnailUrl, row.altText, row.sortOrder, row.isPrimary, row.imageData))
+  val rowCodec: RowCodec[ProductImagesRow] = RowCodecs.of(ProductImagesId.mariaType, ProductsId.mariaType, MariaTypes.varchar, MariaTypes.varchar.opt, MariaTypes.varchar.opt, MariaTypes.tinyintUnsigned, IsPrimary.mariaType, MariaTypes.longblob.opt)(ProductImagesRow.apply)(row => Array[Any](row.imageId, row.productId, row.imageUrl, row.thumbnailUrl, row.altText, row.sortOrder, row.isPrimary, row.imageData))
 }

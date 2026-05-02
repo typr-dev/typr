@@ -5,105 +5,105 @@
  */
 package oracledb.all_types_test
 
-import dev.typr.foundations.OracleTypes
-import dev.typr.foundations.scala.DbTypeOps
-import dev.typr.foundations.scala.DeleteBuilder
-import dev.typr.foundations.scala.Dialect
-import dev.typr.foundations.scala.Fragment
-import dev.typr.foundations.scala.SelectBuilder
-import dev.typr.foundations.scala.UpdateBuilder
-import java.sql.Connection
+import dev.typr.dslsc.DeleteBuilder
+import dev.typr.dslsc.Dialect
+import dev.typr.dslsc.SelectBuilder
+import dev.typr.dslsc.UpdateBuilder
+import dev.typr.foundationssc.Connection
+import dev.typr.foundationssc.ConnectionRead
+import dev.typr.foundationssc.Fragment
+import dev.typr.foundationssc.OracleTypes
 import oracledb.AllTypesStructNoLobs
 import oracledb.AllTypesStructNoLobsArray
 import scala.collection.mutable.ListBuffer
-import dev.typr.foundations.scala.Fragment.sql
+import dev.typr.foundationssc.Fragment.sql
 
 class AllTypesTestRepoImpl extends AllTypesTestRepo {
   override def delete: DeleteBuilder[AllTypesTestFields, AllTypesTestRow] = DeleteBuilder.of(""""ALL_TYPES_TEST"""", AllTypesTestFields.structure, Dialect.ORACLE)
 
-  override def deleteById(id: AllTypesTestId)(using c: Connection): Boolean = sql"""delete from "ALL_TYPES_TEST" where "ID" = ${Fragment.encode(AllTypesTestId.oracleType, id)}""".update().runUnchecked(c) > 0
+  override def deleteById(id: AllTypesTestId)(using c: Connection): Boolean = sql"""delete from "ALL_TYPES_TEST" where "ID" = ${Fragment.encode(AllTypesTestId.oracleType, id)}""".update().run(using c) > 0
 
-  override def deleteByIds(ids: Array[AllTypesTestId])(using c: Connection): Int = {
+  override def deleteByIds(ids: List[AllTypesTestId])(using c: Connection): Int = {
     val fragments: ListBuffer[Fragment] = ListBuffer()
     ids.foreach { id => fragments.addOne(Fragment.encode(AllTypesTestId.oracleType, id)): @scala.annotation.nowarn }
-    return Fragment.interpolate(Fragment.lit("""delete from "ALL_TYPES_TEST" where "ID" in ("""), Fragment.comma(fragments), Fragment.lit(")")).update().runUnchecked(c)
+    return Fragment.concat(Fragment.of("""delete from "ALL_TYPES_TEST" where "ID" in ("""), Fragment.comma(fragments), Fragment.of(")")).update().run(using c)
   }
 
   override def insert(unsaved: AllTypesTestRow)(using c: Connection): AllTypesTestId = {
   sql"""insert into "ALL_TYPES_TEST"("ID", "NAME", "DATA", "DATA_ARRAY")
-    values (${Fragment.encode(AllTypesTestId.oracleType, unsaved.id)}, ${Fragment.encode(OracleTypes.varchar2, unsaved.name)}, ${Fragment.encode(AllTypesStructNoLobs.oracleType.nullable, unsaved.data)}, ${Fragment.encode(AllTypesStructNoLobsArray.oracleType.nullable, unsaved.dataArray)})
+    values (${Fragment.encode(AllTypesTestId.oracleType, unsaved.id)}, ${Fragment.encode(OracleTypes.varchar2, unsaved.name)}, ${Fragment.encode(AllTypesStructNoLobs.oracleType.opt, unsaved.data)}, ${Fragment.encode(AllTypesStructNoLobsArray.oracleType.opt, unsaved.dataArray)})
     """
-    .updateReturningGeneratedKeys(Array[String]("ID"), AllTypesTestId.`_rowParser`.exactlyOne()).runUnchecked(c)
+    .updateReturningGeneratedKeys(Array[String]("ID"), AllTypesTestId.rowCodec.exactlyOne()).run(using c)
   }
 
   override def insert(unsaved: AllTypesTestRowUnsaved)(using c: Connection): AllTypesTestId = {
     val columns: ListBuffer[Fragment] = ListBuffer()
     val values: ListBuffer[Fragment] = ListBuffer()
-    columns.addOne(Fragment.lit(""""NAME"""")): @scala.annotation.nowarn
+    columns.addOne(Fragment.of(""""NAME"""")): @scala.annotation.nowarn
     values.addOne(sql"${Fragment.encode(OracleTypes.varchar2, unsaved.name)}"): @scala.annotation.nowarn
-    columns.addOne(Fragment.lit(""""DATA"""")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(AllTypesStructNoLobs.oracleType.nullable, unsaved.data)}"): @scala.annotation.nowarn
-    columns.addOne(Fragment.lit(""""DATA_ARRAY"""")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(AllTypesStructNoLobsArray.oracleType.nullable, unsaved.dataArray)}"): @scala.annotation.nowarn
+    columns.addOne(Fragment.of(""""DATA"""")): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(AllTypesStructNoLobs.oracleType.opt, unsaved.data)}"): @scala.annotation.nowarn
+    columns.addOne(Fragment.of(""""DATA_ARRAY"""")): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(AllTypesStructNoLobsArray.oracleType.opt, unsaved.dataArray)}"): @scala.annotation.nowarn
     unsaved.id.visit(
       {  },
-      value => { columns.addOne(Fragment.lit(""""ID"""")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(AllTypesTestId.oracleType, value)}"): @scala.annotation.nowarn }
+      value => { columns.addOne(Fragment.of(""""ID"""")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(AllTypesTestId.oracleType, value)}"): @scala.annotation.nowarn }
     );
     val q: Fragment = {
       sql"""insert into "ALL_TYPES_TEST"(${Fragment.comma(columns)})
       values (${Fragment.comma(values)})
       """
     }
-    return q.updateReturningGeneratedKeys(Array[String]("ID"), AllTypesTestId.`_rowParser`.exactlyOne()).runUnchecked(c)
+    return q.updateReturningGeneratedKeys(Array[String]("ID"), AllTypesTestId.rowCodec.exactlyOne()).run(using c)
   }
 
-  override def select: SelectBuilder[AllTypesTestFields, AllTypesTestRow] = SelectBuilder.of(""""ALL_TYPES_TEST"""", AllTypesTestFields.structure, AllTypesTestRow.`_rowParser`, Dialect.ORACLE)
+  override def select: SelectBuilder[AllTypesTestFields, AllTypesTestRow] = SelectBuilder.of(""""ALL_TYPES_TEST"""", AllTypesTestFields.structure, AllTypesTestRow.rowCodec, Dialect.ORACLE)
 
-  override def selectAll(using c: Connection): List[AllTypesTestRow] = {
+  override def selectAll(using c: ConnectionRead): List[AllTypesTestRow] = {
     sql"""select "ID", "NAME", "DATA", "DATA_ARRAY"
     from "ALL_TYPES_TEST"
-    """.query(AllTypesTestRow.`_rowParser`.all()).runUnchecked(c)
+    """.query(AllTypesTestRow.rowCodec.all()).run(using c)
   }
 
-  override def selectById(id: AllTypesTestId)(using c: Connection): Option[AllTypesTestRow] = {
+  override def selectById(id: AllTypesTestId)(using c: ConnectionRead): Option[AllTypesTestRow] = {
     sql"""select "ID", "NAME", "DATA", "DATA_ARRAY"
     from "ALL_TYPES_TEST"
-    where "ID" = ${Fragment.encode(AllTypesTestId.oracleType, id)}""".query(AllTypesTestRow.`_rowParser`.first()).runUnchecked(c)
+    where "ID" = ${Fragment.encode(AllTypesTestId.oracleType, id)}""".query(AllTypesTestRow.rowCodec.first()).run(using c)
   }
 
-  override def selectByIds(ids: Array[AllTypesTestId])(using c: Connection): List[AllTypesTestRow] = {
+  override def selectByIds(ids: List[AllTypesTestId])(using c: ConnectionRead): List[AllTypesTestRow] = {
     val fragments: ListBuffer[Fragment] = ListBuffer()
     ids.foreach { id => fragments.addOne(Fragment.encode(AllTypesTestId.oracleType, id)): @scala.annotation.nowarn }
-    return Fragment.interpolate(Fragment.lit("""select "ID", "NAME", "DATA", "DATA_ARRAY" from "ALL_TYPES_TEST" where "ID" in ("""), Fragment.comma(fragments), Fragment.lit(")")).query(AllTypesTestRow.`_rowParser`.all()).runUnchecked(c)
+    return Fragment.concat(Fragment.of("""select "ID", "NAME", "DATA", "DATA_ARRAY" from "ALL_TYPES_TEST" where "ID" in ("""), Fragment.comma(fragments), Fragment.of(")")).query(AllTypesTestRow.rowCodec.all()).run(using c)
   }
 
-  override def selectByIdsTracked(ids: Array[AllTypesTestId])(using c: Connection): Map[AllTypesTestId, AllTypesTestRow] = {
+  override def selectByIdsTracked(ids: List[AllTypesTestId])(using c: ConnectionRead): Map[AllTypesTestId, AllTypesTestRow] = {
     val ret: scala.collection.mutable.Map[AllTypesTestId, AllTypesTestRow] = scala.collection.mutable.Map.empty[AllTypesTestId, AllTypesTestRow]
     selectByIds(ids)(using c).foreach(row => ret.put(row.id, row): @scala.annotation.nowarn)
     return ret.toMap
   }
 
-  override def update: UpdateBuilder[AllTypesTestFields, AllTypesTestRow] = UpdateBuilder.of(""""ALL_TYPES_TEST"""", AllTypesTestFields.structure, AllTypesTestRow.`_rowParser`, Dialect.ORACLE)
+  override def update: UpdateBuilder[AllTypesTestFields, AllTypesTestRow] = UpdateBuilder.of(""""ALL_TYPES_TEST"""", AllTypesTestFields.structure, AllTypesTestRow.rowCodec, Dialect.ORACLE)
 
   override def update(row: AllTypesTestRow)(using c: Connection): Boolean = {
     val id: AllTypesTestId = row.id
     return sql"""update "ALL_TYPES_TEST"
     set "NAME" = ${Fragment.encode(OracleTypes.varchar2, row.name)},
-    "DATA" = ${Fragment.encode(AllTypesStructNoLobs.oracleType.nullable, row.data)},
-    "DATA_ARRAY" = ${Fragment.encode(AllTypesStructNoLobsArray.oracleType.nullable, row.dataArray)}
-    where "ID" = ${Fragment.encode(AllTypesTestId.oracleType, id)}""".update().runUnchecked(c) > 0
+    "DATA" = ${Fragment.encode(AllTypesStructNoLobs.oracleType.opt, row.data)},
+    "DATA_ARRAY" = ${Fragment.encode(AllTypesStructNoLobsArray.oracleType.opt, row.dataArray)}
+    where "ID" = ${Fragment.encode(AllTypesTestId.oracleType, id)}""".update().run(using c) > 0
   }
 
   override def upsert(unsaved: AllTypesTestRow)(using c: Connection): Unit = {
     sql"""MERGE INTO "ALL_TYPES_TEST" t
-    USING (SELECT ${Fragment.encode(AllTypesTestId.oracleType, unsaved.id)}, ${Fragment.encode(OracleTypes.varchar2, unsaved.name)}, ${Fragment.encode(AllTypesStructNoLobs.oracleType.nullable, unsaved.data)}, ${Fragment.encode(AllTypesStructNoLobsArray.oracleType.nullable, unsaved.dataArray)} FROM DUAL) s
+    USING (SELECT ${Fragment.encode(AllTypesTestId.oracleType, unsaved.id)}, ${Fragment.encode(OracleTypes.varchar2, unsaved.name)}, ${Fragment.encode(AllTypesStructNoLobs.oracleType.opt, unsaved.data)}, ${Fragment.encode(AllTypesStructNoLobsArray.oracleType.opt, unsaved.dataArray)} FROM DUAL) s
     ON (t."ID" = s."ID")
     WHEN MATCHED THEN UPDATE SET t."NAME" = s."NAME",
     t."DATA" = s."DATA",
     t."DATA_ARRAY" = s."DATA_ARRAY"
-    WHEN NOT MATCHED THEN INSERT ("ID", "NAME", "DATA", "DATA_ARRAY") VALUES (${Fragment.encode(AllTypesTestId.oracleType, unsaved.id)}, ${Fragment.encode(OracleTypes.varchar2, unsaved.name)}, ${Fragment.encode(AllTypesStructNoLobs.oracleType.nullable, unsaved.data)}, ${Fragment.encode(AllTypesStructNoLobsArray.oracleType.nullable, unsaved.dataArray)})"""
+    WHEN NOT MATCHED THEN INSERT ("ID", "NAME", "DATA", "DATA_ARRAY") VALUES (${Fragment.encode(AllTypesTestId.oracleType, unsaved.id)}, ${Fragment.encode(OracleTypes.varchar2, unsaved.name)}, ${Fragment.encode(AllTypesStructNoLobs.oracleType.opt, unsaved.data)}, ${Fragment.encode(AllTypesStructNoLobsArray.oracleType.opt, unsaved.dataArray)})"""
       .update()
-      .runUnchecked(c): @scala.annotation.nowarn
+      .run(using c): @scala.annotation.nowarn
   }
 
   override def upsertBatch(unsaved: Iterator[AllTypesTestRow])(using c: Connection): Unit = {
@@ -114,7 +114,7 @@ class AllTypesTestRepoImpl extends AllTypesTestRepo {
     t."DATA" = s."DATA",
     t."DATA_ARRAY" = s."DATA_ARRAY"
     WHEN NOT MATCHED THEN INSERT ("ID", "NAME", "DATA", "DATA_ARRAY") VALUES (?, ?, ?, ?)"""
-      .updateMany(AllTypesTestRow.`_rowParser`, unsaved)
-      .runUnchecked(c): @scala.annotation.nowarn
+      .updateMany(AllTypesTestRow.rowCodec, unsaved)
+      .run(using c): @scala.annotation.nowarn
   }
 }

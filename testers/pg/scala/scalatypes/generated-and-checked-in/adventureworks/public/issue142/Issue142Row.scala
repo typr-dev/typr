@@ -5,10 +5,10 @@
  */
 package adventureworks.public.issue142
 
+import dev.typr.dslsc.RowCodecs
 import dev.typr.foundations.PgText
 import dev.typr.foundations.Tuple.Tuple1
-import dev.typr.foundations.scala.RowParser
-import dev.typr.foundations.scala.RowParsers
+import dev.typr.foundationssc.RowCodec
 
 /** Table: public.issue142
  * Primary key: tabellkode
@@ -20,7 +20,7 @@ case class Issue142Row(tabellkode: Issue142Id) extends Tuple1[Issue142Id] {
 }
 
 object Issue142Row {
-  val `_rowParser`: RowParser[Issue142Row] = RowParsers.of(Issue142Id.pgType)(Issue142Row.apply)(row => Array[Any](row.tabellkode))
+  given pgText: PgText[Issue142Row] = PgText.from(rowCodec.underlying)
 
-  given pgText: PgText[Issue142Row] = PgText.from(`_rowParser`.underlying)
+  val rowCodec: RowCodec[Issue142Row] = RowCodecs.of(Issue142Id.pgType)(Issue142Row.apply)(row => Array[Any](row.tabellkode))
 }

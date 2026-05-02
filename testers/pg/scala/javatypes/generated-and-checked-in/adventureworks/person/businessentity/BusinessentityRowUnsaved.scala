@@ -31,5 +31,5 @@ case class BusinessentityRowUnsaved(
 }
 
 object BusinessentityRowUnsaved {
-  given pgText: PgText[BusinessentityRowUnsaved] = PgText.instance((row, sb) => { Defaulted.pgText(using BusinessentityId.pgType.text).unsafeEncode(row.businessentityid, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using PgTypes.uuid.text).unsafeEncode(row.rowguid, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using PgTypes.timestamp.text).unsafeEncode(row.modifieddate, sb) })
+  given pgText: PgText[BusinessentityRowUnsaved] = PgText.instance((row, sb) => { Defaulted.pgText(using BusinessentityId.pgType.pgText()).unsafeEncode(row.businessentityid, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using PgTypes.uuid.pgText()).unsafeEncode(row.rowguid, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using PgTypes.timestamp.pgText()).unsafeEncode(row.modifieddate, sb) })
 }

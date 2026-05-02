@@ -6,14 +6,15 @@
 package adventureworks.person.countryregion
 
 import adventureworks.public.Name
-import dev.typr.foundations.PgTypes
-import dev.typr.foundations.kotlin.DeleteBuilder
-import dev.typr.foundations.kotlin.Dialect
-import dev.typr.foundations.kotlin.Fragment
-import dev.typr.foundations.kotlin.SelectBuilder
-import dev.typr.foundations.kotlin.UpdateBuilder
-import dev.typr.foundations.streamingInsert
-import java.sql.Connection
+import dev.typr.dslkt.DeleteBuilder
+import dev.typr.dslkt.Dialect
+import dev.typr.dslkt.SelectBuilder
+import dev.typr.dslkt.UpdateBuilder
+import dev.typr.foundationskt.Connection
+import dev.typr.foundationskt.ConnectionRead
+import dev.typr.foundationskt.Fragment
+import dev.typr.foundationskt.PgTypes
+import dev.typr.foundationskt.StreamingInsert
 import java.util.ArrayList
 import kotlin.collections.Iterator
 import kotlin.collections.List
@@ -26,20 +27,20 @@ class CountryregionRepoImpl() : CountryregionRepo {
   override fun deleteById(
     countryregioncode: CountryregionId,
     c: Connection
-  ): Boolean = Fragment.interpolate(Fragment.lit("delete from \"person\".\"countryregion\" where \"countryregioncode\" = "), Fragment.encode(CountryregionId.pgType, countryregioncode), Fragment.lit("")).update().runUnchecked(c) > 0
+  ): kotlin.Boolean = Fragment.concat(Fragment.of("delete from \"person\".\"countryregion\" where \"countryregioncode\" = "), Fragment.encode(CountryregionId.pgType, countryregioncode), Fragment.of("")).update().run(c) > 0
 
   override fun deleteByIds(
-    countryregioncodes: Array<CountryregionId>,
+    countryregioncodes: List<CountryregionId>,
     c: Connection
-  ): Int = Fragment.interpolate(Fragment.lit("delete\nfrom \"person\".\"countryregion\"\nwhere \"countryregioncode\" = ANY("), Fragment.encode(CountryregionId.pgTypeArray, countryregioncodes), Fragment.lit(")"))
+  ): Int = Fragment.concat(Fragment.of("delete\nfrom \"person\".\"countryregion\"\nwhere \"countryregioncode\" = ANY("), Fragment.encode(CountryregionId.pgType.array(), countryregioncodes), Fragment.of(")"))
     .update()
-    .runUnchecked(c)
+    .run(c)
 
   override fun insert(
     unsaved: CountryregionRow,
     c: Connection
-  ): CountryregionRow = Fragment.interpolate(Fragment.lit("insert into \"person\".\"countryregion\"(\"countryregioncode\", \"name\", \"modifieddate\")\nvalues ("), Fragment.encode(CountryregionId.pgType, unsaved.countryregioncode), Fragment.lit(", "), Fragment.encode(Name.pgType, unsaved.name), Fragment.lit("::varchar, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\nRETURNING \"countryregioncode\", \"name\", \"modifieddate\"\n"))
-    .updateReturning(CountryregionRow._rowParser.exactlyOne()).runUnchecked(c)
+  ): CountryregionRow = Fragment.concat(Fragment.of("insert into \"person\".\"countryregion\"(\"countryregioncode\", \"name\", \"modifieddate\")\nvalues ("), Fragment.encode(CountryregionId.pgType, unsaved.countryregioncode), Fragment.of(", "), Fragment.encode(Name.pgType, unsaved.name), Fragment.of("::varchar, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.of("::timestamp)\nRETURNING \"countryregioncode\", \"name\", \"modifieddate\"\n"))
+    .updateReturning(CountryregionRow.rowCodec.exactlyOne()).run(c)
 
   override fun insert(
     unsaved: CountryregionRowUnsaved,
@@ -47,78 +48,78 @@ class CountryregionRepoImpl() : CountryregionRepo {
   ): CountryregionRow {
     val columns: ArrayList<Fragment> = ArrayList()
     val values: ArrayList<Fragment> = ArrayList()
-    columns.add(Fragment.lit("\"countryregioncode\""))
-    values.add(Fragment.interpolate(Fragment.encode(CountryregionId.pgType, unsaved.countryregioncode), Fragment.lit("")))
-    columns.add(Fragment.lit("\"name\""))
-    values.add(Fragment.interpolate(Fragment.encode(Name.pgType, unsaved.name), Fragment.lit("::varchar")))
+    columns.add(Fragment.of("\"countryregioncode\""))
+    values.add(Fragment.concat(Fragment.encode(CountryregionId.pgType, unsaved.countryregioncode), Fragment.of("")))
+    columns.add(Fragment.of("\"name\""))
+    values.add(Fragment.concat(Fragment.encode(Name.pgType, unsaved.name), Fragment.of("::varchar")))
     unsaved.modifieddate.visit(
       {  },
-      { value -> columns.add(Fragment.lit("\"modifieddate\""))
-      values.add(Fragment.interpolate(Fragment.encode(PgTypes.timestamp, value), Fragment.lit("::timestamp"))) }
+      { value -> columns.add(Fragment.of("\"modifieddate\""))
+      values.add(Fragment.concat(Fragment.encode(PgTypes.timestamp, value), Fragment.of("::timestamp"))) }
     );
-    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into \"person\".\"countryregion\"("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nRETURNING \"countryregioncode\", \"name\", \"modifieddate\"\n"))
-    return q.updateReturning(CountryregionRow._rowParser.exactlyOne()).runUnchecked(c)
+    val q: Fragment = Fragment.concat(Fragment.of("insert into \"person\".\"countryregion\"("), Fragment.comma(columns.toMutableList()), Fragment.of(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.of(")\nRETURNING \"countryregioncode\", \"name\", \"modifieddate\"\n"))
+    return q.updateReturning(CountryregionRow.rowCodec.exactlyOne()).run(c)
   }
 
   override fun insertStreaming(
     unsaved: Iterator<CountryregionRow>,
     batchSize: Int,
     c: Connection
-  ): Long = streamingInsert.insertUnchecked("COPY \"person\".\"countryregion\"(\"countryregioncode\", \"name\", \"modifieddate\") FROM STDIN", batchSize, unsaved, c, CountryregionRow.pgText)
+  ): kotlin.Long = StreamingInsert.of("COPY \"person\".\"countryregion\"(\"countryregioncode\", \"name\", \"modifieddate\") FROM STDIN", batchSize, unsaved, CountryregionRow.pgText).run(c)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
   override fun insertUnsavedStreaming(
     unsaved: Iterator<CountryregionRowUnsaved>,
     batchSize: Int,
     c: Connection
-  ): Long = streamingInsert.insertUnchecked("COPY \"person\".\"countryregion\"(\"countryregioncode\", \"name\", \"modifieddate\") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')", batchSize, unsaved, c, CountryregionRowUnsaved.pgText)
+  ): kotlin.Long = StreamingInsert.of("COPY \"person\".\"countryregion\"(\"countryregioncode\", \"name\", \"modifieddate\") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')", batchSize, unsaved, CountryregionRowUnsaved.pgText).run(c)
 
-  override fun select(): SelectBuilder<CountryregionFields, CountryregionRow> = SelectBuilder.of("\"person\".\"countryregion\"", CountryregionFields.structure, CountryregionRow._rowParser, Dialect.POSTGRESQL)
+  override fun select(): SelectBuilder<CountryregionFields, CountryregionRow> = SelectBuilder.of("\"person\".\"countryregion\"", CountryregionFields.structure, CountryregionRow.rowCodec, Dialect.POSTGRESQL)
 
-  override fun selectAll(c: Connection): List<CountryregionRow> = Fragment.interpolate(Fragment.lit("select \"countryregioncode\", \"name\", \"modifieddate\"\nfrom \"person\".\"countryregion\"\n")).query(CountryregionRow._rowParser.all()).runUnchecked(c)
+  override fun selectAll(c: ConnectionRead): List<CountryregionRow> = Fragment.concat(Fragment.of("select \"countryregioncode\", \"name\", \"modifieddate\"\nfrom \"person\".\"countryregion\"\n")).query(CountryregionRow.rowCodec.all()).run(c)
 
   override fun selectById(
     countryregioncode: CountryregionId,
-    c: Connection
-  ): CountryregionRow? = Fragment.interpolate(Fragment.lit("select \"countryregioncode\", \"name\", \"modifieddate\"\nfrom \"person\".\"countryregion\"\nwhere \"countryregioncode\" = "), Fragment.encode(CountryregionId.pgType, countryregioncode), Fragment.lit("")).query(CountryregionRow._rowParser.first()).runUnchecked(c)
+    c: ConnectionRead
+  ): CountryregionRow? = Fragment.concat(Fragment.of("select \"countryregioncode\", \"name\", \"modifieddate\"\nfrom \"person\".\"countryregion\"\nwhere \"countryregioncode\" = "), Fragment.encode(CountryregionId.pgType, countryregioncode), Fragment.of("")).query(CountryregionRow.rowCodec.first()).run(c)
 
   override fun selectByIds(
-    countryregioncodes: Array<CountryregionId>,
-    c: Connection
-  ): List<CountryregionRow> = Fragment.interpolate(Fragment.lit("select \"countryregioncode\", \"name\", \"modifieddate\"\nfrom \"person\".\"countryregion\"\nwhere \"countryregioncode\" = ANY("), Fragment.encode(CountryregionId.pgTypeArray, countryregioncodes), Fragment.lit(")")).query(CountryregionRow._rowParser.all()).runUnchecked(c)
+    countryregioncodes: List<CountryregionId>,
+    c: ConnectionRead
+  ): List<CountryregionRow> = Fragment.concat(Fragment.of("select \"countryregioncode\", \"name\", \"modifieddate\"\nfrom \"person\".\"countryregion\"\nwhere \"countryregioncode\" = ANY("), Fragment.encode(CountryregionId.pgType.array(), countryregioncodes), Fragment.of(")")).query(CountryregionRow.rowCodec.all()).run(c)
 
   override fun selectByIdsTracked(
-    countryregioncodes: Array<CountryregionId>,
-    c: Connection
+    countryregioncodes: List<CountryregionId>,
+    c: ConnectionRead
   ): Map<CountryregionId, CountryregionRow> {
     val ret: MutableMap<CountryregionId, CountryregionRow> = mutableMapOf<CountryregionId, CountryregionRow>()
     selectByIds(countryregioncodes, c).forEach({ row -> ret.put(row.countryregioncode, row) })
     return ret.toMap()
   }
 
-  override fun update(): UpdateBuilder<CountryregionFields, CountryregionRow> = UpdateBuilder.of("\"person\".\"countryregion\"", CountryregionFields.structure, CountryregionRow._rowParser, Dialect.POSTGRESQL)
+  override fun update(): UpdateBuilder<CountryregionFields, CountryregionRow> = UpdateBuilder.of("\"person\".\"countryregion\"", CountryregionFields.structure, CountryregionRow.rowCodec, Dialect.POSTGRESQL)
 
   override fun update(
     row: CountryregionRow,
     c: Connection
-  ): Boolean {
+  ): kotlin.Boolean {
     val countryregioncode: CountryregionId = row.countryregioncode
-    return Fragment.interpolate(Fragment.lit("update \"person\".\"countryregion\"\nset \"name\" = "), Fragment.encode(Name.pgType, row.name), Fragment.lit("::varchar,\n\"modifieddate\" = "), Fragment.encode(PgTypes.timestamp, row.modifieddate), Fragment.lit("::timestamp\nwhere \"countryregioncode\" = "), Fragment.encode(CountryregionId.pgType, countryregioncode), Fragment.lit("")).update().runUnchecked(c) > 0
+    return Fragment.concat(Fragment.of("update \"person\".\"countryregion\"\nset \"name\" = "), Fragment.encode(Name.pgType, row.name), Fragment.of("::varchar,\n\"modifieddate\" = "), Fragment.encode(PgTypes.timestamp, row.modifieddate), Fragment.of("::timestamp\nwhere \"countryregioncode\" = "), Fragment.encode(CountryregionId.pgType, countryregioncode), Fragment.of("")).update().run(c) > 0
   }
 
   override fun upsert(
     unsaved: CountryregionRow,
     c: Connection
-  ): CountryregionRow = Fragment.interpolate(Fragment.lit("insert into \"person\".\"countryregion\"(\"countryregioncode\", \"name\", \"modifieddate\")\nvalues ("), Fragment.encode(CountryregionId.pgType, unsaved.countryregioncode), Fragment.lit(", "), Fragment.encode(Name.pgType, unsaved.name), Fragment.lit("::varchar, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\non conflict (\"countryregioncode\")\ndo update set\n  \"name\" = EXCLUDED.\"name\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\nreturning \"countryregioncode\", \"name\", \"modifieddate\""))
-    .updateReturning(CountryregionRow._rowParser.exactlyOne())
-    .runUnchecked(c)
+  ): CountryregionRow = Fragment.concat(Fragment.of("insert into \"person\".\"countryregion\"(\"countryregioncode\", \"name\", \"modifieddate\")\nvalues ("), Fragment.encode(CountryregionId.pgType, unsaved.countryregioncode), Fragment.of(", "), Fragment.encode(Name.pgType, unsaved.name), Fragment.of("::varchar, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.of("::timestamp)\non conflict (\"countryregioncode\")\ndo update set\n  \"name\" = EXCLUDED.\"name\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\nreturning \"countryregioncode\", \"name\", \"modifieddate\""))
+    .updateReturning(CountryregionRow.rowCodec.exactlyOne())
+    .run(c)
 
   override fun upsertBatch(
     unsaved: Iterator<CountryregionRow>,
     c: Connection
-  ): List<CountryregionRow> = Fragment.interpolate(Fragment.lit("insert into \"person\".\"countryregion\"(\"countryregioncode\", \"name\", \"modifieddate\")\nvalues (?, ?::varchar, ?::timestamp)\non conflict (\"countryregioncode\")\ndo update set\n  \"name\" = EXCLUDED.\"name\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\nreturning \"countryregioncode\", \"name\", \"modifieddate\""))
-    .updateManyReturning(CountryregionRow._rowParser, unsaved)
-  .runUnchecked(c)
+  ): List<CountryregionRow> = Fragment.concat(Fragment.of("insert into \"person\".\"countryregion\"(\"countryregioncode\", \"name\", \"modifieddate\")\nvalues (?, ?::varchar, ?::timestamp)\non conflict (\"countryregioncode\")\ndo update set\n  \"name\" = EXCLUDED.\"name\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\nreturning \"countryregioncode\", \"name\", \"modifieddate\""))
+    .updateManyReturning(CountryregionRow.rowCodec, unsaved)
+  .run(c)
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
   override fun upsertStreaming(
@@ -126,8 +127,8 @@ class CountryregionRepoImpl() : CountryregionRepo {
     batchSize: Int,
     c: Connection
   ): Int {
-    Fragment.interpolate(Fragment.lit("create temporary table countryregion_TEMP (like \"person\".\"countryregion\") on commit drop")).update().runUnchecked(c)
-    streamingInsert.insertUnchecked("copy countryregion_TEMP(\"countryregioncode\", \"name\", \"modifieddate\") from stdin", batchSize, unsaved, c, CountryregionRow.pgText)
-    return Fragment.interpolate(Fragment.lit("insert into \"person\".\"countryregion\"(\"countryregioncode\", \"name\", \"modifieddate\")\nselect * from countryregion_TEMP\non conflict (\"countryregioncode\")\ndo update set\n  \"name\" = EXCLUDED.\"name\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\n;\ndrop table countryregion_TEMP;")).update().runUnchecked(c)
+    Fragment.concat(Fragment.of("create temporary table countryregion_TEMP (like \"person\".\"countryregion\") on commit drop")).update().run(c)
+    StreamingInsert.of("copy countryregion_TEMP(\"countryregioncode\", \"name\", \"modifieddate\") from stdin", batchSize, unsaved, CountryregionRow.pgText).run(c)
+    return Fragment.concat(Fragment.of("insert into \"person\".\"countryregion\"(\"countryregioncode\", \"name\", \"modifieddate\")\nselect * from countryregion_TEMP\non conflict (\"countryregioncode\")\ndo update set\n  \"name\" = EXCLUDED.\"name\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\n;\ndrop table countryregion_TEMP;")).update().run(c)
   }
 }

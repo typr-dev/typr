@@ -24,7 +24,7 @@ object PrecisionTypesNullId {
 
   given arraySetter: Setter[Array[PrecisionTypesNullId]] = adventureworks.IntArraySetter.contramap(_.map(_.value))
 
-  given bijection: Bijection[PrecisionTypesNullId, Int] = Bijection.apply[PrecisionTypesNullId, Int](_.value)(PrecisionTypesNullId.apply)
+  given bijection: Bijection[PrecisionTypesNullId, Int] = Bijection[PrecisionTypesNullId, Int](_.value)(PrecisionTypesNullId.apply)
 
   given jdbcDecoder: JdbcDecoder[PrecisionTypesNullId] = JdbcDecoder.intDecoder.map(PrecisionTypesNullId.apply)
 

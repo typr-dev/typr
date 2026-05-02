@@ -5,21 +5,20 @@
  */
 package testdb.payments
 
-import dev.typr.foundations.MariaTypes
-import dev.typr.foundations.RowParser
+import dev.typr.dsl.FieldsBase
+import dev.typr.dsl.Path
+import dev.typr.dsl.SqlExpr.FieldLike
+import dev.typr.dslsc.ForeignKey
+import dev.typr.dslsc.RelationStructure
+import dev.typr.dslsc.SqlExpr
+import dev.typr.dslsc.SqlExpr.Field
+import dev.typr.dslsc.SqlExpr.IdField
+import dev.typr.dslsc.SqlExpr.OptField
+import dev.typr.dslsc.TupleExpr12
+import dev.typr.foundations.RowCodec
 import dev.typr.foundations.data.Json
 import dev.typr.foundations.data.maria.Inet6
-import dev.typr.foundations.dsl.FieldsBase
-import dev.typr.foundations.dsl.Path
-import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.scala.ForeignKey
-import dev.typr.foundations.scala.RelationStructure
-import dev.typr.foundations.scala.ScalaDbTypes
-import dev.typr.foundations.scala.SqlExpr
-import dev.typr.foundations.scala.SqlExpr.Field
-import dev.typr.foundations.scala.SqlExpr.IdField
-import dev.typr.foundations.scala.SqlExpr.OptField
-import dev.typr.foundations.scala.TupleExpr12
+import dev.typr.foundationssc.MariaTypes
 import java.time.LocalDateTime
 import testdb.orders.OrdersFields
 import testdb.orders.OrdersId
@@ -37,7 +36,7 @@ class PaymentsFields(val `_path`: java.util.List[Path]) extends TupleExpr12[Paym
       None,
       None,
       (row, value) => row.copy(paymentId = value),
-      PaymentsId.mariaType
+      PaymentsId.mariaType.underlying
     )
   }
 
@@ -49,7 +48,7 @@ class PaymentsFields(val `_path`: java.util.List[Path]) extends TupleExpr12[Paym
       None,
       None,
       (row, value) => row.copy(orderId = value),
-      OrdersId.mariaType
+      OrdersId.mariaType.underlying
     )
   }
 
@@ -61,7 +60,7 @@ class PaymentsFields(val `_path`: java.util.List[Path]) extends TupleExpr12[Paym
       None,
       None,
       (row, value) => row.copy(methodId = value),
-      PaymentMethodsId.mariaType
+      PaymentMethodsId.mariaType.underlying
     )
   }
 
@@ -73,7 +72,7 @@ class PaymentsFields(val `_path`: java.util.List[Path]) extends TupleExpr12[Paym
       None,
       None,
       (row, value) => row.copy(transactionId = value),
-      MariaTypes.varchar
+      MariaTypes.varchar.underlying
     )
   }
 
@@ -85,7 +84,7 @@ class PaymentsFields(val `_path`: java.util.List[Path]) extends TupleExpr12[Paym
       None,
       None,
       (row, value) => row.copy(amount = value),
-      ScalaDbTypes.MariaTypes.numeric
+      MariaTypes.numeric.underlying
     )
   }
 
@@ -97,7 +96,7 @@ class PaymentsFields(val `_path`: java.util.List[Path]) extends TupleExpr12[Paym
       None,
       None,
       (row, value) => row.copy(currencyCode = value),
-      MariaTypes.char_
+      MariaTypes.char_.underlying
     )
   }
 
@@ -109,7 +108,7 @@ class PaymentsFields(val `_path`: java.util.List[Path]) extends TupleExpr12[Paym
       None,
       None,
       (row, value) => row.copy(status = value),
-      MariaTypes.text
+      MariaTypes.text.underlying
     )
   }
 
@@ -121,7 +120,7 @@ class PaymentsFields(val `_path`: java.util.List[Path]) extends TupleExpr12[Paym
       None,
       None,
       (row, value) => row.copy(processorResponse = value),
-      MariaTypes.json
+      MariaTypes.json.underlying
     )
   }
 
@@ -133,7 +132,7 @@ class PaymentsFields(val `_path`: java.util.List[Path]) extends TupleExpr12[Paym
       None,
       None,
       (row, value) => row.copy(errorMessage = value),
-      MariaTypes.varchar
+      MariaTypes.varchar.underlying
     )
   }
 
@@ -145,7 +144,7 @@ class PaymentsFields(val `_path`: java.util.List[Path]) extends TupleExpr12[Paym
       None,
       None,
       (row, value) => row.copy(ipAddress = value),
-      MariaTypes.inet6
+      MariaTypes.inet6.underlying
     )
   }
 
@@ -157,7 +156,7 @@ class PaymentsFields(val `_path`: java.util.List[Path]) extends TupleExpr12[Paym
       None,
       None,
       (row, value) => row.copy(createdAt = value),
-      MariaTypes.datetime
+      MariaTypes.datetime.underlying
     )
   }
 
@@ -169,7 +168,7 @@ class PaymentsFields(val `_path`: java.util.List[Path]) extends TupleExpr12[Paym
       None,
       None,
       (row, value) => row.copy(processedAt = value),
-      MariaTypes.datetime
+      MariaTypes.datetime.underlying
     )
   }
 
@@ -179,7 +178,7 @@ class PaymentsFields(val `_path`: java.util.List[Path]) extends TupleExpr12[Paym
 
   override def columns: java.util.List[FieldLike[?, PaymentsRow]] = java.util.List.of(this.paymentId.underlying, this.orderId.underlying, this.methodId.underlying, this.transactionId.underlying, this.amount.underlying, this.currencyCode.underlying, this.status.underlying, this.processorResponse.underlying, this.errorMessage.underlying, this.ipAddress.underlying, this.createdAt.underlying, this.processedAt.underlying)
 
-  override def rowParser: RowParser[PaymentsRow] = PaymentsRow._rowParser.underlying
+  override def rowCodec: RowCodec[PaymentsRow] = PaymentsRow.rowCodec.underlying
 
   override def withPaths(`_path`: java.util.List[Path]): RelationStructure[PaymentsFields, PaymentsRow] = new PaymentsFields(`_path`)
 

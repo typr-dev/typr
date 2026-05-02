@@ -2,8 +2,8 @@ package oracledb;
 
 import static org.junit.Assert.*;
 
-import dev.typr.foundations.dsl.Bijection;
-import dev.typr.foundations.dsl.TupleExpr;
+import dev.typr.dsl.TupleExpr;
+import dev.typr.foundations.Bijection;
 import java.math.BigDecimal;
 import java.util.Optional;
 import oracledb.customers.CustomersRepoImpl;

@@ -5,41 +5,40 @@
  */
 package testdb.nullability_test
 
-import dev.typr.foundations.Db2Types
-import dev.typr.foundations.RowParser
-import dev.typr.foundations.dsl.FieldsBase
-import dev.typr.foundations.dsl.Path
-import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.kotlin.KotlinDbTypes
-import dev.typr.foundations.kotlin.RelationStructure
-import dev.typr.foundations.kotlin.SqlExpr
-import dev.typr.foundations.kotlin.SqlExpr.Field
-import dev.typr.foundations.kotlin.SqlExpr.OptField
-import dev.typr.foundations.kotlin.TupleExpr4
+import dev.typr.dsl.FieldsBase
+import dev.typr.dsl.Path
+import dev.typr.dsl.SqlExpr.FieldLike
+import dev.typr.dslkt.RelationStructure
+import dev.typr.dslkt.SqlExpr
+import dev.typr.dslkt.SqlExpr.Field
+import dev.typr.dslkt.SqlExpr.OptField
+import dev.typr.dslkt.TupleExpr4
+import dev.typr.foundations.RowCodec
+import dev.typr.foundationskt.Db2Types
 import kotlin.collections.List
 
-data class NullabilityTestFields(val _path: List<Path>) : TupleExpr4<Int, String, String, String>, RelationStructure<NullabilityTestFields, NullabilityTestRow>, FieldsBase<NullabilityTestRow> {
+data class NullabilityTestFields(val _path: List<Path>) : TupleExpr4<Int, kotlin.String, kotlin.String, kotlin.String>, RelationStructure<NullabilityTestFields, NullabilityTestRow>, FieldsBase<NullabilityTestRow> {
   override fun _1(): SqlExpr<Int> = id()
 
-  override fun _2(): SqlExpr<String> = requiredCol()
+  override fun _2(): SqlExpr<kotlin.String> = requiredCol()
 
-  override fun _3(): SqlExpr<String> = optionalCol()
+  override fun _3(): SqlExpr<kotlin.String> = optionalCol()
 
-  override fun _4(): SqlExpr<String> = defaultedCol()
+  override fun _4(): SqlExpr<kotlin.String> = defaultedCol()
 
   override fun _path(): List<Path> = _path
 
   override fun columns(): List<FieldLike<*, NullabilityTestRow>> = listOf(this.id().underlying, this.requiredCol().underlying, this.optionalCol().underlying, this.defaultedCol().underlying)
 
-  fun defaultedCol(): OptField<String, NullabilityTestRow> = OptField<String, NullabilityTestRow>(_path, "DEFAULTED_COL", NullabilityTestRow::defaultedCol, null, null, { row, value -> row.copy(defaultedCol = value) }, Db2Types.varchar)
+  fun defaultedCol(): OptField<kotlin.String, NullabilityTestRow> = OptField<kotlin.String, NullabilityTestRow>(_path, "DEFAULTED_COL", NullabilityTestRow::defaultedCol, null, null, { row, value -> row.copy(defaultedCol = value) }, Db2Types.varchar.underlying)
 
-  fun id(): Field<Int, NullabilityTestRow> = Field<Int, NullabilityTestRow>(_path, "ID", NullabilityTestRow::id, null, null, { row, value -> row.copy(id = value) }, KotlinDbTypes.Db2Types.integer)
+  fun id(): Field<Int, NullabilityTestRow> = Field<Int, NullabilityTestRow>(_path, "ID", NullabilityTestRow::id, null, null, { row, value -> row.copy(id = value) }, Db2Types.integer.underlying)
 
-  fun optionalCol(): OptField<String, NullabilityTestRow> = OptField<String, NullabilityTestRow>(_path, "OPTIONAL_COL", NullabilityTestRow::optionalCol, null, null, { row, value -> row.copy(optionalCol = value) }, Db2Types.varchar)
+  fun optionalCol(): OptField<kotlin.String, NullabilityTestRow> = OptField<kotlin.String, NullabilityTestRow>(_path, "OPTIONAL_COL", NullabilityTestRow::optionalCol, null, null, { row, value -> row.copy(optionalCol = value) }, Db2Types.varchar.underlying)
 
-  fun requiredCol(): Field<String, NullabilityTestRow> = Field<String, NullabilityTestRow>(_path, "REQUIRED_COL", NullabilityTestRow::requiredCol, null, null, { row, value -> row.copy(requiredCol = value) }, Db2Types.varchar)
+  fun requiredCol(): Field<kotlin.String, NullabilityTestRow> = Field<kotlin.String, NullabilityTestRow>(_path, "REQUIRED_COL", NullabilityTestRow::requiredCol, null, null, { row, value -> row.copy(requiredCol = value) }, Db2Types.varchar.underlying)
 
-  override fun rowParser(): RowParser<NullabilityTestRow> = NullabilityTestRow._rowParser.underlying
+  override fun rowCodec(): RowCodec<NullabilityTestRow> = NullabilityTestRow.rowCodec.underlying
 
   override fun withPaths(_path: List<Path>): RelationStructure<NullabilityTestFields, NullabilityTestRow> = NullabilityTestFields(_path)
 

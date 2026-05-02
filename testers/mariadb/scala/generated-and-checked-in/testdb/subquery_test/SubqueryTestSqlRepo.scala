@@ -5,8 +5,8 @@
  */
 package testdb.subquery_test
 
-import java.sql.Connection
+import dev.typr.foundationssc.ConnectionRead
 
 trait SubqueryTestSqlRepo {
-  def apply(using c: Connection): List[SubqueryTestSqlRow]
+  def apply(using c: ConnectionRead): List[SubqueryTestSqlRow]
 }

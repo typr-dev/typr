@@ -6,12 +6,10 @@
 package testdb.customer_summary
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import dev.typr.foundations.Db2Types
+import dev.typr.dslsc.RowCodecs
 import dev.typr.foundations.Tuple.Tuple5
-import dev.typr.foundations.scala.DbTypeOps
-import dev.typr.foundations.scala.RowParser
-import dev.typr.foundations.scala.RowParsers
-import dev.typr.foundations.scala.ScalaDbTypes
+import dev.typr.foundationssc.Db2Types
+import dev.typr.foundationssc.RowCodec
 
 /** SQL file: customer_summary.sql */
 case class CustomerSummarySqlRow(
@@ -33,5 +31,5 @@ case class CustomerSummarySqlRow(
 }
 
 object CustomerSummarySqlRow {
-  val `_rowParser`: RowParser[CustomerSummarySqlRow] = RowParsers.of(ScalaDbTypes.Db2Types.integer, Db2Types.varchar, Db2Types.varchar, ScalaDbTypes.Db2Types.integer.nullable, ScalaDbTypes.Db2Types.decimal.nullable)(CustomerSummarySqlRow.apply)(row => Array[Any](row.customerId, row.name, row.email, row.orderCount, row.totalSpent))
+  val rowCodec: RowCodec[CustomerSummarySqlRow] = RowCodecs.of(Db2Types.integer, Db2Types.varchar, Db2Types.varchar, Db2Types.integer.opt, Db2Types.decimal.opt)(CustomerSummarySqlRow.apply)(row => Array[Any](row.customerId, row.name, row.email, row.orderCount, row.totalSpent))
 }

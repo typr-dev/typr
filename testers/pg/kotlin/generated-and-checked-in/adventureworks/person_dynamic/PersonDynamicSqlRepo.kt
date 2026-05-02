@@ -5,12 +5,12 @@
  */
 package adventureworks.person_dynamic
 
-import java.sql.Connection
+import dev.typr.foundationskt.ConnectionRead
 import kotlin.collections.List
 
 interface PersonDynamicSqlRepo {
   abstract fun apply(
-    firstName: String?,
-    c: Connection
+    firstName: kotlin.String?,
+    c: ConnectionRead
   ): List<PersonDynamicSqlRow>
 }

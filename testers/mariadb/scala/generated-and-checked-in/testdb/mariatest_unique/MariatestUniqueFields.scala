@@ -5,16 +5,16 @@
  */
 package testdb.mariatest_unique
 
-import dev.typr.foundations.MariaTypes
-import dev.typr.foundations.RowParser
-import dev.typr.foundations.dsl.FieldsBase
-import dev.typr.foundations.dsl.Path
-import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.scala.RelationStructure
-import dev.typr.foundations.scala.SqlExpr
-import dev.typr.foundations.scala.SqlExpr.Field
-import dev.typr.foundations.scala.SqlExpr.IdField
-import dev.typr.foundations.scala.TupleExpr4
+import dev.typr.dsl.FieldsBase
+import dev.typr.dsl.Path
+import dev.typr.dsl.SqlExpr.FieldLike
+import dev.typr.dslsc.RelationStructure
+import dev.typr.dslsc.SqlExpr
+import dev.typr.dslsc.SqlExpr.Field
+import dev.typr.dslsc.SqlExpr.IdField
+import dev.typr.dslsc.TupleExpr4
+import dev.typr.foundations.RowCodec
+import dev.typr.foundationssc.MariaTypes
 import testdb.userdefined.Email
 
 class MariatestUniqueFields(val `_path`: java.util.List[Path]) extends TupleExpr4[MariatestUniqueId, /* user-picked */ Email, String, String] with RelationStructure[MariatestUniqueFields, MariatestUniqueRow]  with FieldsBase[MariatestUniqueRow] {
@@ -26,7 +26,7 @@ class MariatestUniqueFields(val `_path`: java.util.List[Path]) extends TupleExpr
       None,
       None,
       (row, value) => row.copy(id = value),
-      MariatestUniqueId.mariaType
+      MariatestUniqueId.mariaType.underlying
     )
   }
 
@@ -38,7 +38,7 @@ class MariatestUniqueFields(val `_path`: java.util.List[Path]) extends TupleExpr
       None,
       None,
       (row, value) => row.copy(email = value),
-      Email.mariaType
+      Email.mariaType.underlying
     )
   }
 
@@ -50,7 +50,7 @@ class MariatestUniqueFields(val `_path`: java.util.List[Path]) extends TupleExpr
       None,
       None,
       (row, value) => row.copy(code = value),
-      MariaTypes.varchar
+      MariaTypes.varchar.underlying
     )
   }
 
@@ -62,13 +62,13 @@ class MariatestUniqueFields(val `_path`: java.util.List[Path]) extends TupleExpr
       None,
       None,
       (row, value) => row.copy(category = value),
-      MariaTypes.varchar
+      MariaTypes.varchar.underlying
     )
   }
 
   override def columns: java.util.List[FieldLike[?, MariatestUniqueRow]] = java.util.List.of(this.id.underlying, this.email.underlying, this.code.underlying, this.category.underlying)
 
-  override def rowParser: RowParser[MariatestUniqueRow] = MariatestUniqueRow._rowParser.underlying
+  override def rowCodec: RowCodec[MariatestUniqueRow] = MariatestUniqueRow.rowCodec.underlying
 
   override def withPaths(`_path`: java.util.List[Path]): RelationStructure[MariatestUniqueFields, MariatestUniqueRow] = new MariatestUniqueFields(`_path`)
 

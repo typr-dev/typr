@@ -5,10 +5,11 @@
  */
 package testdb.payment_methods
 
-import dev.typr.foundations.kotlin.DeleteBuilder
-import dev.typr.foundations.kotlin.SelectBuilder
-import dev.typr.foundations.kotlin.UpdateBuilder
-import java.sql.Connection
+import dev.typr.dslkt.DeleteBuilder
+import dev.typr.dslkt.SelectBuilder
+import dev.typr.dslkt.UpdateBuilder
+import dev.typr.foundationskt.Connection
+import dev.typr.foundationskt.ConnectionRead
 import kotlin.collections.Iterator
 import kotlin.collections.List
 import kotlin.collections.Map
@@ -19,10 +20,10 @@ interface PaymentMethodsRepo {
   abstract fun deleteById(
     methodId: PaymentMethodsId,
     c: Connection
-  ): Boolean
+  ): kotlin.Boolean
 
   abstract fun deleteByIds(
-    methodIds: Array<PaymentMethodsId>,
+    methodIds: List<PaymentMethodsId>,
     c: Connection
   ): Int
 
@@ -38,26 +39,26 @@ interface PaymentMethodsRepo {
 
   abstract fun select(): SelectBuilder<PaymentMethodsFields, PaymentMethodsRow>
 
-  abstract fun selectAll(c: Connection): List<PaymentMethodsRow>
+  abstract fun selectAll(c: ConnectionRead): List<PaymentMethodsRow>
 
   abstract fun selectById(
     methodId: PaymentMethodsId,
-    c: Connection
+    c: ConnectionRead
   ): PaymentMethodsRow?
 
   abstract fun selectByIds(
-    methodIds: Array<PaymentMethodsId>,
-    c: Connection
+    methodIds: List<PaymentMethodsId>,
+    c: ConnectionRead
   ): List<PaymentMethodsRow>
 
   abstract fun selectByIdsTracked(
-    methodIds: Array<PaymentMethodsId>,
-    c: Connection
+    methodIds: List<PaymentMethodsId>,
+    c: ConnectionRead
   ): Map<PaymentMethodsId, PaymentMethodsRow>
 
   abstract fun selectByUniqueCode(
-    code: String,
-    c: Connection
+    code: kotlin.String,
+    c: ConnectionRead
   ): PaymentMethodsRow?
 
   abstract fun update(): UpdateBuilder<PaymentMethodsFields, PaymentMethodsRow>
@@ -65,7 +66,7 @@ interface PaymentMethodsRepo {
   abstract fun update(
     row: PaymentMethodsRow,
     c: Connection
-  ): Boolean
+  ): kotlin.Boolean
 
   abstract fun upsert(
     unsaved: PaymentMethodsRow,

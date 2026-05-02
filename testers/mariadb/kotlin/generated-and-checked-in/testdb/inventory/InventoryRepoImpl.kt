@@ -5,15 +5,14 @@
  */
 package testdb.inventory
 
-import dev.typr.foundations.MariaTypes
-import dev.typr.foundations.kotlin.DeleteBuilder
-import dev.typr.foundations.kotlin.Dialect
-import dev.typr.foundations.kotlin.Fragment
-import dev.typr.foundations.kotlin.KotlinDbTypes
-import dev.typr.foundations.kotlin.SelectBuilder
-import dev.typr.foundations.kotlin.UpdateBuilder
-import dev.typr.foundations.kotlin.nullable
-import java.sql.Connection
+import dev.typr.dslkt.DeleteBuilder
+import dev.typr.dslkt.Dialect
+import dev.typr.dslkt.SelectBuilder
+import dev.typr.dslkt.UpdateBuilder
+import dev.typr.foundationskt.Connection
+import dev.typr.foundationskt.ConnectionRead
+import dev.typr.foundationskt.Fragment
+import dev.typr.foundationskt.MariaTypes
 import java.util.ArrayList
 import kotlin.collections.Iterator
 import kotlin.collections.List
@@ -28,22 +27,22 @@ class InventoryRepoImpl() : InventoryRepo {
   override fun deleteById(
     inventoryId: InventoryId,
     c: Connection
-  ): Boolean = Fragment.interpolate(Fragment.lit("delete from `inventory` where `inventory_id` = "), Fragment.encode(InventoryId.mariaType, inventoryId), Fragment.lit("")).update().runUnchecked(c) > 0
+  ): kotlin.Boolean = Fragment.concat(Fragment.of("delete from `inventory` where `inventory_id` = "), Fragment.encode(InventoryId.mariaType, inventoryId), Fragment.of("")).update().run(c) > 0
 
   override fun deleteByIds(
-    inventoryIds: Array<InventoryId>,
+    inventoryIds: List<InventoryId>,
     c: Connection
   ): Int {
     val fragments: ArrayList<Fragment> = ArrayList()
     for (id in inventoryIds) { fragments.add(Fragment.encode(InventoryId.mariaType, id)) }
-    return Fragment.interpolate(Fragment.lit("delete from `inventory` where `inventory_id` in ("), Fragment.comma(fragments.toMutableList()), Fragment.lit(")")).update().runUnchecked(c)
+    return Fragment.concat(Fragment.of("delete from `inventory` where `inventory_id` in ("), Fragment.comma(fragments.toMutableList()), Fragment.of(")")).update().run(c)
   }
 
   override fun insert(
     unsaved: InventoryRow,
     c: Connection
-  ): InventoryRow = Fragment.interpolate(Fragment.lit("insert into `inventory`(`product_id`, `warehouse_id`, `quantity_on_hand`, `quantity_reserved`, `quantity_on_order`, `reorder_point`, `reorder_quantity`, `bin_location`, `last_counted_at`, `updated_at`)\nvalues ("), Fragment.encode(ProductsId.mariaType, unsaved.productId), Fragment.lit(", "), Fragment.encode(WarehousesId.mariaType, unsaved.warehouseId), Fragment.lit(", "), Fragment.encode(KotlinDbTypes.MariaTypes.int_, unsaved.quantityOnHand), Fragment.lit(", "), Fragment.encode(KotlinDbTypes.MariaTypes.int_, unsaved.quantityReserved), Fragment.lit(", "), Fragment.encode(KotlinDbTypes.MariaTypes.int_, unsaved.quantityOnOrder), Fragment.lit(", "), Fragment.encode(KotlinDbTypes.MariaTypes.int_, unsaved.reorderPoint), Fragment.lit(", "), Fragment.encode(KotlinDbTypes.MariaTypes.int_, unsaved.reorderQuantity), Fragment.lit(", "), Fragment.encode(MariaTypes.varchar.nullable(), unsaved.binLocation), Fragment.lit(", "), Fragment.encode(MariaTypes.datetime.nullable(), unsaved.lastCountedAt), Fragment.lit(", "), Fragment.encode(MariaTypes.datetime, unsaved.updatedAt), Fragment.lit(")\nRETURNING `inventory_id`, `product_id`, `warehouse_id`, `quantity_on_hand`, `quantity_reserved`, `quantity_on_order`, `reorder_point`, `reorder_quantity`, `bin_location`, `last_counted_at`, `updated_at`\n"))
-    .updateReturning(InventoryRow._rowParser.exactlyOne()).runUnchecked(c)
+  ): InventoryRow = Fragment.concat(Fragment.of("insert into `inventory`(`product_id`, `warehouse_id`, `quantity_on_hand`, `quantity_reserved`, `quantity_on_order`, `reorder_point`, `reorder_quantity`, `bin_location`, `last_counted_at`, `updated_at`)\nvalues ("), Fragment.encode(ProductsId.mariaType, unsaved.productId), Fragment.of(", "), Fragment.encode(WarehousesId.mariaType, unsaved.warehouseId), Fragment.of(", "), Fragment.encode(MariaTypes.int_, unsaved.quantityOnHand), Fragment.of(", "), Fragment.encode(MariaTypes.int_, unsaved.quantityReserved), Fragment.of(", "), Fragment.encode(MariaTypes.int_, unsaved.quantityOnOrder), Fragment.of(", "), Fragment.encode(MariaTypes.int_, unsaved.reorderPoint), Fragment.of(", "), Fragment.encode(MariaTypes.int_, unsaved.reorderQuantity), Fragment.of(", "), Fragment.encode(MariaTypes.varchar.opt(), unsaved.binLocation), Fragment.of(", "), Fragment.encode(MariaTypes.datetime.opt(), unsaved.lastCountedAt), Fragment.of(", "), Fragment.encode(MariaTypes.datetime, unsaved.updatedAt), Fragment.of(")\nRETURNING `inventory_id`, `product_id`, `warehouse_id`, `quantity_on_hand`, `quantity_reserved`, `quantity_on_order`, `reorder_point`, `reorder_quantity`, `bin_location`, `last_counted_at`, `updated_at`\n"))
+    .updateReturning(InventoryRow.rowCodec.exactlyOne()).run(c)
 
   override fun insert(
     unsaved: InventoryRowUnsaved,
@@ -51,75 +50,75 @@ class InventoryRepoImpl() : InventoryRepo {
   ): InventoryRow {
     val columns: ArrayList<Fragment> = ArrayList()
     val values: ArrayList<Fragment> = ArrayList()
-    columns.add(Fragment.lit("`product_id`"))
-    values.add(Fragment.interpolate(Fragment.encode(ProductsId.mariaType, unsaved.productId), Fragment.lit("")))
-    columns.add(Fragment.lit("`warehouse_id`"))
-    values.add(Fragment.interpolate(Fragment.encode(WarehousesId.mariaType, unsaved.warehouseId), Fragment.lit("")))
+    columns.add(Fragment.of("`product_id`"))
+    values.add(Fragment.concat(Fragment.encode(ProductsId.mariaType, unsaved.productId), Fragment.of("")))
+    columns.add(Fragment.of("`warehouse_id`"))
+    values.add(Fragment.concat(Fragment.encode(WarehousesId.mariaType, unsaved.warehouseId), Fragment.of("")))
     unsaved.quantityOnHand.visit(
       {  },
-      { value -> columns.add(Fragment.lit("`quantity_on_hand`"))
-      values.add(Fragment.interpolate(Fragment.encode(KotlinDbTypes.MariaTypes.int_, value), Fragment.lit(""))) }
+      { value -> columns.add(Fragment.of("`quantity_on_hand`"))
+      values.add(Fragment.concat(Fragment.encode(MariaTypes.int_, value), Fragment.of(""))) }
     );
     unsaved.quantityReserved.visit(
       {  },
-      { value -> columns.add(Fragment.lit("`quantity_reserved`"))
-      values.add(Fragment.interpolate(Fragment.encode(KotlinDbTypes.MariaTypes.int_, value), Fragment.lit(""))) }
+      { value -> columns.add(Fragment.of("`quantity_reserved`"))
+      values.add(Fragment.concat(Fragment.encode(MariaTypes.int_, value), Fragment.of(""))) }
     );
     unsaved.quantityOnOrder.visit(
       {  },
-      { value -> columns.add(Fragment.lit("`quantity_on_order`"))
-      values.add(Fragment.interpolate(Fragment.encode(KotlinDbTypes.MariaTypes.int_, value), Fragment.lit(""))) }
+      { value -> columns.add(Fragment.of("`quantity_on_order`"))
+      values.add(Fragment.concat(Fragment.encode(MariaTypes.int_, value), Fragment.of(""))) }
     );
     unsaved.reorderPoint.visit(
       {  },
-      { value -> columns.add(Fragment.lit("`reorder_point`"))
-      values.add(Fragment.interpolate(Fragment.encode(KotlinDbTypes.MariaTypes.int_, value), Fragment.lit(""))) }
+      { value -> columns.add(Fragment.of("`reorder_point`"))
+      values.add(Fragment.concat(Fragment.encode(MariaTypes.int_, value), Fragment.of(""))) }
     );
     unsaved.reorderQuantity.visit(
       {  },
-      { value -> columns.add(Fragment.lit("`reorder_quantity`"))
-      values.add(Fragment.interpolate(Fragment.encode(KotlinDbTypes.MariaTypes.int_, value), Fragment.lit(""))) }
+      { value -> columns.add(Fragment.of("`reorder_quantity`"))
+      values.add(Fragment.concat(Fragment.encode(MariaTypes.int_, value), Fragment.of(""))) }
     );
     unsaved.binLocation.visit(
       {  },
-      { value -> columns.add(Fragment.lit("`bin_location`"))
-      values.add(Fragment.interpolate(Fragment.encode(MariaTypes.varchar.nullable(), value), Fragment.lit(""))) }
+      { value -> columns.add(Fragment.of("`bin_location`"))
+      values.add(Fragment.concat(Fragment.encode(MariaTypes.varchar.opt(), value), Fragment.of(""))) }
     );
     unsaved.lastCountedAt.visit(
       {  },
-      { value -> columns.add(Fragment.lit("`last_counted_at`"))
-      values.add(Fragment.interpolate(Fragment.encode(MariaTypes.datetime.nullable(), value), Fragment.lit(""))) }
+      { value -> columns.add(Fragment.of("`last_counted_at`"))
+      values.add(Fragment.concat(Fragment.encode(MariaTypes.datetime.opt(), value), Fragment.of(""))) }
     );
     unsaved.updatedAt.visit(
       {  },
-      { value -> columns.add(Fragment.lit("`updated_at`"))
-      values.add(Fragment.interpolate(Fragment.encode(MariaTypes.datetime, value), Fragment.lit(""))) }
+      { value -> columns.add(Fragment.of("`updated_at`"))
+      values.add(Fragment.concat(Fragment.encode(MariaTypes.datetime, value), Fragment.of(""))) }
     );
-    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into `inventory`("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nRETURNING `inventory_id`, `product_id`, `warehouse_id`, `quantity_on_hand`, `quantity_reserved`, `quantity_on_order`, `reorder_point`, `reorder_quantity`, `bin_location`, `last_counted_at`, `updated_at`\n"))
-    return q.updateReturning(InventoryRow._rowParser.exactlyOne()).runUnchecked(c)
+    val q: Fragment = Fragment.concat(Fragment.of("insert into `inventory`("), Fragment.comma(columns.toMutableList()), Fragment.of(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.of(")\nRETURNING `inventory_id`, `product_id`, `warehouse_id`, `quantity_on_hand`, `quantity_reserved`, `quantity_on_order`, `reorder_point`, `reorder_quantity`, `bin_location`, `last_counted_at`, `updated_at`\n"))
+    return q.updateReturning(InventoryRow.rowCodec.exactlyOne()).run(c)
   }
 
-  override fun select(): SelectBuilder<InventoryFields, InventoryRow> = SelectBuilder.of("`inventory`", InventoryFields.structure, InventoryRow._rowParser, Dialect.MARIADB)
+  override fun select(): SelectBuilder<InventoryFields, InventoryRow> = SelectBuilder.of("`inventory`", InventoryFields.structure, InventoryRow.rowCodec, Dialect.MARIADB)
 
-  override fun selectAll(c: Connection): List<InventoryRow> = Fragment.interpolate(Fragment.lit("select `inventory_id`, `product_id`, `warehouse_id`, `quantity_on_hand`, `quantity_reserved`, `quantity_on_order`, `reorder_point`, `reorder_quantity`, `bin_location`, `last_counted_at`, `updated_at`\nfrom `inventory`\n")).query(InventoryRow._rowParser.all()).runUnchecked(c)
+  override fun selectAll(c: ConnectionRead): List<InventoryRow> = Fragment.concat(Fragment.of("select `inventory_id`, `product_id`, `warehouse_id`, `quantity_on_hand`, `quantity_reserved`, `quantity_on_order`, `reorder_point`, `reorder_quantity`, `bin_location`, `last_counted_at`, `updated_at`\nfrom `inventory`\n")).query(InventoryRow.rowCodec.all()).run(c)
 
   override fun selectById(
     inventoryId: InventoryId,
-    c: Connection
-  ): InventoryRow? = Fragment.interpolate(Fragment.lit("select `inventory_id`, `product_id`, `warehouse_id`, `quantity_on_hand`, `quantity_reserved`, `quantity_on_order`, `reorder_point`, `reorder_quantity`, `bin_location`, `last_counted_at`, `updated_at`\nfrom `inventory`\nwhere `inventory_id` = "), Fragment.encode(InventoryId.mariaType, inventoryId), Fragment.lit("")).query(InventoryRow._rowParser.first()).runUnchecked(c)
+    c: ConnectionRead
+  ): InventoryRow? = Fragment.concat(Fragment.of("select `inventory_id`, `product_id`, `warehouse_id`, `quantity_on_hand`, `quantity_reserved`, `quantity_on_order`, `reorder_point`, `reorder_quantity`, `bin_location`, `last_counted_at`, `updated_at`\nfrom `inventory`\nwhere `inventory_id` = "), Fragment.encode(InventoryId.mariaType, inventoryId), Fragment.of("")).query(InventoryRow.rowCodec.first()).run(c)
 
   override fun selectByIds(
-    inventoryIds: Array<InventoryId>,
-    c: Connection
+    inventoryIds: List<InventoryId>,
+    c: ConnectionRead
   ): List<InventoryRow> {
     val fragments: ArrayList<Fragment> = ArrayList()
     for (id in inventoryIds) { fragments.add(Fragment.encode(InventoryId.mariaType, id)) }
-    return Fragment.interpolate(Fragment.lit("select `inventory_id`, `product_id`, `warehouse_id`, `quantity_on_hand`, `quantity_reserved`, `quantity_on_order`, `reorder_point`, `reorder_quantity`, `bin_location`, `last_counted_at`, `updated_at` from `inventory` where `inventory_id` in ("), Fragment.comma(fragments.toMutableList()), Fragment.lit(")")).query(InventoryRow._rowParser.all()).runUnchecked(c)
+    return Fragment.concat(Fragment.of("select `inventory_id`, `product_id`, `warehouse_id`, `quantity_on_hand`, `quantity_reserved`, `quantity_on_order`, `reorder_point`, `reorder_quantity`, `bin_location`, `last_counted_at`, `updated_at` from `inventory` where `inventory_id` in ("), Fragment.comma(fragments.toMutableList()), Fragment.of(")")).query(InventoryRow.rowCodec.all()).run(c)
   }
 
   override fun selectByIdsTracked(
-    inventoryIds: Array<InventoryId>,
-    c: Connection
+    inventoryIds: List<InventoryId>,
+    c: ConnectionRead
   ): Map<InventoryId, InventoryRow> {
     val ret: MutableMap<InventoryId, InventoryRow> = mutableMapOf<InventoryId, InventoryRow>()
     selectByIds(inventoryIds, c).forEach({ row -> ret.put(row.inventoryId, row) })
@@ -129,30 +128,30 @@ class InventoryRepoImpl() : InventoryRepo {
   override fun selectByUniqueProductIdAndWarehouseId(
     productId: ProductsId,
     warehouseId: WarehousesId,
-    c: Connection
-  ): InventoryRow? = Fragment.interpolate(Fragment.lit("select `inventory_id`, `product_id`, `warehouse_id`, `quantity_on_hand`, `quantity_reserved`, `quantity_on_order`, `reorder_point`, `reorder_quantity`, `bin_location`, `last_counted_at`, `updated_at`\nfrom `inventory`\nwhere `product_id` = "), Fragment.encode(ProductsId.mariaType, productId), Fragment.lit(" AND `warehouse_id` = "), Fragment.encode(WarehousesId.mariaType, warehouseId), Fragment.lit("\n")).query(InventoryRow._rowParser.first()).runUnchecked(c)
+    c: ConnectionRead
+  ): InventoryRow? = Fragment.concat(Fragment.of("select `inventory_id`, `product_id`, `warehouse_id`, `quantity_on_hand`, `quantity_reserved`, `quantity_on_order`, `reorder_point`, `reorder_quantity`, `bin_location`, `last_counted_at`, `updated_at`\nfrom `inventory`\nwhere `product_id` = "), Fragment.encode(ProductsId.mariaType, productId), Fragment.of(" AND `warehouse_id` = "), Fragment.encode(WarehousesId.mariaType, warehouseId), Fragment.of("\n")).query(InventoryRow.rowCodec.first()).run(c)
 
-  override fun update(): UpdateBuilder<InventoryFields, InventoryRow> = UpdateBuilder.of("`inventory`", InventoryFields.structure, InventoryRow._rowParser, Dialect.MARIADB)
+  override fun update(): UpdateBuilder<InventoryFields, InventoryRow> = UpdateBuilder.of("`inventory`", InventoryFields.structure, InventoryRow.rowCodec, Dialect.MARIADB)
 
   override fun update(
     row: InventoryRow,
     c: Connection
-  ): Boolean {
+  ): kotlin.Boolean {
     val inventoryId: InventoryId = row.inventoryId
-    return Fragment.interpolate(Fragment.lit("update `inventory`\nset `product_id` = "), Fragment.encode(ProductsId.mariaType, row.productId), Fragment.lit(",\n`warehouse_id` = "), Fragment.encode(WarehousesId.mariaType, row.warehouseId), Fragment.lit(",\n`quantity_on_hand` = "), Fragment.encode(KotlinDbTypes.MariaTypes.int_, row.quantityOnHand), Fragment.lit(",\n`quantity_reserved` = "), Fragment.encode(KotlinDbTypes.MariaTypes.int_, row.quantityReserved), Fragment.lit(",\n`quantity_on_order` = "), Fragment.encode(KotlinDbTypes.MariaTypes.int_, row.quantityOnOrder), Fragment.lit(",\n`reorder_point` = "), Fragment.encode(KotlinDbTypes.MariaTypes.int_, row.reorderPoint), Fragment.lit(",\n`reorder_quantity` = "), Fragment.encode(KotlinDbTypes.MariaTypes.int_, row.reorderQuantity), Fragment.lit(",\n`bin_location` = "), Fragment.encode(MariaTypes.varchar.nullable(), row.binLocation), Fragment.lit(",\n`last_counted_at` = "), Fragment.encode(MariaTypes.datetime.nullable(), row.lastCountedAt), Fragment.lit(",\n`updated_at` = "), Fragment.encode(MariaTypes.datetime, row.updatedAt), Fragment.lit("\nwhere `inventory_id` = "), Fragment.encode(InventoryId.mariaType, inventoryId), Fragment.lit("")).update().runUnchecked(c) > 0
+    return Fragment.concat(Fragment.of("update `inventory`\nset `product_id` = "), Fragment.encode(ProductsId.mariaType, row.productId), Fragment.of(",\n`warehouse_id` = "), Fragment.encode(WarehousesId.mariaType, row.warehouseId), Fragment.of(",\n`quantity_on_hand` = "), Fragment.encode(MariaTypes.int_, row.quantityOnHand), Fragment.of(",\n`quantity_reserved` = "), Fragment.encode(MariaTypes.int_, row.quantityReserved), Fragment.of(",\n`quantity_on_order` = "), Fragment.encode(MariaTypes.int_, row.quantityOnOrder), Fragment.of(",\n`reorder_point` = "), Fragment.encode(MariaTypes.int_, row.reorderPoint), Fragment.of(",\n`reorder_quantity` = "), Fragment.encode(MariaTypes.int_, row.reorderQuantity), Fragment.of(",\n`bin_location` = "), Fragment.encode(MariaTypes.varchar.opt(), row.binLocation), Fragment.of(",\n`last_counted_at` = "), Fragment.encode(MariaTypes.datetime.opt(), row.lastCountedAt), Fragment.of(",\n`updated_at` = "), Fragment.encode(MariaTypes.datetime, row.updatedAt), Fragment.of("\nwhere `inventory_id` = "), Fragment.encode(InventoryId.mariaType, inventoryId), Fragment.of("")).update().run(c) > 0
   }
 
   override fun upsert(
     unsaved: InventoryRow,
     c: Connection
-  ): InventoryRow = Fragment.interpolate(Fragment.lit("INSERT INTO `inventory`(`inventory_id`, `product_id`, `warehouse_id`, `quantity_on_hand`, `quantity_reserved`, `quantity_on_order`, `reorder_point`, `reorder_quantity`, `bin_location`, `last_counted_at`, `updated_at`)\nVALUES ("), Fragment.encode(InventoryId.mariaType, unsaved.inventoryId), Fragment.lit(", "), Fragment.encode(ProductsId.mariaType, unsaved.productId), Fragment.lit(", "), Fragment.encode(WarehousesId.mariaType, unsaved.warehouseId), Fragment.lit(", "), Fragment.encode(KotlinDbTypes.MariaTypes.int_, unsaved.quantityOnHand), Fragment.lit(", "), Fragment.encode(KotlinDbTypes.MariaTypes.int_, unsaved.quantityReserved), Fragment.lit(", "), Fragment.encode(KotlinDbTypes.MariaTypes.int_, unsaved.quantityOnOrder), Fragment.lit(", "), Fragment.encode(KotlinDbTypes.MariaTypes.int_, unsaved.reorderPoint), Fragment.lit(", "), Fragment.encode(KotlinDbTypes.MariaTypes.int_, unsaved.reorderQuantity), Fragment.lit(", "), Fragment.encode(MariaTypes.varchar.nullable(), unsaved.binLocation), Fragment.lit(", "), Fragment.encode(MariaTypes.datetime.nullable(), unsaved.lastCountedAt), Fragment.lit(", "), Fragment.encode(MariaTypes.datetime, unsaved.updatedAt), Fragment.lit(")\nON DUPLICATE KEY UPDATE `product_id` = VALUES(`product_id`),\n`warehouse_id` = VALUES(`warehouse_id`),\n`quantity_on_hand` = VALUES(`quantity_on_hand`),\n`quantity_reserved` = VALUES(`quantity_reserved`),\n`quantity_on_order` = VALUES(`quantity_on_order`),\n`reorder_point` = VALUES(`reorder_point`),\n`reorder_quantity` = VALUES(`reorder_quantity`),\n`bin_location` = VALUES(`bin_location`),\n`last_counted_at` = VALUES(`last_counted_at`),\n`updated_at` = VALUES(`updated_at`)\nRETURNING `inventory_id`, `product_id`, `warehouse_id`, `quantity_on_hand`, `quantity_reserved`, `quantity_on_order`, `reorder_point`, `reorder_quantity`, `bin_location`, `last_counted_at`, `updated_at`"))
-    .updateReturning(InventoryRow._rowParser.exactlyOne())
-    .runUnchecked(c)
+  ): InventoryRow = Fragment.concat(Fragment.of("INSERT INTO `inventory`(`inventory_id`, `product_id`, `warehouse_id`, `quantity_on_hand`, `quantity_reserved`, `quantity_on_order`, `reorder_point`, `reorder_quantity`, `bin_location`, `last_counted_at`, `updated_at`)\nVALUES ("), Fragment.encode(InventoryId.mariaType, unsaved.inventoryId), Fragment.of(", "), Fragment.encode(ProductsId.mariaType, unsaved.productId), Fragment.of(", "), Fragment.encode(WarehousesId.mariaType, unsaved.warehouseId), Fragment.of(", "), Fragment.encode(MariaTypes.int_, unsaved.quantityOnHand), Fragment.of(", "), Fragment.encode(MariaTypes.int_, unsaved.quantityReserved), Fragment.of(", "), Fragment.encode(MariaTypes.int_, unsaved.quantityOnOrder), Fragment.of(", "), Fragment.encode(MariaTypes.int_, unsaved.reorderPoint), Fragment.of(", "), Fragment.encode(MariaTypes.int_, unsaved.reorderQuantity), Fragment.of(", "), Fragment.encode(MariaTypes.varchar.opt(), unsaved.binLocation), Fragment.of(", "), Fragment.encode(MariaTypes.datetime.opt(), unsaved.lastCountedAt), Fragment.of(", "), Fragment.encode(MariaTypes.datetime, unsaved.updatedAt), Fragment.of(")\nON DUPLICATE KEY UPDATE `product_id` = VALUES(`product_id`),\n`warehouse_id` = VALUES(`warehouse_id`),\n`quantity_on_hand` = VALUES(`quantity_on_hand`),\n`quantity_reserved` = VALUES(`quantity_reserved`),\n`quantity_on_order` = VALUES(`quantity_on_order`),\n`reorder_point` = VALUES(`reorder_point`),\n`reorder_quantity` = VALUES(`reorder_quantity`),\n`bin_location` = VALUES(`bin_location`),\n`last_counted_at` = VALUES(`last_counted_at`),\n`updated_at` = VALUES(`updated_at`)\nRETURNING `inventory_id`, `product_id`, `warehouse_id`, `quantity_on_hand`, `quantity_reserved`, `quantity_on_order`, `reorder_point`, `reorder_quantity`, `bin_location`, `last_counted_at`, `updated_at`"))
+    .updateReturning(InventoryRow.rowCodec.exactlyOne())
+    .run(c)
 
   override fun upsertBatch(
     unsaved: Iterator<InventoryRow>,
     c: Connection
-  ): List<InventoryRow> = Fragment.interpolate(Fragment.lit("INSERT INTO `inventory`(`inventory_id`, `product_id`, `warehouse_id`, `quantity_on_hand`, `quantity_reserved`, `quantity_on_order`, `reorder_point`, `reorder_quantity`, `bin_location`, `last_counted_at`, `updated_at`)\nVALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)\nON DUPLICATE KEY UPDATE `product_id` = VALUES(`product_id`),\n`warehouse_id` = VALUES(`warehouse_id`),\n`quantity_on_hand` = VALUES(`quantity_on_hand`),\n`quantity_reserved` = VALUES(`quantity_reserved`),\n`quantity_on_order` = VALUES(`quantity_on_order`),\n`reorder_point` = VALUES(`reorder_point`),\n`reorder_quantity` = VALUES(`reorder_quantity`),\n`bin_location` = VALUES(`bin_location`),\n`last_counted_at` = VALUES(`last_counted_at`),\n`updated_at` = VALUES(`updated_at`)\nRETURNING `inventory_id`, `product_id`, `warehouse_id`, `quantity_on_hand`, `quantity_reserved`, `quantity_on_order`, `reorder_point`, `reorder_quantity`, `bin_location`, `last_counted_at`, `updated_at`"))
-    .updateReturningEach(InventoryRow._rowParser, unsaved)
-  .runUnchecked(c)
+  ): List<InventoryRow> = Fragment.concat(Fragment.of("INSERT INTO `inventory`(`inventory_id`, `product_id`, `warehouse_id`, `quantity_on_hand`, `quantity_reserved`, `quantity_on_order`, `reorder_point`, `reorder_quantity`, `bin_location`, `last_counted_at`, `updated_at`)\nVALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)\nON DUPLICATE KEY UPDATE `product_id` = VALUES(`product_id`),\n`warehouse_id` = VALUES(`warehouse_id`),\n`quantity_on_hand` = VALUES(`quantity_on_hand`),\n`quantity_reserved` = VALUES(`quantity_reserved`),\n`quantity_on_order` = VALUES(`quantity_on_order`),\n`reorder_point` = VALUES(`reorder_point`),\n`reorder_quantity` = VALUES(`reorder_quantity`),\n`bin_location` = VALUES(`bin_location`),\n`last_counted_at` = VALUES(`last_counted_at`),\n`updated_at` = VALUES(`updated_at`)\nRETURNING `inventory_id`, `product_id`, `warehouse_id`, `quantity_on_hand`, `quantity_reserved`, `quantity_on_order`, `reorder_point`, `reorder_quantity`, `bin_location`, `last_counted_at`, `updated_at`"))
+    .updateReturningEach(InventoryRow.rowCodec, unsaved)
+  .run(c)
 }

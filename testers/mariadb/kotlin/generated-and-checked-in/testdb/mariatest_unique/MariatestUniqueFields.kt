@@ -5,41 +5,41 @@
  */
 package testdb.mariatest_unique
 
-import dev.typr.foundations.MariaTypes
-import dev.typr.foundations.RowParser
-import dev.typr.foundations.dsl.FieldsBase
-import dev.typr.foundations.dsl.Path
-import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.kotlin.RelationStructure
-import dev.typr.foundations.kotlin.SqlExpr
-import dev.typr.foundations.kotlin.SqlExpr.Field
-import dev.typr.foundations.kotlin.SqlExpr.IdField
-import dev.typr.foundations.kotlin.TupleExpr4
+import dev.typr.dsl.FieldsBase
+import dev.typr.dsl.Path
+import dev.typr.dsl.SqlExpr.FieldLike
+import dev.typr.dslkt.RelationStructure
+import dev.typr.dslkt.SqlExpr
+import dev.typr.dslkt.SqlExpr.Field
+import dev.typr.dslkt.SqlExpr.IdField
+import dev.typr.dslkt.TupleExpr4
+import dev.typr.foundations.RowCodec
+import dev.typr.foundationskt.MariaTypes
 import kotlin.collections.List
 import testdb.userdefined.Email
 
-data class MariatestUniqueFields(val _path: List<Path>) : TupleExpr4<MariatestUniqueId, /* user-picked */ Email, String, String>, RelationStructure<MariatestUniqueFields, MariatestUniqueRow>, FieldsBase<MariatestUniqueRow> {
+data class MariatestUniqueFields(val _path: List<Path>) : TupleExpr4<MariatestUniqueId, /* user-picked */ Email, kotlin.String, kotlin.String>, RelationStructure<MariatestUniqueFields, MariatestUniqueRow>, FieldsBase<MariatestUniqueRow> {
   override fun _1(): SqlExpr<MariatestUniqueId> = id()
 
   override fun _2(): SqlExpr</* user-picked */ Email> = email()
 
-  override fun _3(): SqlExpr<String> = code()
+  override fun _3(): SqlExpr<kotlin.String> = code()
 
-  override fun _4(): SqlExpr<String> = category()
+  override fun _4(): SqlExpr<kotlin.String> = category()
 
   override fun _path(): List<Path> = _path
 
-  fun category(): Field<String, MariatestUniqueRow> = Field<String, MariatestUniqueRow>(_path, "category", MariatestUniqueRow::category, null, null, { row, value -> row.copy(category = value) }, MariaTypes.varchar)
+  fun category(): Field<kotlin.String, MariatestUniqueRow> = Field<kotlin.String, MariatestUniqueRow>(_path, "category", MariatestUniqueRow::category, null, null, { row, value -> row.copy(category = value) }, MariaTypes.varchar.underlying)
 
-  fun code(): Field<String, MariatestUniqueRow> = Field<String, MariatestUniqueRow>(_path, "code", MariatestUniqueRow::code, null, null, { row, value -> row.copy(code = value) }, MariaTypes.varchar)
+  fun code(): Field<kotlin.String, MariatestUniqueRow> = Field<kotlin.String, MariatestUniqueRow>(_path, "code", MariatestUniqueRow::code, null, null, { row, value -> row.copy(code = value) }, MariaTypes.varchar.underlying)
 
   override fun columns(): List<FieldLike<*, MariatestUniqueRow>> = listOf(this.id().underlying, this.email().underlying, this.code().underlying, this.category().underlying)
 
-  fun email(): Field</* user-picked */ Email, MariatestUniqueRow> = Field</* user-picked */ Email, MariatestUniqueRow>(_path, "email", MariatestUniqueRow::email, null, null, { row, value -> row.copy(email = value) }, Email.mariaType)
+  fun email(): Field</* user-picked */ Email, MariatestUniqueRow> = Field</* user-picked */ Email, MariatestUniqueRow>(_path, "email", MariatestUniqueRow::email, null, null, { row, value -> row.copy(email = value) }, Email.mariaType.underlying)
 
-  fun id(): IdField<MariatestUniqueId, MariatestUniqueRow> = IdField<MariatestUniqueId, MariatestUniqueRow>(_path, "id", MariatestUniqueRow::id, null, null, { row, value -> row.copy(id = value) }, MariatestUniqueId.mariaType)
+  fun id(): IdField<MariatestUniqueId, MariatestUniqueRow> = IdField<MariatestUniqueId, MariatestUniqueRow>(_path, "id", MariatestUniqueRow::id, null, null, { row, value -> row.copy(id = value) }, MariatestUniqueId.mariaType.underlying)
 
-  override fun rowParser(): RowParser<MariatestUniqueRow> = MariatestUniqueRow._rowParser.underlying
+  override fun rowCodec(): RowCodec<MariatestUniqueRow> = MariatestUniqueRow.rowCodec.underlying
 
   override fun withPaths(_path: List<Path>): RelationStructure<MariatestUniqueFields, MariatestUniqueRow> = MariatestUniqueFields(_path)
 

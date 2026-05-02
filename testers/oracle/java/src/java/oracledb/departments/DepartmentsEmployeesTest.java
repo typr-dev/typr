@@ -80,11 +80,11 @@ public class DepartmentsEmployeesTest {
               new DepartmentsRow("FINANCE", "CENTRAL", "Finance", Optional.empty()), c);
 
           // Select multiple by composite IDs
-          DepartmentsId[] ids = {
-            new DepartmentsId("SALES", "NORTH"),
-            new DepartmentsId("SALES", "SOUTH"),
-            new DepartmentsId("NONEXISTENT", "NONE")
-          };
+          List<DepartmentsId> ids =
+              List.of(
+                  new DepartmentsId("SALES", "NORTH"),
+                  new DepartmentsId("SALES", "SOUTH"),
+                  new DepartmentsId("NONEXISTENT", "NONE"));
           List<DepartmentsRow> found = departmentsRepo.selectByIds(ids, c);
 
           assertEquals(2, found.size());
@@ -108,11 +108,11 @@ public class DepartmentsEmployeesTest {
               new DepartmentsRow("DEV", "EAST", "Development East", Optional.empty()), c);
 
           // Select multiple by composite IDs with tracking
-          DepartmentsId[] ids = {
-            new DepartmentsId("DEV", "WEST"),
-            new DepartmentsId("DEV", "EAST"),
-            new DepartmentsId("MISSING", "NONE")
-          };
+          List<DepartmentsId> ids =
+              List.of(
+                  new DepartmentsId("DEV", "WEST"),
+                  new DepartmentsId("DEV", "EAST"),
+                  new DepartmentsId("MISSING", "NONE"));
           Map<DepartmentsId, DepartmentsRow> tracked = departmentsRepo.selectByIdsTracked(ids, c);
 
           assertEquals(2, tracked.size());
@@ -183,7 +183,8 @@ public class DepartmentsEmployeesTest {
           departmentsRepo.insert(new DepartmentsRow("DEL2", "R1", "Delete 3", Optional.empty()), c);
 
           // Delete multiple by composite IDs
-          DepartmentsId[] ids = {new DepartmentsId("DEL1", "R1"), new DepartmentsId("DEL1", "R2")};
+          List<DepartmentsId> ids =
+              List.of(new DepartmentsId("DEL1", "R1"), new DepartmentsId("DEL1", "R2"));
           Integer deletedCount = departmentsRepo.deleteByIds(ids, c);
 
           assertEquals(Integer.valueOf(2), deletedCount);

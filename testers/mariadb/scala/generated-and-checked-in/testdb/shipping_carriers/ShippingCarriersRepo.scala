@@ -5,17 +5,18 @@
  */
 package testdb.shipping_carriers
 
-import dev.typr.foundations.scala.DeleteBuilder
-import dev.typr.foundations.scala.SelectBuilder
-import dev.typr.foundations.scala.UpdateBuilder
-import java.sql.Connection
+import dev.typr.dslsc.DeleteBuilder
+import dev.typr.dslsc.SelectBuilder
+import dev.typr.dslsc.UpdateBuilder
+import dev.typr.foundationssc.Connection
+import dev.typr.foundationssc.ConnectionRead
 
 trait ShippingCarriersRepo {
   def delete: DeleteBuilder[ShippingCarriersFields, ShippingCarriersRow]
 
   def deleteById(carrierId: ShippingCarriersId)(using c: Connection): Boolean
 
-  def deleteByIds(carrierIds: Array[ShippingCarriersId])(using c: Connection): Int
+  def deleteByIds(carrierIds: List[ShippingCarriersId])(using c: Connection): Int
 
   def insert(unsaved: ShippingCarriersRow)(using c: Connection): ShippingCarriersRow
 
@@ -23,15 +24,15 @@ trait ShippingCarriersRepo {
 
   def select: SelectBuilder[ShippingCarriersFields, ShippingCarriersRow]
 
-  def selectAll(using c: Connection): List[ShippingCarriersRow]
+  def selectAll(using c: ConnectionRead): List[ShippingCarriersRow]
 
-  def selectById(carrierId: ShippingCarriersId)(using c: Connection): Option[ShippingCarriersRow]
+  def selectById(carrierId: ShippingCarriersId)(using c: ConnectionRead): Option[ShippingCarriersRow]
 
-  def selectByIds(carrierIds: Array[ShippingCarriersId])(using c: Connection): List[ShippingCarriersRow]
+  def selectByIds(carrierIds: List[ShippingCarriersId])(using c: ConnectionRead): List[ShippingCarriersRow]
 
-  def selectByIdsTracked(carrierIds: Array[ShippingCarriersId])(using c: Connection): Map[ShippingCarriersId, ShippingCarriersRow]
+  def selectByIdsTracked(carrierIds: List[ShippingCarriersId])(using c: ConnectionRead): Map[ShippingCarriersId, ShippingCarriersRow]
 
-  def selectByUniqueCode(code: String)(using c: Connection): Option[ShippingCarriersRow]
+  def selectByUniqueCode(code: String)(using c: ConnectionRead): Option[ShippingCarriersRow]
 
   def update: UpdateBuilder[ShippingCarriersFields, ShippingCarriersRow]
 

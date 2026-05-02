@@ -6,10 +6,9 @@
 package oracledb
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import dev.typr.foundations.OracleObject
-import dev.typr.foundations.OracleType
-import dev.typr.foundations.OracleTypes
-import dev.typr.foundations.scala.ScalaDbTypes
+import dev.typr.foundationssc.OracleType
+import dev.typr.foundationssc.OracleTypes
+import dev.typr.foundationssc.RowCodec
 
 /** Oracle Object Type: MONEY_T */
 case class MoneyT(
@@ -18,5 +17,5 @@ case class MoneyT(
 )
 
 object MoneyT {
-  val oracleType: OracleType[MoneyT] = OracleObject.builder[MoneyT]("MONEY_T").addAttribute("AMOUNT", ScalaDbTypes.OracleTypes.number, _.amount).addAttribute("CURRENCY", OracleTypes.char_, _.currency).build(attrs => new MoneyT(attrs(0).asInstanceOf[BigDecimal], attrs(1).asInstanceOf[String])).asType()
+  val oracleType: OracleType[MoneyT] = OracleTypes.compositeOf("MONEY_T", RowCodec.namedBuilder[MoneyT]().field("AMOUNT", OracleTypes.number)(_.amount).field("CURRENCY", OracleTypes.char_)(_.currency).build((t0, t1) => MoneyT(amount = t0, currency = t1)))
 }

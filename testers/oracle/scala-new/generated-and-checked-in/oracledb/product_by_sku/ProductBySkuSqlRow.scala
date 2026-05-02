@@ -6,11 +6,10 @@
 package oracledb.product_by_sku
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import dev.typr.foundations.OracleTypes
+import dev.typr.dslsc.RowCodecs
 import dev.typr.foundations.Tuple.Tuple5
-import dev.typr.foundations.scala.DbTypeOps
-import dev.typr.foundations.scala.RowParser
-import dev.typr.foundations.scala.RowParsers
+import dev.typr.foundationssc.OracleTypes
+import dev.typr.foundationssc.RowCodec
 import oracledb.MoneyT
 import oracledb.TagVarrayT
 import oracledb.products.ProductsId
@@ -40,5 +39,5 @@ case class ProductBySkuSqlRow(
 }
 
 object ProductBySkuSqlRow {
-  val `_rowParser`: RowParser[ProductBySkuSqlRow] = RowParsers.of(ProductsId.oracleType, OracleTypes.varchar2, OracleTypes.varchar2, MoneyT.oracleType, TagVarrayT.oracleType.nullable)(ProductBySkuSqlRow.apply)(row => Array[Any](row.productId, row.sku, row.name, row.price, row.tags))
+  val rowCodec: RowCodec[ProductBySkuSqlRow] = RowCodecs.of(ProductsId.oracleType, OracleTypes.varchar2, OracleTypes.varchar2, MoneyT.oracleType, TagVarrayT.oracleType.opt)(ProductBySkuSqlRow.apply)(row => Array[Any](row.productId, row.sku, row.name, row.price, row.tags))
 }

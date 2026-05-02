@@ -22,7 +22,7 @@ Typr is a database code generator that creates type-safe JVM code from database 
 
 ## Build System
 
-This project uses **Bleep** (https://bleep.build/) as the primary build tool. Kotlin modules are also buildable with Gradle.
+This project uses **Bleep** (https://bleep.build/) as the build tool.
 
 ### Common Bleep Commands
 ```bash
@@ -38,35 +38,25 @@ bleep fmt
 # Regenerate tuples, rowparsers and so on. runs bleep sourcegen scripts
 bleep sourcegen
 
-# Code generation scripts
-bleep generate-postgres          # PostgreSQL AdventureWorks + Showcase schemas
-bleep generate-mariadb           # MariaDB test + Showcase schemas
-bleep generate-duckdb            # DuckDB test + Showcase schemas
-bleep generate-oracle            # Oracle test + Showcase schemas
-bleep generate-sqlserver         # SQL Server test + Showcase schemas
-bleep generate-openapi-test      # OpenAPI code generation
-bleep generate-sources           # Typr's internal generated code
-
-# Run all generators in parallel. much faster
-bleep generate-all               
+# Typr's internal generated code
+bleep generate-sources
 
 # Documentation
 bleep generate-docs              # Generate documentation with mdoc
 ```
 
-### Gradle for Kotlin
-Kotlin modules have Gradle build files for IDE support and alternative building:
+### Typr CLI for Code Generation
+Database code generation is done via the **typr CLI** instead of bleep scripts:
+
 ```bash
-./gradlew :testers:pg:kotlin:build
-./gradlew :foundations-jdbc-dsl-kotlin:build
+# Generate code (reads typr.yaml config)
+bleep run typr generate <outputs>
 ```
 
-The Gradle project includes:
-- `foundations-jdbc` - Java runtime module
-- `foundations-jdbc-dsl` - Java DSL module
-- `foundations-jdbc-dsl-kotlin` - Kotlin DSL module
-- All Kotlin testers (`testers:pg:kotlin`, `testers:mariadb:kotlin`, etc.)
-- OpenAPI Kotlin testers (`testers:openapi:kotlin:jaxrs`, `spring`, `quarkus`)
+The CLI reads configuration from `typr.yaml` and generates type-safe code for:
+- Tables, views, and custom SQL queries
+- Type overrides (scalar types, composite types)
+- Selected schemas and tables
 
 ## Tester Project Layout
 
@@ -84,8 +74,7 @@ testers/{database}/{language}/
 ├── src/                          # Manually written test code
 │   └── {lang}/                   # java/, kotlin/, or scala/
 │       └── {package}/            # Test files (e.g., *Test.java, *Test.scala)
-├── build.gradle.kts              # Kotlin testers only - Gradle build file
-└── gradle.properties             # Kotlin testers only - Gradle properties
+└── ...
 ```
 
 ### Scala Cross-Compilation
@@ -106,7 +95,6 @@ testers/pg/scala/anorm/
 **Kotlin tester** (`testers/pg/kotlin/`):
 - `generated-and-checked-in/` - Generated Kotlin code
 - `src/kotlin/` - Test files
-- `build.gradle.kts` - Gradle build configuration
 
 **Scala Anorm tester** (`testers/pg/scala/anorm/`):
 - `generated-and-checked-in-2.13/` - Scala 2.13 variant
@@ -115,16 +103,16 @@ testers/pg/scala/anorm/
 
 ### Generation Variants
 
-The `GeneratedPostgres.scala` script generates multiple variants:
-- Scala 2.13 + Anorm + PlayJson
-- Scala 3 + Anorm + PlayJson
-- Scala 2.13 + Doobie + Circe
-- Scala 3 + Doobie + Circe
-- Scala 2.13 + ZIO-JDBC + ZioJson
-- Scala 3 + ZIO-JDBC + ZioJson
-- Java + Typo DSL + Jackson
-- Scala 3 with Java types + Typo DSL + Jackson
-- Scala 3 with Scala types + Typo DSL + Jackson
+The typr CLI supports generating code for multiple combinations:
+- Scala 2.13 + Anorm + PlayJson (PostgreSQL only)
+- Scala 3 + Anorm + PlayJson (PostgreSQL only)
+- Scala 2.13 + Doobie + Circe (PostgreSQL only)
+- Scala 3 + Doobie + Circe (PostgreSQL only)
+- Scala 2.13 + ZIO-JDBC + ZioJson (PostgreSQL only)
+- Scala 3 + ZIO-JDBC + ZioJson (PostgreSQL only)
+- Java + Typo DSL + Jackson (all databases)
+- Kotlin + Typo DSL + Jackson (all databases)
+- Scala 3 + Typo DSL + Jackson (all databases)
 
 ## Docker-Compose Database Setup
 
@@ -167,7 +155,7 @@ docker-compose down
 docker-compose up -d
 
 # 4. Regenerate code
-bleep generate-postgres
+bleep run typr generate <outputs>
 ```
 
 **MariaDB schema changes:**
@@ -178,7 +166,7 @@ docker-compose down
 docker-compose up -d
 
 # 3. Regenerate code
-bleep generate-mariadb
+bleep run typr generate <outputs>
 ```
 
 **Oracle schema changes:**
@@ -193,15 +181,15 @@ docker-compose up -d
 docker-compose logs -f oracle
 
 # 4. Regenerate code
-bleep generate-oracle
+bleep run typr generate <outputs>
 ```
 
 **Complete reset (all databases):**
 ```bash
 docker-compose down -v    # -v removes volumes
 docker-compose up -d
-# Wait for all databases to initialize
-bleep generate-all
+# Wait for all databases to initialize, then regenerate
+bleep run typr generate <outputs>
 ```
 
 ### Persistent Volumes
@@ -314,7 +302,7 @@ typr/                              # Main code generator
 testers/                           # Integration test projects
 ├── pg/                            # PostgreSQL testers
 │   ├── java/                      # Java tester
-│   ├── kotlin/                    # Kotlin tester (Gradle buildable)
+│   ├── kotlin/                    # Kotlin tester
 │   └── scala/                     # Scala testers (anorm, doobie, zio-jdbc, scalatypes, javatypes)
 ├── mariadb/                       # MariaDB testers (java, kotlin, scala)
 ├── duckdb/                        # DuckDB testers (java, kotlin, scala)
@@ -333,14 +321,10 @@ typr-dsl-anorm/                    # [LEGACY] Anorm-specific DSL (Scala, Postgre
 typr-dsl-doobie/                   # [LEGACY] Doobie-specific DSL (Scala, PostgreSQL only)
 typr-dsl-zio-jdbc/                 # [LEGACY] ZIO-JDBC-specific DSL (Scala, PostgreSQL only)
 
-typr-scripts/                      # Generation scripts
-├── GeneratedPostgres.scala        # PostgreSQL generation
-├── GeneratedMariaDb.scala         # MariaDB generation
-├── GeneratedDuckDb.scala          # DuckDB generation
-├── GeneratedOracle.scala          # Oracle generation
-├── GeneratedSqlServer.scala       # SQL Server generation
-├── GenerateOpenApiTest.scala      # OpenAPI generation
-├── GenerateAll.scala              # Run all generators
+typr-scripts/                      # Build and publishing scripts
+├── GeneratedSources.scala         # Typr's internal generated code
+├── PublishLocal.scala             # Local publishing
+├── Publish.scala                  # Release publishing
 └── ...
 
 sql-init/                          # Schema files (mounted to Docker)
@@ -442,7 +426,7 @@ WHERE p.productcategory = :category_id:myapp.production.productcategory.Productc
 1. **Create Test Case**: Add SQL file in `sql-init/postgres/issueNNN.sql` (or appropriate database folder)
 2. **Update Install Script**: Add to `sql-init/postgres/00-install.sh` for PostgreSQL
 3. **Restart Database**: `docker-compose down && docker-compose up -d`
-4. **Generate Code**: Run appropriate generator (e.g., `bleep generate-postgres`)
+4. **Generate Code**: Run `bleep run typr generate <outputs>`
 5. **Trace Issue**: Examine generated code
 6. **Commit Test Setup**: Commit before making changes
 7. **Implement Fix**: Make code changes
@@ -462,8 +446,6 @@ bleep test testers/mariadb/scala
 # Run a specific test class within a project
 bleep test foundations-jdbc-test --only DuckDbTypeTest
 
-# Kotlin tests via Gradle
-./gradlew :testers:pg:kotlin:test
 ```
 
 ## Documentation
@@ -477,8 +459,6 @@ cd site && npm install && npm run build
 ## Key Files
 
 - `bleep.yaml` - Main build configuration (all projects, scripts, templates)
-- `build.gradle.kts` - Root Gradle config for Kotlin modules
-- `settings.gradle.kts` - Gradle project structure
 - `docker-compose.yml` - Database infrastructure (PostgreSQL, MariaDB, Oracle, SQL Server, DB2)
 - `sql-init/postgres/00-install.sh` - PostgreSQL initialization script
 
@@ -486,7 +466,7 @@ cd site && npm install && npm run build
 
 ### Common Issues
 - **Database Connection**: Ensure Docker containers are running
-- **Kotlin Compilation**: Use Gradle for Kotlin modules if Bleep has issues
+- **Kotlin Compilation**: Check bleep.yaml for Kotlin project definitions
 - **Generated Code Errors**: Re-run appropriate generator after schema changes
 - **Oracle slow to start**: Wait 1-2 minutes, check `docker-compose logs -f oracle`
 - **Stale data**: Remove volumes with `docker-compose down -v`
@@ -517,7 +497,7 @@ docker-compose logs -f oracle
 
 ### Code Generation Philosophy
 - Never generate code that relies on derivation - we are the deriver
-- Run appropriate generator (e.g., `bleep generate-postgres`) before testing to see codegen effects
+- Run `bleep run typr generate <outputs>` before testing to see codegen effects
 
 ### Development Rules
 - Always run `bleep fmt` and `bleep test`  before commiting
@@ -534,3 +514,4 @@ docker-compose logs -f oracle
 - when restarting a database container always restart only the one you want to restart. it takes ages to start all
 - UNDER NO CIRCUMSTANCE, EVER. FUCKING EVER. WILL CLAUDE GIVE UP AND REVERT ALL THE FILES
 - NEVER HIDE PROBLEMS BY WORKING AROUND THEM. When you discover an issue (e.g., serialization doesn't work, types don't match, framework integration fails), IMMEDIATELY TELL THE USER. Do not quietly work around it with simpler/different code and pretend everything is fine. Tests exist to find these problems - report them, don't hide them.
+- **DO NOT COMPARE WITH "PRE-EXISTING" STATE.** When there are compilation errors or test failures, FIX THEM. Do not check if they existed before your changes, do not stash and compare with HEAD, do not say "these are pre-existing errors". The branch has many commits and may have just been rebased - "pre-existing" is meaningless. If it doesn't compile, fix it.

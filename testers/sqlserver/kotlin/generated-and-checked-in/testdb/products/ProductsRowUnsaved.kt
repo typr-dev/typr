@@ -9,9 +9,9 @@ import java.math.BigDecimal
 
 /** This class corresponds to a row in table `products` which has not been persisted yet */
 data class ProductsRowUnsaved(
-  val name: String,
+  val name: kotlin.String,
   val price: BigDecimal,
-  val description: String? = null
+  val description: kotlin.String? = null
 ) {
   fun toRow(productIdDefault: () -> ProductsId): ProductsRow = ProductsRow(productId = productIdDefault(), name = name, price = price, description = description)
 }

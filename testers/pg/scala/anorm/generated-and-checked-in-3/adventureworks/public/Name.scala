@@ -24,7 +24,7 @@ object Name {
 
   given arrayToStatement: ToStatement[Array[Name]] = ToStatement.arrayToParameter(using ParameterMetaData.StringParameterMetaData).contramap(_.map(_.value))
 
-  given bijection: Bijection[Name, String] = Bijection.apply[Name, String](_.value)(Name.apply)
+  given bijection: Bijection[Name, String] = Bijection[Name, String](_.value)(Name.apply)
 
   given column: Column[Name] = Column.columnToString.map(Name.apply)
 

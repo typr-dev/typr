@@ -27,7 +27,7 @@ object OrderNumber {
 
   given arraySetter: Setter[Array[OrderNumber]] = adventureworks.StringArraySetter.contramap(_.map(_.value))
 
-  given bijection: Bijection[OrderNumber, String] = Bijection.apply[OrderNumber, String](_.value)(OrderNumber.apply)
+  given bijection: Bijection[OrderNumber, String] = Bijection[OrderNumber, String](_.value)(OrderNumber.apply)
 
   given jdbcDecoder: JdbcDecoder[OrderNumber] = JdbcDecoder.stringDecoder.map(OrderNumber.apply)
 

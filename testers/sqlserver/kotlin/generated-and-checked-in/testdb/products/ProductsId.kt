@@ -6,9 +6,9 @@
 package testdb.products
 
 import com.fasterxml.jackson.annotation.JsonValue
-import dev.typr.foundations.SqlServerType
-import dev.typr.foundations.kotlin.Bijection
-import dev.typr.foundations.kotlin.KotlinDbTypes
+import dev.typr.foundationskt.Bijection
+import dev.typr.foundationskt.SqlServerType
+import dev.typr.foundationskt.SqlServerTypes
 
 /** Type for the primary key of table `products` */
 data class ProductsId(@field:JsonValue val value: Int) {
@@ -21,6 +21,6 @@ data class ProductsId(@field:JsonValue val value: Int) {
       Bijection.of(ProductsId::value, ::ProductsId)
 
     val sqlServerType: SqlServerType<ProductsId> =
-      KotlinDbTypes.SqlServerTypes.int_.bimap(::ProductsId, ProductsId::value)
+      SqlServerTypes.int_.to(Bijection.of(::ProductsId, ProductsId::value))
   }
 }

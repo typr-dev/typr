@@ -2,8 +2,8 @@ package testdb;
 
 import static org.junit.Assert.*;
 
-import dev.typr.foundations.dsl.Bijection;
-import dev.typr.foundations.dsl.MockConnection;
+import dev.typr.dsl.MockConnection;
+import dev.typr.foundations.Bijection;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Optional;

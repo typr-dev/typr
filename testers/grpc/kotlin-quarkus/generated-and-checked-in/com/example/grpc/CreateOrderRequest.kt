@@ -28,6 +28,20 @@ data class CreateOrderRequest(val order: Order?) {
   }
 
   companion object {
+    @Throws(IOException::class)
+    fun parseFrom(input: CodedInputStream): CreateOrderRequest {
+      var order: Order? = null
+      while (!input.isAtEnd()) {
+        val tag = input.readTag()
+        if (WireFormat.getTagFieldNumber(tag) == 1) { val _length = input.readRawVarint32();
+        val _oldLimit = input.pushLimit(_length);
+        order = Order.parseFrom(input);
+        input.popLimit(_oldLimit); }
+        else { input.skipField(tag) }
+      }
+      return CreateOrderRequest(order)
+    }
+
     val MARSHALLER: Marshaller<CreateOrderRequest> =
       object : Marshaller<CreateOrderRequest> {
         override fun stream(value: CreateOrderRequest): InputStream {
@@ -49,19 +63,5 @@ data class CreateOrderRequest(val order: Order?) {
           } 
         }
       }
-
-    @Throws(IOException::class)
-    fun parseFrom(input: CodedInputStream): CreateOrderRequest {
-      var order: Order? = null
-      while (!input.isAtEnd()) {
-        val tag = input.readTag()
-        if (WireFormat.getTagFieldNumber(tag) == 1) { val _length = input.readRawVarint32();
-        val _oldLimit = input.pushLimit(_length);
-        order = Order.parseFrom(input);
-        input.popLimit(_oldLimit); }
-        else { input.skipField(tag) }
-      }
-      return CreateOrderRequest(order)
-    }
   }
 }

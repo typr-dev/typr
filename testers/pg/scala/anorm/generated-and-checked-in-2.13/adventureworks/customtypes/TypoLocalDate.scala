@@ -39,7 +39,7 @@ object TypoLocalDate {
 
   implicit lazy val arrayToStatement: ToStatement[Array[TypoLocalDate]] = ToStatement[Array[TypoLocalDate]]((s, index, v) => s.setArray(index, s.getConnection.createArrayOf("date", v.map(v => v.value.toString()))))
 
-  implicit lazy val bijection: Bijection[TypoLocalDate, LocalDate] = Bijection.apply[TypoLocalDate, LocalDate](_.value)(TypoLocalDate.apply)
+  implicit lazy val bijection: Bijection[TypoLocalDate, LocalDate] = Bijection[TypoLocalDate, LocalDate](_.value)(TypoLocalDate.apply)
 
   implicit lazy val column: Column[TypoLocalDate] = {
     Column.nonNull[TypoLocalDate]((v1: Any, _) =>

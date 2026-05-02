@@ -5,17 +5,18 @@
  */
 package testdb.db2test_unique
 
-import dev.typr.foundations.scala.DeleteBuilder
-import dev.typr.foundations.scala.SelectBuilder
-import dev.typr.foundations.scala.UpdateBuilder
-import java.sql.Connection
+import dev.typr.dslsc.DeleteBuilder
+import dev.typr.dslsc.SelectBuilder
+import dev.typr.dslsc.UpdateBuilder
+import dev.typr.foundationssc.Connection
+import dev.typr.foundationssc.ConnectionRead
 
 trait Db2testUniqueRepo {
   def delete: DeleteBuilder[Db2testUniqueFields, Db2testUniqueRow]
 
   def deleteById(id: Db2testUniqueId)(using c: Connection): Boolean
 
-  def deleteByIds(ids: Array[Db2testUniqueId])(using c: Connection): Int
+  def deleteByIds(ids: List[Db2testUniqueId])(using c: Connection): Int
 
   def insert(unsaved: Db2testUniqueRow)(using c: Connection): Db2testUniqueRow
 
@@ -23,20 +24,20 @@ trait Db2testUniqueRepo {
 
   def select: SelectBuilder[Db2testUniqueFields, Db2testUniqueRow]
 
-  def selectAll(using c: Connection): List[Db2testUniqueRow]
+  def selectAll(using c: ConnectionRead): List[Db2testUniqueRow]
 
-  def selectById(id: Db2testUniqueId)(using c: Connection): Option[Db2testUniqueRow]
+  def selectById(id: Db2testUniqueId)(using c: ConnectionRead): Option[Db2testUniqueRow]
 
-  def selectByIds(ids: Array[Db2testUniqueId])(using c: Connection): List[Db2testUniqueRow]
+  def selectByIds(ids: List[Db2testUniqueId])(using c: ConnectionRead): List[Db2testUniqueRow]
 
-  def selectByIdsTracked(ids: Array[Db2testUniqueId])(using c: Connection): Map[Db2testUniqueId, Db2testUniqueRow]
+  def selectByIdsTracked(ids: List[Db2testUniqueId])(using c: ConnectionRead): Map[Db2testUniqueId, Db2testUniqueRow]
 
   def selectByUniqueCodeAndCategory(
     code: String,
     category: String
-  )(using c: Connection): Option[Db2testUniqueRow]
+  )(using c: ConnectionRead): Option[Db2testUniqueRow]
 
-  def selectByUniqueEmail(email: String)(using c: Connection): Option[Db2testUniqueRow]
+  def selectByUniqueEmail(email: String)(using c: ConnectionRead): Option[Db2testUniqueRow]
 
   def update: UpdateBuilder[Db2testUniqueFields, Db2testUniqueRow]
 

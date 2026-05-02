@@ -6,11 +6,10 @@
 package testdb.mariatest_spatial_null
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import dev.typr.foundations.MariaTypes
+import dev.typr.dslsc.RowCodecs
 import dev.typr.foundations.Tuple.Tuple9
-import dev.typr.foundations.scala.DbTypeOps
-import dev.typr.foundations.scala.RowParser
-import dev.typr.foundations.scala.RowParsers
+import dev.typr.foundationssc.MariaTypes
+import dev.typr.foundationssc.RowCodec
 import org.mariadb.jdbc.`type`.Geometry
 import org.mariadb.jdbc.`type`.GeometryCollection
 import org.mariadb.jdbc.`type`.LineString
@@ -104,5 +103,5 @@ case class MariatestSpatialNullRow(
 }
 
 object MariatestSpatialNullRow {
-  val `_rowParser`: RowParser[MariatestSpatialNullRow] = RowParsers.of(MariatestSpatialNullId.mariaType, MariaTypes.geometry.nullable, MariaTypes.point.nullable, MariaTypes.linestring.nullable, MariaTypes.polygon.nullable, MariaTypes.multipoint.nullable, MariaTypes.multilinestring.nullable, MariaTypes.multipolygon.nullable, MariaTypes.geometrycollection.nullable)(MariatestSpatialNullRow.apply)(row => Array[Any](row.id, row.geometryCol, row.pointCol, row.linestringCol, row.polygonCol, row.multipointCol, row.multilinestringCol, row.multipolygonCol, row.geometrycollectionCol))
+  val rowCodec: RowCodec[MariatestSpatialNullRow] = RowCodecs.of(MariatestSpatialNullId.mariaType, MariaTypes.geometry.opt, MariaTypes.point.opt, MariaTypes.linestring.opt, MariaTypes.polygon.opt, MariaTypes.multipoint.opt, MariaTypes.multilinestring.opt, MariaTypes.multipolygon.opt, MariaTypes.geometrycollection.opt)(MariatestSpatialNullRow.apply)(row => Array[Any](row.id, row.geometryCol, row.pointCol, row.linestringCol, row.polygonCol, row.multipointCol, row.multilinestringCol, row.multipolygonCol, row.geometrycollectionCol))
 }

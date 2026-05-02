@@ -24,7 +24,7 @@ object UnitmeasureId {
 
   given arraySetter: Setter[Array[UnitmeasureId]] = adventureworks.StringArraySetter.contramap(_.map(_.value))
 
-  given bijection: Bijection[UnitmeasureId, String] = Bijection.apply[UnitmeasureId, String](_.value)(UnitmeasureId.apply)
+  given bijection: Bijection[UnitmeasureId, String] = Bijection[UnitmeasureId, String](_.value)(UnitmeasureId.apply)
 
   given jdbcDecoder: JdbcDecoder[UnitmeasureId] = JdbcDecoder.stringDecoder.map(UnitmeasureId.apply)
 

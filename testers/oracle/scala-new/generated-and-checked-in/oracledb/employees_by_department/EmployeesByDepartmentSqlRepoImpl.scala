@@ -5,16 +5,16 @@
  */
 package oracledb.employees_by_department
 
-import dev.typr.foundations.OracleTypes
-import dev.typr.foundations.scala.Fragment
-import java.sql.Connection
-import dev.typr.foundations.scala.Fragment.sql
+import dev.typr.foundationssc.ConnectionRead
+import dev.typr.foundationssc.Fragment
+import dev.typr.foundationssc.OracleTypes
+import dev.typr.foundationssc.Fragment.sql
 
 class EmployeesByDepartmentSqlRepoImpl extends EmployeesByDepartmentSqlRepo {
   override def apply(
     deptCode: String,
     deptRegion: String
-  )(using c: Connection): List[EmployeesByDepartmentSqlRow] = {
+  )(using c: ConnectionRead): List[EmployeesByDepartmentSqlRow] = {
     sql"""-- Get employees in a department
     SELECT
         e.emp_number,
@@ -29,6 +29,6 @@ class EmployeesByDepartmentSqlRepoImpl extends EmployeesByDepartmentSqlRepo {
     WHERE e.dept_code = ${Fragment.encode(OracleTypes.varchar2, deptCode)}
       AND e.dept_region = ${Fragment.encode(OracleTypes.varchar2, deptRegion)}
     ORDER BY e.emp_name
-    """.query(EmployeesByDepartmentSqlRow.`_rowParser`.all()).runUnchecked(c)
+    """.query(EmployeesByDepartmentSqlRow.rowCodec.all()).run(using c)
   }
 }

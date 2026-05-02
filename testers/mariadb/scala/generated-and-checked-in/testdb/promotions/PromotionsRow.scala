@@ -6,15 +6,13 @@
 package testdb.promotions
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import dev.typr.foundations.MariaTypes
+import dev.typr.dslsc.RowCodecs
 import dev.typr.foundations.Tuple.Tuple16
 import dev.typr.foundations.data.Json
 import dev.typr.foundations.data.Uint1
 import dev.typr.foundations.data.Uint4
-import dev.typr.foundations.scala.DbTypeOps
-import dev.typr.foundations.scala.RowParser
-import dev.typr.foundations.scala.RowParsers
-import dev.typr.foundations.scala.ScalaDbTypes
+import dev.typr.foundationssc.MariaTypes
+import dev.typr.foundationssc.RowCodec
 import java.time.LocalDateTime
 import testdb.AllBrandsCategoriesCSet
 import testdb.customtypes.Defaulted
@@ -143,5 +141,5 @@ case class PromotionsRow(
 }
 
 object PromotionsRow {
-  val `_rowParser`: RowParser[PromotionsRow] = RowParsers.of(PromotionsId.mariaType, MariaTypes.varchar, MariaTypes.varchar, MariaTypes.text.nullable, MariaTypes.text, ScalaDbTypes.MariaTypes.numeric, ScalaDbTypes.MariaTypes.numeric.nullable, MariaTypes.intUnsigned.nullable, MariaTypes.intUnsigned, MariaTypes.tinyintUnsigned.nullable, AllBrandsCategoriesCSet.mariaType.nullable, MariaTypes.json.nullable, MariaTypes.datetime, MariaTypes.datetime, IsActive.mariaType, MariaTypes.datetime)(PromotionsRow.apply)(row => Array[Any](row.promotionId, row.code, row.name, row.description, row.discountType, row.discountValue, row.minOrderAmount, row.maxUses, row.usesCount, row.maxUsesPerCustomer, row.applicableTo, row.rulesJson, row.validFrom, row.validTo, row.isActive, row.createdAt))
+  val rowCodec: RowCodec[PromotionsRow] = RowCodecs.of(PromotionsId.mariaType, MariaTypes.varchar, MariaTypes.varchar, MariaTypes.text.opt, MariaTypes.text, MariaTypes.numeric, MariaTypes.numeric.opt, MariaTypes.intUnsigned.opt, MariaTypes.intUnsigned, MariaTypes.tinyintUnsigned.opt, AllBrandsCategoriesCSet.mariaType.opt, MariaTypes.json.opt, MariaTypes.datetime, MariaTypes.datetime, IsActive.mariaType, MariaTypes.datetime)(PromotionsRow.apply)(row => Array[Any](row.promotionId, row.code, row.name, row.description, row.discountType, row.discountValue, row.minOrderAmount, row.maxUses, row.usesCount, row.maxUsesPerCustomer, row.applicableTo, row.rulesJson, row.validFrom, row.validTo, row.isActive, row.createdAt))
 }

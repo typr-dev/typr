@@ -23,7 +23,7 @@ object Mydomain {
 
   implicit lazy val arrayPut: Put[Array[Mydomain]] = adventureworks.StringArrayMeta.put.contramap(_.map(_.value))
 
-  implicit lazy val bijection: Bijection[Mydomain, String] = Bijection.apply[Mydomain, String](_.value)(Mydomain.apply)
+  implicit lazy val bijection: Bijection[Mydomain, String] = Bijection[Mydomain, String](_.value)(Mydomain.apply)
 
   implicit lazy val decoder: Decoder[Mydomain] = Decoder.decodeString.map(Mydomain.apply)
 

@@ -5,56 +5,55 @@
  */
 package testdb.nullability_test
 
-import dev.typr.foundations.Db2Types
-import dev.typr.foundations.scala.DbTypeOps
-import dev.typr.foundations.scala.DeleteBuilder
-import dev.typr.foundations.scala.Dialect
-import dev.typr.foundations.scala.Fragment
-import dev.typr.foundations.scala.ScalaDbTypes
-import dev.typr.foundations.scala.SelectBuilder
-import dev.typr.foundations.scala.UpdateBuilder
-import java.sql.Connection
+import dev.typr.dslsc.DeleteBuilder
+import dev.typr.dslsc.Dialect
+import dev.typr.dslsc.SelectBuilder
+import dev.typr.dslsc.UpdateBuilder
+import dev.typr.foundationssc.Connection
+import dev.typr.foundationssc.ConnectionRead
+import dev.typr.foundationssc.Db2Types
+import dev.typr.foundationssc.Fragment
 import scala.collection.mutable.ListBuffer
-import dev.typr.foundations.scala.Fragment.sql
+import dev.typr.foundationssc.Fragment.sql
 
 class NullabilityTestRepoImpl extends NullabilityTestRepo {
   override def delete: DeleteBuilder[NullabilityTestFields, NullabilityTestRow] = DeleteBuilder.of(""""NULLABILITY_TEST"""", NullabilityTestFields.structure, Dialect.DB2)
 
   override def insert(unsaved: NullabilityTestRow)(using c: Connection): NullabilityTestRow = {
   sql"""SELECT "ID", "REQUIRED_COL", "OPTIONAL_COL", "DEFAULTED_COL" FROM FINAL TABLE (INSERT INTO "NULLABILITY_TEST"("ID", "REQUIRED_COL", "OPTIONAL_COL", "DEFAULTED_COL")
-    VALUES (${Fragment.encode(ScalaDbTypes.Db2Types.integer, unsaved.id)}, ${Fragment.encode(Db2Types.varchar, unsaved.requiredCol)}, ${Fragment.encode(Db2Types.varchar.nullable, unsaved.optionalCol)}, ${Fragment.encode(Db2Types.varchar.nullable, unsaved.defaultedCol)}))
+    VALUES (${Fragment.encode(Db2Types.integer, unsaved.id)}, ${Fragment.encode(Db2Types.varchar, unsaved.requiredCol)}, ${Fragment.encode(Db2Types.varchar.opt, unsaved.optionalCol)}, ${Fragment.encode(Db2Types.varchar.opt, unsaved.defaultedCol)}))
     """
-    .updateReturning(NullabilityTestRow.`_rowParser`.exactlyOne()).runUnchecked(c)
+    .updateReturning(NullabilityTestRow.rowCodec.exactlyOne()).run(using c)
   }
 
   override def insert(unsaved: NullabilityTestRowUnsaved)(using c: Connection): NullabilityTestRow = {
     val columns: ListBuffer[Fragment] = ListBuffer()
     val values: ListBuffer[Fragment] = ListBuffer()
-    columns.addOne(Fragment.lit(""""ID"""")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(ScalaDbTypes.Db2Types.integer, unsaved.id)}"): @scala.annotation.nowarn
-    columns.addOne(Fragment.lit(""""REQUIRED_COL"""")): @scala.annotation.nowarn
+    columns.addOne(Fragment.of(""""ID"""")): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(Db2Types.integer, unsaved.id)}"): @scala.annotation.nowarn
+    columns.addOne(Fragment.of(""""REQUIRED_COL"""")): @scala.annotation.nowarn
     values.addOne(sql"${Fragment.encode(Db2Types.varchar, unsaved.requiredCol)}"): @scala.annotation.nowarn
-    columns.addOne(Fragment.lit(""""OPTIONAL_COL"""")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(Db2Types.varchar.nullable, unsaved.optionalCol)}"): @scala.annotation.nowarn
+    columns.addOne(Fragment.of(""""OPTIONAL_COL"""")): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(Db2Types.varchar.opt, unsaved.optionalCol)}"): @scala.annotation.nowarn
     unsaved.defaultedCol.visit(
       {  },
-      value => { columns.addOne(Fragment.lit(""""DEFAULTED_COL"""")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(Db2Types.varchar.nullable, value)}"): @scala.annotation.nowarn }
+      value => { columns.addOne(Fragment.of(""""DEFAULTED_COL"""")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(Db2Types.varchar.opt, value)}"): @scala.annotation.nowarn }
     );
     val q: Fragment = {
       sql"""SELECT "ID", "REQUIRED_COL", "OPTIONAL_COL", "DEFAULTED_COL" FROM FINAL TABLE (INSERT INTO "NULLABILITY_TEST"(${Fragment.comma(columns)})
       VALUES (${Fragment.comma(values)}))
       """
     }
-    return q.updateReturning(NullabilityTestRow.`_rowParser`.exactlyOne()).runUnchecked(c)
+    return q.updateReturning(NullabilityTestRow.rowCodec.exactlyOne()).run(using c)
   }
 
-  override def select: SelectBuilder[NullabilityTestFields, NullabilityTestRow] = SelectBuilder.of(""""NULLABILITY_TEST"""", NullabilityTestFields.structure, NullabilityTestRow.`_rowParser`, Dialect.DB2)
+  override def select: SelectBuilder[NullabilityTestFields, NullabilityTestRow] = SelectBuilder.of(""""NULLABILITY_TEST"""", NullabilityTestFields.structure, NullabilityTestRow.rowCodec, Dialect.DB2)
 
-  override def selectAll(using c: Connection): List[NullabilityTestRow] = {
+  override def selectAll(using c: ConnectionRead): List[NullabilityTestRow] = {
     sql"""select "ID", "REQUIRED_COL", "OPTIONAL_COL", "DEFAULTED_COL"
     from "NULLABILITY_TEST"
-    """.query(NullabilityTestRow.`_rowParser`.all()).runUnchecked(c)
+    """.query(NullabilityTestRow.rowCodec.all()).run(using c)
   }
 
-  override def update: UpdateBuilder[NullabilityTestFields, NullabilityTestRow] = UpdateBuilder.of(""""NULLABILITY_TEST"""", NullabilityTestFields.structure, NullabilityTestRow.`_rowParser`, Dialect.DB2)
+  override def update: UpdateBuilder[NullabilityTestFields, NullabilityTestRow] = UpdateBuilder.of(""""NULLABILITY_TEST"""", NullabilityTestFields.structure, NullabilityTestRow.rowCodec, Dialect.DB2)
 }

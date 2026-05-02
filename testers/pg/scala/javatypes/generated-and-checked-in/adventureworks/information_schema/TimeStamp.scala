@@ -6,9 +6,9 @@
 package adventureworks.information_schema
 
 import com.fasterxml.jackson.annotation.JsonValue
+import dev.typr.foundations.Bijection
 import dev.typr.foundations.PgType
 import dev.typr.foundations.PgTypes
-import dev.typr.foundations.dsl.Bijection
 import java.time.Instant
 
 /** Domain `information_schema.time_stamp`
@@ -17,9 +17,9 @@ import java.time.Instant
 case class TimeStamp(@JsonValue value: Instant)
 
 object TimeStamp {
-  given bijection: Bijection[TimeStamp, Instant] = Bijection.apply[TimeStamp, Instant](_.value)(TimeStamp.apply)
+  given bijection: Bijection[TimeStamp, Instant] = Bijection.of[TimeStamp, Instant](_.value, TimeStamp.apply)
 
-  given pgType: PgType[TimeStamp] = PgTypes.timestamptz.bimap(TimeStamp.apply, _.value).renamed(""""information_schema"."time_stamp"""")
+  given pgType: PgType[TimeStamp] = PgTypes.timestamptz.to(Bijection.of(TimeStamp.apply, _.value)).renamed(""""information_schema"."time_stamp"""")
 
-  given pgTypeArray: PgType[Array[TimeStamp]] = PgTypes.timestamptzArray.bimap(xs => xs.map(TimeStamp.apply), xs => xs.map(_.value)).renamed(""""information_schema"."time_stamp"[]""")
+  given pgTypeArray: PgType[java.util.List[TimeStamp]] = pgType.array
 }

@@ -6,12 +6,10 @@
 package testdb.nullability_test
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import dev.typr.foundations.Db2Types
+import dev.typr.dslsc.RowCodecs
 import dev.typr.foundations.Tuple.Tuple4
-import dev.typr.foundations.scala.DbTypeOps
-import dev.typr.foundations.scala.RowParser
-import dev.typr.foundations.scala.RowParsers
-import dev.typr.foundations.scala.ScalaDbTypes
+import dev.typr.foundationssc.Db2Types
+import dev.typr.foundationssc.RowCodec
 import testdb.customtypes.Defaulted
 
 /** Table: NULLABILITY_TEST */
@@ -41,5 +39,5 @@ case class NullabilityTestRow(
 }
 
 object NullabilityTestRow {
-  val `_rowParser`: RowParser[NullabilityTestRow] = RowParsers.of(ScalaDbTypes.Db2Types.integer, Db2Types.varchar, Db2Types.varchar.nullable, Db2Types.varchar.nullable)(NullabilityTestRow.apply)(row => Array[Any](row.id, row.requiredCol, row.optionalCol, row.defaultedCol))
+  val rowCodec: RowCodec[NullabilityTestRow] = RowCodecs.of(Db2Types.integer, Db2Types.varchar, Db2Types.varchar.opt, Db2Types.varchar.opt)(NullabilityTestRow.apply)(row => Array[Any](row.id, row.requiredCol, row.optionalCol, row.defaultedCol))
 }

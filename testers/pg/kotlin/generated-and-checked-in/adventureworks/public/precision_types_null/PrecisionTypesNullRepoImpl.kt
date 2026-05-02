@@ -12,15 +12,15 @@ import adventureworks.precisetypes.String100
 import adventureworks.precisetypes.String20
 import adventureworks.precisetypes.String255
 import adventureworks.precisetypes.String50
-import dev.typr.foundations.PgTypes
-import dev.typr.foundations.kotlin.DeleteBuilder
-import dev.typr.foundations.kotlin.Dialect
-import dev.typr.foundations.kotlin.Fragment
-import dev.typr.foundations.kotlin.SelectBuilder
-import dev.typr.foundations.kotlin.UpdateBuilder
-import dev.typr.foundations.kotlin.nullable
-import dev.typr.foundations.streamingInsert
-import java.sql.Connection
+import dev.typr.dslkt.DeleteBuilder
+import dev.typr.dslkt.Dialect
+import dev.typr.dslkt.SelectBuilder
+import dev.typr.dslkt.UpdateBuilder
+import dev.typr.foundationskt.Connection
+import dev.typr.foundationskt.ConnectionRead
+import dev.typr.foundationskt.Fragment
+import dev.typr.foundationskt.PgTypes
+import dev.typr.foundationskt.StreamingInsert
 import java.util.ArrayList
 import kotlin.collections.Iterator
 import kotlin.collections.List
@@ -33,20 +33,20 @@ class PrecisionTypesNullRepoImpl() : PrecisionTypesNullRepo {
   override fun deleteById(
     id: PrecisionTypesNullId,
     c: Connection
-  ): Boolean = Fragment.interpolate(Fragment.lit("delete from \"public\".\"precision_types_null\" where \"id\" = "), Fragment.encode(PrecisionTypesNullId.pgType, id), Fragment.lit("")).update().runUnchecked(c) > 0
+  ): kotlin.Boolean = Fragment.concat(Fragment.of("delete from \"public\".\"precision_types_null\" where \"id\" = "), Fragment.encode(PrecisionTypesNullId.pgType, id), Fragment.of("")).update().run(c) > 0
 
   override fun deleteByIds(
-    ids: Array<PrecisionTypesNullId>,
+    ids: List<PrecisionTypesNullId>,
     c: Connection
-  ): Int = Fragment.interpolate(Fragment.lit("delete\nfrom \"public\".\"precision_types_null\"\nwhere \"id\" = ANY("), Fragment.encode(PrecisionTypesNullId.pgTypeArray, ids), Fragment.lit(")"))
+  ): Int = Fragment.concat(Fragment.of("delete\nfrom \"public\".\"precision_types_null\"\nwhere \"id\" = ANY("), Fragment.encode(PrecisionTypesNullId.pgType.array(), ids), Fragment.of(")"))
     .update()
-    .runUnchecked(c)
+    .run(c)
 
   override fun insert(
     unsaved: PrecisionTypesNullRow,
     c: Connection
-  ): PrecisionTypesNullRow = Fragment.interpolate(Fragment.lit("insert into \"public\".\"precision_types_null\"(\"id\", \"string10\", \"string20\", \"string50\", \"string100\", \"string255\", \"bpchar3\", \"bpchar10\", \"decimal5_2\", \"decimal10_2\", \"decimal18_4\", \"numeric8_2\", \"numeric12_4\", \"timestamp0\", \"timestamp3\", \"timestamp6\", \"timestamptz0\", \"timestamptz3\", \"timestamptz6\", \"time0\", \"time3\", \"time6\", \"timetz0\", \"timetz3\", \"timetz6\")\nvalues ("), Fragment.encode(PrecisionTypesNullId.pgType, unsaved.id), Fragment.lit("::int4, "), Fragment.encode(String10.pgType.nullable(), unsaved.string10), Fragment.lit(", "), Fragment.encode(String20.pgType.nullable(), unsaved.string20), Fragment.lit(", "), Fragment.encode(String50.pgType.nullable(), unsaved.string50), Fragment.lit(", "), Fragment.encode(String100.pgType.nullable(), unsaved.string100), Fragment.lit(", "), Fragment.encode(String255.pgType.nullable(), unsaved.string255), Fragment.lit(", "), Fragment.encode(PaddedString3.pgType.nullable(), unsaved.bpchar3), Fragment.lit("::bpchar, "), Fragment.encode(PaddedString10.pgType.nullable(), unsaved.bpchar10), Fragment.lit("::bpchar, "), Fragment.encode(PgTypes.numeric.nullable(), unsaved.decimal52), Fragment.lit("::numeric, "), Fragment.encode(PgTypes.numeric.nullable(), unsaved.decimal102), Fragment.lit("::numeric, "), Fragment.encode(PgTypes.numeric.nullable(), unsaved.decimal184), Fragment.lit("::numeric, "), Fragment.encode(PgTypes.numeric.nullable(), unsaved.numeric82), Fragment.lit("::numeric, "), Fragment.encode(PgTypes.numeric.nullable(), unsaved.numeric124), Fragment.lit("::numeric, "), Fragment.encode(PgTypes.timestamp.nullable(), unsaved.timestamp0), Fragment.lit("::timestamp, "), Fragment.encode(PgTypes.timestamp.nullable(), unsaved.timestamp3), Fragment.lit("::timestamp, "), Fragment.encode(PgTypes.timestamp.nullable(), unsaved.timestamp6), Fragment.lit("::timestamp, "), Fragment.encode(PgTypes.timestamptz.nullable(), unsaved.timestamptz0), Fragment.lit("::timestamptz, "), Fragment.encode(PgTypes.timestamptz.nullable(), unsaved.timestamptz3), Fragment.lit("::timestamptz, "), Fragment.encode(PgTypes.timestamptz.nullable(), unsaved.timestamptz6), Fragment.lit("::timestamptz, "), Fragment.encode(PgTypes.time.nullable(), unsaved.time0), Fragment.lit("::time, "), Fragment.encode(PgTypes.time.nullable(), unsaved.time3), Fragment.lit("::time, "), Fragment.encode(PgTypes.time.nullable(), unsaved.time6), Fragment.lit("::time, "), Fragment.encode(PgTypes.timetz.nullable(), unsaved.timetz0), Fragment.lit("::timetz, "), Fragment.encode(PgTypes.timetz.nullable(), unsaved.timetz3), Fragment.lit("::timetz, "), Fragment.encode(PgTypes.timetz.nullable(), unsaved.timetz6), Fragment.lit("::timetz)\nRETURNING \"id\", \"string10\", \"string20\", \"string50\", \"string100\", \"string255\", \"bpchar3\", \"bpchar10\", \"decimal5_2\", \"decimal10_2\", \"decimal18_4\", \"numeric8_2\", \"numeric12_4\", \"timestamp0\", \"timestamp3\", \"timestamp6\", \"timestamptz0\", \"timestamptz3\", \"timestamptz6\", \"time0\", \"time3\", \"time6\", \"timetz0\", \"timetz3\", \"timetz6\"\n"))
-    .updateReturning(PrecisionTypesNullRow._rowParser.exactlyOne()).runUnchecked(c)
+  ): PrecisionTypesNullRow = Fragment.concat(Fragment.of("insert into \"public\".\"precision_types_null\"(\"id\", \"string10\", \"string20\", \"string50\", \"string100\", \"string255\", \"bpchar3\", \"bpchar10\", \"decimal5_2\", \"decimal10_2\", \"decimal18_4\", \"numeric8_2\", \"numeric12_4\", \"timestamp0\", \"timestamp3\", \"timestamp6\", \"timestamptz0\", \"timestamptz3\", \"timestamptz6\", \"time0\", \"time3\", \"time6\", \"timetz0\", \"timetz3\", \"timetz6\")\nvalues ("), Fragment.encode(PrecisionTypesNullId.pgType, unsaved.id), Fragment.of("::int4, "), Fragment.encode(String10.pgType.opt(), unsaved.string10), Fragment.of(", "), Fragment.encode(String20.pgType.opt(), unsaved.string20), Fragment.of(", "), Fragment.encode(String50.pgType.opt(), unsaved.string50), Fragment.of(", "), Fragment.encode(String100.pgType.opt(), unsaved.string100), Fragment.of(", "), Fragment.encode(String255.pgType.opt(), unsaved.string255), Fragment.of(", "), Fragment.encode(PaddedString3.pgType.opt(), unsaved.bpchar3), Fragment.of("::bpchar, "), Fragment.encode(PaddedString10.pgType.opt(), unsaved.bpchar10), Fragment.of("::bpchar, "), Fragment.encode(PgTypes.numeric.opt(), unsaved.decimal52), Fragment.of("::numeric, "), Fragment.encode(PgTypes.numeric.opt(), unsaved.decimal102), Fragment.of("::numeric, "), Fragment.encode(PgTypes.numeric.opt(), unsaved.decimal184), Fragment.of("::numeric, "), Fragment.encode(PgTypes.numeric.opt(), unsaved.numeric82), Fragment.of("::numeric, "), Fragment.encode(PgTypes.numeric.opt(), unsaved.numeric124), Fragment.of("::numeric, "), Fragment.encode(PgTypes.timestamp.opt(), unsaved.timestamp0), Fragment.of("::timestamp, "), Fragment.encode(PgTypes.timestamp.opt(), unsaved.timestamp3), Fragment.of("::timestamp, "), Fragment.encode(PgTypes.timestamp.opt(), unsaved.timestamp6), Fragment.of("::timestamp, "), Fragment.encode(PgTypes.timestamptz.opt(), unsaved.timestamptz0), Fragment.of("::timestamptz, "), Fragment.encode(PgTypes.timestamptz.opt(), unsaved.timestamptz3), Fragment.of("::timestamptz, "), Fragment.encode(PgTypes.timestamptz.opt(), unsaved.timestamptz6), Fragment.of("::timestamptz, "), Fragment.encode(PgTypes.time.opt(), unsaved.time0), Fragment.of("::time, "), Fragment.encode(PgTypes.time.opt(), unsaved.time3), Fragment.of("::time, "), Fragment.encode(PgTypes.time.opt(), unsaved.time6), Fragment.of("::time, "), Fragment.encode(PgTypes.timetz.opt(), unsaved.timetz0), Fragment.of("::timetz, "), Fragment.encode(PgTypes.timetz.opt(), unsaved.timetz3), Fragment.of("::timetz, "), Fragment.encode(PgTypes.timetz.opt(), unsaved.timetz6), Fragment.of("::timetz)\nRETURNING \"id\", \"string10\", \"string20\", \"string50\", \"string100\", \"string255\", \"bpchar3\", \"bpchar10\", \"decimal5_2\", \"decimal10_2\", \"decimal18_4\", \"numeric8_2\", \"numeric12_4\", \"timestamp0\", \"timestamp3\", \"timestamp6\", \"timestamptz0\", \"timestamptz3\", \"timestamptz6\", \"time0\", \"time3\", \"time6\", \"timetz0\", \"timetz3\", \"timetz6\"\n"))
+    .updateReturning(PrecisionTypesNullRow.rowCodec.exactlyOne()).run(c)
 
   override fun insert(
     unsaved: PrecisionTypesNullRowUnsaved,
@@ -54,122 +54,122 @@ class PrecisionTypesNullRepoImpl() : PrecisionTypesNullRepo {
   ): PrecisionTypesNullRow {
     val columns: ArrayList<Fragment> = ArrayList()
     val values: ArrayList<Fragment> = ArrayList()
-    columns.add(Fragment.lit("\"string10\""))
-    values.add(Fragment.interpolate(Fragment.encode(String10.pgType.nullable(), unsaved.string10), Fragment.lit("")))
-    columns.add(Fragment.lit("\"string20\""))
-    values.add(Fragment.interpolate(Fragment.encode(String20.pgType.nullable(), unsaved.string20), Fragment.lit("")))
-    columns.add(Fragment.lit("\"string50\""))
-    values.add(Fragment.interpolate(Fragment.encode(String50.pgType.nullable(), unsaved.string50), Fragment.lit("")))
-    columns.add(Fragment.lit("\"string100\""))
-    values.add(Fragment.interpolate(Fragment.encode(String100.pgType.nullable(), unsaved.string100), Fragment.lit("")))
-    columns.add(Fragment.lit("\"string255\""))
-    values.add(Fragment.interpolate(Fragment.encode(String255.pgType.nullable(), unsaved.string255), Fragment.lit("")))
-    columns.add(Fragment.lit("\"bpchar3\""))
-    values.add(Fragment.interpolate(Fragment.encode(PaddedString3.pgType.nullable(), unsaved.bpchar3), Fragment.lit("::bpchar")))
-    columns.add(Fragment.lit("\"bpchar10\""))
-    values.add(Fragment.interpolate(Fragment.encode(PaddedString10.pgType.nullable(), unsaved.bpchar10), Fragment.lit("::bpchar")))
-    columns.add(Fragment.lit("\"decimal5_2\""))
-    values.add(Fragment.interpolate(Fragment.encode(PgTypes.numeric.nullable(), unsaved.decimal52), Fragment.lit("::numeric")))
-    columns.add(Fragment.lit("\"decimal10_2\""))
-    values.add(Fragment.interpolate(Fragment.encode(PgTypes.numeric.nullable(), unsaved.decimal102), Fragment.lit("::numeric")))
-    columns.add(Fragment.lit("\"decimal18_4\""))
-    values.add(Fragment.interpolate(Fragment.encode(PgTypes.numeric.nullable(), unsaved.decimal184), Fragment.lit("::numeric")))
-    columns.add(Fragment.lit("\"numeric8_2\""))
-    values.add(Fragment.interpolate(Fragment.encode(PgTypes.numeric.nullable(), unsaved.numeric82), Fragment.lit("::numeric")))
-    columns.add(Fragment.lit("\"numeric12_4\""))
-    values.add(Fragment.interpolate(Fragment.encode(PgTypes.numeric.nullable(), unsaved.numeric124), Fragment.lit("::numeric")))
-    columns.add(Fragment.lit("\"timestamp0\""))
-    values.add(Fragment.interpolate(Fragment.encode(PgTypes.timestamp.nullable(), unsaved.timestamp0), Fragment.lit("::timestamp")))
-    columns.add(Fragment.lit("\"timestamp3\""))
-    values.add(Fragment.interpolate(Fragment.encode(PgTypes.timestamp.nullable(), unsaved.timestamp3), Fragment.lit("::timestamp")))
-    columns.add(Fragment.lit("\"timestamp6\""))
-    values.add(Fragment.interpolate(Fragment.encode(PgTypes.timestamp.nullable(), unsaved.timestamp6), Fragment.lit("::timestamp")))
-    columns.add(Fragment.lit("\"timestamptz0\""))
-    values.add(Fragment.interpolate(Fragment.encode(PgTypes.timestamptz.nullable(), unsaved.timestamptz0), Fragment.lit("::timestamptz")))
-    columns.add(Fragment.lit("\"timestamptz3\""))
-    values.add(Fragment.interpolate(Fragment.encode(PgTypes.timestamptz.nullable(), unsaved.timestamptz3), Fragment.lit("::timestamptz")))
-    columns.add(Fragment.lit("\"timestamptz6\""))
-    values.add(Fragment.interpolate(Fragment.encode(PgTypes.timestamptz.nullable(), unsaved.timestamptz6), Fragment.lit("::timestamptz")))
-    columns.add(Fragment.lit("\"time0\""))
-    values.add(Fragment.interpolate(Fragment.encode(PgTypes.time.nullable(), unsaved.time0), Fragment.lit("::time")))
-    columns.add(Fragment.lit("\"time3\""))
-    values.add(Fragment.interpolate(Fragment.encode(PgTypes.time.nullable(), unsaved.time3), Fragment.lit("::time")))
-    columns.add(Fragment.lit("\"time6\""))
-    values.add(Fragment.interpolate(Fragment.encode(PgTypes.time.nullable(), unsaved.time6), Fragment.lit("::time")))
-    columns.add(Fragment.lit("\"timetz0\""))
-    values.add(Fragment.interpolate(Fragment.encode(PgTypes.timetz.nullable(), unsaved.timetz0), Fragment.lit("::timetz")))
-    columns.add(Fragment.lit("\"timetz3\""))
-    values.add(Fragment.interpolate(Fragment.encode(PgTypes.timetz.nullable(), unsaved.timetz3), Fragment.lit("::timetz")))
-    columns.add(Fragment.lit("\"timetz6\""))
-    values.add(Fragment.interpolate(Fragment.encode(PgTypes.timetz.nullable(), unsaved.timetz6), Fragment.lit("::timetz")))
+    columns.add(Fragment.of("\"string10\""))
+    values.add(Fragment.concat(Fragment.encode(String10.pgType.opt(), unsaved.string10), Fragment.of("")))
+    columns.add(Fragment.of("\"string20\""))
+    values.add(Fragment.concat(Fragment.encode(String20.pgType.opt(), unsaved.string20), Fragment.of("")))
+    columns.add(Fragment.of("\"string50\""))
+    values.add(Fragment.concat(Fragment.encode(String50.pgType.opt(), unsaved.string50), Fragment.of("")))
+    columns.add(Fragment.of("\"string100\""))
+    values.add(Fragment.concat(Fragment.encode(String100.pgType.opt(), unsaved.string100), Fragment.of("")))
+    columns.add(Fragment.of("\"string255\""))
+    values.add(Fragment.concat(Fragment.encode(String255.pgType.opt(), unsaved.string255), Fragment.of("")))
+    columns.add(Fragment.of("\"bpchar3\""))
+    values.add(Fragment.concat(Fragment.encode(PaddedString3.pgType.opt(), unsaved.bpchar3), Fragment.of("::bpchar")))
+    columns.add(Fragment.of("\"bpchar10\""))
+    values.add(Fragment.concat(Fragment.encode(PaddedString10.pgType.opt(), unsaved.bpchar10), Fragment.of("::bpchar")))
+    columns.add(Fragment.of("\"decimal5_2\""))
+    values.add(Fragment.concat(Fragment.encode(PgTypes.numeric.opt(), unsaved.decimal52), Fragment.of("::numeric")))
+    columns.add(Fragment.of("\"decimal10_2\""))
+    values.add(Fragment.concat(Fragment.encode(PgTypes.numeric.opt(), unsaved.decimal102), Fragment.of("::numeric")))
+    columns.add(Fragment.of("\"decimal18_4\""))
+    values.add(Fragment.concat(Fragment.encode(PgTypes.numeric.opt(), unsaved.decimal184), Fragment.of("::numeric")))
+    columns.add(Fragment.of("\"numeric8_2\""))
+    values.add(Fragment.concat(Fragment.encode(PgTypes.numeric.opt(), unsaved.numeric82), Fragment.of("::numeric")))
+    columns.add(Fragment.of("\"numeric12_4\""))
+    values.add(Fragment.concat(Fragment.encode(PgTypes.numeric.opt(), unsaved.numeric124), Fragment.of("::numeric")))
+    columns.add(Fragment.of("\"timestamp0\""))
+    values.add(Fragment.concat(Fragment.encode(PgTypes.timestamp.opt(), unsaved.timestamp0), Fragment.of("::timestamp")))
+    columns.add(Fragment.of("\"timestamp3\""))
+    values.add(Fragment.concat(Fragment.encode(PgTypes.timestamp.opt(), unsaved.timestamp3), Fragment.of("::timestamp")))
+    columns.add(Fragment.of("\"timestamp6\""))
+    values.add(Fragment.concat(Fragment.encode(PgTypes.timestamp.opt(), unsaved.timestamp6), Fragment.of("::timestamp")))
+    columns.add(Fragment.of("\"timestamptz0\""))
+    values.add(Fragment.concat(Fragment.encode(PgTypes.timestamptz.opt(), unsaved.timestamptz0), Fragment.of("::timestamptz")))
+    columns.add(Fragment.of("\"timestamptz3\""))
+    values.add(Fragment.concat(Fragment.encode(PgTypes.timestamptz.opt(), unsaved.timestamptz3), Fragment.of("::timestamptz")))
+    columns.add(Fragment.of("\"timestamptz6\""))
+    values.add(Fragment.concat(Fragment.encode(PgTypes.timestamptz.opt(), unsaved.timestamptz6), Fragment.of("::timestamptz")))
+    columns.add(Fragment.of("\"time0\""))
+    values.add(Fragment.concat(Fragment.encode(PgTypes.time.opt(), unsaved.time0), Fragment.of("::time")))
+    columns.add(Fragment.of("\"time3\""))
+    values.add(Fragment.concat(Fragment.encode(PgTypes.time.opt(), unsaved.time3), Fragment.of("::time")))
+    columns.add(Fragment.of("\"time6\""))
+    values.add(Fragment.concat(Fragment.encode(PgTypes.time.opt(), unsaved.time6), Fragment.of("::time")))
+    columns.add(Fragment.of("\"timetz0\""))
+    values.add(Fragment.concat(Fragment.encode(PgTypes.timetz.opt(), unsaved.timetz0), Fragment.of("::timetz")))
+    columns.add(Fragment.of("\"timetz3\""))
+    values.add(Fragment.concat(Fragment.encode(PgTypes.timetz.opt(), unsaved.timetz3), Fragment.of("::timetz")))
+    columns.add(Fragment.of("\"timetz6\""))
+    values.add(Fragment.concat(Fragment.encode(PgTypes.timetz.opt(), unsaved.timetz6), Fragment.of("::timetz")))
     unsaved.id.visit(
       {  },
-      { value -> columns.add(Fragment.lit("\"id\""))
-      values.add(Fragment.interpolate(Fragment.encode(PrecisionTypesNullId.pgType, value), Fragment.lit("::int4"))) }
+      { value -> columns.add(Fragment.of("\"id\""))
+      values.add(Fragment.concat(Fragment.encode(PrecisionTypesNullId.pgType, value), Fragment.of("::int4"))) }
     );
-    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into \"public\".\"precision_types_null\"("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nRETURNING \"id\", \"string10\", \"string20\", \"string50\", \"string100\", \"string255\", \"bpchar3\", \"bpchar10\", \"decimal5_2\", \"decimal10_2\", \"decimal18_4\", \"numeric8_2\", \"numeric12_4\", \"timestamp0\", \"timestamp3\", \"timestamp6\", \"timestamptz0\", \"timestamptz3\", \"timestamptz6\", \"time0\", \"time3\", \"time6\", \"timetz0\", \"timetz3\", \"timetz6\"\n"))
-    return q.updateReturning(PrecisionTypesNullRow._rowParser.exactlyOne()).runUnchecked(c)
+    val q: Fragment = Fragment.concat(Fragment.of("insert into \"public\".\"precision_types_null\"("), Fragment.comma(columns.toMutableList()), Fragment.of(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.of(")\nRETURNING \"id\", \"string10\", \"string20\", \"string50\", \"string100\", \"string255\", \"bpchar3\", \"bpchar10\", \"decimal5_2\", \"decimal10_2\", \"decimal18_4\", \"numeric8_2\", \"numeric12_4\", \"timestamp0\", \"timestamp3\", \"timestamp6\", \"timestamptz0\", \"timestamptz3\", \"timestamptz6\", \"time0\", \"time3\", \"time6\", \"timetz0\", \"timetz3\", \"timetz6\"\n"))
+    return q.updateReturning(PrecisionTypesNullRow.rowCodec.exactlyOne()).run(c)
   }
 
   override fun insertStreaming(
     unsaved: Iterator<PrecisionTypesNullRow>,
     batchSize: Int,
     c: Connection
-  ): Long = streamingInsert.insertUnchecked("COPY \"public\".\"precision_types_null\"(\"id\", \"string10\", \"string20\", \"string50\", \"string100\", \"string255\", \"bpchar3\", \"bpchar10\", \"decimal5_2\", \"decimal10_2\", \"decimal18_4\", \"numeric8_2\", \"numeric12_4\", \"timestamp0\", \"timestamp3\", \"timestamp6\", \"timestamptz0\", \"timestamptz3\", \"timestamptz6\", \"time0\", \"time3\", \"time6\", \"timetz0\", \"timetz3\", \"timetz6\") FROM STDIN", batchSize, unsaved, c, PrecisionTypesNullRow.pgText)
+  ): kotlin.Long = StreamingInsert.of("COPY \"public\".\"precision_types_null\"(\"id\", \"string10\", \"string20\", \"string50\", \"string100\", \"string255\", \"bpchar3\", \"bpchar10\", \"decimal5_2\", \"decimal10_2\", \"decimal18_4\", \"numeric8_2\", \"numeric12_4\", \"timestamp0\", \"timestamp3\", \"timestamp6\", \"timestamptz0\", \"timestamptz3\", \"timestamptz6\", \"time0\", \"time3\", \"time6\", \"timetz0\", \"timetz3\", \"timetz6\") FROM STDIN", batchSize, unsaved, PrecisionTypesNullRow.pgText).run(c)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
   override fun insertUnsavedStreaming(
     unsaved: Iterator<PrecisionTypesNullRowUnsaved>,
     batchSize: Int,
     c: Connection
-  ): Long = streamingInsert.insertUnchecked("COPY \"public\".\"precision_types_null\"(\"string10\", \"string20\", \"string50\", \"string100\", \"string255\", \"bpchar3\", \"bpchar10\", \"decimal5_2\", \"decimal10_2\", \"decimal18_4\", \"numeric8_2\", \"numeric12_4\", \"timestamp0\", \"timestamp3\", \"timestamp6\", \"timestamptz0\", \"timestamptz3\", \"timestamptz6\", \"time0\", \"time3\", \"time6\", \"timetz0\", \"timetz3\", \"timetz6\", \"id\") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')", batchSize, unsaved, c, PrecisionTypesNullRowUnsaved.pgText)
+  ): kotlin.Long = StreamingInsert.of("COPY \"public\".\"precision_types_null\"(\"string10\", \"string20\", \"string50\", \"string100\", \"string255\", \"bpchar3\", \"bpchar10\", \"decimal5_2\", \"decimal10_2\", \"decimal18_4\", \"numeric8_2\", \"numeric12_4\", \"timestamp0\", \"timestamp3\", \"timestamp6\", \"timestamptz0\", \"timestamptz3\", \"timestamptz6\", \"time0\", \"time3\", \"time6\", \"timetz0\", \"timetz3\", \"timetz6\", \"id\") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')", batchSize, unsaved, PrecisionTypesNullRowUnsaved.pgText).run(c)
 
-  override fun select(): SelectBuilder<PrecisionTypesNullFields, PrecisionTypesNullRow> = SelectBuilder.of("\"public\".\"precision_types_null\"", PrecisionTypesNullFields.structure, PrecisionTypesNullRow._rowParser, Dialect.POSTGRESQL)
+  override fun select(): SelectBuilder<PrecisionTypesNullFields, PrecisionTypesNullRow> = SelectBuilder.of("\"public\".\"precision_types_null\"", PrecisionTypesNullFields.structure, PrecisionTypesNullRow.rowCodec, Dialect.POSTGRESQL)
 
-  override fun selectAll(c: Connection): List<PrecisionTypesNullRow> = Fragment.interpolate(Fragment.lit("select \"id\", \"string10\", \"string20\", \"string50\", \"string100\", \"string255\", \"bpchar3\", \"bpchar10\", \"decimal5_2\", \"decimal10_2\", \"decimal18_4\", \"numeric8_2\", \"numeric12_4\", \"timestamp0\", \"timestamp3\", \"timestamp6\", \"timestamptz0\", \"timestamptz3\", \"timestamptz6\", \"time0\", \"time3\", \"time6\", \"timetz0\", \"timetz3\", \"timetz6\"\nfrom \"public\".\"precision_types_null\"\n")).query(PrecisionTypesNullRow._rowParser.all()).runUnchecked(c)
+  override fun selectAll(c: ConnectionRead): List<PrecisionTypesNullRow> = Fragment.concat(Fragment.of("select \"id\", \"string10\", \"string20\", \"string50\", \"string100\", \"string255\", \"bpchar3\", \"bpchar10\", \"decimal5_2\", \"decimal10_2\", \"decimal18_4\", \"numeric8_2\", \"numeric12_4\", \"timestamp0\", \"timestamp3\", \"timestamp6\", \"timestamptz0\", \"timestamptz3\", \"timestamptz6\", \"time0\", \"time3\", \"time6\", \"timetz0\", \"timetz3\", \"timetz6\"\nfrom \"public\".\"precision_types_null\"\n")).query(PrecisionTypesNullRow.rowCodec.all()).run(c)
 
   override fun selectById(
     id: PrecisionTypesNullId,
-    c: Connection
-  ): PrecisionTypesNullRow? = Fragment.interpolate(Fragment.lit("select \"id\", \"string10\", \"string20\", \"string50\", \"string100\", \"string255\", \"bpchar3\", \"bpchar10\", \"decimal5_2\", \"decimal10_2\", \"decimal18_4\", \"numeric8_2\", \"numeric12_4\", \"timestamp0\", \"timestamp3\", \"timestamp6\", \"timestamptz0\", \"timestamptz3\", \"timestamptz6\", \"time0\", \"time3\", \"time6\", \"timetz0\", \"timetz3\", \"timetz6\"\nfrom \"public\".\"precision_types_null\"\nwhere \"id\" = "), Fragment.encode(PrecisionTypesNullId.pgType, id), Fragment.lit("")).query(PrecisionTypesNullRow._rowParser.first()).runUnchecked(c)
+    c: ConnectionRead
+  ): PrecisionTypesNullRow? = Fragment.concat(Fragment.of("select \"id\", \"string10\", \"string20\", \"string50\", \"string100\", \"string255\", \"bpchar3\", \"bpchar10\", \"decimal5_2\", \"decimal10_2\", \"decimal18_4\", \"numeric8_2\", \"numeric12_4\", \"timestamp0\", \"timestamp3\", \"timestamp6\", \"timestamptz0\", \"timestamptz3\", \"timestamptz6\", \"time0\", \"time3\", \"time6\", \"timetz0\", \"timetz3\", \"timetz6\"\nfrom \"public\".\"precision_types_null\"\nwhere \"id\" = "), Fragment.encode(PrecisionTypesNullId.pgType, id), Fragment.of("")).query(PrecisionTypesNullRow.rowCodec.first()).run(c)
 
   override fun selectByIds(
-    ids: Array<PrecisionTypesNullId>,
-    c: Connection
-  ): List<PrecisionTypesNullRow> = Fragment.interpolate(Fragment.lit("select \"id\", \"string10\", \"string20\", \"string50\", \"string100\", \"string255\", \"bpchar3\", \"bpchar10\", \"decimal5_2\", \"decimal10_2\", \"decimal18_4\", \"numeric8_2\", \"numeric12_4\", \"timestamp0\", \"timestamp3\", \"timestamp6\", \"timestamptz0\", \"timestamptz3\", \"timestamptz6\", \"time0\", \"time3\", \"time6\", \"timetz0\", \"timetz3\", \"timetz6\"\nfrom \"public\".\"precision_types_null\"\nwhere \"id\" = ANY("), Fragment.encode(PrecisionTypesNullId.pgTypeArray, ids), Fragment.lit(")")).query(PrecisionTypesNullRow._rowParser.all()).runUnchecked(c)
+    ids: List<PrecisionTypesNullId>,
+    c: ConnectionRead
+  ): List<PrecisionTypesNullRow> = Fragment.concat(Fragment.of("select \"id\", \"string10\", \"string20\", \"string50\", \"string100\", \"string255\", \"bpchar3\", \"bpchar10\", \"decimal5_2\", \"decimal10_2\", \"decimal18_4\", \"numeric8_2\", \"numeric12_4\", \"timestamp0\", \"timestamp3\", \"timestamp6\", \"timestamptz0\", \"timestamptz3\", \"timestamptz6\", \"time0\", \"time3\", \"time6\", \"timetz0\", \"timetz3\", \"timetz6\"\nfrom \"public\".\"precision_types_null\"\nwhere \"id\" = ANY("), Fragment.encode(PrecisionTypesNullId.pgType.array(), ids), Fragment.of(")")).query(PrecisionTypesNullRow.rowCodec.all()).run(c)
 
   override fun selectByIdsTracked(
-    ids: Array<PrecisionTypesNullId>,
-    c: Connection
+    ids: List<PrecisionTypesNullId>,
+    c: ConnectionRead
   ): Map<PrecisionTypesNullId, PrecisionTypesNullRow> {
     val ret: MutableMap<PrecisionTypesNullId, PrecisionTypesNullRow> = mutableMapOf<PrecisionTypesNullId, PrecisionTypesNullRow>()
     selectByIds(ids, c).forEach({ row -> ret.put(row.id, row) })
     return ret.toMap()
   }
 
-  override fun update(): UpdateBuilder<PrecisionTypesNullFields, PrecisionTypesNullRow> = UpdateBuilder.of("\"public\".\"precision_types_null\"", PrecisionTypesNullFields.structure, PrecisionTypesNullRow._rowParser, Dialect.POSTGRESQL)
+  override fun update(): UpdateBuilder<PrecisionTypesNullFields, PrecisionTypesNullRow> = UpdateBuilder.of("\"public\".\"precision_types_null\"", PrecisionTypesNullFields.structure, PrecisionTypesNullRow.rowCodec, Dialect.POSTGRESQL)
 
   override fun update(
     row: PrecisionTypesNullRow,
     c: Connection
-  ): Boolean {
+  ): kotlin.Boolean {
     val id: PrecisionTypesNullId = row.id
-    return Fragment.interpolate(Fragment.lit("update \"public\".\"precision_types_null\"\nset \"string10\" = "), Fragment.encode(String10.pgType.nullable(), row.string10), Fragment.lit(",\n\"string20\" = "), Fragment.encode(String20.pgType.nullable(), row.string20), Fragment.lit(",\n\"string50\" = "), Fragment.encode(String50.pgType.nullable(), row.string50), Fragment.lit(",\n\"string100\" = "), Fragment.encode(String100.pgType.nullable(), row.string100), Fragment.lit(",\n\"string255\" = "), Fragment.encode(String255.pgType.nullable(), row.string255), Fragment.lit(",\n\"bpchar3\" = "), Fragment.encode(PaddedString3.pgType.nullable(), row.bpchar3), Fragment.lit("::bpchar,\n\"bpchar10\" = "), Fragment.encode(PaddedString10.pgType.nullable(), row.bpchar10), Fragment.lit("::bpchar,\n\"decimal5_2\" = "), Fragment.encode(PgTypes.numeric.nullable(), row.decimal52), Fragment.lit("::numeric,\n\"decimal10_2\" = "), Fragment.encode(PgTypes.numeric.nullable(), row.decimal102), Fragment.lit("::numeric,\n\"decimal18_4\" = "), Fragment.encode(PgTypes.numeric.nullable(), row.decimal184), Fragment.lit("::numeric,\n\"numeric8_2\" = "), Fragment.encode(PgTypes.numeric.nullable(), row.numeric82), Fragment.lit("::numeric,\n\"numeric12_4\" = "), Fragment.encode(PgTypes.numeric.nullable(), row.numeric124), Fragment.lit("::numeric,\n\"timestamp0\" = "), Fragment.encode(PgTypes.timestamp.nullable(), row.timestamp0), Fragment.lit("::timestamp,\n\"timestamp3\" = "), Fragment.encode(PgTypes.timestamp.nullable(), row.timestamp3), Fragment.lit("::timestamp,\n\"timestamp6\" = "), Fragment.encode(PgTypes.timestamp.nullable(), row.timestamp6), Fragment.lit("::timestamp,\n\"timestamptz0\" = "), Fragment.encode(PgTypes.timestamptz.nullable(), row.timestamptz0), Fragment.lit("::timestamptz,\n\"timestamptz3\" = "), Fragment.encode(PgTypes.timestamptz.nullable(), row.timestamptz3), Fragment.lit("::timestamptz,\n\"timestamptz6\" = "), Fragment.encode(PgTypes.timestamptz.nullable(), row.timestamptz6), Fragment.lit("::timestamptz,\n\"time0\" = "), Fragment.encode(PgTypes.time.nullable(), row.time0), Fragment.lit("::time,\n\"time3\" = "), Fragment.encode(PgTypes.time.nullable(), row.time3), Fragment.lit("::time,\n\"time6\" = "), Fragment.encode(PgTypes.time.nullable(), row.time6), Fragment.lit("::time,\n\"timetz0\" = "), Fragment.encode(PgTypes.timetz.nullable(), row.timetz0), Fragment.lit("::timetz,\n\"timetz3\" = "), Fragment.encode(PgTypes.timetz.nullable(), row.timetz3), Fragment.lit("::timetz,\n\"timetz6\" = "), Fragment.encode(PgTypes.timetz.nullable(), row.timetz6), Fragment.lit("::timetz\nwhere \"id\" = "), Fragment.encode(PrecisionTypesNullId.pgType, id), Fragment.lit("")).update().runUnchecked(c) > 0
+    return Fragment.concat(Fragment.of("update \"public\".\"precision_types_null\"\nset \"string10\" = "), Fragment.encode(String10.pgType.opt(), row.string10), Fragment.of(",\n\"string20\" = "), Fragment.encode(String20.pgType.opt(), row.string20), Fragment.of(",\n\"string50\" = "), Fragment.encode(String50.pgType.opt(), row.string50), Fragment.of(",\n\"string100\" = "), Fragment.encode(String100.pgType.opt(), row.string100), Fragment.of(",\n\"string255\" = "), Fragment.encode(String255.pgType.opt(), row.string255), Fragment.of(",\n\"bpchar3\" = "), Fragment.encode(PaddedString3.pgType.opt(), row.bpchar3), Fragment.of("::bpchar,\n\"bpchar10\" = "), Fragment.encode(PaddedString10.pgType.opt(), row.bpchar10), Fragment.of("::bpchar,\n\"decimal5_2\" = "), Fragment.encode(PgTypes.numeric.opt(), row.decimal52), Fragment.of("::numeric,\n\"decimal10_2\" = "), Fragment.encode(PgTypes.numeric.opt(), row.decimal102), Fragment.of("::numeric,\n\"decimal18_4\" = "), Fragment.encode(PgTypes.numeric.opt(), row.decimal184), Fragment.of("::numeric,\n\"numeric8_2\" = "), Fragment.encode(PgTypes.numeric.opt(), row.numeric82), Fragment.of("::numeric,\n\"numeric12_4\" = "), Fragment.encode(PgTypes.numeric.opt(), row.numeric124), Fragment.of("::numeric,\n\"timestamp0\" = "), Fragment.encode(PgTypes.timestamp.opt(), row.timestamp0), Fragment.of("::timestamp,\n\"timestamp3\" = "), Fragment.encode(PgTypes.timestamp.opt(), row.timestamp3), Fragment.of("::timestamp,\n\"timestamp6\" = "), Fragment.encode(PgTypes.timestamp.opt(), row.timestamp6), Fragment.of("::timestamp,\n\"timestamptz0\" = "), Fragment.encode(PgTypes.timestamptz.opt(), row.timestamptz0), Fragment.of("::timestamptz,\n\"timestamptz3\" = "), Fragment.encode(PgTypes.timestamptz.opt(), row.timestamptz3), Fragment.of("::timestamptz,\n\"timestamptz6\" = "), Fragment.encode(PgTypes.timestamptz.opt(), row.timestamptz6), Fragment.of("::timestamptz,\n\"time0\" = "), Fragment.encode(PgTypes.time.opt(), row.time0), Fragment.of("::time,\n\"time3\" = "), Fragment.encode(PgTypes.time.opt(), row.time3), Fragment.of("::time,\n\"time6\" = "), Fragment.encode(PgTypes.time.opt(), row.time6), Fragment.of("::time,\n\"timetz0\" = "), Fragment.encode(PgTypes.timetz.opt(), row.timetz0), Fragment.of("::timetz,\n\"timetz3\" = "), Fragment.encode(PgTypes.timetz.opt(), row.timetz3), Fragment.of("::timetz,\n\"timetz6\" = "), Fragment.encode(PgTypes.timetz.opt(), row.timetz6), Fragment.of("::timetz\nwhere \"id\" = "), Fragment.encode(PrecisionTypesNullId.pgType, id), Fragment.of("")).update().run(c) > 0
   }
 
   override fun upsert(
     unsaved: PrecisionTypesNullRow,
     c: Connection
-  ): PrecisionTypesNullRow = Fragment.interpolate(Fragment.lit("insert into \"public\".\"precision_types_null\"(\"id\", \"string10\", \"string20\", \"string50\", \"string100\", \"string255\", \"bpchar3\", \"bpchar10\", \"decimal5_2\", \"decimal10_2\", \"decimal18_4\", \"numeric8_2\", \"numeric12_4\", \"timestamp0\", \"timestamp3\", \"timestamp6\", \"timestamptz0\", \"timestamptz3\", \"timestamptz6\", \"time0\", \"time3\", \"time6\", \"timetz0\", \"timetz3\", \"timetz6\")\nvalues ("), Fragment.encode(PrecisionTypesNullId.pgType, unsaved.id), Fragment.lit("::int4, "), Fragment.encode(String10.pgType.nullable(), unsaved.string10), Fragment.lit(", "), Fragment.encode(String20.pgType.nullable(), unsaved.string20), Fragment.lit(", "), Fragment.encode(String50.pgType.nullable(), unsaved.string50), Fragment.lit(", "), Fragment.encode(String100.pgType.nullable(), unsaved.string100), Fragment.lit(", "), Fragment.encode(String255.pgType.nullable(), unsaved.string255), Fragment.lit(", "), Fragment.encode(PaddedString3.pgType.nullable(), unsaved.bpchar3), Fragment.lit("::bpchar, "), Fragment.encode(PaddedString10.pgType.nullable(), unsaved.bpchar10), Fragment.lit("::bpchar, "), Fragment.encode(PgTypes.numeric.nullable(), unsaved.decimal52), Fragment.lit("::numeric, "), Fragment.encode(PgTypes.numeric.nullable(), unsaved.decimal102), Fragment.lit("::numeric, "), Fragment.encode(PgTypes.numeric.nullable(), unsaved.decimal184), Fragment.lit("::numeric, "), Fragment.encode(PgTypes.numeric.nullable(), unsaved.numeric82), Fragment.lit("::numeric, "), Fragment.encode(PgTypes.numeric.nullable(), unsaved.numeric124), Fragment.lit("::numeric, "), Fragment.encode(PgTypes.timestamp.nullable(), unsaved.timestamp0), Fragment.lit("::timestamp, "), Fragment.encode(PgTypes.timestamp.nullable(), unsaved.timestamp3), Fragment.lit("::timestamp, "), Fragment.encode(PgTypes.timestamp.nullable(), unsaved.timestamp6), Fragment.lit("::timestamp, "), Fragment.encode(PgTypes.timestamptz.nullable(), unsaved.timestamptz0), Fragment.lit("::timestamptz, "), Fragment.encode(PgTypes.timestamptz.nullable(), unsaved.timestamptz3), Fragment.lit("::timestamptz, "), Fragment.encode(PgTypes.timestamptz.nullable(), unsaved.timestamptz6), Fragment.lit("::timestamptz, "), Fragment.encode(PgTypes.time.nullable(), unsaved.time0), Fragment.lit("::time, "), Fragment.encode(PgTypes.time.nullable(), unsaved.time3), Fragment.lit("::time, "), Fragment.encode(PgTypes.time.nullable(), unsaved.time6), Fragment.lit("::time, "), Fragment.encode(PgTypes.timetz.nullable(), unsaved.timetz0), Fragment.lit("::timetz, "), Fragment.encode(PgTypes.timetz.nullable(), unsaved.timetz3), Fragment.lit("::timetz, "), Fragment.encode(PgTypes.timetz.nullable(), unsaved.timetz6), Fragment.lit("::timetz)\non conflict (\"id\")\ndo update set\n  \"string10\" = EXCLUDED.\"string10\",\n\"string20\" = EXCLUDED.\"string20\",\n\"string50\" = EXCLUDED.\"string50\",\n\"string100\" = EXCLUDED.\"string100\",\n\"string255\" = EXCLUDED.\"string255\",\n\"bpchar3\" = EXCLUDED.\"bpchar3\",\n\"bpchar10\" = EXCLUDED.\"bpchar10\",\n\"decimal5_2\" = EXCLUDED.\"decimal5_2\",\n\"decimal10_2\" = EXCLUDED.\"decimal10_2\",\n\"decimal18_4\" = EXCLUDED.\"decimal18_4\",\n\"numeric8_2\" = EXCLUDED.\"numeric8_2\",\n\"numeric12_4\" = EXCLUDED.\"numeric12_4\",\n\"timestamp0\" = EXCLUDED.\"timestamp0\",\n\"timestamp3\" = EXCLUDED.\"timestamp3\",\n\"timestamp6\" = EXCLUDED.\"timestamp6\",\n\"timestamptz0\" = EXCLUDED.\"timestamptz0\",\n\"timestamptz3\" = EXCLUDED.\"timestamptz3\",\n\"timestamptz6\" = EXCLUDED.\"timestamptz6\",\n\"time0\" = EXCLUDED.\"time0\",\n\"time3\" = EXCLUDED.\"time3\",\n\"time6\" = EXCLUDED.\"time6\",\n\"timetz0\" = EXCLUDED.\"timetz0\",\n\"timetz3\" = EXCLUDED.\"timetz3\",\n\"timetz6\" = EXCLUDED.\"timetz6\"\nreturning \"id\", \"string10\", \"string20\", \"string50\", \"string100\", \"string255\", \"bpchar3\", \"bpchar10\", \"decimal5_2\", \"decimal10_2\", \"decimal18_4\", \"numeric8_2\", \"numeric12_4\", \"timestamp0\", \"timestamp3\", \"timestamp6\", \"timestamptz0\", \"timestamptz3\", \"timestamptz6\", \"time0\", \"time3\", \"time6\", \"timetz0\", \"timetz3\", \"timetz6\""))
-    .updateReturning(PrecisionTypesNullRow._rowParser.exactlyOne())
-    .runUnchecked(c)
+  ): PrecisionTypesNullRow = Fragment.concat(Fragment.of("insert into \"public\".\"precision_types_null\"(\"id\", \"string10\", \"string20\", \"string50\", \"string100\", \"string255\", \"bpchar3\", \"bpchar10\", \"decimal5_2\", \"decimal10_2\", \"decimal18_4\", \"numeric8_2\", \"numeric12_4\", \"timestamp0\", \"timestamp3\", \"timestamp6\", \"timestamptz0\", \"timestamptz3\", \"timestamptz6\", \"time0\", \"time3\", \"time6\", \"timetz0\", \"timetz3\", \"timetz6\")\nvalues ("), Fragment.encode(PrecisionTypesNullId.pgType, unsaved.id), Fragment.of("::int4, "), Fragment.encode(String10.pgType.opt(), unsaved.string10), Fragment.of(", "), Fragment.encode(String20.pgType.opt(), unsaved.string20), Fragment.of(", "), Fragment.encode(String50.pgType.opt(), unsaved.string50), Fragment.of(", "), Fragment.encode(String100.pgType.opt(), unsaved.string100), Fragment.of(", "), Fragment.encode(String255.pgType.opt(), unsaved.string255), Fragment.of(", "), Fragment.encode(PaddedString3.pgType.opt(), unsaved.bpchar3), Fragment.of("::bpchar, "), Fragment.encode(PaddedString10.pgType.opt(), unsaved.bpchar10), Fragment.of("::bpchar, "), Fragment.encode(PgTypes.numeric.opt(), unsaved.decimal52), Fragment.of("::numeric, "), Fragment.encode(PgTypes.numeric.opt(), unsaved.decimal102), Fragment.of("::numeric, "), Fragment.encode(PgTypes.numeric.opt(), unsaved.decimal184), Fragment.of("::numeric, "), Fragment.encode(PgTypes.numeric.opt(), unsaved.numeric82), Fragment.of("::numeric, "), Fragment.encode(PgTypes.numeric.opt(), unsaved.numeric124), Fragment.of("::numeric, "), Fragment.encode(PgTypes.timestamp.opt(), unsaved.timestamp0), Fragment.of("::timestamp, "), Fragment.encode(PgTypes.timestamp.opt(), unsaved.timestamp3), Fragment.of("::timestamp, "), Fragment.encode(PgTypes.timestamp.opt(), unsaved.timestamp6), Fragment.of("::timestamp, "), Fragment.encode(PgTypes.timestamptz.opt(), unsaved.timestamptz0), Fragment.of("::timestamptz, "), Fragment.encode(PgTypes.timestamptz.opt(), unsaved.timestamptz3), Fragment.of("::timestamptz, "), Fragment.encode(PgTypes.timestamptz.opt(), unsaved.timestamptz6), Fragment.of("::timestamptz, "), Fragment.encode(PgTypes.time.opt(), unsaved.time0), Fragment.of("::time, "), Fragment.encode(PgTypes.time.opt(), unsaved.time3), Fragment.of("::time, "), Fragment.encode(PgTypes.time.opt(), unsaved.time6), Fragment.of("::time, "), Fragment.encode(PgTypes.timetz.opt(), unsaved.timetz0), Fragment.of("::timetz, "), Fragment.encode(PgTypes.timetz.opt(), unsaved.timetz3), Fragment.of("::timetz, "), Fragment.encode(PgTypes.timetz.opt(), unsaved.timetz6), Fragment.of("::timetz)\non conflict (\"id\")\ndo update set\n  \"string10\" = EXCLUDED.\"string10\",\n\"string20\" = EXCLUDED.\"string20\",\n\"string50\" = EXCLUDED.\"string50\",\n\"string100\" = EXCLUDED.\"string100\",\n\"string255\" = EXCLUDED.\"string255\",\n\"bpchar3\" = EXCLUDED.\"bpchar3\",\n\"bpchar10\" = EXCLUDED.\"bpchar10\",\n\"decimal5_2\" = EXCLUDED.\"decimal5_2\",\n\"decimal10_2\" = EXCLUDED.\"decimal10_2\",\n\"decimal18_4\" = EXCLUDED.\"decimal18_4\",\n\"numeric8_2\" = EXCLUDED.\"numeric8_2\",\n\"numeric12_4\" = EXCLUDED.\"numeric12_4\",\n\"timestamp0\" = EXCLUDED.\"timestamp0\",\n\"timestamp3\" = EXCLUDED.\"timestamp3\",\n\"timestamp6\" = EXCLUDED.\"timestamp6\",\n\"timestamptz0\" = EXCLUDED.\"timestamptz0\",\n\"timestamptz3\" = EXCLUDED.\"timestamptz3\",\n\"timestamptz6\" = EXCLUDED.\"timestamptz6\",\n\"time0\" = EXCLUDED.\"time0\",\n\"time3\" = EXCLUDED.\"time3\",\n\"time6\" = EXCLUDED.\"time6\",\n\"timetz0\" = EXCLUDED.\"timetz0\",\n\"timetz3\" = EXCLUDED.\"timetz3\",\n\"timetz6\" = EXCLUDED.\"timetz6\"\nreturning \"id\", \"string10\", \"string20\", \"string50\", \"string100\", \"string255\", \"bpchar3\", \"bpchar10\", \"decimal5_2\", \"decimal10_2\", \"decimal18_4\", \"numeric8_2\", \"numeric12_4\", \"timestamp0\", \"timestamp3\", \"timestamp6\", \"timestamptz0\", \"timestamptz3\", \"timestamptz6\", \"time0\", \"time3\", \"time6\", \"timetz0\", \"timetz3\", \"timetz6\""))
+    .updateReturning(PrecisionTypesNullRow.rowCodec.exactlyOne())
+    .run(c)
 
   override fun upsertBatch(
     unsaved: Iterator<PrecisionTypesNullRow>,
     c: Connection
-  ): List<PrecisionTypesNullRow> = Fragment.interpolate(Fragment.lit("insert into \"public\".\"precision_types_null\"(\"id\", \"string10\", \"string20\", \"string50\", \"string100\", \"string255\", \"bpchar3\", \"bpchar10\", \"decimal5_2\", \"decimal10_2\", \"decimal18_4\", \"numeric8_2\", \"numeric12_4\", \"timestamp0\", \"timestamp3\", \"timestamp6\", \"timestamptz0\", \"timestamptz3\", \"timestamptz6\", \"time0\", \"time3\", \"time6\", \"timetz0\", \"timetz3\", \"timetz6\")\nvalues (?::int4, ?, ?, ?, ?, ?, ?::bpchar, ?::bpchar, ?::numeric, ?::numeric, ?::numeric, ?::numeric, ?::numeric, ?::timestamp, ?::timestamp, ?::timestamp, ?::timestamptz, ?::timestamptz, ?::timestamptz, ?::time, ?::time, ?::time, ?::timetz, ?::timetz, ?::timetz)\non conflict (\"id\")\ndo update set\n  \"string10\" = EXCLUDED.\"string10\",\n\"string20\" = EXCLUDED.\"string20\",\n\"string50\" = EXCLUDED.\"string50\",\n\"string100\" = EXCLUDED.\"string100\",\n\"string255\" = EXCLUDED.\"string255\",\n\"bpchar3\" = EXCLUDED.\"bpchar3\",\n\"bpchar10\" = EXCLUDED.\"bpchar10\",\n\"decimal5_2\" = EXCLUDED.\"decimal5_2\",\n\"decimal10_2\" = EXCLUDED.\"decimal10_2\",\n\"decimal18_4\" = EXCLUDED.\"decimal18_4\",\n\"numeric8_2\" = EXCLUDED.\"numeric8_2\",\n\"numeric12_4\" = EXCLUDED.\"numeric12_4\",\n\"timestamp0\" = EXCLUDED.\"timestamp0\",\n\"timestamp3\" = EXCLUDED.\"timestamp3\",\n\"timestamp6\" = EXCLUDED.\"timestamp6\",\n\"timestamptz0\" = EXCLUDED.\"timestamptz0\",\n\"timestamptz3\" = EXCLUDED.\"timestamptz3\",\n\"timestamptz6\" = EXCLUDED.\"timestamptz6\",\n\"time0\" = EXCLUDED.\"time0\",\n\"time3\" = EXCLUDED.\"time3\",\n\"time6\" = EXCLUDED.\"time6\",\n\"timetz0\" = EXCLUDED.\"timetz0\",\n\"timetz3\" = EXCLUDED.\"timetz3\",\n\"timetz6\" = EXCLUDED.\"timetz6\"\nreturning \"id\", \"string10\", \"string20\", \"string50\", \"string100\", \"string255\", \"bpchar3\", \"bpchar10\", \"decimal5_2\", \"decimal10_2\", \"decimal18_4\", \"numeric8_2\", \"numeric12_4\", \"timestamp0\", \"timestamp3\", \"timestamp6\", \"timestamptz0\", \"timestamptz3\", \"timestamptz6\", \"time0\", \"time3\", \"time6\", \"timetz0\", \"timetz3\", \"timetz6\""))
-    .updateManyReturning(PrecisionTypesNullRow._rowParser, unsaved)
-  .runUnchecked(c)
+  ): List<PrecisionTypesNullRow> = Fragment.concat(Fragment.of("insert into \"public\".\"precision_types_null\"(\"id\", \"string10\", \"string20\", \"string50\", \"string100\", \"string255\", \"bpchar3\", \"bpchar10\", \"decimal5_2\", \"decimal10_2\", \"decimal18_4\", \"numeric8_2\", \"numeric12_4\", \"timestamp0\", \"timestamp3\", \"timestamp6\", \"timestamptz0\", \"timestamptz3\", \"timestamptz6\", \"time0\", \"time3\", \"time6\", \"timetz0\", \"timetz3\", \"timetz6\")\nvalues (?::int4, ?, ?, ?, ?, ?, ?::bpchar, ?::bpchar, ?::numeric, ?::numeric, ?::numeric, ?::numeric, ?::numeric, ?::timestamp, ?::timestamp, ?::timestamp, ?::timestamptz, ?::timestamptz, ?::timestamptz, ?::time, ?::time, ?::time, ?::timetz, ?::timetz, ?::timetz)\non conflict (\"id\")\ndo update set\n  \"string10\" = EXCLUDED.\"string10\",\n\"string20\" = EXCLUDED.\"string20\",\n\"string50\" = EXCLUDED.\"string50\",\n\"string100\" = EXCLUDED.\"string100\",\n\"string255\" = EXCLUDED.\"string255\",\n\"bpchar3\" = EXCLUDED.\"bpchar3\",\n\"bpchar10\" = EXCLUDED.\"bpchar10\",\n\"decimal5_2\" = EXCLUDED.\"decimal5_2\",\n\"decimal10_2\" = EXCLUDED.\"decimal10_2\",\n\"decimal18_4\" = EXCLUDED.\"decimal18_4\",\n\"numeric8_2\" = EXCLUDED.\"numeric8_2\",\n\"numeric12_4\" = EXCLUDED.\"numeric12_4\",\n\"timestamp0\" = EXCLUDED.\"timestamp0\",\n\"timestamp3\" = EXCLUDED.\"timestamp3\",\n\"timestamp6\" = EXCLUDED.\"timestamp6\",\n\"timestamptz0\" = EXCLUDED.\"timestamptz0\",\n\"timestamptz3\" = EXCLUDED.\"timestamptz3\",\n\"timestamptz6\" = EXCLUDED.\"timestamptz6\",\n\"time0\" = EXCLUDED.\"time0\",\n\"time3\" = EXCLUDED.\"time3\",\n\"time6\" = EXCLUDED.\"time6\",\n\"timetz0\" = EXCLUDED.\"timetz0\",\n\"timetz3\" = EXCLUDED.\"timetz3\",\n\"timetz6\" = EXCLUDED.\"timetz6\"\nreturning \"id\", \"string10\", \"string20\", \"string50\", \"string100\", \"string255\", \"bpchar3\", \"bpchar10\", \"decimal5_2\", \"decimal10_2\", \"decimal18_4\", \"numeric8_2\", \"numeric12_4\", \"timestamp0\", \"timestamp3\", \"timestamp6\", \"timestamptz0\", \"timestamptz3\", \"timestamptz6\", \"time0\", \"time3\", \"time6\", \"timetz0\", \"timetz3\", \"timetz6\""))
+    .updateManyReturning(PrecisionTypesNullRow.rowCodec, unsaved)
+  .run(c)
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
   override fun upsertStreaming(
@@ -177,8 +177,8 @@ class PrecisionTypesNullRepoImpl() : PrecisionTypesNullRepo {
     batchSize: Int,
     c: Connection
   ): Int {
-    Fragment.interpolate(Fragment.lit("create temporary table precision_types_null_TEMP (like \"public\".\"precision_types_null\") on commit drop")).update().runUnchecked(c)
-    streamingInsert.insertUnchecked("copy precision_types_null_TEMP(\"id\", \"string10\", \"string20\", \"string50\", \"string100\", \"string255\", \"bpchar3\", \"bpchar10\", \"decimal5_2\", \"decimal10_2\", \"decimal18_4\", \"numeric8_2\", \"numeric12_4\", \"timestamp0\", \"timestamp3\", \"timestamp6\", \"timestamptz0\", \"timestamptz3\", \"timestamptz6\", \"time0\", \"time3\", \"time6\", \"timetz0\", \"timetz3\", \"timetz6\") from stdin", batchSize, unsaved, c, PrecisionTypesNullRow.pgText)
-    return Fragment.interpolate(Fragment.lit("insert into \"public\".\"precision_types_null\"(\"id\", \"string10\", \"string20\", \"string50\", \"string100\", \"string255\", \"bpchar3\", \"bpchar10\", \"decimal5_2\", \"decimal10_2\", \"decimal18_4\", \"numeric8_2\", \"numeric12_4\", \"timestamp0\", \"timestamp3\", \"timestamp6\", \"timestamptz0\", \"timestamptz3\", \"timestamptz6\", \"time0\", \"time3\", \"time6\", \"timetz0\", \"timetz3\", \"timetz6\")\nselect * from precision_types_null_TEMP\non conflict (\"id\")\ndo update set\n  \"string10\" = EXCLUDED.\"string10\",\n\"string20\" = EXCLUDED.\"string20\",\n\"string50\" = EXCLUDED.\"string50\",\n\"string100\" = EXCLUDED.\"string100\",\n\"string255\" = EXCLUDED.\"string255\",\n\"bpchar3\" = EXCLUDED.\"bpchar3\",\n\"bpchar10\" = EXCLUDED.\"bpchar10\",\n\"decimal5_2\" = EXCLUDED.\"decimal5_2\",\n\"decimal10_2\" = EXCLUDED.\"decimal10_2\",\n\"decimal18_4\" = EXCLUDED.\"decimal18_4\",\n\"numeric8_2\" = EXCLUDED.\"numeric8_2\",\n\"numeric12_4\" = EXCLUDED.\"numeric12_4\",\n\"timestamp0\" = EXCLUDED.\"timestamp0\",\n\"timestamp3\" = EXCLUDED.\"timestamp3\",\n\"timestamp6\" = EXCLUDED.\"timestamp6\",\n\"timestamptz0\" = EXCLUDED.\"timestamptz0\",\n\"timestamptz3\" = EXCLUDED.\"timestamptz3\",\n\"timestamptz6\" = EXCLUDED.\"timestamptz6\",\n\"time0\" = EXCLUDED.\"time0\",\n\"time3\" = EXCLUDED.\"time3\",\n\"time6\" = EXCLUDED.\"time6\",\n\"timetz0\" = EXCLUDED.\"timetz0\",\n\"timetz3\" = EXCLUDED.\"timetz3\",\n\"timetz6\" = EXCLUDED.\"timetz6\"\n;\ndrop table precision_types_null_TEMP;")).update().runUnchecked(c)
+    Fragment.concat(Fragment.of("create temporary table precision_types_null_TEMP (like \"public\".\"precision_types_null\") on commit drop")).update().run(c)
+    StreamingInsert.of("copy precision_types_null_TEMP(\"id\", \"string10\", \"string20\", \"string50\", \"string100\", \"string255\", \"bpchar3\", \"bpchar10\", \"decimal5_2\", \"decimal10_2\", \"decimal18_4\", \"numeric8_2\", \"numeric12_4\", \"timestamp0\", \"timestamp3\", \"timestamp6\", \"timestamptz0\", \"timestamptz3\", \"timestamptz6\", \"time0\", \"time3\", \"time6\", \"timetz0\", \"timetz3\", \"timetz6\") from stdin", batchSize, unsaved, PrecisionTypesNullRow.pgText).run(c)
+    return Fragment.concat(Fragment.of("insert into \"public\".\"precision_types_null\"(\"id\", \"string10\", \"string20\", \"string50\", \"string100\", \"string255\", \"bpchar3\", \"bpchar10\", \"decimal5_2\", \"decimal10_2\", \"decimal18_4\", \"numeric8_2\", \"numeric12_4\", \"timestamp0\", \"timestamp3\", \"timestamp6\", \"timestamptz0\", \"timestamptz3\", \"timestamptz6\", \"time0\", \"time3\", \"time6\", \"timetz0\", \"timetz3\", \"timetz6\")\nselect * from precision_types_null_TEMP\non conflict (\"id\")\ndo update set\n  \"string10\" = EXCLUDED.\"string10\",\n\"string20\" = EXCLUDED.\"string20\",\n\"string50\" = EXCLUDED.\"string50\",\n\"string100\" = EXCLUDED.\"string100\",\n\"string255\" = EXCLUDED.\"string255\",\n\"bpchar3\" = EXCLUDED.\"bpchar3\",\n\"bpchar10\" = EXCLUDED.\"bpchar10\",\n\"decimal5_2\" = EXCLUDED.\"decimal5_2\",\n\"decimal10_2\" = EXCLUDED.\"decimal10_2\",\n\"decimal18_4\" = EXCLUDED.\"decimal18_4\",\n\"numeric8_2\" = EXCLUDED.\"numeric8_2\",\n\"numeric12_4\" = EXCLUDED.\"numeric12_4\",\n\"timestamp0\" = EXCLUDED.\"timestamp0\",\n\"timestamp3\" = EXCLUDED.\"timestamp3\",\n\"timestamp6\" = EXCLUDED.\"timestamp6\",\n\"timestamptz0\" = EXCLUDED.\"timestamptz0\",\n\"timestamptz3\" = EXCLUDED.\"timestamptz3\",\n\"timestamptz6\" = EXCLUDED.\"timestamptz6\",\n\"time0\" = EXCLUDED.\"time0\",\n\"time3\" = EXCLUDED.\"time3\",\n\"time6\" = EXCLUDED.\"time6\",\n\"timetz0\" = EXCLUDED.\"timetz0\",\n\"timetz3\" = EXCLUDED.\"timetz3\",\n\"timetz6\" = EXCLUDED.\"timetz6\"\n;\ndrop table precision_types_null_TEMP;")).update().run(c)
   }
 }

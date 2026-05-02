@@ -5,17 +5,18 @@
  */
 package oracledb.all_scalar_types
 
-import dev.typr.foundations.dsl.DeleteBuilder
-import dev.typr.foundations.dsl.DeleteBuilderMock
-import dev.typr.foundations.dsl.DeleteParams
-import dev.typr.foundations.dsl.SelectBuilder
-import dev.typr.foundations.dsl.SelectBuilderMock
-import dev.typr.foundations.dsl.SelectParams
-import dev.typr.foundations.dsl.UpdateBuilder
-import dev.typr.foundations.dsl.UpdateBuilderMock
-import dev.typr.foundations.dsl.UpdateParams
+import dev.typr.dsl.DeleteBuilder
+import dev.typr.dsl.DeleteBuilderMock
+import dev.typr.dsl.DeleteParams
+import dev.typr.dsl.SelectBuilder
+import dev.typr.dsl.SelectBuilderMock
+import dev.typr.dsl.SelectParams
+import dev.typr.dsl.UpdateBuilder
+import dev.typr.dsl.UpdateBuilderMock
+import dev.typr.dsl.UpdateParams
+import dev.typr.foundations.Connection
+import dev.typr.foundations.ConnectionRead
 import java.lang.RuntimeException
-import java.sql.Connection
 import java.util.ArrayList
 import java.util.HashMap
 import java.util.Optional
@@ -30,9 +31,9 @@ case class AllScalarTypesRepoMock(
 
   override def deleteById(id: AllScalarTypesId)(using c: Connection): java.lang.Boolean = Optional.ofNullable(map.remove(id)).isPresent()
 
-  override def deleteByIds(ids: Array[AllScalarTypesId])(using c: Connection): Integer = {
+  override def deleteByIds(ids: java.util.List[AllScalarTypesId])(using c: Connection): Integer = {
     var count = 0
-    ids.foreach { id => if (Optional.ofNullable(map.remove(id)).isPresent()) {
+    ids.forEach { id => if (Optional.ofNullable(map.remove(id)).isPresent()) {
       count = count + 1
     } }
     return count
@@ -50,19 +51,19 @@ case class AllScalarTypesRepoMock(
 
   override def select: SelectBuilder[AllScalarTypesFields, AllScalarTypesRow] = SelectBuilderMock(AllScalarTypesFields.structure, () => new ArrayList(map.values()), SelectParams.empty())
 
-  override def selectAll(using c: Connection): java.util.List[AllScalarTypesRow] = new ArrayList(map.values())
+  override def selectAll(using c: ConnectionRead): java.util.List[AllScalarTypesRow] = new ArrayList(map.values())
 
-  override def selectById(id: AllScalarTypesId)(using c: Connection): Optional[AllScalarTypesRow] = Optional.ofNullable(map.get(id))
+  override def selectById(id: AllScalarTypesId)(using c: ConnectionRead): Optional[AllScalarTypesRow] = Optional.ofNullable(map.get(id))
 
-  override def selectByIds(ids: Array[AllScalarTypesId])(using c: Connection): java.util.List[AllScalarTypesRow] = {
+  override def selectByIds(ids: java.util.List[AllScalarTypesId])(using c: ConnectionRead): java.util.List[AllScalarTypesRow] = {
     val result = new ArrayList[AllScalarTypesRow]()
-    ids.foreach { id => val opt = Optional.ofNullable(map.get(id)); if (opt.isPresent()) {
+    ids.forEach { id => val opt = Optional.ofNullable(map.get(id)); if (opt.isPresent()) {
       result.add(opt.get()): @scala.annotation.nowarn
     } }
     return result
   }
 
-  override def selectByIdsTracked(ids: Array[AllScalarTypesId])(using c: Connection): java.util.Map[AllScalarTypesId, AllScalarTypesRow] = selectByIds(ids)(using c).stream().collect(Collectors.toMap((row: AllScalarTypesRow) => row.id, Function.identity()))
+  override def selectByIdsTracked(ids: java.util.List[AllScalarTypesId])(using c: ConnectionRead): java.util.Map[AllScalarTypesId, AllScalarTypesRow] = selectByIds(ids)(using c).stream().collect(Collectors.toMap((row: AllScalarTypesRow) => row.id, Function.identity()))
 
   override def update: UpdateBuilder[AllScalarTypesFields, AllScalarTypesRow] = UpdateBuilderMock(AllScalarTypesFields.structure, () => new ArrayList(map.values()), UpdateParams.empty(), row => row)
 

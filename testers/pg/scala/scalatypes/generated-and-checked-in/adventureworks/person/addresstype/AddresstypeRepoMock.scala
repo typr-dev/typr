@@ -5,17 +5,18 @@
  */
 package adventureworks.person.addresstype
 
-import dev.typr.foundations.scala.DeleteBuilder
-import dev.typr.foundations.scala.DeleteBuilderMock
-import dev.typr.foundations.scala.DeleteParams
-import dev.typr.foundations.scala.SelectBuilder
-import dev.typr.foundations.scala.SelectBuilderMock
-import dev.typr.foundations.scala.SelectParams
-import dev.typr.foundations.scala.UpdateBuilder
-import dev.typr.foundations.scala.UpdateBuilderMock
-import dev.typr.foundations.scala.UpdateParams
+import dev.typr.dslsc.DeleteBuilder
+import dev.typr.dslsc.DeleteBuilderMock
+import dev.typr.dslsc.DeleteParams
+import dev.typr.dslsc.SelectBuilder
+import dev.typr.dslsc.SelectBuilderMock
+import dev.typr.dslsc.SelectParams
+import dev.typr.dslsc.UpdateBuilder
+import dev.typr.dslsc.UpdateBuilderMock
+import dev.typr.dslsc.UpdateParams
+import dev.typr.foundationssc.Connection
+import dev.typr.foundationssc.ConnectionRead
 import java.lang.RuntimeException
-import java.sql.Connection
 
 case class AddresstypeRepoMock(
   toRow: AddresstypeRowUnsaved => AddresstypeRow,
@@ -25,7 +26,7 @@ case class AddresstypeRepoMock(
 
   override def deleteById(addresstypeid: AddresstypeId)(using c: Connection): Boolean = map.remove(addresstypeid).isDefined
 
-  override def deleteByIds(addresstypeids: Array[AddresstypeId])(using c: Connection): Int = {
+  override def deleteByIds(addresstypeids: List[AddresstypeId])(using c: Connection): Int = {
     var count = 0
     addresstypeids.foreach { id => if (map.remove(id).isDefined) {
       count = count + 1
@@ -67,13 +68,13 @@ case class AddresstypeRepoMock(
 
   override def select: SelectBuilder[AddresstypeFields, AddresstypeRow] = SelectBuilderMock(AddresstypeFields.structure, () => map.values.toList, SelectParams.empty())
 
-  override def selectAll(using c: Connection): List[AddresstypeRow] = map.values.toList
+  override def selectAll(using c: ConnectionRead): List[AddresstypeRow] = map.values.toList
 
-  override def selectById(addresstypeid: AddresstypeId)(using c: Connection): Option[AddresstypeRow] = map.get(addresstypeid)
+  override def selectById(addresstypeid: AddresstypeId)(using c: ConnectionRead): Option[AddresstypeRow] = map.get(addresstypeid)
 
-  override def selectByIds(addresstypeids: Array[AddresstypeId])(using c: Connection): List[AddresstypeRow] = addresstypeids.flatMap(map.get(_)).toList
+  override def selectByIds(addresstypeids: List[AddresstypeId])(using c: ConnectionRead): List[AddresstypeRow] = addresstypeids.flatMap(map.get(_)).toList
 
-  override def selectByIdsTracked(addresstypeids: Array[AddresstypeId])(using c: Connection): Map[AddresstypeId, AddresstypeRow] = selectByIds(addresstypeids)(using c).map(x => (((row: AddresstypeRow) => row.addresstypeid).apply(x), x)).toMap
+  override def selectByIdsTracked(addresstypeids: List[AddresstypeId])(using c: ConnectionRead): Map[AddresstypeId, AddresstypeRow] = selectByIds(addresstypeids)(using c).map(x => (((row: AddresstypeRow) => row.addresstypeid).apply(x), x)).toMap
 
   override def update: UpdateBuilder[AddresstypeFields, AddresstypeRow] = UpdateBuilderMock(AddresstypeFields.structure, () => map.values.toList, UpdateParams.empty(), row => row)
 

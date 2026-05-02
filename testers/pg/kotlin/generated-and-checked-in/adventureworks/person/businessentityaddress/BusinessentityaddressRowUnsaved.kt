@@ -11,7 +11,7 @@ import adventureworks.person.address.AddressId
 import adventureworks.person.addresstype.AddresstypeId
 import adventureworks.person.businessentity.BusinessentityId
 import dev.typr.foundations.PgText
-import dev.typr.foundations.PgTypes
+import dev.typr.foundationskt.PgTypes
 import java.time.LocalDateTime
 import java.util.UUID
 
@@ -41,14 +41,14 @@ data class BusinessentityaddressRowUnsaved(
 
   companion object {
     val pgText: PgText<BusinessentityaddressRowUnsaved> =
-      PgText.instance({ row, sb -> BusinessentityId.pgType.text().unsafeEncode(row.businessentityid, sb)
+      PgText.instance({ row, sb -> BusinessentityId.pgType.pgText().unsafeEncode(row.businessentityid, sb)
       sb.append(PgText.DELIMETER)
-      AddressId.pgType.text().unsafeEncode(row.addressid, sb)
+      AddressId.pgType.pgText().unsafeEncode(row.addressid, sb)
       sb.append(PgText.DELIMETER)
-      AddresstypeId.pgType.text().unsafeEncode(row.addresstypeid, sb)
+      AddresstypeId.pgType.pgText().unsafeEncode(row.addresstypeid, sb)
       sb.append(PgText.DELIMETER)
-      Defaulted.pgText(PgTypes.uuid.text()).unsafeEncode(row.rowguid, sb)
+      Defaulted.pgText(PgTypes.uuid.pgText()).unsafeEncode(row.rowguid, sb)
       sb.append(PgText.DELIMETER)
-      Defaulted.pgText(PgTypes.timestamp.text()).unsafeEncode(row.modifieddate, sb) })
+      Defaulted.pgText(PgTypes.timestamp.pgText()).unsafeEncode(row.modifieddate, sb) })
   }
 }

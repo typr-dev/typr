@@ -23,7 +23,7 @@ object SqlIdentifier {
 
   implicit lazy val arrayPut: Put[Array[SqlIdentifier]] = adventureworks.StringArrayMeta.put.contramap(_.map(_.value))
 
-  implicit lazy val bijection: Bijection[SqlIdentifier, String] = Bijection.apply[SqlIdentifier, String](_.value)(SqlIdentifier.apply)
+  implicit lazy val bijection: Bijection[SqlIdentifier, String] = Bijection[SqlIdentifier, String](_.value)(SqlIdentifier.apply)
 
   implicit lazy val decoder: Decoder[SqlIdentifier] = Decoder.decodeString.map(SqlIdentifier.apply)
 

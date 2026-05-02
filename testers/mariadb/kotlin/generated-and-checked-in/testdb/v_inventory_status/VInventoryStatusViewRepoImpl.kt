@@ -5,14 +5,14 @@
  */
 package testdb.v_inventory_status
 
-import dev.typr.foundations.kotlin.Dialect
-import dev.typr.foundations.kotlin.Fragment
-import dev.typr.foundations.kotlin.SelectBuilder
-import java.sql.Connection
+import dev.typr.dslkt.Dialect
+import dev.typr.dslkt.SelectBuilder
+import dev.typr.foundationskt.ConnectionRead
+import dev.typr.foundationskt.Fragment
 import kotlin.collections.List
 
 class VInventoryStatusViewRepoImpl() : VInventoryStatusViewRepo {
-  override fun select(): SelectBuilder<VInventoryStatusViewFields, VInventoryStatusViewRow> = SelectBuilder.of("`v_inventory_status`", VInventoryStatusViewFields.structure, VInventoryStatusViewRow._rowParser, Dialect.MARIADB)
+  override fun select(): SelectBuilder<VInventoryStatusViewFields, VInventoryStatusViewRow> = SelectBuilder.of("`v_inventory_status`", VInventoryStatusViewFields.structure, VInventoryStatusViewRow.rowCodec, Dialect.MARIADB)
 
-  override fun selectAll(c: Connection): List<VInventoryStatusViewRow> = Fragment.interpolate(Fragment.lit("select `product_id`, `sku`, `product_name`, `warehouse_id`, `warehouse_code`, `warehouse_name`, `quantity_on_hand`, `quantity_reserved`, `quantity_on_order`, `available`, `reorder_point`, `stock_status`, `bin_location`, `last_counted_at`\nfrom `v_inventory_status`\n")).query(VInventoryStatusViewRow._rowParser.all()).runUnchecked(c)
+  override fun selectAll(c: ConnectionRead): List<VInventoryStatusViewRow> = Fragment.concat(Fragment.of("select `product_id`, `sku`, `product_name`, `warehouse_id`, `warehouse_code`, `warehouse_name`, `quantity_on_hand`, `quantity_reserved`, `quantity_on_order`, `available`, `reorder_point`, `stock_status`, `bin_location`, `last_counted_at`\nfrom `v_inventory_status`\n")).query(VInventoryStatusViewRow.rowCodec.all()).run(c)
 }

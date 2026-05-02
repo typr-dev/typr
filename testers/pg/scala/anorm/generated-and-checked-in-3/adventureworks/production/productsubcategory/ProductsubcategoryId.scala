@@ -21,7 +21,7 @@ object ProductsubcategoryId {
 
   given arrayToStatement: ToStatement[Array[ProductsubcategoryId]] = adventureworks.IntArrayToStatement.contramap(_.map(_.value))
 
-  given bijection: Bijection[ProductsubcategoryId, Int] = Bijection.apply[ProductsubcategoryId, Int](_.value)(ProductsubcategoryId.apply)
+  given bijection: Bijection[ProductsubcategoryId, Int] = Bijection[ProductsubcategoryId, Int](_.value)(ProductsubcategoryId.apply)
 
   given column: Column[ProductsubcategoryId] = Column.columnToInt.map(ProductsubcategoryId.apply)
 

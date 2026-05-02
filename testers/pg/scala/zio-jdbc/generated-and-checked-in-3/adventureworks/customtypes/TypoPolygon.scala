@@ -49,7 +49,7 @@ object TypoPolygon {
     )
   }
 
-  given bijection: Bijection[TypoPolygon, List[TypoPoint]] = Bijection.apply[TypoPolygon, List[TypoPoint]](_.points)(TypoPolygon.apply)
+  given bijection: Bijection[TypoPolygon, List[TypoPoint]] = Bijection[TypoPolygon, List[TypoPoint]](_.points)(TypoPolygon.apply)
 
   given jdbcDecoder: JdbcDecoder[TypoPolygon] = {
     JdbcDecoder[TypoPolygon](

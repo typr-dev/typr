@@ -5,7 +5,7 @@
  */
 package testdb.order_items_bulk_insert
 
-import java.sql.Connection
+import dev.typr.foundationssc.ConnectionRead
 import testdb.orders.OrdersId
 import testdb.products.ProductsId
 
@@ -15,5 +15,5 @@ trait OrderItemsBulkInsertSqlRepo {
     productId: /* user-picked */ ProductsId,
     quantity: Int,
     unitPrice: BigDecimal
-  )(using c: Connection): List[OrderItemsBulkInsertSqlRow]
+  )(using c: ConnectionRead): List[OrderItemsBulkInsertSqlRow]
 }

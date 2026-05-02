@@ -21,7 +21,7 @@ import typr.generated.Text
 case class TypoShort(value: Short)
 
 object TypoShort {
-  implicit lazy val arrayColumn: Column[Array[TypoShort]] = {
+  given arrayColumn: Column[Array[TypoShort]] = {
     Column.nonNull[Array[TypoShort]]((v1: Any, _) =>
       v1 match {
           case v: PgArray =>
@@ -35,9 +35,9 @@ object TypoShort {
     )
   }
 
-  implicit lazy val arrayToStatement: ToStatement[Array[TypoShort]] = ToStatement[Array[TypoShort]]((s, index, v) => s.setArray(index, s.getConnection.createArrayOf("int2", v.map(v => v.value: java.lang.Short))))
+  given arrayToStatement: ToStatement[Array[TypoShort]] = ToStatement[Array[TypoShort]]((s, index, v) => s.setArray(index, s.getConnection.createArrayOf("int2", v.map(v => v.value: java.lang.Short))))
 
-  implicit lazy val column: Column[TypoShort] = {
+  given column: Column[TypoShort] = {
     Column.nonNull[TypoShort]((v1: Any, _) =>
       v1 match {
         case v: Integer => Right(TypoShort(v.toShort))
@@ -46,7 +46,7 @@ object TypoShort {
     )
   }
 
-  implicit lazy val numeric: Numeric[TypoShort] = {
+  given numeric: Numeric[TypoShort] = {
     new Numeric[TypoShort] {
       override def compare(x: TypoShort, y: TypoShort): Int = java.lang.Short.compare(x.value, y.value)
       override def plus(x: TypoShort, y: TypoShort): TypoShort = TypoShort((x.value + y.value).toShort)
@@ -63,23 +63,23 @@ object TypoShort {
     }
   }
 
-  implicit lazy val parameterMetadata: ParameterMetaData[TypoShort] = {
+  given parameterMetadata: ParameterMetaData[TypoShort] = {
     new ParameterMetaData[TypoShort] {
       override def sqlType: String = "int2"
       override def jdbcType: Int = Types.OTHER
     }
   }
 
-  implicit lazy val pgText: Text[TypoShort] = {
+  given pgText: Text[TypoShort] = {
     new Text[TypoShort] {
       override def unsafeEncode(v: TypoShort, sb: StringBuilder): Unit = Text[Short].unsafeEncode(v.value, sb)
       override def unsafeArrayEncode(v: TypoShort, sb: StringBuilder): Unit = Text[Short].unsafeArrayEncode(v.value, sb)
     }
   }
 
-  implicit lazy val reads: Reads[TypoShort] = implicitly[Reads[Short]].map(TypoShort.apply)
+  given reads: Reads[TypoShort] = implicitly[Reads[Short]].map(TypoShort.apply)
 
-  implicit lazy val toStatement: ToStatement[TypoShort] = ToStatement[TypoShort]((s, index, v) => s.setObject(index, v.value.toInt))
+  given toStatement: ToStatement[TypoShort] = ToStatement[TypoShort]((s, index, v) => s.setObject(index, v.value.toInt))
 
-  implicit lazy val writes: Writes[TypoShort] = implicitly[Writes[Short]].contramap(_.value)
+  given writes: Writes[TypoShort] = implicitly[Writes[Short]].contramap(_.value)
 }

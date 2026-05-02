@@ -9,7 +9,7 @@ import adventureworks.customtypes.Defaulted
 import adventureworks.customtypes.Defaulted.UseDefault
 import com.fasterxml.jackson.annotation.JsonProperty
 import dev.typr.foundations.PgText
-import dev.typr.foundations.scala.ScalaDbTypes
+import dev.typr.foundationssc.PgTypes
 
 /** This class corresponds to a row in table `public.identity-test` which has not been persisted yet */
 case class IdentityTestRowUnsaved(
@@ -24,5 +24,5 @@ case class IdentityTestRowUnsaved(
 }
 
 object IdentityTestRowUnsaved {
-  given pgText: PgText[IdentityTestRowUnsaved] = PgText.instance((row, sb) => { IdentityTestId.pgType.text.unsafeEncode(row.name, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using ScalaDbTypes.PgTypes.int4.text).unsafeEncode(row.defaultGenerated, sb) })
+  given pgText: PgText[IdentityTestRowUnsaved] = PgText.instance((row, sb) => { IdentityTestId.pgType.pgText().unsafeEncode(row.name, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using PgTypes.int4.pgText()).unsafeEncode(row.defaultGenerated, sb) })
 }

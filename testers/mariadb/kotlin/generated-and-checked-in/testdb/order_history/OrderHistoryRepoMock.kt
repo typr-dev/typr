@@ -5,17 +5,18 @@
  */
 package testdb.order_history
 
-import dev.typr.foundations.kotlin.DeleteBuilder
-import dev.typr.foundations.kotlin.DeleteBuilderMock
-import dev.typr.foundations.kotlin.DeleteParams
-import dev.typr.foundations.kotlin.SelectBuilder
-import dev.typr.foundations.kotlin.SelectBuilderMock
-import dev.typr.foundations.kotlin.SelectParams
-import dev.typr.foundations.kotlin.UpdateBuilder
-import dev.typr.foundations.kotlin.UpdateBuilderMock
-import dev.typr.foundations.kotlin.UpdateParams
+import dev.typr.dslkt.DeleteBuilder
+import dev.typr.dslkt.DeleteBuilderMock
+import dev.typr.dslkt.DeleteParams
+import dev.typr.dslkt.SelectBuilder
+import dev.typr.dslkt.SelectBuilderMock
+import dev.typr.dslkt.SelectParams
+import dev.typr.dslkt.UpdateBuilder
+import dev.typr.dslkt.UpdateBuilderMock
+import dev.typr.dslkt.UpdateParams
+import dev.typr.foundationskt.Connection
+import dev.typr.foundationskt.ConnectionRead
 import java.lang.RuntimeException
-import java.sql.Connection
 import java.util.ArrayList
 import kotlin.collections.Iterator
 import kotlin.collections.List
@@ -31,10 +32,10 @@ data class OrderHistoryRepoMock(
   override fun deleteById(
     historyId: OrderHistoryId,
     c: Connection
-  ): Boolean = map.remove(historyId) != null
+  ): kotlin.Boolean = map.remove(historyId) != null
 
   override fun deleteByIds(
-    historyIds: Array<OrderHistoryId>,
+    historyIds: List<OrderHistoryId>,
     c: Connection
   ): Int {
     var count = 0
@@ -64,16 +65,16 @@ data class OrderHistoryRepoMock(
 
   override fun select(): SelectBuilder<OrderHistoryFields, OrderHistoryRow> = SelectBuilderMock(OrderHistoryFields.structure, { map.values.toList() }, SelectParams.empty())
 
-  override fun selectAll(c: Connection): List<OrderHistoryRow> = map.values.toList()
+  override fun selectAll(c: ConnectionRead): List<OrderHistoryRow> = map.values.toList()
 
   override fun selectById(
     historyId: OrderHistoryId,
-    c: Connection
+    c: ConnectionRead
   ): OrderHistoryRow? = map[historyId]
 
   override fun selectByIds(
-    historyIds: Array<OrderHistoryId>,
-    c: Connection
+    historyIds: List<OrderHistoryId>,
+    c: ConnectionRead
   ): List<OrderHistoryRow> {
     val result = ArrayList<OrderHistoryRow>()
     for (id in historyIds) {
@@ -86,8 +87,8 @@ data class OrderHistoryRepoMock(
   }
 
   override fun selectByIdsTracked(
-    historyIds: Array<OrderHistoryId>,
-    c: Connection
+    historyIds: List<OrderHistoryId>,
+    c: ConnectionRead
   ): Map<OrderHistoryId, OrderHistoryRow> = selectByIds(historyIds, c).associateBy({ row: OrderHistoryRow -> row.historyId })
 
   override fun update(): UpdateBuilder<OrderHistoryFields, OrderHistoryRow> = UpdateBuilderMock(OrderHistoryFields.structure, { map.values.toList() }, UpdateParams.empty(), { row -> row })
@@ -95,7 +96,7 @@ data class OrderHistoryRepoMock(
   override fun update(
     row: OrderHistoryRow,
     c: Connection
-  ): Boolean {
+  ): kotlin.Boolean {
     val shouldUpdate = map[row.historyId]?.takeIf({ oldRow -> (oldRow != row) }) != null
     if (shouldUpdate) {
       map[row.historyId] = row

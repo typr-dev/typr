@@ -50,6 +50,24 @@ data class OptionalFields(
   }
 
   companion object {
+    @Throws(IOException::class)
+    fun parseFrom(input: CodedInputStream): OptionalFields {
+      var name: kotlin.String? = null
+      var age: Int? = null
+      var customer: Customer? = null
+      while (!input.isAtEnd()) {
+        val tag = input.readTag()
+        if (WireFormat.getTagFieldNumber(tag) == 1) { name = input.readString() }
+        else if (WireFormat.getTagFieldNumber(tag) == 2) { age = input.readInt32() }
+        else if (WireFormat.getTagFieldNumber(tag) == 3) { val _length = input.readRawVarint32();
+        val _oldLimit = input.pushLimit(_length);
+        customer = Customer.parseFrom(input);
+        input.popLimit(_oldLimit); }
+        else { input.skipField(tag) }
+      }
+      return OptionalFields(name, age, customer)
+    }
+
     val MARSHALLER: Marshaller<OptionalFields> =
       object : Marshaller<OptionalFields> {
         override fun stream(value: OptionalFields): InputStream {
@@ -71,23 +89,5 @@ data class OptionalFields(
           } 
         }
       }
-
-    @Throws(IOException::class)
-    fun parseFrom(input: CodedInputStream): OptionalFields {
-      var name: kotlin.String? = null
-      var age: Int? = null
-      var customer: Customer? = null
-      while (!input.isAtEnd()) {
-        val tag = input.readTag()
-        if (WireFormat.getTagFieldNumber(tag) == 1) { name = input.readString() }
-        else if (WireFormat.getTagFieldNumber(tag) == 2) { age = input.readInt32() }
-        else if (WireFormat.getTagFieldNumber(tag) == 3) { val _length = input.readRawVarint32();
-        val _oldLimit = input.pushLimit(_length);
-        customer = Customer.parseFrom(input);
-        input.popLimit(_oldLimit); }
-        else { input.skipField(tag) }
-      }
-      return OptionalFields(name, age, customer)
-    }
   }
 }

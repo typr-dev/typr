@@ -1,6 +1,6 @@
 package testdb
 
-import dev.typr.foundations.dsl.Bijection
+import dev.typr.foundations.Bijection
 import org.junit.Assert.*
 import org.junit.Test
 import testdb.customers.*

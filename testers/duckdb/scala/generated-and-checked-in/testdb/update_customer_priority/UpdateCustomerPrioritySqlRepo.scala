@@ -5,7 +5,7 @@
  */
 package testdb.update_customer_priority
 
-import java.sql.Connection
+import dev.typr.foundationssc.ConnectionRead
 import testdb.Priority
 import testdb.customers.CustomersId
 
@@ -13,5 +13,5 @@ trait UpdateCustomerPrioritySqlRepo {
   def apply(
     newPriority: /* user-picked */ Priority,
     customerId: /* user-picked */ CustomersId
-  )(using c: Connection): List[UpdateCustomerPrioritySqlRow]
+  )(using c: ConnectionRead): List[UpdateCustomerPrioritySqlRow]
 }

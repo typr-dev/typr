@@ -50,7 +50,7 @@ object TypoUUID {
     )
   }
 
-  implicit lazy val bijection: Bijection[TypoUUID, UUID] = Bijection.apply[TypoUUID, UUID](_.value)(TypoUUID.apply)
+  implicit lazy val bijection: Bijection[TypoUUID, UUID] = Bijection[TypoUUID, UUID](_.value)(TypoUUID.apply)
 
   implicit lazy val jdbcDecoder: JdbcDecoder[TypoUUID] = {
     JdbcDecoder[TypoUUID](

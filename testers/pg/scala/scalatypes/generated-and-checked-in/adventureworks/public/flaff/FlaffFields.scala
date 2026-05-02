@@ -6,19 +6,18 @@
 package adventureworks.public.flaff
 
 import adventureworks.public.ShortText
-import dev.typr.foundations.PgTypes
-import dev.typr.foundations.RowParser
-import dev.typr.foundations.dsl.FieldsBase
-import dev.typr.foundations.dsl.Path
-import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.scala.ForeignKey
-import dev.typr.foundations.scala.RelationStructure
-import dev.typr.foundations.scala.ScalaDbTypes
-import dev.typr.foundations.scala.SqlExpr
-import dev.typr.foundations.scala.SqlExpr.IdField
-import dev.typr.foundations.scala.SqlExpr.OptField
-import dev.typr.foundations.scala.TupleExpr
-import dev.typr.foundations.scala.TupleExpr5
+import dev.typr.dsl.FieldsBase
+import dev.typr.dsl.Path
+import dev.typr.dsl.SqlExpr.FieldLike
+import dev.typr.dslsc.ForeignKey
+import dev.typr.dslsc.RelationStructure
+import dev.typr.dslsc.SqlExpr
+import dev.typr.dslsc.SqlExpr.IdField
+import dev.typr.dslsc.SqlExpr.OptField
+import dev.typr.dslsc.TupleExpr
+import dev.typr.dslsc.TupleExpr5
+import dev.typr.foundations.RowCodec
+import dev.typr.foundationssc.PgTypes
 
 class FlaffFields(val `_path`: java.util.List[Path]) extends TupleExpr5[ShortText, String, Int, ShortText, ShortText] with RelationStructure[FlaffFields, FlaffRow]  with FieldsBase[FlaffRow] {
   def code: IdField[ShortText, FlaffRow] = {
@@ -29,7 +28,7 @@ class FlaffFields(val `_path`: java.util.List[Path]) extends TupleExpr5[ShortTex
       None,
       Some("text"),
       (row, value) => row.copy(code = value),
-      ShortText.pgType
+      ShortText.pgType.underlying
     )
   }
 
@@ -41,7 +40,7 @@ class FlaffFields(val `_path`: java.util.List[Path]) extends TupleExpr5[ShortTex
       None,
       None,
       (row, value) => row.copy(anotherCode = value),
-      PgTypes.text
+      PgTypes.text.underlying
     )
   }
 
@@ -53,7 +52,7 @@ class FlaffFields(val `_path`: java.util.List[Path]) extends TupleExpr5[ShortTex
       None,
       Some("int4"),
       (row, value) => row.copy(someNumber = value),
-      ScalaDbTypes.PgTypes.int4
+      PgTypes.int4.underlying
     )
   }
 
@@ -65,7 +64,7 @@ class FlaffFields(val `_path`: java.util.List[Path]) extends TupleExpr5[ShortTex
       None,
       Some("text"),
       (row, value) => row.copy(specifier = value),
-      ShortText.pgType
+      ShortText.pgType.underlying
     )
   }
 
@@ -77,7 +76,7 @@ class FlaffFields(val `_path`: java.util.List[Path]) extends TupleExpr5[ShortTex
       None,
       Some("text"),
       (row, value) => row.copy(parentspecifier = value),
-      ShortText.pgType
+      ShortText.pgType.underlying
     )
   }
 
@@ -89,7 +88,7 @@ class FlaffFields(val `_path`: java.util.List[Path]) extends TupleExpr5[ShortTex
 
   override def columns: java.util.List[FieldLike[?, FlaffRow]] = java.util.List.of(this.code.underlying, this.anotherCode.underlying, this.someNumber.underlying, this.specifier.underlying, this.parentspecifier.underlying)
 
-  override def rowParser: RowParser[FlaffRow] = FlaffRow._rowParser.underlying
+  override def rowCodec: RowCodec[FlaffRow] = FlaffRow.rowCodec.underlying
 
   override def withPaths(`_path`: java.util.List[Path]): RelationStructure[FlaffFields, FlaffRow] = new FlaffFields(`_path`)
 

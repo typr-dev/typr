@@ -6,18 +6,17 @@
 package adventureworks.production.productmodel
 
 import com.fasterxml.jackson.annotation.JsonValue
-import dev.typr.foundations.PgType
-import dev.typr.foundations.PgTypes
-import dev.typr.foundations.scala.Bijection
-import dev.typr.foundations.scala.ScalaDbTypes
+import dev.typr.dslsc.Bijection
+import dev.typr.foundationssc.PgType
+import dev.typr.foundationssc.PgTypes
 
 /** Type for the primary key of table `production.productmodel` */
 case class ProductmodelId(@JsonValue value: Int) extends scala.AnyVal
 
 object ProductmodelId {
-  given bijection: Bijection[ProductmodelId, Int] = Bijection.apply[ProductmodelId, Int](_.value)(ProductmodelId.apply)
+  given bijection: Bijection[ProductmodelId, Int] = Bijection.of[ProductmodelId, Int](_.value, ProductmodelId.apply)
 
-  given pgType: PgType[ProductmodelId] = ScalaDbTypes.PgTypes.int4.bimap(ProductmodelId.apply, _.value)
+  given pgType: PgType[ProductmodelId] = PgTypes.int4.to(Bijection.of(ProductmodelId.apply, _.value))
 
-  given pgTypeArray: PgType[Array[ProductmodelId]] = PgTypes.int4ArrayUnboxed.bimap(xs => xs.map(ProductmodelId.apply), xs => xs.map(_.value))
+  given pgTypeArray: PgType[List[ProductmodelId]] = pgType.array
 }

@@ -24,7 +24,7 @@ object ActiveFlag {
 
   implicit lazy val arrayToStatement: ToStatement[Array[ActiveFlag]] = Flag.arrayToStatement.contramap(_.map(_.value))
 
-  implicit lazy val bijection: Bijection[ActiveFlag, Flag] = Bijection.apply[ActiveFlag, Flag](_.value)(ActiveFlag.apply)
+  implicit lazy val bijection: Bijection[ActiveFlag, Flag] = Bijection[ActiveFlag, Flag](_.value)(ActiveFlag.apply)
 
   implicit lazy val column: Column[ActiveFlag] = Flag.column.map(ActiveFlag.apply)
 

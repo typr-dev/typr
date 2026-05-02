@@ -5,10 +5,11 @@
  */
 package adventureworks.production.productcosthistory
 
-import dev.typr.foundations.kotlin.DeleteBuilder
-import dev.typr.foundations.kotlin.SelectBuilder
-import dev.typr.foundations.kotlin.UpdateBuilder
-import java.sql.Connection
+import dev.typr.dslkt.DeleteBuilder
+import dev.typr.dslkt.SelectBuilder
+import dev.typr.dslkt.UpdateBuilder
+import dev.typr.foundationskt.Connection
+import dev.typr.foundationskt.ConnectionRead
 import kotlin.collections.Iterator
 import kotlin.collections.List
 import kotlin.collections.Map
@@ -19,10 +20,10 @@ interface ProductcosthistoryRepo {
   abstract fun deleteById(
     compositeId: ProductcosthistoryId,
     c: Connection
-  ): Boolean
+  ): kotlin.Boolean
 
   abstract fun deleteByIds(
-    compositeIds: Array<ProductcosthistoryId>,
+    compositeIds: List<ProductcosthistoryId>,
     c: Connection
   ): Int
 
@@ -40,32 +41,32 @@ interface ProductcosthistoryRepo {
     unsaved: Iterator<ProductcosthistoryRow>,
     batchSize: Int = 10000,
     c: Connection
-  ): Long
+  ): kotlin.Long
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
   abstract fun insertUnsavedStreaming(
     unsaved: Iterator<ProductcosthistoryRowUnsaved>,
     batchSize: Int = 10000,
     c: Connection
-  ): Long
+  ): kotlin.Long
 
   abstract fun select(): SelectBuilder<ProductcosthistoryFields, ProductcosthistoryRow>
 
-  abstract fun selectAll(c: Connection): List<ProductcosthistoryRow>
+  abstract fun selectAll(c: ConnectionRead): List<ProductcosthistoryRow>
 
   abstract fun selectById(
     compositeId: ProductcosthistoryId,
-    c: Connection
+    c: ConnectionRead
   ): ProductcosthistoryRow?
 
   abstract fun selectByIds(
-    compositeIds: Array<ProductcosthistoryId>,
-    c: Connection
+    compositeIds: List<ProductcosthistoryId>,
+    c: ConnectionRead
   ): List<ProductcosthistoryRow>
 
   abstract fun selectByIdsTracked(
-    compositeIds: Array<ProductcosthistoryId>,
-    c: Connection
+    compositeIds: List<ProductcosthistoryId>,
+    c: ConnectionRead
   ): Map<ProductcosthistoryId, ProductcosthistoryRow>
 
   abstract fun update(): UpdateBuilder<ProductcosthistoryFields, ProductcosthistoryRow>
@@ -73,7 +74,7 @@ interface ProductcosthistoryRepo {
   abstract fun update(
     row: ProductcosthistoryRow,
     c: Connection
-  ): Boolean
+  ): kotlin.Boolean
 
   abstract fun upsert(
     unsaved: ProductcosthistoryRow,

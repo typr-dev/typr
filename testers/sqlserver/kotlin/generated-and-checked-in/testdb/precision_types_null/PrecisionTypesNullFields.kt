@@ -5,16 +5,16 @@
  */
 package testdb.precision_types_null
 
-import dev.typr.foundations.RowParser
-import dev.typr.foundations.SqlServerTypes
-import dev.typr.foundations.dsl.FieldsBase
-import dev.typr.foundations.dsl.Path
-import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.kotlin.RelationStructure
-import dev.typr.foundations.kotlin.SqlExpr
-import dev.typr.foundations.kotlin.SqlExpr.IdField
-import dev.typr.foundations.kotlin.SqlExpr.OptField
-import dev.typr.foundations.kotlin.TupleExpr27
+import dev.typr.dsl.FieldsBase
+import dev.typr.dsl.Path
+import dev.typr.dsl.SqlExpr.FieldLike
+import dev.typr.dslkt.RelationStructure
+import dev.typr.dslkt.SqlExpr
+import dev.typr.dslkt.SqlExpr.IdField
+import dev.typr.dslkt.SqlExpr.OptField
+import dev.typr.dslkt.TupleExpr27
+import dev.typr.foundations.RowCodec
+import dev.typr.foundationskt.SqlServerTypes
 import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.OffsetDateTime
@@ -96,63 +96,63 @@ data class PrecisionTypesNullFields(val _path: List<Path>) : TupleExpr27<Precisi
 
   override fun _path(): List<Path> = _path
 
-  fun binary10(): OptField<Binary10, PrecisionTypesNullRow> = OptField<Binary10, PrecisionTypesNullRow>(_path, "binary10", PrecisionTypesNullRow::binary10, null, null, { row, value -> row.copy(binary10 = value) }, Binary10.sqlServerType)
+  fun binary10(): OptField<Binary10, PrecisionTypesNullRow> = OptField<Binary10, PrecisionTypesNullRow>(_path, "binary10", PrecisionTypesNullRow::binary10, null, null, { row, value -> row.copy(binary10 = value) }, Binary10.sqlServerType.underlying)
 
-  fun binary32(): OptField<Binary32, PrecisionTypesNullRow> = OptField<Binary32, PrecisionTypesNullRow>(_path, "binary32", PrecisionTypesNullRow::binary32, null, null, { row, value -> row.copy(binary32 = value) }, Binary32.sqlServerType)
+  fun binary32(): OptField<Binary32, PrecisionTypesNullRow> = OptField<Binary32, PrecisionTypesNullRow>(_path, "binary32", PrecisionTypesNullRow::binary32, null, null, { row, value -> row.copy(binary32 = value) }, Binary32.sqlServerType.underlying)
 
-  fun char10(): OptField<PaddedString10, PrecisionTypesNullRow> = OptField<PaddedString10, PrecisionTypesNullRow>(_path, "char10", PrecisionTypesNullRow::char10, null, null, { row, value -> row.copy(char10 = value) }, PaddedString10.sqlServerType)
+  fun char10(): OptField<PaddedString10, PrecisionTypesNullRow> = OptField<PaddedString10, PrecisionTypesNullRow>(_path, "char10", PrecisionTypesNullRow::char10, null, null, { row, value -> row.copy(char10 = value) }, PaddedString10.sqlServerType.underlying)
 
   override fun columns(): List<FieldLike<*, PrecisionTypesNullRow>> = listOf(this.id().underlying, this.string10().underlying, this.string20().underlying, this.string50().underlying, this.string100().underlying, this.string255().underlying, this.nstring10().underlying, this.nstring50().underlying, this.nstring255().underlying, this.char10().underlying, this.nchar10().underlying, this.decimal52().underlying, this.decimal102().underlying, this.decimal184().underlying, this.numeric82().underlying, this.numeric124().underlying, this.binary10().underlying, this.binary32().underlying, this.time0().underlying, this.time3().underlying, this.time7().underlying, this.datetime20().underlying, this.datetime23().underlying, this.datetime27().underlying, this.dto0().underlying, this.dto3().underlying, this.dto7().underlying)
 
-  fun datetime20(): OptField<LocalDateTime, PrecisionTypesNullRow> = OptField<LocalDateTime, PrecisionTypesNullRow>(_path, "datetime2_0", PrecisionTypesNullRow::datetime20, null, null, { row, value -> row.copy(datetime20 = value) }, SqlServerTypes.datetime2)
+  fun datetime20(): OptField<LocalDateTime, PrecisionTypesNullRow> = OptField<LocalDateTime, PrecisionTypesNullRow>(_path, "datetime2_0", PrecisionTypesNullRow::datetime20, null, null, { row, value -> row.copy(datetime20 = value) }, SqlServerTypes.datetime2.underlying)
 
-  fun datetime23(): OptField<LocalDateTime3, PrecisionTypesNullRow> = OptField<LocalDateTime3, PrecisionTypesNullRow>(_path, "datetime2_3", PrecisionTypesNullRow::datetime23, null, null, { row, value -> row.copy(datetime23 = value) }, LocalDateTime3.sqlServerType)
+  fun datetime23(): OptField<LocalDateTime3, PrecisionTypesNullRow> = OptField<LocalDateTime3, PrecisionTypesNullRow>(_path, "datetime2_3", PrecisionTypesNullRow::datetime23, null, null, { row, value -> row.copy(datetime23 = value) }, LocalDateTime3.sqlServerType.underlying)
 
-  fun datetime27(): OptField<LocalDateTime7, PrecisionTypesNullRow> = OptField<LocalDateTime7, PrecisionTypesNullRow>(_path, "datetime2_7", PrecisionTypesNullRow::datetime27, null, null, { row, value -> row.copy(datetime27 = value) }, LocalDateTime7.sqlServerType)
+  fun datetime27(): OptField<LocalDateTime7, PrecisionTypesNullRow> = OptField<LocalDateTime7, PrecisionTypesNullRow>(_path, "datetime2_7", PrecisionTypesNullRow::datetime27, null, null, { row, value -> row.copy(datetime27 = value) }, LocalDateTime7.sqlServerType.underlying)
 
-  fun decimal102(): OptField<Decimal10_2, PrecisionTypesNullRow> = OptField<Decimal10_2, PrecisionTypesNullRow>(_path, "decimal10_2", PrecisionTypesNullRow::decimal102, null, null, { row, value -> row.copy(decimal102 = value) }, Decimal10_2.sqlServerType)
+  fun decimal102(): OptField<Decimal10_2, PrecisionTypesNullRow> = OptField<Decimal10_2, PrecisionTypesNullRow>(_path, "decimal10_2", PrecisionTypesNullRow::decimal102, null, null, { row, value -> row.copy(decimal102 = value) }, Decimal10_2.sqlServerType.underlying)
 
-  fun decimal184(): OptField<Decimal18_4, PrecisionTypesNullRow> = OptField<Decimal18_4, PrecisionTypesNullRow>(_path, "decimal18_4", PrecisionTypesNullRow::decimal184, null, null, { row, value -> row.copy(decimal184 = value) }, Decimal18_4.sqlServerType)
+  fun decimal184(): OptField<Decimal18_4, PrecisionTypesNullRow> = OptField<Decimal18_4, PrecisionTypesNullRow>(_path, "decimal18_4", PrecisionTypesNullRow::decimal184, null, null, { row, value -> row.copy(decimal184 = value) }, Decimal18_4.sqlServerType.underlying)
 
-  fun decimal52(): OptField<Decimal5_2, PrecisionTypesNullRow> = OptField<Decimal5_2, PrecisionTypesNullRow>(_path, "decimal5_2", PrecisionTypesNullRow::decimal52, null, null, { row, value -> row.copy(decimal52 = value) }, Decimal5_2.sqlServerType)
+  fun decimal52(): OptField<Decimal5_2, PrecisionTypesNullRow> = OptField<Decimal5_2, PrecisionTypesNullRow>(_path, "decimal5_2", PrecisionTypesNullRow::decimal52, null, null, { row, value -> row.copy(decimal52 = value) }, Decimal5_2.sqlServerType.underlying)
 
-  fun dto0(): OptField<OffsetDateTime, PrecisionTypesNullRow> = OptField<OffsetDateTime, PrecisionTypesNullRow>(_path, "dto0", PrecisionTypesNullRow::dto0, null, null, { row, value -> row.copy(dto0 = value) }, SqlServerTypes.datetimeoffset)
+  fun dto0(): OptField<OffsetDateTime, PrecisionTypesNullRow> = OptField<OffsetDateTime, PrecisionTypesNullRow>(_path, "dto0", PrecisionTypesNullRow::dto0, null, null, { row, value -> row.copy(dto0 = value) }, SqlServerTypes.datetimeoffset.underlying)
 
-  fun dto3(): OptField<OffsetDateTime3, PrecisionTypesNullRow> = OptField<OffsetDateTime3, PrecisionTypesNullRow>(_path, "dto3", PrecisionTypesNullRow::dto3, null, null, { row, value -> row.copy(dto3 = value) }, OffsetDateTime3.sqlServerType)
+  fun dto3(): OptField<OffsetDateTime3, PrecisionTypesNullRow> = OptField<OffsetDateTime3, PrecisionTypesNullRow>(_path, "dto3", PrecisionTypesNullRow::dto3, null, null, { row, value -> row.copy(dto3 = value) }, OffsetDateTime3.sqlServerType.underlying)
 
-  fun dto7(): OptField<OffsetDateTime7, PrecisionTypesNullRow> = OptField<OffsetDateTime7, PrecisionTypesNullRow>(_path, "dto7", PrecisionTypesNullRow::dto7, null, null, { row, value -> row.copy(dto7 = value) }, OffsetDateTime7.sqlServerType)
+  fun dto7(): OptField<OffsetDateTime7, PrecisionTypesNullRow> = OptField<OffsetDateTime7, PrecisionTypesNullRow>(_path, "dto7", PrecisionTypesNullRow::dto7, null, null, { row, value -> row.copy(dto7 = value) }, OffsetDateTime7.sqlServerType.underlying)
 
-  fun id(): IdField<PrecisionTypesNullId, PrecisionTypesNullRow> = IdField<PrecisionTypesNullId, PrecisionTypesNullRow>(_path, "id", PrecisionTypesNullRow::id, null, null, { row, value -> row.copy(id = value) }, PrecisionTypesNullId.sqlServerType)
+  fun id(): IdField<PrecisionTypesNullId, PrecisionTypesNullRow> = IdField<PrecisionTypesNullId, PrecisionTypesNullRow>(_path, "id", PrecisionTypesNullRow::id, null, null, { row, value -> row.copy(id = value) }, PrecisionTypesNullId.sqlServerType.underlying)
 
-  fun nchar10(): OptField<PaddedString10, PrecisionTypesNullRow> = OptField<PaddedString10, PrecisionTypesNullRow>(_path, "nchar10", PrecisionTypesNullRow::nchar10, null, null, { row, value -> row.copy(nchar10 = value) }, PaddedString10.sqlServerType)
+  fun nchar10(): OptField<PaddedString10, PrecisionTypesNullRow> = OptField<PaddedString10, PrecisionTypesNullRow>(_path, "nchar10", PrecisionTypesNullRow::nchar10, null, null, { row, value -> row.copy(nchar10 = value) }, PaddedString10.sqlServerType.underlying)
 
-  fun nstring10(): OptField<String10, PrecisionTypesNullRow> = OptField<String10, PrecisionTypesNullRow>(_path, "nstring10", PrecisionTypesNullRow::nstring10, null, null, { row, value -> row.copy(nstring10 = value) }, String10.sqlServerType)
+  fun nstring10(): OptField<String10, PrecisionTypesNullRow> = OptField<String10, PrecisionTypesNullRow>(_path, "nstring10", PrecisionTypesNullRow::nstring10, null, null, { row, value -> row.copy(nstring10 = value) }, String10.sqlServerType.underlying)
 
-  fun nstring255(): OptField<String255, PrecisionTypesNullRow> = OptField<String255, PrecisionTypesNullRow>(_path, "nstring255", PrecisionTypesNullRow::nstring255, null, null, { row, value -> row.copy(nstring255 = value) }, String255.sqlServerType)
+  fun nstring255(): OptField<String255, PrecisionTypesNullRow> = OptField<String255, PrecisionTypesNullRow>(_path, "nstring255", PrecisionTypesNullRow::nstring255, null, null, { row, value -> row.copy(nstring255 = value) }, String255.sqlServerType.underlying)
 
-  fun nstring50(): OptField<String50, PrecisionTypesNullRow> = OptField<String50, PrecisionTypesNullRow>(_path, "nstring50", PrecisionTypesNullRow::nstring50, null, null, { row, value -> row.copy(nstring50 = value) }, String50.sqlServerType)
+  fun nstring50(): OptField<String50, PrecisionTypesNullRow> = OptField<String50, PrecisionTypesNullRow>(_path, "nstring50", PrecisionTypesNullRow::nstring50, null, null, { row, value -> row.copy(nstring50 = value) }, String50.sqlServerType.underlying)
 
-  fun numeric124(): OptField<Decimal12_4, PrecisionTypesNullRow> = OptField<Decimal12_4, PrecisionTypesNullRow>(_path, "numeric12_4", PrecisionTypesNullRow::numeric124, null, null, { row, value -> row.copy(numeric124 = value) }, Decimal12_4.sqlServerType)
+  fun numeric124(): OptField<Decimal12_4, PrecisionTypesNullRow> = OptField<Decimal12_4, PrecisionTypesNullRow>(_path, "numeric12_4", PrecisionTypesNullRow::numeric124, null, null, { row, value -> row.copy(numeric124 = value) }, Decimal12_4.sqlServerType.underlying)
 
-  fun numeric82(): OptField<Decimal8_2, PrecisionTypesNullRow> = OptField<Decimal8_2, PrecisionTypesNullRow>(_path, "numeric8_2", PrecisionTypesNullRow::numeric82, null, null, { row, value -> row.copy(numeric82 = value) }, Decimal8_2.sqlServerType)
+  fun numeric82(): OptField<Decimal8_2, PrecisionTypesNullRow> = OptField<Decimal8_2, PrecisionTypesNullRow>(_path, "numeric8_2", PrecisionTypesNullRow::numeric82, null, null, { row, value -> row.copy(numeric82 = value) }, Decimal8_2.sqlServerType.underlying)
 
-  override fun rowParser(): RowParser<PrecisionTypesNullRow> = PrecisionTypesNullRow._rowParser.underlying
+  override fun rowCodec(): RowCodec<PrecisionTypesNullRow> = PrecisionTypesNullRow.rowCodec.underlying
 
-  fun string10(): OptField<String10, PrecisionTypesNullRow> = OptField<String10, PrecisionTypesNullRow>(_path, "string10", PrecisionTypesNullRow::string10, null, null, { row, value -> row.copy(string10 = value) }, String10.sqlServerType)
+  fun string10(): OptField<String10, PrecisionTypesNullRow> = OptField<String10, PrecisionTypesNullRow>(_path, "string10", PrecisionTypesNullRow::string10, null, null, { row, value -> row.copy(string10 = value) }, String10.sqlServerType.underlying)
 
-  fun string100(): OptField<String100, PrecisionTypesNullRow> = OptField<String100, PrecisionTypesNullRow>(_path, "string100", PrecisionTypesNullRow::string100, null, null, { row, value -> row.copy(string100 = value) }, String100.sqlServerType)
+  fun string100(): OptField<String100, PrecisionTypesNullRow> = OptField<String100, PrecisionTypesNullRow>(_path, "string100", PrecisionTypesNullRow::string100, null, null, { row, value -> row.copy(string100 = value) }, String100.sqlServerType.underlying)
 
-  fun string20(): OptField<String20, PrecisionTypesNullRow> = OptField<String20, PrecisionTypesNullRow>(_path, "string20", PrecisionTypesNullRow::string20, null, null, { row, value -> row.copy(string20 = value) }, String20.sqlServerType)
+  fun string20(): OptField<String20, PrecisionTypesNullRow> = OptField<String20, PrecisionTypesNullRow>(_path, "string20", PrecisionTypesNullRow::string20, null, null, { row, value -> row.copy(string20 = value) }, String20.sqlServerType.underlying)
 
-  fun string255(): OptField<String255, PrecisionTypesNullRow> = OptField<String255, PrecisionTypesNullRow>(_path, "string255", PrecisionTypesNullRow::string255, null, null, { row, value -> row.copy(string255 = value) }, String255.sqlServerType)
+  fun string255(): OptField<String255, PrecisionTypesNullRow> = OptField<String255, PrecisionTypesNullRow>(_path, "string255", PrecisionTypesNullRow::string255, null, null, { row, value -> row.copy(string255 = value) }, String255.sqlServerType.underlying)
 
-  fun string50(): OptField<String50, PrecisionTypesNullRow> = OptField<String50, PrecisionTypesNullRow>(_path, "string50", PrecisionTypesNullRow::string50, null, null, { row, value -> row.copy(string50 = value) }, String50.sqlServerType)
+  fun string50(): OptField<String50, PrecisionTypesNullRow> = OptField<String50, PrecisionTypesNullRow>(_path, "string50", PrecisionTypesNullRow::string50, null, null, { row, value -> row.copy(string50 = value) }, String50.sqlServerType.underlying)
 
-  fun time0(): OptField<LocalTime, PrecisionTypesNullRow> = OptField<LocalTime, PrecisionTypesNullRow>(_path, "time0", PrecisionTypesNullRow::time0, null, null, { row, value -> row.copy(time0 = value) }, SqlServerTypes.time)
+  fun time0(): OptField<LocalTime, PrecisionTypesNullRow> = OptField<LocalTime, PrecisionTypesNullRow>(_path, "time0", PrecisionTypesNullRow::time0, null, null, { row, value -> row.copy(time0 = value) }, SqlServerTypes.time.underlying)
 
-  fun time3(): OptField<LocalTime3, PrecisionTypesNullRow> = OptField<LocalTime3, PrecisionTypesNullRow>(_path, "time3", PrecisionTypesNullRow::time3, null, null, { row, value -> row.copy(time3 = value) }, LocalTime3.sqlServerType)
+  fun time3(): OptField<LocalTime3, PrecisionTypesNullRow> = OptField<LocalTime3, PrecisionTypesNullRow>(_path, "time3", PrecisionTypesNullRow::time3, null, null, { row, value -> row.copy(time3 = value) }, LocalTime3.sqlServerType.underlying)
 
-  fun time7(): OptField<LocalTime7, PrecisionTypesNullRow> = OptField<LocalTime7, PrecisionTypesNullRow>(_path, "time7", PrecisionTypesNullRow::time7, null, null, { row, value -> row.copy(time7 = value) }, LocalTime7.sqlServerType)
+  fun time7(): OptField<LocalTime7, PrecisionTypesNullRow> = OptField<LocalTime7, PrecisionTypesNullRow>(_path, "time7", PrecisionTypesNullRow::time7, null, null, { row, value -> row.copy(time7 = value) }, LocalTime7.sqlServerType.underlying)
 
   override fun withPaths(_path: List<Path>): RelationStructure<PrecisionTypesNullFields, PrecisionTypesNullRow> = PrecisionTypesNullFields(_path)
 

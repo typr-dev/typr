@@ -6,9 +6,9 @@
 package oracledb.employees
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import dev.typr.dsl.RowCodecs
 import dev.typr.foundations.OracleTypes
-import dev.typr.foundations.RowParser
-import dev.typr.foundations.RowParsers
+import dev.typr.foundations.RowCodec
 import dev.typr.foundations.Tuple.Tuple2
 
 /** Type for the composite primary key of table `EMPLOYEES` */
@@ -22,5 +22,5 @@ case class EmployeesId(
 }
 
 object EmployeesId {
-  val `_rowParser`: RowParser[EmployeesId] = RowParsers.of(OracleTypes.number, OracleTypes.varchar2, EmployeesId.apply, row => Array[Any](row.empNumber, row.empSuffix))
+  val rowCodec: RowCodec[EmployeesId] = RowCodecs.of(OracleTypes.number, OracleTypes.varchar2, EmployeesId.apply, row => Array[Any](row.empNumber, row.empSuffix))
 }

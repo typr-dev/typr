@@ -5,14 +5,14 @@
  */
 package adventureworks.update_person_returning
 
-import java.sql.Connection
+import dev.typr.foundationskt.ConnectionRead
 import java.time.LocalDateTime
 import kotlin.collections.List
 
 interface UpdatePersonReturningSqlRepo {
   abstract fun apply(
-    suffix: /* nullability unknown */ String?,
+    suffix: /* nullability unknown */ kotlin.String?,
     cutoff: /* nullability unknown */ LocalDateTime?,
-    c: Connection
+    c: ConnectionRead
   ): List<UpdatePersonReturningSqlRow>
 }

@@ -14,19 +14,19 @@ import adventureworks.humanresources.shift.ShiftFields
 import adventureworks.humanresources.shift.ShiftId
 import adventureworks.humanresources.shift.ShiftRow
 import adventureworks.person.businessentity.BusinessentityId
+import dev.typr.dsl.FieldsBase
+import dev.typr.dsl.ForeignKey
+import dev.typr.dsl.Path
+import dev.typr.dsl.RelationStructure
+import dev.typr.dsl.SqlExpr
+import dev.typr.dsl.SqlExpr.Field
+import dev.typr.dsl.SqlExpr.FieldLike
+import dev.typr.dsl.SqlExpr.IdField
+import dev.typr.dsl.SqlExpr.OptField
+import dev.typr.dsl.TupleExpr
+import dev.typr.dsl.TupleExpr.TupleExpr6
 import dev.typr.foundations.PgTypes
-import dev.typr.foundations.RowParser
-import dev.typr.foundations.dsl.FieldsBase
-import dev.typr.foundations.dsl.ForeignKey
-import dev.typr.foundations.dsl.Path
-import dev.typr.foundations.dsl.RelationStructure
-import dev.typr.foundations.dsl.SqlExpr
-import dev.typr.foundations.dsl.SqlExpr.Field
-import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.dsl.SqlExpr.IdField
-import dev.typr.foundations.dsl.SqlExpr.OptField
-import dev.typr.foundations.dsl.TupleExpr
-import dev.typr.foundations.dsl.TupleExpr.TupleExpr6
+import dev.typr.foundations.RowCodec
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.Optional
@@ -116,7 +116,7 @@ class EmployeedepartmenthistoryFields(val `_path`: java.util.List[Path]) extends
 
   override def columns: java.util.List[FieldLike[?, EmployeedepartmenthistoryRow]] = java.util.List.of(this.businessentityid, this.departmentid, this.shiftid, this.startdate, this.enddate, this.modifieddate)
 
-  override def rowParser: RowParser[EmployeedepartmenthistoryRow] = EmployeedepartmenthistoryRow._rowParser
+  override def rowCodec: RowCodec[EmployeedepartmenthistoryRow] = EmployeedepartmenthistoryRow.rowCodec
 
   override def withPaths(`_path`: java.util.List[Path]): RelationStructure[EmployeedepartmenthistoryFields, EmployeedepartmenthistoryRow] = new EmployeedepartmenthistoryFields(`_path`)
 

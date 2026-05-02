@@ -7,7 +7,8 @@ import org.junit.Assert.*
 import org.junit.Test
 import dev.typr.foundations.data.Unknown
 
-import java.sql.Connection
+import dev.typr.foundations.Connection
+
 import java.util.UUID
 
 class UsersRepoTest {
@@ -54,7 +55,7 @@ class UsersRepoTest {
 
       val _ = usersRepo.insertUnsavedStreaming(before.iterator, 2)
 
-      val ids = before.map(_.userId).toArray
+      val ids = before.map(_.userId)
       val afterList = usersRepo.selectByIds(ids)
 
       val beforeById = before.map(row => row.userId -> row).toMap
@@ -87,24 +88,16 @@ class UsersRepoTest {
   @Test
   def testInsertUnsavedStreamingPg(): Unit = {
     val shouldRun = WithConnection {
-      val versionResult = dev.typr.foundations.Fragment
-        .lit("SELECT VERSION()")
-        .query(
-          dev.typr.foundations.RowParsers
-            .of(
-              dev.typr.foundations.PgTypes.text,
-              (s: String) => s,
-              (s: String) => Array[Object](s)
-            )
-            .first()
-        )
-        .runUnchecked(summon[Connection])
+      val versionResult = dev.typr.foundationssc.Fragment
+        .of("SELECT VERSION()")
+        .query(dev.typr.foundationssc.RowCodec.of(dev.typr.foundationssc.PgTypes.text).first())
+        .run
 
       if (versionResult.isEmpty) {
         System.err.println("Could not determine PostgreSQL version")
         false
       } else {
-        val versionString = versionResult.get()
+        val versionString = versionResult.get
         val parts = versionString.split(" ")
         val version = parts(1).split("\\.")(0).toDouble
 

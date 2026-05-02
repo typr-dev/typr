@@ -5,11 +5,11 @@
  */
 package testdb.v_product_catalog
 
-import dev.typr.foundations.scala.SelectBuilder
-import java.sql.Connection
+import dev.typr.dslsc.SelectBuilder
+import dev.typr.foundationssc.ConnectionRead
 
 trait VProductCatalogViewRepo {
   def select: SelectBuilder[VProductCatalogViewFields, VProductCatalogViewRow]
 
-  def selectAll(using c: Connection): List[VProductCatalogViewRow]
+  def selectAll(using c: ConnectionRead): List[VProductCatalogViewRow]
 }

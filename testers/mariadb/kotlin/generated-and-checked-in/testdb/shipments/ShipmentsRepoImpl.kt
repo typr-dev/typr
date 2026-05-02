@@ -5,15 +5,14 @@
  */
 package testdb.shipments
 
-import dev.typr.foundations.MariaTypes
-import dev.typr.foundations.kotlin.DeleteBuilder
-import dev.typr.foundations.kotlin.Dialect
-import dev.typr.foundations.kotlin.Fragment
-import dev.typr.foundations.kotlin.KotlinDbTypes
-import dev.typr.foundations.kotlin.SelectBuilder
-import dev.typr.foundations.kotlin.UpdateBuilder
-import dev.typr.foundations.kotlin.nullable
-import java.sql.Connection
+import dev.typr.dslkt.DeleteBuilder
+import dev.typr.dslkt.Dialect
+import dev.typr.dslkt.SelectBuilder
+import dev.typr.dslkt.UpdateBuilder
+import dev.typr.foundationskt.Connection
+import dev.typr.foundationskt.ConnectionRead
+import dev.typr.foundationskt.Fragment
+import dev.typr.foundationskt.MariaTypes
 import java.util.ArrayList
 import kotlin.collections.Iterator
 import kotlin.collections.List
@@ -29,22 +28,22 @@ class ShipmentsRepoImpl() : ShipmentsRepo {
   override fun deleteById(
     shipmentId: ShipmentsId,
     c: Connection
-  ): Boolean = Fragment.interpolate(Fragment.lit("delete from `shipments` where `shipment_id` = "), Fragment.encode(ShipmentsId.mariaType, shipmentId), Fragment.lit("")).update().runUnchecked(c) > 0
+  ): kotlin.Boolean = Fragment.concat(Fragment.of("delete from `shipments` where `shipment_id` = "), Fragment.encode(ShipmentsId.mariaType, shipmentId), Fragment.of("")).update().run(c) > 0
 
   override fun deleteByIds(
-    shipmentIds: Array<ShipmentsId>,
+    shipmentIds: List<ShipmentsId>,
     c: Connection
   ): Int {
     val fragments: ArrayList<Fragment> = ArrayList()
     for (id in shipmentIds) { fragments.add(Fragment.encode(ShipmentsId.mariaType, id)) }
-    return Fragment.interpolate(Fragment.lit("delete from `shipments` where `shipment_id` in ("), Fragment.comma(fragments.toMutableList()), Fragment.lit(")")).update().runUnchecked(c)
+    return Fragment.concat(Fragment.of("delete from `shipments` where `shipment_id` in ("), Fragment.comma(fragments.toMutableList()), Fragment.of(")")).update().run(c)
   }
 
   override fun insert(
     unsaved: ShipmentsRow,
     c: Connection
-  ): ShipmentsRow = Fragment.interpolate(Fragment.lit("insert into `shipments`(`order_id`, `carrier_id`, `tracking_number`, `shipping_method`, `weight_kg`, `dimensions_json`, `label_data`, `status`, `estimated_delivery_date`, `actual_delivery_at`, `shipping_cost`, `insurance_amount`, `origin_warehouse_id`, `shipped_at`, `created_at`, `updated_at`)\nvalues ("), Fragment.encode(OrdersId.mariaType, unsaved.orderId), Fragment.lit(", "), Fragment.encode(ShippingCarriersId.mariaType, unsaved.carrierId), Fragment.lit(", "), Fragment.encode(MariaTypes.varchar.nullable(), unsaved.trackingNumber), Fragment.lit(", "), Fragment.encode(MariaTypes.varchar, unsaved.shippingMethod), Fragment.lit(", "), Fragment.encode(KotlinDbTypes.MariaTypes.numeric.nullable(), unsaved.weightKg), Fragment.lit(", "), Fragment.encode(MariaTypes.json.nullable(), unsaved.dimensionsJson), Fragment.lit(", "), Fragment.encode(MariaTypes.longblob.nullable(), unsaved.labelData), Fragment.lit(", "), Fragment.encode(MariaTypes.text, unsaved.status), Fragment.lit(", "), Fragment.encode(MariaTypes.date.nullable(), unsaved.estimatedDeliveryDate), Fragment.lit(", "), Fragment.encode(MariaTypes.datetime.nullable(), unsaved.actualDeliveryAt), Fragment.lit(", "), Fragment.encode(KotlinDbTypes.MariaTypes.numeric, unsaved.shippingCost), Fragment.lit(", "), Fragment.encode(KotlinDbTypes.MariaTypes.numeric.nullable(), unsaved.insuranceAmount), Fragment.lit(", "), Fragment.encode(WarehousesId.mariaType.nullable(), unsaved.originWarehouseId), Fragment.lit(", "), Fragment.encode(MariaTypes.datetime.nullable(), unsaved.shippedAt), Fragment.lit(", "), Fragment.encode(MariaTypes.datetime, unsaved.createdAt), Fragment.lit(", "), Fragment.encode(MariaTypes.datetime, unsaved.updatedAt), Fragment.lit(")\nRETURNING `shipment_id`, `order_id`, `carrier_id`, `tracking_number`, `shipping_method`, `weight_kg`, `dimensions_json`, `label_data`, `status`, `estimated_delivery_date`, `actual_delivery_at`, `shipping_cost`, `insurance_amount`, `origin_warehouse_id`, `shipped_at`, `created_at`, `updated_at`\n"))
-    .updateReturning(ShipmentsRow._rowParser.exactlyOne()).runUnchecked(c)
+  ): ShipmentsRow = Fragment.concat(Fragment.of("insert into `shipments`(`order_id`, `carrier_id`, `tracking_number`, `shipping_method`, `weight_kg`, `dimensions_json`, `label_data`, `status`, `estimated_delivery_date`, `actual_delivery_at`, `shipping_cost`, `insurance_amount`, `origin_warehouse_id`, `shipped_at`, `created_at`, `updated_at`)\nvalues ("), Fragment.encode(OrdersId.mariaType, unsaved.orderId), Fragment.of(", "), Fragment.encode(ShippingCarriersId.mariaType, unsaved.carrierId), Fragment.of(", "), Fragment.encode(MariaTypes.varchar.opt(), unsaved.trackingNumber), Fragment.of(", "), Fragment.encode(MariaTypes.varchar, unsaved.shippingMethod), Fragment.of(", "), Fragment.encode(MariaTypes.numeric.opt(), unsaved.weightKg), Fragment.of(", "), Fragment.encode(MariaTypes.json.opt(), unsaved.dimensionsJson), Fragment.of(", "), Fragment.encode(MariaTypes.longblob.opt(), unsaved.labelData), Fragment.of(", "), Fragment.encode(MariaTypes.text, unsaved.status), Fragment.of(", "), Fragment.encode(MariaTypes.date.opt(), unsaved.estimatedDeliveryDate), Fragment.of(", "), Fragment.encode(MariaTypes.datetime.opt(), unsaved.actualDeliveryAt), Fragment.of(", "), Fragment.encode(MariaTypes.numeric, unsaved.shippingCost), Fragment.of(", "), Fragment.encode(MariaTypes.numeric.opt(), unsaved.insuranceAmount), Fragment.of(", "), Fragment.encode(WarehousesId.mariaType.opt(), unsaved.originWarehouseId), Fragment.of(", "), Fragment.encode(MariaTypes.datetime.opt(), unsaved.shippedAt), Fragment.of(", "), Fragment.encode(MariaTypes.datetime, unsaved.createdAt), Fragment.of(", "), Fragment.encode(MariaTypes.datetime, unsaved.updatedAt), Fragment.of(")\nRETURNING `shipment_id`, `order_id`, `carrier_id`, `tracking_number`, `shipping_method`, `weight_kg`, `dimensions_json`, `label_data`, `status`, `estimated_delivery_date`, `actual_delivery_at`, `shipping_cost`, `insurance_amount`, `origin_warehouse_id`, `shipped_at`, `created_at`, `updated_at`\n"))
+    .updateReturning(ShipmentsRow.rowCodec.exactlyOne()).run(c)
 
   override fun insert(
     unsaved: ShipmentsRowUnsaved,
@@ -52,126 +51,126 @@ class ShipmentsRepoImpl() : ShipmentsRepo {
   ): ShipmentsRow {
     val columns: ArrayList<Fragment> = ArrayList()
     val values: ArrayList<Fragment> = ArrayList()
-    columns.add(Fragment.lit("`order_id`"))
-    values.add(Fragment.interpolate(Fragment.encode(OrdersId.mariaType, unsaved.orderId), Fragment.lit("")))
-    columns.add(Fragment.lit("`carrier_id`"))
-    values.add(Fragment.interpolate(Fragment.encode(ShippingCarriersId.mariaType, unsaved.carrierId), Fragment.lit("")))
-    columns.add(Fragment.lit("`shipping_method`"))
-    values.add(Fragment.interpolate(Fragment.encode(MariaTypes.varchar, unsaved.shippingMethod), Fragment.lit("")))
-    columns.add(Fragment.lit("`shipping_cost`"))
-    values.add(Fragment.interpolate(Fragment.encode(KotlinDbTypes.MariaTypes.numeric, unsaved.shippingCost), Fragment.lit("")))
+    columns.add(Fragment.of("`order_id`"))
+    values.add(Fragment.concat(Fragment.encode(OrdersId.mariaType, unsaved.orderId), Fragment.of("")))
+    columns.add(Fragment.of("`carrier_id`"))
+    values.add(Fragment.concat(Fragment.encode(ShippingCarriersId.mariaType, unsaved.carrierId), Fragment.of("")))
+    columns.add(Fragment.of("`shipping_method`"))
+    values.add(Fragment.concat(Fragment.encode(MariaTypes.varchar, unsaved.shippingMethod), Fragment.of("")))
+    columns.add(Fragment.of("`shipping_cost`"))
+    values.add(Fragment.concat(Fragment.encode(MariaTypes.numeric, unsaved.shippingCost), Fragment.of("")))
     unsaved.trackingNumber.visit(
       {  },
-      { value -> columns.add(Fragment.lit("`tracking_number`"))
-      values.add(Fragment.interpolate(Fragment.encode(MariaTypes.varchar.nullable(), value), Fragment.lit(""))) }
+      { value -> columns.add(Fragment.of("`tracking_number`"))
+      values.add(Fragment.concat(Fragment.encode(MariaTypes.varchar.opt(), value), Fragment.of(""))) }
     );
     unsaved.weightKg.visit(
       {  },
-      { value -> columns.add(Fragment.lit("`weight_kg`"))
-      values.add(Fragment.interpolate(Fragment.encode(KotlinDbTypes.MariaTypes.numeric.nullable(), value), Fragment.lit(""))) }
+      { value -> columns.add(Fragment.of("`weight_kg`"))
+      values.add(Fragment.concat(Fragment.encode(MariaTypes.numeric.opt(), value), Fragment.of(""))) }
     );
     unsaved.dimensionsJson.visit(
       {  },
-      { value -> columns.add(Fragment.lit("`dimensions_json`"))
-      values.add(Fragment.interpolate(Fragment.encode(MariaTypes.json.nullable(), value), Fragment.lit(""))) }
+      { value -> columns.add(Fragment.of("`dimensions_json`"))
+      values.add(Fragment.concat(Fragment.encode(MariaTypes.json.opt(), value), Fragment.of(""))) }
     );
     unsaved.labelData.visit(
       {  },
-      { value -> columns.add(Fragment.lit("`label_data`"))
-      values.add(Fragment.interpolate(Fragment.encode(MariaTypes.longblob.nullable(), value), Fragment.lit(""))) }
+      { value -> columns.add(Fragment.of("`label_data`"))
+      values.add(Fragment.concat(Fragment.encode(MariaTypes.longblob.opt(), value), Fragment.of(""))) }
     );
     unsaved.status.visit(
       {  },
-      { value -> columns.add(Fragment.lit("`status`"))
-      values.add(Fragment.interpolate(Fragment.encode(MariaTypes.text, value), Fragment.lit(""))) }
+      { value -> columns.add(Fragment.of("`status`"))
+      values.add(Fragment.concat(Fragment.encode(MariaTypes.text, value), Fragment.of(""))) }
     );
     unsaved.estimatedDeliveryDate.visit(
       {  },
-      { value -> columns.add(Fragment.lit("`estimated_delivery_date`"))
-      values.add(Fragment.interpolate(Fragment.encode(MariaTypes.date.nullable(), value), Fragment.lit(""))) }
+      { value -> columns.add(Fragment.of("`estimated_delivery_date`"))
+      values.add(Fragment.concat(Fragment.encode(MariaTypes.date.opt(), value), Fragment.of(""))) }
     );
     unsaved.actualDeliveryAt.visit(
       {  },
-      { value -> columns.add(Fragment.lit("`actual_delivery_at`"))
-      values.add(Fragment.interpolate(Fragment.encode(MariaTypes.datetime.nullable(), value), Fragment.lit(""))) }
+      { value -> columns.add(Fragment.of("`actual_delivery_at`"))
+      values.add(Fragment.concat(Fragment.encode(MariaTypes.datetime.opt(), value), Fragment.of(""))) }
     );
     unsaved.insuranceAmount.visit(
       {  },
-      { value -> columns.add(Fragment.lit("`insurance_amount`"))
-      values.add(Fragment.interpolate(Fragment.encode(KotlinDbTypes.MariaTypes.numeric.nullable(), value), Fragment.lit(""))) }
+      { value -> columns.add(Fragment.of("`insurance_amount`"))
+      values.add(Fragment.concat(Fragment.encode(MariaTypes.numeric.opt(), value), Fragment.of(""))) }
     );
     unsaved.originWarehouseId.visit(
       {  },
-      { value -> columns.add(Fragment.lit("`origin_warehouse_id`"))
-      values.add(Fragment.interpolate(Fragment.encode(WarehousesId.mariaType.nullable(), value), Fragment.lit(""))) }
+      { value -> columns.add(Fragment.of("`origin_warehouse_id`"))
+      values.add(Fragment.concat(Fragment.encode(WarehousesId.mariaType.opt(), value), Fragment.of(""))) }
     );
     unsaved.shippedAt.visit(
       {  },
-      { value -> columns.add(Fragment.lit("`shipped_at`"))
-      values.add(Fragment.interpolate(Fragment.encode(MariaTypes.datetime.nullable(), value), Fragment.lit(""))) }
+      { value -> columns.add(Fragment.of("`shipped_at`"))
+      values.add(Fragment.concat(Fragment.encode(MariaTypes.datetime.opt(), value), Fragment.of(""))) }
     );
     unsaved.createdAt.visit(
       {  },
-      { value -> columns.add(Fragment.lit("`created_at`"))
-      values.add(Fragment.interpolate(Fragment.encode(MariaTypes.datetime, value), Fragment.lit(""))) }
+      { value -> columns.add(Fragment.of("`created_at`"))
+      values.add(Fragment.concat(Fragment.encode(MariaTypes.datetime, value), Fragment.of(""))) }
     );
     unsaved.updatedAt.visit(
       {  },
-      { value -> columns.add(Fragment.lit("`updated_at`"))
-      values.add(Fragment.interpolate(Fragment.encode(MariaTypes.datetime, value), Fragment.lit(""))) }
+      { value -> columns.add(Fragment.of("`updated_at`"))
+      values.add(Fragment.concat(Fragment.encode(MariaTypes.datetime, value), Fragment.of(""))) }
     );
-    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into `shipments`("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nRETURNING `shipment_id`, `order_id`, `carrier_id`, `tracking_number`, `shipping_method`, `weight_kg`, `dimensions_json`, `label_data`, `status`, `estimated_delivery_date`, `actual_delivery_at`, `shipping_cost`, `insurance_amount`, `origin_warehouse_id`, `shipped_at`, `created_at`, `updated_at`\n"))
-    return q.updateReturning(ShipmentsRow._rowParser.exactlyOne()).runUnchecked(c)
+    val q: Fragment = Fragment.concat(Fragment.of("insert into `shipments`("), Fragment.comma(columns.toMutableList()), Fragment.of(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.of(")\nRETURNING `shipment_id`, `order_id`, `carrier_id`, `tracking_number`, `shipping_method`, `weight_kg`, `dimensions_json`, `label_data`, `status`, `estimated_delivery_date`, `actual_delivery_at`, `shipping_cost`, `insurance_amount`, `origin_warehouse_id`, `shipped_at`, `created_at`, `updated_at`\n"))
+    return q.updateReturning(ShipmentsRow.rowCodec.exactlyOne()).run(c)
   }
 
-  override fun select(): SelectBuilder<ShipmentsFields, ShipmentsRow> = SelectBuilder.of("`shipments`", ShipmentsFields.structure, ShipmentsRow._rowParser, Dialect.MARIADB)
+  override fun select(): SelectBuilder<ShipmentsFields, ShipmentsRow> = SelectBuilder.of("`shipments`", ShipmentsFields.structure, ShipmentsRow.rowCodec, Dialect.MARIADB)
 
-  override fun selectAll(c: Connection): List<ShipmentsRow> = Fragment.interpolate(Fragment.lit("select `shipment_id`, `order_id`, `carrier_id`, `tracking_number`, `shipping_method`, `weight_kg`, `dimensions_json`, `label_data`, `status`, `estimated_delivery_date`, `actual_delivery_at`, `shipping_cost`, `insurance_amount`, `origin_warehouse_id`, `shipped_at`, `created_at`, `updated_at`\nfrom `shipments`\n")).query(ShipmentsRow._rowParser.all()).runUnchecked(c)
+  override fun selectAll(c: ConnectionRead): List<ShipmentsRow> = Fragment.concat(Fragment.of("select `shipment_id`, `order_id`, `carrier_id`, `tracking_number`, `shipping_method`, `weight_kg`, `dimensions_json`, `label_data`, `status`, `estimated_delivery_date`, `actual_delivery_at`, `shipping_cost`, `insurance_amount`, `origin_warehouse_id`, `shipped_at`, `created_at`, `updated_at`\nfrom `shipments`\n")).query(ShipmentsRow.rowCodec.all()).run(c)
 
   override fun selectById(
     shipmentId: ShipmentsId,
-    c: Connection
-  ): ShipmentsRow? = Fragment.interpolate(Fragment.lit("select `shipment_id`, `order_id`, `carrier_id`, `tracking_number`, `shipping_method`, `weight_kg`, `dimensions_json`, `label_data`, `status`, `estimated_delivery_date`, `actual_delivery_at`, `shipping_cost`, `insurance_amount`, `origin_warehouse_id`, `shipped_at`, `created_at`, `updated_at`\nfrom `shipments`\nwhere `shipment_id` = "), Fragment.encode(ShipmentsId.mariaType, shipmentId), Fragment.lit("")).query(ShipmentsRow._rowParser.first()).runUnchecked(c)
+    c: ConnectionRead
+  ): ShipmentsRow? = Fragment.concat(Fragment.of("select `shipment_id`, `order_id`, `carrier_id`, `tracking_number`, `shipping_method`, `weight_kg`, `dimensions_json`, `label_data`, `status`, `estimated_delivery_date`, `actual_delivery_at`, `shipping_cost`, `insurance_amount`, `origin_warehouse_id`, `shipped_at`, `created_at`, `updated_at`\nfrom `shipments`\nwhere `shipment_id` = "), Fragment.encode(ShipmentsId.mariaType, shipmentId), Fragment.of("")).query(ShipmentsRow.rowCodec.first()).run(c)
 
   override fun selectByIds(
-    shipmentIds: Array<ShipmentsId>,
-    c: Connection
+    shipmentIds: List<ShipmentsId>,
+    c: ConnectionRead
   ): List<ShipmentsRow> {
     val fragments: ArrayList<Fragment> = ArrayList()
     for (id in shipmentIds) { fragments.add(Fragment.encode(ShipmentsId.mariaType, id)) }
-    return Fragment.interpolate(Fragment.lit("select `shipment_id`, `order_id`, `carrier_id`, `tracking_number`, `shipping_method`, `weight_kg`, `dimensions_json`, `label_data`, `status`, `estimated_delivery_date`, `actual_delivery_at`, `shipping_cost`, `insurance_amount`, `origin_warehouse_id`, `shipped_at`, `created_at`, `updated_at` from `shipments` where `shipment_id` in ("), Fragment.comma(fragments.toMutableList()), Fragment.lit(")")).query(ShipmentsRow._rowParser.all()).runUnchecked(c)
+    return Fragment.concat(Fragment.of("select `shipment_id`, `order_id`, `carrier_id`, `tracking_number`, `shipping_method`, `weight_kg`, `dimensions_json`, `label_data`, `status`, `estimated_delivery_date`, `actual_delivery_at`, `shipping_cost`, `insurance_amount`, `origin_warehouse_id`, `shipped_at`, `created_at`, `updated_at` from `shipments` where `shipment_id` in ("), Fragment.comma(fragments.toMutableList()), Fragment.of(")")).query(ShipmentsRow.rowCodec.all()).run(c)
   }
 
   override fun selectByIdsTracked(
-    shipmentIds: Array<ShipmentsId>,
-    c: Connection
+    shipmentIds: List<ShipmentsId>,
+    c: ConnectionRead
   ): Map<ShipmentsId, ShipmentsRow> {
     val ret: MutableMap<ShipmentsId, ShipmentsRow> = mutableMapOf<ShipmentsId, ShipmentsRow>()
     selectByIds(shipmentIds, c).forEach({ row -> ret.put(row.shipmentId, row) })
     return ret.toMap()
   }
 
-  override fun update(): UpdateBuilder<ShipmentsFields, ShipmentsRow> = UpdateBuilder.of("`shipments`", ShipmentsFields.structure, ShipmentsRow._rowParser, Dialect.MARIADB)
+  override fun update(): UpdateBuilder<ShipmentsFields, ShipmentsRow> = UpdateBuilder.of("`shipments`", ShipmentsFields.structure, ShipmentsRow.rowCodec, Dialect.MARIADB)
 
   override fun update(
     row: ShipmentsRow,
     c: Connection
-  ): Boolean {
+  ): kotlin.Boolean {
     val shipmentId: ShipmentsId = row.shipmentId
-    return Fragment.interpolate(Fragment.lit("update `shipments`\nset `order_id` = "), Fragment.encode(OrdersId.mariaType, row.orderId), Fragment.lit(",\n`carrier_id` = "), Fragment.encode(ShippingCarriersId.mariaType, row.carrierId), Fragment.lit(",\n`tracking_number` = "), Fragment.encode(MariaTypes.varchar.nullable(), row.trackingNumber), Fragment.lit(",\n`shipping_method` = "), Fragment.encode(MariaTypes.varchar, row.shippingMethod), Fragment.lit(",\n`weight_kg` = "), Fragment.encode(KotlinDbTypes.MariaTypes.numeric.nullable(), row.weightKg), Fragment.lit(",\n`dimensions_json` = "), Fragment.encode(MariaTypes.json.nullable(), row.dimensionsJson), Fragment.lit(",\n`label_data` = "), Fragment.encode(MariaTypes.longblob.nullable(), row.labelData), Fragment.lit(",\n`status` = "), Fragment.encode(MariaTypes.text, row.status), Fragment.lit(",\n`estimated_delivery_date` = "), Fragment.encode(MariaTypes.date.nullable(), row.estimatedDeliveryDate), Fragment.lit(",\n`actual_delivery_at` = "), Fragment.encode(MariaTypes.datetime.nullable(), row.actualDeliveryAt), Fragment.lit(",\n`shipping_cost` = "), Fragment.encode(KotlinDbTypes.MariaTypes.numeric, row.shippingCost), Fragment.lit(",\n`insurance_amount` = "), Fragment.encode(KotlinDbTypes.MariaTypes.numeric.nullable(), row.insuranceAmount), Fragment.lit(",\n`origin_warehouse_id` = "), Fragment.encode(WarehousesId.mariaType.nullable(), row.originWarehouseId), Fragment.lit(",\n`shipped_at` = "), Fragment.encode(MariaTypes.datetime.nullable(), row.shippedAt), Fragment.lit(",\n`created_at` = "), Fragment.encode(MariaTypes.datetime, row.createdAt), Fragment.lit(",\n`updated_at` = "), Fragment.encode(MariaTypes.datetime, row.updatedAt), Fragment.lit("\nwhere `shipment_id` = "), Fragment.encode(ShipmentsId.mariaType, shipmentId), Fragment.lit("")).update().runUnchecked(c) > 0
+    return Fragment.concat(Fragment.of("update `shipments`\nset `order_id` = "), Fragment.encode(OrdersId.mariaType, row.orderId), Fragment.of(",\n`carrier_id` = "), Fragment.encode(ShippingCarriersId.mariaType, row.carrierId), Fragment.of(",\n`tracking_number` = "), Fragment.encode(MariaTypes.varchar.opt(), row.trackingNumber), Fragment.of(",\n`shipping_method` = "), Fragment.encode(MariaTypes.varchar, row.shippingMethod), Fragment.of(",\n`weight_kg` = "), Fragment.encode(MariaTypes.numeric.opt(), row.weightKg), Fragment.of(",\n`dimensions_json` = "), Fragment.encode(MariaTypes.json.opt(), row.dimensionsJson), Fragment.of(",\n`label_data` = "), Fragment.encode(MariaTypes.longblob.opt(), row.labelData), Fragment.of(",\n`status` = "), Fragment.encode(MariaTypes.text, row.status), Fragment.of(",\n`estimated_delivery_date` = "), Fragment.encode(MariaTypes.date.opt(), row.estimatedDeliveryDate), Fragment.of(",\n`actual_delivery_at` = "), Fragment.encode(MariaTypes.datetime.opt(), row.actualDeliveryAt), Fragment.of(",\n`shipping_cost` = "), Fragment.encode(MariaTypes.numeric, row.shippingCost), Fragment.of(",\n`insurance_amount` = "), Fragment.encode(MariaTypes.numeric.opt(), row.insuranceAmount), Fragment.of(",\n`origin_warehouse_id` = "), Fragment.encode(WarehousesId.mariaType.opt(), row.originWarehouseId), Fragment.of(",\n`shipped_at` = "), Fragment.encode(MariaTypes.datetime.opt(), row.shippedAt), Fragment.of(",\n`created_at` = "), Fragment.encode(MariaTypes.datetime, row.createdAt), Fragment.of(",\n`updated_at` = "), Fragment.encode(MariaTypes.datetime, row.updatedAt), Fragment.of("\nwhere `shipment_id` = "), Fragment.encode(ShipmentsId.mariaType, shipmentId), Fragment.of("")).update().run(c) > 0
   }
 
   override fun upsert(
     unsaved: ShipmentsRow,
     c: Connection
-  ): ShipmentsRow = Fragment.interpolate(Fragment.lit("INSERT INTO `shipments`(`shipment_id`, `order_id`, `carrier_id`, `tracking_number`, `shipping_method`, `weight_kg`, `dimensions_json`, `label_data`, `status`, `estimated_delivery_date`, `actual_delivery_at`, `shipping_cost`, `insurance_amount`, `origin_warehouse_id`, `shipped_at`, `created_at`, `updated_at`)\nVALUES ("), Fragment.encode(ShipmentsId.mariaType, unsaved.shipmentId), Fragment.lit(", "), Fragment.encode(OrdersId.mariaType, unsaved.orderId), Fragment.lit(", "), Fragment.encode(ShippingCarriersId.mariaType, unsaved.carrierId), Fragment.lit(", "), Fragment.encode(MariaTypes.varchar.nullable(), unsaved.trackingNumber), Fragment.lit(", "), Fragment.encode(MariaTypes.varchar, unsaved.shippingMethod), Fragment.lit(", "), Fragment.encode(KotlinDbTypes.MariaTypes.numeric.nullable(), unsaved.weightKg), Fragment.lit(", "), Fragment.encode(MariaTypes.json.nullable(), unsaved.dimensionsJson), Fragment.lit(", "), Fragment.encode(MariaTypes.longblob.nullable(), unsaved.labelData), Fragment.lit(", "), Fragment.encode(MariaTypes.text, unsaved.status), Fragment.lit(", "), Fragment.encode(MariaTypes.date.nullable(), unsaved.estimatedDeliveryDate), Fragment.lit(", "), Fragment.encode(MariaTypes.datetime.nullable(), unsaved.actualDeliveryAt), Fragment.lit(", "), Fragment.encode(KotlinDbTypes.MariaTypes.numeric, unsaved.shippingCost), Fragment.lit(", "), Fragment.encode(KotlinDbTypes.MariaTypes.numeric.nullable(), unsaved.insuranceAmount), Fragment.lit(", "), Fragment.encode(WarehousesId.mariaType.nullable(), unsaved.originWarehouseId), Fragment.lit(", "), Fragment.encode(MariaTypes.datetime.nullable(), unsaved.shippedAt), Fragment.lit(", "), Fragment.encode(MariaTypes.datetime, unsaved.createdAt), Fragment.lit(", "), Fragment.encode(MariaTypes.datetime, unsaved.updatedAt), Fragment.lit(")\nON DUPLICATE KEY UPDATE `order_id` = VALUES(`order_id`),\n`carrier_id` = VALUES(`carrier_id`),\n`tracking_number` = VALUES(`tracking_number`),\n`shipping_method` = VALUES(`shipping_method`),\n`weight_kg` = VALUES(`weight_kg`),\n`dimensions_json` = VALUES(`dimensions_json`),\n`label_data` = VALUES(`label_data`),\n`status` = VALUES(`status`),\n`estimated_delivery_date` = VALUES(`estimated_delivery_date`),\n`actual_delivery_at` = VALUES(`actual_delivery_at`),\n`shipping_cost` = VALUES(`shipping_cost`),\n`insurance_amount` = VALUES(`insurance_amount`),\n`origin_warehouse_id` = VALUES(`origin_warehouse_id`),\n`shipped_at` = VALUES(`shipped_at`),\n`created_at` = VALUES(`created_at`),\n`updated_at` = VALUES(`updated_at`)\nRETURNING `shipment_id`, `order_id`, `carrier_id`, `tracking_number`, `shipping_method`, `weight_kg`, `dimensions_json`, `label_data`, `status`, `estimated_delivery_date`, `actual_delivery_at`, `shipping_cost`, `insurance_amount`, `origin_warehouse_id`, `shipped_at`, `created_at`, `updated_at`"))
-    .updateReturning(ShipmentsRow._rowParser.exactlyOne())
-    .runUnchecked(c)
+  ): ShipmentsRow = Fragment.concat(Fragment.of("INSERT INTO `shipments`(`shipment_id`, `order_id`, `carrier_id`, `tracking_number`, `shipping_method`, `weight_kg`, `dimensions_json`, `label_data`, `status`, `estimated_delivery_date`, `actual_delivery_at`, `shipping_cost`, `insurance_amount`, `origin_warehouse_id`, `shipped_at`, `created_at`, `updated_at`)\nVALUES ("), Fragment.encode(ShipmentsId.mariaType, unsaved.shipmentId), Fragment.of(", "), Fragment.encode(OrdersId.mariaType, unsaved.orderId), Fragment.of(", "), Fragment.encode(ShippingCarriersId.mariaType, unsaved.carrierId), Fragment.of(", "), Fragment.encode(MariaTypes.varchar.opt(), unsaved.trackingNumber), Fragment.of(", "), Fragment.encode(MariaTypes.varchar, unsaved.shippingMethod), Fragment.of(", "), Fragment.encode(MariaTypes.numeric.opt(), unsaved.weightKg), Fragment.of(", "), Fragment.encode(MariaTypes.json.opt(), unsaved.dimensionsJson), Fragment.of(", "), Fragment.encode(MariaTypes.longblob.opt(), unsaved.labelData), Fragment.of(", "), Fragment.encode(MariaTypes.text, unsaved.status), Fragment.of(", "), Fragment.encode(MariaTypes.date.opt(), unsaved.estimatedDeliveryDate), Fragment.of(", "), Fragment.encode(MariaTypes.datetime.opt(), unsaved.actualDeliveryAt), Fragment.of(", "), Fragment.encode(MariaTypes.numeric, unsaved.shippingCost), Fragment.of(", "), Fragment.encode(MariaTypes.numeric.opt(), unsaved.insuranceAmount), Fragment.of(", "), Fragment.encode(WarehousesId.mariaType.opt(), unsaved.originWarehouseId), Fragment.of(", "), Fragment.encode(MariaTypes.datetime.opt(), unsaved.shippedAt), Fragment.of(", "), Fragment.encode(MariaTypes.datetime, unsaved.createdAt), Fragment.of(", "), Fragment.encode(MariaTypes.datetime, unsaved.updatedAt), Fragment.of(")\nON DUPLICATE KEY UPDATE `order_id` = VALUES(`order_id`),\n`carrier_id` = VALUES(`carrier_id`),\n`tracking_number` = VALUES(`tracking_number`),\n`shipping_method` = VALUES(`shipping_method`),\n`weight_kg` = VALUES(`weight_kg`),\n`dimensions_json` = VALUES(`dimensions_json`),\n`label_data` = VALUES(`label_data`),\n`status` = VALUES(`status`),\n`estimated_delivery_date` = VALUES(`estimated_delivery_date`),\n`actual_delivery_at` = VALUES(`actual_delivery_at`),\n`shipping_cost` = VALUES(`shipping_cost`),\n`insurance_amount` = VALUES(`insurance_amount`),\n`origin_warehouse_id` = VALUES(`origin_warehouse_id`),\n`shipped_at` = VALUES(`shipped_at`),\n`created_at` = VALUES(`created_at`),\n`updated_at` = VALUES(`updated_at`)\nRETURNING `shipment_id`, `order_id`, `carrier_id`, `tracking_number`, `shipping_method`, `weight_kg`, `dimensions_json`, `label_data`, `status`, `estimated_delivery_date`, `actual_delivery_at`, `shipping_cost`, `insurance_amount`, `origin_warehouse_id`, `shipped_at`, `created_at`, `updated_at`"))
+    .updateReturning(ShipmentsRow.rowCodec.exactlyOne())
+    .run(c)
 
   override fun upsertBatch(
     unsaved: Iterator<ShipmentsRow>,
     c: Connection
-  ): List<ShipmentsRow> = Fragment.interpolate(Fragment.lit("INSERT INTO `shipments`(`shipment_id`, `order_id`, `carrier_id`, `tracking_number`, `shipping_method`, `weight_kg`, `dimensions_json`, `label_data`, `status`, `estimated_delivery_date`, `actual_delivery_at`, `shipping_cost`, `insurance_amount`, `origin_warehouse_id`, `shipped_at`, `created_at`, `updated_at`)\nVALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)\nON DUPLICATE KEY UPDATE `order_id` = VALUES(`order_id`),\n`carrier_id` = VALUES(`carrier_id`),\n`tracking_number` = VALUES(`tracking_number`),\n`shipping_method` = VALUES(`shipping_method`),\n`weight_kg` = VALUES(`weight_kg`),\n`dimensions_json` = VALUES(`dimensions_json`),\n`label_data` = VALUES(`label_data`),\n`status` = VALUES(`status`),\n`estimated_delivery_date` = VALUES(`estimated_delivery_date`),\n`actual_delivery_at` = VALUES(`actual_delivery_at`),\n`shipping_cost` = VALUES(`shipping_cost`),\n`insurance_amount` = VALUES(`insurance_amount`),\n`origin_warehouse_id` = VALUES(`origin_warehouse_id`),\n`shipped_at` = VALUES(`shipped_at`),\n`created_at` = VALUES(`created_at`),\n`updated_at` = VALUES(`updated_at`)\nRETURNING `shipment_id`, `order_id`, `carrier_id`, `tracking_number`, `shipping_method`, `weight_kg`, `dimensions_json`, `label_data`, `status`, `estimated_delivery_date`, `actual_delivery_at`, `shipping_cost`, `insurance_amount`, `origin_warehouse_id`, `shipped_at`, `created_at`, `updated_at`"))
-    .updateReturningEach(ShipmentsRow._rowParser, unsaved)
-  .runUnchecked(c)
+  ): List<ShipmentsRow> = Fragment.concat(Fragment.of("INSERT INTO `shipments`(`shipment_id`, `order_id`, `carrier_id`, `tracking_number`, `shipping_method`, `weight_kg`, `dimensions_json`, `label_data`, `status`, `estimated_delivery_date`, `actual_delivery_at`, `shipping_cost`, `insurance_amount`, `origin_warehouse_id`, `shipped_at`, `created_at`, `updated_at`)\nVALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)\nON DUPLICATE KEY UPDATE `order_id` = VALUES(`order_id`),\n`carrier_id` = VALUES(`carrier_id`),\n`tracking_number` = VALUES(`tracking_number`),\n`shipping_method` = VALUES(`shipping_method`),\n`weight_kg` = VALUES(`weight_kg`),\n`dimensions_json` = VALUES(`dimensions_json`),\n`label_data` = VALUES(`label_data`),\n`status` = VALUES(`status`),\n`estimated_delivery_date` = VALUES(`estimated_delivery_date`),\n`actual_delivery_at` = VALUES(`actual_delivery_at`),\n`shipping_cost` = VALUES(`shipping_cost`),\n`insurance_amount` = VALUES(`insurance_amount`),\n`origin_warehouse_id` = VALUES(`origin_warehouse_id`),\n`shipped_at` = VALUES(`shipped_at`),\n`created_at` = VALUES(`created_at`),\n`updated_at` = VALUES(`updated_at`)\nRETURNING `shipment_id`, `order_id`, `carrier_id`, `tracking_number`, `shipping_method`, `weight_kg`, `dimensions_json`, `label_data`, `status`, `estimated_delivery_date`, `actual_delivery_at`, `shipping_cost`, `insurance_amount`, `origin_warehouse_id`, `shipped_at`, `created_at`, `updated_at`"))
+    .updateReturningEach(ShipmentsRow.rowCodec, unsaved)
+  .run(c)
 }

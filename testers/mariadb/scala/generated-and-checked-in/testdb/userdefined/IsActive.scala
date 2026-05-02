@@ -6,9 +6,9 @@
 package testdb.userdefined
 
 import com.fasterxml.jackson.annotation.JsonValue
-import dev.typr.foundations.MariaType
-import dev.typr.foundations.scala.Bijection
-import dev.typr.foundations.scala.ScalaDbTypes
+import dev.typr.dslsc.Bijection
+import dev.typr.foundationssc.MariaType
+import dev.typr.foundationssc.MariaTypes
 
 /** Shared type `IsActive`
  * Generated from TypeDefinitions matching
@@ -16,7 +16,7 @@ import dev.typr.foundations.scala.ScalaDbTypes
 case class IsActive(@JsonValue value: Boolean) extends scala.AnyVal
 
 object IsActive {
-  given bijection: Bijection[IsActive, Boolean] = Bijection.apply[IsActive, Boolean](_.value)(IsActive.apply)
+  given bijection: Bijection[IsActive, Boolean] = Bijection.of[IsActive, Boolean](_.value, IsActive.apply)
 
-  given mariaType: MariaType[IsActive] = ScalaDbTypes.MariaTypes.bool.bimap(IsActive.apply, _.value)
+  given mariaType: MariaType[IsActive] = MariaTypes.bool.to(Bijection.of(IsActive.apply, _.value))
 }

@@ -2,7 +2,7 @@ package com.example.grpc
 
 
 
-/** Wrapper type for typr.grpc.GrpcCodegen$$$Lambda/0x00007fc001118400@7b4c50bc */
+/** Wrapper type for kotlin.String */
 data class CustomerId(val value: kotlin.String) {
   /** Get the underlying value */
   fun unwrap(): kotlin.String {

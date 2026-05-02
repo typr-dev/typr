@@ -44,7 +44,7 @@ object TypoJsonb {
     }))))
   }
 
-  given bijection: Bijection[TypoJsonb, String] = Bijection.apply[TypoJsonb, String](_.value)(TypoJsonb.apply)
+  given bijection: Bijection[TypoJsonb, String] = Bijection[TypoJsonb, String](_.value)(TypoJsonb.apply)
 
   given column: Column[TypoJsonb] = {
     Column.nonNull[TypoJsonb]((v1: Any, _) =>

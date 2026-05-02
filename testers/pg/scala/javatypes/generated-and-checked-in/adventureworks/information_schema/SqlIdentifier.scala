@@ -6,9 +6,9 @@
 package adventureworks.information_schema
 
 import com.fasterxml.jackson.annotation.JsonValue
+import dev.typr.foundations.Bijection
 import dev.typr.foundations.PgType
 import dev.typr.foundations.PgTypes
-import dev.typr.foundations.dsl.Bijection
 
 /** Domain `information_schema.sql_identifier`
  * No constraint
@@ -16,9 +16,9 @@ import dev.typr.foundations.dsl.Bijection
 case class SqlIdentifier(@JsonValue value: String)
 
 object SqlIdentifier {
-  given bijection: Bijection[SqlIdentifier, String] = Bijection.apply[SqlIdentifier, String](_.value)(SqlIdentifier.apply)
+  given bijection: Bijection[SqlIdentifier, String] = Bijection.of[SqlIdentifier, String](_.value, SqlIdentifier.apply)
 
-  given pgType: PgType[SqlIdentifier] = PgTypes.name.bimap(SqlIdentifier.apply, _.value).renamed(""""information_schema"."sql_identifier"""")
+  given pgType: PgType[SqlIdentifier] = PgTypes.name.to(Bijection.of(SqlIdentifier.apply, _.value)).renamed(""""information_schema"."sql_identifier"""")
 
-  given pgTypeArray: PgType[Array[SqlIdentifier]] = PgTypes.nameArray.bimap(xs => xs.map(SqlIdentifier.apply), xs => xs.map(_.value)).renamed(""""information_schema"."sql_identifier"[]""")
+  given pgTypeArray: PgType[java.util.List[SqlIdentifier]] = pgType.array
 }

@@ -5,14 +5,14 @@
  */
 package adventureworks.public.title_domain
 
-import dev.typr.foundations.RowParser
-import dev.typr.foundations.dsl.FieldsBase
-import dev.typr.foundations.dsl.Path
-import dev.typr.foundations.dsl.RelationStructure
-import dev.typr.foundations.dsl.SqlExpr
-import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.dsl.SqlExpr.IdField
-import dev.typr.foundations.dsl.TupleExpr.TupleExpr1
+import dev.typr.dsl.FieldsBase
+import dev.typr.dsl.Path
+import dev.typr.dsl.RelationStructure
+import dev.typr.dsl.SqlExpr
+import dev.typr.dsl.SqlExpr.FieldLike
+import dev.typr.dsl.SqlExpr.IdField
+import dev.typr.dsl.TupleExpr.TupleExpr1
+import dev.typr.foundations.RowCodec
 import java.util.Optional
 
 class TitleDomainFields(val `_path`: java.util.List[Path]) extends TupleExpr1[TitleDomainId] with RelationStructure[TitleDomainFields, TitleDomainRow]  with FieldsBase[TitleDomainRow] {
@@ -30,7 +30,7 @@ class TitleDomainFields(val `_path`: java.util.List[Path]) extends TupleExpr1[Ti
 
   override def columns: java.util.List[FieldLike[?, TitleDomainRow]] = java.util.List.of(this.code)
 
-  override def rowParser: RowParser[TitleDomainRow] = TitleDomainRow._rowParser
+  override def rowCodec: RowCodec[TitleDomainRow] = TitleDomainRow.rowCodec
 
   override def withPaths(`_path`: java.util.List[Path]): RelationStructure[TitleDomainFields, TitleDomainRow] = new TitleDomainFields(`_path`)
 

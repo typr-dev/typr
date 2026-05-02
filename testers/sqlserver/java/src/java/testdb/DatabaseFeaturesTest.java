@@ -22,7 +22,7 @@ import testdb.userdefined.Email;
  * HIERARCHYID, and Views.
  */
 public class DatabaseFeaturesTest {
-  private final TestInsert testInsert = new TestInsert(new Random(42));
+  private final TestInsert testInsert = new TestInsert(new Random(1794616927));
   private final AllScalarTypesRepoImpl allTypesRepo = new AllScalarTypesRepoImpl();
   private final CustomersRepoImpl customersRepo = new CustomersRepoImpl();
   private final CustomerOrdersViewViewRepoImpl customerOrdersViewRepo =

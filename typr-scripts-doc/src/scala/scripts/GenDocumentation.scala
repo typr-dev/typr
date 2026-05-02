@@ -46,8 +46,43 @@ object GenDocumentation extends BleepScript("GenDocumentation") {
         docusaurus.dev(using started.executionContext)
       case Some("deploy") =>
         docusaurus.docusaurusPublishGhpages(mdocArgs = Nil)
+      case Some("surge-deploy") =>
+        val siteName = "typr-docs-preview"
+        val siteDir = started.buildPaths.buildDir / "site"
+        val buildDir = siteDir / "build"
+
+        mdoc.mdoc(args = Nil)
+
+        cli(
+          action = "npm install",
+          cwd = siteDir,
+          cmd = List("npm", "install"),
+          logger = started.logger,
+          out = cli.Out.ViaLogger(started.logger),
+          env = env
+        )
+
+        cli(
+          action = "npm run build",
+          cwd = siteDir,
+          cmd = List("npm", "run", "build"),
+          logger = started.logger,
+          out = cli.Out.ViaLogger(started.logger),
+          env = env
+        )
+
+        started.logger.info(s"Built documentation, deploying to surge...")
+        cli(
+          action = "surge deploy",
+          cwd = buildDir,
+          cmd = List("npx", "surge", ".", s"$siteName.surge.sh"),
+          logger = started.logger,
+          out = cli.Out.ViaLogger(started.logger),
+          env = env
+        )
+        started.logger.info(s"Deployed to https://$siteName.surge.sh")
       case Some(other) =>
-        sys.error(s"Expected argument to be dev or deploy, not $other")
+        sys.error(s"Expected argument to be mdoc, dev, deploy or surge-deploy, not $other")
       case None =>
         val path = docusaurus.doc(mdocArgs = args)
         started.logger.info(s"Created documentation at $path")

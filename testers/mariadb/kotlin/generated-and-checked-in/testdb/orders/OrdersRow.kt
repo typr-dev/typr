@@ -6,13 +6,11 @@
 package testdb.orders
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import dev.typr.foundations.MariaTypes
+import dev.typr.dslkt.RowCodecs
 import dev.typr.foundations.Tuple.Tuple22
 import dev.typr.foundations.data.maria.Inet6
-import dev.typr.foundations.kotlin.KotlinDbTypes
-import dev.typr.foundations.kotlin.RowParser
-import dev.typr.foundations.kotlin.RowParsers
-import dev.typr.foundations.kotlin.nullable
+import dev.typr.foundationskt.MariaTypes
+import dev.typr.foundationskt.RowCodec
 import java.math.BigDecimal
 import java.time.LocalDateTime
 import testdb.customer_addresses.CustomerAddressesId
@@ -29,7 +27,7 @@ data class OrdersRow(
     */
   @field:JsonProperty("order_id") val orderId: OrdersId,
   /**  */
-  @field:JsonProperty("order_number") val orderNumber: String,
+  @field:JsonProperty("order_number") val orderNumber: kotlin.String,
   /** 
     * Points to [testdb.customers.CustomersRow.customerId]
     */
@@ -37,11 +35,11 @@ data class OrdersRow(
   /** 
     * Default: 'pending'
     */
-  @field:JsonProperty("order_status") val orderStatus: String,
+  @field:JsonProperty("order_status") val orderStatus: kotlin.String,
   /** 
     * Default: 'pending'
     */
-  @field:JsonProperty("payment_status") val paymentStatus: String,
+  @field:JsonProperty("payment_status") val paymentStatus: kotlin.String,
   /** 
     * Default: NULL
     * Points to [testdb.customer_addresses.CustomerAddressesRow.addressId]
@@ -71,7 +69,7 @@ data class OrdersRow(
   /** 
     * Default: 'USD'
     */
-  @field:JsonProperty("currency_code") val currencyCode: String,
+  @field:JsonProperty("currency_code") val currencyCode: kotlin.String,
   /** 
     * Default: NULL
     * Points to [testdb.promotions.PromotionsRow.promotionId]
@@ -80,11 +78,11 @@ data class OrdersRow(
   /** 
     * Default: NULL
     */
-  val notes: String?,
+  val notes: kotlin.String?,
   /** 
     * Default: NULL
     */
-  @field:JsonProperty("internal_notes") val internalNotes: String?,
+  @field:JsonProperty("internal_notes") val internalNotes: kotlin.String?,
   /** 
     * Default: NULL
     */
@@ -92,7 +90,7 @@ data class OrdersRow(
   /** 
     * Default: NULL
     */
-  @field:JsonProperty("user_agent") val userAgent: String?,
+  @field:JsonProperty("user_agent") val userAgent: kotlin.String?,
   /** 
     * Default: current_timestamp(6)
     */
@@ -109,7 +107,7 @@ data class OrdersRow(
     * Default: NULL
     */
   @field:JsonProperty("delivered_at") val deliveredAt: LocalDateTime?
-) : Tuple22<OrdersId, String, CustomersId, String, String, CustomerAddressesId?, CustomerAddressesId?, BigDecimal, BigDecimal, BigDecimal, BigDecimal, BigDecimal, String, PromotionsId?, String?, String?, Inet6?, String?, LocalDateTime, LocalDateTime?, LocalDateTime?, LocalDateTime?> {
+) : Tuple22<OrdersId, kotlin.String, CustomersId, kotlin.String, kotlin.String, CustomerAddressesId?, CustomerAddressesId?, BigDecimal, BigDecimal, BigDecimal, BigDecimal, BigDecimal, kotlin.String, PromotionsId?, kotlin.String?, kotlin.String?, Inet6?, kotlin.String?, LocalDateTime, LocalDateTime?, LocalDateTime?, LocalDateTime?> {
   override fun _1(): OrdersId = orderId
 
   override fun _10(): BigDecimal = taxAmount
@@ -118,21 +116,21 @@ data class OrdersRow(
 
   override fun _12(): BigDecimal = totalAmount
 
-  override fun _13(): String = currencyCode
+  override fun _13(): kotlin.String = currencyCode
 
   override fun _14(): PromotionsId? = promotionId
 
-  override fun _15(): String? = notes
+  override fun _15(): kotlin.String? = notes
 
-  override fun _16(): String? = internalNotes
+  override fun _16(): kotlin.String? = internalNotes
 
   override fun _17(): Inet6? = ipAddress
 
-  override fun _18(): String? = userAgent
+  override fun _18(): kotlin.String? = userAgent
 
   override fun _19(): LocalDateTime = orderedAt
 
-  override fun _2(): String = orderNumber
+  override fun _2(): kotlin.String = orderNumber
 
   override fun _20(): LocalDateTime? = confirmedAt
 
@@ -142,9 +140,9 @@ data class OrdersRow(
 
   override fun _3(): CustomersId = customerId
 
-  override fun _4(): String = orderStatus
+  override fun _4(): kotlin.String = orderStatus
 
-  override fun _5(): String = paymentStatus
+  override fun _5(): kotlin.String = paymentStatus
 
   override fun _6(): CustomerAddressesId? = shippingAddressId
 
@@ -157,19 +155,19 @@ data class OrdersRow(
   fun id(): OrdersId = orderId
 
   fun toUnsavedRow(
-    orderStatus: Defaulted<String> = Defaulted.Provided(this.orderStatus),
-    paymentStatus: Defaulted<String> = Defaulted.Provided(this.paymentStatus),
+    orderStatus: Defaulted<kotlin.String> = Defaulted.Provided(this.orderStatus),
+    paymentStatus: Defaulted<kotlin.String> = Defaulted.Provided(this.paymentStatus),
     shippingAddressId: Defaulted<CustomerAddressesId?> = Defaulted.Provided(this.shippingAddressId),
     billingAddressId: Defaulted<CustomerAddressesId?> = Defaulted.Provided(this.billingAddressId),
     shippingCost: Defaulted<BigDecimal> = Defaulted.Provided(this.shippingCost),
     taxAmount: Defaulted<BigDecimal> = Defaulted.Provided(this.taxAmount),
     discountAmount: Defaulted<BigDecimal> = Defaulted.Provided(this.discountAmount),
-    currencyCode: Defaulted<String> = Defaulted.Provided(this.currencyCode),
+    currencyCode: Defaulted<kotlin.String> = Defaulted.Provided(this.currencyCode),
     promotionId: Defaulted<PromotionsId?> = Defaulted.Provided(this.promotionId),
-    notes: Defaulted<String?> = Defaulted.Provided(this.notes),
-    internalNotes: Defaulted<String?> = Defaulted.Provided(this.internalNotes),
+    notes: Defaulted<kotlin.String?> = Defaulted.Provided(this.notes),
+    internalNotes: Defaulted<kotlin.String?> = Defaulted.Provided(this.internalNotes),
     ipAddress: Defaulted<Inet6?> = Defaulted.Provided(this.ipAddress),
-    userAgent: Defaulted<String?> = Defaulted.Provided(this.userAgent),
+    userAgent: Defaulted<kotlin.String?> = Defaulted.Provided(this.userAgent),
     orderedAt: Defaulted<LocalDateTime> = Defaulted.Provided(this.orderedAt),
     confirmedAt: Defaulted<LocalDateTime?> = Defaulted.Provided(this.confirmedAt),
     shippedAt: Defaulted<LocalDateTime?> = Defaulted.Provided(this.shippedAt),
@@ -177,6 +175,6 @@ data class OrdersRow(
   ): OrdersRowUnsaved = OrdersRowUnsaved(orderNumber, customerId, subtotal, totalAmount, orderStatus, paymentStatus, shippingAddressId, billingAddressId, shippingCost, taxAmount, discountAmount, currencyCode, promotionId, notes, internalNotes, ipAddress, userAgent, orderedAt, confirmedAt, shippedAt, deliveredAt)
 
   companion object {
-    val _rowParser: RowParser<OrdersRow> = RowParsers.of(OrdersId.mariaType, MariaTypes.varchar, CustomersId.mariaType, MariaTypes.text, MariaTypes.text, CustomerAddressesId.mariaType.nullable(), CustomerAddressesId.mariaType.nullable(), KotlinDbTypes.MariaTypes.numeric, KotlinDbTypes.MariaTypes.numeric, KotlinDbTypes.MariaTypes.numeric, KotlinDbTypes.MariaTypes.numeric, KotlinDbTypes.MariaTypes.numeric, MariaTypes.char_, PromotionsId.mariaType.nullable(), MariaTypes.text.nullable(), MariaTypes.mediumtext.nullable(), MariaTypes.inet6.nullable(), MariaTypes.varchar.nullable(), MariaTypes.datetime, MariaTypes.datetime.nullable(), MariaTypes.datetime.nullable(), MariaTypes.datetime.nullable(), { t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15, t16, t17, t18, t19, t20, t21 -> OrdersRow(t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15, t16, t17, t18, t19, t20, t21) }, { row -> arrayOf<Any?>(row.orderId, row.orderNumber, row.customerId, row.orderStatus, row.paymentStatus, row.shippingAddressId, row.billingAddressId, row.subtotal, row.shippingCost, row.taxAmount, row.discountAmount, row.totalAmount, row.currencyCode, row.promotionId, row.notes, row.internalNotes, row.ipAddress, row.userAgent, row.orderedAt, row.confirmedAt, row.shippedAt, row.deliveredAt) })
+    val rowCodec: RowCodec<OrdersRow> = RowCodecs.of(OrdersId.mariaType, MariaTypes.varchar, CustomersId.mariaType, MariaTypes.text, MariaTypes.text, CustomerAddressesId.mariaType.opt(), CustomerAddressesId.mariaType.opt(), MariaTypes.numeric, MariaTypes.numeric, MariaTypes.numeric, MariaTypes.numeric, MariaTypes.numeric, MariaTypes.char_, PromotionsId.mariaType.opt(), MariaTypes.text.opt(), MariaTypes.mediumtext.opt(), MariaTypes.inet6.opt(), MariaTypes.varchar.opt(), MariaTypes.datetime, MariaTypes.datetime.opt(), MariaTypes.datetime.opt(), MariaTypes.datetime.opt(), { t0: OrdersId, t1: kotlin.String, t2: CustomersId, t3: kotlin.String, t4: kotlin.String, t5: CustomerAddressesId?, t6: CustomerAddressesId?, t7: BigDecimal, t8: BigDecimal, t9: BigDecimal, t10: BigDecimal, t11: BigDecimal, t12: kotlin.String, t13: PromotionsId?, t14: kotlin.String?, t15: kotlin.String?, t16: Inet6?, t17: kotlin.String?, t18: LocalDateTime, t19: LocalDateTime?, t20: LocalDateTime?, t21: LocalDateTime? -> OrdersRow(t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15, t16, t17, t18, t19, t20, t21) }, { row: OrdersRow -> arrayOf<Any?>(row.orderId, row.orderNumber, row.customerId, row.orderStatus, row.paymentStatus, row.shippingAddressId, row.billingAddressId, row.subtotal, row.shippingCost, row.taxAmount, row.discountAmount, row.totalAmount, row.currencyCode, row.promotionId, row.notes, row.internalNotes, row.ipAddress, row.userAgent, row.orderedAt, row.confirmedAt, row.shippedAt, row.deliveredAt) })
   }
 }

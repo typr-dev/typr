@@ -5,89 +5,90 @@
  */
 package adventureworks.public.title_domain
 
+import dev.typr.dsl.DeleteBuilder
+import dev.typr.dsl.Dialect
+import dev.typr.dsl.SelectBuilder
+import dev.typr.dsl.UpdateBuilder
+import dev.typr.foundations.Connection
+import dev.typr.foundations.ConnectionRead
 import dev.typr.foundations.Fragment
-import dev.typr.foundations.dsl.DeleteBuilder
-import dev.typr.foundations.dsl.Dialect
-import dev.typr.foundations.dsl.SelectBuilder
-import dev.typr.foundations.dsl.UpdateBuilder
-import dev.typr.foundations.streamingInsert
-import java.sql.Connection
+import dev.typr.foundations.StreamingInsert
 import java.util.HashMap
 import java.util.Optional
-import dev.typr.foundations.Fragment.interpolate
+import dev.typr.foundations.Fragment.concat
 
 class TitleDomainRepoImpl extends TitleDomainRepo {
   override def delete: DeleteBuilder[TitleDomainFields, TitleDomainRow] = DeleteBuilder.of(""""public"."title_domain"""", TitleDomainFields.structure, Dialect.POSTGRESQL)
 
-  override def deleteById(code: TitleDomainId)(using c: Connection): java.lang.Boolean = interpolate(Fragment.lit("""delete from "public"."title_domain" where "code" = """), Fragment.encode(TitleDomainId.pgType, code), Fragment.lit("")).update().runUnchecked(c) > 0
+  override def deleteById(code: TitleDomainId)(using c: Connection): java.lang.Boolean = concat(Fragment.of("""delete from "public"."title_domain" where "code" = """), Fragment.encode(TitleDomainId.pgType, code), Fragment.of("")).update().run(c) > 0
 
-  override def deleteByIds(codes: Array[TitleDomainId])(using c: Connection): Integer = {
-    interpolate(Fragment.lit("""delete
+  override def deleteByIds(codes: java.util.List[TitleDomainId])(using c: Connection): Integer = {
+    concat(Fragment.of("""delete
     from "public"."title_domain"
-    where "code" = ANY("""), Fragment.encode(TitleDomainId.pgTypeArray, codes), Fragment.lit(")"))
+    where "code" = ANY("""), Fragment.encode(TitleDomainId.pgType.array(), codes), Fragment.of(")"))
       .update()
-      .runUnchecked(c)
+      .run(c)
   }
 
   override def insert(unsaved: TitleDomainRow)(using c: Connection): TitleDomainRow = {
-  interpolate(Fragment.lit("""insert into "public"."title_domain"("code")
-    values ("""), Fragment.encode(TitleDomainId.pgType, unsaved.code), Fragment.lit("""::text)
+  concat(Fragment.of("""insert into "public"."title_domain"("code")
+    values ("""), Fragment.encode(TitleDomainId.pgType, unsaved.code), Fragment.of("""::text)
     RETURNING "code"
     """))
-    .updateReturning(TitleDomainRow.`_rowParser`.exactlyOne()).runUnchecked(c)
+    .updateReturning(TitleDomainRow.rowCodec.exactlyOne()).run(c)
   }
 
   override def insertStreaming(
     unsaved: java.util.Iterator[TitleDomainRow],
     batchSize: Integer = 10000
-  )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "public"."title_domain"("code") FROM STDIN""", batchSize, unsaved, c, TitleDomainRow.pgText)
+  )(using c: Connection): java.lang.Long = StreamingInsert.of(s"""COPY "public"."title_domain"("code") FROM STDIN""", batchSize, unsaved, TitleDomainRow.pgText).run(c)
 
-  override def select: SelectBuilder[TitleDomainFields, TitleDomainRow] = SelectBuilder.of(""""public"."title_domain"""", TitleDomainFields.structure, TitleDomainRow.`_rowParser`, Dialect.POSTGRESQL)
+  override def select: SelectBuilder[TitleDomainFields, TitleDomainRow] = SelectBuilder.of(""""public"."title_domain"""", TitleDomainFields.structure, TitleDomainRow.rowCodec, Dialect.POSTGRESQL)
 
-  override def selectAll(using c: Connection): java.util.List[TitleDomainRow] = {
-    interpolate(Fragment.lit("""select "code"
+  override def selectAll(using c: ConnectionRead): java.util.List[TitleDomainRow] = {
+    concat(Fragment.of("""select "code"
     from "public"."title_domain"
-    """)).query(TitleDomainRow.`_rowParser`.all()).runUnchecked(c)
+    """)).query(TitleDomainRow.rowCodec.all()).run(c)
   }
 
-  override def selectById(code: TitleDomainId)(using c: Connection): Optional[TitleDomainRow] = {
-    interpolate(Fragment.lit("""select "code"
+  override def selectById(code: TitleDomainId)(using c: ConnectionRead): Optional[TitleDomainRow] = {
+    concat(Fragment.of("""select "code"
     from "public"."title_domain"
-    where "code" = """), Fragment.encode(TitleDomainId.pgType, code), Fragment.lit("")).query(TitleDomainRow.`_rowParser`.first()).runUnchecked(c)
+    where "code" = """), Fragment.encode(TitleDomainId.pgType, code), Fragment.of("")).query(TitleDomainRow.rowCodec.first()).run(c)
   }
 
-  override def selectByIds(codes: Array[TitleDomainId])(using c: Connection): java.util.List[TitleDomainRow] = {
-    interpolate(Fragment.lit("""select "code"
+  override def selectByIds(codes: java.util.List[TitleDomainId])(using c: ConnectionRead): java.util.List[TitleDomainRow] = {
+    concat(Fragment.of("""select "code"
     from "public"."title_domain"
-    where "code" = ANY("""), Fragment.encode(TitleDomainId.pgTypeArray, codes), Fragment.lit(")")).query(TitleDomainRow.`_rowParser`.all()).runUnchecked(c)
+    where "code" = ANY("""), Fragment.encode(TitleDomainId.pgType.array(), codes), Fragment.of(")")).query(TitleDomainRow.rowCodec.all()).run(c)
   }
 
-  override def selectByIdsTracked(codes: Array[TitleDomainId])(using c: Connection): java.util.Map[TitleDomainId, TitleDomainRow] = {
+  override def selectByIdsTracked(codes: java.util.List[TitleDomainId])(using c: ConnectionRead): java.util.Map[TitleDomainId, TitleDomainRow] = {
     val ret: HashMap[TitleDomainId, TitleDomainRow] = new HashMap[TitleDomainId, TitleDomainRow]()
     selectByIds(codes)(using c).forEach(row => ret.put(row.code, row): @scala.annotation.nowarn)
     return ret
   }
 
-  override def update: UpdateBuilder[TitleDomainFields, TitleDomainRow] = UpdateBuilder.of(""""public"."title_domain"""", TitleDomainFields.structure, TitleDomainRow.`_rowParser`, Dialect.POSTGRESQL)
+  override def update: UpdateBuilder[TitleDomainFields, TitleDomainRow] = UpdateBuilder.of(""""public"."title_domain"""", TitleDomainFields.structure, TitleDomainRow.rowCodec, Dialect.POSTGRESQL)
 
   override def upsert(unsaved: TitleDomainRow)(using c: Connection): TitleDomainRow = {
-  interpolate(Fragment.lit("""insert into "public"."title_domain"("code")
-    values ("""), Fragment.encode(TitleDomainId.pgType, unsaved.code), Fragment.lit("""::text)
+  concat(Fragment.of("""insert into "public"."title_domain"("code")
+    values ("""), Fragment.encode(TitleDomainId.pgType, unsaved.code), Fragment.of("""::text)
     on conflict ("code")
     do update set "code" = EXCLUDED."code"
     returning "code""""))
-    .updateReturning(TitleDomainRow.`_rowParser`.exactlyOne())
-    .runUnchecked(c)
+    .updateReturning(TitleDomainRow.rowCodec.exactlyOne())
+    .run(c)
   }
 
   override def upsertBatch(unsaved: java.util.Iterator[TitleDomainRow])(using c: Connection): java.util.List[TitleDomainRow] = {
-    interpolate(Fragment.lit("""insert into "public"."title_domain"("code")
+    concat(Fragment.of("""insert into "public"."title_domain"("code")
     values (?::text)
     on conflict ("code")
     do update set "code" = EXCLUDED."code"
     returning "code""""))
-      .updateManyReturning(TitleDomainRow.`_rowParser`, unsaved)
-    .runUnchecked(c)
+      .updateManyReturning(TitleDomainRow.rowCodec, unsaved)
+    .run(c)
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
@@ -95,13 +96,13 @@ class TitleDomainRepoImpl extends TitleDomainRepo {
     unsaved: java.util.Iterator[TitleDomainRow],
     batchSize: Integer = 10000
   )(using c: Connection): Integer = {
-    interpolate(Fragment.lit("""create temporary table title_domain_TEMP (like "public"."title_domain") on commit drop""")).update().runUnchecked(c): @scala.annotation.nowarn
-    streamingInsert.insertUnchecked(s"""copy title_domain_TEMP("code") from stdin""", batchSize, unsaved, c, TitleDomainRow.pgText): @scala.annotation.nowarn
-    return interpolate(Fragment.lit("""insert into "public"."title_domain"("code")
+    concat(Fragment.of("""create temporary table title_domain_TEMP (like "public"."title_domain") on commit drop""")).update().run(c): @scala.annotation.nowarn
+    StreamingInsert.of(s"""copy title_domain_TEMP("code") from stdin""", batchSize, unsaved, TitleDomainRow.pgText).run(c): @scala.annotation.nowarn
+    return concat(Fragment.of("""insert into "public"."title_domain"("code")
     select * from title_domain_TEMP
     on conflict ("code")
     do nothing
     ;
-    drop table title_domain_TEMP;""")).update().runUnchecked(c)
+    drop table title_domain_TEMP;""")).update().run(c)
   }
 }

@@ -36,7 +36,7 @@ object TypoUnknownCitext {
 
   implicit lazy val arrayToStatement: ToStatement[Array[TypoUnknownCitext]] = ToStatement[Array[TypoUnknownCitext]]((s, index, v) => s.setArray(index, s.getConnection.createArrayOf("citext", v.map(v => v.value))))
 
-  implicit lazy val bijection: Bijection[TypoUnknownCitext, String] = Bijection.apply[TypoUnknownCitext, String](_.value)(TypoUnknownCitext.apply)
+  implicit lazy val bijection: Bijection[TypoUnknownCitext, String] = Bijection[TypoUnknownCitext, String](_.value)(TypoUnknownCitext.apply)
 
   implicit lazy val column: Column[TypoUnknownCitext] = {
     Column.nonNull[TypoUnknownCitext]((v1: Any, _) =>

@@ -5,17 +5,18 @@
  */
 package oracledb.contacts
 
-import dev.typr.foundations.kotlin.DeleteBuilder
-import dev.typr.foundations.kotlin.DeleteBuilderMock
-import dev.typr.foundations.kotlin.DeleteParams
-import dev.typr.foundations.kotlin.SelectBuilder
-import dev.typr.foundations.kotlin.SelectBuilderMock
-import dev.typr.foundations.kotlin.SelectParams
-import dev.typr.foundations.kotlin.UpdateBuilder
-import dev.typr.foundations.kotlin.UpdateBuilderMock
-import dev.typr.foundations.kotlin.UpdateParams
+import dev.typr.dslkt.DeleteBuilder
+import dev.typr.dslkt.DeleteBuilderMock
+import dev.typr.dslkt.DeleteParams
+import dev.typr.dslkt.SelectBuilder
+import dev.typr.dslkt.SelectBuilderMock
+import dev.typr.dslkt.SelectParams
+import dev.typr.dslkt.UpdateBuilder
+import dev.typr.dslkt.UpdateBuilderMock
+import dev.typr.dslkt.UpdateParams
+import dev.typr.foundationskt.Connection
+import dev.typr.foundationskt.ConnectionRead
 import java.lang.RuntimeException
-import java.sql.Connection
 import java.util.ArrayList
 import kotlin.collections.Iterator
 import kotlin.collections.List
@@ -31,10 +32,10 @@ data class ContactsRepoMock(
   override fun deleteById(
     contactId: ContactsId,
     c: Connection
-  ): Boolean = map.remove(contactId) != null
+  ): kotlin.Boolean = map.remove(contactId) != null
 
   override fun deleteByIds(
-    contactIds: Array<ContactsId>,
+    contactIds: List<ContactsId>,
     c: Connection
   ): Int {
     var count = 0
@@ -64,16 +65,16 @@ data class ContactsRepoMock(
 
   override fun select(): SelectBuilder<ContactsFields, ContactsRow> = SelectBuilderMock(ContactsFields.structure, { map.values.toList() }, SelectParams.empty())
 
-  override fun selectAll(c: Connection): List<ContactsRow> = map.values.toList()
+  override fun selectAll(c: ConnectionRead): List<ContactsRow> = map.values.toList()
 
   override fun selectById(
     contactId: ContactsId,
-    c: Connection
+    c: ConnectionRead
   ): ContactsRow? = map[contactId]
 
   override fun selectByIds(
-    contactIds: Array<ContactsId>,
-    c: Connection
+    contactIds: List<ContactsId>,
+    c: ConnectionRead
   ): List<ContactsRow> {
     val result = ArrayList<ContactsRow>()
     for (id in contactIds) {
@@ -86,8 +87,8 @@ data class ContactsRepoMock(
   }
 
   override fun selectByIdsTracked(
-    contactIds: Array<ContactsId>,
-    c: Connection
+    contactIds: List<ContactsId>,
+    c: ConnectionRead
   ): Map<ContactsId, ContactsRow> = selectByIds(contactIds, c).associateBy({ row: ContactsRow -> row.contactId })
 
   override fun update(): UpdateBuilder<ContactsFields, ContactsRow> = UpdateBuilderMock(ContactsFields.structure, { map.values.toList() }, UpdateParams.empty(), { row -> row })
@@ -95,7 +96,7 @@ data class ContactsRepoMock(
   override fun update(
     row: ContactsRow,
     c: Connection
-  ): Boolean {
+  ): kotlin.Boolean {
     val shouldUpdate = map[row.contactId]?.takeIf({ oldRow -> (oldRow != row) }) != null
     if (shouldUpdate) {
       map[row.contactId] = row

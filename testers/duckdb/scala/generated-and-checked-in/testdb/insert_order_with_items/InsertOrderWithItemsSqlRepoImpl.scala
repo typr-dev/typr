@@ -5,14 +5,12 @@
  */
 package testdb.insert_order_with_items
 
-import dev.typr.foundations.DuckDbTypes
-import dev.typr.foundations.scala.DbTypeOps
-import dev.typr.foundations.scala.Fragment
-import dev.typr.foundations.scala.ScalaDbTypes
-import java.sql.Connection
+import dev.typr.foundationssc.ConnectionRead
+import dev.typr.foundationssc.DuckDbTypes
+import dev.typr.foundationssc.Fragment
 import java.time.LocalDate
 import testdb.customers.CustomersId
-import dev.typr.foundations.scala.Fragment.sql
+import dev.typr.foundationssc.Fragment.sql
 
 class InsertOrderWithItemsSqlRepoImpl extends InsertOrderWithItemsSqlRepo {
   override def apply(
@@ -21,23 +19,23 @@ class InsertOrderWithItemsSqlRepoImpl extends InsertOrderWithItemsSqlRepo {
     orderDate: Option[LocalDate],
     totalAmount: Option[BigDecimal],
     status: Option[String]
-  )(using c: Connection): List[InsertOrderWithItemsSqlRow] = {
+  )(using c: ConnectionRead): List[InsertOrderWithItemsSqlRow] = {
     sql"""-- Insert a new order and return the generated data
     -- Tests: INSERT with RETURNING, multiple columns, foreign keys, DEFAULT values
   
     INSERT INTO orders (order_id, customer_id, order_date, total_amount, status)
     VALUES (
-        CAST(${Fragment.encode(ScalaDbTypes.DuckDbTypes.integer, orderId)} AS INTEGER),
+        CAST(${Fragment.encode(DuckDbTypes.integer, orderId)} AS INTEGER),
         CAST(${Fragment.encode(CustomersId.duckDbType, customerId)} AS INTEGER),
-        CAST(${Fragment.encode(DuckDbTypes.date.nullable, orderDate)} AS DATE),
-        CAST(${Fragment.encode(ScalaDbTypes.DuckDbTypes.numeric.nullable, totalAmount)} AS DECIMAL),
-        CAST(${Fragment.encode(DuckDbTypes.text.nullable, status)} AS VARCHAR)
+        CAST(${Fragment.encode(DuckDbTypes.date.opt, orderDate)} AS DATE),
+        CAST(${Fragment.encode(DuckDbTypes.numeric.opt, totalAmount)} AS DECIMAL),
+        CAST(${Fragment.encode(DuckDbTypes.text.opt, status)} AS VARCHAR)
     )
     RETURNING
         order_id,
         customer_id,
         order_date,
         total_amount,
-        status""".query(InsertOrderWithItemsSqlRow.`_rowParser`.all()).runUnchecked(c)
+        status""".query(InsertOrderWithItemsSqlRow.rowCodec.all()).run(using c)
   }
 }

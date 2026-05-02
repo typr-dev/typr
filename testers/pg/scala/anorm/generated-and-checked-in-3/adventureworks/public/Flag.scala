@@ -24,7 +24,7 @@ object Flag {
 
   given arrayToStatement: ToStatement[Array[Flag]] = adventureworks.BooleanArrayToStatement.contramap(_.map(_.value))
 
-  given bijection: Bijection[Flag, Boolean] = Bijection.apply[Flag, Boolean](_.value)(Flag.apply)
+  given bijection: Bijection[Flag, Boolean] = Bijection[Flag, Boolean](_.value)(Flag.apply)
 
   given column: Column[Flag] = Column.columnToBoolean.map(Flag.apply)
 

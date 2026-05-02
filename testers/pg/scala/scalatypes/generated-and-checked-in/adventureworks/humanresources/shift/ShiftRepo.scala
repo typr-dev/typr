@@ -5,17 +5,18 @@
  */
 package adventureworks.humanresources.shift
 
-import dev.typr.foundations.scala.DeleteBuilder
-import dev.typr.foundations.scala.SelectBuilder
-import dev.typr.foundations.scala.UpdateBuilder
-import java.sql.Connection
+import dev.typr.dslsc.DeleteBuilder
+import dev.typr.dslsc.SelectBuilder
+import dev.typr.dslsc.UpdateBuilder
+import dev.typr.foundationssc.Connection
+import dev.typr.foundationssc.ConnectionRead
 
 trait ShiftRepo {
   def delete: DeleteBuilder[ShiftFields, ShiftRow]
 
   def deleteById(shiftid: ShiftId)(using c: Connection): Boolean
 
-  def deleteByIds(shiftids: Array[ShiftId])(using c: Connection): Int
+  def deleteByIds(shiftids: List[ShiftId])(using c: Connection): Int
 
   def insert(unsaved: ShiftRow)(using c: Connection): ShiftRow
 
@@ -34,13 +35,13 @@ trait ShiftRepo {
 
   def select: SelectBuilder[ShiftFields, ShiftRow]
 
-  def selectAll(using c: Connection): List[ShiftRow]
+  def selectAll(using c: ConnectionRead): List[ShiftRow]
 
-  def selectById(shiftid: ShiftId)(using c: Connection): Option[ShiftRow]
+  def selectById(shiftid: ShiftId)(using c: ConnectionRead): Option[ShiftRow]
 
-  def selectByIds(shiftids: Array[ShiftId])(using c: Connection): List[ShiftRow]
+  def selectByIds(shiftids: List[ShiftId])(using c: ConnectionRead): List[ShiftRow]
 
-  def selectByIdsTracked(shiftids: Array[ShiftId])(using c: Connection): Map[ShiftId, ShiftRow]
+  def selectByIdsTracked(shiftids: List[ShiftId])(using c: ConnectionRead): Map[ShiftId, ShiftRow]
 
   def update: UpdateBuilder[ShiftFields, ShiftRow]
 

@@ -5,14 +5,14 @@
  */
 package oracledb.product_by_sku
 
-import dev.typr.foundations.OracleTypes
-import dev.typr.foundations.kotlin.Fragment
-import java.sql.Connection
+import dev.typr.foundationskt.ConnectionRead
+import dev.typr.foundationskt.Fragment
+import dev.typr.foundationskt.OracleTypes
 import kotlin.collections.List
 
 class ProductBySkuSqlRepoImpl() : ProductBySkuSqlRepo {
   override fun apply(
-    sku: String,
-    c: Connection
-  ): List<ProductBySkuSqlRow> = Fragment.interpolate(Fragment.lit("-- Find product by SKU\nSELECT\n    p.product_id,\n    p.sku,\n    p.name,\n    p.price,\n    p.tags\nFROM products p\nWHERE p.sku = "), Fragment.encode(OracleTypes.varchar2, sku), Fragment.lit("\n")).query(ProductBySkuSqlRow._rowParser.all()).runUnchecked(c)
+    sku: kotlin.String,
+    c: ConnectionRead
+  ): List<ProductBySkuSqlRow> = Fragment.concat(Fragment.of("-- Find product by SKU\nSELECT\n    p.product_id,\n    p.sku,\n    p.name,\n    p.price,\n    p.tags\nFROM products p\nWHERE p.sku = "), Fragment.encode(OracleTypes.varchar2, sku), Fragment.of("\n")).query(ProductBySkuSqlRow.rowCodec.all()).run(c)
 }

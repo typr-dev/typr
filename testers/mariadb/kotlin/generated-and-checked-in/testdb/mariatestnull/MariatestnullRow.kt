@@ -6,7 +6,6 @@
 package testdb.mariatestnull
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import dev.typr.foundations.MariaTypes
 import dev.typr.foundations.Tuple.Tuple41
 import dev.typr.foundations.data.Json
 import dev.typr.foundations.data.Uint1
@@ -15,10 +14,8 @@ import dev.typr.foundations.data.Uint4
 import dev.typr.foundations.data.Uint8
 import dev.typr.foundations.data.maria.Inet4
 import dev.typr.foundations.data.maria.Inet6
-import dev.typr.foundations.kotlin.KotlinDbTypes
-import dev.typr.foundations.kotlin.RowParser
-import dev.typr.foundations.kotlin.RowParsers
-import dev.typr.foundations.kotlin.nullable
+import dev.typr.foundationskt.MariaTypes
+import dev.typr.foundationskt.RowCodec
 import java.math.BigDecimal
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -34,11 +31,11 @@ data class MariatestnullRow(
   /** 
     * Default: NULL
     */
-  @field:JsonProperty("tinyint_col") val tinyintCol: Byte?,
+  @field:JsonProperty("tinyint_col") val tinyintCol: kotlin.Byte?,
   /** 
     * Default: NULL
     */
-  @field:JsonProperty("smallint_col") val smallintCol: Short?,
+  @field:JsonProperty("smallint_col") val smallintCol: kotlin.Short?,
   /** 
     * Default: NULL
     */
@@ -50,7 +47,7 @@ data class MariatestnullRow(
   /** 
     * Default: NULL
     */
-  @field:JsonProperty("bigint_col") val bigintCol: Long?,
+  @field:JsonProperty("bigint_col") val bigintCol: kotlin.Long?,
   /** 
     * Default: NULL
     */
@@ -82,15 +79,15 @@ data class MariatestnullRow(
   /** 
     * Default: NULL
     */
-  @field:JsonProperty("float_col") val floatCol: Float?,
+  @field:JsonProperty("float_col") val floatCol: kotlin.Float?,
   /** 
     * Default: NULL
     */
-  @field:JsonProperty("double_col") val doubleCol: Double?,
+  @field:JsonProperty("double_col") val doubleCol: kotlin.Double?,
   /** 
     * Default: NULL
     */
-  @field:JsonProperty("bool_col") val boolCol: Boolean?,
+  @field:JsonProperty("bool_col") val boolCol: kotlin.Boolean?,
   /** 
     * Default: NULL
     */
@@ -102,27 +99,27 @@ data class MariatestnullRow(
   /** 
     * Default: NULL
     */
-  @field:JsonProperty("char_col") val charCol: String?,
+  @field:JsonProperty("char_col") val charCol: kotlin.String?,
   /** 
     * Default: NULL
     */
-  @field:JsonProperty("varchar_col") val varcharCol: String?,
+  @field:JsonProperty("varchar_col") val varcharCol: kotlin.String?,
   /** 
     * Default: NULL
     */
-  @field:JsonProperty("tinytext_col") val tinytextCol: String?,
+  @field:JsonProperty("tinytext_col") val tinytextCol: kotlin.String?,
   /** 
     * Default: NULL
     */
-  @field:JsonProperty("text_col") val textCol: String?,
+  @field:JsonProperty("text_col") val textCol: kotlin.String?,
   /** 
     * Default: NULL
     */
-  @field:JsonProperty("mediumtext_col") val mediumtextCol: String?,
+  @field:JsonProperty("mediumtext_col") val mediumtextCol: kotlin.String?,
   /** 
     * Default: NULL
     */
-  @field:JsonProperty("longtext_col") val longtextCol: String?,
+  @field:JsonProperty("longtext_col") val longtextCol: kotlin.String?,
   /** 
     * Default: NULL
     */
@@ -195,8 +192,8 @@ data class MariatestnullRow(
     * Default: NULL
     */
   @field:JsonProperty("inet6_col") val inet6Col: Inet6?
-) : Tuple41<Byte?, Short?, Int?, Int?, Long?, Uint1?, Uint2?, Uint4?, Uint4?, Uint8?, BigDecimal?, BigDecimal?, Float?, Double?, Boolean?, ByteArray?, ByteArray?, String?, String?, String?, String?, String?, String?, ByteArray?, ByteArray?, ByteArray?, ByteArray?, ByteArray?, ByteArray?, LocalDate?, LocalTime?, LocalTime?, LocalDateTime?, LocalDateTime?, LocalDateTime?, LocalDateTime?, Year?, XYZSet?, Json?, Inet4?, Inet6?> {
-  override fun _1(): Byte? = tinyintCol
+) : Tuple41<kotlin.Byte?, kotlin.Short?, Int?, Int?, kotlin.Long?, Uint1?, Uint2?, Uint4?, Uint4?, Uint8?, BigDecimal?, BigDecimal?, kotlin.Float?, kotlin.Double?, kotlin.Boolean?, ByteArray?, ByteArray?, kotlin.String?, kotlin.String?, kotlin.String?, kotlin.String?, kotlin.String?, kotlin.String?, ByteArray?, ByteArray?, ByteArray?, ByteArray?, ByteArray?, ByteArray?, LocalDate?, LocalTime?, LocalTime?, LocalDateTime?, LocalDateTime?, LocalDateTime?, LocalDateTime?, Year?, XYZSet?, Json?, Inet4?, Inet6?> {
+  override fun _1(): kotlin.Byte? = tinyintCol
 
   override fun _10(): Uint8? = bigintUCol
 
@@ -204,29 +201,29 @@ data class MariatestnullRow(
 
   override fun _12(): BigDecimal? = numericCol
 
-  override fun _13(): Float? = floatCol
+  override fun _13(): kotlin.Float? = floatCol
 
-  override fun _14(): Double? = doubleCol
+  override fun _14(): kotlin.Double? = doubleCol
 
-  override fun _15(): Boolean? = boolCol
+  override fun _15(): kotlin.Boolean? = boolCol
 
   override fun _16(): ByteArray? = bitCol
 
   override fun _17(): ByteArray? = bit1Col
 
-  override fun _18(): String? = charCol
+  override fun _18(): kotlin.String? = charCol
 
-  override fun _19(): String? = varcharCol
+  override fun _19(): kotlin.String? = varcharCol
 
-  override fun _2(): Short? = smallintCol
+  override fun _2(): kotlin.Short? = smallintCol
 
-  override fun _20(): String? = tinytextCol
+  override fun _20(): kotlin.String? = tinytextCol
 
-  override fun _21(): String? = textCol
+  override fun _21(): kotlin.String? = textCol
 
-  override fun _22(): String? = mediumtextCol
+  override fun _22(): kotlin.String? = mediumtextCol
 
-  override fun _23(): String? = longtextCol
+  override fun _23(): kotlin.String? = longtextCol
 
   override fun _24(): ByteArray? = binaryCol
 
@@ -268,7 +265,7 @@ data class MariatestnullRow(
 
   override fun _41(): Inet6? = inet6Col
 
-  override fun _5(): Long? = bigintCol
+  override fun _5(): kotlin.Long? = bigintCol
 
   override fun _6(): Uint1? = tinyintUCol
 
@@ -279,11 +276,11 @@ data class MariatestnullRow(
   override fun _9(): Uint4? = intUCol
 
   fun toUnsavedRow(
-    tinyintCol: Defaulted<Byte?> = Defaulted.Provided(this.tinyintCol),
-    smallintCol: Defaulted<Short?> = Defaulted.Provided(this.smallintCol),
+    tinyintCol: Defaulted<kotlin.Byte?> = Defaulted.Provided(this.tinyintCol),
+    smallintCol: Defaulted<kotlin.Short?> = Defaulted.Provided(this.smallintCol),
     mediumintCol: Defaulted<Int?> = Defaulted.Provided(this.mediumintCol),
     intCol: Defaulted<Int?> = Defaulted.Provided(this.intCol),
-    bigintCol: Defaulted<Long?> = Defaulted.Provided(this.bigintCol),
+    bigintCol: Defaulted<kotlin.Long?> = Defaulted.Provided(this.bigintCol),
     tinyintUCol: Defaulted<Uint1?> = Defaulted.Provided(this.tinyintUCol),
     smallintUCol: Defaulted<Uint2?> = Defaulted.Provided(this.smallintUCol),
     mediumintUCol: Defaulted<Uint4?> = Defaulted.Provided(this.mediumintUCol),
@@ -291,17 +288,17 @@ data class MariatestnullRow(
     bigintUCol: Defaulted<Uint8?> = Defaulted.Provided(this.bigintUCol),
     decimalCol: Defaulted<BigDecimal?> = Defaulted.Provided(this.decimalCol),
     numericCol: Defaulted<BigDecimal?> = Defaulted.Provided(this.numericCol),
-    floatCol: Defaulted<Float?> = Defaulted.Provided(this.floatCol),
-    doubleCol: Defaulted<Double?> = Defaulted.Provided(this.doubleCol),
-    boolCol: Defaulted<Boolean?> = Defaulted.Provided(this.boolCol),
+    floatCol: Defaulted<kotlin.Float?> = Defaulted.Provided(this.floatCol),
+    doubleCol: Defaulted<kotlin.Double?> = Defaulted.Provided(this.doubleCol),
+    boolCol: Defaulted<kotlin.Boolean?> = Defaulted.Provided(this.boolCol),
     bitCol: Defaulted<ByteArray?> = Defaulted.Provided(this.bitCol),
     bit1Col: Defaulted<ByteArray?> = Defaulted.Provided(this.bit1Col),
-    charCol: Defaulted<String?> = Defaulted.Provided(this.charCol),
-    varcharCol: Defaulted<String?> = Defaulted.Provided(this.varcharCol),
-    tinytextCol: Defaulted<String?> = Defaulted.Provided(this.tinytextCol),
-    textCol: Defaulted<String?> = Defaulted.Provided(this.textCol),
-    mediumtextCol: Defaulted<String?> = Defaulted.Provided(this.mediumtextCol),
-    longtextCol: Defaulted<String?> = Defaulted.Provided(this.longtextCol),
+    charCol: Defaulted<kotlin.String?> = Defaulted.Provided(this.charCol),
+    varcharCol: Defaulted<kotlin.String?> = Defaulted.Provided(this.varcharCol),
+    tinytextCol: Defaulted<kotlin.String?> = Defaulted.Provided(this.tinytextCol),
+    textCol: Defaulted<kotlin.String?> = Defaulted.Provided(this.textCol),
+    mediumtextCol: Defaulted<kotlin.String?> = Defaulted.Provided(this.mediumtextCol),
+    longtextCol: Defaulted<kotlin.String?> = Defaulted.Provided(this.longtextCol),
     binaryCol: Defaulted<ByteArray?> = Defaulted.Provided(this.binaryCol),
     varbinaryCol: Defaulted<ByteArray?> = Defaulted.Provided(this.varbinaryCol),
     tinyblobCol: Defaulted<ByteArray?> = Defaulted.Provided(this.tinyblobCol),
@@ -323,6 +320,6 @@ data class MariatestnullRow(
   ): MariatestnullRowUnsaved = MariatestnullRowUnsaved(tinyintCol, smallintCol, mediumintCol, intCol, bigintCol, tinyintUCol, smallintUCol, mediumintUCol, intUCol, bigintUCol, decimalCol, numericCol, floatCol, doubleCol, boolCol, bitCol, bit1Col, charCol, varcharCol, tinytextCol, textCol, mediumtextCol, longtextCol, binaryCol, varbinaryCol, tinyblobCol, blobCol, mediumblobCol, longblobCol, dateCol, timeCol, timeFspCol, datetimeCol, datetimeFspCol, timestampCol, timestampFspCol, yearCol, setCol, jsonCol, inet4Col, inet6Col)
 
   companion object {
-    val _rowParser: RowParser<MariatestnullRow> = RowParsers.of(KotlinDbTypes.MariaTypes.tinyint.nullable(), KotlinDbTypes.MariaTypes.smallint.nullable(), KotlinDbTypes.MariaTypes.mediumint.nullable(), KotlinDbTypes.MariaTypes.int_.nullable(), KotlinDbTypes.MariaTypes.bigint.nullable(), MariaTypes.tinyintUnsigned.nullable(), MariaTypes.smallintUnsigned.nullable(), MariaTypes.mediumintUnsigned.nullable(), MariaTypes.intUnsigned.nullable(), MariaTypes.bigintUnsigned.nullable(), KotlinDbTypes.MariaTypes.numeric.nullable(), KotlinDbTypes.MariaTypes.numeric.nullable(), KotlinDbTypes.MariaTypes.float_.nullable(), KotlinDbTypes.MariaTypes.double_.nullable(), KotlinDbTypes.MariaTypes.bool.nullable(), MariaTypes.bit.nullable(), MariaTypes.bit.nullable(), MariaTypes.char_.nullable(), MariaTypes.varchar.nullable(), MariaTypes.tinytext.nullable(), MariaTypes.text.nullable(), MariaTypes.mediumtext.nullable(), MariaTypes.longtext.nullable(), MariaTypes.binary.nullable(), MariaTypes.varbinary.nullable(), MariaTypes.tinyblob.nullable(), MariaTypes.blob.nullable(), MariaTypes.mediumblob.nullable(), MariaTypes.longblob.nullable(), MariaTypes.date.nullable(), MariaTypes.time.nullable(), MariaTypes.time.nullable(), MariaTypes.datetime.nullable(), MariaTypes.datetime.nullable(), MariaTypes.timestamp.nullable(), MariaTypes.timestamp.nullable(), MariaTypes.year.nullable(), XYZSet.mariaType.nullable(), MariaTypes.json.nullable(), MariaTypes.inet4.nullable(), MariaTypes.inet6.nullable(), { t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15, t16, t17, t18, t19, t20, t21, t22, t23, t24, t25, t26, t27, t28, t29, t30, t31, t32, t33, t34, t35, t36, t37, t38, t39, t40 -> MariatestnullRow(t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15, t16, t17, t18, t19, t20, t21, t22, t23, t24, t25, t26, t27, t28, t29, t30, t31, t32, t33, t34, t35, t36, t37, t38, t39, t40) }, { row -> arrayOf<Any?>(row.tinyintCol, row.smallintCol, row.mediumintCol, row.intCol, row.bigintCol, row.tinyintUCol, row.smallintUCol, row.mediumintUCol, row.intUCol, row.bigintUCol, row.decimalCol, row.numericCol, row.floatCol, row.doubleCol, row.boolCol, row.bitCol, row.bit1Col, row.charCol, row.varcharCol, row.tinytextCol, row.textCol, row.mediumtextCol, row.longtextCol, row.binaryCol, row.varbinaryCol, row.tinyblobCol, row.blobCol, row.mediumblobCol, row.longblobCol, row.dateCol, row.timeCol, row.timeFspCol, row.datetimeCol, row.datetimeFspCol, row.timestampCol, row.timestampFspCol, row.yearCol, row.setCol, row.jsonCol, row.inet4Col, row.inet6Col) })
+    val rowCodec: RowCodec<MariatestnullRow> = RowCodec(dev.typr.foundations.RowCodec.create(listOf(MariaTypes.tinyint.opt().underlying, MariaTypes.smallint.opt().underlying, MariaTypes.mediumint.opt().underlying, MariaTypes.int_.opt().underlying, MariaTypes.bigint.opt().underlying, MariaTypes.tinyintUnsigned.opt().underlying, MariaTypes.smallintUnsigned.opt().underlying, MariaTypes.mediumintUnsigned.opt().underlying, MariaTypes.intUnsigned.opt().underlying, MariaTypes.bigintUnsigned.opt().underlying, MariaTypes.numeric.opt().underlying, MariaTypes.numeric.opt().underlying, MariaTypes.float_.opt().underlying, MariaTypes.double_.opt().underlying, MariaTypes.bool.opt().underlying, MariaTypes.bit.opt().underlying, MariaTypes.bit.opt().underlying, MariaTypes.char_.opt().underlying, MariaTypes.varchar.opt().underlying, MariaTypes.tinytext.opt().underlying, MariaTypes.text.opt().underlying, MariaTypes.mediumtext.opt().underlying, MariaTypes.longtext.opt().underlying, MariaTypes.binary.opt().underlying, MariaTypes.varbinary.opt().underlying, MariaTypes.tinyblob.opt().underlying, MariaTypes.blob.opt().underlying, MariaTypes.mediumblob.opt().underlying, MariaTypes.longblob.opt().underlying, MariaTypes.date.opt().underlying, MariaTypes.time.opt().underlying, MariaTypes.time.opt().underlying, MariaTypes.datetime.opt().underlying, MariaTypes.datetime.opt().underlying, MariaTypes.timestamp.opt().underlying, MariaTypes.timestamp.opt().underlying, MariaTypes.year.opt().underlying, XYZSet.mariaType.opt().underlying, MariaTypes.json.opt().underlying, MariaTypes.inet4.opt().underlying, MariaTypes.inet6.opt().underlying), { a -> MariatestnullRow(a[0] as kotlin.Byte?, a[1] as kotlin.Short?, a[2] as Int?, a[3] as Int?, a[4] as kotlin.Long?, a[5] as Uint1?, a[6] as Uint2?, a[7] as Uint4?, a[8] as Uint4?, a[9] as Uint8?, a[10] as BigDecimal?, a[11] as BigDecimal?, a[12] as kotlin.Float?, a[13] as kotlin.Double?, a[14] as kotlin.Boolean?, a[15] as ByteArray?, a[16] as ByteArray?, a[17] as kotlin.String?, a[18] as kotlin.String?, a[19] as kotlin.String?, a[20] as kotlin.String?, a[21] as kotlin.String?, a[22] as kotlin.String?, a[23] as ByteArray?, a[24] as ByteArray?, a[25] as ByteArray?, a[26] as ByteArray?, a[27] as ByteArray?, a[28] as ByteArray?, a[29] as LocalDate?, a[30] as LocalTime?, a[31] as LocalTime?, a[32] as LocalDateTime?, a[33] as LocalDateTime?, a[34] as LocalDateTime?, a[35] as LocalDateTime?, a[36] as Year?, a[37] as XYZSet?, a[38] as Json?, a[39] as Inet4?, a[40] as Inet6?) }, { row: MariatestnullRow -> arrayOf<Any?>(row.tinyintCol, row.smallintCol, row.mediumintCol, row.intCol, row.bigintCol, row.tinyintUCol, row.smallintUCol, row.mediumintUCol, row.intUCol, row.bigintUCol, row.decimalCol, row.numericCol, row.floatCol, row.doubleCol, row.boolCol, row.bitCol, row.bit1Col, row.charCol, row.varcharCol, row.tinytextCol, row.textCol, row.mediumtextCol, row.longtextCol, row.binaryCol, row.varbinaryCol, row.tinyblobCol, row.blobCol, row.mediumblobCol, row.longblobCol, row.dateCol, row.timeCol, row.timeFspCol, row.datetimeCol, row.datetimeFspCol, row.timestampCol, row.timestampFspCol, row.yearCol, row.setCol, row.jsonCol, row.inet4Col, row.inet6Col) }))
   }
 }

@@ -5,13 +5,14 @@
  */
 package testdb.product_categories
 
-import dev.typr.foundations.kotlin.DeleteBuilder
-import dev.typr.foundations.kotlin.Dialect
-import dev.typr.foundations.kotlin.Fragment
-import dev.typr.foundations.kotlin.KotlinDbTypes
-import dev.typr.foundations.kotlin.SelectBuilder
-import dev.typr.foundations.kotlin.UpdateBuilder
-import java.sql.Connection
+import dev.typr.dslkt.DeleteBuilder
+import dev.typr.dslkt.Dialect
+import dev.typr.dslkt.SelectBuilder
+import dev.typr.dslkt.UpdateBuilder
+import dev.typr.foundationskt.Connection
+import dev.typr.foundationskt.ConnectionRead
+import dev.typr.foundationskt.Fragment
+import dev.typr.foundationskt.MariaTypes
 import java.util.ArrayList
 import kotlin.collections.Iterator
 import kotlin.collections.List
@@ -27,22 +28,22 @@ class ProductCategoriesRepoImpl() : ProductCategoriesRepo {
   override fun deleteById(
     compositeId: ProductCategoriesId,
     c: Connection
-  ): Boolean = Fragment.interpolate(Fragment.lit("delete from `product_categories` where `product_id` = "), Fragment.encode(ProductsId.mariaType, compositeId.productId), Fragment.lit(" AND `category_id` = "), Fragment.encode(CategoriesId.mariaType, compositeId.categoryId), Fragment.lit("")).update().runUnchecked(c) > 0
+  ): kotlin.Boolean = Fragment.concat(Fragment.of("delete from `product_categories` where `product_id` = "), Fragment.encode(ProductsId.mariaType, compositeId.productId), Fragment.of(" AND `category_id` = "), Fragment.encode(CategoriesId.mariaType, compositeId.categoryId), Fragment.of("")).update().run(c) > 0
 
   override fun deleteByIds(
-    compositeIds: Array<ProductCategoriesId>,
+    compositeIds: List<ProductCategoriesId>,
     c: Connection
   ): Int {
     val fragments: ArrayList<Fragment> = ArrayList()
-    for (id in compositeIds) { fragments.add(Fragment.interpolate(Fragment.lit("("), Fragment.encode(ProductsId.mariaType, id.productId), Fragment.lit(", "), Fragment.encode(CategoriesId.mariaType, id.categoryId), Fragment.lit(")"))) }
-    return Fragment.interpolate(Fragment.lit("delete from `product_categories` where (`product_id`, `category_id`) in ("), Fragment.comma(fragments.toMutableList()), Fragment.lit(")")).update().runUnchecked(c)
+    for (id in compositeIds) { fragments.add(Fragment.concat(Fragment.of("("), Fragment.encode(ProductsId.mariaType, id.productId), Fragment.of(", "), Fragment.encode(CategoriesId.mariaType, id.categoryId), Fragment.of(")"))) }
+    return Fragment.concat(Fragment.of("delete from `product_categories` where (`product_id`, `category_id`) in ("), Fragment.comma(fragments.toMutableList()), Fragment.of(")")).update().run(c)
   }
 
   override fun insert(
     unsaved: ProductCategoriesRow,
     c: Connection
-  ): ProductCategoriesRow = Fragment.interpolate(Fragment.lit("insert into `product_categories`(`product_id`, `category_id`, `is_primary`, `sort_order`)\nvalues ("), Fragment.encode(ProductsId.mariaType, unsaved.productId), Fragment.lit(", "), Fragment.encode(CategoriesId.mariaType, unsaved.categoryId), Fragment.lit(", "), Fragment.encode(IsPrimary.mariaType, unsaved.isPrimary), Fragment.lit(", "), Fragment.encode(KotlinDbTypes.MariaTypes.smallint, unsaved.sortOrder), Fragment.lit(")\nRETURNING `product_id`, `category_id`, `is_primary`, `sort_order`\n"))
-    .updateReturning(ProductCategoriesRow._rowParser.exactlyOne()).runUnchecked(c)
+  ): ProductCategoriesRow = Fragment.concat(Fragment.of("insert into `product_categories`(`product_id`, `category_id`, `is_primary`, `sort_order`)\nvalues ("), Fragment.encode(ProductsId.mariaType, unsaved.productId), Fragment.of(", "), Fragment.encode(CategoriesId.mariaType, unsaved.categoryId), Fragment.of(", "), Fragment.encode(IsPrimary.mariaType, unsaved.isPrimary), Fragment.of(", "), Fragment.encode(MariaTypes.smallint, unsaved.sortOrder), Fragment.of(")\nRETURNING `product_id`, `category_id`, `is_primary`, `sort_order`\n"))
+    .updateReturning(ProductCategoriesRow.rowCodec.exactlyOne()).run(c)
 
   override fun insert(
     unsaved: ProductCategoriesRowUnsaved,
@@ -50,72 +51,72 @@ class ProductCategoriesRepoImpl() : ProductCategoriesRepo {
   ): ProductCategoriesRow {
     val columns: ArrayList<Fragment> = ArrayList()
     val values: ArrayList<Fragment> = ArrayList()
-    columns.add(Fragment.lit("`product_id`"))
-    values.add(Fragment.interpolate(Fragment.encode(ProductsId.mariaType, unsaved.productId), Fragment.lit("")))
-    columns.add(Fragment.lit("`category_id`"))
-    values.add(Fragment.interpolate(Fragment.encode(CategoriesId.mariaType, unsaved.categoryId), Fragment.lit("")))
+    columns.add(Fragment.of("`product_id`"))
+    values.add(Fragment.concat(Fragment.encode(ProductsId.mariaType, unsaved.productId), Fragment.of("")))
+    columns.add(Fragment.of("`category_id`"))
+    values.add(Fragment.concat(Fragment.encode(CategoriesId.mariaType, unsaved.categoryId), Fragment.of("")))
     unsaved.isPrimary.visit(
       {  },
-      { value -> columns.add(Fragment.lit("`is_primary`"))
-      values.add(Fragment.interpolate(Fragment.encode(IsPrimary.mariaType, value), Fragment.lit(""))) }
+      { value -> columns.add(Fragment.of("`is_primary`"))
+      values.add(Fragment.concat(Fragment.encode(IsPrimary.mariaType, value), Fragment.of(""))) }
     );
     unsaved.sortOrder.visit(
       {  },
-      { value -> columns.add(Fragment.lit("`sort_order`"))
-      values.add(Fragment.interpolate(Fragment.encode(KotlinDbTypes.MariaTypes.smallint, value), Fragment.lit(""))) }
+      { value -> columns.add(Fragment.of("`sort_order`"))
+      values.add(Fragment.concat(Fragment.encode(MariaTypes.smallint, value), Fragment.of(""))) }
     );
-    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into `product_categories`("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nRETURNING `product_id`, `category_id`, `is_primary`, `sort_order`\n"))
-    return q.updateReturning(ProductCategoriesRow._rowParser.exactlyOne()).runUnchecked(c)
+    val q: Fragment = Fragment.concat(Fragment.of("insert into `product_categories`("), Fragment.comma(columns.toMutableList()), Fragment.of(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.of(")\nRETURNING `product_id`, `category_id`, `is_primary`, `sort_order`\n"))
+    return q.updateReturning(ProductCategoriesRow.rowCodec.exactlyOne()).run(c)
   }
 
-  override fun select(): SelectBuilder<ProductCategoriesFields, ProductCategoriesRow> = SelectBuilder.of("`product_categories`", ProductCategoriesFields.structure, ProductCategoriesRow._rowParser, Dialect.MARIADB)
+  override fun select(): SelectBuilder<ProductCategoriesFields, ProductCategoriesRow> = SelectBuilder.of("`product_categories`", ProductCategoriesFields.structure, ProductCategoriesRow.rowCodec, Dialect.MARIADB)
 
-  override fun selectAll(c: Connection): List<ProductCategoriesRow> = Fragment.interpolate(Fragment.lit("select `product_id`, `category_id`, `is_primary`, `sort_order`\nfrom `product_categories`\n")).query(ProductCategoriesRow._rowParser.all()).runUnchecked(c)
+  override fun selectAll(c: ConnectionRead): List<ProductCategoriesRow> = Fragment.concat(Fragment.of("select `product_id`, `category_id`, `is_primary`, `sort_order`\nfrom `product_categories`\n")).query(ProductCategoriesRow.rowCodec.all()).run(c)
 
   override fun selectById(
     compositeId: ProductCategoriesId,
-    c: Connection
-  ): ProductCategoriesRow? = Fragment.interpolate(Fragment.lit("select `product_id`, `category_id`, `is_primary`, `sort_order`\nfrom `product_categories`\nwhere `product_id` = "), Fragment.encode(ProductsId.mariaType, compositeId.productId), Fragment.lit(" AND `category_id` = "), Fragment.encode(CategoriesId.mariaType, compositeId.categoryId), Fragment.lit("")).query(ProductCategoriesRow._rowParser.first()).runUnchecked(c)
+    c: ConnectionRead
+  ): ProductCategoriesRow? = Fragment.concat(Fragment.of("select `product_id`, `category_id`, `is_primary`, `sort_order`\nfrom `product_categories`\nwhere `product_id` = "), Fragment.encode(ProductsId.mariaType, compositeId.productId), Fragment.of(" AND `category_id` = "), Fragment.encode(CategoriesId.mariaType, compositeId.categoryId), Fragment.of("")).query(ProductCategoriesRow.rowCodec.first()).run(c)
 
   override fun selectByIds(
-    compositeIds: Array<ProductCategoriesId>,
-    c: Connection
+    compositeIds: List<ProductCategoriesId>,
+    c: ConnectionRead
   ): List<ProductCategoriesRow> {
     val fragments: ArrayList<Fragment> = ArrayList()
-    for (id in compositeIds) { fragments.add(Fragment.interpolate(Fragment.lit("("), Fragment.encode(ProductsId.mariaType, id.productId), Fragment.lit(", "), Fragment.encode(CategoriesId.mariaType, id.categoryId), Fragment.lit(")"))) }
-    return Fragment.interpolate(Fragment.lit("select `product_id`, `category_id`, `is_primary`, `sort_order` from `product_categories` where (`product_id`, `category_id`) in ("), Fragment.comma(fragments.toMutableList()), Fragment.lit(")")).query(ProductCategoriesRow._rowParser.all()).runUnchecked(c)
+    for (id in compositeIds) { fragments.add(Fragment.concat(Fragment.of("("), Fragment.encode(ProductsId.mariaType, id.productId), Fragment.of(", "), Fragment.encode(CategoriesId.mariaType, id.categoryId), Fragment.of(")"))) }
+    return Fragment.concat(Fragment.of("select `product_id`, `category_id`, `is_primary`, `sort_order` from `product_categories` where (`product_id`, `category_id`) in ("), Fragment.comma(fragments.toMutableList()), Fragment.of(")")).query(ProductCategoriesRow.rowCodec.all()).run(c)
   }
 
   override fun selectByIdsTracked(
-    compositeIds: Array<ProductCategoriesId>,
-    c: Connection
+    compositeIds: List<ProductCategoriesId>,
+    c: ConnectionRead
   ): Map<ProductCategoriesId, ProductCategoriesRow> {
     val ret: MutableMap<ProductCategoriesId, ProductCategoriesRow> = mutableMapOf<ProductCategoriesId, ProductCategoriesRow>()
     selectByIds(compositeIds, c).forEach({ row -> ret.put(row.compositeId(), row) })
     return ret.toMap()
   }
 
-  override fun update(): UpdateBuilder<ProductCategoriesFields, ProductCategoriesRow> = UpdateBuilder.of("`product_categories`", ProductCategoriesFields.structure, ProductCategoriesRow._rowParser, Dialect.MARIADB)
+  override fun update(): UpdateBuilder<ProductCategoriesFields, ProductCategoriesRow> = UpdateBuilder.of("`product_categories`", ProductCategoriesFields.structure, ProductCategoriesRow.rowCodec, Dialect.MARIADB)
 
   override fun update(
     row: ProductCategoriesRow,
     c: Connection
-  ): Boolean {
+  ): kotlin.Boolean {
     val compositeId: ProductCategoriesId = row.compositeId()
-    return Fragment.interpolate(Fragment.lit("update `product_categories`\nset `is_primary` = "), Fragment.encode(IsPrimary.mariaType, row.isPrimary), Fragment.lit(",\n`sort_order` = "), Fragment.encode(KotlinDbTypes.MariaTypes.smallint, row.sortOrder), Fragment.lit("\nwhere `product_id` = "), Fragment.encode(ProductsId.mariaType, compositeId.productId), Fragment.lit(" AND `category_id` = "), Fragment.encode(CategoriesId.mariaType, compositeId.categoryId), Fragment.lit("")).update().runUnchecked(c) > 0
+    return Fragment.concat(Fragment.of("update `product_categories`\nset `is_primary` = "), Fragment.encode(IsPrimary.mariaType, row.isPrimary), Fragment.of(",\n`sort_order` = "), Fragment.encode(MariaTypes.smallint, row.sortOrder), Fragment.of("\nwhere `product_id` = "), Fragment.encode(ProductsId.mariaType, compositeId.productId), Fragment.of(" AND `category_id` = "), Fragment.encode(CategoriesId.mariaType, compositeId.categoryId), Fragment.of("")).update().run(c) > 0
   }
 
   override fun upsert(
     unsaved: ProductCategoriesRow,
     c: Connection
-  ): ProductCategoriesRow = Fragment.interpolate(Fragment.lit("INSERT INTO `product_categories`(`product_id`, `category_id`, `is_primary`, `sort_order`)\nVALUES ("), Fragment.encode(ProductsId.mariaType, unsaved.productId), Fragment.lit(", "), Fragment.encode(CategoriesId.mariaType, unsaved.categoryId), Fragment.lit(", "), Fragment.encode(IsPrimary.mariaType, unsaved.isPrimary), Fragment.lit(", "), Fragment.encode(KotlinDbTypes.MariaTypes.smallint, unsaved.sortOrder), Fragment.lit(")\nON DUPLICATE KEY UPDATE `is_primary` = VALUES(`is_primary`),\n`sort_order` = VALUES(`sort_order`)\nRETURNING `product_id`, `category_id`, `is_primary`, `sort_order`"))
-    .updateReturning(ProductCategoriesRow._rowParser.exactlyOne())
-    .runUnchecked(c)
+  ): ProductCategoriesRow = Fragment.concat(Fragment.of("INSERT INTO `product_categories`(`product_id`, `category_id`, `is_primary`, `sort_order`)\nVALUES ("), Fragment.encode(ProductsId.mariaType, unsaved.productId), Fragment.of(", "), Fragment.encode(CategoriesId.mariaType, unsaved.categoryId), Fragment.of(", "), Fragment.encode(IsPrimary.mariaType, unsaved.isPrimary), Fragment.of(", "), Fragment.encode(MariaTypes.smallint, unsaved.sortOrder), Fragment.of(")\nON DUPLICATE KEY UPDATE `is_primary` = VALUES(`is_primary`),\n`sort_order` = VALUES(`sort_order`)\nRETURNING `product_id`, `category_id`, `is_primary`, `sort_order`"))
+    .updateReturning(ProductCategoriesRow.rowCodec.exactlyOne())
+    .run(c)
 
   override fun upsertBatch(
     unsaved: Iterator<ProductCategoriesRow>,
     c: Connection
-  ): List<ProductCategoriesRow> = Fragment.interpolate(Fragment.lit("INSERT INTO `product_categories`(`product_id`, `category_id`, `is_primary`, `sort_order`)\nVALUES (?, ?, ?, ?)\nON DUPLICATE KEY UPDATE `is_primary` = VALUES(`is_primary`),\n`sort_order` = VALUES(`sort_order`)\nRETURNING `product_id`, `category_id`, `is_primary`, `sort_order`"))
-    .updateReturningEach(ProductCategoriesRow._rowParser, unsaved)
-  .runUnchecked(c)
+  ): List<ProductCategoriesRow> = Fragment.concat(Fragment.of("INSERT INTO `product_categories`(`product_id`, `category_id`, `is_primary`, `sort_order`)\nVALUES (?, ?, ?, ?)\nON DUPLICATE KEY UPDATE `is_primary` = VALUES(`is_primary`),\n`sort_order` = VALUES(`sort_order`)\nRETURNING `product_id`, `category_id`, `is_primary`, `sort_order`"))
+    .updateReturningEach(ProductCategoriesRow.rowCodec, unsaved)
+  .run(c)
 }

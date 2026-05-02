@@ -9,10 +9,10 @@ import adventureworks.customtypes.Defaulted
 import adventureworks.humanresources.department.DepartmentId
 import adventureworks.humanresources.shift.ShiftId
 import adventureworks.person.businessentity.BusinessentityId
+import dev.typr.dsl.RowCodecs
 import dev.typr.foundations.PgText
 import dev.typr.foundations.PgTypes
-import dev.typr.foundations.RowParser
-import dev.typr.foundations.RowParsers
+import dev.typr.foundations.RowCodec
 import dev.typr.foundations.Tuple.Tuple6
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -82,8 +82,6 @@ case class EmployeedepartmenthistoryRow(
 }
 
 object EmployeedepartmenthistoryRow {
-  val `_rowParser`: RowParser[EmployeedepartmenthistoryRow] = RowParsers.of(BusinessentityId.pgType, DepartmentId.pgType, ShiftId.pgType, PgTypes.date, PgTypes.date.opt(), PgTypes.timestamp, EmployeedepartmenthistoryRow.apply, row => Array[Any](row.businessentityid, row.departmentid, row.shiftid, row.startdate, row.enddate, row.modifieddate))
-
   def apply(
     compositeId: EmployeedepartmenthistoryId,
     enddate: Optional[LocalDate],
@@ -99,5 +97,7 @@ object EmployeedepartmenthistoryRow {
     )
   }
 
-  given pgText: PgText[EmployeedepartmenthistoryRow] = PgText.from(`_rowParser`)
+  given pgText: PgText[EmployeedepartmenthistoryRow] = PgText.from(rowCodec)
+
+  val rowCodec: RowCodec[EmployeedepartmenthistoryRow] = RowCodecs.of(BusinessentityId.pgType, DepartmentId.pgType, ShiftId.pgType, PgTypes.date, PgTypes.date.opt, PgTypes.timestamp, EmployeedepartmenthistoryRow.apply, row => Array[Any](row.businessentityid, row.departmentid, row.shiftid, row.startdate, row.enddate, row.modifieddate))
 }

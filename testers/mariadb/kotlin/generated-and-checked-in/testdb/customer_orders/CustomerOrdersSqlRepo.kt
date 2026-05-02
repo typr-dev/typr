@@ -5,14 +5,14 @@
  */
 package testdb.customer_orders
 
-import java.sql.Connection
+import dev.typr.foundationskt.ConnectionRead
 import kotlin.collections.List
 import testdb.customers.CustomersId
 
 interface CustomerOrdersSqlRepo {
   abstract fun apply(
     customerId: /* user-picked */ CustomersId,
-    orderStatus: String?,
-    c: Connection
+    orderStatus: kotlin.String?,
+    c: ConnectionRead
   ): List<CustomerOrdersSqlRow>
 }

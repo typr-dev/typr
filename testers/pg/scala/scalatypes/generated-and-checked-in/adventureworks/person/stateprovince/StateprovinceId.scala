@@ -6,18 +6,17 @@
 package adventureworks.person.stateprovince
 
 import com.fasterxml.jackson.annotation.JsonValue
-import dev.typr.foundations.PgType
-import dev.typr.foundations.PgTypes
-import dev.typr.foundations.scala.Bijection
-import dev.typr.foundations.scala.ScalaDbTypes
+import dev.typr.dslsc.Bijection
+import dev.typr.foundationssc.PgType
+import dev.typr.foundationssc.PgTypes
 
 /** Type for the primary key of table `person.stateprovince` */
 case class StateprovinceId(@JsonValue value: Int) extends scala.AnyVal
 
 object StateprovinceId {
-  given bijection: Bijection[StateprovinceId, Int] = Bijection.apply[StateprovinceId, Int](_.value)(StateprovinceId.apply)
+  given bijection: Bijection[StateprovinceId, Int] = Bijection.of[StateprovinceId, Int](_.value, StateprovinceId.apply)
 
-  given pgType: PgType[StateprovinceId] = ScalaDbTypes.PgTypes.int4.bimap(StateprovinceId.apply, _.value)
+  given pgType: PgType[StateprovinceId] = PgTypes.int4.to(Bijection.of(StateprovinceId.apply, _.value))
 
-  given pgTypeArray: PgType[Array[StateprovinceId]] = PgTypes.int4ArrayUnboxed.bimap(xs => xs.map(StateprovinceId.apply), xs => xs.map(_.value))
+  given pgTypeArray: PgType[List[StateprovinceId]] = pgType.array
 }

@@ -23,7 +23,7 @@ object CharacterData {
 
   implicit lazy val arrayPut: Put[Array[CharacterData]] = adventureworks.StringArrayMeta.put.contramap(_.map(_.value))
 
-  implicit lazy val bijection: Bijection[CharacterData, String] = Bijection.apply[CharacterData, String](_.value)(CharacterData.apply)
+  implicit lazy val bijection: Bijection[CharacterData, String] = Bijection[CharacterData, String](_.value)(CharacterData.apply)
 
   implicit lazy val decoder: Decoder[CharacterData] = Decoder.decodeString.map(CharacterData.apply)
 

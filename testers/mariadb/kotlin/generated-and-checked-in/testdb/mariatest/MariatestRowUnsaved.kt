@@ -25,15 +25,15 @@ import testdb.customtypes.Defaulted.UseDefault
 /** This class corresponds to a row in table `mariatest` which has not been persisted yet */
 data class MariatestRowUnsaved(
   /**  */
-  @field:JsonProperty("tinyint_col") val tinyintCol: Byte,
+  @field:JsonProperty("tinyint_col") val tinyintCol: kotlin.Byte,
   /**  */
-  @field:JsonProperty("smallint_col") val smallintCol: Short,
+  @field:JsonProperty("smallint_col") val smallintCol: kotlin.Short,
   /**  */
   @field:JsonProperty("mediumint_col") val mediumintCol: Int,
   /**  */
   @field:JsonProperty("int_col") val intCol: MariatestId,
   /**  */
-  @field:JsonProperty("bigint_col") val bigintCol: Long,
+  @field:JsonProperty("bigint_col") val bigintCol: kotlin.Long,
   /**  */
   @field:JsonProperty("tinyint_u_col") val tinyintUCol: Uint1,
   /**  */
@@ -49,27 +49,27 @@ data class MariatestRowUnsaved(
   /**  */
   @field:JsonProperty("numeric_col") val numericCol: BigDecimal,
   /**  */
-  @field:JsonProperty("float_col") val floatCol: Float,
+  @field:JsonProperty("float_col") val floatCol: kotlin.Float,
   /**  */
-  @field:JsonProperty("double_col") val doubleCol: Double,
+  @field:JsonProperty("double_col") val doubleCol: kotlin.Double,
   /**  */
-  @field:JsonProperty("bool_col") val boolCol: Boolean,
+  @field:JsonProperty("bool_col") val boolCol: kotlin.Boolean,
   /**  */
   @field:JsonProperty("bit_col") val bitCol: ByteArray,
   /**  */
   @field:JsonProperty("bit1_col") val bit1Col: ByteArray,
   /**  */
-  @field:JsonProperty("char_col") val charCol: String,
+  @field:JsonProperty("char_col") val charCol: kotlin.String,
   /**  */
-  @field:JsonProperty("varchar_col") val varcharCol: String,
+  @field:JsonProperty("varchar_col") val varcharCol: kotlin.String,
   /**  */
-  @field:JsonProperty("tinytext_col") val tinytextCol: String,
+  @field:JsonProperty("tinytext_col") val tinytextCol: kotlin.String,
   /**  */
-  @field:JsonProperty("text_col") val textCol: String,
+  @field:JsonProperty("text_col") val textCol: kotlin.String,
   /**  */
-  @field:JsonProperty("mediumtext_col") val mediumtextCol: String,
+  @field:JsonProperty("mediumtext_col") val mediumtextCol: kotlin.String,
   /**  */
-  @field:JsonProperty("longtext_col") val longtextCol: String,
+  @field:JsonProperty("longtext_col") val longtextCol: kotlin.String,
   /**  */
   @field:JsonProperty("binary_col") val binaryCol: ByteArray,
   /**  */

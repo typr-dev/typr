@@ -5,21 +5,21 @@
  */
 package testdb.reviews
 
-import dev.typr.foundations.MariaTypes
-import dev.typr.foundations.RowParser
+import dev.typr.dsl.FieldsBase
+import dev.typr.dsl.Path
+import dev.typr.dsl.SqlExpr.FieldLike
+import dev.typr.dslsc.ForeignKey
+import dev.typr.dslsc.RelationStructure
+import dev.typr.dslsc.SqlExpr
+import dev.typr.dslsc.SqlExpr.Field
+import dev.typr.dslsc.SqlExpr.IdField
+import dev.typr.dslsc.SqlExpr.OptField
+import dev.typr.dslsc.TupleExpr18
+import dev.typr.foundations.RowCodec
 import dev.typr.foundations.data.Json
 import dev.typr.foundations.data.Uint1
 import dev.typr.foundations.data.Uint4
-import dev.typr.foundations.dsl.FieldsBase
-import dev.typr.foundations.dsl.Path
-import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.scala.ForeignKey
-import dev.typr.foundations.scala.RelationStructure
-import dev.typr.foundations.scala.SqlExpr
-import dev.typr.foundations.scala.SqlExpr.Field
-import dev.typr.foundations.scala.SqlExpr.IdField
-import dev.typr.foundations.scala.SqlExpr.OptField
-import dev.typr.foundations.scala.TupleExpr18
+import dev.typr.foundationssc.MariaTypes
 import java.time.LocalDateTime
 import testdb.customers.CustomersFields
 import testdb.customers.CustomersId
@@ -42,7 +42,7 @@ class ReviewsFields(val `_path`: java.util.List[Path]) extends TupleExpr18[Revie
       None,
       None,
       (row, value) => row.copy(reviewId = value),
-      ReviewsId.mariaType
+      ReviewsId.mariaType.underlying
     )
   }
 
@@ -54,7 +54,7 @@ class ReviewsFields(val `_path`: java.util.List[Path]) extends TupleExpr18[Revie
       None,
       None,
       (row, value) => row.copy(productId = value),
-      ProductsId.mariaType
+      ProductsId.mariaType.underlying
     )
   }
 
@@ -66,7 +66,7 @@ class ReviewsFields(val `_path`: java.util.List[Path]) extends TupleExpr18[Revie
       None,
       None,
       (row, value) => row.copy(customerId = value),
-      CustomersId.mariaType
+      CustomersId.mariaType.underlying
     )
   }
 
@@ -78,7 +78,7 @@ class ReviewsFields(val `_path`: java.util.List[Path]) extends TupleExpr18[Revie
       None,
       None,
       (row, value) => row.copy(orderItemId = value),
-      OrderItemsId.mariaType
+      OrderItemsId.mariaType.underlying
     )
   }
 
@@ -90,7 +90,7 @@ class ReviewsFields(val `_path`: java.util.List[Path]) extends TupleExpr18[Revie
       None,
       None,
       (row, value) => row.copy(rating = value),
-      MariaTypes.tinyintUnsigned
+      MariaTypes.tinyintUnsigned.underlying
     )
   }
 
@@ -102,7 +102,7 @@ class ReviewsFields(val `_path`: java.util.List[Path]) extends TupleExpr18[Revie
       None,
       None,
       (row, value) => row.copy(title = value),
-      MariaTypes.varchar
+      MariaTypes.varchar.underlying
     )
   }
 
@@ -114,7 +114,7 @@ class ReviewsFields(val `_path`: java.util.List[Path]) extends TupleExpr18[Revie
       None,
       None,
       (row, value) => row.copy(content = value),
-      MariaTypes.text
+      MariaTypes.text.underlying
     )
   }
 
@@ -126,7 +126,7 @@ class ReviewsFields(val `_path`: java.util.List[Path]) extends TupleExpr18[Revie
       None,
       None,
       (row, value) => row.copy(pros = value),
-      MariaTypes.json
+      MariaTypes.json.underlying
     )
   }
 
@@ -138,7 +138,7 @@ class ReviewsFields(val `_path`: java.util.List[Path]) extends TupleExpr18[Revie
       None,
       None,
       (row, value) => row.copy(cons = value),
-      MariaTypes.json
+      MariaTypes.json.underlying
     )
   }
 
@@ -150,7 +150,7 @@ class ReviewsFields(val `_path`: java.util.List[Path]) extends TupleExpr18[Revie
       None,
       None,
       (row, value) => row.copy(images = value),
-      MariaTypes.json
+      MariaTypes.json.underlying
     )
   }
 
@@ -162,7 +162,7 @@ class ReviewsFields(val `_path`: java.util.List[Path]) extends TupleExpr18[Revie
       None,
       None,
       (row, value) => row.copy(isVerifiedPurchase = value),
-      IsVerifiedPurchase.mariaType
+      IsVerifiedPurchase.mariaType.underlying
     )
   }
 
@@ -174,7 +174,7 @@ class ReviewsFields(val `_path`: java.util.List[Path]) extends TupleExpr18[Revie
       None,
       None,
       (row, value) => row.copy(isApproved = value),
-      IsApproved.mariaType
+      IsApproved.mariaType.underlying
     )
   }
 
@@ -186,7 +186,7 @@ class ReviewsFields(val `_path`: java.util.List[Path]) extends TupleExpr18[Revie
       None,
       None,
       (row, value) => row.copy(helpfulVotes = value),
-      MariaTypes.intUnsigned
+      MariaTypes.intUnsigned.underlying
     )
   }
 
@@ -198,7 +198,7 @@ class ReviewsFields(val `_path`: java.util.List[Path]) extends TupleExpr18[Revie
       None,
       None,
       (row, value) => row.copy(unhelpfulVotes = value),
-      MariaTypes.intUnsigned
+      MariaTypes.intUnsigned.underlying
     )
   }
 
@@ -210,7 +210,7 @@ class ReviewsFields(val `_path`: java.util.List[Path]) extends TupleExpr18[Revie
       None,
       None,
       (row, value) => row.copy(adminResponse = value),
-      MariaTypes.text
+      MariaTypes.text.underlying
     )
   }
 
@@ -222,7 +222,7 @@ class ReviewsFields(val `_path`: java.util.List[Path]) extends TupleExpr18[Revie
       None,
       None,
       (row, value) => row.copy(respondedAt = value),
-      MariaTypes.datetime
+      MariaTypes.datetime.underlying
     )
   }
 
@@ -234,7 +234,7 @@ class ReviewsFields(val `_path`: java.util.List[Path]) extends TupleExpr18[Revie
       None,
       None,
       (row, value) => row.copy(createdAt = value),
-      MariaTypes.datetime
+      MariaTypes.datetime.underlying
     )
   }
 
@@ -246,7 +246,7 @@ class ReviewsFields(val `_path`: java.util.List[Path]) extends TupleExpr18[Revie
       None,
       None,
       (row, value) => row.copy(updatedAt = value),
-      MariaTypes.datetime
+      MariaTypes.datetime.underlying
     )
   }
 
@@ -258,7 +258,7 @@ class ReviewsFields(val `_path`: java.util.List[Path]) extends TupleExpr18[Revie
 
   override def columns: java.util.List[FieldLike[?, ReviewsRow]] = java.util.List.of(this.reviewId.underlying, this.productId.underlying, this.customerId.underlying, this.orderItemId.underlying, this.rating.underlying, this.title.underlying, this.content.underlying, this.pros.underlying, this.cons.underlying, this.images.underlying, this.isVerifiedPurchase.underlying, this.isApproved.underlying, this.helpfulVotes.underlying, this.unhelpfulVotes.underlying, this.adminResponse.underlying, this.respondedAt.underlying, this.createdAt.underlying, this.updatedAt.underlying)
 
-  override def rowParser: RowParser[ReviewsRow] = ReviewsRow._rowParser.underlying
+  override def rowCodec: RowCodec[ReviewsRow] = ReviewsRow.rowCodec.underlying
 
   override def withPaths(`_path`: java.util.List[Path]): RelationStructure[ReviewsFields, ReviewsRow] = new ReviewsFields(`_path`)
 

@@ -23,9 +23,9 @@ class DefaultedSerializer() : JsonSerializer<Defaulted<*>>() {
   ) {
     when (val __r = value) {
       null -> gen.writeNull()
-      is UseDefault<*> -> { val u = __r as UseDefault<*>; gen.writeString("defaulted") }
+      is UseDefault<*> -> { val u = __r; gen.writeString("defaulted") }
       is Provided<*> -> {
-        val p = __r as Provided<*>
+        val p = __r
         gen.writeStartObject();
           gen.writeFieldName("provided");
           serializers.defaultSerializeValue(p.value, gen);

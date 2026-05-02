@@ -5,14 +5,14 @@
  */
 package adventureworks.humanresources.vemployee
 
-import dev.typr.foundations.kotlin.Dialect
-import dev.typr.foundations.kotlin.Fragment
-import dev.typr.foundations.kotlin.SelectBuilder
-import java.sql.Connection
+import dev.typr.dslkt.Dialect
+import dev.typr.dslkt.SelectBuilder
+import dev.typr.foundationskt.ConnectionRead
+import dev.typr.foundationskt.Fragment
 import kotlin.collections.List
 
 class VemployeeViewRepoImpl() : VemployeeViewRepo {
-  override fun select(): SelectBuilder<VemployeeViewFields, VemployeeViewRow> = SelectBuilder.of("\"humanresources\".\"vemployee\"", VemployeeViewFields.structure, VemployeeViewRow._rowParser, Dialect.POSTGRESQL)
+  override fun select(): SelectBuilder<VemployeeViewFields, VemployeeViewRow> = SelectBuilder.of("\"humanresources\".\"vemployee\"", VemployeeViewFields.structure, VemployeeViewRow.rowCodec, Dialect.POSTGRESQL)
 
-  override fun selectAll(c: Connection): List<VemployeeViewRow> = Fragment.interpolate(Fragment.lit("select \"businessentityid\", \"title\", \"firstname\", \"middlename\", \"lastname\", \"suffix\", \"jobtitle\", \"phonenumber\", \"phonenumbertype\", \"emailaddress\", \"emailpromotion\", \"addressline1\", \"addressline2\", \"city\", \"stateprovincename\", \"postalcode\", \"countryregionname\", \"additionalcontactinfo\"\nfrom \"humanresources\".\"vemployee\"\n")).query(VemployeeViewRow._rowParser.all()).runUnchecked(c)
+  override fun selectAll(c: ConnectionRead): List<VemployeeViewRow> = Fragment.concat(Fragment.of("select \"businessentityid\", \"title\", \"firstname\", \"middlename\", \"lastname\", \"suffix\", \"jobtitle\", \"phonenumber\", \"phonenumbertype\", \"emailaddress\", \"emailpromotion\", \"addressline1\", \"addressline2\", \"city\", \"stateprovincename\", \"postalcode\", \"countryregionname\", \"additionalcontactinfo\"\nfrom \"humanresources\".\"vemployee\"\n")).query(VemployeeViewRow.rowCodec.all()).run(c)
 }

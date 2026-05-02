@@ -14,18 +14,18 @@ import adventureworks.person.addresstype.AddresstypeRow
 import adventureworks.person.businessentity.BusinessentityFields
 import adventureworks.person.businessentity.BusinessentityId
 import adventureworks.person.businessentity.BusinessentityRow
-import dev.typr.foundations.PgTypes
-import dev.typr.foundations.RowParser
-import dev.typr.foundations.dsl.FieldsBase
-import dev.typr.foundations.dsl.Path
-import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.scala.ForeignKey
-import dev.typr.foundations.scala.RelationStructure
-import dev.typr.foundations.scala.SqlExpr
-import dev.typr.foundations.scala.SqlExpr.Field
-import dev.typr.foundations.scala.SqlExpr.IdField
-import dev.typr.foundations.scala.TupleExpr
-import dev.typr.foundations.scala.TupleExpr5
+import dev.typr.dsl.FieldsBase
+import dev.typr.dsl.Path
+import dev.typr.dsl.SqlExpr.FieldLike
+import dev.typr.dslsc.ForeignKey
+import dev.typr.dslsc.RelationStructure
+import dev.typr.dslsc.SqlExpr
+import dev.typr.dslsc.SqlExpr.Field
+import dev.typr.dslsc.SqlExpr.IdField
+import dev.typr.dslsc.TupleExpr
+import dev.typr.dslsc.TupleExpr5
+import dev.typr.foundations.RowCodec
+import dev.typr.foundationssc.PgTypes
 import java.time.LocalDateTime
 import java.util.UUID
 
@@ -38,7 +38,7 @@ class BusinessentityaddressFields(val `_path`: java.util.List[Path]) extends Tup
       None,
       Some("int4"),
       (row, value) => row.copy(businessentityid = value),
-      BusinessentityId.pgType
+      BusinessentityId.pgType.underlying
     )
   }
 
@@ -50,7 +50,7 @@ class BusinessentityaddressFields(val `_path`: java.util.List[Path]) extends Tup
       None,
       Some("int4"),
       (row, value) => row.copy(addressid = value),
-      AddressId.pgType
+      AddressId.pgType.underlying
     )
   }
 
@@ -62,7 +62,7 @@ class BusinessentityaddressFields(val `_path`: java.util.List[Path]) extends Tup
       None,
       Some("int4"),
       (row, value) => row.copy(addresstypeid = value),
-      AddresstypeId.pgType
+      AddresstypeId.pgType.underlying
     )
   }
 
@@ -74,7 +74,7 @@ class BusinessentityaddressFields(val `_path`: java.util.List[Path]) extends Tup
       None,
       Some("uuid"),
       (row, value) => row.copy(rowguid = value),
-      PgTypes.uuid
+      PgTypes.uuid.underlying
     )
   }
 
@@ -86,7 +86,7 @@ class BusinessentityaddressFields(val `_path`: java.util.List[Path]) extends Tup
       None,
       Some("timestamp"),
       (row, value) => row.copy(modifieddate = value),
-      PgTypes.timestamp
+      PgTypes.timestamp.underlying
     )
   }
 
@@ -102,7 +102,7 @@ class BusinessentityaddressFields(val `_path`: java.util.List[Path]) extends Tup
 
   override def columns: java.util.List[FieldLike[?, BusinessentityaddressRow]] = java.util.List.of(this.businessentityid.underlying, this.addressid.underlying, this.addresstypeid.underlying, this.rowguid.underlying, this.modifieddate.underlying)
 
-  override def rowParser: RowParser[BusinessentityaddressRow] = BusinessentityaddressRow._rowParser.underlying
+  override def rowCodec: RowCodec[BusinessentityaddressRow] = BusinessentityaddressRow.rowCodec.underlying
 
   override def withPaths(`_path`: java.util.List[Path]): RelationStructure[BusinessentityaddressFields, BusinessentityaddressRow] = new BusinessentityaddressFields(`_path`)
 

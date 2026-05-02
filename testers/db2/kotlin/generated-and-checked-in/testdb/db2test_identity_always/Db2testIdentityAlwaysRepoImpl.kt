@@ -5,13 +5,14 @@
  */
 package testdb.db2test_identity_always
 
-import dev.typr.foundations.Db2Types
-import dev.typr.foundations.kotlin.DeleteBuilder
-import dev.typr.foundations.kotlin.Dialect
-import dev.typr.foundations.kotlin.Fragment
-import dev.typr.foundations.kotlin.SelectBuilder
-import dev.typr.foundations.kotlin.UpdateBuilder
-import java.sql.Connection
+import dev.typr.dslkt.DeleteBuilder
+import dev.typr.dslkt.Dialect
+import dev.typr.dslkt.SelectBuilder
+import dev.typr.dslkt.UpdateBuilder
+import dev.typr.foundationskt.Connection
+import dev.typr.foundationskt.ConnectionRead
+import dev.typr.foundationskt.Db2Types
+import dev.typr.foundationskt.Fragment
 import java.util.ArrayList
 import kotlin.collections.Iterator
 import kotlin.collections.List
@@ -24,22 +25,22 @@ class Db2testIdentityAlwaysRepoImpl() : Db2testIdentityAlwaysRepo {
   override fun deleteById(
     id: Db2testIdentityAlwaysId,
     c: Connection
-  ): Boolean = Fragment.interpolate(Fragment.lit("delete from \"DB2TEST_IDENTITY_ALWAYS\" where \"ID\" = "), Fragment.encode(Db2testIdentityAlwaysId.db2Type, id), Fragment.lit("")).update().runUnchecked(c) > 0
+  ): kotlin.Boolean = Fragment.concat(Fragment.of("delete from \"DB2TEST_IDENTITY_ALWAYS\" where \"ID\" = "), Fragment.encode(Db2testIdentityAlwaysId.db2Type, id), Fragment.of("")).update().run(c) > 0
 
   override fun deleteByIds(
-    ids: Array<Db2testIdentityAlwaysId>,
+    ids: List<Db2testIdentityAlwaysId>,
     c: Connection
   ): Int {
     val fragments: ArrayList<Fragment> = ArrayList()
     for (id in ids) { fragments.add(Fragment.encode(Db2testIdentityAlwaysId.db2Type, id)) }
-    return Fragment.interpolate(Fragment.lit("delete from \"DB2TEST_IDENTITY_ALWAYS\" where \"ID\" in ("), Fragment.comma(fragments.toMutableList()), Fragment.lit(")")).update().runUnchecked(c)
+    return Fragment.concat(Fragment.of("delete from \"DB2TEST_IDENTITY_ALWAYS\" where \"ID\" in ("), Fragment.comma(fragments.toMutableList()), Fragment.of(")")).update().run(c)
   }
 
   override fun insert(
     unsaved: Db2testIdentityAlwaysRow,
     c: Connection
-  ): Db2testIdentityAlwaysRow = Fragment.interpolate(Fragment.lit("SELECT \"ID\", \"NAME\" FROM FINAL TABLE (INSERT INTO \"DB2TEST_IDENTITY_ALWAYS\"(\"NAME\")\nVALUES ("), Fragment.encode(Db2Types.varchar, unsaved.name), Fragment.lit("))\n"))
-    .updateReturning(Db2testIdentityAlwaysRow._rowParser.exactlyOne()).runUnchecked(c)
+  ): Db2testIdentityAlwaysRow = Fragment.concat(Fragment.of("SELECT \"ID\", \"NAME\" FROM FINAL TABLE (INSERT INTO \"DB2TEST_IDENTITY_ALWAYS\"(\"NAME\")\nVALUES ("), Fragment.encode(Db2Types.varchar, unsaved.name), Fragment.of("))\n"))
+    .updateReturning(Db2testIdentityAlwaysRow.rowCodec.exactlyOne()).run(c)
 
   override fun insert(
     unsaved: Db2testIdentityAlwaysRowUnsaved,
@@ -47,64 +48,64 @@ class Db2testIdentityAlwaysRepoImpl() : Db2testIdentityAlwaysRepo {
   ): Db2testIdentityAlwaysRow {
     val columns: ArrayList<Fragment> = ArrayList()
     val values: ArrayList<Fragment> = ArrayList()
-    columns.add(Fragment.lit("\"NAME\""))
-    values.add(Fragment.interpolate(Fragment.encode(Db2Types.varchar, unsaved.name), Fragment.lit("")))
-    val q: Fragment = Fragment.interpolate(Fragment.lit("SELECT \"ID\", \"NAME\" FROM FINAL TABLE (INSERT INTO \"DB2TEST_IDENTITY_ALWAYS\"("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nVALUES ("), Fragment.comma(values.toMutableList()), Fragment.lit("))\n"))
-    return q.updateReturning(Db2testIdentityAlwaysRow._rowParser.exactlyOne()).runUnchecked(c)
+    columns.add(Fragment.of("\"NAME\""))
+    values.add(Fragment.concat(Fragment.encode(Db2Types.varchar, unsaved.name), Fragment.of("")))
+    val q: Fragment = Fragment.concat(Fragment.of("SELECT \"ID\", \"NAME\" FROM FINAL TABLE (INSERT INTO \"DB2TEST_IDENTITY_ALWAYS\"("), Fragment.comma(columns.toMutableList()), Fragment.of(")\nVALUES ("), Fragment.comma(values.toMutableList()), Fragment.of("))\n"))
+    return q.updateReturning(Db2testIdentityAlwaysRow.rowCodec.exactlyOne()).run(c)
   }
 
-  override fun select(): SelectBuilder<Db2testIdentityAlwaysFields, Db2testIdentityAlwaysRow> = SelectBuilder.of("\"DB2TEST_IDENTITY_ALWAYS\"", Db2testIdentityAlwaysFields.structure, Db2testIdentityAlwaysRow._rowParser, Dialect.DB2)
+  override fun select(): SelectBuilder<Db2testIdentityAlwaysFields, Db2testIdentityAlwaysRow> = SelectBuilder.of("\"DB2TEST_IDENTITY_ALWAYS\"", Db2testIdentityAlwaysFields.structure, Db2testIdentityAlwaysRow.rowCodec, Dialect.DB2)
 
-  override fun selectAll(c: Connection): List<Db2testIdentityAlwaysRow> = Fragment.interpolate(Fragment.lit("select \"ID\", \"NAME\"\nfrom \"DB2TEST_IDENTITY_ALWAYS\"\n")).query(Db2testIdentityAlwaysRow._rowParser.all()).runUnchecked(c)
+  override fun selectAll(c: ConnectionRead): List<Db2testIdentityAlwaysRow> = Fragment.concat(Fragment.of("select \"ID\", \"NAME\"\nfrom \"DB2TEST_IDENTITY_ALWAYS\"\n")).query(Db2testIdentityAlwaysRow.rowCodec.all()).run(c)
 
   override fun selectById(
     id: Db2testIdentityAlwaysId,
-    c: Connection
-  ): Db2testIdentityAlwaysRow? = Fragment.interpolate(Fragment.lit("select \"ID\", \"NAME\"\nfrom \"DB2TEST_IDENTITY_ALWAYS\"\nwhere \"ID\" = "), Fragment.encode(Db2testIdentityAlwaysId.db2Type, id), Fragment.lit("")).query(Db2testIdentityAlwaysRow._rowParser.first()).runUnchecked(c)
+    c: ConnectionRead
+  ): Db2testIdentityAlwaysRow? = Fragment.concat(Fragment.of("select \"ID\", \"NAME\"\nfrom \"DB2TEST_IDENTITY_ALWAYS\"\nwhere \"ID\" = "), Fragment.encode(Db2testIdentityAlwaysId.db2Type, id), Fragment.of("")).query(Db2testIdentityAlwaysRow.rowCodec.first()).run(c)
 
   override fun selectByIds(
-    ids: Array<Db2testIdentityAlwaysId>,
-    c: Connection
+    ids: List<Db2testIdentityAlwaysId>,
+    c: ConnectionRead
   ): List<Db2testIdentityAlwaysRow> {
     val fragments: ArrayList<Fragment> = ArrayList()
     for (id in ids) { fragments.add(Fragment.encode(Db2testIdentityAlwaysId.db2Type, id)) }
-    return Fragment.interpolate(Fragment.lit("select \"ID\", \"NAME\" from \"DB2TEST_IDENTITY_ALWAYS\" where \"ID\" in ("), Fragment.comma(fragments.toMutableList()), Fragment.lit(")")).query(Db2testIdentityAlwaysRow._rowParser.all()).runUnchecked(c)
+    return Fragment.concat(Fragment.of("select \"ID\", \"NAME\" from \"DB2TEST_IDENTITY_ALWAYS\" where \"ID\" in ("), Fragment.comma(fragments.toMutableList()), Fragment.of(")")).query(Db2testIdentityAlwaysRow.rowCodec.all()).run(c)
   }
 
   override fun selectByIdsTracked(
-    ids: Array<Db2testIdentityAlwaysId>,
-    c: Connection
+    ids: List<Db2testIdentityAlwaysId>,
+    c: ConnectionRead
   ): Map<Db2testIdentityAlwaysId, Db2testIdentityAlwaysRow> {
     val ret: MutableMap<Db2testIdentityAlwaysId, Db2testIdentityAlwaysRow> = mutableMapOf<Db2testIdentityAlwaysId, Db2testIdentityAlwaysRow>()
     selectByIds(ids, c).forEach({ row -> ret.put(row.id, row) })
     return ret.toMap()
   }
 
-  override fun update(): UpdateBuilder<Db2testIdentityAlwaysFields, Db2testIdentityAlwaysRow> = UpdateBuilder.of("\"DB2TEST_IDENTITY_ALWAYS\"", Db2testIdentityAlwaysFields.structure, Db2testIdentityAlwaysRow._rowParser, Dialect.DB2)
+  override fun update(): UpdateBuilder<Db2testIdentityAlwaysFields, Db2testIdentityAlwaysRow> = UpdateBuilder.of("\"DB2TEST_IDENTITY_ALWAYS\"", Db2testIdentityAlwaysFields.structure, Db2testIdentityAlwaysRow.rowCodec, Dialect.DB2)
 
   override fun update(
     row: Db2testIdentityAlwaysRow,
     c: Connection
-  ): Boolean {
+  ): kotlin.Boolean {
     val id: Db2testIdentityAlwaysId = row.id
-    return Fragment.interpolate(Fragment.lit("update \"DB2TEST_IDENTITY_ALWAYS\"\nset \"NAME\" = "), Fragment.encode(Db2Types.varchar, row.name), Fragment.lit("\nwhere \"ID\" = "), Fragment.encode(Db2testIdentityAlwaysId.db2Type, id), Fragment.lit("")).update().runUnchecked(c) > 0
+    return Fragment.concat(Fragment.of("update \"DB2TEST_IDENTITY_ALWAYS\"\nset \"NAME\" = "), Fragment.encode(Db2Types.varchar, row.name), Fragment.of("\nwhere \"ID\" = "), Fragment.encode(Db2testIdentityAlwaysId.db2Type, id), Fragment.of("")).update().run(c) > 0
   }
 
   override fun upsert(
     unsaved: Db2testIdentityAlwaysRow,
     c: Connection
   ) {
-    Fragment.interpolate(Fragment.lit("MERGE INTO \"DB2TEST_IDENTITY_ALWAYS\" AS t\nUSING (VALUES ("), Fragment.encode(Db2testIdentityAlwaysId.db2Type, unsaved.id), Fragment.lit(", "), Fragment.encode(Db2Types.varchar, unsaved.name), Fragment.lit(")) AS s(\"ID\", \"NAME\")\nON t.\"ID\" = s.\"ID\"\nWHEN MATCHED THEN UPDATE SET \"NAME\" = s.\"NAME\"\nWHEN NOT MATCHED THEN INSERT (\"ID\", \"NAME\") VALUES ("), Fragment.encode(Db2testIdentityAlwaysId.db2Type, unsaved.id), Fragment.lit(", "), Fragment.encode(Db2Types.varchar, unsaved.name), Fragment.lit(")"))
+    Fragment.concat(Fragment.of("MERGE INTO \"DB2TEST_IDENTITY_ALWAYS\" AS t\nUSING (VALUES ("), Fragment.encode(Db2testIdentityAlwaysId.db2Type, unsaved.id), Fragment.of(", "), Fragment.encode(Db2Types.varchar, unsaved.name), Fragment.of(")) AS s(\"ID\", \"NAME\")\nON t.\"ID\" = s.\"ID\"\nWHEN MATCHED THEN UPDATE SET \"NAME\" = s.\"NAME\"\nWHEN NOT MATCHED THEN INSERT (\"ID\", \"NAME\") VALUES ("), Fragment.encode(Db2testIdentityAlwaysId.db2Type, unsaved.id), Fragment.of(", "), Fragment.encode(Db2Types.varchar, unsaved.name), Fragment.of(")"))
       .update()
-      .runUnchecked(c)
+      .run(c)
   }
 
   override fun upsertBatch(
     unsaved: Iterator<Db2testIdentityAlwaysRow>,
     c: Connection
   ) {
-    Fragment.interpolate(Fragment.lit("MERGE INTO \"DB2TEST_IDENTITY_ALWAYS\" AS t\nUSING (VALUES (?, ?)) AS s(\"ID\", \"NAME\")\nON t.\"ID\" = s.\"ID\"\nWHEN MATCHED THEN UPDATE SET \"NAME\" = s.\"NAME\"\nWHEN NOT MATCHED THEN INSERT (\"ID\", \"NAME\") VALUES (?, ?)"))
-      .updateMany(Db2testIdentityAlwaysRow._rowParser, unsaved)
-      .runUnchecked(c)
+    Fragment.concat(Fragment.of("MERGE INTO \"DB2TEST_IDENTITY_ALWAYS\" AS t\nUSING (VALUES (?, ?)) AS s(\"ID\", \"NAME\")\nON t.\"ID\" = s.\"ID\"\nWHEN MATCHED THEN UPDATE SET \"NAME\" = s.\"NAME\"\nWHEN NOT MATCHED THEN INSERT (\"ID\", \"NAME\") VALUES (?, ?)"))
+      .updateMany(Db2testIdentityAlwaysRow.rowCodec, unsaved)
+      .run(c)
   }
 }

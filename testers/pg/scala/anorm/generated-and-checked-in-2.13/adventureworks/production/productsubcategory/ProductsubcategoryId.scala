@@ -21,7 +21,7 @@ object ProductsubcategoryId {
 
   implicit lazy val arrayToStatement: ToStatement[Array[ProductsubcategoryId]] = adventureworks.IntArrayToStatement.contramap(_.map(_.value))
 
-  implicit lazy val bijection: Bijection[ProductsubcategoryId, Int] = Bijection.apply[ProductsubcategoryId, Int](_.value)(ProductsubcategoryId.apply)
+  implicit lazy val bijection: Bijection[ProductsubcategoryId, Int] = Bijection[ProductsubcategoryId, Int](_.value)(ProductsubcategoryId.apply)
 
   implicit lazy val column: Column[ProductsubcategoryId] = Column.columnToInt.map(ProductsubcategoryId.apply)
 

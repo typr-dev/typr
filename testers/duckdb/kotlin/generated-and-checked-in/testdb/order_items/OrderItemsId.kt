@@ -6,10 +6,10 @@
 package testdb.order_items
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import dev.typr.dslkt.RowCodecs
 import dev.typr.foundations.Tuple.Tuple2
-import dev.typr.foundations.kotlin.KotlinDbTypes
-import dev.typr.foundations.kotlin.RowParser
-import dev.typr.foundations.kotlin.RowParsers
+import dev.typr.foundationskt.DuckDbTypes
+import dev.typr.foundationskt.RowCodec
 
 /** Type for the composite primary key of table `order_items` */
 data class OrderItemsId(
@@ -21,6 +21,6 @@ data class OrderItemsId(
   override fun _2(): Int = productId
 
   companion object {
-    val _rowParser: RowParser<OrderItemsId> = RowParsers.of(KotlinDbTypes.DuckDbTypes.integer, KotlinDbTypes.DuckDbTypes.integer, { t0, t1 -> OrderItemsId(t0, t1) }, { row -> arrayOf<Any?>(row.orderId, row.productId) })
+    val rowCodec: RowCodec<OrderItemsId> = RowCodecs.of(DuckDbTypes.integer, DuckDbTypes.integer, { t0: Int, t1: Int -> OrderItemsId(t0, t1) }, { row: OrderItemsId -> arrayOf<Any?>(row.orderId, row.productId) })
   }
 }

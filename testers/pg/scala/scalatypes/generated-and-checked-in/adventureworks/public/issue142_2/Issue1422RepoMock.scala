@@ -6,24 +6,25 @@
 package adventureworks.public.issue142_2
 
 import adventureworks.public.issue142.Issue142Id
-import dev.typr.foundations.scala.DeleteBuilder
-import dev.typr.foundations.scala.DeleteBuilderMock
-import dev.typr.foundations.scala.DeleteParams
-import dev.typr.foundations.scala.SelectBuilder
-import dev.typr.foundations.scala.SelectBuilderMock
-import dev.typr.foundations.scala.SelectParams
-import dev.typr.foundations.scala.UpdateBuilder
-import dev.typr.foundations.scala.UpdateBuilderMock
-import dev.typr.foundations.scala.UpdateParams
+import dev.typr.dslsc.DeleteBuilder
+import dev.typr.dslsc.DeleteBuilderMock
+import dev.typr.dslsc.DeleteParams
+import dev.typr.dslsc.SelectBuilder
+import dev.typr.dslsc.SelectBuilderMock
+import dev.typr.dslsc.SelectParams
+import dev.typr.dslsc.UpdateBuilder
+import dev.typr.dslsc.UpdateBuilderMock
+import dev.typr.dslsc.UpdateParams
+import dev.typr.foundationssc.Connection
+import dev.typr.foundationssc.ConnectionRead
 import java.lang.RuntimeException
-import java.sql.Connection
 
 case class Issue1422RepoMock(map: scala.collection.mutable.Map[Issue142Id, Issue1422Row] = scala.collection.mutable.Map.empty[Issue142Id, Issue1422Row]) extends Issue1422Repo {
   override def delete: DeleteBuilder[Issue1422Fields, Issue1422Row] = DeleteBuilderMock(Issue1422Fields.structure, () => map.values.toList, DeleteParams.empty(), row => row.tabellkode, id => map.remove(id): @scala.annotation.nowarn)
 
   override def deleteById(tabellkode: Issue142Id)(using c: Connection): Boolean = map.remove(tabellkode).isDefined
 
-  override def deleteByIds(tabellkodes: Array[Issue142Id])(using c: Connection): Int = {
+  override def deleteByIds(tabellkodes: List[Issue142Id])(using c: Connection): Int = {
     var count = 0
     tabellkodes.foreach { id => if (map.remove(id).isDefined) {
       count = count + 1
@@ -51,13 +52,13 @@ case class Issue1422RepoMock(map: scala.collection.mutable.Map[Issue142Id, Issue
 
   override def select: SelectBuilder[Issue1422Fields, Issue1422Row] = SelectBuilderMock(Issue1422Fields.structure, () => map.values.toList, SelectParams.empty())
 
-  override def selectAll(using c: Connection): List[Issue1422Row] = map.values.toList
+  override def selectAll(using c: ConnectionRead): List[Issue1422Row] = map.values.toList
 
-  override def selectById(tabellkode: Issue142Id)(using c: Connection): Option[Issue1422Row] = map.get(tabellkode)
+  override def selectById(tabellkode: Issue142Id)(using c: ConnectionRead): Option[Issue1422Row] = map.get(tabellkode)
 
-  override def selectByIds(tabellkodes: Array[Issue142Id])(using c: Connection): List[Issue1422Row] = tabellkodes.flatMap(map.get(_)).toList
+  override def selectByIds(tabellkodes: List[Issue142Id])(using c: ConnectionRead): List[Issue1422Row] = tabellkodes.flatMap(map.get(_)).toList
 
-  override def selectByIdsTracked(tabellkodes: Array[Issue142Id])(using c: Connection): Map[Issue142Id, Issue1422Row] = selectByIds(tabellkodes)(using c).map(x => (((row: Issue1422Row) => row.tabellkode).apply(x), x)).toMap
+  override def selectByIdsTracked(tabellkodes: List[Issue142Id])(using c: ConnectionRead): Map[Issue142Id, Issue1422Row] = selectByIds(tabellkodes)(using c).map(x => (((row: Issue1422Row) => row.tabellkode).apply(x), x)).toMap
 
   override def update: UpdateBuilder[Issue1422Fields, Issue1422Row] = UpdateBuilderMock(Issue1422Fields.structure, () => map.values.toList, UpdateParams.empty(), row => row)
 

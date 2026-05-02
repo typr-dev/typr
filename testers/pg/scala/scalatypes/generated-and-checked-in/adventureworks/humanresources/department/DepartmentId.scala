@@ -6,18 +6,17 @@
 package adventureworks.humanresources.department
 
 import com.fasterxml.jackson.annotation.JsonValue
-import dev.typr.foundations.PgType
-import dev.typr.foundations.PgTypes
-import dev.typr.foundations.scala.Bijection
-import dev.typr.foundations.scala.ScalaDbTypes
+import dev.typr.dslsc.Bijection
+import dev.typr.foundationssc.PgType
+import dev.typr.foundationssc.PgTypes
 
 /** Type for the primary key of table `humanresources.department` */
 case class DepartmentId(@JsonValue value: Int) extends scala.AnyVal
 
 object DepartmentId {
-  given bijection: Bijection[DepartmentId, Int] = Bijection.apply[DepartmentId, Int](_.value)(DepartmentId.apply)
+  given bijection: Bijection[DepartmentId, Int] = Bijection.of[DepartmentId, Int](_.value, DepartmentId.apply)
 
-  given pgType: PgType[DepartmentId] = ScalaDbTypes.PgTypes.int4.bimap(DepartmentId.apply, _.value)
+  given pgType: PgType[DepartmentId] = PgTypes.int4.to(Bijection.of(DepartmentId.apply, _.value))
 
-  given pgTypeArray: PgType[Array[DepartmentId]] = PgTypes.int4ArrayUnboxed.bimap(xs => xs.map(DepartmentId.apply), xs => xs.map(_.value))
+  given pgTypeArray: PgType[List[DepartmentId]] = pgType.array
 }

@@ -5,14 +5,14 @@
  */
 package oracledb.products
 
-import dev.typr.foundations.OracleTypes
-import dev.typr.foundations.kotlin.DeleteBuilder
-import dev.typr.foundations.kotlin.Dialect
-import dev.typr.foundations.kotlin.Fragment
-import dev.typr.foundations.kotlin.SelectBuilder
-import dev.typr.foundations.kotlin.UpdateBuilder
-import dev.typr.foundations.kotlin.nullable
-import java.sql.Connection
+import dev.typr.dslkt.DeleteBuilder
+import dev.typr.dslkt.Dialect
+import dev.typr.dslkt.SelectBuilder
+import dev.typr.dslkt.UpdateBuilder
+import dev.typr.foundationskt.Connection
+import dev.typr.foundationskt.ConnectionRead
+import dev.typr.foundationskt.Fragment
+import dev.typr.foundationskt.OracleTypes
 import java.util.ArrayList
 import kotlin.collections.Iterator
 import kotlin.collections.List
@@ -27,22 +27,22 @@ class ProductsRepoImpl() : ProductsRepo {
   override fun deleteById(
     productId: ProductsId,
     c: Connection
-  ): Boolean = Fragment.interpolate(Fragment.lit("delete from \"PRODUCTS\" where \"PRODUCT_ID\" = "), Fragment.encode(ProductsId.oracleType, productId), Fragment.lit("")).update().runUnchecked(c) > 0
+  ): kotlin.Boolean = Fragment.concat(Fragment.of("delete from \"PRODUCTS\" where \"PRODUCT_ID\" = "), Fragment.encode(ProductsId.oracleType, productId), Fragment.of("")).update().run(c) > 0
 
   override fun deleteByIds(
-    productIds: Array<ProductsId>,
+    productIds: List<ProductsId>,
     c: Connection
   ): Int {
     val fragments: ArrayList<Fragment> = ArrayList()
     for (id in productIds) { fragments.add(Fragment.encode(ProductsId.oracleType, id)) }
-    return Fragment.interpolate(Fragment.lit("delete from \"PRODUCTS\" where \"PRODUCT_ID\" in ("), Fragment.comma(fragments.toMutableList()), Fragment.lit(")")).update().runUnchecked(c)
+    return Fragment.concat(Fragment.of("delete from \"PRODUCTS\" where \"PRODUCT_ID\" in ("), Fragment.comma(fragments.toMutableList()), Fragment.of(")")).update().run(c)
   }
 
   override fun insert(
     unsaved: ProductsRow,
     c: Connection
-  ): ProductsId = Fragment.interpolate(Fragment.lit("insert into \"PRODUCTS\"(\"PRODUCT_ID\", \"SKU\", \"NAME\", \"PRICE\", \"TAGS\")\nvalues ("), Fragment.encode(ProductsId.oracleType, unsaved.productId), Fragment.lit(", "), Fragment.encode(OracleTypes.varchar2, unsaved.sku), Fragment.lit(", "), Fragment.encode(OracleTypes.varchar2, unsaved.name), Fragment.lit(", "), Fragment.encode(MoneyT.oracleType, unsaved.price), Fragment.lit(", "), Fragment.encode(TagVarrayT.oracleType.nullable(), unsaved.tags), Fragment.lit(")\n"))
-    .updateReturningGeneratedKeys(arrayOf<String>("PRODUCT_ID"), ProductsId._rowParser.exactlyOne()).runUnchecked(c)
+  ): ProductsId = Fragment.concat(Fragment.of("insert into \"PRODUCTS\"(\"PRODUCT_ID\", \"SKU\", \"NAME\", \"PRICE\", \"TAGS\")\nvalues ("), Fragment.encode(ProductsId.oracleType, unsaved.productId), Fragment.of(", "), Fragment.encode(OracleTypes.varchar2, unsaved.sku), Fragment.of(", "), Fragment.encode(OracleTypes.varchar2, unsaved.name), Fragment.of(", "), Fragment.encode(MoneyT.oracleType, unsaved.price), Fragment.of(", "), Fragment.encode(TagVarrayT.oracleType.opt(), unsaved.tags), Fragment.of(")\n"))
+    .updateReturningGeneratedKeys(arrayOf<kotlin.String>("PRODUCT_ID"), ProductsId.rowCodec.exactlyOne()).run(c)
 
   override fun insert(
     unsaved: ProductsRowUnsaved,
@@ -50,44 +50,44 @@ class ProductsRepoImpl() : ProductsRepo {
   ): ProductsId {
     val columns: ArrayList<Fragment> = ArrayList()
     val values: ArrayList<Fragment> = ArrayList()
-    columns.add(Fragment.lit("\"SKU\""))
-    values.add(Fragment.interpolate(Fragment.encode(OracleTypes.varchar2, unsaved.sku), Fragment.lit("")))
-    columns.add(Fragment.lit("\"NAME\""))
-    values.add(Fragment.interpolate(Fragment.encode(OracleTypes.varchar2, unsaved.name), Fragment.lit("")))
-    columns.add(Fragment.lit("\"PRICE\""))
-    values.add(Fragment.interpolate(Fragment.encode(MoneyT.oracleType, unsaved.price), Fragment.lit("")))
-    columns.add(Fragment.lit("\"TAGS\""))
-    values.add(Fragment.interpolate(Fragment.encode(TagVarrayT.oracleType.nullable(), unsaved.tags), Fragment.lit("")))
+    columns.add(Fragment.of("\"SKU\""))
+    values.add(Fragment.concat(Fragment.encode(OracleTypes.varchar2, unsaved.sku), Fragment.of("")))
+    columns.add(Fragment.of("\"NAME\""))
+    values.add(Fragment.concat(Fragment.encode(OracleTypes.varchar2, unsaved.name), Fragment.of("")))
+    columns.add(Fragment.of("\"PRICE\""))
+    values.add(Fragment.concat(Fragment.encode(MoneyT.oracleType, unsaved.price), Fragment.of("")))
+    columns.add(Fragment.of("\"TAGS\""))
+    values.add(Fragment.concat(Fragment.encode(TagVarrayT.oracleType.opt(), unsaved.tags), Fragment.of("")))
     unsaved.productId.visit(
       {  },
-      { value -> columns.add(Fragment.lit("\"PRODUCT_ID\""))
-      values.add(Fragment.interpolate(Fragment.encode(ProductsId.oracleType, value), Fragment.lit(""))) }
+      { value -> columns.add(Fragment.of("\"PRODUCT_ID\""))
+      values.add(Fragment.concat(Fragment.encode(ProductsId.oracleType, value), Fragment.of(""))) }
     );
-    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into \"PRODUCTS\"("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\n"))
-    return q.updateReturningGeneratedKeys(arrayOf<String>("PRODUCT_ID"), ProductsId._rowParser.exactlyOne()).runUnchecked(c)
+    val q: Fragment = Fragment.concat(Fragment.of("insert into \"PRODUCTS\"("), Fragment.comma(columns.toMutableList()), Fragment.of(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.of(")\n"))
+    return q.updateReturningGeneratedKeys(arrayOf<kotlin.String>("PRODUCT_ID"), ProductsId.rowCodec.exactlyOne()).run(c)
   }
 
-  override fun select(): SelectBuilder<ProductsFields, ProductsRow> = SelectBuilder.of("\"PRODUCTS\"", ProductsFields.structure, ProductsRow._rowParser, Dialect.ORACLE)
+  override fun select(): SelectBuilder<ProductsFields, ProductsRow> = SelectBuilder.of("\"PRODUCTS\"", ProductsFields.structure, ProductsRow.rowCodec, Dialect.ORACLE)
 
-  override fun selectAll(c: Connection): List<ProductsRow> = Fragment.interpolate(Fragment.lit("select \"PRODUCT_ID\", \"SKU\", \"NAME\", \"PRICE\", \"TAGS\"\nfrom \"PRODUCTS\"\n")).query(ProductsRow._rowParser.all()).runUnchecked(c)
+  override fun selectAll(c: ConnectionRead): List<ProductsRow> = Fragment.concat(Fragment.of("select \"PRODUCT_ID\", \"SKU\", \"NAME\", \"PRICE\", \"TAGS\"\nfrom \"PRODUCTS\"\n")).query(ProductsRow.rowCodec.all()).run(c)
 
   override fun selectById(
     productId: ProductsId,
-    c: Connection
-  ): ProductsRow? = Fragment.interpolate(Fragment.lit("select \"PRODUCT_ID\", \"SKU\", \"NAME\", \"PRICE\", \"TAGS\"\nfrom \"PRODUCTS\"\nwhere \"PRODUCT_ID\" = "), Fragment.encode(ProductsId.oracleType, productId), Fragment.lit("")).query(ProductsRow._rowParser.first()).runUnchecked(c)
+    c: ConnectionRead
+  ): ProductsRow? = Fragment.concat(Fragment.of("select \"PRODUCT_ID\", \"SKU\", \"NAME\", \"PRICE\", \"TAGS\"\nfrom \"PRODUCTS\"\nwhere \"PRODUCT_ID\" = "), Fragment.encode(ProductsId.oracleType, productId), Fragment.of("")).query(ProductsRow.rowCodec.first()).run(c)
 
   override fun selectByIds(
-    productIds: Array<ProductsId>,
-    c: Connection
+    productIds: List<ProductsId>,
+    c: ConnectionRead
   ): List<ProductsRow> {
     val fragments: ArrayList<Fragment> = ArrayList()
     for (id in productIds) { fragments.add(Fragment.encode(ProductsId.oracleType, id)) }
-    return Fragment.interpolate(Fragment.lit("select \"PRODUCT_ID\", \"SKU\", \"NAME\", \"PRICE\", \"TAGS\" from \"PRODUCTS\" where \"PRODUCT_ID\" in ("), Fragment.comma(fragments.toMutableList()), Fragment.lit(")")).query(ProductsRow._rowParser.all()).runUnchecked(c)
+    return Fragment.concat(Fragment.of("select \"PRODUCT_ID\", \"SKU\", \"NAME\", \"PRICE\", \"TAGS\" from \"PRODUCTS\" where \"PRODUCT_ID\" in ("), Fragment.comma(fragments.toMutableList()), Fragment.of(")")).query(ProductsRow.rowCodec.all()).run(c)
   }
 
   override fun selectByIdsTracked(
-    productIds: Array<ProductsId>,
-    c: Connection
+    productIds: List<ProductsId>,
+    c: ConnectionRead
   ): Map<ProductsId, ProductsRow> {
     val ret: MutableMap<ProductsId, ProductsRow> = mutableMapOf<ProductsId, ProductsRow>()
     selectByIds(productIds, c).forEach({ row -> ret.put(row.productId, row) })
@@ -95,35 +95,35 @@ class ProductsRepoImpl() : ProductsRepo {
   }
 
   override fun selectByUniqueSku(
-    sku: String,
-    c: Connection
-  ): ProductsRow? = Fragment.interpolate(Fragment.lit("select \"PRODUCT_ID\", \"SKU\", \"NAME\", \"PRICE\", \"TAGS\"\nfrom \"PRODUCTS\"\nwhere \"SKU\" = "), Fragment.encode(OracleTypes.varchar2, sku), Fragment.lit("\n")).query(ProductsRow._rowParser.first()).runUnchecked(c)
+    sku: kotlin.String,
+    c: ConnectionRead
+  ): ProductsRow? = Fragment.concat(Fragment.of("select \"PRODUCT_ID\", \"SKU\", \"NAME\", \"PRICE\", \"TAGS\"\nfrom \"PRODUCTS\"\nwhere \"SKU\" = "), Fragment.encode(OracleTypes.varchar2, sku), Fragment.of("\n")).query(ProductsRow.rowCodec.first()).run(c)
 
-  override fun update(): UpdateBuilder<ProductsFields, ProductsRow> = UpdateBuilder.of("\"PRODUCTS\"", ProductsFields.structure, ProductsRow._rowParser, Dialect.ORACLE)
+  override fun update(): UpdateBuilder<ProductsFields, ProductsRow> = UpdateBuilder.of("\"PRODUCTS\"", ProductsFields.structure, ProductsRow.rowCodec, Dialect.ORACLE)
 
   override fun update(
     row: ProductsRow,
     c: Connection
-  ): Boolean {
+  ): kotlin.Boolean {
     val productId: ProductsId = row.productId
-    return Fragment.interpolate(Fragment.lit("update \"PRODUCTS\"\nset \"SKU\" = "), Fragment.encode(OracleTypes.varchar2, row.sku), Fragment.lit(",\n\"NAME\" = "), Fragment.encode(OracleTypes.varchar2, row.name), Fragment.lit(",\n\"PRICE\" = "), Fragment.encode(MoneyT.oracleType, row.price), Fragment.lit(",\n\"TAGS\" = "), Fragment.encode(TagVarrayT.oracleType.nullable(), row.tags), Fragment.lit("\nwhere \"PRODUCT_ID\" = "), Fragment.encode(ProductsId.oracleType, productId), Fragment.lit("")).update().runUnchecked(c) > 0
+    return Fragment.concat(Fragment.of("update \"PRODUCTS\"\nset \"SKU\" = "), Fragment.encode(OracleTypes.varchar2, row.sku), Fragment.of(",\n\"NAME\" = "), Fragment.encode(OracleTypes.varchar2, row.name), Fragment.of(",\n\"PRICE\" = "), Fragment.encode(MoneyT.oracleType, row.price), Fragment.of(",\n\"TAGS\" = "), Fragment.encode(TagVarrayT.oracleType.opt(), row.tags), Fragment.of("\nwhere \"PRODUCT_ID\" = "), Fragment.encode(ProductsId.oracleType, productId), Fragment.of("")).update().run(c) > 0
   }
 
   override fun upsert(
     unsaved: ProductsRow,
     c: Connection
   ) {
-    Fragment.interpolate(Fragment.lit("MERGE INTO \"PRODUCTS\" t\nUSING (SELECT "), Fragment.encode(ProductsId.oracleType, unsaved.productId), Fragment.lit(", "), Fragment.encode(OracleTypes.varchar2, unsaved.sku), Fragment.lit(", "), Fragment.encode(OracleTypes.varchar2, unsaved.name), Fragment.lit(", "), Fragment.encode(MoneyT.oracleType, unsaved.price), Fragment.lit(", "), Fragment.encode(TagVarrayT.oracleType.nullable(), unsaved.tags), Fragment.lit(" FROM DUAL) s\nON (t.\"PRODUCT_ID\" = s.\"PRODUCT_ID\")\nWHEN MATCHED THEN UPDATE SET t.\"SKU\" = s.\"SKU\",\nt.\"NAME\" = s.\"NAME\",\nt.\"PRICE\" = s.\"PRICE\",\nt.\"TAGS\" = s.\"TAGS\"\nWHEN NOT MATCHED THEN INSERT (\"PRODUCT_ID\", \"SKU\", \"NAME\", \"PRICE\", \"TAGS\") VALUES ("), Fragment.encode(ProductsId.oracleType, unsaved.productId), Fragment.lit(", "), Fragment.encode(OracleTypes.varchar2, unsaved.sku), Fragment.lit(", "), Fragment.encode(OracleTypes.varchar2, unsaved.name), Fragment.lit(", "), Fragment.encode(MoneyT.oracleType, unsaved.price), Fragment.lit(", "), Fragment.encode(TagVarrayT.oracleType.nullable(), unsaved.tags), Fragment.lit(")"))
+    Fragment.concat(Fragment.of("MERGE INTO \"PRODUCTS\" t\nUSING (SELECT "), Fragment.encode(ProductsId.oracleType, unsaved.productId), Fragment.of(", "), Fragment.encode(OracleTypes.varchar2, unsaved.sku), Fragment.of(", "), Fragment.encode(OracleTypes.varchar2, unsaved.name), Fragment.of(", "), Fragment.encode(MoneyT.oracleType, unsaved.price), Fragment.of(", "), Fragment.encode(TagVarrayT.oracleType.opt(), unsaved.tags), Fragment.of(" FROM DUAL) s\nON (t.\"PRODUCT_ID\" = s.\"PRODUCT_ID\")\nWHEN MATCHED THEN UPDATE SET t.\"SKU\" = s.\"SKU\",\nt.\"NAME\" = s.\"NAME\",\nt.\"PRICE\" = s.\"PRICE\",\nt.\"TAGS\" = s.\"TAGS\"\nWHEN NOT MATCHED THEN INSERT (\"PRODUCT_ID\", \"SKU\", \"NAME\", \"PRICE\", \"TAGS\") VALUES ("), Fragment.encode(ProductsId.oracleType, unsaved.productId), Fragment.of(", "), Fragment.encode(OracleTypes.varchar2, unsaved.sku), Fragment.of(", "), Fragment.encode(OracleTypes.varchar2, unsaved.name), Fragment.of(", "), Fragment.encode(MoneyT.oracleType, unsaved.price), Fragment.of(", "), Fragment.encode(TagVarrayT.oracleType.opt(), unsaved.tags), Fragment.of(")"))
       .update()
-      .runUnchecked(c)
+      .run(c)
   }
 
   override fun upsertBatch(
     unsaved: Iterator<ProductsRow>,
     c: Connection
   ) {
-    Fragment.interpolate(Fragment.lit("MERGE INTO \"PRODUCTS\" t\nUSING (SELECT ?, ?, ?, ?, ? FROM DUAL) s\nON (t.\"PRODUCT_ID\" = s.\"PRODUCT_ID\")\nWHEN MATCHED THEN UPDATE SET t.\"SKU\" = s.\"SKU\",\nt.\"NAME\" = s.\"NAME\",\nt.\"PRICE\" = s.\"PRICE\",\nt.\"TAGS\" = s.\"TAGS\"\nWHEN NOT MATCHED THEN INSERT (\"PRODUCT_ID\", \"SKU\", \"NAME\", \"PRICE\", \"TAGS\") VALUES (?, ?, ?, ?, ?)"))
-      .updateMany(ProductsRow._rowParser, unsaved)
-      .runUnchecked(c)
+    Fragment.concat(Fragment.of("MERGE INTO \"PRODUCTS\" t\nUSING (SELECT ?, ?, ?, ?, ? FROM DUAL) s\nON (t.\"PRODUCT_ID\" = s.\"PRODUCT_ID\")\nWHEN MATCHED THEN UPDATE SET t.\"SKU\" = s.\"SKU\",\nt.\"NAME\" = s.\"NAME\",\nt.\"PRICE\" = s.\"PRICE\",\nt.\"TAGS\" = s.\"TAGS\"\nWHEN NOT MATCHED THEN INSERT (\"PRODUCT_ID\", \"SKU\", \"NAME\", \"PRICE\", \"TAGS\") VALUES (?, ?, ?, ?, ?)"))
+      .updateMany(ProductsRow.rowCodec, unsaved)
+      .run(c)
   }
 }

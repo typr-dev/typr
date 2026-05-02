@@ -6,12 +6,10 @@
 package testdb.products
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import dev.typr.foundations.SqlServerTypes
+import dev.typr.dslkt.RowCodecs
 import dev.typr.foundations.Tuple.Tuple4
-import dev.typr.foundations.kotlin.KotlinDbTypes
-import dev.typr.foundations.kotlin.RowParser
-import dev.typr.foundations.kotlin.RowParsers
-import dev.typr.foundations.kotlin.nullable
+import dev.typr.foundationskt.RowCodec
+import dev.typr.foundationskt.SqlServerTypes
 import java.math.BigDecimal
 
 /** Table: products
@@ -20,23 +18,23 @@ import java.math.BigDecimal
 data class ProductsRow(
   /** IDENTITY(1, 1) */
   @field:JsonProperty("product_id") val productId: ProductsId,
-  val name: String,
+  val name: kotlin.String,
   val price: BigDecimal,
-  val description: String?
-) : Tuple4<ProductsId, String, BigDecimal, String?> {
+  val description: kotlin.String?
+) : Tuple4<ProductsId, kotlin.String, BigDecimal, kotlin.String?> {
   override fun _1(): ProductsId = productId
 
-  override fun _2(): String = name
+  override fun _2(): kotlin.String = name
 
   override fun _3(): BigDecimal = price
 
-  override fun _4(): String? = description
+  override fun _4(): kotlin.String? = description
 
   fun id(): ProductsId = productId
 
   fun toUnsavedRow(): ProductsRowUnsaved = ProductsRowUnsaved(name, price, description)
 
   companion object {
-    val _rowParser: RowParser<ProductsRow> = RowParsers.of(ProductsId.sqlServerType, SqlServerTypes.nvarchar, KotlinDbTypes.SqlServerTypes.money, SqlServerTypes.nvarchar.nullable(), { t0, t1, t2, t3 -> ProductsRow(t0, t1, t2, t3) }, { row -> arrayOf<Any?>(row.productId, row.name, row.price, row.description) })
+    val rowCodec: RowCodec<ProductsRow> = RowCodecs.of(ProductsId.sqlServerType, SqlServerTypes.nvarchar, SqlServerTypes.money, SqlServerTypes.nvarchar.opt(), { t0: ProductsId, t1: kotlin.String, t2: BigDecimal, t3: kotlin.String? -> ProductsRow(t0, t1, t2, t3) }, { row: ProductsRow -> arrayOf<Any?>(row.productId, row.name, row.price, row.description) })
   }
 }

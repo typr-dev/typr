@@ -5,17 +5,18 @@
  */
 package testdb.db2test_identity_always
 
-import dev.typr.foundations.kotlin.DeleteBuilder
-import dev.typr.foundations.kotlin.DeleteBuilderMock
-import dev.typr.foundations.kotlin.DeleteParams
-import dev.typr.foundations.kotlin.SelectBuilder
-import dev.typr.foundations.kotlin.SelectBuilderMock
-import dev.typr.foundations.kotlin.SelectParams
-import dev.typr.foundations.kotlin.UpdateBuilder
-import dev.typr.foundations.kotlin.UpdateBuilderMock
-import dev.typr.foundations.kotlin.UpdateParams
+import dev.typr.dslkt.DeleteBuilder
+import dev.typr.dslkt.DeleteBuilderMock
+import dev.typr.dslkt.DeleteParams
+import dev.typr.dslkt.SelectBuilder
+import dev.typr.dslkt.SelectBuilderMock
+import dev.typr.dslkt.SelectParams
+import dev.typr.dslkt.UpdateBuilder
+import dev.typr.dslkt.UpdateBuilderMock
+import dev.typr.dslkt.UpdateParams
+import dev.typr.foundationskt.Connection
+import dev.typr.foundationskt.ConnectionRead
 import java.lang.RuntimeException
-import java.sql.Connection
 import java.util.ArrayList
 import kotlin.collections.Iterator
 import kotlin.collections.List
@@ -31,10 +32,10 @@ data class Db2testIdentityAlwaysRepoMock(
   override fun deleteById(
     id: Db2testIdentityAlwaysId,
     c: Connection
-  ): Boolean = map.remove(id) != null
+  ): kotlin.Boolean = map.remove(id) != null
 
   override fun deleteByIds(
-    ids: Array<Db2testIdentityAlwaysId>,
+    ids: List<Db2testIdentityAlwaysId>,
     c: Connection
   ): Int {
     var count = 0
@@ -64,16 +65,16 @@ data class Db2testIdentityAlwaysRepoMock(
 
   override fun select(): SelectBuilder<Db2testIdentityAlwaysFields, Db2testIdentityAlwaysRow> = SelectBuilderMock(Db2testIdentityAlwaysFields.structure, { map.values.toList() }, SelectParams.empty())
 
-  override fun selectAll(c: Connection): List<Db2testIdentityAlwaysRow> = map.values.toList()
+  override fun selectAll(c: ConnectionRead): List<Db2testIdentityAlwaysRow> = map.values.toList()
 
   override fun selectById(
     id: Db2testIdentityAlwaysId,
-    c: Connection
+    c: ConnectionRead
   ): Db2testIdentityAlwaysRow? = map[id]
 
   override fun selectByIds(
-    ids: Array<Db2testIdentityAlwaysId>,
-    c: Connection
+    ids: List<Db2testIdentityAlwaysId>,
+    c: ConnectionRead
   ): List<Db2testIdentityAlwaysRow> {
     val result = ArrayList<Db2testIdentityAlwaysRow>()
     for (id in ids) {
@@ -86,8 +87,8 @@ data class Db2testIdentityAlwaysRepoMock(
   }
 
   override fun selectByIdsTracked(
-    ids: Array<Db2testIdentityAlwaysId>,
-    c: Connection
+    ids: List<Db2testIdentityAlwaysId>,
+    c: ConnectionRead
   ): Map<Db2testIdentityAlwaysId, Db2testIdentityAlwaysRow> = selectByIds(ids, c).associateBy({ row: Db2testIdentityAlwaysRow -> row.id })
 
   override fun update(): UpdateBuilder<Db2testIdentityAlwaysFields, Db2testIdentityAlwaysRow> = UpdateBuilderMock(Db2testIdentityAlwaysFields.structure, { map.values.toList() }, UpdateParams.empty(), { row -> row })
@@ -95,7 +96,7 @@ data class Db2testIdentityAlwaysRepoMock(
   override fun update(
     row: Db2testIdentityAlwaysRow,
     c: Connection
-  ): Boolean {
+  ): kotlin.Boolean {
     val shouldUpdate = map[row.id]?.takeIf({ oldRow -> (oldRow != row) }) != null
     if (shouldUpdate) {
       map[row.id] = row

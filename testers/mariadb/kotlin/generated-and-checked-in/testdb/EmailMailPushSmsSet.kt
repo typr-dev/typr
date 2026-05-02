@@ -5,29 +5,28 @@
  */
 package testdb
 
-import dev.typr.foundations.MariaType
-import dev.typr.foundations.MariaTypes
 import dev.typr.foundations.data.maria.MariaSet
+import dev.typr.foundationskt.Bijection
+import dev.typr.foundationskt.MariaType
+import dev.typr.foundationskt.MariaTypes
 import java.util.EnumSet
 import kotlin.collections.List
 import kotlin.collections.Set
 
 /** MariaDB SET type with values: email, mail, push, sms */
 data class EmailMailPushSmsSet(val members: Set<EmailMailPushSmsSetMember>) {
-  fun contains(member: EmailMailPushSmsSetMember): Boolean = members.contains(member)
+  fun contains(member: EmailMailPushSmsSetMember): kotlin.Boolean = members.contains(member)
 
-  fun isEmpty(): Boolean = members.isEmpty()
+  fun isEmpty(): kotlin.Boolean = members.isEmpty()
 
   fun size(): Int = members.size
 
-  fun toCommaSeparated(): String = members.joinToString(",") { it.value }
+  fun toCommaSeparated(): kotlin.String = members.joinToString(",") { it.value }
 
-  override fun toString(): String = toCommaSeparated()
+  override fun toString(): kotlin.String = toCommaSeparated()
 
   companion object {
-    fun empty(): EmailMailPushSmsSet = EmailMailPushSmsSet(EnumSet.noneOf(EmailMailPushSmsSetMember::class.java).toSet())
-
-    fun fromString(str: String): EmailMailPushSmsSet = run {
+    fun fromString(str: kotlin.String): EmailMailPushSmsSet = run {
       if (str.isNullOrEmpty()) EmailMailPushSmsSet(EnumSet.noneOf(EmailMailPushSmsSetMember::class.java).toSet())
       else {
         val set = EnumSet.noneOf(EmailMailPushSmsSetMember::class.java)
@@ -38,12 +37,14 @@ data class EmailMailPushSmsSet(val members: Set<EmailMailPushSmsSetMember>) {
       }
     }
 
-    val mariaType: MariaType<EmailMailPushSmsSet> =
-      MariaTypes.set.bimap({ ms: MariaSet -> EmailMailPushSmsSet.fromString(ms.toCommaSeparated()) }, { s: EmailMailPushSmsSet -> MariaSet.fromString(s.toCommaSeparated()) })
-
     fun of(members: List<EmailMailPushSmsSetMember>): EmailMailPushSmsSet = run {
       if (members.isEmpty()) EmailMailPushSmsSet(EnumSet.noneOf(EmailMailPushSmsSetMember::class.java).toSet())
       else EmailMailPushSmsSet(EnumSet.copyOf(members).toSet())
     }
+
+    fun empty(): EmailMailPushSmsSet = EmailMailPushSmsSet(EnumSet.noneOf(EmailMailPushSmsSetMember::class.java).toSet())
+
+    val mariaType: MariaType<EmailMailPushSmsSet> =
+      MariaTypes.set.to(Bijection.of({ ms: MariaSet -> EmailMailPushSmsSet.fromString(ms.toCommaSeparated()) }, { s: EmailMailPushSmsSet -> MariaSet.fromString(s.toCommaSeparated()) }))
   }
 }

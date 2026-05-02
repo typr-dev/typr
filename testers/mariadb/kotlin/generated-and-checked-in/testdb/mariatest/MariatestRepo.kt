@@ -5,10 +5,11 @@
  */
 package testdb.mariatest
 
-import dev.typr.foundations.kotlin.DeleteBuilder
-import dev.typr.foundations.kotlin.SelectBuilder
-import dev.typr.foundations.kotlin.UpdateBuilder
-import java.sql.Connection
+import dev.typr.dslkt.DeleteBuilder
+import dev.typr.dslkt.SelectBuilder
+import dev.typr.dslkt.UpdateBuilder
+import dev.typr.foundationskt.Connection
+import dev.typr.foundationskt.ConnectionRead
 import kotlin.collections.Iterator
 import kotlin.collections.List
 import kotlin.collections.Map
@@ -19,10 +20,10 @@ interface MariatestRepo {
   abstract fun deleteById(
     intCol: MariatestId,
     c: Connection
-  ): Boolean
+  ): kotlin.Boolean
 
   abstract fun deleteByIds(
-    intCols: Array<MariatestId>,
+    intCols: List<MariatestId>,
     c: Connection
   ): Int
 
@@ -38,21 +39,21 @@ interface MariatestRepo {
 
   abstract fun select(): SelectBuilder<MariatestFields, MariatestRow>
 
-  abstract fun selectAll(c: Connection): List<MariatestRow>
+  abstract fun selectAll(c: ConnectionRead): List<MariatestRow>
 
   abstract fun selectById(
     intCol: MariatestId,
-    c: Connection
+    c: ConnectionRead
   ): MariatestRow?
 
   abstract fun selectByIds(
-    intCols: Array<MariatestId>,
-    c: Connection
+    intCols: List<MariatestId>,
+    c: ConnectionRead
   ): List<MariatestRow>
 
   abstract fun selectByIdsTracked(
-    intCols: Array<MariatestId>,
-    c: Connection
+    intCols: List<MariatestId>,
+    c: ConnectionRead
   ): Map<MariatestId, MariatestRow>
 
   abstract fun update(): UpdateBuilder<MariatestFields, MariatestRow>
@@ -60,7 +61,7 @@ interface MariatestRepo {
   abstract fun update(
     row: MariatestRow,
     c: Connection
-  ): Boolean
+  ): kotlin.Boolean
 
   abstract fun upsert(
     unsaved: MariatestRow,

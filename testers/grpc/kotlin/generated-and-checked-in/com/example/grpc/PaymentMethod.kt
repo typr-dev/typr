@@ -55,28 +55,6 @@ data class PaymentMethod(
   }
 
   companion object {
-    val MARSHALLER: Marshaller<PaymentMethod> =
-      object : Marshaller<PaymentMethod> {
-        override fun stream(value: PaymentMethod): InputStream {
-          val bytes = ByteArray(value.getSerializedSize())
-          val cos = CodedOutputStream.newInstance(bytes)
-          try {
-            value.writeTo(cos)
-            cos.flush()
-          } catch (e: IOException) {
-            throw RuntimeException(e)
-          } 
-          return ByteArrayInputStream(bytes)
-        }
-        override fun parse(stream: InputStream): PaymentMethod {
-          try {
-            return PaymentMethod.parseFrom(CodedInputStream.newInstance(stream))
-          } catch (e: IOException) {
-            throw RuntimeException(e)
-          } 
-        }
-      }
-
     @Throws(IOException::class)
     fun parseFrom(input: CodedInputStream): PaymentMethod {
       var id: kotlin.String = ""
@@ -100,5 +78,27 @@ data class PaymentMethod(
       }
       return PaymentMethod(id, method)
     }
+
+    val MARSHALLER: Marshaller<PaymentMethod> =
+      object : Marshaller<PaymentMethod> {
+        override fun stream(value: PaymentMethod): InputStream {
+          val bytes = ByteArray(value.getSerializedSize())
+          val cos = CodedOutputStream.newInstance(bytes)
+          try {
+            value.writeTo(cos)
+            cos.flush()
+          } catch (e: IOException) {
+            throw RuntimeException(e)
+          } 
+          return ByteArrayInputStream(bytes)
+        }
+        override fun parse(stream: InputStream): PaymentMethod {
+          try {
+            return PaymentMethod.parseFrom(CodedInputStream.newInstance(stream))
+          } catch (e: IOException) {
+            throw RuntimeException(e)
+          } 
+        }
+      }
   }
 }

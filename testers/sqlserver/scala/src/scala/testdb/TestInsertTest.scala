@@ -9,12 +9,10 @@ import scala.util.Random
 /** Tests for the TestInsert helper class that generates random test data. Tests seeded randomness, customization, and foreign key handling.
   */
 class TestInsertTest {
-  private val testInsert = TestInsert(Random(42))
+  private val testInsert = TestInsert(Random(676729449))
 
   @Test
-  def testCustomersInsert(): Unit = withConnection { c =>
-    given java.sql.Connection = c
-
+  def testCustomersInsert(): Unit = withConnection {
     val row = testInsert.Customers(email = Email("test@example.com"))
     assertNotNull(row)
     assertNotNull(row.customerId)
@@ -22,9 +20,7 @@ class TestInsertTest {
   }
 
   @Test
-  def testCustomersWithCustomization(): Unit = withConnection { c =>
-    given java.sql.Connection = c
-
+  def testCustomersWithCustomization(): Unit = withConnection {
     val row = testInsert.Customers(email = Email("custom@example.com"), name = "Custom Name")
 
     assertNotNull(row)
@@ -32,9 +28,7 @@ class TestInsertTest {
   }
 
   @Test
-  def testProductsInsert(): Unit = withConnection { c =>
-    given java.sql.Connection = c
-
+  def testProductsInsert(): Unit = withConnection {
     val row = testInsert.Products()
 
     assertNotNull(row)
@@ -44,9 +38,7 @@ class TestInsertTest {
   }
 
   @Test
-  def testAllScalarTypesInsert(): Unit = withConnection { c =>
-    given java.sql.Connection = c
-
+  def testAllScalarTypesInsert(): Unit = withConnection {
     val row = testInsert.AllScalarTypes()
 
     assertNotNull(row)
@@ -55,9 +47,7 @@ class TestInsertTest {
   }
 
   @Test
-  def testOrdersWithCustomerFK(): Unit = withConnection { c =>
-    given java.sql.Connection = c
-
+  def testOrdersWithCustomerFK(): Unit = withConnection {
     val customer = testInsert.Customers(email = Email("orders-fk@example.com"))
 
     val order = testInsert.Orders(customer.customerId)
@@ -67,9 +57,7 @@ class TestInsertTest {
   }
 
   @Test
-  def testOrderItemsWithFKs(): Unit = withConnection { c =>
-    given java.sql.Connection = c
-
+  def testOrderItemsWithFKs(): Unit = withConnection {
     val customer = testInsert.Customers(email = Email("orderitems-fk@example.com"))
     val product = testInsert.Products()
     val order = testInsert.Orders(customer.customerId)
@@ -82,9 +70,7 @@ class TestInsertTest {
   }
 
   @Test
-  def testMultipleInserts(): Unit = withConnection { c =>
-    given java.sql.Connection = c
-
+  def testMultipleInserts(): Unit = withConnection {
     val row1 = testInsert.Customers(email = Email("multi1@example.com"))
     val row2 = testInsert.Customers(email = Email("multi2@example.com"))
     val row3 = testInsert.Customers(email = Email("multi3@example.com"))
@@ -95,9 +81,7 @@ class TestInsertTest {
   }
 
   @Test
-  def testInsertWithSeededRandom(): Unit = withConnection { c =>
-    given java.sql.Connection = c
-
+  def testInsertWithSeededRandom(): Unit = withConnection {
     val testInsert1 = TestInsert(Random(123))
     val testInsert2 = TestInsert(Random(123))
 
@@ -109,9 +93,7 @@ class TestInsertTest {
   }
 
   @Test
-  def testChainedCustomization(): Unit = withConnection { c =>
-    given java.sql.Connection = c
-
+  def testChainedCustomization(): Unit = withConnection {
     val row = testInsert.Customers(email = Email("first@test.com"), name = "First")
 
     assertEquals("First", row.name)

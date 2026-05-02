@@ -5,10 +5,11 @@
  */
 package adventureworks.production.productcategory
 
-import dev.typr.foundations.dsl.DeleteBuilder
-import dev.typr.foundations.dsl.SelectBuilder
-import dev.typr.foundations.dsl.UpdateBuilder
-import java.sql.Connection
+import dev.typr.dsl.DeleteBuilder
+import dev.typr.dsl.SelectBuilder
+import dev.typr.dsl.UpdateBuilder
+import dev.typr.foundations.Connection
+import dev.typr.foundations.ConnectionRead
 import java.util.Optional
 
 trait ProductcategoryRepo {
@@ -16,7 +17,7 @@ trait ProductcategoryRepo {
 
   def deleteById(productcategoryid: ProductcategoryId)(using c: Connection): java.lang.Boolean
 
-  def deleteByIds(productcategoryids: Array[ProductcategoryId])(using c: Connection): Integer
+  def deleteByIds(productcategoryids: java.util.List[ProductcategoryId])(using c: Connection): Integer
 
   def insert(unsaved: ProductcategoryRow)(using c: Connection): ProductcategoryRow
 
@@ -35,13 +36,13 @@ trait ProductcategoryRepo {
 
   def select: SelectBuilder[ProductcategoryFields, ProductcategoryRow]
 
-  def selectAll(using c: Connection): java.util.List[ProductcategoryRow]
+  def selectAll(using c: ConnectionRead): java.util.List[ProductcategoryRow]
 
-  def selectById(productcategoryid: ProductcategoryId)(using c: Connection): Optional[ProductcategoryRow]
+  def selectById(productcategoryid: ProductcategoryId)(using c: ConnectionRead): Optional[ProductcategoryRow]
 
-  def selectByIds(productcategoryids: Array[ProductcategoryId])(using c: Connection): java.util.List[ProductcategoryRow]
+  def selectByIds(productcategoryids: java.util.List[ProductcategoryId])(using c: ConnectionRead): java.util.List[ProductcategoryRow]
 
-  def selectByIdsTracked(productcategoryids: Array[ProductcategoryId])(using c: Connection): java.util.Map[ProductcategoryId, ProductcategoryRow]
+  def selectByIdsTracked(productcategoryids: java.util.List[ProductcategoryId])(using c: ConnectionRead): java.util.Map[ProductcategoryId, ProductcategoryRow]
 
   def update: UpdateBuilder[ProductcategoryFields, ProductcategoryRow]
 

@@ -6,10 +6,10 @@
 package oracledb.precision_types
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import dev.typr.foundations.OracleTypes
+import dev.typr.dslkt.RowCodecs
 import dev.typr.foundations.Tuple.Tuple17
-import dev.typr.foundations.kotlin.RowParser
-import dev.typr.foundations.kotlin.RowParsers
+import dev.typr.foundationskt.OracleTypes
+import dev.typr.foundationskt.RowCodec
 import java.time.LocalDateTime
 import oracledb.customtypes.Defaulted
 import oracledb.precisetypes.Decimal10_2
@@ -32,7 +32,7 @@ import oracledb.precisetypes.NonEmptyString50
   * Primary key: ID
   */
 data class PrecisionTypesRow(
-  /** Default: "TYPR"."ISEQ$$_72873".nextval */
+  /** Default: "TYPR"."ISEQ$$_72863".nextval */
   @field:JsonProperty("ID") val id: PrecisionTypesId,
   @field:JsonProperty("STRING10") val string10: NonEmptyString10,
   @field:JsonProperty("STRING20") val string20: NonEmptyString20,
@@ -88,6 +88,6 @@ data class PrecisionTypesRow(
   fun toUnsavedRow(id: Defaulted<PrecisionTypesId>): PrecisionTypesRowUnsaved = PrecisionTypesRowUnsaved(string10, string20, string50, string100, string255, char10, number52, number102, number184, number50, number100, number180, ts0, ts3, ts6, ts9, id)
 
   companion object {
-    val _rowParser: RowParser<PrecisionTypesRow> = RowParsers.of(PrecisionTypesId.oracleType, NonEmptyString10.oracleType, NonEmptyString20.oracleType, NonEmptyString50.oracleType, NonEmptyString100.oracleType, NonEmptyString255.oracleType, NonEmptyPaddedString10.oracleType, Decimal5_2.oracleType, Decimal10_2.oracleType, Decimal18_4.oracleType, Int5.oracleType, Int10.oracleType, Int18.oracleType, OracleTypes.timestamp, LocalDateTime3.oracleType, LocalDateTime6.oracleType, LocalDateTime9.oracleType, { t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15, t16 -> PrecisionTypesRow(t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15, t16) }, { row -> arrayOf<Any?>(row.id, row.string10, row.string20, row.string50, row.string100, row.string255, row.char10, row.number52, row.number102, row.number184, row.number50, row.number100, row.number180, row.ts0, row.ts3, row.ts6, row.ts9) })
+    val rowCodec: RowCodec<PrecisionTypesRow> = RowCodecs.of(PrecisionTypesId.oracleType, NonEmptyString10.oracleType, NonEmptyString20.oracleType, NonEmptyString50.oracleType, NonEmptyString100.oracleType, NonEmptyString255.oracleType, NonEmptyPaddedString10.oracleType, Decimal5_2.oracleType, Decimal10_2.oracleType, Decimal18_4.oracleType, Int5.oracleType, Int10.oracleType, Int18.oracleType, OracleTypes.timestamp, LocalDateTime3.oracleType, LocalDateTime6.oracleType, LocalDateTime9.oracleType, { t0: PrecisionTypesId, t1: NonEmptyString10, t2: NonEmptyString20, t3: NonEmptyString50, t4: NonEmptyString100, t5: NonEmptyString255, t6: NonEmptyPaddedString10, t7: Decimal5_2, t8: Decimal10_2, t9: Decimal18_4, t10: Int5, t11: Int10, t12: Int18, t13: LocalDateTime, t14: LocalDateTime3, t15: LocalDateTime6, t16: LocalDateTime9 -> PrecisionTypesRow(t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15, t16) }, { row: PrecisionTypesRow -> arrayOf<Any?>(row.id, row.string10, row.string20, row.string50, row.string100, row.string255, row.char10, row.number52, row.number102, row.number184, row.number50, row.number100, row.number180, row.ts0, row.ts3, row.ts6, row.ts9) })
   }
 }

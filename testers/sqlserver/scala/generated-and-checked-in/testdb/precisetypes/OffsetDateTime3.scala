@@ -6,10 +6,10 @@
 package testdb.precisetypes
 
 import com.fasterxml.jackson.annotation.JsonValue
-import dev.typr.foundations.SqlServerType
-import dev.typr.foundations.SqlServerTypes
+import dev.typr.dslsc.Bijection
 import dev.typr.foundations.data.precise.OffsetDateTimeN
-import dev.typr.foundations.scala.Bijection
+import dev.typr.foundationssc.SqlServerType
+import dev.typr.foundationssc.SqlServerTypes
 import java.time.OffsetDateTime
 import java.time.temporal.ChronoUnit
 
@@ -18,7 +18,7 @@ case class OffsetDateTime3 private(@JsonValue value: OffsetDateTime) extends Off
 
   override def fractionalSecondsPrecision: Int = 3
 
-  override def semanticEquals(other: OffsetDateTimeN): Boolean = (if (other == null) false else value == other.rawValue())
+  override def semanticEquals(other: OffsetDateTimeN): Boolean = (if (other == null) false else (value == other.rawValue()))
 
   override def semanticHashCode: Int = value.hashCode()
 
@@ -28,11 +28,11 @@ case class OffsetDateTime3 private(@JsonValue value: OffsetDateTime) extends Off
 }
 
 object OffsetDateTime3 {
-  given bijection: Bijection[OffsetDateTime3, OffsetDateTime] = Bijection.apply[OffsetDateTime3, OffsetDateTime](_.value)(OffsetDateTime3.apply)
+  given bijection: Bijection[OffsetDateTime3, OffsetDateTime] = Bijection.of[OffsetDateTime3, OffsetDateTime](_.value, OffsetDateTime3.apply)
 
   def now: OffsetDateTime3 = new OffsetDateTime3(OffsetDateTime.now().truncatedTo(ChronoUnit.MILLIS))
 
   def of(value: OffsetDateTime): OffsetDateTime3 = new OffsetDateTime3(value.truncatedTo(ChronoUnit.MILLIS))
 
-  given sqlServerType: SqlServerType[OffsetDateTime3] = SqlServerTypes.datetimeoffset.bimap(OffsetDateTime3.apply, _.value)
+  given sqlServerType: SqlServerType[OffsetDateTime3] = SqlServerTypes.datetimeoffset.to(Bijection.of(OffsetDateTime3.apply, _.value))
 }

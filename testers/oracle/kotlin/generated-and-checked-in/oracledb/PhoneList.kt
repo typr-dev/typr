@@ -5,13 +5,14 @@
  */
 package oracledb
 
-import dev.typr.foundations.OracleType
-import dev.typr.foundations.OracleTypes
+import dev.typr.foundations.Bijection
 import dev.typr.foundations.OracleVArray
+import dev.typr.foundationskt.OracleType
+import dev.typr.foundationskt.OracleTypes
 
 /** Oracle VARRAY Type: PHONE_LIST (max size: 5) */
-data class PhoneList(val value: Array<String>) {
+data class PhoneList(val value: Array<kotlin.String>) {
   companion object {
-    val oracleType: OracleType<PhoneList> = OracleVArray.of("PHONE_LIST", 5, OracleTypes.varchar2).bimap({ list -> PhoneList(list.toTypedArray()) }, { wrapper -> wrapper.value.asList() })
+    val oracleType: OracleType<PhoneList> = OracleType(OracleVArray.of("PHONE_LIST", 5, OracleTypes.varchar2.underlying).to(Bijection.of({ list -> PhoneList(list.toTypedArray()) }, { wrapper -> wrapper.value.asList() })))
   }
 }

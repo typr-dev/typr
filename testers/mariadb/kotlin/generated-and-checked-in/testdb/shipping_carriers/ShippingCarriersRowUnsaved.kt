@@ -14,13 +14,13 @@ import testdb.userdefined.IsActive
 /** This class corresponds to a row in table `shipping_carriers` which has not been persisted yet */
 data class ShippingCarriersRowUnsaved(
   /**  */
-  val code: String,
+  val code: kotlin.String,
   /**  */
-  val name: String,
+  val name: kotlin.String,
   /** Default: NULL
 
     */
-  @field:JsonProperty("tracking_url_template") val trackingUrlTemplate: Defaulted<String?> = UseDefault(),
+  @field:JsonProperty("tracking_url_template") val trackingUrlTemplate: Defaulted<kotlin.String?> = UseDefault(),
   /** Default: NULL
 
     */
@@ -31,7 +31,7 @@ data class ShippingCarriersRowUnsaved(
   @field:JsonProperty("is_active") val isActive: Defaulted</* user-picked */ IsActive> = UseDefault()
 ) {
   fun toRow(
-    trackingUrlTemplateDefault: () -> String?,
+    trackingUrlTemplateDefault: () -> kotlin.String?,
     apiConfigDefault: () -> Json?,
     isActiveDefault: () -> /* user-picked */ IsActive,
     carrierIdDefault: () -> ShippingCarriersId

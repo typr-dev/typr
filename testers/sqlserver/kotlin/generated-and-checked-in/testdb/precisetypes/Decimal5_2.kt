@@ -6,10 +6,10 @@
 package testdb.precisetypes
 
 import com.fasterxml.jackson.annotation.JsonValue
-import dev.typr.foundations.SqlServerType
 import dev.typr.foundations.data.precise.DecimalN
-import dev.typr.foundations.kotlin.Bijection
-import dev.typr.foundations.kotlin.KotlinDbTypes
+import dev.typr.foundationskt.Bijection
+import dev.typr.foundationskt.SqlServerType
+import dev.typr.foundationskt.SqlServerTypes
 import java.lang.IllegalArgumentException
 import java.math.BigDecimal
 import java.math.RoundingMode
@@ -18,7 +18,7 @@ import java.math.RoundingMode
 data class Decimal5_2 private constructor(@field:JsonValue val value: BigDecimal) : DecimalN {
   override fun decimalValue(): BigDecimal = value
 
-  override fun equals(other: Any?): Boolean {
+  override fun equals(other: Any?): kotlin.Boolean {
     if (this === other) return true
     if (other !is DecimalN) return false
     return decimalValue().compareTo(other.decimalValue()) == 0
@@ -30,7 +30,7 @@ data class Decimal5_2 private constructor(@field:JsonValue val value: BigDecimal
 
   override fun scale(): Int = 2
 
-  override fun semanticEquals(other: DecimalN): Boolean = if (other == null) false else decimalValue().compareTo(other.decimalValue()) == 0
+  override fun semanticEquals(other: DecimalN): kotlin.Boolean = if (other == null) false else decimalValue().compareTo(other.decimalValue()) == 0
 
   override fun semanticHashCode(): Int = decimalValue().stripTrailingZeros().hashCode()
 
@@ -39,30 +39,30 @@ data class Decimal5_2 private constructor(@field:JsonValue val value: BigDecimal
   }
 
   companion object {
-    val Zero: Decimal5_2 =
-      Decimal5_2(BigDecimal.ZERO)
-
-    val bijection: Bijection<Decimal5_2, BigDecimal> =
-      Bijection.of(Decimal5_2::value, ::Decimal5_2)
-
     fun of(value: BigDecimal): Decimal5_2? {
       val scaled = value.setScale(2, RoundingMode.HALF_UP)
       return if (scaled.precision() <= 5) Decimal5_2(scaled) else null
     }
-
-    fun of(value: Int): Decimal5_2 = Decimal5_2(BigDecimal.valueOf(value.toLong()))
-
-    fun of(value: Long): Decimal5_2? = Decimal5_2.of(BigDecimal.valueOf(value))
-
-    fun of(value: Double): Decimal5_2? = Decimal5_2.of(BigDecimal.valueOf(value))
-
-    val sqlServerType: SqlServerType<Decimal5_2> =
-      KotlinDbTypes.SqlServerTypes.decimal.bimap(::Decimal5_2, Decimal5_2::value)
 
     fun unsafeForce(value: BigDecimal): Decimal5_2 {
       val scaled = value.setScale(2, RoundingMode.HALF_UP)
       if (scaled.precision() > 5) throw IllegalArgumentException("Value exceeds precision(5, 2)")
       return Decimal5_2(scaled)
     }
+
+    fun of(value: Int): Decimal5_2 = Decimal5_2(BigDecimal.valueOf(value.toLong()))
+
+    fun of(value: kotlin.Long): Decimal5_2? = Decimal5_2.of(BigDecimal.valueOf(value))
+
+    fun of(value: kotlin.Double): Decimal5_2? = Decimal5_2.of(BigDecimal.valueOf(value))
+
+    val Zero: Decimal5_2 =
+      Decimal5_2(BigDecimal.ZERO)
+
+    val bijection: Bijection<Decimal5_2, BigDecimal> =
+      Bijection.of(Decimal5_2::value, ::Decimal5_2)
+
+    val sqlServerType: SqlServerType<Decimal5_2> =
+      SqlServerTypes.decimal.to(Bijection.of(::Decimal5_2, Decimal5_2::value))
   }
 }

@@ -7,11 +7,11 @@ package adventureworks.production.productcategory
 
 import adventureworks.customtypes.Defaulted
 import adventureworks.public.Name
+import dev.typr.dslkt.RowCodecs
 import dev.typr.foundations.PgText
-import dev.typr.foundations.PgTypes
 import dev.typr.foundations.Tuple.Tuple4
-import dev.typr.foundations.kotlin.RowParser
-import dev.typr.foundations.kotlin.RowParsers
+import dev.typr.foundationskt.PgTypes
+import dev.typr.foundationskt.RowCodec
 import java.time.LocalDateTime
 import java.util.UUID
 
@@ -48,9 +48,9 @@ data class ProductcategoryRow(
   ): ProductcategoryRowUnsaved = ProductcategoryRowUnsaved(name, productcategoryid, rowguid, modifieddate)
 
   companion object {
-    val _rowParser: RowParser<ProductcategoryRow> = RowParsers.of(ProductcategoryId.pgType, Name.pgType, PgTypes.uuid, PgTypes.timestamp, { t0, t1, t2, t3 -> ProductcategoryRow(t0, t1, t2, t3) }, { row -> arrayOf<Any?>(row.productcategoryid, row.name, row.rowguid, row.modifieddate) })
+    val rowCodec: RowCodec<ProductcategoryRow> = RowCodecs.of(ProductcategoryId.pgType, Name.pgType, PgTypes.uuid, PgTypes.timestamp, { t0: ProductcategoryId, t1: Name, t2: UUID, t3: LocalDateTime -> ProductcategoryRow(t0, t1, t2, t3) }, { row: ProductcategoryRow -> arrayOf<Any?>(row.productcategoryid, row.name, row.rowguid, row.modifieddate) })
 
     val pgText: PgText<ProductcategoryRow> =
-      PgText.from(_rowParser.underlying)
+      PgText.from(rowCodec.underlying)
   }
 }

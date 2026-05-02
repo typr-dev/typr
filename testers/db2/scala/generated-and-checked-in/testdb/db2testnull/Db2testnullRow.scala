@@ -6,13 +6,11 @@
 package testdb.db2testnull
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import dev.typr.foundations.Db2Types
+import dev.typr.dslsc.RowCodecs
 import dev.typr.foundations.Tuple.Tuple24
 import dev.typr.foundations.data.Xml
-import dev.typr.foundations.scala.DbTypeOps
-import dev.typr.foundations.scala.RowParser
-import dev.typr.foundations.scala.RowParsers
-import dev.typr.foundations.scala.ScalaDbTypes
+import dev.typr.foundationssc.Db2Types
+import dev.typr.foundationssc.RowCodec
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
@@ -94,5 +92,5 @@ case class Db2testnullRow(
 }
 
 object Db2testnullRow {
-  val `_rowParser`: RowParser[Db2testnullRow] = RowParsers.of(ScalaDbTypes.Db2Types.smallint.nullable, ScalaDbTypes.Db2Types.integer.nullable, ScalaDbTypes.Db2Types.bigint.nullable, ScalaDbTypes.Db2Types.decimal.nullable, ScalaDbTypes.Db2Types.decimal.nullable, ScalaDbTypes.Db2Types.decfloat.nullable, ScalaDbTypes.Db2Types.decfloat.nullable, ScalaDbTypes.Db2Types.real.nullable, ScalaDbTypes.Db2Types.double_.nullable, ScalaDbTypes.Db2Types.boolean_.nullable, Db2Types.char_.nullable, Db2Types.varchar.nullable, Db2Types.clob.nullable, Db2Types.graphic.nullable, Db2Types.vargraphic.nullable, Db2Types.binary.nullable, Db2Types.varbinary.nullable, Db2Types.blob.nullable, Db2Types.date.nullable, Db2Types.time.nullable, Db2Types.timestamp.nullable, Db2Types.timestamp.nullable, Db2Types.timestamp.nullable, Db2Types.xml.nullable)(Db2testnullRow.apply)(row => Array[Any](row.smallintCol, row.intCol, row.bigintCol, row.decimalCol, row.numericCol, row.decfloat16Col, row.decfloat34Col, row.realCol, row.doubleCol, row.boolCol, row.charCol, row.varcharCol, row.clobCol, row.graphicCol, row.vargraphicCol, row.binaryCol, row.varbinaryCol, row.blobCol, row.dateCol, row.timeCol, row.timestampCol, row.timestamp6Col, row.timestamp12Col, row.xmlCol))
+  val rowCodec: RowCodec[Db2testnullRow] = RowCodecs.of(Db2Types.smallint.opt, Db2Types.integer.opt, Db2Types.bigint.opt, Db2Types.decimal.opt, Db2Types.decimal.opt, Db2Types.decfloat.opt, Db2Types.decfloat.opt, Db2Types.real.opt, Db2Types.double_.opt, Db2Types.boolean_.opt, Db2Types.char_.opt, Db2Types.varchar.opt, Db2Types.clob.opt, Db2Types.graphic.opt, Db2Types.vargraphic.opt, Db2Types.binary.opt, Db2Types.varbinary.opt, Db2Types.blob.opt, Db2Types.date.opt, Db2Types.time.opt, Db2Types.timestamp.opt, Db2Types.timestamp.opt, Db2Types.timestamp.opt, Db2Types.xml.opt)(Db2testnullRow.apply)(row => Array[Any](row.smallintCol, row.intCol, row.bigintCol, row.decimalCol, row.numericCol, row.decfloat16Col, row.decfloat34Col, row.realCol, row.doubleCol, row.boolCol, row.charCol, row.varcharCol, row.clobCol, row.graphicCol, row.vargraphicCol, row.binaryCol, row.varbinaryCol, row.blobCol, row.dateCol, row.timeCol, row.timestampCol, row.timestamp6Col, row.timestamp12Col, row.xmlCol))
 }

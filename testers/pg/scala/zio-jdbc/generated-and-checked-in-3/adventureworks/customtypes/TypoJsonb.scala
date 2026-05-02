@@ -53,7 +53,7 @@ object TypoJsonb {
     )
   }
 
-  given bijection: Bijection[TypoJsonb, String] = Bijection.apply[TypoJsonb, String](_.value)(TypoJsonb.apply)
+  given bijection: Bijection[TypoJsonb, String] = Bijection[TypoJsonb, String](_.value)(TypoJsonb.apply)
 
   given jdbcDecoder: JdbcDecoder[TypoJsonb] = {
     JdbcDecoder[TypoJsonb](

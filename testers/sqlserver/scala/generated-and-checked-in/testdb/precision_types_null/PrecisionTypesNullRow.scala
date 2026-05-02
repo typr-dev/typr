@@ -6,11 +6,10 @@
 package testdb.precision_types_null
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import dev.typr.foundations.SqlServerTypes
+import dev.typr.dslsc.RowCodecs
 import dev.typr.foundations.Tuple.Tuple27
-import dev.typr.foundations.scala.DbTypeOps
-import dev.typr.foundations.scala.RowParser
-import dev.typr.foundations.scala.RowParsers
+import dev.typr.foundationssc.RowCodec
+import dev.typr.foundationssc.SqlServerTypes
 import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.OffsetDateTime
@@ -154,5 +153,5 @@ case class PrecisionTypesNullRow(
 }
 
 object PrecisionTypesNullRow {
-  val `_rowParser`: RowParser[PrecisionTypesNullRow] = RowParsers.of(PrecisionTypesNullId.sqlServerType, String10.sqlServerType.nullable, String20.sqlServerType.nullable, String50.sqlServerType.nullable, String100.sqlServerType.nullable, String255.sqlServerType.nullable, String10.sqlServerType.nullable, String50.sqlServerType.nullable, String255.sqlServerType.nullable, PaddedString10.sqlServerType.nullable, PaddedString10.sqlServerType.nullable, Decimal5_2.sqlServerType.nullable, Decimal10_2.sqlServerType.nullable, Decimal18_4.sqlServerType.nullable, Decimal8_2.sqlServerType.nullable, Decimal12_4.sqlServerType.nullable, Binary10.sqlServerType.nullable, Binary32.sqlServerType.nullable, SqlServerTypes.time.nullable, LocalTime3.sqlServerType.nullable, LocalTime7.sqlServerType.nullable, SqlServerTypes.datetime2.nullable, LocalDateTime3.sqlServerType.nullable, LocalDateTime7.sqlServerType.nullable, SqlServerTypes.datetimeoffset.nullable, OffsetDateTime3.sqlServerType.nullable, OffsetDateTime7.sqlServerType.nullable)(PrecisionTypesNullRow.apply)(row => Array[Any](row.id, row.string10, row.string20, row.string50, row.string100, row.string255, row.nstring10, row.nstring50, row.nstring255, row.char10, row.nchar10, row.decimal52, row.decimal102, row.decimal184, row.numeric82, row.numeric124, row.binary10, row.binary32, row.time0, row.time3, row.time7, row.datetime20, row.datetime23, row.datetime27, row.dto0, row.dto3, row.dto7))
+  val rowCodec: RowCodec[PrecisionTypesNullRow] = RowCodecs.of(PrecisionTypesNullId.sqlServerType, String10.sqlServerType.opt, String20.sqlServerType.opt, String50.sqlServerType.opt, String100.sqlServerType.opt, String255.sqlServerType.opt, String10.sqlServerType.opt, String50.sqlServerType.opt, String255.sqlServerType.opt, PaddedString10.sqlServerType.opt, PaddedString10.sqlServerType.opt, Decimal5_2.sqlServerType.opt, Decimal10_2.sqlServerType.opt, Decimal18_4.sqlServerType.opt, Decimal8_2.sqlServerType.opt, Decimal12_4.sqlServerType.opt, Binary10.sqlServerType.opt, Binary32.sqlServerType.opt, SqlServerTypes.time.opt, LocalTime3.sqlServerType.opt, LocalTime7.sqlServerType.opt, SqlServerTypes.datetime2.opt, LocalDateTime3.sqlServerType.opt, LocalDateTime7.sqlServerType.opt, SqlServerTypes.datetimeoffset.opt, OffsetDateTime3.sqlServerType.opt, OffsetDateTime7.sqlServerType.opt)(PrecisionTypesNullRow.apply)(row => Array[Any](row.id, row.string10, row.string20, row.string50, row.string100, row.string255, row.nstring10, row.nstring50, row.nstring255, row.char10, row.nchar10, row.decimal52, row.decimal102, row.decimal184, row.numeric82, row.numeric124, row.binary10, row.binary32, row.time0, row.time3, row.time7, row.datetime20, row.datetime23, row.datetime27, row.dto0, row.dto3, row.dto7))
 }

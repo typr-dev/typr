@@ -6,11 +6,11 @@
 package oracledb.products
 
 import com.fasterxml.jackson.annotation.JsonValue
-import dev.typr.foundations.OracleType
-import dev.typr.foundations.kotlin.Bijection
-import dev.typr.foundations.kotlin.KotlinDbTypes
-import dev.typr.foundations.kotlin.RowParser
-import dev.typr.foundations.kotlin.RowParsers
+import dev.typr.dslkt.RowCodecs
+import dev.typr.foundationskt.Bijection
+import dev.typr.foundationskt.OracleType
+import dev.typr.foundationskt.OracleTypes
+import dev.typr.foundationskt.RowCodec
 import java.math.BigDecimal
 
 /** Type for the primary key of table `PRODUCTS` */
@@ -20,13 +20,13 @@ data class ProductsId(@field:JsonValue val value: BigDecimal) {
   }
 
   companion object {
-    val _rowParser: RowParser<ProductsId> =
-      RowParsers.of(KotlinDbTypes.OracleTypes.number.bimap(::ProductsId, ProductsId::value), { x -> x }, { id -> arrayOf<Any?>(id) })
-
     val bijection: Bijection<ProductsId, BigDecimal> =
       Bijection.of(ProductsId::value, ::ProductsId)
 
     val oracleType: OracleType<ProductsId> =
-      KotlinDbTypes.OracleTypes.number.bimap(::ProductsId, ProductsId::value)
+      OracleTypes.number.to(Bijection.of(::ProductsId, ProductsId::value))
+
+    val rowCodec: RowCodec<ProductsId> =
+      RowCodecs.of(OracleTypes.number.to(Bijection.of(::ProductsId, ProductsId::value)), { x -> x }, { id -> arrayOf<Any?>(id) })
   }
 }

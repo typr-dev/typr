@@ -27,7 +27,7 @@ object CardinalNumber {
 
   given arraySetter: Setter[Array[CardinalNumber]] = adventureworks.IntArraySetter.contramap(_.map(_.value))
 
-  given bijection: Bijection[CardinalNumber, Int] = Bijection.apply[CardinalNumber, Int](_.value)(CardinalNumber.apply)
+  given bijection: Bijection[CardinalNumber, Int] = Bijection[CardinalNumber, Int](_.value)(CardinalNumber.apply)
 
   given jdbcDecoder: JdbcDecoder[CardinalNumber] = JdbcDecoder.intDecoder.map(CardinalNumber.apply)
 

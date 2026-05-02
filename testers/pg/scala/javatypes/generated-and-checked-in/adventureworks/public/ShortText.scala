@@ -6,9 +6,9 @@
 package adventureworks.public
 
 import com.fasterxml.jackson.annotation.JsonValue
+import dev.typr.foundations.Bijection
 import dev.typr.foundations.PgType
 import dev.typr.foundations.PgTypes
-import dev.typr.foundations.dsl.Bijection
 
 /** Domain `public.short_text`
  * Constraint: CHECK ((length(VALUE) <= 55))
@@ -16,9 +16,9 @@ import dev.typr.foundations.dsl.Bijection
 case class ShortText(@JsonValue value: String)
 
 object ShortText {
-  given bijection: Bijection[ShortText, String] = Bijection.apply[ShortText, String](_.value)(ShortText.apply)
+  given bijection: Bijection[ShortText, String] = Bijection.of[ShortText, String](_.value, ShortText.apply)
 
-  given pgType: PgType[ShortText] = PgTypes.text.bimap(ShortText.apply, _.value).renamed(""""public"."short_text"""")
+  given pgType: PgType[ShortText] = PgTypes.text.to(Bijection.of(ShortText.apply, _.value)).renamed(""""public"."short_text"""")
 
-  given pgTypeArray: PgType[Array[ShortText]] = PgTypes.textArray.bimap(xs => xs.map(ShortText.apply), xs => xs.map(_.value)).renamed(""""public"."short_text"[]""")
+  given pgTypeArray: PgType[java.util.List[ShortText]] = pgType.array
 }

@@ -5,14 +5,14 @@
  */
 package oracledb.customers
 
-import dev.typr.foundations.OracleTypes
-import dev.typr.foundations.kotlin.DeleteBuilder
-import dev.typr.foundations.kotlin.Dialect
-import dev.typr.foundations.kotlin.Fragment
-import dev.typr.foundations.kotlin.SelectBuilder
-import dev.typr.foundations.kotlin.UpdateBuilder
-import dev.typr.foundations.kotlin.nullable
-import java.sql.Connection
+import dev.typr.dslkt.DeleteBuilder
+import dev.typr.dslkt.Dialect
+import dev.typr.dslkt.SelectBuilder
+import dev.typr.dslkt.UpdateBuilder
+import dev.typr.foundationskt.Connection
+import dev.typr.foundationskt.ConnectionRead
+import dev.typr.foundationskt.Fragment
+import dev.typr.foundationskt.OracleTypes
 import java.util.ArrayList
 import kotlin.collections.Iterator
 import kotlin.collections.List
@@ -27,22 +27,22 @@ class CustomersRepoImpl() : CustomersRepo {
   override fun deleteById(
     customerId: CustomersId,
     c: Connection
-  ): Boolean = Fragment.interpolate(Fragment.lit("delete from \"CUSTOMERS\" where \"CUSTOMER_ID\" = "), Fragment.encode(CustomersId.oracleType, customerId), Fragment.lit("")).update().runUnchecked(c) > 0
+  ): kotlin.Boolean = Fragment.concat(Fragment.of("delete from \"CUSTOMERS\" where \"CUSTOMER_ID\" = "), Fragment.encode(CustomersId.oracleType, customerId), Fragment.of("")).update().run(c) > 0
 
   override fun deleteByIds(
-    customerIds: Array<CustomersId>,
+    customerIds: List<CustomersId>,
     c: Connection
   ): Int {
     val fragments: ArrayList<Fragment> = ArrayList()
     for (id in customerIds) { fragments.add(Fragment.encode(CustomersId.oracleType, id)) }
-    return Fragment.interpolate(Fragment.lit("delete from \"CUSTOMERS\" where \"CUSTOMER_ID\" in ("), Fragment.comma(fragments.toMutableList()), Fragment.lit(")")).update().runUnchecked(c)
+    return Fragment.concat(Fragment.of("delete from \"CUSTOMERS\" where \"CUSTOMER_ID\" in ("), Fragment.comma(fragments.toMutableList()), Fragment.of(")")).update().run(c)
   }
 
   override fun insert(
     unsaved: CustomersRow,
     c: Connection
-  ): CustomersId = Fragment.interpolate(Fragment.lit("insert into \"CUSTOMERS\"(\"CUSTOMER_ID\", \"NAME\", \"BILLING_ADDRESS\", \"CREDIT_LIMIT\", \"CREATED_AT\")\nvalues ("), Fragment.encode(CustomersId.oracleType, unsaved.customerId), Fragment.lit(", "), Fragment.encode(OracleTypes.varchar2, unsaved.name), Fragment.lit(", "), Fragment.encode(AddressT.oracleType, unsaved.billingAddress), Fragment.lit(", "), Fragment.encode(MoneyT.oracleType.nullable(), unsaved.creditLimit), Fragment.lit(", "), Fragment.encode(OracleTypes.timestamp, unsaved.createdAt), Fragment.lit(")\n"))
-    .updateReturningGeneratedKeys(arrayOf<String>("CUSTOMER_ID"), CustomersId._rowParser.exactlyOne()).runUnchecked(c)
+  ): CustomersId = Fragment.concat(Fragment.of("insert into \"CUSTOMERS\"(\"CUSTOMER_ID\", \"NAME\", \"BILLING_ADDRESS\", \"CREDIT_LIMIT\", \"CREATED_AT\")\nvalues ("), Fragment.encode(CustomersId.oracleType, unsaved.customerId), Fragment.of(", "), Fragment.encode(OracleTypes.varchar2, unsaved.name), Fragment.of(", "), Fragment.encode(AddressT.oracleType, unsaved.billingAddress), Fragment.of(", "), Fragment.encode(MoneyT.oracleType.opt(), unsaved.creditLimit), Fragment.of(", "), Fragment.encode(OracleTypes.timestamp, unsaved.createdAt), Fragment.of(")\n"))
+    .updateReturningGeneratedKeys(arrayOf<kotlin.String>("CUSTOMER_ID"), CustomersId.rowCodec.exactlyOne()).run(c)
 
   override fun insert(
     unsaved: CustomersRowUnsaved,
@@ -50,78 +50,78 @@ class CustomersRepoImpl() : CustomersRepo {
   ): CustomersId {
     val columns: ArrayList<Fragment> = ArrayList()
     val values: ArrayList<Fragment> = ArrayList()
-    columns.add(Fragment.lit("\"NAME\""))
-    values.add(Fragment.interpolate(Fragment.encode(OracleTypes.varchar2, unsaved.name), Fragment.lit("")))
-    columns.add(Fragment.lit("\"BILLING_ADDRESS\""))
-    values.add(Fragment.interpolate(Fragment.encode(AddressT.oracleType, unsaved.billingAddress), Fragment.lit("")))
-    columns.add(Fragment.lit("\"CREDIT_LIMIT\""))
-    values.add(Fragment.interpolate(Fragment.encode(MoneyT.oracleType.nullable(), unsaved.creditLimit), Fragment.lit("")))
+    columns.add(Fragment.of("\"NAME\""))
+    values.add(Fragment.concat(Fragment.encode(OracleTypes.varchar2, unsaved.name), Fragment.of("")))
+    columns.add(Fragment.of("\"BILLING_ADDRESS\""))
+    values.add(Fragment.concat(Fragment.encode(AddressT.oracleType, unsaved.billingAddress), Fragment.of("")))
+    columns.add(Fragment.of("\"CREDIT_LIMIT\""))
+    values.add(Fragment.concat(Fragment.encode(MoneyT.oracleType.opt(), unsaved.creditLimit), Fragment.of("")))
     unsaved.customerId.visit(
       {  },
-      { value -> columns.add(Fragment.lit("\"CUSTOMER_ID\""))
-      values.add(Fragment.interpolate(Fragment.encode(CustomersId.oracleType, value), Fragment.lit(""))) }
+      { value -> columns.add(Fragment.of("\"CUSTOMER_ID\""))
+      values.add(Fragment.concat(Fragment.encode(CustomersId.oracleType, value), Fragment.of(""))) }
     );
     unsaved.createdAt.visit(
       {  },
-      { value -> columns.add(Fragment.lit("\"CREATED_AT\""))
-      values.add(Fragment.interpolate(Fragment.encode(OracleTypes.timestamp, value), Fragment.lit(""))) }
+      { value -> columns.add(Fragment.of("\"CREATED_AT\""))
+      values.add(Fragment.concat(Fragment.encode(OracleTypes.timestamp, value), Fragment.of(""))) }
     );
-    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into \"CUSTOMERS\"("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\n"))
-    return q.updateReturningGeneratedKeys(arrayOf<String>("CUSTOMER_ID"), CustomersId._rowParser.exactlyOne()).runUnchecked(c)
+    val q: Fragment = Fragment.concat(Fragment.of("insert into \"CUSTOMERS\"("), Fragment.comma(columns.toMutableList()), Fragment.of(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.of(")\n"))
+    return q.updateReturningGeneratedKeys(arrayOf<kotlin.String>("CUSTOMER_ID"), CustomersId.rowCodec.exactlyOne()).run(c)
   }
 
-  override fun select(): SelectBuilder<CustomersFields, CustomersRow> = SelectBuilder.of("\"CUSTOMERS\"", CustomersFields.structure, CustomersRow._rowParser, Dialect.ORACLE)
+  override fun select(): SelectBuilder<CustomersFields, CustomersRow> = SelectBuilder.of("\"CUSTOMERS\"", CustomersFields.structure, CustomersRow.rowCodec, Dialect.ORACLE)
 
-  override fun selectAll(c: Connection): List<CustomersRow> = Fragment.interpolate(Fragment.lit("select \"CUSTOMER_ID\", \"NAME\", \"BILLING_ADDRESS\", \"CREDIT_LIMIT\", \"CREATED_AT\"\nfrom \"CUSTOMERS\"\n")).query(CustomersRow._rowParser.all()).runUnchecked(c)
+  override fun selectAll(c: ConnectionRead): List<CustomersRow> = Fragment.concat(Fragment.of("select \"CUSTOMER_ID\", \"NAME\", \"BILLING_ADDRESS\", \"CREDIT_LIMIT\", \"CREATED_AT\"\nfrom \"CUSTOMERS\"\n")).query(CustomersRow.rowCodec.all()).run(c)
 
   override fun selectById(
     customerId: CustomersId,
-    c: Connection
-  ): CustomersRow? = Fragment.interpolate(Fragment.lit("select \"CUSTOMER_ID\", \"NAME\", \"BILLING_ADDRESS\", \"CREDIT_LIMIT\", \"CREATED_AT\"\nfrom \"CUSTOMERS\"\nwhere \"CUSTOMER_ID\" = "), Fragment.encode(CustomersId.oracleType, customerId), Fragment.lit("")).query(CustomersRow._rowParser.first()).runUnchecked(c)
+    c: ConnectionRead
+  ): CustomersRow? = Fragment.concat(Fragment.of("select \"CUSTOMER_ID\", \"NAME\", \"BILLING_ADDRESS\", \"CREDIT_LIMIT\", \"CREATED_AT\"\nfrom \"CUSTOMERS\"\nwhere \"CUSTOMER_ID\" = "), Fragment.encode(CustomersId.oracleType, customerId), Fragment.of("")).query(CustomersRow.rowCodec.first()).run(c)
 
   override fun selectByIds(
-    customerIds: Array<CustomersId>,
-    c: Connection
+    customerIds: List<CustomersId>,
+    c: ConnectionRead
   ): List<CustomersRow> {
     val fragments: ArrayList<Fragment> = ArrayList()
     for (id in customerIds) { fragments.add(Fragment.encode(CustomersId.oracleType, id)) }
-    return Fragment.interpolate(Fragment.lit("select \"CUSTOMER_ID\", \"NAME\", \"BILLING_ADDRESS\", \"CREDIT_LIMIT\", \"CREATED_AT\" from \"CUSTOMERS\" where \"CUSTOMER_ID\" in ("), Fragment.comma(fragments.toMutableList()), Fragment.lit(")")).query(CustomersRow._rowParser.all()).runUnchecked(c)
+    return Fragment.concat(Fragment.of("select \"CUSTOMER_ID\", \"NAME\", \"BILLING_ADDRESS\", \"CREDIT_LIMIT\", \"CREATED_AT\" from \"CUSTOMERS\" where \"CUSTOMER_ID\" in ("), Fragment.comma(fragments.toMutableList()), Fragment.of(")")).query(CustomersRow.rowCodec.all()).run(c)
   }
 
   override fun selectByIdsTracked(
-    customerIds: Array<CustomersId>,
-    c: Connection
+    customerIds: List<CustomersId>,
+    c: ConnectionRead
   ): Map<CustomersId, CustomersRow> {
     val ret: MutableMap<CustomersId, CustomersRow> = mutableMapOf<CustomersId, CustomersRow>()
     selectByIds(customerIds, c).forEach({ row -> ret.put(row.customerId, row) })
     return ret.toMap()
   }
 
-  override fun update(): UpdateBuilder<CustomersFields, CustomersRow> = UpdateBuilder.of("\"CUSTOMERS\"", CustomersFields.structure, CustomersRow._rowParser, Dialect.ORACLE)
+  override fun update(): UpdateBuilder<CustomersFields, CustomersRow> = UpdateBuilder.of("\"CUSTOMERS\"", CustomersFields.structure, CustomersRow.rowCodec, Dialect.ORACLE)
 
   override fun update(
     row: CustomersRow,
     c: Connection
-  ): Boolean {
+  ): kotlin.Boolean {
     val customerId: CustomersId = row.customerId
-    return Fragment.interpolate(Fragment.lit("update \"CUSTOMERS\"\nset \"NAME\" = "), Fragment.encode(OracleTypes.varchar2, row.name), Fragment.lit(",\n\"BILLING_ADDRESS\" = "), Fragment.encode(AddressT.oracleType, row.billingAddress), Fragment.lit(",\n\"CREDIT_LIMIT\" = "), Fragment.encode(MoneyT.oracleType.nullable(), row.creditLimit), Fragment.lit(",\n\"CREATED_AT\" = "), Fragment.encode(OracleTypes.timestamp, row.createdAt), Fragment.lit("\nwhere \"CUSTOMER_ID\" = "), Fragment.encode(CustomersId.oracleType, customerId), Fragment.lit("")).update().runUnchecked(c) > 0
+    return Fragment.concat(Fragment.of("update \"CUSTOMERS\"\nset \"NAME\" = "), Fragment.encode(OracleTypes.varchar2, row.name), Fragment.of(",\n\"BILLING_ADDRESS\" = "), Fragment.encode(AddressT.oracleType, row.billingAddress), Fragment.of(",\n\"CREDIT_LIMIT\" = "), Fragment.encode(MoneyT.oracleType.opt(), row.creditLimit), Fragment.of(",\n\"CREATED_AT\" = "), Fragment.encode(OracleTypes.timestamp, row.createdAt), Fragment.of("\nwhere \"CUSTOMER_ID\" = "), Fragment.encode(CustomersId.oracleType, customerId), Fragment.of("")).update().run(c) > 0
   }
 
   override fun upsert(
     unsaved: CustomersRow,
     c: Connection
   ) {
-    Fragment.interpolate(Fragment.lit("MERGE INTO \"CUSTOMERS\" t\nUSING (SELECT "), Fragment.encode(CustomersId.oracleType, unsaved.customerId), Fragment.lit(", "), Fragment.encode(OracleTypes.varchar2, unsaved.name), Fragment.lit(", "), Fragment.encode(AddressT.oracleType, unsaved.billingAddress), Fragment.lit(", "), Fragment.encode(MoneyT.oracleType.nullable(), unsaved.creditLimit), Fragment.lit(", "), Fragment.encode(OracleTypes.timestamp, unsaved.createdAt), Fragment.lit(" FROM DUAL) s\nON (t.\"CUSTOMER_ID\" = s.\"CUSTOMER_ID\")\nWHEN MATCHED THEN UPDATE SET t.\"NAME\" = s.\"NAME\",\nt.\"BILLING_ADDRESS\" = s.\"BILLING_ADDRESS\",\nt.\"CREDIT_LIMIT\" = s.\"CREDIT_LIMIT\",\nt.\"CREATED_AT\" = s.\"CREATED_AT\"\nWHEN NOT MATCHED THEN INSERT (\"CUSTOMER_ID\", \"NAME\", \"BILLING_ADDRESS\", \"CREDIT_LIMIT\", \"CREATED_AT\") VALUES ("), Fragment.encode(CustomersId.oracleType, unsaved.customerId), Fragment.lit(", "), Fragment.encode(OracleTypes.varchar2, unsaved.name), Fragment.lit(", "), Fragment.encode(AddressT.oracleType, unsaved.billingAddress), Fragment.lit(", "), Fragment.encode(MoneyT.oracleType.nullable(), unsaved.creditLimit), Fragment.lit(", "), Fragment.encode(OracleTypes.timestamp, unsaved.createdAt), Fragment.lit(")"))
+    Fragment.concat(Fragment.of("MERGE INTO \"CUSTOMERS\" t\nUSING (SELECT "), Fragment.encode(CustomersId.oracleType, unsaved.customerId), Fragment.of(", "), Fragment.encode(OracleTypes.varchar2, unsaved.name), Fragment.of(", "), Fragment.encode(AddressT.oracleType, unsaved.billingAddress), Fragment.of(", "), Fragment.encode(MoneyT.oracleType.opt(), unsaved.creditLimit), Fragment.of(", "), Fragment.encode(OracleTypes.timestamp, unsaved.createdAt), Fragment.of(" FROM DUAL) s\nON (t.\"CUSTOMER_ID\" = s.\"CUSTOMER_ID\")\nWHEN MATCHED THEN UPDATE SET t.\"NAME\" = s.\"NAME\",\nt.\"BILLING_ADDRESS\" = s.\"BILLING_ADDRESS\",\nt.\"CREDIT_LIMIT\" = s.\"CREDIT_LIMIT\",\nt.\"CREATED_AT\" = s.\"CREATED_AT\"\nWHEN NOT MATCHED THEN INSERT (\"CUSTOMER_ID\", \"NAME\", \"BILLING_ADDRESS\", \"CREDIT_LIMIT\", \"CREATED_AT\") VALUES ("), Fragment.encode(CustomersId.oracleType, unsaved.customerId), Fragment.of(", "), Fragment.encode(OracleTypes.varchar2, unsaved.name), Fragment.of(", "), Fragment.encode(AddressT.oracleType, unsaved.billingAddress), Fragment.of(", "), Fragment.encode(MoneyT.oracleType.opt(), unsaved.creditLimit), Fragment.of(", "), Fragment.encode(OracleTypes.timestamp, unsaved.createdAt), Fragment.of(")"))
       .update()
-      .runUnchecked(c)
+      .run(c)
   }
 
   override fun upsertBatch(
     unsaved: Iterator<CustomersRow>,
     c: Connection
   ) {
-    Fragment.interpolate(Fragment.lit("MERGE INTO \"CUSTOMERS\" t\nUSING (SELECT ?, ?, ?, ?, ? FROM DUAL) s\nON (t.\"CUSTOMER_ID\" = s.\"CUSTOMER_ID\")\nWHEN MATCHED THEN UPDATE SET t.\"NAME\" = s.\"NAME\",\nt.\"BILLING_ADDRESS\" = s.\"BILLING_ADDRESS\",\nt.\"CREDIT_LIMIT\" = s.\"CREDIT_LIMIT\",\nt.\"CREATED_AT\" = s.\"CREATED_AT\"\nWHEN NOT MATCHED THEN INSERT (\"CUSTOMER_ID\", \"NAME\", \"BILLING_ADDRESS\", \"CREDIT_LIMIT\", \"CREATED_AT\") VALUES (?, ?, ?, ?, ?)"))
-      .updateMany(CustomersRow._rowParser, unsaved)
-      .runUnchecked(c)
+    Fragment.concat(Fragment.of("MERGE INTO \"CUSTOMERS\" t\nUSING (SELECT ?, ?, ?, ?, ? FROM DUAL) s\nON (t.\"CUSTOMER_ID\" = s.\"CUSTOMER_ID\")\nWHEN MATCHED THEN UPDATE SET t.\"NAME\" = s.\"NAME\",\nt.\"BILLING_ADDRESS\" = s.\"BILLING_ADDRESS\",\nt.\"CREDIT_LIMIT\" = s.\"CREDIT_LIMIT\",\nt.\"CREATED_AT\" = s.\"CREATED_AT\"\nWHEN NOT MATCHED THEN INSERT (\"CUSTOMER_ID\", \"NAME\", \"BILLING_ADDRESS\", \"CREDIT_LIMIT\", \"CREATED_AT\") VALUES (?, ?, ?, ?, ?)"))
+      .updateMany(CustomersRow.rowCodec, unsaved)
+      .run(c)
   }
 }

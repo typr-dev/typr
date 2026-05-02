@@ -6,27 +6,27 @@
 package adventureworks.person_row_join
 
 import adventureworks.person.businessentity.BusinessentityId
-import dev.typr.foundations.PgTypes
+import dev.typr.dslkt.RowCodecs
 import dev.typr.foundations.Tuple.Tuple3
 import dev.typr.foundations.data.Record
-import dev.typr.foundations.kotlin.RowParser
-import dev.typr.foundations.kotlin.RowParsers
-import dev.typr.foundations.kotlin.nullable
+import dev.typr.foundationskt.PgTypes
+import dev.typr.foundationskt.RowCodec
+import kotlin.collections.List
 
 /** SQL file: person_row_join.sql */
 data class PersonRowJoinSqlRow(
   /** Points to [adventureworks.sales.salesperson.SalespersonRow.businessentityid] */
   val businessentityid: BusinessentityId,
-  val email: Array<Record>?,
-  val emails: Array<Record>?
-) : Tuple3<BusinessentityId, Array<Record>?, Array<Record>?> {
+  val email: List<Record>?,
+  val emails: List<Record>?
+) : Tuple3<BusinessentityId, List<Record>?, List<Record>?> {
   override fun _1(): BusinessentityId = businessentityid
 
-  override fun _2(): Array<Record>? = email
+  override fun _2(): List<Record>? = email
 
-  override fun _3(): Array<Record>? = emails
+  override fun _3(): List<Record>? = emails
 
   companion object {
-    val _rowParser: RowParser<PersonRowJoinSqlRow> = RowParsers.of(BusinessentityId.pgType, PgTypes.recordArray.nullable(), PgTypes.recordArray.nullable(), { t0, t1, t2 -> PersonRowJoinSqlRow(t0, t1, t2) }, { row -> arrayOf<Any?>(row.businessentityid, row.email, row.emails) })
+    val rowCodec: RowCodec<PersonRowJoinSqlRow> = RowCodecs.of(BusinessentityId.pgType, PgTypes.record.array().opt(), PgTypes.record.array().opt(), { t0: BusinessentityId, t1: List<Record>?, t2: List<Record>? -> PersonRowJoinSqlRow(t0, t1, t2) }, { row: PersonRowJoinSqlRow -> arrayOf<Any?>(row.businessentityid, row.email, row.emails) })
   }
 }

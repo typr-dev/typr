@@ -5,10 +5,9 @@
  */
 package adventureworks.public
 
-import dev.typr.foundations.PgRead
-import dev.typr.foundations.PgStruct
 import dev.typr.foundations.PgType
 import dev.typr.foundations.PgTypes
+import dev.typr.foundations.RowCodec
 import java.util.Optional
 
 /** PostgreSQL composite type: public.address */
@@ -20,9 +19,7 @@ case class Address(
 )
 
 object Address {
-  given pgStruct: PgStruct[Address] = PgStruct.builder[Address]("public.address").optField("street", PgTypes.text, (v: Address) => v.street).optField("city", PgTypes.text, (v: Address) => v.city).optField("zip", PgTypes.text, (v: Address) => v.zip).optField("country", PgTypes.text, (v: Address) => v.country).build(arr => Address(street = Optional.ofNullable(arr(0).asInstanceOf[String]), city = Optional.ofNullable(arr(1).asInstanceOf[String]), zip = Optional.ofNullable(arr(2).asInstanceOf[String]), country = Optional.ofNullable(arr(3).asInstanceOf[String])))
+  given pgType: PgType[Address] = PgTypes.compositeOf("public.address", RowCodec.namedBuilder[Address]().field("street", PgTypes.text.opt(), (v: Address) => v.street).field("city", PgTypes.text.opt(), (v: Address) => v.city).field("zip", PgTypes.text.opt(), (v: Address) => v.zip).field("country", PgTypes.text.opt(), (v: Address) => v.country).build((t0, t1, t2, t3) => Address(street = t0, city = t1, zip = t2, country = t3)))
 
-  given pgType: PgType[Address] = pgStruct.asType()
-
-  given pgTypeArray: PgType[Array[Address]] = pgType.array(PgRead.readCompositeArray(pgType.pgCompositeText(), n => new Array[Address](n)), n => new Array[Address](n))
+  given pgTypeArray: PgType[java.util.List[Address]] = pgType.array()
 }

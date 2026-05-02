@@ -16,11 +16,11 @@ import testdb.userdefined.IsActive
 /** This class corresponds to a row in table `warehouses` which has not been persisted yet */
 data class WarehousesRowUnsaved(
   /**  */
-  val code: String,
+  val code: kotlin.String,
   /**  */
-  val name: String,
+  val name: kotlin.String,
   /**  */
-  val address: String,
+  val address: kotlin.String,
   /**  */
   val location: Point,
   /** Default: NULL
@@ -30,7 +30,7 @@ data class WarehousesRowUnsaved(
   /** Default: 'UTC'
 
     */
-  val timezone: Defaulted<String> = UseDefault(),
+  val timezone: Defaulted<kotlin.String> = UseDefault(),
   /** Default: 1
 
     */
@@ -42,14 +42,14 @@ data class WarehousesRowUnsaved(
   /** Default: NULL
 
     */
-  @field:JsonProperty("contact_phone") val contactPhone: Defaulted<String?> = UseDefault()
+  @field:JsonProperty("contact_phone") val contactPhone: Defaulted<kotlin.String?> = UseDefault()
 ) {
   fun toRow(
     serviceAreaDefault: () -> Polygon?,
-    timezoneDefault: () -> String,
+    timezoneDefault: () -> kotlin.String,
     isActiveDefault: () -> /* user-picked */ IsActive,
     contactEmailDefault: () -> /* user-picked */ Email?,
-    contactPhoneDefault: () -> String?,
+    contactPhoneDefault: () -> kotlin.String?,
     warehouseIdDefault: () -> WarehousesId
   ): WarehousesRow = WarehousesRow(warehouseId = warehouseIdDefault(), code = code, name = name, address = address, location = location, serviceArea = serviceArea.getOrElse(serviceAreaDefault), timezone = timezone.getOrElse(timezoneDefault), isActive = isActive.getOrElse(isActiveDefault), contactEmail = contactEmail.getOrElse(contactEmailDefault), contactPhone = contactPhone.getOrElse(contactPhoneDefault))
 }

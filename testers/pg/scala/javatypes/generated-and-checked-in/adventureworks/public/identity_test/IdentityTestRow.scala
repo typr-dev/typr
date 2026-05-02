@@ -7,10 +7,10 @@ package adventureworks.public.identity_test
 
 import adventureworks.customtypes.Defaulted
 import com.fasterxml.jackson.annotation.JsonProperty
+import dev.typr.dsl.RowCodecs
 import dev.typr.foundations.PgText
 import dev.typr.foundations.PgTypes
-import dev.typr.foundations.RowParser
-import dev.typr.foundations.RowParsers
+import dev.typr.foundations.RowCodec
 import dev.typr.foundations.Tuple.Tuple3
 
 /** Table: public.identity-test
@@ -35,7 +35,7 @@ case class IdentityTestRow(
 }
 
 object IdentityTestRow {
-  val `_rowParser`: RowParser[IdentityTestRow] = RowParsers.of(PgTypes.int4, PgTypes.int4, IdentityTestId.pgType, IdentityTestRow.apply, row => Array[Any](row.alwaysGenerated, row.defaultGenerated, row.name))
+  given pgText: PgText[IdentityTestRow] = PgText.from(rowCodec)
 
-  given pgText: PgText[IdentityTestRow] = PgText.from(`_rowParser`)
+  val rowCodec: RowCodec[IdentityTestRow] = RowCodecs.of(PgTypes.int4, PgTypes.int4, IdentityTestId.pgType, IdentityTestRow.apply, row => Array[Any](row.alwaysGenerated, row.defaultGenerated, row.name))
 }

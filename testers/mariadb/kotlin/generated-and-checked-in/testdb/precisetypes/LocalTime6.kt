@@ -6,16 +6,16 @@
 package testdb.precisetypes
 
 import com.fasterxml.jackson.annotation.JsonValue
-import dev.typr.foundations.MariaType
-import dev.typr.foundations.MariaTypes
 import dev.typr.foundations.data.precise.LocalTimeN
-import dev.typr.foundations.kotlin.Bijection
+import dev.typr.foundationskt.Bijection
+import dev.typr.foundationskt.MariaType
+import dev.typr.foundationskt.MariaTypes
 import java.time.LocalTime
 import java.time.temporal.ChronoUnit
 
 @kotlin.ConsistentCopyVisibility
 data class LocalTime6 private constructor(@field:JsonValue val value: LocalTime) : LocalTimeN {
-  override fun equals(other: Any?): Boolean {
+  override fun equals(other: Any?): kotlin.Boolean {
     if (this === other) return true
     if (other !is LocalTimeN) return false
     return value == other.rawValue()
@@ -27,7 +27,7 @@ data class LocalTime6 private constructor(@field:JsonValue val value: LocalTime)
 
   override fun rawValue(): LocalTime = value
 
-  override fun semanticEquals(other: LocalTimeN): Boolean = if (other == null) false else value == other.rawValue()
+  override fun semanticEquals(other: LocalTimeN): kotlin.Boolean = if (other == null) false else (value == other.rawValue())
 
   override fun semanticHashCode(): Int = value.hashCode()
 
@@ -36,14 +36,14 @@ data class LocalTime6 private constructor(@field:JsonValue val value: LocalTime)
   }
 
   companion object {
+    fun of(value: LocalTime): LocalTime6 = LocalTime6(value.truncatedTo(ChronoUnit.MICROS))
+
+    fun now(): LocalTime6 = LocalTime6(LocalTime.now().truncatedTo(ChronoUnit.MICROS))
+
     val bijection: Bijection<LocalTime6, LocalTime> =
       Bijection.of(LocalTime6::value, ::LocalTime6)
 
     val mariaType: MariaType<LocalTime6> =
-      MariaTypes.time.bimap(::LocalTime6, LocalTime6::value)
-
-    fun now(): LocalTime6 = LocalTime6(LocalTime.now().truncatedTo(ChronoUnit.MICROS))
-
-    fun of(value: LocalTime): LocalTime6 = LocalTime6(value.truncatedTo(ChronoUnit.MICROS))
+      MariaTypes.time.to(Bijection.of(::LocalTime6, LocalTime6::value))
   }
 }

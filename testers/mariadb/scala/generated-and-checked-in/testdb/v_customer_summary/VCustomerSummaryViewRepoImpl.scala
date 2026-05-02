@@ -5,17 +5,17 @@
  */
 package testdb.v_customer_summary
 
-import dev.typr.foundations.scala.Dialect
-import dev.typr.foundations.scala.SelectBuilder
-import java.sql.Connection
-import dev.typr.foundations.scala.Fragment.sql
+import dev.typr.dslsc.Dialect
+import dev.typr.dslsc.SelectBuilder
+import dev.typr.foundationssc.ConnectionRead
+import dev.typr.foundationssc.Fragment.sql
 
 class VCustomerSummaryViewRepoImpl extends VCustomerSummaryViewRepo {
-  override def select: SelectBuilder[VCustomerSummaryViewFields, VCustomerSummaryViewRow] = SelectBuilder.of("`v_customer_summary`", VCustomerSummaryViewFields.structure, VCustomerSummaryViewRow.`_rowParser`, Dialect.MARIADB)
+  override def select: SelectBuilder[VCustomerSummaryViewFields, VCustomerSummaryViewRow] = SelectBuilder.of("`v_customer_summary`", VCustomerSummaryViewFields.structure, VCustomerSummaryViewRow.rowCodec, Dialect.MARIADB)
 
-  override def selectAll(using c: Connection): List[VCustomerSummaryViewRow] = {
+  override def selectAll(using c: ConnectionRead): List[VCustomerSummaryViewRow] = {
     sql"""select `customer_id`, `email`, `full_name`, `tier`, `status`, `created_at`, `last_login_at`, `total_orders`, `lifetime_value`, `last_order_date`
     from `v_customer_summary`
-    """.query(VCustomerSummaryViewRow.`_rowParser`.all()).runUnchecked(c)
+    """.query(VCustomerSummaryViewRow.rowCodec.all()).run(using c)
   }
 }

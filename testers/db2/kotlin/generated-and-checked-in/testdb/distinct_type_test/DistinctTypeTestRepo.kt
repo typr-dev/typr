@@ -5,10 +5,11 @@
  */
 package testdb.distinct_type_test
 
-import dev.typr.foundations.kotlin.DeleteBuilder
-import dev.typr.foundations.kotlin.SelectBuilder
-import dev.typr.foundations.kotlin.UpdateBuilder
-import java.sql.Connection
+import dev.typr.dslkt.DeleteBuilder
+import dev.typr.dslkt.SelectBuilder
+import dev.typr.dslkt.UpdateBuilder
+import dev.typr.foundationskt.Connection
+import dev.typr.foundationskt.ConnectionRead
 import kotlin.collections.Iterator
 import kotlin.collections.List
 import kotlin.collections.Map
@@ -19,10 +20,10 @@ interface DistinctTypeTestRepo {
   abstract fun deleteById(
     id: DistinctTypeTestId,
     c: Connection
-  ): Boolean
+  ): kotlin.Boolean
 
   abstract fun deleteByIds(
-    ids: Array<DistinctTypeTestId>,
+    ids: List<DistinctTypeTestId>,
     c: Connection
   ): Int
 
@@ -38,21 +39,21 @@ interface DistinctTypeTestRepo {
 
   abstract fun select(): SelectBuilder<DistinctTypeTestFields, DistinctTypeTestRow>
 
-  abstract fun selectAll(c: Connection): List<DistinctTypeTestRow>
+  abstract fun selectAll(c: ConnectionRead): List<DistinctTypeTestRow>
 
   abstract fun selectById(
     id: DistinctTypeTestId,
-    c: Connection
+    c: ConnectionRead
   ): DistinctTypeTestRow?
 
   abstract fun selectByIds(
-    ids: Array<DistinctTypeTestId>,
-    c: Connection
+    ids: List<DistinctTypeTestId>,
+    c: ConnectionRead
   ): List<DistinctTypeTestRow>
 
   abstract fun selectByIdsTracked(
-    ids: Array<DistinctTypeTestId>,
-    c: Connection
+    ids: List<DistinctTypeTestId>,
+    c: ConnectionRead
   ): Map<DistinctTypeTestId, DistinctTypeTestRow>
 
   abstract fun update(): UpdateBuilder<DistinctTypeTestFields, DistinctTypeTestRow>
@@ -60,7 +61,7 @@ interface DistinctTypeTestRepo {
   abstract fun update(
     row: DistinctTypeTestRow,
     c: Connection
-  ): Boolean
+  ): kotlin.Boolean
 
   abstract fun upsert(
     unsaved: DistinctTypeTestRow,

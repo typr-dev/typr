@@ -5,17 +5,17 @@
  */
 package oracledb.all_types_test
 
-import dev.typr.foundations.OracleTypes
-import dev.typr.foundations.RowParser
-import dev.typr.foundations.dsl.FieldsBase
-import dev.typr.foundations.dsl.Path
-import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.scala.RelationStructure
-import dev.typr.foundations.scala.SqlExpr
-import dev.typr.foundations.scala.SqlExpr.Field
-import dev.typr.foundations.scala.SqlExpr.IdField
-import dev.typr.foundations.scala.SqlExpr.OptField
-import dev.typr.foundations.scala.TupleExpr4
+import dev.typr.dsl.FieldsBase
+import dev.typr.dsl.Path
+import dev.typr.dsl.SqlExpr.FieldLike
+import dev.typr.dslsc.RelationStructure
+import dev.typr.dslsc.SqlExpr
+import dev.typr.dslsc.SqlExpr.Field
+import dev.typr.dslsc.SqlExpr.IdField
+import dev.typr.dslsc.SqlExpr.OptField
+import dev.typr.dslsc.TupleExpr4
+import dev.typr.foundations.RowCodec
+import dev.typr.foundationssc.OracleTypes
 import oracledb.AllTypesStructNoLobs
 import oracledb.AllTypesStructNoLobsArray
 
@@ -28,7 +28,7 @@ class AllTypesTestFields(val `_path`: java.util.List[Path]) extends TupleExpr4[A
       None,
       None,
       (row, value) => row.copy(id = value),
-      AllTypesTestId.oracleType
+      AllTypesTestId.oracleType.underlying
     )
   }
 
@@ -40,7 +40,7 @@ class AllTypesTestFields(val `_path`: java.util.List[Path]) extends TupleExpr4[A
       None,
       None,
       (row, value) => row.copy(name = value),
-      OracleTypes.varchar2
+      OracleTypes.varchar2.underlying
     )
   }
 
@@ -52,7 +52,7 @@ class AllTypesTestFields(val `_path`: java.util.List[Path]) extends TupleExpr4[A
       None,
       None,
       (row, value) => row.copy(data = value),
-      AllTypesStructNoLobs.oracleType
+      AllTypesStructNoLobs.oracleType.underlying
     )
   }
 
@@ -64,13 +64,13 @@ class AllTypesTestFields(val `_path`: java.util.List[Path]) extends TupleExpr4[A
       None,
       None,
       (row, value) => row.copy(dataArray = value),
-      AllTypesStructNoLobsArray.oracleType
+      AllTypesStructNoLobsArray.oracleType.underlying
     )
   }
 
   override def columns: java.util.List[FieldLike[?, AllTypesTestRow]] = java.util.List.of(this.id.underlying, this.name.underlying, this.data.underlying, this.dataArray.underlying)
 
-  override def rowParser: RowParser[AllTypesTestRow] = AllTypesTestRow._rowParser.underlying
+  override def rowCodec: RowCodec[AllTypesTestRow] = AllTypesTestRow.rowCodec.underlying
 
   override def withPaths(`_path`: java.util.List[Path]): RelationStructure[AllTypesTestFields, AllTypesTestRow] = new AllTypesTestFields(`_path`)
 

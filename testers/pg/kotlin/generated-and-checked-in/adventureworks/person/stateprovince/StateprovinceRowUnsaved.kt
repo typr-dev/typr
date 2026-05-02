@@ -12,14 +12,14 @@ import adventureworks.public.Flag
 import adventureworks.public.Name
 import adventureworks.sales.salesterritory.SalesterritoryId
 import dev.typr.foundations.PgText
-import dev.typr.foundations.PgTypes
+import dev.typr.foundationskt.PgTypes
 import java.time.LocalDateTime
 import java.util.UUID
 
 /** This class corresponds to a row in table `person.stateprovince` which has not been persisted yet */
 data class StateprovinceRowUnsaved(
   /** ISO standard state or province code. */
-  val stateprovincecode: String,
+  val stateprovincecode: kotlin.String,
   /** ISO standard country or region code. Foreign key to CountryRegion.CountryRegionCode.
     * Points to [adventureworks.person.countryregion.CountryregionRow.countryregioncode]
     */
@@ -52,20 +52,20 @@ data class StateprovinceRowUnsaved(
 
   companion object {
     val pgText: PgText<StateprovinceRowUnsaved> =
-      PgText.instance({ row, sb -> PgTypes.bpchar.text().unsafeEncode(row.stateprovincecode, sb)
+      PgText.instance({ row, sb -> PgTypes.bpchar.pgText().unsafeEncode(row.stateprovincecode, sb)
       sb.append(PgText.DELIMETER)
-      CountryregionId.pgType.text().unsafeEncode(row.countryregioncode, sb)
+      CountryregionId.pgType.pgText().unsafeEncode(row.countryregioncode, sb)
       sb.append(PgText.DELIMETER)
-      Name.pgType.text().unsafeEncode(row.name, sb)
+      Name.pgType.pgText().unsafeEncode(row.name, sb)
       sb.append(PgText.DELIMETER)
-      SalesterritoryId.pgType.text().unsafeEncode(row.territoryid, sb)
+      SalesterritoryId.pgType.pgText().unsafeEncode(row.territoryid, sb)
       sb.append(PgText.DELIMETER)
-      Defaulted.pgText(StateprovinceId.pgType.text()).unsafeEncode(row.stateprovinceid, sb)
+      Defaulted.pgText(StateprovinceId.pgType.pgText()).unsafeEncode(row.stateprovinceid, sb)
       sb.append(PgText.DELIMETER)
-      Defaulted.pgText(Flag.pgType.text()).unsafeEncode(row.isonlystateprovinceflag, sb)
+      Defaulted.pgText(Flag.pgType.pgText()).unsafeEncode(row.isonlystateprovinceflag, sb)
       sb.append(PgText.DELIMETER)
-      Defaulted.pgText(PgTypes.uuid.text()).unsafeEncode(row.rowguid, sb)
+      Defaulted.pgText(PgTypes.uuid.pgText()).unsafeEncode(row.rowguid, sb)
       sb.append(PgText.DELIMETER)
-      Defaulted.pgText(PgTypes.timestamp.text()).unsafeEncode(row.modifieddate, sb) })
+      Defaulted.pgText(PgTypes.timestamp.pgText()).unsafeEncode(row.modifieddate, sb) })
   }
 }

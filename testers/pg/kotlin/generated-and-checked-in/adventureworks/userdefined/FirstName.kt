@@ -7,9 +7,9 @@ package adventureworks.userdefined
 
 import adventureworks.public.Name
 import com.fasterxml.jackson.annotation.JsonValue
-import dev.typr.foundations.PgType
-import dev.typr.foundations.internal.arrayMap
-import dev.typr.foundations.kotlin.Bijection
+import dev.typr.foundationskt.Bijection
+import dev.typr.foundationskt.PgType
+import kotlin.collections.List
 
 /** Shared type `FirstName`
   * Generated from TypeDefinitions matching
@@ -24,9 +24,9 @@ data class FirstName(@field:JsonValue val value: Name) {
       Bijection.of(FirstName::value, ::FirstName)
 
     val pgType: PgType<FirstName> =
-      Name.pgType.bimap(::FirstName, FirstName::value)
+      Name.pgType.to(Bijection.of(::FirstName, FirstName::value))
 
-    val pgTypeArray: PgType<Array<FirstName>> =
-      Name.pgTypeArray.bimap({ xs -> arrayMap.map(xs, ::FirstName, FirstName::class.java) }, { xs -> arrayMap.map(xs, FirstName::value, Name::class.java) })
+    val pgTypeArray: PgType<List<FirstName>> =
+      pgType.array()
   }
 }

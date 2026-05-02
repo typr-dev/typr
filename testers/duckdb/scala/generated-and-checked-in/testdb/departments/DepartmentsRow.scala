@@ -6,12 +6,10 @@
 package testdb.departments
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import dev.typr.foundations.DuckDbTypes
+import dev.typr.dslsc.RowCodecs
 import dev.typr.foundations.Tuple.Tuple4
-import dev.typr.foundations.scala.DbTypeOps
-import dev.typr.foundations.scala.RowParser
-import dev.typr.foundations.scala.RowParsers
-import dev.typr.foundations.scala.ScalaDbTypes
+import dev.typr.foundationssc.DuckDbTypes
+import dev.typr.foundationssc.RowCodec
 
 /** Table: departments
  * Composite primary key: dept_code, dept_region
@@ -36,8 +34,6 @@ case class DepartmentsRow(
 }
 
 object DepartmentsRow {
-  val `_rowParser`: RowParser[DepartmentsRow] = RowParsers.of(DuckDbTypes.varchar, DuckDbTypes.varchar, DuckDbTypes.varchar, ScalaDbTypes.DuckDbTypes.numeric.nullable)(DepartmentsRow.apply)(row => Array[Any](row.deptCode, row.deptRegion, row.deptName, row.budget))
-
   def apply(
     compositeId: DepartmentsId,
     deptName: String,
@@ -50,4 +46,6 @@ object DepartmentsRow {
       budget
     )
   }
+
+  val rowCodec: RowCodec[DepartmentsRow] = RowCodecs.of(DuckDbTypes.varchar, DuckDbTypes.varchar, DuckDbTypes.varchar, DuckDbTypes.numeric.opt)(DepartmentsRow.apply)(row => Array[Any](row.deptCode, row.deptRegion, row.deptName, row.budget))
 }

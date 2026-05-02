@@ -6,16 +6,15 @@
 package adventureworks.production.productcosthistory
 
 import adventureworks.production.product.ProductId
-import dev.typr.foundations.PgTypes
-import dev.typr.foundations.internal.arrayMap
-import dev.typr.foundations.kotlin.DeleteBuilder
-import dev.typr.foundations.kotlin.Dialect
-import dev.typr.foundations.kotlin.Fragment
-import dev.typr.foundations.kotlin.SelectBuilder
-import dev.typr.foundations.kotlin.UpdateBuilder
-import dev.typr.foundations.kotlin.nullable
-import dev.typr.foundations.streamingInsert
-import java.sql.Connection
+import dev.typr.dslkt.DeleteBuilder
+import dev.typr.dslkt.Dialect
+import dev.typr.dslkt.SelectBuilder
+import dev.typr.dslkt.UpdateBuilder
+import dev.typr.foundationskt.Connection
+import dev.typr.foundationskt.ConnectionRead
+import dev.typr.foundationskt.Fragment
+import dev.typr.foundationskt.PgTypes
+import dev.typr.foundationskt.StreamingInsert
 import java.time.LocalDateTime
 import java.util.ArrayList
 import kotlin.collections.Iterator
@@ -29,22 +28,22 @@ class ProductcosthistoryRepoImpl() : ProductcosthistoryRepo {
   override fun deleteById(
     compositeId: ProductcosthistoryId,
     c: Connection
-  ): Boolean = Fragment.interpolate(Fragment.lit("delete from \"production\".\"productcosthistory\" where \"productid\" = "), Fragment.encode(ProductId.pgType, compositeId.productid), Fragment.lit(" AND \"startdate\" = "), Fragment.encode(PgTypes.timestamp, compositeId.startdate), Fragment.lit("")).update().runUnchecked(c) > 0
+  ): kotlin.Boolean = Fragment.concat(Fragment.of("delete from \"production\".\"productcosthistory\" where \"productid\" = "), Fragment.encode(ProductId.pgType, compositeId.productid), Fragment.of(" AND \"startdate\" = "), Fragment.encode(PgTypes.timestamp, compositeId.startdate), Fragment.of("")).update().run(c) > 0
 
   override fun deleteByIds(
-    compositeIds: Array<ProductcosthistoryId>,
+    compositeIds: List<ProductcosthistoryId>,
     c: Connection
   ): Int {
-    val productid: Array<ProductId> = arrayMap.map(compositeIds, ProductcosthistoryId::productid, ProductId::class.java)
-    val startdate: Array<LocalDateTime> = arrayMap.map(compositeIds, ProductcosthistoryId::startdate, LocalDateTime::class.java)
-    return Fragment.interpolate(Fragment.lit("delete\nfrom \"production\".\"productcosthistory\"\nwhere (\"productid\", \"startdate\")\nin (select * from unnest("), Fragment.encode(ProductId.pgTypeArray, productid), Fragment.lit(", "), Fragment.encode(PgTypes.timestampArray, startdate), Fragment.lit("))\n")).update().runUnchecked(c)
+    val productid: List<ProductId> = compositeIds.map(ProductcosthistoryId::productid)
+    val startdate: List<LocalDateTime> = compositeIds.map(ProductcosthistoryId::startdate)
+    return Fragment.concat(Fragment.of("delete\nfrom \"production\".\"productcosthistory\"\nwhere (\"productid\", \"startdate\")\nin (select * from unnest("), Fragment.encode(ProductId.pgType.array(), productid), Fragment.of(", "), Fragment.encode(PgTypes.timestamp.array(), startdate), Fragment.of("))\n")).update().run(c)
   }
 
   override fun insert(
     unsaved: ProductcosthistoryRow,
     c: Connection
-  ): ProductcosthistoryRow = Fragment.interpolate(Fragment.lit("insert into \"production\".\"productcosthistory\"(\"productid\", \"startdate\", \"enddate\", \"standardcost\", \"modifieddate\")\nvalues ("), Fragment.encode(ProductId.pgType, unsaved.productid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.timestamp, unsaved.startdate), Fragment.lit("::timestamp, "), Fragment.encode(PgTypes.timestamp.nullable(), unsaved.enddate), Fragment.lit("::timestamp, "), Fragment.encode(PgTypes.numeric, unsaved.standardcost), Fragment.lit("::numeric, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\nRETURNING \"productid\", \"startdate\", \"enddate\", \"standardcost\", \"modifieddate\"\n"))
-    .updateReturning(ProductcosthistoryRow._rowParser.exactlyOne()).runUnchecked(c)
+  ): ProductcosthistoryRow = Fragment.concat(Fragment.of("insert into \"production\".\"productcosthistory\"(\"productid\", \"startdate\", \"enddate\", \"standardcost\", \"modifieddate\")\nvalues ("), Fragment.encode(ProductId.pgType, unsaved.productid), Fragment.of("::int4, "), Fragment.encode(PgTypes.timestamp, unsaved.startdate), Fragment.of("::timestamp, "), Fragment.encode(PgTypes.timestamp.opt(), unsaved.enddate), Fragment.of("::timestamp, "), Fragment.encode(PgTypes.numeric, unsaved.standardcost), Fragment.of("::numeric, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.of("::timestamp)\nRETURNING \"productid\", \"startdate\", \"enddate\", \"standardcost\", \"modifieddate\"\n"))
+    .updateReturning(ProductcosthistoryRow.rowCodec.exactlyOne()).run(c)
 
   override fun insert(
     unsaved: ProductcosthistoryRowUnsaved,
@@ -52,86 +51,86 @@ class ProductcosthistoryRepoImpl() : ProductcosthistoryRepo {
   ): ProductcosthistoryRow {
     val columns: ArrayList<Fragment> = ArrayList()
     val values: ArrayList<Fragment> = ArrayList()
-    columns.add(Fragment.lit("\"productid\""))
-    values.add(Fragment.interpolate(Fragment.encode(ProductId.pgType, unsaved.productid), Fragment.lit("::int4")))
-    columns.add(Fragment.lit("\"startdate\""))
-    values.add(Fragment.interpolate(Fragment.encode(PgTypes.timestamp, unsaved.startdate), Fragment.lit("::timestamp")))
-    columns.add(Fragment.lit("\"enddate\""))
-    values.add(Fragment.interpolate(Fragment.encode(PgTypes.timestamp.nullable(), unsaved.enddate), Fragment.lit("::timestamp")))
-    columns.add(Fragment.lit("\"standardcost\""))
-    values.add(Fragment.interpolate(Fragment.encode(PgTypes.numeric, unsaved.standardcost), Fragment.lit("::numeric")))
+    columns.add(Fragment.of("\"productid\""))
+    values.add(Fragment.concat(Fragment.encode(ProductId.pgType, unsaved.productid), Fragment.of("::int4")))
+    columns.add(Fragment.of("\"startdate\""))
+    values.add(Fragment.concat(Fragment.encode(PgTypes.timestamp, unsaved.startdate), Fragment.of("::timestamp")))
+    columns.add(Fragment.of("\"enddate\""))
+    values.add(Fragment.concat(Fragment.encode(PgTypes.timestamp.opt(), unsaved.enddate), Fragment.of("::timestamp")))
+    columns.add(Fragment.of("\"standardcost\""))
+    values.add(Fragment.concat(Fragment.encode(PgTypes.numeric, unsaved.standardcost), Fragment.of("::numeric")))
     unsaved.modifieddate.visit(
       {  },
-      { value -> columns.add(Fragment.lit("\"modifieddate\""))
-      values.add(Fragment.interpolate(Fragment.encode(PgTypes.timestamp, value), Fragment.lit("::timestamp"))) }
+      { value -> columns.add(Fragment.of("\"modifieddate\""))
+      values.add(Fragment.concat(Fragment.encode(PgTypes.timestamp, value), Fragment.of("::timestamp"))) }
     );
-    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into \"production\".\"productcosthistory\"("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nRETURNING \"productid\", \"startdate\", \"enddate\", \"standardcost\", \"modifieddate\"\n"))
-    return q.updateReturning(ProductcosthistoryRow._rowParser.exactlyOne()).runUnchecked(c)
+    val q: Fragment = Fragment.concat(Fragment.of("insert into \"production\".\"productcosthistory\"("), Fragment.comma(columns.toMutableList()), Fragment.of(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.of(")\nRETURNING \"productid\", \"startdate\", \"enddate\", \"standardcost\", \"modifieddate\"\n"))
+    return q.updateReturning(ProductcosthistoryRow.rowCodec.exactlyOne()).run(c)
   }
 
   override fun insertStreaming(
     unsaved: Iterator<ProductcosthistoryRow>,
     batchSize: Int,
     c: Connection
-  ): Long = streamingInsert.insertUnchecked("COPY \"production\".\"productcosthistory\"(\"productid\", \"startdate\", \"enddate\", \"standardcost\", \"modifieddate\") FROM STDIN", batchSize, unsaved, c, ProductcosthistoryRow.pgText)
+  ): kotlin.Long = StreamingInsert.of("COPY \"production\".\"productcosthistory\"(\"productid\", \"startdate\", \"enddate\", \"standardcost\", \"modifieddate\") FROM STDIN", batchSize, unsaved, ProductcosthistoryRow.pgText).run(c)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
   override fun insertUnsavedStreaming(
     unsaved: Iterator<ProductcosthistoryRowUnsaved>,
     batchSize: Int,
     c: Connection
-  ): Long = streamingInsert.insertUnchecked("COPY \"production\".\"productcosthistory\"(\"productid\", \"startdate\", \"enddate\", \"standardcost\", \"modifieddate\") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')", batchSize, unsaved, c, ProductcosthistoryRowUnsaved.pgText)
+  ): kotlin.Long = StreamingInsert.of("COPY \"production\".\"productcosthistory\"(\"productid\", \"startdate\", \"enddate\", \"standardcost\", \"modifieddate\") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')", batchSize, unsaved, ProductcosthistoryRowUnsaved.pgText).run(c)
 
-  override fun select(): SelectBuilder<ProductcosthistoryFields, ProductcosthistoryRow> = SelectBuilder.of("\"production\".\"productcosthistory\"", ProductcosthistoryFields.structure, ProductcosthistoryRow._rowParser, Dialect.POSTGRESQL)
+  override fun select(): SelectBuilder<ProductcosthistoryFields, ProductcosthistoryRow> = SelectBuilder.of("\"production\".\"productcosthistory\"", ProductcosthistoryFields.structure, ProductcosthistoryRow.rowCodec, Dialect.POSTGRESQL)
 
-  override fun selectAll(c: Connection): List<ProductcosthistoryRow> = Fragment.interpolate(Fragment.lit("select \"productid\", \"startdate\", \"enddate\", \"standardcost\", \"modifieddate\"\nfrom \"production\".\"productcosthistory\"\n")).query(ProductcosthistoryRow._rowParser.all()).runUnchecked(c)
+  override fun selectAll(c: ConnectionRead): List<ProductcosthistoryRow> = Fragment.concat(Fragment.of("select \"productid\", \"startdate\", \"enddate\", \"standardcost\", \"modifieddate\"\nfrom \"production\".\"productcosthistory\"\n")).query(ProductcosthistoryRow.rowCodec.all()).run(c)
 
   override fun selectById(
     compositeId: ProductcosthistoryId,
-    c: Connection
-  ): ProductcosthistoryRow? = Fragment.interpolate(Fragment.lit("select \"productid\", \"startdate\", \"enddate\", \"standardcost\", \"modifieddate\"\nfrom \"production\".\"productcosthistory\"\nwhere \"productid\" = "), Fragment.encode(ProductId.pgType, compositeId.productid), Fragment.lit(" AND \"startdate\" = "), Fragment.encode(PgTypes.timestamp, compositeId.startdate), Fragment.lit("")).query(ProductcosthistoryRow._rowParser.first()).runUnchecked(c)
+    c: ConnectionRead
+  ): ProductcosthistoryRow? = Fragment.concat(Fragment.of("select \"productid\", \"startdate\", \"enddate\", \"standardcost\", \"modifieddate\"\nfrom \"production\".\"productcosthistory\"\nwhere \"productid\" = "), Fragment.encode(ProductId.pgType, compositeId.productid), Fragment.of(" AND \"startdate\" = "), Fragment.encode(PgTypes.timestamp, compositeId.startdate), Fragment.of("")).query(ProductcosthistoryRow.rowCodec.first()).run(c)
 
   override fun selectByIds(
-    compositeIds: Array<ProductcosthistoryId>,
-    c: Connection
+    compositeIds: List<ProductcosthistoryId>,
+    c: ConnectionRead
   ): List<ProductcosthistoryRow> {
-    val productid: Array<ProductId> = arrayMap.map(compositeIds, ProductcosthistoryId::productid, ProductId::class.java)
-    val startdate: Array<LocalDateTime> = arrayMap.map(compositeIds, ProductcosthistoryId::startdate, LocalDateTime::class.java)
-    return Fragment.interpolate(Fragment.lit("select \"productid\", \"startdate\", \"enddate\", \"standardcost\", \"modifieddate\"\nfrom \"production\".\"productcosthistory\"\nwhere (\"productid\", \"startdate\")\nin (select * from unnest("), Fragment.encode(ProductId.pgTypeArray, productid), Fragment.lit(", "), Fragment.encode(PgTypes.timestampArray, startdate), Fragment.lit("))\n")).query(ProductcosthistoryRow._rowParser.all()).runUnchecked(c)
+    val productid: List<ProductId> = compositeIds.map(ProductcosthistoryId::productid)
+    val startdate: List<LocalDateTime> = compositeIds.map(ProductcosthistoryId::startdate)
+    return Fragment.concat(Fragment.of("select \"productid\", \"startdate\", \"enddate\", \"standardcost\", \"modifieddate\"\nfrom \"production\".\"productcosthistory\"\nwhere (\"productid\", \"startdate\")\nin (select * from unnest("), Fragment.encode(ProductId.pgType.array(), productid), Fragment.of(", "), Fragment.encode(PgTypes.timestamp.array(), startdate), Fragment.of("))\n")).query(ProductcosthistoryRow.rowCodec.all()).run(c)
   }
 
   override fun selectByIdsTracked(
-    compositeIds: Array<ProductcosthistoryId>,
-    c: Connection
+    compositeIds: List<ProductcosthistoryId>,
+    c: ConnectionRead
   ): Map<ProductcosthistoryId, ProductcosthistoryRow> {
     val ret: MutableMap<ProductcosthistoryId, ProductcosthistoryRow> = mutableMapOf<ProductcosthistoryId, ProductcosthistoryRow>()
     selectByIds(compositeIds, c).forEach({ row -> ret.put(row.compositeId(), row) })
     return ret.toMap()
   }
 
-  override fun update(): UpdateBuilder<ProductcosthistoryFields, ProductcosthistoryRow> = UpdateBuilder.of("\"production\".\"productcosthistory\"", ProductcosthistoryFields.structure, ProductcosthistoryRow._rowParser, Dialect.POSTGRESQL)
+  override fun update(): UpdateBuilder<ProductcosthistoryFields, ProductcosthistoryRow> = UpdateBuilder.of("\"production\".\"productcosthistory\"", ProductcosthistoryFields.structure, ProductcosthistoryRow.rowCodec, Dialect.POSTGRESQL)
 
   override fun update(
     row: ProductcosthistoryRow,
     c: Connection
-  ): Boolean {
+  ): kotlin.Boolean {
     val compositeId: ProductcosthistoryId = row.compositeId()
-    return Fragment.interpolate(Fragment.lit("update \"production\".\"productcosthistory\"\nset \"enddate\" = "), Fragment.encode(PgTypes.timestamp.nullable(), row.enddate), Fragment.lit("::timestamp,\n\"standardcost\" = "), Fragment.encode(PgTypes.numeric, row.standardcost), Fragment.lit("::numeric,\n\"modifieddate\" = "), Fragment.encode(PgTypes.timestamp, row.modifieddate), Fragment.lit("::timestamp\nwhere \"productid\" = "), Fragment.encode(ProductId.pgType, compositeId.productid), Fragment.lit(" AND \"startdate\" = "), Fragment.encode(PgTypes.timestamp, compositeId.startdate), Fragment.lit("")).update().runUnchecked(c) > 0
+    return Fragment.concat(Fragment.of("update \"production\".\"productcosthistory\"\nset \"enddate\" = "), Fragment.encode(PgTypes.timestamp.opt(), row.enddate), Fragment.of("::timestamp,\n\"standardcost\" = "), Fragment.encode(PgTypes.numeric, row.standardcost), Fragment.of("::numeric,\n\"modifieddate\" = "), Fragment.encode(PgTypes.timestamp, row.modifieddate), Fragment.of("::timestamp\nwhere \"productid\" = "), Fragment.encode(ProductId.pgType, compositeId.productid), Fragment.of(" AND \"startdate\" = "), Fragment.encode(PgTypes.timestamp, compositeId.startdate), Fragment.of("")).update().run(c) > 0
   }
 
   override fun upsert(
     unsaved: ProductcosthistoryRow,
     c: Connection
-  ): ProductcosthistoryRow = Fragment.interpolate(Fragment.lit("insert into \"production\".\"productcosthistory\"(\"productid\", \"startdate\", \"enddate\", \"standardcost\", \"modifieddate\")\nvalues ("), Fragment.encode(ProductId.pgType, unsaved.productid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.timestamp, unsaved.startdate), Fragment.lit("::timestamp, "), Fragment.encode(PgTypes.timestamp.nullable(), unsaved.enddate), Fragment.lit("::timestamp, "), Fragment.encode(PgTypes.numeric, unsaved.standardcost), Fragment.lit("::numeric, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\non conflict (\"productid\", \"startdate\")\ndo update set\n  \"enddate\" = EXCLUDED.\"enddate\",\n\"standardcost\" = EXCLUDED.\"standardcost\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\nreturning \"productid\", \"startdate\", \"enddate\", \"standardcost\", \"modifieddate\""))
-    .updateReturning(ProductcosthistoryRow._rowParser.exactlyOne())
-    .runUnchecked(c)
+  ): ProductcosthistoryRow = Fragment.concat(Fragment.of("insert into \"production\".\"productcosthistory\"(\"productid\", \"startdate\", \"enddate\", \"standardcost\", \"modifieddate\")\nvalues ("), Fragment.encode(ProductId.pgType, unsaved.productid), Fragment.of("::int4, "), Fragment.encode(PgTypes.timestamp, unsaved.startdate), Fragment.of("::timestamp, "), Fragment.encode(PgTypes.timestamp.opt(), unsaved.enddate), Fragment.of("::timestamp, "), Fragment.encode(PgTypes.numeric, unsaved.standardcost), Fragment.of("::numeric, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.of("::timestamp)\non conflict (\"productid\", \"startdate\")\ndo update set\n  \"enddate\" = EXCLUDED.\"enddate\",\n\"standardcost\" = EXCLUDED.\"standardcost\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\nreturning \"productid\", \"startdate\", \"enddate\", \"standardcost\", \"modifieddate\""))
+    .updateReturning(ProductcosthistoryRow.rowCodec.exactlyOne())
+    .run(c)
 
   override fun upsertBatch(
     unsaved: Iterator<ProductcosthistoryRow>,
     c: Connection
-  ): List<ProductcosthistoryRow> = Fragment.interpolate(Fragment.lit("insert into \"production\".\"productcosthistory\"(\"productid\", \"startdate\", \"enddate\", \"standardcost\", \"modifieddate\")\nvalues (?::int4, ?::timestamp, ?::timestamp, ?::numeric, ?::timestamp)\non conflict (\"productid\", \"startdate\")\ndo update set\n  \"enddate\" = EXCLUDED.\"enddate\",\n\"standardcost\" = EXCLUDED.\"standardcost\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\nreturning \"productid\", \"startdate\", \"enddate\", \"standardcost\", \"modifieddate\""))
-    .updateManyReturning(ProductcosthistoryRow._rowParser, unsaved)
-  .runUnchecked(c)
+  ): List<ProductcosthistoryRow> = Fragment.concat(Fragment.of("insert into \"production\".\"productcosthistory\"(\"productid\", \"startdate\", \"enddate\", \"standardcost\", \"modifieddate\")\nvalues (?::int4, ?::timestamp, ?::timestamp, ?::numeric, ?::timestamp)\non conflict (\"productid\", \"startdate\")\ndo update set\n  \"enddate\" = EXCLUDED.\"enddate\",\n\"standardcost\" = EXCLUDED.\"standardcost\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\nreturning \"productid\", \"startdate\", \"enddate\", \"standardcost\", \"modifieddate\""))
+    .updateManyReturning(ProductcosthistoryRow.rowCodec, unsaved)
+  .run(c)
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
   override fun upsertStreaming(
@@ -139,8 +138,8 @@ class ProductcosthistoryRepoImpl() : ProductcosthistoryRepo {
     batchSize: Int,
     c: Connection
   ): Int {
-    Fragment.interpolate(Fragment.lit("create temporary table productcosthistory_TEMP (like \"production\".\"productcosthistory\") on commit drop")).update().runUnchecked(c)
-    streamingInsert.insertUnchecked("copy productcosthistory_TEMP(\"productid\", \"startdate\", \"enddate\", \"standardcost\", \"modifieddate\") from stdin", batchSize, unsaved, c, ProductcosthistoryRow.pgText)
-    return Fragment.interpolate(Fragment.lit("insert into \"production\".\"productcosthistory\"(\"productid\", \"startdate\", \"enddate\", \"standardcost\", \"modifieddate\")\nselect * from productcosthistory_TEMP\non conflict (\"productid\", \"startdate\")\ndo update set\n  \"enddate\" = EXCLUDED.\"enddate\",\n\"standardcost\" = EXCLUDED.\"standardcost\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\n;\ndrop table productcosthistory_TEMP;")).update().runUnchecked(c)
+    Fragment.concat(Fragment.of("create temporary table productcosthistory_TEMP (like \"production\".\"productcosthistory\") on commit drop")).update().run(c)
+    StreamingInsert.of("copy productcosthistory_TEMP(\"productid\", \"startdate\", \"enddate\", \"standardcost\", \"modifieddate\") from stdin", batchSize, unsaved, ProductcosthistoryRow.pgText).run(c)
+    return Fragment.concat(Fragment.of("insert into \"production\".\"productcosthistory\"(\"productid\", \"startdate\", \"enddate\", \"standardcost\", \"modifieddate\")\nselect * from productcosthistory_TEMP\non conflict (\"productid\", \"startdate\")\ndo update set\n  \"enddate\" = EXCLUDED.\"enddate\",\n\"standardcost\" = EXCLUDED.\"standardcost\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\n;\ndrop table productcosthistory_TEMP;")).update().run(c)
   }
 }

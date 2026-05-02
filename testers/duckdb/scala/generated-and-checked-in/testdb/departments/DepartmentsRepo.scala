@@ -5,29 +5,30 @@
  */
 package testdb.departments
 
-import dev.typr.foundations.scala.DeleteBuilder
-import dev.typr.foundations.scala.SelectBuilder
-import dev.typr.foundations.scala.UpdateBuilder
-import java.sql.Connection
+import dev.typr.dslsc.DeleteBuilder
+import dev.typr.dslsc.SelectBuilder
+import dev.typr.dslsc.UpdateBuilder
+import dev.typr.foundationssc.Connection
+import dev.typr.foundationssc.ConnectionRead
 
 trait DepartmentsRepo {
   def delete: DeleteBuilder[DepartmentsFields, DepartmentsRow]
 
   def deleteById(compositeId: DepartmentsId)(using c: Connection): Boolean
 
-  def deleteByIds(compositeIds: Array[DepartmentsId])(using c: Connection): Int
+  def deleteByIds(compositeIds: List[DepartmentsId])(using c: Connection): Int
 
   def insert(unsaved: DepartmentsRow)(using c: Connection): DepartmentsRow
 
   def select: SelectBuilder[DepartmentsFields, DepartmentsRow]
 
-  def selectAll(using c: Connection): List[DepartmentsRow]
+  def selectAll(using c: ConnectionRead): List[DepartmentsRow]
 
-  def selectById(compositeId: DepartmentsId)(using c: Connection): Option[DepartmentsRow]
+  def selectById(compositeId: DepartmentsId)(using c: ConnectionRead): Option[DepartmentsRow]
 
-  def selectByIds(compositeIds: Array[DepartmentsId])(using c: Connection): List[DepartmentsRow]
+  def selectByIds(compositeIds: List[DepartmentsId])(using c: ConnectionRead): List[DepartmentsRow]
 
-  def selectByIdsTracked(compositeIds: Array[DepartmentsId])(using c: Connection): Map[DepartmentsId, DepartmentsRow]
+  def selectByIdsTracked(compositeIds: List[DepartmentsId])(using c: ConnectionRead): Map[DepartmentsId, DepartmentsRow]
 
   def update: UpdateBuilder[DepartmentsFields, DepartmentsRow]
 

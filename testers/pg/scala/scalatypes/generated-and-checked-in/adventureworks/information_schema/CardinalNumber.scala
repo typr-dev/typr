@@ -6,10 +6,9 @@
 package adventureworks.information_schema
 
 import com.fasterxml.jackson.annotation.JsonValue
-import dev.typr.foundations.PgType
-import dev.typr.foundations.PgTypes
-import dev.typr.foundations.scala.Bijection
-import dev.typr.foundations.scala.ScalaDbTypes
+import dev.typr.dslsc.Bijection
+import dev.typr.foundationssc.PgType
+import dev.typr.foundationssc.PgTypes
 
 /** Domain `information_schema.cardinal_number`
  * Constraint: CHECK ((VALUE >= 0))
@@ -17,9 +16,9 @@ import dev.typr.foundations.scala.ScalaDbTypes
 case class CardinalNumber(@JsonValue value: Int)
 
 object CardinalNumber {
-  given bijection: Bijection[CardinalNumber, Int] = Bijection.apply[CardinalNumber, Int](_.value)(CardinalNumber.apply)
+  given bijection: Bijection[CardinalNumber, Int] = Bijection.of[CardinalNumber, Int](_.value, CardinalNumber.apply)
 
-  given pgType: PgType[CardinalNumber] = ScalaDbTypes.PgTypes.int4.bimap(CardinalNumber.apply, _.value).renamed(""""information_schema"."cardinal_number"""")
+  given pgType: PgType[CardinalNumber] = PgType(PgTypes.int4.to(Bijection.of(CardinalNumber.apply, _.value)).underlying.renamed(""""information_schema"."cardinal_number""""))
 
-  given pgTypeArray: PgType[Array[CardinalNumber]] = PgTypes.int4ArrayUnboxed.bimap(xs => xs.map(CardinalNumber.apply), xs => xs.map(_.value)).renamed(""""information_schema"."cardinal_number"[]""")
+  given pgTypeArray: PgType[List[CardinalNumber]] = pgType.array
 }

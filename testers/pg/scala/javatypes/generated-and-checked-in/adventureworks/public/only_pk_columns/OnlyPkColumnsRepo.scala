@@ -5,10 +5,11 @@
  */
 package adventureworks.public.only_pk_columns
 
-import dev.typr.foundations.dsl.DeleteBuilder
-import dev.typr.foundations.dsl.SelectBuilder
-import dev.typr.foundations.dsl.UpdateBuilder
-import java.sql.Connection
+import dev.typr.dsl.DeleteBuilder
+import dev.typr.dsl.SelectBuilder
+import dev.typr.dsl.UpdateBuilder
+import dev.typr.foundations.Connection
+import dev.typr.foundations.ConnectionRead
 import java.util.Optional
 
 trait OnlyPkColumnsRepo {
@@ -16,7 +17,7 @@ trait OnlyPkColumnsRepo {
 
   def deleteById(compositeId: OnlyPkColumnsId)(using c: Connection): java.lang.Boolean
 
-  def deleteByIds(compositeIds: Array[OnlyPkColumnsId])(using c: Connection): Integer
+  def deleteByIds(compositeIds: java.util.List[OnlyPkColumnsId])(using c: Connection): Integer
 
   def insert(unsaved: OnlyPkColumnsRow)(using c: Connection): OnlyPkColumnsRow
 
@@ -27,13 +28,13 @@ trait OnlyPkColumnsRepo {
 
   def select: SelectBuilder[OnlyPkColumnsFields, OnlyPkColumnsRow]
 
-  def selectAll(using c: Connection): java.util.List[OnlyPkColumnsRow]
+  def selectAll(using c: ConnectionRead): java.util.List[OnlyPkColumnsRow]
 
-  def selectById(compositeId: OnlyPkColumnsId)(using c: Connection): Optional[OnlyPkColumnsRow]
+  def selectById(compositeId: OnlyPkColumnsId)(using c: ConnectionRead): Optional[OnlyPkColumnsRow]
 
-  def selectByIds(compositeIds: Array[OnlyPkColumnsId])(using c: Connection): java.util.List[OnlyPkColumnsRow]
+  def selectByIds(compositeIds: java.util.List[OnlyPkColumnsId])(using c: ConnectionRead): java.util.List[OnlyPkColumnsRow]
 
-  def selectByIdsTracked(compositeIds: Array[OnlyPkColumnsId])(using c: Connection): java.util.Map[OnlyPkColumnsId, OnlyPkColumnsRow]
+  def selectByIdsTracked(compositeIds: java.util.List[OnlyPkColumnsId])(using c: ConnectionRead): java.util.Map[OnlyPkColumnsId, OnlyPkColumnsRow]
 
   def update: UpdateBuilder[OnlyPkColumnsFields, OnlyPkColumnsRow]
 

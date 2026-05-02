@@ -12,7 +12,7 @@ import testdb.customtypes.Defaulted.UseDefault
 
 /** This class corresponds to a row in table `test_connection` which has not been persisted yet */
 data class TestConnectionRowUnsaved(
-  val message: String,
+  val message: kotlin.String,
   /** Default: (getdate()) */
   @field:JsonProperty("created_at") val createdAt: Defaulted<LocalDateTime?> = UseDefault()
 ) {

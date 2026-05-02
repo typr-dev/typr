@@ -5,19 +5,18 @@
  */
 package testdb.departments
 
-import dev.typr.foundations.DuckDbTypes
-import dev.typr.foundations.RowParser
-import dev.typr.foundations.dsl.FieldsBase
-import dev.typr.foundations.dsl.Path
-import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.scala.RelationStructure
-import dev.typr.foundations.scala.ScalaDbTypes
-import dev.typr.foundations.scala.SqlExpr
-import dev.typr.foundations.scala.SqlExpr.Field
-import dev.typr.foundations.scala.SqlExpr.IdField
-import dev.typr.foundations.scala.SqlExpr.OptField
-import dev.typr.foundations.scala.TupleExpr
-import dev.typr.foundations.scala.TupleExpr4
+import dev.typr.dsl.FieldsBase
+import dev.typr.dsl.Path
+import dev.typr.dsl.SqlExpr.FieldLike
+import dev.typr.dslsc.RelationStructure
+import dev.typr.dslsc.SqlExpr
+import dev.typr.dslsc.SqlExpr.Field
+import dev.typr.dslsc.SqlExpr.IdField
+import dev.typr.dslsc.SqlExpr.OptField
+import dev.typr.dslsc.TupleExpr
+import dev.typr.dslsc.TupleExpr4
+import dev.typr.foundations.RowCodec
+import dev.typr.foundationssc.DuckDbTypes
 
 class DepartmentsFields(val `_path`: java.util.List[Path]) extends TupleExpr4[String, String, String, BigDecimal] with RelationStructure[DepartmentsFields, DepartmentsRow]  with FieldsBase[DepartmentsRow] {
   def deptCode: IdField[String, DepartmentsRow] = {
@@ -28,7 +27,7 @@ class DepartmentsFields(val `_path`: java.util.List[Path]) extends TupleExpr4[St
       None,
       None,
       (row, value) => row.copy(deptCode = value),
-      DuckDbTypes.varchar
+      DuckDbTypes.varchar.underlying
     )
   }
 
@@ -40,7 +39,7 @@ class DepartmentsFields(val `_path`: java.util.List[Path]) extends TupleExpr4[St
       None,
       None,
       (row, value) => row.copy(deptRegion = value),
-      DuckDbTypes.varchar
+      DuckDbTypes.varchar.underlying
     )
   }
 
@@ -52,7 +51,7 @@ class DepartmentsFields(val `_path`: java.util.List[Path]) extends TupleExpr4[St
       None,
       None,
       (row, value) => row.copy(deptName = value),
-      DuckDbTypes.varchar
+      DuckDbTypes.varchar.underlying
     )
   }
 
@@ -64,7 +63,7 @@ class DepartmentsFields(val `_path`: java.util.List[Path]) extends TupleExpr4[St
       None,
       Some("DECIMAL(15,2)"),
       (row, value) => row.copy(budget = value),
-      ScalaDbTypes.DuckDbTypes.numeric
+      DuckDbTypes.numeric.underlying
     )
   }
 
@@ -74,7 +73,7 @@ class DepartmentsFields(val `_path`: java.util.List[Path]) extends TupleExpr4[St
 
   override def columns: java.util.List[FieldLike[?, DepartmentsRow]] = java.util.List.of(this.deptCode.underlying, this.deptRegion.underlying, this.deptName.underlying, this.budget.underlying)
 
-  override def rowParser: RowParser[DepartmentsRow] = DepartmentsRow._rowParser.underlying
+  override def rowCodec: RowCodec[DepartmentsRow] = DepartmentsRow.rowCodec.underlying
 
   override def withPaths(`_path`: java.util.List[Path]): RelationStructure[DepartmentsFields, DepartmentsRow] = new DepartmentsFields(`_path`)
 

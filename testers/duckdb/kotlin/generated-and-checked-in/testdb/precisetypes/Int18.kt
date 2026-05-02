@@ -6,19 +6,20 @@
 package testdb.precisetypes
 
 import com.fasterxml.jackson.annotation.JsonValue
-import dev.typr.foundations.DuckDbType
-import dev.typr.foundations.DuckDbTypes
 import dev.typr.foundations.data.precise.DecimalN
-import dev.typr.foundations.kotlin.Bijection
+import dev.typr.foundationskt.Bijection
+import dev.typr.foundationskt.DuckDbType
+import dev.typr.foundationskt.DuckDbTypes
 import java.lang.IllegalArgumentException
 import java.math.BigDecimal
 import java.math.BigInteger
+import kotlin.collections.List
 
 @kotlin.ConsistentCopyVisibility
 data class Int18 private constructor(@field:JsonValue val value: BigInteger) : DecimalN {
   override fun decimalValue(): BigDecimal = BigDecimal(value)
 
-  override fun equals(other: Any?): Boolean {
+  override fun equals(other: Any?): kotlin.Boolean {
     if (this === other) return true
     if (other !is DecimalN) return false
     return decimalValue().compareTo(other.decimalValue()) == 0
@@ -30,7 +31,7 @@ data class Int18 private constructor(@field:JsonValue val value: BigInteger) : D
 
   override fun scale(): Int = 0
 
-  override fun semanticEquals(other: DecimalN): Boolean = if (other == null) false else decimalValue().compareTo(other.decimalValue()) == 0
+  override fun semanticEquals(other: DecimalN): kotlin.Boolean = if (other == null) false else decimalValue().compareTo(other.decimalValue()) == 0
 
   override fun semanticHashCode(): Int = decimalValue().stripTrailingZeros().hashCode()
 
@@ -39,23 +40,7 @@ data class Int18 private constructor(@field:JsonValue val value: BigInteger) : D
   }
 
   companion object {
-    val Zero: Int18 =
-      Int18(BigInteger.ZERO)
-
-    val bijection: Bijection<Int18, BigInteger> =
-      Bijection.of(Int18::value, ::Int18)
-
-    val dbTypeArray: DuckDbType<Array<Int18>> =
-      DuckDbTypes.decimalArray.bimap({ xs: Array<BigDecimal> -> xs.map { bd -> Int18(bd.toBigIntegerExact()) }.toTypedArray() }, { xs: Array<Int18> -> xs.map { v -> BigDecimal(v.value) }.toTypedArray() })
-
-    val duckDbType: DuckDbType<Int18> =
-      DuckDbTypes.numeric.bimap({ bd: BigDecimal -> Int18(bd.toBigIntegerExact()) }, { v: Int18 -> BigDecimal(v.value) })
-
     fun of(value: BigInteger): Int18? = if (value.bitLength() <= 72) Int18(value) else null
-
-    fun of(value: Int): Int18 = Int18(BigInteger.valueOf(value.toLong()))
-
-    fun of(value: Long): Int18? = Int18.of(BigInteger.valueOf(value))
 
     fun unsafeForce(value: BigInteger): Int18 {
       if (value.bitLength() > 72) {
@@ -63,5 +48,21 @@ data class Int18 private constructor(@field:JsonValue val value: BigInteger) : D
       }
       return Int18(value)
     }
+
+    fun of(value: Int): Int18 = Int18(BigInteger.valueOf(value.toLong()))
+
+    fun of(value: kotlin.Long): Int18? = Int18.of(BigInteger.valueOf(value))
+
+    val Zero: Int18 =
+      Int18(BigInteger.ZERO)
+
+    val bijection: Bijection<Int18, BigInteger> =
+      Bijection.of(Int18::value, ::Int18)
+
+    val duckDbType: DuckDbType<Int18> =
+      DuckDbTypes.numeric.to(Bijection.of({ bd: BigDecimal -> Int18(bd.toBigIntegerExact()) }, { v: Int18 -> BigDecimal(v.value) }))
+
+    val dbTypeArray: DuckDbType<List<Int18>> =
+      DuckDbTypes.numeric.list().to(Bijection.of({ xs: List<BigDecimal> -> xs.map { bd -> Int18(bd.toBigIntegerExact()) } }, { xs: List<Int18> -> xs.map { v -> BigDecimal(v.value) } }))
   }
 }

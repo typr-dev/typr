@@ -23,7 +23,7 @@ object FirstName {
 
   implicit lazy val arrayPut: Put[Array[FirstName]] = Name.arrayPut.contramap(_.map(_.value))
 
-  implicit lazy val bijection: Bijection[FirstName, Name] = Bijection.apply[FirstName, Name](_.value)(FirstName.apply)
+  implicit lazy val bijection: Bijection[FirstName, Name] = Bijection[FirstName, Name](_.value)(FirstName.apply)
 
   implicit lazy val decoder: Decoder[FirstName] = Name.decoder.map(FirstName.apply)
 

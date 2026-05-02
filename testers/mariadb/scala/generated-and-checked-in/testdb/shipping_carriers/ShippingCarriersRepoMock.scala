@@ -5,17 +5,18 @@
  */
 package testdb.shipping_carriers
 
-import dev.typr.foundations.scala.DeleteBuilder
-import dev.typr.foundations.scala.DeleteBuilderMock
-import dev.typr.foundations.scala.DeleteParams
-import dev.typr.foundations.scala.SelectBuilder
-import dev.typr.foundations.scala.SelectBuilderMock
-import dev.typr.foundations.scala.SelectParams
-import dev.typr.foundations.scala.UpdateBuilder
-import dev.typr.foundations.scala.UpdateBuilderMock
-import dev.typr.foundations.scala.UpdateParams
+import dev.typr.dslsc.DeleteBuilder
+import dev.typr.dslsc.DeleteBuilderMock
+import dev.typr.dslsc.DeleteParams
+import dev.typr.dslsc.SelectBuilder
+import dev.typr.dslsc.SelectBuilderMock
+import dev.typr.dslsc.SelectParams
+import dev.typr.dslsc.UpdateBuilder
+import dev.typr.dslsc.UpdateBuilderMock
+import dev.typr.dslsc.UpdateParams
+import dev.typr.foundationssc.Connection
+import dev.typr.foundationssc.ConnectionRead
 import java.lang.RuntimeException
-import java.sql.Connection
 
 case class ShippingCarriersRepoMock(
   toRow: ShippingCarriersRowUnsaved => ShippingCarriersRow,
@@ -25,7 +26,7 @@ case class ShippingCarriersRepoMock(
 
   override def deleteById(carrierId: ShippingCarriersId)(using c: Connection): Boolean = map.remove(carrierId).isDefined
 
-  override def deleteByIds(carrierIds: Array[ShippingCarriersId])(using c: Connection): Int = {
+  override def deleteByIds(carrierIds: List[ShippingCarriersId])(using c: Connection): Int = {
     var count = 0
     carrierIds.foreach { id => if (map.remove(id).isDefined) {
       count = count + 1
@@ -45,15 +46,15 @@ case class ShippingCarriersRepoMock(
 
   override def select: SelectBuilder[ShippingCarriersFields, ShippingCarriersRow] = SelectBuilderMock(ShippingCarriersFields.structure, () => map.values.toList, SelectParams.empty())
 
-  override def selectAll(using c: Connection): List[ShippingCarriersRow] = map.values.toList
+  override def selectAll(using c: ConnectionRead): List[ShippingCarriersRow] = map.values.toList
 
-  override def selectById(carrierId: ShippingCarriersId)(using c: Connection): Option[ShippingCarriersRow] = map.get(carrierId)
+  override def selectById(carrierId: ShippingCarriersId)(using c: ConnectionRead): Option[ShippingCarriersRow] = map.get(carrierId)
 
-  override def selectByIds(carrierIds: Array[ShippingCarriersId])(using c: Connection): List[ShippingCarriersRow] = carrierIds.flatMap(map.get(_)).toList
+  override def selectByIds(carrierIds: List[ShippingCarriersId])(using c: ConnectionRead): List[ShippingCarriersRow] = carrierIds.flatMap(map.get(_)).toList
 
-  override def selectByIdsTracked(carrierIds: Array[ShippingCarriersId])(using c: Connection): Map[ShippingCarriersId, ShippingCarriersRow] = selectByIds(carrierIds)(using c).map(x => (((row: ShippingCarriersRow) => row.carrierId).apply(x), x)).toMap
+  override def selectByIdsTracked(carrierIds: List[ShippingCarriersId])(using c: ConnectionRead): Map[ShippingCarriersId, ShippingCarriersRow] = selectByIds(carrierIds)(using c).map(x => (((row: ShippingCarriersRow) => row.carrierId).apply(x), x)).toMap
 
-  override def selectByUniqueCode(code: String)(using c: Connection): Option[ShippingCarriersRow] = map.values.toList.find(v => (code == v.code))
+  override def selectByUniqueCode(code: String)(using c: ConnectionRead): Option[ShippingCarriersRow] = map.values.toList.find(v => (code == v.code))
 
   override def update: UpdateBuilder[ShippingCarriersFields, ShippingCarriersRow] = UpdateBuilderMock(ShippingCarriersFields.structure, () => map.values.toList, UpdateParams.empty(), row => row)
 

@@ -5,6 +5,7 @@
  */
 package oracledb
 
+import dev.typr.foundations.Bijection
 import dev.typr.foundations.OracleType
 import dev.typr.foundations.OracleVArray
 
@@ -12,5 +13,5 @@ import dev.typr.foundations.OracleVArray
 case class AllTypesStructNoLobsArray(value: Array[AllTypesStructNoLobs])
 
 object AllTypesStructNoLobsArray {
-  val oracleType: OracleType[AllTypesStructNoLobsArray] = OracleVArray.of("ALL_TYPES_STRUCT_NO_LOBS_ARRAY", 10, oracledb.AllTypesStructNoLobs.oracleType).bimap(list => new AllTypesStructNoLobsArray(list.toArray(new Array[AllTypesStructNoLobs](0))), wrapper => java.util.List.of(wrapper.value*))
+  val oracleType: OracleType[AllTypesStructNoLobsArray] = OracleVArray.of("ALL_TYPES_STRUCT_NO_LOBS_ARRAY", 10, oracledb.AllTypesStructNoLobs.oracleType).to(Bijection.of(list => new AllTypesStructNoLobsArray(list.toArray(new Array[AllTypesStructNoLobs](0))), wrapper => java.util.List.of(wrapper.value*)))
 }

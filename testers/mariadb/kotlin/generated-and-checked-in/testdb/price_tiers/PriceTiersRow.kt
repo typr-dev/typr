@@ -6,12 +6,11 @@
 package testdb.price_tiers
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import dev.typr.foundations.MariaTypes
+import dev.typr.dslkt.RowCodecs
 import dev.typr.foundations.Tuple.Tuple5
 import dev.typr.foundations.data.Uint4
-import dev.typr.foundations.kotlin.KotlinDbTypes
-import dev.typr.foundations.kotlin.RowParser
-import dev.typr.foundations.kotlin.RowParsers
+import dev.typr.foundationskt.MariaTypes
+import dev.typr.foundationskt.RowCodec
 import java.math.BigDecimal
 import testdb.customtypes.Defaulted
 
@@ -24,23 +23,23 @@ data class PriceTiersRow(
     */
   @field:JsonProperty("tier_id") val tierId: PriceTiersId,
   /**  */
-  val name: String,
+  val name: kotlin.String,
   /** 
     * Default: 1
     */
   @field:JsonProperty("min_quantity") val minQuantity: Uint4,
   /**  */
-  @field:JsonProperty("discount_type") val discountType: String,
+  @field:JsonProperty("discount_type") val discountType: kotlin.String,
   /**  */
   @field:JsonProperty("discount_value") val discountValue: BigDecimal
-) : Tuple5<PriceTiersId, String, Uint4, String, BigDecimal> {
+) : Tuple5<PriceTiersId, kotlin.String, Uint4, kotlin.String, BigDecimal> {
   override fun _1(): PriceTiersId = tierId
 
-  override fun _2(): String = name
+  override fun _2(): kotlin.String = name
 
   override fun _3(): Uint4 = minQuantity
 
-  override fun _4(): String = discountType
+  override fun _4(): kotlin.String = discountType
 
   override fun _5(): BigDecimal = discountValue
 
@@ -49,6 +48,6 @@ data class PriceTiersRow(
   fun toUnsavedRow(minQuantity: Defaulted<Uint4> = Defaulted.Provided(this.minQuantity)): PriceTiersRowUnsaved = PriceTiersRowUnsaved(name, discountType, discountValue, minQuantity)
 
   companion object {
-    val _rowParser: RowParser<PriceTiersRow> = RowParsers.of(PriceTiersId.mariaType, MariaTypes.varchar, MariaTypes.intUnsigned, MariaTypes.text, KotlinDbTypes.MariaTypes.numeric, { t0, t1, t2, t3, t4 -> PriceTiersRow(t0, t1, t2, t3, t4) }, { row -> arrayOf<Any?>(row.tierId, row.name, row.minQuantity, row.discountType, row.discountValue) })
+    val rowCodec: RowCodec<PriceTiersRow> = RowCodecs.of(PriceTiersId.mariaType, MariaTypes.varchar, MariaTypes.intUnsigned, MariaTypes.text, MariaTypes.numeric, { t0: PriceTiersId, t1: kotlin.String, t2: Uint4, t3: kotlin.String, t4: BigDecimal -> PriceTiersRow(t0, t1, t2, t3, t4) }, { row: PriceTiersRow -> arrayOf<Any?>(row.tierId, row.name, row.minQuantity, row.discountType, row.discountValue) })
   }
 }

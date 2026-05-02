@@ -8,18 +8,18 @@ package adventureworks.person.address
 import adventureworks.person.stateprovince.StateprovinceFields
 import adventureworks.person.stateprovince.StateprovinceId
 import adventureworks.person.stateprovince.StateprovinceRow
-import dev.typr.foundations.PgTypes
-import dev.typr.foundations.RowParser
-import dev.typr.foundations.dsl.FieldsBase
-import dev.typr.foundations.dsl.Path
-import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.scala.ForeignKey
-import dev.typr.foundations.scala.RelationStructure
-import dev.typr.foundations.scala.SqlExpr
-import dev.typr.foundations.scala.SqlExpr.Field
-import dev.typr.foundations.scala.SqlExpr.IdField
-import dev.typr.foundations.scala.SqlExpr.OptField
-import dev.typr.foundations.scala.TupleExpr9
+import dev.typr.dsl.FieldsBase
+import dev.typr.dsl.Path
+import dev.typr.dsl.SqlExpr.FieldLike
+import dev.typr.dslsc.ForeignKey
+import dev.typr.dslsc.RelationStructure
+import dev.typr.dslsc.SqlExpr
+import dev.typr.dslsc.SqlExpr.Field
+import dev.typr.dslsc.SqlExpr.IdField
+import dev.typr.dslsc.SqlExpr.OptField
+import dev.typr.dslsc.TupleExpr9
+import dev.typr.foundations.RowCodec
+import dev.typr.foundationssc.PgTypes
 import java.time.LocalDateTime
 import java.util.UUID
 
@@ -32,7 +32,7 @@ class AddressFields(val `_path`: java.util.List[Path]) extends TupleExpr9[Addres
       None,
       Some("int4"),
       (row, value) => row.copy(addressid = value),
-      AddressId.pgType
+      AddressId.pgType.underlying
     )
   }
 
@@ -44,7 +44,7 @@ class AddressFields(val `_path`: java.util.List[Path]) extends TupleExpr9[Addres
       None,
       None,
       (row, value) => row.copy(addressline1 = value),
-      PgTypes.text
+      PgTypes.text.underlying
     )
   }
 
@@ -56,7 +56,7 @@ class AddressFields(val `_path`: java.util.List[Path]) extends TupleExpr9[Addres
       None,
       None,
       (row, value) => row.copy(addressline2 = value),
-      PgTypes.text
+      PgTypes.text.underlying
     )
   }
 
@@ -68,7 +68,7 @@ class AddressFields(val `_path`: java.util.List[Path]) extends TupleExpr9[Addres
       None,
       None,
       (row, value) => row.copy(city = value),
-      PgTypes.text
+      PgTypes.text.underlying
     )
   }
 
@@ -80,7 +80,7 @@ class AddressFields(val `_path`: java.util.List[Path]) extends TupleExpr9[Addres
       None,
       Some("int4"),
       (row, value) => row.copy(stateprovinceid = value),
-      StateprovinceId.pgType
+      StateprovinceId.pgType.underlying
     )
   }
 
@@ -92,7 +92,7 @@ class AddressFields(val `_path`: java.util.List[Path]) extends TupleExpr9[Addres
       None,
       None,
       (row, value) => row.copy(postalcode = value),
-      PgTypes.text
+      PgTypes.text.underlying
     )
   }
 
@@ -104,7 +104,7 @@ class AddressFields(val `_path`: java.util.List[Path]) extends TupleExpr9[Addres
       None,
       Some("bytea"),
       (row, value) => row.copy(spatiallocation = value),
-      PgTypes.bytea
+      PgTypes.bytea.underlying
     )
   }
 
@@ -116,7 +116,7 @@ class AddressFields(val `_path`: java.util.List[Path]) extends TupleExpr9[Addres
       None,
       Some("uuid"),
       (row, value) => row.copy(rowguid = value),
-      PgTypes.uuid
+      PgTypes.uuid.underlying
     )
   }
 
@@ -128,7 +128,7 @@ class AddressFields(val `_path`: java.util.List[Path]) extends TupleExpr9[Addres
       None,
       Some("timestamp"),
       (row, value) => row.copy(modifieddate = value),
-      PgTypes.timestamp
+      PgTypes.timestamp.underlying
     )
   }
 
@@ -136,7 +136,7 @@ class AddressFields(val `_path`: java.util.List[Path]) extends TupleExpr9[Addres
 
   override def columns: java.util.List[FieldLike[?, AddressRow]] = java.util.List.of(this.addressid.underlying, this.addressline1.underlying, this.addressline2.underlying, this.city.underlying, this.stateprovinceid.underlying, this.postalcode.underlying, this.spatiallocation.underlying, this.rowguid.underlying, this.modifieddate.underlying)
 
-  override def rowParser: RowParser[AddressRow] = AddressRow._rowParser.underlying
+  override def rowCodec: RowCodec[AddressRow] = AddressRow.rowCodec.underlying
 
   override def withPaths(`_path`: java.util.List[Path]): RelationStructure[AddressFields, AddressRow] = new AddressFields(`_path`)
 

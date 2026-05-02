@@ -24,24 +24,24 @@ import testdb.customtypes.Defaulted.UseDefault
 /** This class corresponds to a row in table `all_scalar_types` which has not been persisted yet */
 data class AllScalarTypesRowUnsaved(
   @field:JsonProperty("col_tinyint") val colTinyint: Uint1? = null,
-  @field:JsonProperty("col_smallint") val colSmallint: Short? = null,
+  @field:JsonProperty("col_smallint") val colSmallint: kotlin.Short? = null,
   @field:JsonProperty("col_int") val colInt: Int? = null,
-  @field:JsonProperty("col_bigint") val colBigint: Long? = null,
+  @field:JsonProperty("col_bigint") val colBigint: kotlin.Long? = null,
   @field:JsonProperty("col_decimal") val colDecimal: BigDecimal? = null,
   @field:JsonProperty("col_numeric") val colNumeric: BigDecimal? = null,
   @field:JsonProperty("col_money") val colMoney: BigDecimal? = null,
   @field:JsonProperty("col_smallmoney") val colSmallmoney: BigDecimal? = null,
-  @field:JsonProperty("col_real") val colReal: Float? = null,
-  @field:JsonProperty("col_float") val colFloat: Double? = null,
-  @field:JsonProperty("col_bit") val colBit: Boolean? = null,
-  @field:JsonProperty("col_char") val colChar: String? = null,
-  @field:JsonProperty("col_varchar") val colVarchar: String? = null,
-  @field:JsonProperty("col_varchar_max") val colVarcharMax: String? = null,
-  @field:JsonProperty("col_text") val colText: String? = null,
-  @field:JsonProperty("col_nchar") val colNchar: String? = null,
-  @field:JsonProperty("col_nvarchar") val colNvarchar: String? = null,
-  @field:JsonProperty("col_nvarchar_max") val colNvarcharMax: String? = null,
-  @field:JsonProperty("col_ntext") val colNtext: String? = null,
+  @field:JsonProperty("col_real") val colReal: kotlin.Float? = null,
+  @field:JsonProperty("col_float") val colFloat: kotlin.Double? = null,
+  @field:JsonProperty("col_bit") val colBit: kotlin.Boolean? = null,
+  @field:JsonProperty("col_char") val colChar: kotlin.String? = null,
+  @field:JsonProperty("col_varchar") val colVarchar: kotlin.String? = null,
+  @field:JsonProperty("col_varchar_max") val colVarcharMax: kotlin.String? = null,
+  @field:JsonProperty("col_text") val colText: kotlin.String? = null,
+  @field:JsonProperty("col_nchar") val colNchar: kotlin.String? = null,
+  @field:JsonProperty("col_nvarchar") val colNvarchar: kotlin.String? = null,
+  @field:JsonProperty("col_nvarchar_max") val colNvarcharMax: kotlin.String? = null,
+  @field:JsonProperty("col_ntext") val colNtext: kotlin.String? = null,
   @field:JsonProperty("col_binary") val colBinary: ByteArray? = null,
   @field:JsonProperty("col_varbinary") val colVarbinary: ByteArray? = null,
   @field:JsonProperty("col_varbinary_max") val colVarbinaryMax: ByteArray? = null,
@@ -59,10 +59,10 @@ data class AllScalarTypesRowUnsaved(
   @field:JsonProperty("col_geography") val colGeography: Geography? = null,
   @field:JsonProperty("col_geometry") val colGeometry: Geometry? = null,
   /** Default: ('default_value') */
-  @field:JsonProperty("col_not_null") val colNotNull: Defaulted<String> = UseDefault()
+  @field:JsonProperty("col_not_null") val colNotNull: Defaulted<kotlin.String> = UseDefault()
 ) {
   fun toRow(
-    colNotNullDefault: () -> String,
+    colNotNullDefault: () -> kotlin.String,
     idDefault: () -> AllScalarTypesId,
     colRowversionDefault: () -> ByteArray
   ): AllScalarTypesRow = AllScalarTypesRow(id = idDefault(), colTinyint = colTinyint, colSmallint = colSmallint, colInt = colInt, colBigint = colBigint, colDecimal = colDecimal, colNumeric = colNumeric, colMoney = colMoney, colSmallmoney = colSmallmoney, colReal = colReal, colFloat = colFloat, colBit = colBit, colChar = colChar, colVarchar = colVarchar, colVarcharMax = colVarcharMax, colText = colText, colNchar = colNchar, colNvarchar = colNvarchar, colNvarcharMax = colNvarcharMax, colNtext = colNtext, colBinary = colBinary, colVarbinary = colVarbinary, colVarbinaryMax = colVarbinaryMax, colImage = colImage, colDate = colDate, colTime = colTime, colDatetime = colDatetime, colSmalldatetime = colSmalldatetime, colDatetime2 = colDatetime2, colDatetimeoffset = colDatetimeoffset, colUniqueidentifier = colUniqueidentifier, colXml = colXml, colJson = colJson, colRowversion = colRowversionDefault(), colHierarchyid = colHierarchyid, colGeography = colGeography, colGeometry = colGeometry, colNotNull = colNotNull.getOrElse(colNotNullDefault))

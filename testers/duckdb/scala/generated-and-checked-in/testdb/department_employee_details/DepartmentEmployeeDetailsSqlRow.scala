@@ -6,12 +6,10 @@
 package testdb.department_employee_details
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import dev.typr.foundations.DuckDbTypes
+import dev.typr.dslsc.RowCodecs
 import dev.typr.foundations.Tuple.Tuple10
-import dev.typr.foundations.scala.DbTypeOps
-import dev.typr.foundations.scala.RowParser
-import dev.typr.foundations.scala.RowParsers
-import dev.typr.foundations.scala.ScalaDbTypes
+import dev.typr.foundationssc.DuckDbTypes
+import dev.typr.foundationssc.RowCodec
 import java.time.LocalDate
 
 /** SQL file: department_employee_details.sql */
@@ -59,5 +57,5 @@ case class DepartmentEmployeeDetailsSqlRow(
 }
 
 object DepartmentEmployeeDetailsSqlRow {
-  val `_rowParser`: RowParser[DepartmentEmployeeDetailsSqlRow] = RowParsers.of(DuckDbTypes.varchar, DuckDbTypes.varchar, DuckDbTypes.varchar, ScalaDbTypes.DuckDbTypes.numeric.nullable, ScalaDbTypes.DuckDbTypes.integer.nullable, DuckDbTypes.varchar.nullable, DuckDbTypes.varchar.nullable, ScalaDbTypes.DuckDbTypes.numeric.nullable, DuckDbTypes.date.nullable, ScalaDbTypes.DuckDbTypes.integer.nullable)(DepartmentEmployeeDetailsSqlRow.apply)(row => Array[Any](row.deptCode, row.deptRegion, row.deptName, row.budget, row.empNumber, row.empSuffix, row.empName, row.salary, row.hireDate, row.yearsOfService))
+  val rowCodec: RowCodec[DepartmentEmployeeDetailsSqlRow] = RowCodecs.of(DuckDbTypes.varchar, DuckDbTypes.varchar, DuckDbTypes.varchar, DuckDbTypes.numeric.opt, DuckDbTypes.integer.opt, DuckDbTypes.varchar.opt, DuckDbTypes.varchar.opt, DuckDbTypes.numeric.opt, DuckDbTypes.date.opt, DuckDbTypes.integer.opt)(DepartmentEmployeeDetailsSqlRow.apply)(row => Array[Any](row.deptCode, row.deptRegion, row.deptName, row.budget, row.empNumber, row.empSuffix, row.empName, row.salary, row.hireDate, row.yearsOfService))
 }

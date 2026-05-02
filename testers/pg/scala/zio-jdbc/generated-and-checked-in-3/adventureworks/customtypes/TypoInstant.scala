@@ -57,7 +57,7 @@ object TypoInstant {
     )
   }
 
-  given bijection: Bijection[TypoInstant, Instant] = Bijection.apply[TypoInstant, Instant](_.value)(TypoInstant.apply)
+  given bijection: Bijection[TypoInstant, Instant] = Bijection[TypoInstant, Instant](_.value)(TypoInstant.apply)
 
   given jdbcDecoder: JdbcDecoder[TypoInstant] = {
     JdbcDecoder[TypoInstant](

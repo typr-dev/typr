@@ -5,8 +5,8 @@
  */
 package oracledb.product_by_sku
 
-import java.sql.Connection
+import dev.typr.foundationssc.ConnectionRead
 
 trait ProductBySkuSqlRepo {
-  def apply(sku: String)(using c: Connection): List[ProductBySkuSqlRow]
+  def apply(sku: String)(using c: ConnectionRead): List[ProductBySkuSqlRow]
 }

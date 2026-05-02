@@ -6,9 +6,9 @@
 package testdb.mariatest_spatial
 
 import com.fasterxml.jackson.annotation.JsonValue
-import dev.typr.foundations.MariaType
-import dev.typr.foundations.kotlin.Bijection
-import dev.typr.foundations.kotlin.KotlinDbTypes
+import dev.typr.foundationskt.Bijection
+import dev.typr.foundationskt.MariaType
+import dev.typr.foundationskt.MariaTypes
 
 /** Type for the primary key of table `mariatest_spatial` */
 data class MariatestSpatialId(@field:JsonValue val value: Int) {
@@ -21,6 +21,6 @@ data class MariatestSpatialId(@field:JsonValue val value: Int) {
       Bijection.of(MariatestSpatialId::value, ::MariatestSpatialId)
 
     val mariaType: MariaType<MariatestSpatialId> =
-      KotlinDbTypes.MariaTypes.int_.bimap(::MariatestSpatialId, MariatestSpatialId::value)
+      MariaTypes.int_.to(Bijection.of(::MariatestSpatialId, MariatestSpatialId::value))
   }
 }

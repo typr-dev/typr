@@ -14,18 +14,18 @@ import adventureworks.person.addresstype.AddresstypeRow
 import adventureworks.person.businessentity.BusinessentityFields
 import adventureworks.person.businessentity.BusinessentityId
 import adventureworks.person.businessentity.BusinessentityRow
+import dev.typr.dsl.FieldsBase
+import dev.typr.dsl.ForeignKey
+import dev.typr.dsl.Path
+import dev.typr.dsl.RelationStructure
+import dev.typr.dsl.SqlExpr
+import dev.typr.dsl.SqlExpr.Field
+import dev.typr.dsl.SqlExpr.FieldLike
+import dev.typr.dsl.SqlExpr.IdField
+import dev.typr.dsl.TupleExpr
+import dev.typr.dsl.TupleExpr.TupleExpr5
 import dev.typr.foundations.PgTypes
-import dev.typr.foundations.RowParser
-import dev.typr.foundations.dsl.FieldsBase
-import dev.typr.foundations.dsl.ForeignKey
-import dev.typr.foundations.dsl.Path
-import dev.typr.foundations.dsl.RelationStructure
-import dev.typr.foundations.dsl.SqlExpr
-import dev.typr.foundations.dsl.SqlExpr.Field
-import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.dsl.SqlExpr.IdField
-import dev.typr.foundations.dsl.TupleExpr
-import dev.typr.foundations.dsl.TupleExpr.TupleExpr5
+import dev.typr.foundations.RowCodec
 import java.time.LocalDateTime
 import java.util.Optional
 import java.util.UUID
@@ -103,7 +103,7 @@ class BusinessentityaddressFields(val `_path`: java.util.List[Path]) extends Tup
 
   override def columns: java.util.List[FieldLike[?, BusinessentityaddressRow]] = java.util.List.of(this.businessentityid, this.addressid, this.addresstypeid, this.rowguid, this.modifieddate)
 
-  override def rowParser: RowParser[BusinessentityaddressRow] = BusinessentityaddressRow._rowParser
+  override def rowCodec: RowCodec[BusinessentityaddressRow] = BusinessentityaddressRow.rowCodec
 
   override def withPaths(`_path`: java.util.List[Path]): RelationStructure[BusinessentityaddressFields, BusinessentityaddressRow] = new BusinessentityaddressFields(`_path`)
 

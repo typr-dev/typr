@@ -23,7 +23,7 @@ object OnlineOrderFlag {
 
   given arrayPut: Put[Array[OnlineOrderFlag]] = Flag.arrayPut.contramap(_.map(_.value))
 
-  given bijection: Bijection[OnlineOrderFlag, Flag] = Bijection.apply[OnlineOrderFlag, Flag](_.value)(OnlineOrderFlag.apply)
+  given bijection: Bijection[OnlineOrderFlag, Flag] = Bijection[OnlineOrderFlag, Flag](_.value)(OnlineOrderFlag.apply)
 
   given decoder: Decoder[OnlineOrderFlag] = Flag.decoder.map(OnlineOrderFlag.apply)
 

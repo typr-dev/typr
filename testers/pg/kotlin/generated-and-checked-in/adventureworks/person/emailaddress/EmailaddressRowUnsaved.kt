@@ -9,9 +9,7 @@ import adventureworks.customtypes.Defaulted
 import adventureworks.customtypes.Defaulted.UseDefault
 import adventureworks.person.businessentity.BusinessentityId
 import dev.typr.foundations.PgText
-import dev.typr.foundations.PgTypes
-import dev.typr.foundations.kotlin.KotlinDbTypes
-import dev.typr.foundations.kotlin.nullable
+import dev.typr.foundationskt.PgTypes
 import java.time.LocalDateTime
 import java.util.UUID
 
@@ -22,7 +20,7 @@ data class EmailaddressRowUnsaved(
     */
   val businessentityid: BusinessentityId,
   /** E-mail address for the person. */
-  val emailaddress: /* max 50 chars */ String? = null,
+  val emailaddress: /* max 50 chars */ kotlin.String? = null,
   /** Default: nextval('person.emailaddress_emailaddressid_seq'::regclass)
     * Primary key. ID of this email address.
     */
@@ -40,14 +38,14 @@ data class EmailaddressRowUnsaved(
 
   companion object {
     val pgText: PgText<EmailaddressRowUnsaved> =
-      PgText.instance({ row, sb -> BusinessentityId.pgType.text().unsafeEncode(row.businessentityid, sb)
+      PgText.instance({ row, sb -> BusinessentityId.pgType.pgText().unsafeEncode(row.businessentityid, sb)
       sb.append(PgText.DELIMETER)
-      PgTypes.text.nullable().text().unsafeEncode(row.emailaddress, sb)
+      PgTypes.text.opt().pgText().unsafeEncode(row.emailaddress, sb)
       sb.append(PgText.DELIMETER)
-      Defaulted.pgText(KotlinDbTypes.PgTypes.int4.text()).unsafeEncode(row.emailaddressid, sb)
+      Defaulted.pgText(PgTypes.int4.pgText()).unsafeEncode(row.emailaddressid, sb)
       sb.append(PgText.DELIMETER)
-      Defaulted.pgText(PgTypes.uuid.text()).unsafeEncode(row.rowguid, sb)
+      Defaulted.pgText(PgTypes.uuid.pgText()).unsafeEncode(row.rowguid, sb)
       sb.append(PgText.DELIMETER)
-      Defaulted.pgText(PgTypes.timestamp.text()).unsafeEncode(row.modifieddate, sb) })
+      Defaulted.pgText(PgTypes.timestamp.pgText()).unsafeEncode(row.modifieddate, sb) })
   }
 }

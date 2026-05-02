@@ -5,10 +5,11 @@
  */
 package adventureworks.humanresources.shift
 
-import dev.typr.foundations.kotlin.DeleteBuilder
-import dev.typr.foundations.kotlin.SelectBuilder
-import dev.typr.foundations.kotlin.UpdateBuilder
-import java.sql.Connection
+import dev.typr.dslkt.DeleteBuilder
+import dev.typr.dslkt.SelectBuilder
+import dev.typr.dslkt.UpdateBuilder
+import dev.typr.foundationskt.Connection
+import dev.typr.foundationskt.ConnectionRead
 import kotlin.collections.Iterator
 import kotlin.collections.List
 import kotlin.collections.Map
@@ -19,10 +20,10 @@ interface ShiftRepo {
   abstract fun deleteById(
     shiftid: ShiftId,
     c: Connection
-  ): Boolean
+  ): kotlin.Boolean
 
   abstract fun deleteByIds(
-    shiftids: Array<ShiftId>,
+    shiftids: List<ShiftId>,
     c: Connection
   ): Int
 
@@ -40,32 +41,32 @@ interface ShiftRepo {
     unsaved: Iterator<ShiftRow>,
     batchSize: Int = 10000,
     c: Connection
-  ): Long
+  ): kotlin.Long
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
   abstract fun insertUnsavedStreaming(
     unsaved: Iterator<ShiftRowUnsaved>,
     batchSize: Int = 10000,
     c: Connection
-  ): Long
+  ): kotlin.Long
 
   abstract fun select(): SelectBuilder<ShiftFields, ShiftRow>
 
-  abstract fun selectAll(c: Connection): List<ShiftRow>
+  abstract fun selectAll(c: ConnectionRead): List<ShiftRow>
 
   abstract fun selectById(
     shiftid: ShiftId,
-    c: Connection
+    c: ConnectionRead
   ): ShiftRow?
 
   abstract fun selectByIds(
-    shiftids: Array<ShiftId>,
-    c: Connection
+    shiftids: List<ShiftId>,
+    c: ConnectionRead
   ): List<ShiftRow>
 
   abstract fun selectByIdsTracked(
-    shiftids: Array<ShiftId>,
-    c: Connection
+    shiftids: List<ShiftId>,
+    c: ConnectionRead
   ): Map<ShiftId, ShiftRow>
 
   abstract fun update(): UpdateBuilder<ShiftFields, ShiftRow>
@@ -73,7 +74,7 @@ interface ShiftRepo {
   abstract fun update(
     row: ShiftRow,
     c: Connection
-  ): Boolean
+  ): kotlin.Boolean
 
   abstract fun upsert(
     unsaved: ShiftRow,

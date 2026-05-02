@@ -19,8 +19,7 @@ class DepartmentsEmployeesTest extends AnyFunSuite {
   val employeesRepo: EmployeesRepoImpl = new EmployeesRepoImpl
 
   test("insert department with composite PK") {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       val budget = new MoneyT(new java.math.BigDecimal("1000000.01"), "USD")
       val dept = new DepartmentsRow("IT", "WEST", "Information Technology", java.util.Optional.of(budget))
 
@@ -39,8 +38,7 @@ class DepartmentsEmployeesTest extends AnyFunSuite {
   }
 
   test("select department by composite id") {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       val dept = new DepartmentsRow("HR", "EAST", "Human Resources", java.util.Optional.empty[MoneyT]())
       val _ = departmentsRepo.insert(dept)
 
@@ -55,13 +53,12 @@ class DepartmentsEmployeesTest extends AnyFunSuite {
   }
 
   test("select departments by composite ids") {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       val _ = departmentsRepo.insert(new DepartmentsRow("SALES", "NORTH", "Sales North", java.util.Optional.empty[MoneyT]()))
       val _ = departmentsRepo.insert(new DepartmentsRow("SALES", "SOUTH", "Sales South", java.util.Optional.empty[MoneyT]()))
       val _ = departmentsRepo.insert(new DepartmentsRow("FINANCE", "CENTRAL", "Finance", java.util.Optional.empty[MoneyT]()))
 
-      val ids = Array(
+      val ids = java.util.List.of(
         new DepartmentsId("SALES", "NORTH"),
         new DepartmentsId("SALES", "SOUTH"),
         new DepartmentsId("NONEXISTENT", "NONE")
@@ -75,12 +72,11 @@ class DepartmentsEmployeesTest extends AnyFunSuite {
   }
 
   test("select departments by composite ids tracked") {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       val _ = departmentsRepo.insert(new DepartmentsRow("DEV", "WEST", "Development West", java.util.Optional.empty[MoneyT]()))
       val _ = departmentsRepo.insert(new DepartmentsRow("DEV", "EAST", "Development East", java.util.Optional.empty[MoneyT]()))
 
-      val ids = Array(
+      val ids = java.util.List.of(
         new DepartmentsId("DEV", "WEST"),
         new DepartmentsId("DEV", "EAST"),
         new DepartmentsId("MISSING", "NONE")
@@ -95,8 +91,7 @@ class DepartmentsEmployeesTest extends AnyFunSuite {
   }
 
   test("update department") {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       val dept = new DepartmentsRow(
         "OPS",
         "CENTRAL",
@@ -119,8 +114,7 @@ class DepartmentsEmployeesTest extends AnyFunSuite {
   }
 
   test("delete department by composite id") {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       val dept = new DepartmentsRow("TEMP", "REGION1", "Temporary Dept", java.util.Optional.empty[MoneyT]())
       val _ = departmentsRepo.insert(dept)
 
@@ -135,13 +129,12 @@ class DepartmentsEmployeesTest extends AnyFunSuite {
   }
 
   test("delete departments by composite ids") {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       val _ = departmentsRepo.insert(new DepartmentsRow("DEL1", "R1", "Delete 1", java.util.Optional.empty[MoneyT]()))
       val _ = departmentsRepo.insert(new DepartmentsRow("DEL1", "R2", "Delete 2", java.util.Optional.empty[MoneyT]()))
       val _ = departmentsRepo.insert(new DepartmentsRow("DEL2", "R1", "Delete 3", java.util.Optional.empty[MoneyT]()))
 
-      val ids = Array(new DepartmentsId("DEL1", "R1"), new DepartmentsId("DEL1", "R2"))
+      val ids = java.util.List.of(new DepartmentsId("DEL1", "R1"), new DepartmentsId("DEL1", "R2"))
       val deletedCount = departmentsRepo.deleteByIds(ids)
 
       val _ = assert(deletedCount == 2)
@@ -153,8 +146,7 @@ class DepartmentsEmployeesTest extends AnyFunSuite {
   }
 
   test("insert employee with foreign key to department") {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       val dept = new DepartmentsRow(
         "ENG",
         "WEST",
@@ -188,8 +180,7 @@ class DepartmentsEmployeesTest extends AnyFunSuite {
   }
 
   test("select employee by composite id") {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       val _ = departmentsRepo.insert(new DepartmentsRow("ACCT", "SOUTH", "Accounting", java.util.Optional.empty[MoneyT]()))
 
       val empUnsaved = new EmployeesRowUnsaved(
@@ -215,8 +206,7 @@ class DepartmentsEmployeesTest extends AnyFunSuite {
   }
 
   test("multiple employees in same department") {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       val ts = System.currentTimeMillis() % 100000000
       val empNum1 = new java.math.BigDecimal(ts)
       val empNum2 = new java.math.BigDecimal(ts + 1)
@@ -276,8 +266,7 @@ class DepartmentsEmployeesTest extends AnyFunSuite {
   }
 
   test("update employee department") {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       val _ = departmentsRepo.insert(new DepartmentsRow("DEPT1", "LOC1", "Department 1", java.util.Optional.empty[MoneyT]()))
       val _ = departmentsRepo.insert(new DepartmentsRow("DEPT2", "LOC2", "Department 2", java.util.Optional.empty[MoneyT]()))
 
@@ -307,8 +296,7 @@ class DepartmentsEmployeesTest extends AnyFunSuite {
   }
 
   test("delete employee by composite id") {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       val _ = departmentsRepo.insert(new DepartmentsRow("TEST", "TEST", "Test Dept", java.util.Optional.empty[MoneyT]()))
       val _ = employeesRepo.insert(
         new EmployeesRowUnsaved(
@@ -333,8 +321,7 @@ class DepartmentsEmployeesTest extends AnyFunSuite {
   }
 
   test("select all departments") {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       val _ = departmentsRepo.insert(new DepartmentsRow("ALL1", "A", "All Test 1", java.util.Optional.empty[MoneyT]()))
       val _ = departmentsRepo.insert(new DepartmentsRow("ALL2", "B", "All Test 2", java.util.Optional.empty[MoneyT]()))
       val _ = departmentsRepo.insert(new DepartmentsRow("ALL3", "C", "All Test 3", java.util.Optional.empty[MoneyT]()))
@@ -349,8 +336,7 @@ class DepartmentsEmployeesTest extends AnyFunSuite {
   }
 
   test("select all employees") {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       val _ = departmentsRepo.insert(new DepartmentsRow("ALLEMP", "REGION", "All Employees Test", java.util.Optional.empty[MoneyT]()))
 
       val _ = employeesRepo.insert(
@@ -385,8 +371,7 @@ class DepartmentsEmployeesTest extends AnyFunSuite {
   }
 
   test("department with null budget") {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       val dept = new DepartmentsRow("NOBUD", "REGION", "No Budget Dept", java.util.Optional.empty[MoneyT]())
       val insertedId = departmentsRepo.insert(dept)
       val inserted = departmentsRepo.selectById(insertedId).orElseThrow()
@@ -400,8 +385,7 @@ class DepartmentsEmployeesTest extends AnyFunSuite {
   }
 
   test("employee with null salary") {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       val _ = departmentsRepo.insert(new DepartmentsRow("NOSAL", "REGION", "No Salary Dept", java.util.Optional.empty[MoneyT]()))
 
       val empId = employeesRepo.insert(

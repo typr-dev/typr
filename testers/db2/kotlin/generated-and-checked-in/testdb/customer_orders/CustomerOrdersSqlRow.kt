@@ -6,27 +6,25 @@
 package testdb.customer_orders
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import dev.typr.foundations.Db2Types
+import dev.typr.dslkt.RowCodecs
 import dev.typr.foundations.Tuple.Tuple6
-import dev.typr.foundations.kotlin.KotlinDbTypes
-import dev.typr.foundations.kotlin.RowParser
-import dev.typr.foundations.kotlin.RowParsers
-import dev.typr.foundations.kotlin.nullable
+import dev.typr.foundationskt.Db2Types
+import dev.typr.foundationskt.RowCodec
 import java.math.BigDecimal
 import java.time.LocalDate
 
 /** SQL file: customer_orders.sql */
 data class CustomerOrdersSqlRow(
   @field:JsonProperty("customer_id") val customerId: Int,
-  @field:JsonProperty("customer_name") val customerName: String,
+  @field:JsonProperty("customer_name") val customerName: kotlin.String,
   @field:JsonProperty("order_id") val orderId: Int,
   @field:JsonProperty("order_date") val orderDate: LocalDate,
   @field:JsonProperty("total_amount") val totalAmount: BigDecimal?,
-  val status: String?
-) : Tuple6<Int, String, Int, LocalDate, BigDecimal?, String?> {
+  val status: kotlin.String?
+) : Tuple6<Int, kotlin.String, Int, LocalDate, BigDecimal?, kotlin.String?> {
   override fun _1(): Int = customerId
 
-  override fun _2(): String = customerName
+  override fun _2(): kotlin.String = customerName
 
   override fun _3(): Int = orderId
 
@@ -34,9 +32,9 @@ data class CustomerOrdersSqlRow(
 
   override fun _5(): BigDecimal? = totalAmount
 
-  override fun _6(): String? = status
+  override fun _6(): kotlin.String? = status
 
   companion object {
-    val _rowParser: RowParser<CustomerOrdersSqlRow> = RowParsers.of(KotlinDbTypes.Db2Types.integer, Db2Types.varchar, KotlinDbTypes.Db2Types.integer, Db2Types.date, KotlinDbTypes.Db2Types.decimal.nullable(), Db2Types.varchar.nullable(), { t0, t1, t2, t3, t4, t5 -> CustomerOrdersSqlRow(t0, t1, t2, t3, t4, t5) }, { row -> arrayOf<Any?>(row.customerId, row.customerName, row.orderId, row.orderDate, row.totalAmount, row.status) })
+    val rowCodec: RowCodec<CustomerOrdersSqlRow> = RowCodecs.of(Db2Types.integer, Db2Types.varchar, Db2Types.integer, Db2Types.date, Db2Types.decimal.opt(), Db2Types.varchar.opt(), { t0: Int, t1: kotlin.String, t2: Int, t3: LocalDate, t4: BigDecimal?, t5: kotlin.String? -> CustomerOrdersSqlRow(t0, t1, t2, t3, t4, t5) }, { row: CustomerOrdersSqlRow -> arrayOf<Any?>(row.customerId, row.customerName, row.orderId, row.orderDate, row.totalAmount, row.status) })
   }
 }

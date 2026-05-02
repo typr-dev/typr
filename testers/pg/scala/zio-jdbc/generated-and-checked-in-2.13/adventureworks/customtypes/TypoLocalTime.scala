@@ -53,7 +53,7 @@ object TypoLocalTime {
     )
   }
 
-  implicit lazy val bijection: Bijection[TypoLocalTime, LocalTime] = Bijection.apply[TypoLocalTime, LocalTime](_.value)(TypoLocalTime.apply)
+  implicit lazy val bijection: Bijection[TypoLocalTime, LocalTime] = Bijection[TypoLocalTime, LocalTime](_.value)(TypoLocalTime.apply)
 
   implicit lazy val jdbcDecoder: JdbcDecoder[TypoLocalTime] = {
     JdbcDecoder[TypoLocalTime](

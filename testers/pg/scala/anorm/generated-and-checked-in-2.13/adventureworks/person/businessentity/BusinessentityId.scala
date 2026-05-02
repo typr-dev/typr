@@ -21,7 +21,7 @@ object BusinessentityId {
 
   implicit lazy val arrayToStatement: ToStatement[Array[BusinessentityId]] = adventureworks.IntArrayToStatement.contramap(_.map(_.value))
 
-  implicit lazy val bijection: Bijection[BusinessentityId, Int] = Bijection.apply[BusinessentityId, Int](_.value)(BusinessentityId.apply)
+  implicit lazy val bijection: Bijection[BusinessentityId, Int] = Bijection[BusinessentityId, Int](_.value)(BusinessentityId.apply)
 
   implicit lazy val column: Column[BusinessentityId] = Column.columnToInt.map(BusinessentityId.apply)
 

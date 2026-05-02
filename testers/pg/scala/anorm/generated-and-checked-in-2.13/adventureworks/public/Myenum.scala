@@ -23,7 +23,9 @@ import play.api.libs.json.Writes
  *  - c
  */
 
-sealed abstract class Myenum(val value: java.lang.String)
+sealed abstract class Myenum(val value: java.lang.String) {
+  
+}
 
 object Myenum {
   implicit lazy val arrayColumn: Column[Array[Myenum]] = Column.columnToArray[String](Column.columnToString, implicitly).map(_.map(Myenum.force))

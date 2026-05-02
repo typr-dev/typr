@@ -14,18 +14,18 @@ import adventureworks.person.addresstype.AddresstypeRow
 import adventureworks.person.businessentity.BusinessentityFields
 import adventureworks.person.businessentity.BusinessentityId
 import adventureworks.person.businessentity.BusinessentityRow
-import dev.typr.foundations.PgTypes
-import dev.typr.foundations.RowParser
-import dev.typr.foundations.dsl.FieldsBase
-import dev.typr.foundations.dsl.Path
-import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.kotlin.ForeignKey
-import dev.typr.foundations.kotlin.RelationStructure
-import dev.typr.foundations.kotlin.SqlExpr
-import dev.typr.foundations.kotlin.SqlExpr.Field
-import dev.typr.foundations.kotlin.SqlExpr.IdField
-import dev.typr.foundations.kotlin.TupleExpr
-import dev.typr.foundations.kotlin.TupleExpr5
+import dev.typr.dsl.FieldsBase
+import dev.typr.dsl.Path
+import dev.typr.dsl.SqlExpr.FieldLike
+import dev.typr.dslkt.ForeignKey
+import dev.typr.dslkt.RelationStructure
+import dev.typr.dslkt.SqlExpr
+import dev.typr.dslkt.SqlExpr.Field
+import dev.typr.dslkt.SqlExpr.IdField
+import dev.typr.dslkt.TupleExpr
+import dev.typr.dslkt.TupleExpr5
+import dev.typr.foundations.RowCodec
+import dev.typr.foundationskt.PgTypes
 import java.time.LocalDateTime
 import java.util.UUID
 import kotlin.collections.List
@@ -43,17 +43,17 @@ data class BusinessentityaddressFields(val _path: List<Path>) : TupleExpr5<Busin
 
   override fun _path(): List<Path> = _path
 
-  fun addressid(): IdField<AddressId, BusinessentityaddressRow> = IdField<AddressId, BusinessentityaddressRow>(_path, "addressid", BusinessentityaddressRow::addressid, null, "int4", { row, value -> row.copy(addressid = value) }, AddressId.pgType)
+  fun addressid(): IdField<AddressId, BusinessentityaddressRow> = IdField<AddressId, BusinessentityaddressRow>(_path, "addressid", BusinessentityaddressRow::addressid, null, "int4", { row, value -> row.copy(addressid = value) }, AddressId.pgType.underlying)
 
-  fun addresstypeid(): IdField<AddresstypeId, BusinessentityaddressRow> = IdField<AddresstypeId, BusinessentityaddressRow>(_path, "addresstypeid", BusinessentityaddressRow::addresstypeid, null, "int4", { row, value -> row.copy(addresstypeid = value) }, AddresstypeId.pgType)
+  fun addresstypeid(): IdField<AddresstypeId, BusinessentityaddressRow> = IdField<AddresstypeId, BusinessentityaddressRow>(_path, "addresstypeid", BusinessentityaddressRow::addresstypeid, null, "int4", { row, value -> row.copy(addresstypeid = value) }, AddresstypeId.pgType.underlying)
 
-  fun businessentityid(): IdField<BusinessentityId, BusinessentityaddressRow> = IdField<BusinessentityId, BusinessentityaddressRow>(_path, "businessentityid", BusinessentityaddressRow::businessentityid, null, "int4", { row, value -> row.copy(businessentityid = value) }, BusinessentityId.pgType)
+  fun businessentityid(): IdField<BusinessentityId, BusinessentityaddressRow> = IdField<BusinessentityId, BusinessentityaddressRow>(_path, "businessentityid", BusinessentityaddressRow::businessentityid, null, "int4", { row, value -> row.copy(businessentityid = value) }, BusinessentityId.pgType.underlying)
 
   override fun columns(): List<FieldLike<*, BusinessentityaddressRow>> = listOf(this.businessentityid().underlying, this.addressid().underlying, this.addresstypeid().underlying, this.rowguid().underlying, this.modifieddate().underlying)
 
-  fun compositeIdIn(compositeIds: List<BusinessentityaddressId>): SqlExpr<Boolean> = TupleExpr.of(businessentityid(), addressid(), addresstypeid()).among(compositeIds)
+  fun compositeIdIn(compositeIds: List<BusinessentityaddressId>): SqlExpr<kotlin.Boolean> = TupleExpr.of(businessentityid(), addressid(), addresstypeid()).among(compositeIds)
 
-  fun compositeIdIs(compositeId: BusinessentityaddressId): SqlExpr<Boolean> = SqlExpr.all(businessentityid().isEqual(compositeId.businessentityid), addressid().isEqual(compositeId.addressid), addresstypeid().isEqual(compositeId.addresstypeid))
+  fun compositeIdIs(compositeId: BusinessentityaddressId): SqlExpr<kotlin.Boolean> = SqlExpr.all(businessentityid().isEqual(compositeId.businessentityid), addressid().isEqual(compositeId.addressid), addresstypeid().isEqual(compositeId.addresstypeid))
 
   fun fkAddress(): ForeignKey<AddressFields, AddressRow> = ForeignKey.of<AddressFields, AddressRow>("person.FK_BusinessEntityAddress_Address_AddressID").withColumnPair<AddressId>(addressid(), AddressFields::addressid)
 
@@ -61,11 +61,11 @@ data class BusinessentityaddressFields(val _path: List<Path>) : TupleExpr5<Busin
 
   fun fkBusinessentity(): ForeignKey<BusinessentityFields, BusinessentityRow> = ForeignKey.of<BusinessentityFields, BusinessentityRow>("person.FK_BusinessEntityAddress_BusinessEntity_BusinessEntityID").withColumnPair<BusinessentityId>(businessentityid(), BusinessentityFields::businessentityid)
 
-  fun modifieddate(): Field<LocalDateTime, BusinessentityaddressRow> = Field<LocalDateTime, BusinessentityaddressRow>(_path, "modifieddate", BusinessentityaddressRow::modifieddate, null, "timestamp", { row, value -> row.copy(modifieddate = value) }, PgTypes.timestamp)
+  fun modifieddate(): Field<LocalDateTime, BusinessentityaddressRow> = Field<LocalDateTime, BusinessentityaddressRow>(_path, "modifieddate", BusinessentityaddressRow::modifieddate, null, "timestamp", { row, value -> row.copy(modifieddate = value) }, PgTypes.timestamp.underlying)
 
-  override fun rowParser(): RowParser<BusinessentityaddressRow> = BusinessentityaddressRow._rowParser.underlying
+  override fun rowCodec(): RowCodec<BusinessentityaddressRow> = BusinessentityaddressRow.rowCodec.underlying
 
-  fun rowguid(): Field<UUID, BusinessentityaddressRow> = Field<UUID, BusinessentityaddressRow>(_path, "rowguid", BusinessentityaddressRow::rowguid, null, "uuid", { row, value -> row.copy(rowguid = value) }, PgTypes.uuid)
+  fun rowguid(): Field<UUID, BusinessentityaddressRow> = Field<UUID, BusinessentityaddressRow>(_path, "rowguid", BusinessentityaddressRow::rowguid, null, "uuid", { row, value -> row.copy(rowguid = value) }, PgTypes.uuid.underlying)
 
   override fun withPaths(_path: List<Path>): RelationStructure<BusinessentityaddressFields, BusinessentityaddressRow> = BusinessentityaddressFields(_path)
 

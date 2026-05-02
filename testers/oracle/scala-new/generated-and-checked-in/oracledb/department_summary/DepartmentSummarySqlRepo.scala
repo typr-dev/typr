@@ -5,8 +5,8 @@
  */
 package oracledb.department_summary
 
-import java.sql.Connection
+import dev.typr.foundationssc.ConnectionRead
 
 trait DepartmentSummarySqlRepo {
-  def apply(using c: Connection): List[DepartmentSummarySqlRow]
+  def apply(using c: ConnectionRead): List[DepartmentSummarySqlRow]
 }

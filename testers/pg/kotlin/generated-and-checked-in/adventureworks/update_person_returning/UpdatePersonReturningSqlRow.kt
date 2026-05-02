@@ -6,10 +6,10 @@
 package adventureworks.update_person_returning
 
 import adventureworks.userdefined.FirstName
-import dev.typr.foundations.PgTypes
+import dev.typr.dslkt.RowCodecs
 import dev.typr.foundations.Tuple.Tuple2
-import dev.typr.foundations.kotlin.RowParser
-import dev.typr.foundations.kotlin.RowParsers
+import dev.typr.foundationskt.PgTypes
+import dev.typr.foundationskt.RowCodec
 import java.time.LocalDateTime
 
 /** SQL file: update_person_returning.sql */
@@ -24,6 +24,6 @@ data class UpdatePersonReturningSqlRow(
   override fun _2(): LocalDateTime = modifieddate
 
   companion object {
-    val _rowParser: RowParser<UpdatePersonReturningSqlRow> = RowParsers.of(FirstName.pgType, PgTypes.timestamp, { t0, t1 -> UpdatePersonReturningSqlRow(t0, t1) }, { row -> arrayOf<Any?>(row.firstname, row.modifieddate) })
+    val rowCodec: RowCodec<UpdatePersonReturningSqlRow> = RowCodecs.of(FirstName.pgType, PgTypes.timestamp, { t0: /* user-picked */ FirstName, t1: LocalDateTime -> UpdatePersonReturningSqlRow(t0, t1) }, { row: UpdatePersonReturningSqlRow -> arrayOf<Any?>(row.firstname, row.modifieddate) })
   }
 }

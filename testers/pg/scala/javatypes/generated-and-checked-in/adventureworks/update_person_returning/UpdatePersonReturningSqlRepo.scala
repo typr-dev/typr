@@ -5,7 +5,7 @@
  */
 package adventureworks.update_person_returning
 
-import java.sql.Connection
+import dev.typr.foundations.ConnectionRead
 import java.time.LocalDateTime
 import java.util.Optional
 
@@ -13,5 +13,5 @@ trait UpdatePersonReturningSqlRepo {
   def apply(
     suffix: /* nullability unknown */ Optional[String],
     cutoff: /* nullability unknown */ Optional[LocalDateTime]
-  )(using c: Connection): java.util.List[UpdatePersonReturningSqlRow]
+  )(using c: ConnectionRead): java.util.List[UpdatePersonReturningSqlRow]
 }

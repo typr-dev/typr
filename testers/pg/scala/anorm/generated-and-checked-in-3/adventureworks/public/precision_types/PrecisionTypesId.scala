@@ -21,7 +21,7 @@ object PrecisionTypesId {
 
   given arrayToStatement: ToStatement[Array[PrecisionTypesId]] = adventureworks.IntArrayToStatement.contramap(_.map(_.value))
 
-  given bijection: Bijection[PrecisionTypesId, Int] = Bijection.apply[PrecisionTypesId, Int](_.value)(PrecisionTypesId.apply)
+  given bijection: Bijection[PrecisionTypesId, Int] = Bijection[PrecisionTypesId, Int](_.value)(PrecisionTypesId.apply)
 
   given column: Column[PrecisionTypesId] = Column.columnToInt.map(PrecisionTypesId.apply)
 

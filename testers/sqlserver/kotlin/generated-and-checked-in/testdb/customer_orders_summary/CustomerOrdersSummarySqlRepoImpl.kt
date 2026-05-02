@@ -5,18 +5,16 @@
  */
 package testdb.customer_orders_summary
 
-import dev.typr.foundations.SqlServerTypes
-import dev.typr.foundations.kotlin.Fragment
-import dev.typr.foundations.kotlin.KotlinDbTypes
-import dev.typr.foundations.kotlin.nullable
+import dev.typr.foundationskt.ConnectionRead
+import dev.typr.foundationskt.Fragment
+import dev.typr.foundationskt.SqlServerTypes
 import java.math.BigDecimal
-import java.sql.Connection
 import kotlin.collections.List
 
 class CustomerOrdersSummarySqlRepoImpl() : CustomerOrdersSummarySqlRepo {
   override fun apply(
-    customerNamePattern: String?,
+    customerNamePattern: kotlin.String?,
     minTotal: BigDecimal?,
-    c: Connection
-  ): List<CustomerOrdersSummarySqlRow> = Fragment.interpolate(Fragment.lit("-- Get order summary statistics for customers\nSELECT\n    c.customer_id,\n    c.name as customer_name,\n    c.email as customer_email,\n    COUNT(o.order_id) as order_count,\n    COALESCE(SUM(o.total_amount), 0) as total_spent,\n    COALESCE(AVG(o.total_amount), 0) as avg_order_amount,\n    MAX(o.order_date) as last_order_date\nFROM customers c\nLEFT JOIN orders o ON c.customer_id = o.customer_id\nWHERE ("), Fragment.encode(SqlServerTypes.nvarchar.nullable(), customerNamePattern), Fragment.lit(" IS NULL OR c.name LIKE "), Fragment.encode(SqlServerTypes.nvarchar.nullable(), customerNamePattern), Fragment.lit(")\nGROUP BY c.customer_id, c.name, c.email\nHAVING COUNT(o.order_id) > 0\n  AND ("), Fragment.encode(KotlinDbTypes.SqlServerTypes.numeric.nullable(), minTotal), Fragment.lit(" IS NULL OR COALESCE(SUM(o.total_amount), 0) >= "), Fragment.encode(KotlinDbTypes.SqlServerTypes.numeric.nullable(), minTotal), Fragment.lit(")\nORDER BY total_spent DESC\n")).query(CustomerOrdersSummarySqlRow._rowParser.all()).runUnchecked(c)
+    c: ConnectionRead
+  ): List<CustomerOrdersSummarySqlRow> = Fragment.concat(Fragment.of("-- Get order summary statistics for customers\nSELECT\n    c.customer_id,\n    c.name as customer_name,\n    c.email as customer_email,\n    COUNT(o.order_id) as order_count,\n    COALESCE(SUM(o.total_amount), 0) as total_spent,\n    COALESCE(AVG(o.total_amount), 0) as avg_order_amount,\n    MAX(o.order_date) as last_order_date\nFROM customers c\nLEFT JOIN orders o ON c.customer_id = o.customer_id\nWHERE ("), Fragment.encode(SqlServerTypes.nvarchar.opt(), customerNamePattern), Fragment.of(" IS NULL OR c.name LIKE "), Fragment.encode(SqlServerTypes.nvarchar.opt(), customerNamePattern), Fragment.of(")\nGROUP BY c.customer_id, c.name, c.email\nHAVING COUNT(o.order_id) > 0\n  AND ("), Fragment.encode(SqlServerTypes.numeric.opt(), minTotal), Fragment.of(" IS NULL OR COALESCE(SUM(o.total_amount), 0) >= "), Fragment.encode(SqlServerTypes.numeric.opt(), minTotal), Fragment.of(")\nORDER BY total_spent DESC\n")).query(CustomerOrdersSummarySqlRow.rowCodec.all()).run(c)
 }

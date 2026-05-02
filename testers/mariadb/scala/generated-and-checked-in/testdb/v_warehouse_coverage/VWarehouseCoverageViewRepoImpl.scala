@@ -5,17 +5,17 @@
  */
 package testdb.v_warehouse_coverage
 
-import dev.typr.foundations.scala.Dialect
-import dev.typr.foundations.scala.SelectBuilder
-import java.sql.Connection
-import dev.typr.foundations.scala.Fragment.sql
+import dev.typr.dslsc.Dialect
+import dev.typr.dslsc.SelectBuilder
+import dev.typr.foundationssc.ConnectionRead
+import dev.typr.foundationssc.Fragment.sql
 
 class VWarehouseCoverageViewRepoImpl extends VWarehouseCoverageViewRepo {
-  override def select: SelectBuilder[VWarehouseCoverageViewFields, VWarehouseCoverageViewRow] = SelectBuilder.of("`v_warehouse_coverage`", VWarehouseCoverageViewFields.structure, VWarehouseCoverageViewRow.`_rowParser`, Dialect.MARIADB)
+  override def select: SelectBuilder[VWarehouseCoverageViewFields, VWarehouseCoverageViewRow] = SelectBuilder.of("`v_warehouse_coverage`", VWarehouseCoverageViewFields.structure, VWarehouseCoverageViewRow.rowCodec, Dialect.MARIADB)
 
-  override def selectAll(using c: Connection): List[VWarehouseCoverageViewRow] = {
+  override def selectAll(using c: ConnectionRead): List[VWarehouseCoverageViewRow] = {
     sql"""select `warehouse_id`, `code`, `name`, `address`, `location_wkt`, `service_area_wkt`, `timezone`, `is_active`, `products_stocked`, `total_inventory`
     from `v_warehouse_coverage`
-    """.query(VWarehouseCoverageViewRow.`_rowParser`.all()).runUnchecked(c)
+    """.query(VWarehouseCoverageViewRow.rowCodec.all()).run(using c)
   }
 }

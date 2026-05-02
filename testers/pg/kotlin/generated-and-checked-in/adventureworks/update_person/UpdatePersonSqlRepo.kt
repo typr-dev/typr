@@ -5,12 +5,12 @@
  */
 package adventureworks.update_person
 
-import java.sql.Connection
+import dev.typr.foundationskt.Connection
 import java.time.LocalDateTime
 
 interface UpdatePersonSqlRepo {
   abstract fun apply(
-    suffix: String,
+    suffix: kotlin.String,
     cutoff: LocalDateTime?,
     c: Connection
   ): Int

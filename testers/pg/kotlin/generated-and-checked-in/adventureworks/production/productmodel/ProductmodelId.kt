@@ -6,11 +6,10 @@
 package adventureworks.production.productmodel
 
 import com.fasterxml.jackson.annotation.JsonValue
-import dev.typr.foundations.PgType
-import dev.typr.foundations.PgTypes
-import dev.typr.foundations.internal.arrayMap
-import dev.typr.foundations.kotlin.Bijection
-import dev.typr.foundations.kotlin.KotlinDbTypes
+import dev.typr.foundationskt.Bijection
+import dev.typr.foundationskt.PgType
+import dev.typr.foundationskt.PgTypes
+import kotlin.collections.List
 
 /** Type for the primary key of table `production.productmodel` */
 data class ProductmodelId(@field:JsonValue val value: Int) {
@@ -23,9 +22,9 @@ data class ProductmodelId(@field:JsonValue val value: Int) {
       Bijection.of(ProductmodelId::value, ::ProductmodelId)
 
     val pgType: PgType<ProductmodelId> =
-      KotlinDbTypes.PgTypes.int4.bimap(::ProductmodelId, ProductmodelId::value)
+      PgTypes.int4.to(Bijection.of(::ProductmodelId, ProductmodelId::value))
 
-    val pgTypeArray: PgType<Array<ProductmodelId>> =
-      PgTypes.int4Array.bimap({ xs -> arrayMap.map(xs, ::ProductmodelId, ProductmodelId::class.java) }, { xs -> arrayMap.map(xs, ProductmodelId::value, Int::class.javaObjectType) })
+    val pgTypeArray: PgType<List<ProductmodelId>> =
+      pgType.array()
   }
 }

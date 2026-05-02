@@ -44,7 +44,7 @@ object TypoInet {
     }))))
   }
 
-  implicit lazy val bijection: Bijection[TypoInet, String] = Bijection.apply[TypoInet, String](_.value)(TypoInet.apply)
+  implicit lazy val bijection: Bijection[TypoInet, String] = Bijection[TypoInet, String](_.value)(TypoInet.apply)
 
   implicit lazy val column: Column[TypoInet] = {
     Column.nonNull[TypoInet]((v1: Any, _) =>

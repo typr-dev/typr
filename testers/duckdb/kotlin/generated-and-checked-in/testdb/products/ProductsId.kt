@@ -6,11 +6,10 @@
 package testdb.products
 
 import com.fasterxml.jackson.annotation.JsonValue
-import dev.typr.foundations.DuckDbType
-import dev.typr.foundations.DuckDbTypes
-import dev.typr.foundations.internal.arrayMap
-import dev.typr.foundations.kotlin.Bijection
-import dev.typr.foundations.kotlin.KotlinDbTypes
+import dev.typr.foundationskt.Bijection
+import dev.typr.foundationskt.DuckDbType
+import dev.typr.foundationskt.DuckDbTypes
+import kotlin.collections.List
 
 /** Type for the primary key of table `products` */
 data class ProductsId(@field:JsonValue val value: Int) {
@@ -23,9 +22,9 @@ data class ProductsId(@field:JsonValue val value: Int) {
       Bijection.of(ProductsId::value, ::ProductsId)
 
     val duckDbType: DuckDbType<ProductsId> =
-      KotlinDbTypes.DuckDbTypes.integer.bimap(::ProductsId, ProductsId::value)
+      DuckDbTypes.integer.to(Bijection.of(::ProductsId, ProductsId::value))
 
-    val duckDbTypeArray: DuckDbType<Array<ProductsId>> =
-      DuckDbTypes.integerArray.bimap({ xs -> arrayMap.map(xs, ::ProductsId, ProductsId::class.java) }, { xs -> arrayMap.map(xs, ProductsId::value, Int::class.javaObjectType) })
+    val duckDbTypeArray: DuckDbType<List<ProductsId>> =
+      duckDbType.list()
   }
 }

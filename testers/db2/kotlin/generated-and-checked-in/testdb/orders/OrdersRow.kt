@@ -6,12 +6,10 @@
 package testdb.orders
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import dev.typr.foundations.Db2Types
+import dev.typr.dslkt.RowCodecs
 import dev.typr.foundations.Tuple.Tuple5
-import dev.typr.foundations.kotlin.KotlinDbTypes
-import dev.typr.foundations.kotlin.RowParser
-import dev.typr.foundations.kotlin.RowParsers
-import dev.typr.foundations.kotlin.nullable
+import dev.typr.foundationskt.Db2Types
+import dev.typr.foundationskt.RowCodec
 import java.math.BigDecimal
 import java.time.LocalDate
 import testdb.customers.CustomersId
@@ -33,8 +31,8 @@ data class OrdersRow(
   /** Total monetary value of the order */
   @field:JsonProperty("TOTAL_AMOUNT") val totalAmount: BigDecimal?,
   /** Default: 'pending' */
-  @field:JsonProperty("STATUS") val status: String?
-) : Tuple5<OrdersId, CustomersId, LocalDate, BigDecimal?, String?> {
+  @field:JsonProperty("STATUS") val status: kotlin.String?
+) : Tuple5<OrdersId, CustomersId, LocalDate, BigDecimal?, kotlin.String?> {
   override fun _1(): OrdersId = orderId
 
   override fun _2(): CustomersId = customerId
@@ -43,16 +41,16 @@ data class OrdersRow(
 
   override fun _4(): BigDecimal? = totalAmount
 
-  override fun _5(): String? = status
+  override fun _5(): kotlin.String? = status
 
   fun id(): OrdersId = orderId
 
   fun toUnsavedRow(
     orderDate: Defaulted<LocalDate> = Defaulted.Provided(this.orderDate),
-    status: Defaulted<String?> = Defaulted.Provided(this.status)
+    status: Defaulted<kotlin.String?> = Defaulted.Provided(this.status)
   ): OrdersRowUnsaved = OrdersRowUnsaved(customerId, totalAmount, orderDate, status)
 
   companion object {
-    val _rowParser: RowParser<OrdersRow> = RowParsers.of(OrdersId.db2Type, CustomersId.db2Type, Db2Types.date, KotlinDbTypes.Db2Types.decimal.nullable(), Db2Types.varchar.nullable(), { t0, t1, t2, t3, t4 -> OrdersRow(t0, t1, t2, t3, t4) }, { row -> arrayOf<Any?>(row.orderId, row.customerId, row.orderDate, row.totalAmount, row.status) })
+    val rowCodec: RowCodec<OrdersRow> = RowCodecs.of(OrdersId.db2Type, CustomersId.db2Type, Db2Types.date, Db2Types.decimal.opt(), Db2Types.varchar.opt(), { t0: OrdersId, t1: CustomersId, t2: LocalDate, t3: BigDecimal?, t4: kotlin.String? -> OrdersRow(t0, t1, t2, t3, t4) }, { row: OrdersRow -> arrayOf<Any?>(row.orderId, row.customerId, row.orderDate, row.totalAmount, row.status) })
   }
 }

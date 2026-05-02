@@ -15,7 +15,7 @@ import testdb.orders_by_customer.*;
  * generated from SQL files in sql-scripts/db2/.
  */
 public class SqlScriptTest {
-  private final TestInsert testInsert = new TestInsert(new Random(42));
+  private final TestInsert testInsert = new TestInsert(new Random(1526571155));
   private final CustomerOrdersSqlRepoImpl customerOrdersRepo = new CustomerOrdersSqlRepoImpl();
   private final CustomerSummarySqlRepoImpl customerSummaryRepo = new CustomerSummarySqlRepoImpl();
   private final OrdersByCustomerSqlRepoImpl ordersByCustomerRepo =

@@ -5,14 +5,14 @@
  */
 package testdb.order_history
 
-import dev.typr.foundations.MariaTypes
-import dev.typr.foundations.kotlin.DeleteBuilder
-import dev.typr.foundations.kotlin.Dialect
-import dev.typr.foundations.kotlin.Fragment
-import dev.typr.foundations.kotlin.SelectBuilder
-import dev.typr.foundations.kotlin.UpdateBuilder
-import dev.typr.foundations.kotlin.nullable
-import java.sql.Connection
+import dev.typr.dslkt.DeleteBuilder
+import dev.typr.dslkt.Dialect
+import dev.typr.dslkt.SelectBuilder
+import dev.typr.dslkt.UpdateBuilder
+import dev.typr.foundationskt.Connection
+import dev.typr.foundationskt.ConnectionRead
+import dev.typr.foundationskt.Fragment
+import dev.typr.foundationskt.MariaTypes
 import java.util.ArrayList
 import kotlin.collections.Iterator
 import kotlin.collections.List
@@ -26,22 +26,22 @@ class OrderHistoryRepoImpl() : OrderHistoryRepo {
   override fun deleteById(
     historyId: OrderHistoryId,
     c: Connection
-  ): Boolean = Fragment.interpolate(Fragment.lit("delete from `order_history` where `history_id` = "), Fragment.encode(OrderHistoryId.mariaType, historyId), Fragment.lit("")).update().runUnchecked(c) > 0
+  ): kotlin.Boolean = Fragment.concat(Fragment.of("delete from `order_history` where `history_id` = "), Fragment.encode(OrderHistoryId.mariaType, historyId), Fragment.of("")).update().run(c) > 0
 
   override fun deleteByIds(
-    historyIds: Array<OrderHistoryId>,
+    historyIds: List<OrderHistoryId>,
     c: Connection
   ): Int {
     val fragments: ArrayList<Fragment> = ArrayList()
     for (id in historyIds) { fragments.add(Fragment.encode(OrderHistoryId.mariaType, id)) }
-    return Fragment.interpolate(Fragment.lit("delete from `order_history` where `history_id` in ("), Fragment.comma(fragments.toMutableList()), Fragment.lit(")")).update().runUnchecked(c)
+    return Fragment.concat(Fragment.of("delete from `order_history` where `history_id` in ("), Fragment.comma(fragments.toMutableList()), Fragment.of(")")).update().run(c)
   }
 
   override fun insert(
     unsaved: OrderHistoryRow,
     c: Connection
-  ): OrderHistoryRow = Fragment.interpolate(Fragment.lit("insert into `order_history`(`order_id`, `previous_status`, `new_status`, `changed_by`, `change_reason`, `metadata`, `created_at`)\nvalues ("), Fragment.encode(OrdersId.mariaType, unsaved.orderId), Fragment.lit(", "), Fragment.encode(MariaTypes.text.nullable(), unsaved.previousStatus), Fragment.lit(", "), Fragment.encode(MariaTypes.text, unsaved.newStatus), Fragment.lit(", "), Fragment.encode(MariaTypes.varchar.nullable(), unsaved.changedBy), Fragment.lit(", "), Fragment.encode(MariaTypes.varchar.nullable(), unsaved.changeReason), Fragment.lit(", "), Fragment.encode(MariaTypes.json.nullable(), unsaved.metadata), Fragment.lit(", "), Fragment.encode(MariaTypes.datetime, unsaved.createdAt), Fragment.lit(")\nRETURNING `history_id`, `order_id`, `previous_status`, `new_status`, `changed_by`, `change_reason`, `metadata`, `created_at`\n"))
-    .updateReturning(OrderHistoryRow._rowParser.exactlyOne()).runUnchecked(c)
+  ): OrderHistoryRow = Fragment.concat(Fragment.of("insert into `order_history`(`order_id`, `previous_status`, `new_status`, `changed_by`, `change_reason`, `metadata`, `created_at`)\nvalues ("), Fragment.encode(OrdersId.mariaType, unsaved.orderId), Fragment.of(", "), Fragment.encode(MariaTypes.text.opt(), unsaved.previousStatus), Fragment.of(", "), Fragment.encode(MariaTypes.text, unsaved.newStatus), Fragment.of(", "), Fragment.encode(MariaTypes.varchar.opt(), unsaved.changedBy), Fragment.of(", "), Fragment.encode(MariaTypes.varchar.opt(), unsaved.changeReason), Fragment.of(", "), Fragment.encode(MariaTypes.json.opt(), unsaved.metadata), Fragment.of(", "), Fragment.encode(MariaTypes.datetime, unsaved.createdAt), Fragment.of(")\nRETURNING `history_id`, `order_id`, `previous_status`, `new_status`, `changed_by`, `change_reason`, `metadata`, `created_at`\n"))
+    .updateReturning(OrderHistoryRow.rowCodec.exactlyOne()).run(c)
 
   override fun insert(
     unsaved: OrderHistoryRowUnsaved,
@@ -49,87 +49,87 @@ class OrderHistoryRepoImpl() : OrderHistoryRepo {
   ): OrderHistoryRow {
     val columns: ArrayList<Fragment> = ArrayList()
     val values: ArrayList<Fragment> = ArrayList()
-    columns.add(Fragment.lit("`order_id`"))
-    values.add(Fragment.interpolate(Fragment.encode(OrdersId.mariaType, unsaved.orderId), Fragment.lit("")))
-    columns.add(Fragment.lit("`new_status`"))
-    values.add(Fragment.interpolate(Fragment.encode(MariaTypes.text, unsaved.newStatus), Fragment.lit("")))
+    columns.add(Fragment.of("`order_id`"))
+    values.add(Fragment.concat(Fragment.encode(OrdersId.mariaType, unsaved.orderId), Fragment.of("")))
+    columns.add(Fragment.of("`new_status`"))
+    values.add(Fragment.concat(Fragment.encode(MariaTypes.text, unsaved.newStatus), Fragment.of("")))
     unsaved.previousStatus.visit(
       {  },
-      { value -> columns.add(Fragment.lit("`previous_status`"))
-      values.add(Fragment.interpolate(Fragment.encode(MariaTypes.text.nullable(), value), Fragment.lit(""))) }
+      { value -> columns.add(Fragment.of("`previous_status`"))
+      values.add(Fragment.concat(Fragment.encode(MariaTypes.text.opt(), value), Fragment.of(""))) }
     );
     unsaved.changedBy.visit(
       {  },
-      { value -> columns.add(Fragment.lit("`changed_by`"))
-      values.add(Fragment.interpolate(Fragment.encode(MariaTypes.varchar.nullable(), value), Fragment.lit(""))) }
+      { value -> columns.add(Fragment.of("`changed_by`"))
+      values.add(Fragment.concat(Fragment.encode(MariaTypes.varchar.opt(), value), Fragment.of(""))) }
     );
     unsaved.changeReason.visit(
       {  },
-      { value -> columns.add(Fragment.lit("`change_reason`"))
-      values.add(Fragment.interpolate(Fragment.encode(MariaTypes.varchar.nullable(), value), Fragment.lit(""))) }
+      { value -> columns.add(Fragment.of("`change_reason`"))
+      values.add(Fragment.concat(Fragment.encode(MariaTypes.varchar.opt(), value), Fragment.of(""))) }
     );
     unsaved.metadata.visit(
       {  },
-      { value -> columns.add(Fragment.lit("`metadata`"))
-      values.add(Fragment.interpolate(Fragment.encode(MariaTypes.json.nullable(), value), Fragment.lit(""))) }
+      { value -> columns.add(Fragment.of("`metadata`"))
+      values.add(Fragment.concat(Fragment.encode(MariaTypes.json.opt(), value), Fragment.of(""))) }
     );
     unsaved.createdAt.visit(
       {  },
-      { value -> columns.add(Fragment.lit("`created_at`"))
-      values.add(Fragment.interpolate(Fragment.encode(MariaTypes.datetime, value), Fragment.lit(""))) }
+      { value -> columns.add(Fragment.of("`created_at`"))
+      values.add(Fragment.concat(Fragment.encode(MariaTypes.datetime, value), Fragment.of(""))) }
     );
-    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into `order_history`("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nRETURNING `history_id`, `order_id`, `previous_status`, `new_status`, `changed_by`, `change_reason`, `metadata`, `created_at`\n"))
-    return q.updateReturning(OrderHistoryRow._rowParser.exactlyOne()).runUnchecked(c)
+    val q: Fragment = Fragment.concat(Fragment.of("insert into `order_history`("), Fragment.comma(columns.toMutableList()), Fragment.of(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.of(")\nRETURNING `history_id`, `order_id`, `previous_status`, `new_status`, `changed_by`, `change_reason`, `metadata`, `created_at`\n"))
+    return q.updateReturning(OrderHistoryRow.rowCodec.exactlyOne()).run(c)
   }
 
-  override fun select(): SelectBuilder<OrderHistoryFields, OrderHistoryRow> = SelectBuilder.of("`order_history`", OrderHistoryFields.structure, OrderHistoryRow._rowParser, Dialect.MARIADB)
+  override fun select(): SelectBuilder<OrderHistoryFields, OrderHistoryRow> = SelectBuilder.of("`order_history`", OrderHistoryFields.structure, OrderHistoryRow.rowCodec, Dialect.MARIADB)
 
-  override fun selectAll(c: Connection): List<OrderHistoryRow> = Fragment.interpolate(Fragment.lit("select `history_id`, `order_id`, `previous_status`, `new_status`, `changed_by`, `change_reason`, `metadata`, `created_at`\nfrom `order_history`\n")).query(OrderHistoryRow._rowParser.all()).runUnchecked(c)
+  override fun selectAll(c: ConnectionRead): List<OrderHistoryRow> = Fragment.concat(Fragment.of("select `history_id`, `order_id`, `previous_status`, `new_status`, `changed_by`, `change_reason`, `metadata`, `created_at`\nfrom `order_history`\n")).query(OrderHistoryRow.rowCodec.all()).run(c)
 
   override fun selectById(
     historyId: OrderHistoryId,
-    c: Connection
-  ): OrderHistoryRow? = Fragment.interpolate(Fragment.lit("select `history_id`, `order_id`, `previous_status`, `new_status`, `changed_by`, `change_reason`, `metadata`, `created_at`\nfrom `order_history`\nwhere `history_id` = "), Fragment.encode(OrderHistoryId.mariaType, historyId), Fragment.lit("")).query(OrderHistoryRow._rowParser.first()).runUnchecked(c)
+    c: ConnectionRead
+  ): OrderHistoryRow? = Fragment.concat(Fragment.of("select `history_id`, `order_id`, `previous_status`, `new_status`, `changed_by`, `change_reason`, `metadata`, `created_at`\nfrom `order_history`\nwhere `history_id` = "), Fragment.encode(OrderHistoryId.mariaType, historyId), Fragment.of("")).query(OrderHistoryRow.rowCodec.first()).run(c)
 
   override fun selectByIds(
-    historyIds: Array<OrderHistoryId>,
-    c: Connection
+    historyIds: List<OrderHistoryId>,
+    c: ConnectionRead
   ): List<OrderHistoryRow> {
     val fragments: ArrayList<Fragment> = ArrayList()
     for (id in historyIds) { fragments.add(Fragment.encode(OrderHistoryId.mariaType, id)) }
-    return Fragment.interpolate(Fragment.lit("select `history_id`, `order_id`, `previous_status`, `new_status`, `changed_by`, `change_reason`, `metadata`, `created_at` from `order_history` where `history_id` in ("), Fragment.comma(fragments.toMutableList()), Fragment.lit(")")).query(OrderHistoryRow._rowParser.all()).runUnchecked(c)
+    return Fragment.concat(Fragment.of("select `history_id`, `order_id`, `previous_status`, `new_status`, `changed_by`, `change_reason`, `metadata`, `created_at` from `order_history` where `history_id` in ("), Fragment.comma(fragments.toMutableList()), Fragment.of(")")).query(OrderHistoryRow.rowCodec.all()).run(c)
   }
 
   override fun selectByIdsTracked(
-    historyIds: Array<OrderHistoryId>,
-    c: Connection
+    historyIds: List<OrderHistoryId>,
+    c: ConnectionRead
   ): Map<OrderHistoryId, OrderHistoryRow> {
     val ret: MutableMap<OrderHistoryId, OrderHistoryRow> = mutableMapOf<OrderHistoryId, OrderHistoryRow>()
     selectByIds(historyIds, c).forEach({ row -> ret.put(row.historyId, row) })
     return ret.toMap()
   }
 
-  override fun update(): UpdateBuilder<OrderHistoryFields, OrderHistoryRow> = UpdateBuilder.of("`order_history`", OrderHistoryFields.structure, OrderHistoryRow._rowParser, Dialect.MARIADB)
+  override fun update(): UpdateBuilder<OrderHistoryFields, OrderHistoryRow> = UpdateBuilder.of("`order_history`", OrderHistoryFields.structure, OrderHistoryRow.rowCodec, Dialect.MARIADB)
 
   override fun update(
     row: OrderHistoryRow,
     c: Connection
-  ): Boolean {
+  ): kotlin.Boolean {
     val historyId: OrderHistoryId = row.historyId
-    return Fragment.interpolate(Fragment.lit("update `order_history`\nset `order_id` = "), Fragment.encode(OrdersId.mariaType, row.orderId), Fragment.lit(",\n`previous_status` = "), Fragment.encode(MariaTypes.text.nullable(), row.previousStatus), Fragment.lit(",\n`new_status` = "), Fragment.encode(MariaTypes.text, row.newStatus), Fragment.lit(",\n`changed_by` = "), Fragment.encode(MariaTypes.varchar.nullable(), row.changedBy), Fragment.lit(",\n`change_reason` = "), Fragment.encode(MariaTypes.varchar.nullable(), row.changeReason), Fragment.lit(",\n`metadata` = "), Fragment.encode(MariaTypes.json.nullable(), row.metadata), Fragment.lit(",\n`created_at` = "), Fragment.encode(MariaTypes.datetime, row.createdAt), Fragment.lit("\nwhere `history_id` = "), Fragment.encode(OrderHistoryId.mariaType, historyId), Fragment.lit("")).update().runUnchecked(c) > 0
+    return Fragment.concat(Fragment.of("update `order_history`\nset `order_id` = "), Fragment.encode(OrdersId.mariaType, row.orderId), Fragment.of(",\n`previous_status` = "), Fragment.encode(MariaTypes.text.opt(), row.previousStatus), Fragment.of(",\n`new_status` = "), Fragment.encode(MariaTypes.text, row.newStatus), Fragment.of(",\n`changed_by` = "), Fragment.encode(MariaTypes.varchar.opt(), row.changedBy), Fragment.of(",\n`change_reason` = "), Fragment.encode(MariaTypes.varchar.opt(), row.changeReason), Fragment.of(",\n`metadata` = "), Fragment.encode(MariaTypes.json.opt(), row.metadata), Fragment.of(",\n`created_at` = "), Fragment.encode(MariaTypes.datetime, row.createdAt), Fragment.of("\nwhere `history_id` = "), Fragment.encode(OrderHistoryId.mariaType, historyId), Fragment.of("")).update().run(c) > 0
   }
 
   override fun upsert(
     unsaved: OrderHistoryRow,
     c: Connection
-  ): OrderHistoryRow = Fragment.interpolate(Fragment.lit("INSERT INTO `order_history`(`history_id`, `order_id`, `previous_status`, `new_status`, `changed_by`, `change_reason`, `metadata`, `created_at`)\nVALUES ("), Fragment.encode(OrderHistoryId.mariaType, unsaved.historyId), Fragment.lit(", "), Fragment.encode(OrdersId.mariaType, unsaved.orderId), Fragment.lit(", "), Fragment.encode(MariaTypes.text.nullable(), unsaved.previousStatus), Fragment.lit(", "), Fragment.encode(MariaTypes.text, unsaved.newStatus), Fragment.lit(", "), Fragment.encode(MariaTypes.varchar.nullable(), unsaved.changedBy), Fragment.lit(", "), Fragment.encode(MariaTypes.varchar.nullable(), unsaved.changeReason), Fragment.lit(", "), Fragment.encode(MariaTypes.json.nullable(), unsaved.metadata), Fragment.lit(", "), Fragment.encode(MariaTypes.datetime, unsaved.createdAt), Fragment.lit(")\nON DUPLICATE KEY UPDATE `order_id` = VALUES(`order_id`),\n`previous_status` = VALUES(`previous_status`),\n`new_status` = VALUES(`new_status`),\n`changed_by` = VALUES(`changed_by`),\n`change_reason` = VALUES(`change_reason`),\n`metadata` = VALUES(`metadata`),\n`created_at` = VALUES(`created_at`)\nRETURNING `history_id`, `order_id`, `previous_status`, `new_status`, `changed_by`, `change_reason`, `metadata`, `created_at`"))
-    .updateReturning(OrderHistoryRow._rowParser.exactlyOne())
-    .runUnchecked(c)
+  ): OrderHistoryRow = Fragment.concat(Fragment.of("INSERT INTO `order_history`(`history_id`, `order_id`, `previous_status`, `new_status`, `changed_by`, `change_reason`, `metadata`, `created_at`)\nVALUES ("), Fragment.encode(OrderHistoryId.mariaType, unsaved.historyId), Fragment.of(", "), Fragment.encode(OrdersId.mariaType, unsaved.orderId), Fragment.of(", "), Fragment.encode(MariaTypes.text.opt(), unsaved.previousStatus), Fragment.of(", "), Fragment.encode(MariaTypes.text, unsaved.newStatus), Fragment.of(", "), Fragment.encode(MariaTypes.varchar.opt(), unsaved.changedBy), Fragment.of(", "), Fragment.encode(MariaTypes.varchar.opt(), unsaved.changeReason), Fragment.of(", "), Fragment.encode(MariaTypes.json.opt(), unsaved.metadata), Fragment.of(", "), Fragment.encode(MariaTypes.datetime, unsaved.createdAt), Fragment.of(")\nON DUPLICATE KEY UPDATE `order_id` = VALUES(`order_id`),\n`previous_status` = VALUES(`previous_status`),\n`new_status` = VALUES(`new_status`),\n`changed_by` = VALUES(`changed_by`),\n`change_reason` = VALUES(`change_reason`),\n`metadata` = VALUES(`metadata`),\n`created_at` = VALUES(`created_at`)\nRETURNING `history_id`, `order_id`, `previous_status`, `new_status`, `changed_by`, `change_reason`, `metadata`, `created_at`"))
+    .updateReturning(OrderHistoryRow.rowCodec.exactlyOne())
+    .run(c)
 
   override fun upsertBatch(
     unsaved: Iterator<OrderHistoryRow>,
     c: Connection
-  ): List<OrderHistoryRow> = Fragment.interpolate(Fragment.lit("INSERT INTO `order_history`(`history_id`, `order_id`, `previous_status`, `new_status`, `changed_by`, `change_reason`, `metadata`, `created_at`)\nVALUES (?, ?, ?, ?, ?, ?, ?, ?)\nON DUPLICATE KEY UPDATE `order_id` = VALUES(`order_id`),\n`previous_status` = VALUES(`previous_status`),\n`new_status` = VALUES(`new_status`),\n`changed_by` = VALUES(`changed_by`),\n`change_reason` = VALUES(`change_reason`),\n`metadata` = VALUES(`metadata`),\n`created_at` = VALUES(`created_at`)\nRETURNING `history_id`, `order_id`, `previous_status`, `new_status`, `changed_by`, `change_reason`, `metadata`, `created_at`"))
-    .updateReturningEach(OrderHistoryRow._rowParser, unsaved)
-  .runUnchecked(c)
+  ): List<OrderHistoryRow> = Fragment.concat(Fragment.of("INSERT INTO `order_history`(`history_id`, `order_id`, `previous_status`, `new_status`, `changed_by`, `change_reason`, `metadata`, `created_at`)\nVALUES (?, ?, ?, ?, ?, ?, ?, ?)\nON DUPLICATE KEY UPDATE `order_id` = VALUES(`order_id`),\n`previous_status` = VALUES(`previous_status`),\n`new_status` = VALUES(`new_status`),\n`changed_by` = VALUES(`changed_by`),\n`change_reason` = VALUES(`change_reason`),\n`metadata` = VALUES(`metadata`),\n`created_at` = VALUES(`created_at`)\nRETURNING `history_id`, `order_id`, `previous_status`, `new_status`, `changed_by`, `change_reason`, `metadata`, `created_at`"))
+    .updateReturningEach(OrderHistoryRow.rowCodec, unsaved)
+  .run(c)
 }

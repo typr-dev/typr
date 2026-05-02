@@ -6,12 +6,10 @@
 package testdb.v_order_details
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import dev.typr.foundations.MariaTypes
+import dev.typr.dslkt.RowCodecs
 import dev.typr.foundations.Tuple.Tuple14
-import dev.typr.foundations.kotlin.KotlinDbTypes
-import dev.typr.foundations.kotlin.RowParser
-import dev.typr.foundations.kotlin.RowParsers
-import dev.typr.foundations.kotlin.nullable
+import dev.typr.foundationskt.MariaTypes
+import dev.typr.foundationskt.RowCodec
 import java.math.BigDecimal
 import java.time.LocalDateTime
 import testdb.orders.OrdersId
@@ -29,17 +27,17 @@ data class VOrderDetailsViewRow(
   /** 
     * Points to [testdb.orders.OrdersRow.orderNumber]
     */
-  @field:JsonProperty("order_number") val orderNumber: String,
+  @field:JsonProperty("order_number") val orderNumber: kotlin.String,
   /** 
     * Default: 'pending'
     * Points to [testdb.orders.OrdersRow.orderStatus]
     */
-  @field:JsonProperty("order_status") val orderStatus: String,
+  @field:JsonProperty("order_status") val orderStatus: kotlin.String,
   /** 
     * Default: 'pending'
     * Points to [testdb.orders.OrdersRow.paymentStatus]
     */
-  @field:JsonProperty("payment_status") val paymentStatus: String,
+  @field:JsonProperty("payment_status") val paymentStatus: kotlin.String,
   /** 
     * Points to [testdb.orders.OrdersRow.totalAmount]
     */
@@ -48,7 +46,7 @@ data class VOrderDetailsViewRow(
     * Default: 'USD'
     * Points to [testdb.orders.OrdersRow.currencyCode]
     */
-  @field:JsonProperty("currency_code") val currencyCode: String,
+  @field:JsonProperty("currency_code") val currencyCode: kotlin.String,
   /** 
     * Default: current_timestamp(6)
     * Points to [testdb.orders.OrdersRow.orderedAt]
@@ -61,11 +59,11 @@ data class VOrderDetailsViewRow(
   /** 
     * Default: NULL
     */
-  @field:JsonProperty("customer_name") val customerName: String?,
+  @field:JsonProperty("customer_name") val customerName: kotlin.String?,
   /** 
     * Default: 0
     */
-  @field:JsonProperty("item_count") val itemCount: Long,
+  @field:JsonProperty("item_count") val itemCount: kotlin.Long,
   /** 
     * Default: NULL
     */
@@ -74,46 +72,46 @@ data class VOrderDetailsViewRow(
     * Default: NULL
     * Points to [testdb.shipments.ShipmentsRow.trackingNumber]
     */
-  @field:JsonProperty("tracking_number") val trackingNumber: String?,
+  @field:JsonProperty("tracking_number") val trackingNumber: kotlin.String?,
   /** 
     * Default: 'pending'
     * Points to [testdb.shipments.ShipmentsRow.status]
     */
-  @field:JsonProperty("shipping_status") val shippingStatus: String?,
+  @field:JsonProperty("shipping_status") val shippingStatus: kotlin.String?,
   /** 
     * Points to [testdb.shipping_carriers.ShippingCarriersRow.name]
     */
-  @field:JsonProperty("carrier_name") val carrierName: String?
-) : Tuple14<OrdersId, String, String, String, BigDecimal, String, LocalDateTime, /* user-picked */ Email, String?, Long, BigDecimal?, String?, String?, String?> {
+  @field:JsonProperty("carrier_name") val carrierName: kotlin.String?
+) : Tuple14<OrdersId, kotlin.String, kotlin.String, kotlin.String, BigDecimal, kotlin.String, LocalDateTime, /* user-picked */ Email, kotlin.String?, kotlin.Long, BigDecimal?, kotlin.String?, kotlin.String?, kotlin.String?> {
   override fun _1(): OrdersId = orderId
 
-  override fun _10(): Long = itemCount
+  override fun _10(): kotlin.Long = itemCount
 
   override fun _11(): BigDecimal? = totalQuantity
 
-  override fun _12(): String? = trackingNumber
+  override fun _12(): kotlin.String? = trackingNumber
 
-  override fun _13(): String? = shippingStatus
+  override fun _13(): kotlin.String? = shippingStatus
 
-  override fun _14(): String? = carrierName
+  override fun _14(): kotlin.String? = carrierName
 
-  override fun _2(): String = orderNumber
+  override fun _2(): kotlin.String = orderNumber
 
-  override fun _3(): String = orderStatus
+  override fun _3(): kotlin.String = orderStatus
 
-  override fun _4(): String = paymentStatus
+  override fun _4(): kotlin.String = paymentStatus
 
   override fun _5(): BigDecimal = totalAmount
 
-  override fun _6(): String = currencyCode
+  override fun _6(): kotlin.String = currencyCode
 
   override fun _7(): LocalDateTime = orderedAt
 
   override fun _8(): /* user-picked */ Email = customerEmail
 
-  override fun _9(): String? = customerName
+  override fun _9(): kotlin.String? = customerName
 
   companion object {
-    val _rowParser: RowParser<VOrderDetailsViewRow> = RowParsers.of(OrdersId.mariaType, MariaTypes.varchar, MariaTypes.text, MariaTypes.text, KotlinDbTypes.MariaTypes.numeric, MariaTypes.char_, MariaTypes.datetime, Email.mariaType, MariaTypes.varchar.nullable(), KotlinDbTypes.MariaTypes.bigint, KotlinDbTypes.MariaTypes.numeric.nullable(), MariaTypes.varchar.nullable(), MariaTypes.text.nullable(), MariaTypes.varchar.nullable(), { t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13 -> VOrderDetailsViewRow(t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13) }, { row -> arrayOf<Any?>(row.orderId, row.orderNumber, row.orderStatus, row.paymentStatus, row.totalAmount, row.currencyCode, row.orderedAt, row.customerEmail, row.customerName, row.itemCount, row.totalQuantity, row.trackingNumber, row.shippingStatus, row.carrierName) })
+    val rowCodec: RowCodec<VOrderDetailsViewRow> = RowCodecs.of(OrdersId.mariaType, MariaTypes.varchar, MariaTypes.text, MariaTypes.text, MariaTypes.numeric, MariaTypes.char_, MariaTypes.datetime, Email.mariaType, MariaTypes.varchar.opt(), MariaTypes.bigint, MariaTypes.numeric.opt(), MariaTypes.varchar.opt(), MariaTypes.text.opt(), MariaTypes.varchar.opt(), { t0: OrdersId, t1: kotlin.String, t2: kotlin.String, t3: kotlin.String, t4: BigDecimal, t5: kotlin.String, t6: LocalDateTime, t7: /* user-picked */ Email, t8: kotlin.String?, t9: kotlin.Long, t10: BigDecimal?, t11: kotlin.String?, t12: kotlin.String?, t13: kotlin.String? -> VOrderDetailsViewRow(t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13) }, { row: VOrderDetailsViewRow -> arrayOf<Any?>(row.orderId, row.orderNumber, row.orderStatus, row.paymentStatus, row.totalAmount, row.currencyCode, row.orderedAt, row.customerEmail, row.customerName, row.itemCount, row.totalQuantity, row.trackingNumber, row.shippingStatus, row.carrierName) })
   }
 }

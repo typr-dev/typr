@@ -6,17 +6,15 @@
 package adventureworks.public.flaff
 
 import adventureworks.public.ShortText
-import dev.typr.foundations.PgTypes
-import dev.typr.foundations.internal.arrayMap
-import dev.typr.foundations.kotlin.DeleteBuilder
-import dev.typr.foundations.kotlin.Dialect
-import dev.typr.foundations.kotlin.Fragment
-import dev.typr.foundations.kotlin.KotlinDbTypes
-import dev.typr.foundations.kotlin.SelectBuilder
-import dev.typr.foundations.kotlin.UpdateBuilder
-import dev.typr.foundations.kotlin.nullable
-import dev.typr.foundations.streamingInsert
-import java.sql.Connection
+import dev.typr.dslkt.DeleteBuilder
+import dev.typr.dslkt.Dialect
+import dev.typr.dslkt.SelectBuilder
+import dev.typr.dslkt.UpdateBuilder
+import dev.typr.foundationskt.Connection
+import dev.typr.foundationskt.ConnectionRead
+import dev.typr.foundationskt.Fragment
+import dev.typr.foundationskt.PgTypes
+import dev.typr.foundationskt.StreamingInsert
 import kotlin.collections.Iterator
 import kotlin.collections.List
 import kotlin.collections.Map
@@ -28,83 +26,83 @@ class FlaffRepoImpl() : FlaffRepo {
   override fun deleteById(
     compositeId: FlaffId,
     c: Connection
-  ): Boolean = Fragment.interpolate(Fragment.lit("delete from \"public\".\"flaff\" where \"code\" = "), Fragment.encode(ShortText.pgType, compositeId.code), Fragment.lit(" AND \"another_code\" = "), Fragment.encode(PgTypes.text, compositeId.anotherCode), Fragment.lit(" AND \"some_number\" = "), Fragment.encode(KotlinDbTypes.PgTypes.int4, compositeId.someNumber), Fragment.lit(" AND \"specifier\" = "), Fragment.encode(ShortText.pgType, compositeId.specifier), Fragment.lit("")).update().runUnchecked(c) > 0
+  ): kotlin.Boolean = Fragment.concat(Fragment.of("delete from \"public\".\"flaff\" where \"code\" = "), Fragment.encode(ShortText.pgType, compositeId.code), Fragment.of(" AND \"another_code\" = "), Fragment.encode(PgTypes.text, compositeId.anotherCode), Fragment.of(" AND \"some_number\" = "), Fragment.encode(PgTypes.int4, compositeId.someNumber), Fragment.of(" AND \"specifier\" = "), Fragment.encode(ShortText.pgType, compositeId.specifier), Fragment.of("")).update().run(c) > 0
 
   override fun deleteByIds(
-    compositeIds: Array<FlaffId>,
+    compositeIds: List<FlaffId>,
     c: Connection
   ): Int {
-    val code: Array<ShortText> = arrayMap.map(compositeIds, FlaffId::code, ShortText::class.java)
-    val anotherCode: Array<String> = arrayMap.map(compositeIds, FlaffId::anotherCode, String::class.java)
-    val someNumber: Array<Int> = arrayMap.map(compositeIds, FlaffId::someNumber, Int::class.javaObjectType)
-    val specifier: Array<ShortText> = arrayMap.map(compositeIds, FlaffId::specifier, ShortText::class.java)
-    return Fragment.interpolate(Fragment.lit("delete\nfrom \"public\".\"flaff\"\nwhere (\"code\", \"another_code\", \"some_number\", \"specifier\")\nin (select * from unnest("), Fragment.encode(ShortText.pgTypeArray, code), Fragment.lit(", "), Fragment.encode(PgTypes.textArray, anotherCode), Fragment.lit(", "), Fragment.encode(PgTypes.int4Array, someNumber), Fragment.lit(", "), Fragment.encode(ShortText.pgTypeArray, specifier), Fragment.lit("))\n")).update().runUnchecked(c)
+    val code: List<ShortText> = compositeIds.map(FlaffId::code)
+    val anotherCode: List<kotlin.String> = compositeIds.map(FlaffId::anotherCode)
+    val someNumber: List<Int> = compositeIds.map(FlaffId::someNumber)
+    val specifier: List<ShortText> = compositeIds.map(FlaffId::specifier)
+    return Fragment.concat(Fragment.of("delete\nfrom \"public\".\"flaff\"\nwhere (\"code\", \"another_code\", \"some_number\", \"specifier\")\nin (select * from unnest("), Fragment.encode(ShortText.pgType.array(), code), Fragment.of(", "), Fragment.encode(PgTypes.text.array(), anotherCode), Fragment.of(", "), Fragment.encode(PgTypes.int4.array(), someNumber), Fragment.of(", "), Fragment.encode(ShortText.pgType.array(), specifier), Fragment.of("))\n")).update().run(c)
   }
 
   override fun insert(
     unsaved: FlaffRow,
     c: Connection
-  ): FlaffRow = Fragment.interpolate(Fragment.lit("insert into \"public\".\"flaff\"(\"code\", \"another_code\", \"some_number\", \"specifier\", \"parentspecifier\")\nvalues ("), Fragment.encode(ShortText.pgType, unsaved.code), Fragment.lit("::text, "), Fragment.encode(PgTypes.text, unsaved.anotherCode), Fragment.lit(", "), Fragment.encode(KotlinDbTypes.PgTypes.int4, unsaved.someNumber), Fragment.lit("::int4, "), Fragment.encode(ShortText.pgType, unsaved.specifier), Fragment.lit("::text, "), Fragment.encode(ShortText.pgType.nullable(), unsaved.parentspecifier), Fragment.lit("::text)\nRETURNING \"code\", \"another_code\", \"some_number\", \"specifier\", \"parentspecifier\"\n"))
-    .updateReturning(FlaffRow._rowParser.exactlyOne()).runUnchecked(c)
+  ): FlaffRow = Fragment.concat(Fragment.of("insert into \"public\".\"flaff\"(\"code\", \"another_code\", \"some_number\", \"specifier\", \"parentspecifier\")\nvalues ("), Fragment.encode(ShortText.pgType, unsaved.code), Fragment.of("::text, "), Fragment.encode(PgTypes.text, unsaved.anotherCode), Fragment.of(", "), Fragment.encode(PgTypes.int4, unsaved.someNumber), Fragment.of("::int4, "), Fragment.encode(ShortText.pgType, unsaved.specifier), Fragment.of("::text, "), Fragment.encode(ShortText.pgType.opt(), unsaved.parentspecifier), Fragment.of("::text)\nRETURNING \"code\", \"another_code\", \"some_number\", \"specifier\", \"parentspecifier\"\n"))
+    .updateReturning(FlaffRow.rowCodec.exactlyOne()).run(c)
 
   override fun insertStreaming(
     unsaved: Iterator<FlaffRow>,
     batchSize: Int,
     c: Connection
-  ): Long = streamingInsert.insertUnchecked("COPY \"public\".\"flaff\"(\"code\", \"another_code\", \"some_number\", \"specifier\", \"parentspecifier\") FROM STDIN", batchSize, unsaved, c, FlaffRow.pgText)
+  ): kotlin.Long = StreamingInsert.of("COPY \"public\".\"flaff\"(\"code\", \"another_code\", \"some_number\", \"specifier\", \"parentspecifier\") FROM STDIN", batchSize, unsaved, FlaffRow.pgText).run(c)
 
-  override fun select(): SelectBuilder<FlaffFields, FlaffRow> = SelectBuilder.of("\"public\".\"flaff\"", FlaffFields.structure, FlaffRow._rowParser, Dialect.POSTGRESQL)
+  override fun select(): SelectBuilder<FlaffFields, FlaffRow> = SelectBuilder.of("\"public\".\"flaff\"", FlaffFields.structure, FlaffRow.rowCodec, Dialect.POSTGRESQL)
 
-  override fun selectAll(c: Connection): List<FlaffRow> = Fragment.interpolate(Fragment.lit("select \"code\", \"another_code\", \"some_number\", \"specifier\", \"parentspecifier\"\nfrom \"public\".\"flaff\"\n")).query(FlaffRow._rowParser.all()).runUnchecked(c)
+  override fun selectAll(c: ConnectionRead): List<FlaffRow> = Fragment.concat(Fragment.of("select \"code\", \"another_code\", \"some_number\", \"specifier\", \"parentspecifier\"\nfrom \"public\".\"flaff\"\n")).query(FlaffRow.rowCodec.all()).run(c)
 
   override fun selectById(
     compositeId: FlaffId,
-    c: Connection
-  ): FlaffRow? = Fragment.interpolate(Fragment.lit("select \"code\", \"another_code\", \"some_number\", \"specifier\", \"parentspecifier\"\nfrom \"public\".\"flaff\"\nwhere \"code\" = "), Fragment.encode(ShortText.pgType, compositeId.code), Fragment.lit(" AND \"another_code\" = "), Fragment.encode(PgTypes.text, compositeId.anotherCode), Fragment.lit(" AND \"some_number\" = "), Fragment.encode(KotlinDbTypes.PgTypes.int4, compositeId.someNumber), Fragment.lit(" AND \"specifier\" = "), Fragment.encode(ShortText.pgType, compositeId.specifier), Fragment.lit("")).query(FlaffRow._rowParser.first()).runUnchecked(c)
+    c: ConnectionRead
+  ): FlaffRow? = Fragment.concat(Fragment.of("select \"code\", \"another_code\", \"some_number\", \"specifier\", \"parentspecifier\"\nfrom \"public\".\"flaff\"\nwhere \"code\" = "), Fragment.encode(ShortText.pgType, compositeId.code), Fragment.of(" AND \"another_code\" = "), Fragment.encode(PgTypes.text, compositeId.anotherCode), Fragment.of(" AND \"some_number\" = "), Fragment.encode(PgTypes.int4, compositeId.someNumber), Fragment.of(" AND \"specifier\" = "), Fragment.encode(ShortText.pgType, compositeId.specifier), Fragment.of("")).query(FlaffRow.rowCodec.first()).run(c)
 
   override fun selectByIds(
-    compositeIds: Array<FlaffId>,
-    c: Connection
+    compositeIds: List<FlaffId>,
+    c: ConnectionRead
   ): List<FlaffRow> {
-    val code: Array<ShortText> = arrayMap.map(compositeIds, FlaffId::code, ShortText::class.java)
-    val anotherCode: Array<String> = arrayMap.map(compositeIds, FlaffId::anotherCode, String::class.java)
-    val someNumber: Array<Int> = arrayMap.map(compositeIds, FlaffId::someNumber, Int::class.javaObjectType)
-    val specifier: Array<ShortText> = arrayMap.map(compositeIds, FlaffId::specifier, ShortText::class.java)
-    return Fragment.interpolate(Fragment.lit("select \"code\", \"another_code\", \"some_number\", \"specifier\", \"parentspecifier\"\nfrom \"public\".\"flaff\"\nwhere (\"code\", \"another_code\", \"some_number\", \"specifier\")\nin (select * from unnest("), Fragment.encode(ShortText.pgTypeArray, code), Fragment.lit(", "), Fragment.encode(PgTypes.textArray, anotherCode), Fragment.lit(", "), Fragment.encode(PgTypes.int4Array, someNumber), Fragment.lit(", "), Fragment.encode(ShortText.pgTypeArray, specifier), Fragment.lit("))\n")).query(FlaffRow._rowParser.all()).runUnchecked(c)
+    val code: List<ShortText> = compositeIds.map(FlaffId::code)
+    val anotherCode: List<kotlin.String> = compositeIds.map(FlaffId::anotherCode)
+    val someNumber: List<Int> = compositeIds.map(FlaffId::someNumber)
+    val specifier: List<ShortText> = compositeIds.map(FlaffId::specifier)
+    return Fragment.concat(Fragment.of("select \"code\", \"another_code\", \"some_number\", \"specifier\", \"parentspecifier\"\nfrom \"public\".\"flaff\"\nwhere (\"code\", \"another_code\", \"some_number\", \"specifier\")\nin (select * from unnest("), Fragment.encode(ShortText.pgType.array(), code), Fragment.of(", "), Fragment.encode(PgTypes.text.array(), anotherCode), Fragment.of(", "), Fragment.encode(PgTypes.int4.array(), someNumber), Fragment.of(", "), Fragment.encode(ShortText.pgType.array(), specifier), Fragment.of("))\n")).query(FlaffRow.rowCodec.all()).run(c)
   }
 
   override fun selectByIdsTracked(
-    compositeIds: Array<FlaffId>,
-    c: Connection
+    compositeIds: List<FlaffId>,
+    c: ConnectionRead
   ): Map<FlaffId, FlaffRow> {
     val ret: MutableMap<FlaffId, FlaffRow> = mutableMapOf<FlaffId, FlaffRow>()
     selectByIds(compositeIds, c).forEach({ row -> ret.put(row.compositeId(), row) })
     return ret.toMap()
   }
 
-  override fun update(): UpdateBuilder<FlaffFields, FlaffRow> = UpdateBuilder.of("\"public\".\"flaff\"", FlaffFields.structure, FlaffRow._rowParser, Dialect.POSTGRESQL)
+  override fun update(): UpdateBuilder<FlaffFields, FlaffRow> = UpdateBuilder.of("\"public\".\"flaff\"", FlaffFields.structure, FlaffRow.rowCodec, Dialect.POSTGRESQL)
 
   override fun update(
     row: FlaffRow,
     c: Connection
-  ): Boolean {
+  ): kotlin.Boolean {
     val compositeId: FlaffId = row.compositeId()
-    return Fragment.interpolate(Fragment.lit("update \"public\".\"flaff\"\nset \"parentspecifier\" = "), Fragment.encode(ShortText.pgType.nullable(), row.parentspecifier), Fragment.lit("::text\nwhere \"code\" = "), Fragment.encode(ShortText.pgType, compositeId.code), Fragment.lit(" AND \"another_code\" = "), Fragment.encode(PgTypes.text, compositeId.anotherCode), Fragment.lit(" AND \"some_number\" = "), Fragment.encode(KotlinDbTypes.PgTypes.int4, compositeId.someNumber), Fragment.lit(" AND \"specifier\" = "), Fragment.encode(ShortText.pgType, compositeId.specifier), Fragment.lit("")).update().runUnchecked(c) > 0
+    return Fragment.concat(Fragment.of("update \"public\".\"flaff\"\nset \"parentspecifier\" = "), Fragment.encode(ShortText.pgType.opt(), row.parentspecifier), Fragment.of("::text\nwhere \"code\" = "), Fragment.encode(ShortText.pgType, compositeId.code), Fragment.of(" AND \"another_code\" = "), Fragment.encode(PgTypes.text, compositeId.anotherCode), Fragment.of(" AND \"some_number\" = "), Fragment.encode(PgTypes.int4, compositeId.someNumber), Fragment.of(" AND \"specifier\" = "), Fragment.encode(ShortText.pgType, compositeId.specifier), Fragment.of("")).update().run(c) > 0
   }
 
   override fun upsert(
     unsaved: FlaffRow,
     c: Connection
-  ): FlaffRow = Fragment.interpolate(Fragment.lit("insert into \"public\".\"flaff\"(\"code\", \"another_code\", \"some_number\", \"specifier\", \"parentspecifier\")\nvalues ("), Fragment.encode(ShortText.pgType, unsaved.code), Fragment.lit("::text, "), Fragment.encode(PgTypes.text, unsaved.anotherCode), Fragment.lit(", "), Fragment.encode(KotlinDbTypes.PgTypes.int4, unsaved.someNumber), Fragment.lit("::int4, "), Fragment.encode(ShortText.pgType, unsaved.specifier), Fragment.lit("::text, "), Fragment.encode(ShortText.pgType.nullable(), unsaved.parentspecifier), Fragment.lit("::text)\non conflict (\"code\", \"another_code\", \"some_number\", \"specifier\")\ndo update set\n  \"parentspecifier\" = EXCLUDED.\"parentspecifier\"\nreturning \"code\", \"another_code\", \"some_number\", \"specifier\", \"parentspecifier\""))
-    .updateReturning(FlaffRow._rowParser.exactlyOne())
-    .runUnchecked(c)
+  ): FlaffRow = Fragment.concat(Fragment.of("insert into \"public\".\"flaff\"(\"code\", \"another_code\", \"some_number\", \"specifier\", \"parentspecifier\")\nvalues ("), Fragment.encode(ShortText.pgType, unsaved.code), Fragment.of("::text, "), Fragment.encode(PgTypes.text, unsaved.anotherCode), Fragment.of(", "), Fragment.encode(PgTypes.int4, unsaved.someNumber), Fragment.of("::int4, "), Fragment.encode(ShortText.pgType, unsaved.specifier), Fragment.of("::text, "), Fragment.encode(ShortText.pgType.opt(), unsaved.parentspecifier), Fragment.of("::text)\non conflict (\"code\", \"another_code\", \"some_number\", \"specifier\")\ndo update set\n  \"parentspecifier\" = EXCLUDED.\"parentspecifier\"\nreturning \"code\", \"another_code\", \"some_number\", \"specifier\", \"parentspecifier\""))
+    .updateReturning(FlaffRow.rowCodec.exactlyOne())
+    .run(c)
 
   override fun upsertBatch(
     unsaved: Iterator<FlaffRow>,
     c: Connection
-  ): List<FlaffRow> = Fragment.interpolate(Fragment.lit("insert into \"public\".\"flaff\"(\"code\", \"another_code\", \"some_number\", \"specifier\", \"parentspecifier\")\nvalues (?::text, ?, ?::int4, ?::text, ?::text)\non conflict (\"code\", \"another_code\", \"some_number\", \"specifier\")\ndo update set\n  \"parentspecifier\" = EXCLUDED.\"parentspecifier\"\nreturning \"code\", \"another_code\", \"some_number\", \"specifier\", \"parentspecifier\""))
-    .updateManyReturning(FlaffRow._rowParser, unsaved)
-  .runUnchecked(c)
+  ): List<FlaffRow> = Fragment.concat(Fragment.of("insert into \"public\".\"flaff\"(\"code\", \"another_code\", \"some_number\", \"specifier\", \"parentspecifier\")\nvalues (?::text, ?, ?::int4, ?::text, ?::text)\non conflict (\"code\", \"another_code\", \"some_number\", \"specifier\")\ndo update set\n  \"parentspecifier\" = EXCLUDED.\"parentspecifier\"\nreturning \"code\", \"another_code\", \"some_number\", \"specifier\", \"parentspecifier\""))
+    .updateManyReturning(FlaffRow.rowCodec, unsaved)
+  .run(c)
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
   override fun upsertStreaming(
@@ -112,8 +110,8 @@ class FlaffRepoImpl() : FlaffRepo {
     batchSize: Int,
     c: Connection
   ): Int {
-    Fragment.interpolate(Fragment.lit("create temporary table flaff_TEMP (like \"public\".\"flaff\") on commit drop")).update().runUnchecked(c)
-    streamingInsert.insertUnchecked("copy flaff_TEMP(\"code\", \"another_code\", \"some_number\", \"specifier\", \"parentspecifier\") from stdin", batchSize, unsaved, c, FlaffRow.pgText)
-    return Fragment.interpolate(Fragment.lit("insert into \"public\".\"flaff\"(\"code\", \"another_code\", \"some_number\", \"specifier\", \"parentspecifier\")\nselect * from flaff_TEMP\non conflict (\"code\", \"another_code\", \"some_number\", \"specifier\")\ndo update set\n  \"parentspecifier\" = EXCLUDED.\"parentspecifier\"\n;\ndrop table flaff_TEMP;")).update().runUnchecked(c)
+    Fragment.concat(Fragment.of("create temporary table flaff_TEMP (like \"public\".\"flaff\") on commit drop")).update().run(c)
+    StreamingInsert.of("copy flaff_TEMP(\"code\", \"another_code\", \"some_number\", \"specifier\", \"parentspecifier\") from stdin", batchSize, unsaved, FlaffRow.pgText).run(c)
+    return Fragment.concat(Fragment.of("insert into \"public\".\"flaff\"(\"code\", \"another_code\", \"some_number\", \"specifier\", \"parentspecifier\")\nselect * from flaff_TEMP\non conflict (\"code\", \"another_code\", \"some_number\", \"specifier\")\ndo update set\n  \"parentspecifier\" = EXCLUDED.\"parentspecifier\"\n;\ndrop table flaff_TEMP;")).update().run(c)
   }
 }

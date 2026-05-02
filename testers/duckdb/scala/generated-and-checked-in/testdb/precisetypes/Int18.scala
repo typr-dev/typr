@@ -6,10 +6,10 @@
 package testdb.precisetypes
 
 import com.fasterxml.jackson.annotation.JsonValue
-import dev.typr.foundations.DuckDbType
-import dev.typr.foundations.DuckDbTypes
+import dev.typr.dslsc.Bijection
 import dev.typr.foundations.data.precise.DecimalN
-import dev.typr.foundations.scala.Bijection
+import dev.typr.foundationssc.DuckDbType
+import dev.typr.foundationssc.DuckDbTypes
 import java.lang.IllegalArgumentException
 import scala.math.BigInt
 
@@ -32,15 +32,15 @@ case class Int18 private(@JsonValue value: BigInt) extends DecimalN {
 object Int18 {
   given Zero: Int18 = new Int18(BigInt(0))
 
-  given bijection: Bijection[Int18, BigInt] = Bijection.apply[Int18, BigInt](_.value)(Int18.apply)
+  given bijection: Bijection[Int18, BigInt] = Bijection.of[Int18, BigInt](_.value, Int18.apply)
 
-  given dbTypeArray: DuckDbType[Array[Int18]] = DuckDbTypes.decimalArray.bimap(xs => xs.map(bd => new Int18(BigInt(bd.toBigIntegerExact()))), xs => xs.map(v => new java.math.BigDecimal(v.value.bigInteger)))
+  given dbTypeArray: DuckDbType[List[Int18]] = DuckDbTypes.numeric.list.to(Bijection.of(xs => xs.map(bd => new Int18(BigInt(bd.bigDecimal.toBigIntegerExact()))), xs => xs.map(v => BigDecimal(new java.math.BigDecimal(v.value.bigInteger)))))
 
-  given duckDbType: DuckDbType[Int18] = DuckDbTypes.numeric.bimap(bd => new Int18(BigInt(bd.toBigIntegerExact())), v => new java.math.BigDecimal(v.value.bigInteger))
+  given duckDbType: DuckDbType[Int18] = DuckDbTypes.numeric.to(Bijection.of(bd => new Int18(BigInt(bd.bigDecimal.toBigIntegerExact())), v => BigDecimal(new java.math.BigDecimal(v.value.bigInteger))))
 
   def of(value: BigInt): Option[Int18] = (if (value.bitLength <= 72) Some(new Int18(value)) else None)
 
-  def of(value: Int): Int18 = new Int18(BigInt(value))
+  def of(value: Int): Int18 = new Int18(BigInt(value.toLong))
 
   def of(value: Long): Option[Int18] = Int18.of(BigInt(value))
 

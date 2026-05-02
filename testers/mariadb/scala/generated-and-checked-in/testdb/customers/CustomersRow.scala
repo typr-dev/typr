@@ -6,12 +6,11 @@
 package testdb.customers
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import dev.typr.foundations.MariaTypes
+import dev.typr.dslsc.RowCodecs
 import dev.typr.foundations.Tuple.Tuple14
 import dev.typr.foundations.data.Json
-import dev.typr.foundations.scala.DbTypeOps
-import dev.typr.foundations.scala.RowParser
-import dev.typr.foundations.scala.RowParsers
+import dev.typr.foundationssc.MariaTypes
+import dev.typr.foundationssc.RowCodec
 import java.time.LocalDateTime
 import testdb.EmailMailPushSmsSet
 import testdb.customer_status.CustomerStatusId
@@ -134,5 +133,5 @@ case class CustomersRow(
 }
 
 object CustomersRow {
-  val `_rowParser`: RowParser[CustomersRow] = RowParsers.of(CustomersId.mariaType, Email.mariaType, MariaTypes.binary, FirstName.mariaType, LastName.mariaType, MariaTypes.varchar.nullable, CustomerStatusId.mariaType, MariaTypes.text, MariaTypes.json.nullable, EmailMailPushSmsSet.mariaType.nullable, MariaTypes.text.nullable, MariaTypes.datetime, MariaTypes.datetime, MariaTypes.datetime.nullable)(CustomersRow.apply)(row => Array[Any](row.customerId, row.email, row.passwordHash, row.firstName, row.lastName, row.phone, row.status, row.tier, row.preferences, row.marketingFlags, row.notes, row.createdAt, row.updatedAt, row.lastLoginAt))
+  val rowCodec: RowCodec[CustomersRow] = RowCodecs.of(CustomersId.mariaType, Email.mariaType, MariaTypes.binary, FirstName.mariaType, LastName.mariaType, MariaTypes.varchar.opt, CustomerStatusId.mariaType, MariaTypes.text, MariaTypes.json.opt, EmailMailPushSmsSet.mariaType.opt, MariaTypes.text.opt, MariaTypes.datetime, MariaTypes.datetime, MariaTypes.datetime.opt)(CustomersRow.apply)(row => Array[Any](row.customerId, row.email, row.passwordHash, row.firstName, row.lastName, row.phone, row.status, row.tier, row.preferences, row.marketingFlags, row.notes, row.createdAt, row.updatedAt, row.lastLoginAt))
 }

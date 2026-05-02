@@ -5,17 +5,18 @@
  */
 package adventureworks.public.flaff
 
-import dev.typr.foundations.scala.DeleteBuilder
-import dev.typr.foundations.scala.SelectBuilder
-import dev.typr.foundations.scala.UpdateBuilder
-import java.sql.Connection
+import dev.typr.dslsc.DeleteBuilder
+import dev.typr.dslsc.SelectBuilder
+import dev.typr.dslsc.UpdateBuilder
+import dev.typr.foundationssc.Connection
+import dev.typr.foundationssc.ConnectionRead
 
 trait FlaffRepo {
   def delete: DeleteBuilder[FlaffFields, FlaffRow]
 
   def deleteById(compositeId: FlaffId)(using c: Connection): Boolean
 
-  def deleteByIds(compositeIds: Array[FlaffId])(using c: Connection): Int
+  def deleteByIds(compositeIds: List[FlaffId])(using c: Connection): Int
 
   def insert(unsaved: FlaffRow)(using c: Connection): FlaffRow
 
@@ -26,13 +27,13 @@ trait FlaffRepo {
 
   def select: SelectBuilder[FlaffFields, FlaffRow]
 
-  def selectAll(using c: Connection): List[FlaffRow]
+  def selectAll(using c: ConnectionRead): List[FlaffRow]
 
-  def selectById(compositeId: FlaffId)(using c: Connection): Option[FlaffRow]
+  def selectById(compositeId: FlaffId)(using c: ConnectionRead): Option[FlaffRow]
 
-  def selectByIds(compositeIds: Array[FlaffId])(using c: Connection): List[FlaffRow]
+  def selectByIds(compositeIds: List[FlaffId])(using c: ConnectionRead): List[FlaffRow]
 
-  def selectByIdsTracked(compositeIds: Array[FlaffId])(using c: Connection): Map[FlaffId, FlaffRow]
+  def selectByIdsTracked(compositeIds: List[FlaffId])(using c: ConnectionRead): Map[FlaffId, FlaffRow]
 
   def update: UpdateBuilder[FlaffFields, FlaffRow]
 

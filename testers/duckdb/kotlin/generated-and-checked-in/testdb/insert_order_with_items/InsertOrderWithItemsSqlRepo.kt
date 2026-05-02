@@ -5,8 +5,8 @@
  */
 package testdb.insert_order_with_items
 
+import dev.typr.foundationskt.ConnectionRead
 import java.math.BigDecimal
-import java.sql.Connection
 import java.time.LocalDate
 import kotlin.collections.List
 import testdb.customers.CustomersId
@@ -17,7 +17,7 @@ interface InsertOrderWithItemsSqlRepo {
     customerId: /* user-picked */ CustomersId,
     orderDate: LocalDate?,
     totalAmount: BigDecimal?,
-    status: String?,
-    c: Connection
+    status: kotlin.String?,
+    c: ConnectionRead
   ): List<InsertOrderWithItemsSqlRow>
 }

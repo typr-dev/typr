@@ -5,10 +5,11 @@
  */
 package adventureworks.person.stateprovince
 
-import dev.typr.foundations.dsl.DeleteBuilder
-import dev.typr.foundations.dsl.SelectBuilder
-import dev.typr.foundations.dsl.UpdateBuilder
-import java.sql.Connection
+import dev.typr.dsl.DeleteBuilder
+import dev.typr.dsl.SelectBuilder
+import dev.typr.dsl.UpdateBuilder
+import dev.typr.foundations.Connection
+import dev.typr.foundations.ConnectionRead
 import java.util.Optional
 
 trait StateprovinceRepo {
@@ -16,7 +17,7 @@ trait StateprovinceRepo {
 
   def deleteById(stateprovinceid: StateprovinceId)(using c: Connection): java.lang.Boolean
 
-  def deleteByIds(stateprovinceids: Array[StateprovinceId])(using c: Connection): Integer
+  def deleteByIds(stateprovinceids: java.util.List[StateprovinceId])(using c: Connection): Integer
 
   def insert(unsaved: StateprovinceRow)(using c: Connection): StateprovinceRow
 
@@ -35,13 +36,13 @@ trait StateprovinceRepo {
 
   def select: SelectBuilder[StateprovinceFields, StateprovinceRow]
 
-  def selectAll(using c: Connection): java.util.List[StateprovinceRow]
+  def selectAll(using c: ConnectionRead): java.util.List[StateprovinceRow]
 
-  def selectById(stateprovinceid: StateprovinceId)(using c: Connection): Optional[StateprovinceRow]
+  def selectById(stateprovinceid: StateprovinceId)(using c: ConnectionRead): Optional[StateprovinceRow]
 
-  def selectByIds(stateprovinceids: Array[StateprovinceId])(using c: Connection): java.util.List[StateprovinceRow]
+  def selectByIds(stateprovinceids: java.util.List[StateprovinceId])(using c: ConnectionRead): java.util.List[StateprovinceRow]
 
-  def selectByIdsTracked(stateprovinceids: Array[StateprovinceId])(using c: Connection): java.util.Map[StateprovinceId, StateprovinceRow]
+  def selectByIdsTracked(stateprovinceids: java.util.List[StateprovinceId])(using c: ConnectionRead): java.util.Map[StateprovinceId, StateprovinceRow]
 
   def update: UpdateBuilder[StateprovinceFields, StateprovinceRow]
 

@@ -89,7 +89,7 @@ public class EmployeeTest {
           // Select by ids
           var byIds =
               employeeRepo.selectByIds(
-                  new BusinessentityId[] {saved1.businessentityid(), new BusinessentityId(22)}, c);
+                  java.util.List.of(saved1.businessentityid(), new BusinessentityId(22)), c);
           assertEquals(1, byIds.size());
           assertEquals(saved3, byIds.get(0));
 

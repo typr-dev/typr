@@ -5,16 +5,16 @@
  */
 package testdb.precision_types
 
-import dev.typr.foundations.DuckDbTypes
-import dev.typr.foundations.RowParser
-import dev.typr.foundations.dsl.FieldsBase
-import dev.typr.foundations.dsl.Path
-import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.scala.RelationStructure
-import dev.typr.foundations.scala.SqlExpr
-import dev.typr.foundations.scala.SqlExpr.Field
-import dev.typr.foundations.scala.SqlExpr.IdField
-import dev.typr.foundations.scala.TupleExpr12
+import dev.typr.dsl.FieldsBase
+import dev.typr.dsl.Path
+import dev.typr.dsl.SqlExpr.FieldLike
+import dev.typr.dslsc.RelationStructure
+import dev.typr.dslsc.SqlExpr
+import dev.typr.dslsc.SqlExpr.Field
+import dev.typr.dslsc.SqlExpr.IdField
+import dev.typr.dslsc.TupleExpr12
+import dev.typr.foundations.RowCodec
+import dev.typr.foundationssc.DuckDbTypes
 import testdb.precisetypes.Decimal10_2
 import testdb.precisetypes.Decimal18_4
 import testdb.precisetypes.Decimal5_2
@@ -31,7 +31,7 @@ class PrecisionTypesFields(val `_path`: java.util.List[Path]) extends TupleExpr1
       None,
       Some("INTEGER"),
       (row, value) => row.copy(id = value),
-      PrecisionTypesId.duckDbType
+      PrecisionTypesId.duckDbType.underlying
     )
   }
 
@@ -43,7 +43,7 @@ class PrecisionTypesFields(val `_path`: java.util.List[Path]) extends TupleExpr1
       None,
       None,
       (row, value) => row.copy(string10 = value),
-      DuckDbTypes.varchar
+      DuckDbTypes.varchar.underlying
     )
   }
 
@@ -55,7 +55,7 @@ class PrecisionTypesFields(val `_path`: java.util.List[Path]) extends TupleExpr1
       None,
       None,
       (row, value) => row.copy(string20 = value),
-      DuckDbTypes.varchar
+      DuckDbTypes.varchar.underlying
     )
   }
 
@@ -67,7 +67,7 @@ class PrecisionTypesFields(val `_path`: java.util.List[Path]) extends TupleExpr1
       None,
       None,
       (row, value) => row.copy(string50 = value),
-      DuckDbTypes.varchar
+      DuckDbTypes.varchar.underlying
     )
   }
 
@@ -79,7 +79,7 @@ class PrecisionTypesFields(val `_path`: java.util.List[Path]) extends TupleExpr1
       None,
       None,
       (row, value) => row.copy(string100 = value),
-      DuckDbTypes.varchar
+      DuckDbTypes.varchar.underlying
     )
   }
 
@@ -91,7 +91,7 @@ class PrecisionTypesFields(val `_path`: java.util.List[Path]) extends TupleExpr1
       None,
       None,
       (row, value) => row.copy(string255 = value),
-      DuckDbTypes.varchar
+      DuckDbTypes.varchar.underlying
     )
   }
 
@@ -103,7 +103,7 @@ class PrecisionTypesFields(val `_path`: java.util.List[Path]) extends TupleExpr1
       None,
       Some("DECIMAL(5,2)"),
       (row, value) => row.copy(decimal52 = value),
-      Decimal5_2.duckDbType
+      Decimal5_2.duckDbType.underlying
     )
   }
 
@@ -115,7 +115,7 @@ class PrecisionTypesFields(val `_path`: java.util.List[Path]) extends TupleExpr1
       None,
       Some("DECIMAL(10,2)"),
       (row, value) => row.copy(decimal102 = value),
-      Decimal10_2.duckDbType
+      Decimal10_2.duckDbType.underlying
     )
   }
 
@@ -127,7 +127,7 @@ class PrecisionTypesFields(val `_path`: java.util.List[Path]) extends TupleExpr1
       None,
       Some("DECIMAL(18,4)"),
       (row, value) => row.copy(decimal184 = value),
-      Decimal18_4.duckDbType
+      Decimal18_4.duckDbType.underlying
     )
   }
 
@@ -139,7 +139,7 @@ class PrecisionTypesFields(val `_path`: java.util.List[Path]) extends TupleExpr1
       None,
       Some("DECIMAL(5,0)"),
       (row, value) => row.copy(decimal50 = value),
-      Int5.duckDbType
+      Int5.duckDbType.underlying
     )
   }
 
@@ -151,7 +151,7 @@ class PrecisionTypesFields(val `_path`: java.util.List[Path]) extends TupleExpr1
       None,
       Some("DECIMAL(10,0)"),
       (row, value) => row.copy(decimal100 = value),
-      Int10.duckDbType
+      Int10.duckDbType.underlying
     )
   }
 
@@ -163,13 +163,13 @@ class PrecisionTypesFields(val `_path`: java.util.List[Path]) extends TupleExpr1
       None,
       Some("DECIMAL(18,0)"),
       (row, value) => row.copy(decimal180 = value),
-      Int18.duckDbType
+      Int18.duckDbType.underlying
     )
   }
 
   override def columns: java.util.List[FieldLike[?, PrecisionTypesRow]] = java.util.List.of(this.id.underlying, this.string10.underlying, this.string20.underlying, this.string50.underlying, this.string100.underlying, this.string255.underlying, this.decimal52.underlying, this.decimal102.underlying, this.decimal184.underlying, this.decimal50.underlying, this.decimal100.underlying, this.decimal180.underlying)
 
-  override def rowParser: RowParser[PrecisionTypesRow] = PrecisionTypesRow._rowParser.underlying
+  override def rowCodec: RowCodec[PrecisionTypesRow] = PrecisionTypesRow.rowCodec.underlying
 
   override def withPaths(`_path`: java.util.List[Path]): RelationStructure[PrecisionTypesFields, PrecisionTypesRow] = new PrecisionTypesFields(`_path`)
 

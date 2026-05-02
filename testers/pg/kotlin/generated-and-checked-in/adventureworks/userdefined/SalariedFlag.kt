@@ -7,9 +7,9 @@ package adventureworks.userdefined
 
 import adventureworks.public.Flag
 import com.fasterxml.jackson.annotation.JsonValue
-import dev.typr.foundations.PgType
-import dev.typr.foundations.internal.arrayMap
-import dev.typr.foundations.kotlin.Bijection
+import dev.typr.foundationskt.Bijection
+import dev.typr.foundationskt.PgType
+import kotlin.collections.List
 
 /** Shared type `SalariedFlag`
   * Generated from TypeDefinitions matching
@@ -24,9 +24,9 @@ data class SalariedFlag(@field:JsonValue val value: Flag) {
       Bijection.of(SalariedFlag::value, ::SalariedFlag)
 
     val pgType: PgType<SalariedFlag> =
-      Flag.pgType.bimap(::SalariedFlag, SalariedFlag::value)
+      Flag.pgType.to(Bijection.of(::SalariedFlag, SalariedFlag::value))
 
-    val pgTypeArray: PgType<Array<SalariedFlag>> =
-      Flag.pgTypeArray.bimap({ xs -> arrayMap.map(xs, ::SalariedFlag, SalariedFlag::class.java) }, { xs -> arrayMap.map(xs, SalariedFlag::value, Flag::class.java) })
+    val pgTypeArray: PgType<List<SalariedFlag>> =
+      pgType.array()
   }
 }

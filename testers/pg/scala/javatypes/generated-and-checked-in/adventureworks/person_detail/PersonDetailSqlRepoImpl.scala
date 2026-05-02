@@ -6,18 +6,18 @@
 package adventureworks.person_detail
 
 import adventureworks.person.businessentity.BusinessentityId
+import dev.typr.foundations.ConnectionRead
 import dev.typr.foundations.Fragment
 import dev.typr.foundations.PgTypes
-import java.sql.Connection
 import java.time.LocalDateTime
-import dev.typr.foundations.Fragment.interpolate
+import dev.typr.foundations.Fragment.concat
 
 class PersonDetailSqlRepoImpl extends PersonDetailSqlRepo {
   override def apply(
     businessentityid: /* user-picked */ BusinessentityId,
     modifiedAfter: LocalDateTime
-  )(using c: Connection): java.util.List[PersonDetailSqlRow] = {
-    interpolate(Fragment.lit("""SELECT s.businessentityid,
+  )(using c: ConnectionRead): java.util.List[PersonDetailSqlRow] = {
+    concat(Fragment.of("""SELECT s.businessentityid,
            p.title,
            p.firstname,
            p.middlename,
@@ -32,7 +32,7 @@ class PersonDetailSqlRepoImpl extends PersonDetailSqlRepo {
              JOIN person.person p ON p.businessentityid = s.businessentityid
              JOIN person.businessentityaddress bea ON bea.businessentityid = s.businessentityid
              LEFT JOIN person.address a ON a.addressid = bea.addressid
-    where s.businessentityid = """), Fragment.encode(BusinessentityId.pgType, businessentityid), Fragment.lit("""::int4
-      and p.modifieddate > """), Fragment.encode(PgTypes.timestamp, modifiedAfter), Fragment.lit("::timestamp")).query(PersonDetailSqlRow.`_rowParser`.all()).runUnchecked(c)
+    where s.businessentityid = """), Fragment.encode(BusinessentityId.pgType, businessentityid), Fragment.of("""::int4
+      and p.modifieddate > """), Fragment.encode(PgTypes.timestamp, modifiedAfter), Fragment.of("::timestamp")).query(PersonDetailSqlRow.rowCodec.all()).run(c)
   }
 }

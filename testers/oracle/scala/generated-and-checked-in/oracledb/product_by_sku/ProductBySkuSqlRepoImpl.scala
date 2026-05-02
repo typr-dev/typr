@@ -5,14 +5,14 @@
  */
 package oracledb.product_by_sku
 
+import dev.typr.foundations.ConnectionRead
 import dev.typr.foundations.Fragment
 import dev.typr.foundations.OracleTypes
-import java.sql.Connection
-import dev.typr.foundations.Fragment.interpolate
+import dev.typr.foundations.Fragment.concat
 
 class ProductBySkuSqlRepoImpl extends ProductBySkuSqlRepo {
-  override def apply(sku: String)(using c: Connection): java.util.List[ProductBySkuSqlRow] = {
-    interpolate(Fragment.lit("""-- Find product by SKU
+  override def apply(sku: String)(using c: ConnectionRead): java.util.List[ProductBySkuSqlRow] = {
+    concat(Fragment.of("""-- Find product by SKU
     SELECT
         p.product_id,
         p.sku,
@@ -20,7 +20,7 @@ class ProductBySkuSqlRepoImpl extends ProductBySkuSqlRepo {
         p.price,
         p.tags
     FROM products p
-    WHERE p.sku = """), Fragment.encode(OracleTypes.varchar2, sku), Fragment.lit("""
-    """)).query(ProductBySkuSqlRow.`_rowParser`.all()).runUnchecked(c)
+    WHERE p.sku = """), Fragment.encode(OracleTypes.varchar2, sku), Fragment.of("""
+    """)).query(ProductBySkuSqlRow.rowCodec.all()).run(c)
   }
 }

@@ -5,11 +5,11 @@
  */
 package testdb.customer_orders
 
-import dev.typr.foundations.scala.SelectBuilder
-import java.sql.Connection
+import dev.typr.dslsc.SelectBuilder
+import dev.typr.foundationssc.ConnectionRead
 
 trait CustomerOrdersViewRepo {
   def select: SelectBuilder[CustomerOrdersViewFields, CustomerOrdersViewRow]
 
-  def selectAll(using c: Connection): List[CustomerOrdersViewRow]
+  def selectAll(using c: ConnectionRead): List[CustomerOrdersViewRow]
 }

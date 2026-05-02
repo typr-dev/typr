@@ -6,9 +6,9 @@
 package oracledb.customer_products
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import dev.typr.dsl.RowCodecs
 import dev.typr.foundations.OracleTypes
-import dev.typr.foundations.RowParser
-import dev.typr.foundations.RowParsers
+import dev.typr.foundations.RowCodec
 import dev.typr.foundations.Tuple.Tuple6
 import java.util.Optional
 import oracledb.AddressT
@@ -37,5 +37,5 @@ case class CustomerProductsViewRow(
 }
 
 object CustomerProductsViewRow {
-  val `_rowParser`: RowParser[CustomerProductsViewRow] = RowParsers.of(OracleTypes.number, OracleTypes.varchar2, AddressT.oracleType.opt(), OracleTypes.number, OracleTypes.varchar2, MoneyT.oracleType.opt(), CustomerProductsViewRow.apply, row => Array[Any](row.customerId, row.customerName, row.billingAddress, row.productId, row.productName, row.price))
+  val rowCodec: RowCodec[CustomerProductsViewRow] = RowCodecs.of(OracleTypes.number, OracleTypes.varchar2, AddressT.oracleType.opt, OracleTypes.number, OracleTypes.varchar2, MoneyT.oracleType.opt, CustomerProductsViewRow.apply, row => Array[Any](row.customerId, row.customerName, row.billingAddress, row.productId, row.productName, row.price))
 }

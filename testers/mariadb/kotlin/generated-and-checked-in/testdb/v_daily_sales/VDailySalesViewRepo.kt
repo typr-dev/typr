@@ -5,12 +5,12 @@
  */
 package testdb.v_daily_sales
 
-import dev.typr.foundations.kotlin.SelectBuilder
-import java.sql.Connection
+import dev.typr.dslkt.SelectBuilder
+import dev.typr.foundationskt.ConnectionRead
 import kotlin.collections.List
 
 interface VDailySalesViewRepo {
   abstract fun select(): SelectBuilder<VDailySalesViewFields, VDailySalesViewRow>
 
-  abstract fun selectAll(c: Connection): List<VDailySalesViewRow>
+  abstract fun selectAll(c: ConnectionRead): List<VDailySalesViewRow>
 }

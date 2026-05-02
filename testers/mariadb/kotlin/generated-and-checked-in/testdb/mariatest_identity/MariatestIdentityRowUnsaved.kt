@@ -9,6 +9,6 @@ package testdb.mariatest_identity
 
 /** This class corresponds to a row in table `mariatest_identity` which has not been persisted yet */
 data class MariatestIdentityRowUnsaved(/**  */
-val name: String) {
+val name: kotlin.String) {
   fun toRow(idDefault: () -> MariatestIdentityId): MariatestIdentityRow = MariatestIdentityRow(id = idDefault(), name = name)
 }

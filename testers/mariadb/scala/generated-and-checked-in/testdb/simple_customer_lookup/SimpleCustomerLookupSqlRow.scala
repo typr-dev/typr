@@ -6,10 +6,10 @@
 package testdb.simple_customer_lookup
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import dev.typr.foundations.MariaTypes
+import dev.typr.dslsc.RowCodecs
 import dev.typr.foundations.Tuple.Tuple7
-import dev.typr.foundations.scala.RowParser
-import dev.typr.foundations.scala.RowParsers
+import dev.typr.foundationssc.MariaTypes
+import dev.typr.foundationssc.RowCodec
 import java.time.LocalDateTime
 import testdb.customer_status.CustomerStatusId
 import testdb.customers.CustomersId
@@ -50,5 +50,5 @@ case class SimpleCustomerLookupSqlRow(
 }
 
 object SimpleCustomerLookupSqlRow {
-  val `_rowParser`: RowParser[SimpleCustomerLookupSqlRow] = RowParsers.of(CustomersId.mariaType, Email.mariaType, FirstName.mariaType, LastName.mariaType, MariaTypes.text, CustomerStatusId.mariaType, MariaTypes.datetime)(SimpleCustomerLookupSqlRow.apply)(row => Array[Any](row.customerId, row.email, row.firstName, row.lastName, row.tier, row.status, row.createdAt))
+  val rowCodec: RowCodec[SimpleCustomerLookupSqlRow] = RowCodecs.of(CustomersId.mariaType, Email.mariaType, FirstName.mariaType, LastName.mariaType, MariaTypes.text, CustomerStatusId.mariaType, MariaTypes.datetime)(SimpleCustomerLookupSqlRow.apply)(row => Array[Any](row.customerId, row.email, row.firstName, row.lastName, row.tier, row.status, row.createdAt))
 }

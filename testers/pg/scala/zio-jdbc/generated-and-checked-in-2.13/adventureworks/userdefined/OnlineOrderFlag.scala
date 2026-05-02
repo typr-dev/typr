@@ -27,7 +27,7 @@ object OnlineOrderFlag {
 
   implicit lazy val arraySetter: Setter[Array[OnlineOrderFlag]] = Flag.arraySetter.contramap(_.map(_.value))
 
-  implicit lazy val bijection: Bijection[OnlineOrderFlag, Flag] = Bijection.apply[OnlineOrderFlag, Flag](_.value)(OnlineOrderFlag.apply)
+  implicit lazy val bijection: Bijection[OnlineOrderFlag, Flag] = Bijection[OnlineOrderFlag, Flag](_.value)(OnlineOrderFlag.apply)
 
   implicit lazy val jdbcDecoder: JdbcDecoder[OnlineOrderFlag] = Flag.jdbcDecoder.map(OnlineOrderFlag.apply)
 

@@ -5,14 +5,12 @@
  */
 package adventureworks.public
 
-import dev.typr.foundations.PgRead
-import dev.typr.foundations.PgStruct
-import dev.typr.foundations.PgType
-import dev.typr.foundations.PgTypes
-import dev.typr.foundations.kotlin.KotlinDbTypes
+import dev.typr.foundationskt.PgType
+import dev.typr.foundationskt.PgTypes
+import dev.typr.foundationskt.RowCodec
 import java.math.BigDecimal
 import java.time.LocalDate
-import java.util.Optional
+import kotlin.collections.List
 
 /** PostgreSQL composite type: public.employee_record */
 data class EmployeeRecord(
@@ -23,13 +21,10 @@ data class EmployeeRecord(
   val hireDate: LocalDate?
 ) {
   companion object {
-    val pgStruct: PgStruct<EmployeeRecord> =
-      PgStruct.builder<EmployeeRecord>("public.employee_record").optField("name", PersonName.pgType, { v: EmployeeRecord -> Optional.ofNullable(v.name) }).optField("contact", ContactInfo.pgType, { v: EmployeeRecord -> Optional.ofNullable(v.contact) }).optField("employeeId", KotlinDbTypes.PgTypes.int4, { v: EmployeeRecord -> Optional.ofNullable(v.employeeId) }).optField("salary", PgTypes.numeric, { v: EmployeeRecord -> Optional.ofNullable(v.salary) }).optField("hireDate", PgTypes.date, { v: EmployeeRecord -> Optional.ofNullable(v.hireDate) }).build({ arr -> EmployeeRecord(arr[0] as? PersonName, arr[1] as? ContactInfo, arr[2] as? Int, arr[3] as? BigDecimal, arr[4] as? LocalDate) })
-
     val pgType: PgType<EmployeeRecord> =
-      pgStruct.asType()
+      PgTypes.compositeOf("public.employee_record", RowCodec.namedBuilder<EmployeeRecord>().field("name", PersonName.pgType.opt(), { v: EmployeeRecord -> v.name }).field("contact", ContactInfo.pgType.opt(), { v: EmployeeRecord -> v.contact }).field("employeeId", PgTypes.int4.opt(), { v: EmployeeRecord -> v.employeeId }).field("salary", PgTypes.numeric.opt(), { v: EmployeeRecord -> v.salary }).field("hireDate", PgTypes.date.opt(), { v: EmployeeRecord -> v.hireDate }).build({ t0, t1, t2, t3, t4 -> EmployeeRecord(t0, t1, t2, t3, t4) }))
 
-    val pgTypeArray: PgType<Array<EmployeeRecord>> =
-      pgType.array(PgRead.readCompositeArray(pgType.pgCompositeText(), { n -> arrayOfNulls<EmployeeRecord>(n) }), { n -> arrayOfNulls<EmployeeRecord>(n) })
+    val pgTypeArray: PgType<List<EmployeeRecord>> =
+      pgType.array()
   }
 }

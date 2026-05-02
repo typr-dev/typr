@@ -5,17 +5,18 @@
  */
 package oracledb.contacts
 
-import dev.typr.foundations.scala.DeleteBuilder
-import dev.typr.foundations.scala.DeleteBuilderMock
-import dev.typr.foundations.scala.DeleteParams
-import dev.typr.foundations.scala.SelectBuilder
-import dev.typr.foundations.scala.SelectBuilderMock
-import dev.typr.foundations.scala.SelectParams
-import dev.typr.foundations.scala.UpdateBuilder
-import dev.typr.foundations.scala.UpdateBuilderMock
-import dev.typr.foundations.scala.UpdateParams
+import dev.typr.dslsc.DeleteBuilder
+import dev.typr.dslsc.DeleteBuilderMock
+import dev.typr.dslsc.DeleteParams
+import dev.typr.dslsc.SelectBuilder
+import dev.typr.dslsc.SelectBuilderMock
+import dev.typr.dslsc.SelectParams
+import dev.typr.dslsc.UpdateBuilder
+import dev.typr.dslsc.UpdateBuilderMock
+import dev.typr.dslsc.UpdateParams
+import dev.typr.foundationssc.Connection
+import dev.typr.foundationssc.ConnectionRead
 import java.lang.RuntimeException
-import java.sql.Connection
 
 case class ContactsRepoMock(
   toRow: ContactsRowUnsaved => ContactsRow,
@@ -25,7 +26,7 @@ case class ContactsRepoMock(
 
   override def deleteById(contactId: ContactsId)(using c: Connection): Boolean = map.remove(contactId).isDefined
 
-  override def deleteByIds(contactIds: Array[ContactsId])(using c: Connection): Int = {
+  override def deleteByIds(contactIds: List[ContactsId])(using c: Connection): Int = {
     var count = 0
     contactIds.foreach { id => if (map.remove(id).isDefined) {
       count = count + 1
@@ -45,13 +46,13 @@ case class ContactsRepoMock(
 
   override def select: SelectBuilder[ContactsFields, ContactsRow] = SelectBuilderMock(ContactsFields.structure, () => map.values.toList, SelectParams.empty())
 
-  override def selectAll(using c: Connection): List[ContactsRow] = map.values.toList
+  override def selectAll(using c: ConnectionRead): List[ContactsRow] = map.values.toList
 
-  override def selectById(contactId: ContactsId)(using c: Connection): Option[ContactsRow] = map.get(contactId)
+  override def selectById(contactId: ContactsId)(using c: ConnectionRead): Option[ContactsRow] = map.get(contactId)
 
-  override def selectByIds(contactIds: Array[ContactsId])(using c: Connection): List[ContactsRow] = contactIds.flatMap(map.get(_)).toList
+  override def selectByIds(contactIds: List[ContactsId])(using c: ConnectionRead): List[ContactsRow] = contactIds.flatMap(map.get(_)).toList
 
-  override def selectByIdsTracked(contactIds: Array[ContactsId])(using c: Connection): Map[ContactsId, ContactsRow] = selectByIds(contactIds)(using c).map(x => (((row: ContactsRow) => row.contactId).apply(x), x)).toMap
+  override def selectByIdsTracked(contactIds: List[ContactsId])(using c: ConnectionRead): Map[ContactsId, ContactsRow] = selectByIds(contactIds)(using c).map(x => (((row: ContactsRow) => row.contactId).apply(x), x)).toMap
 
   override def update: UpdateBuilder[ContactsFields, ContactsRow] = UpdateBuilderMock(ContactsFields.structure, () => map.values.toList, UpdateParams.empty(), row => row)
 

@@ -5,10 +5,11 @@
  */
 package oracledb.departments
 
-import dev.typr.foundations.dsl.DeleteBuilder
-import dev.typr.foundations.dsl.SelectBuilder
-import dev.typr.foundations.dsl.UpdateBuilder
-import java.sql.Connection
+import dev.typr.dsl.DeleteBuilder
+import dev.typr.dsl.SelectBuilder
+import dev.typr.dsl.UpdateBuilder
+import dev.typr.foundations.Connection
+import dev.typr.foundations.ConnectionRead
 import java.util.Optional
 
 trait DepartmentsRepo {
@@ -16,19 +17,19 @@ trait DepartmentsRepo {
 
   def deleteById(compositeId: DepartmentsId)(using c: Connection): java.lang.Boolean
 
-  def deleteByIds(compositeIds: Array[DepartmentsId])(using c: Connection): Integer
+  def deleteByIds(compositeIds: java.util.List[DepartmentsId])(using c: Connection): Integer
 
   def insert(unsaved: DepartmentsRow)(using c: Connection): DepartmentsId
 
   def select: SelectBuilder[DepartmentsFields, DepartmentsRow]
 
-  def selectAll(using c: Connection): java.util.List[DepartmentsRow]
+  def selectAll(using c: ConnectionRead): java.util.List[DepartmentsRow]
 
-  def selectById(compositeId: DepartmentsId)(using c: Connection): Optional[DepartmentsRow]
+  def selectById(compositeId: DepartmentsId)(using c: ConnectionRead): Optional[DepartmentsRow]
 
-  def selectByIds(compositeIds: Array[DepartmentsId])(using c: Connection): java.util.List[DepartmentsRow]
+  def selectByIds(compositeIds: java.util.List[DepartmentsId])(using c: ConnectionRead): java.util.List[DepartmentsRow]
 
-  def selectByIdsTracked(compositeIds: Array[DepartmentsId])(using c: Connection): java.util.Map[DepartmentsId, DepartmentsRow]
+  def selectByIdsTracked(compositeIds: java.util.List[DepartmentsId])(using c: ConnectionRead): java.util.Map[DepartmentsId, DepartmentsRow]
 
   def update: UpdateBuilder[DepartmentsFields, DepartmentsRow]
 

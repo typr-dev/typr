@@ -5,10 +5,11 @@
  */
 package adventureworks.public.title_domain
 
-import dev.typr.foundations.dsl.DeleteBuilder
-import dev.typr.foundations.dsl.SelectBuilder
-import dev.typr.foundations.dsl.UpdateBuilder
-import java.sql.Connection
+import dev.typr.dsl.DeleteBuilder
+import dev.typr.dsl.SelectBuilder
+import dev.typr.dsl.UpdateBuilder
+import dev.typr.foundations.Connection
+import dev.typr.foundations.ConnectionRead
 import java.util.Optional
 
 trait TitleDomainRepo {
@@ -16,7 +17,7 @@ trait TitleDomainRepo {
 
   def deleteById(code: TitleDomainId)(using c: Connection): java.lang.Boolean
 
-  def deleteByIds(codes: Array[TitleDomainId])(using c: Connection): Integer
+  def deleteByIds(codes: java.util.List[TitleDomainId])(using c: Connection): Integer
 
   def insert(unsaved: TitleDomainRow)(using c: Connection): TitleDomainRow
 
@@ -27,13 +28,13 @@ trait TitleDomainRepo {
 
   def select: SelectBuilder[TitleDomainFields, TitleDomainRow]
 
-  def selectAll(using c: Connection): java.util.List[TitleDomainRow]
+  def selectAll(using c: ConnectionRead): java.util.List[TitleDomainRow]
 
-  def selectById(code: TitleDomainId)(using c: Connection): Optional[TitleDomainRow]
+  def selectById(code: TitleDomainId)(using c: ConnectionRead): Optional[TitleDomainRow]
 
-  def selectByIds(codes: Array[TitleDomainId])(using c: Connection): java.util.List[TitleDomainRow]
+  def selectByIds(codes: java.util.List[TitleDomainId])(using c: ConnectionRead): java.util.List[TitleDomainRow]
 
-  def selectByIdsTracked(codes: Array[TitleDomainId])(using c: Connection): java.util.Map[TitleDomainId, TitleDomainRow]
+  def selectByIdsTracked(codes: java.util.List[TitleDomainId])(using c: ConnectionRead): java.util.Map[TitleDomainId, TitleDomainRow]
 
   def update: UpdateBuilder[TitleDomainFields, TitleDomainRow]
 

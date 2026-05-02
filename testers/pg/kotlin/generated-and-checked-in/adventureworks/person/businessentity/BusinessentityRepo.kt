@@ -5,10 +5,11 @@
  */
 package adventureworks.person.businessentity
 
-import dev.typr.foundations.kotlin.DeleteBuilder
-import dev.typr.foundations.kotlin.SelectBuilder
-import dev.typr.foundations.kotlin.UpdateBuilder
-import java.sql.Connection
+import dev.typr.dslkt.DeleteBuilder
+import dev.typr.dslkt.SelectBuilder
+import dev.typr.dslkt.UpdateBuilder
+import dev.typr.foundationskt.Connection
+import dev.typr.foundationskt.ConnectionRead
 import kotlin.collections.Iterator
 import kotlin.collections.List
 import kotlin.collections.Map
@@ -19,10 +20,10 @@ interface BusinessentityRepo {
   abstract fun deleteById(
     businessentityid: BusinessentityId,
     c: Connection
-  ): Boolean
+  ): kotlin.Boolean
 
   abstract fun deleteByIds(
-    businessentityids: Array<BusinessentityId>,
+    businessentityids: List<BusinessentityId>,
     c: Connection
   ): Int
 
@@ -40,32 +41,32 @@ interface BusinessentityRepo {
     unsaved: Iterator<BusinessentityRow>,
     batchSize: Int = 10000,
     c: Connection
-  ): Long
+  ): kotlin.Long
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
   abstract fun insertUnsavedStreaming(
     unsaved: Iterator<BusinessentityRowUnsaved>,
     batchSize: Int = 10000,
     c: Connection
-  ): Long
+  ): kotlin.Long
 
   abstract fun select(): SelectBuilder<BusinessentityFields, BusinessentityRow>
 
-  abstract fun selectAll(c: Connection): List<BusinessentityRow>
+  abstract fun selectAll(c: ConnectionRead): List<BusinessentityRow>
 
   abstract fun selectById(
     businessentityid: BusinessentityId,
-    c: Connection
+    c: ConnectionRead
   ): BusinessentityRow?
 
   abstract fun selectByIds(
-    businessentityids: Array<BusinessentityId>,
-    c: Connection
+    businessentityids: List<BusinessentityId>,
+    c: ConnectionRead
   ): List<BusinessentityRow>
 
   abstract fun selectByIdsTracked(
-    businessentityids: Array<BusinessentityId>,
-    c: Connection
+    businessentityids: List<BusinessentityId>,
+    c: ConnectionRead
   ): Map<BusinessentityId, BusinessentityRow>
 
   abstract fun update(): UpdateBuilder<BusinessentityFields, BusinessentityRow>
@@ -73,7 +74,7 @@ interface BusinessentityRepo {
   abstract fun update(
     row: BusinessentityRow,
     c: Connection
-  ): Boolean
+  ): kotlin.Boolean
 
   abstract fun upsert(
     unsaved: BusinessentityRow,

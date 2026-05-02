@@ -6,9 +6,9 @@
 package adventureworks.production.productcosthistory
 
 import adventureworks.production.product.ProductId
+import dev.typr.dsl.RowCodecs
 import dev.typr.foundations.PgTypes
-import dev.typr.foundations.RowParser
-import dev.typr.foundations.RowParsers
+import dev.typr.foundations.RowCodec
 import dev.typr.foundations.Tuple.Tuple2
 import java.time.LocalDateTime
 
@@ -23,5 +23,5 @@ case class ProductcosthistoryId(
 }
 
 object ProductcosthistoryId {
-  val `_rowParser`: RowParser[ProductcosthistoryId] = RowParsers.of(ProductId.pgType, PgTypes.timestamp, ProductcosthistoryId.apply, row => Array[Any](row.productid, row.startdate))
+  val rowCodec: RowCodec[ProductcosthistoryId] = RowCodecs.of(ProductId.pgType, PgTypes.timestamp, ProductcosthistoryId.apply, row => Array[Any](row.productid, row.startdate))
 }

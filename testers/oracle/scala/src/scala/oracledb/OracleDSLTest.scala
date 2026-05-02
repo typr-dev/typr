@@ -4,15 +4,15 @@ import oracledb.customers.{CustomersRepoImpl, CustomersRowUnsaved}
 import oracledb.customtypes.Defaulted
 import oracledb.products.{ProductsRepoImpl, ProductsRowUnsaved}
 import org.scalatest.funsuite.AnyFunSuite
-import dev.typr.foundations.dsl.Bijection
+import dev.typr.foundations.Bijection
+import dev.typr.foundations.Connection
 
 class OracleDSLTest extends AnyFunSuite {
   val customersRepo: CustomersRepoImpl = new CustomersRepoImpl
   val productsRepo: ProductsRepoImpl = new ProductsRepoImpl
 
   test("select with where clause") {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       val price = new MoneyT(new java.math.BigDecimal("199.99"), "USD")
       val unsaved = new ProductsRowUnsaved(
         "DSL-001",
@@ -26,15 +26,14 @@ class OracleDSLTest extends AnyFunSuite {
 
       val query = productsRepo.select.where(p => p.sku.isEqual("DSL-001"))
 
-      val results = query.toList(c)
+      val results = query.toList(summon[Connection])
       val _ = assert(results.size() > 0)
       val _ = assert(results.get(0).sku == "DSL-001")
     }
   }
 
   test("order by clause") {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       val price1 = new MoneyT(new java.math.BigDecimal("300.00"), "USD")
       val price2 = new MoneyT(new java.math.BigDecimal("100.00"), "USD")
       val price3 = new MoneyT(new java.math.BigDecimal("200.00"), "USD")
@@ -58,14 +57,13 @@ class OracleDSLTest extends AnyFunSuite {
         )
         .orderBy(p => p.sku.asc())
 
-      val results = query.toList(c)
+      val results = query.toList(summon[Connection])
       val _ = assert(results.size() >= 3)
     }
   }
 
   test("limit clause") {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       val price = new MoneyT(new java.math.BigDecimal("10.00"), "USD")
 
       for (i <- 1 to 5) {
@@ -82,14 +80,13 @@ class OracleDSLTest extends AnyFunSuite {
 
       val query = productsRepo.select.where(p => p.sku.isEqual("LIMIT-1")).limit(3)
 
-      val results = query.toList(c)
+      val results = query.toList(summon[Connection])
       val _ = assert(results.size() <= 3)
     }
   }
 
   test("count query") {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       val price = new MoneyT(new java.math.BigDecimal("50.00"), "USD")
 
       for (i <- 1 to 7) {
@@ -106,30 +103,28 @@ class OracleDSLTest extends AnyFunSuite {
 
       val query = productsRepo.select.where(p => p.sku.isEqual("COUNT-1"))
 
-      val count = query.count(c)
+      val count = query.count(summon[Connection])
       val _ = assert(count >= 1)
     }
   }
 
   test("map projection") {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       val price = new MoneyT(new java.math.BigDecimal("99.99"), "USD")
       val _ = productsRepo.insert(
         new ProductsRowUnsaved("MAP-001", "Map Test", price, java.util.Optional.empty(), Defaulted.UseDefault())
       )
 
-      val query = productsRepo.select.where(p => p.sku.isEqual("MAP-001")).map(p => dev.typr.foundations.dsl.TupleExpr.of(p.name))
+      val query = productsRepo.select.where(p => p.sku.isEqual("MAP-001")).map(p => dev.typr.dsl.TupleExpr.of(p.name))
 
-      val results = query.toList(c)
+      val results = query.toList(summon[Connection])
       val _ = assert(results.size() > 0)
       val _ = assert(results.get(0)._1() == "Map Test")
     }
   }
 
   test("complex where with oracle object types") {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       val nycCoords = new CoordinatesT(new java.math.BigDecimal("40.7128"), new java.math.BigDecimal("-74.0061"))
       val nycAddress = new AddressT("NYC Street", "New York", nycCoords)
 
@@ -145,15 +140,14 @@ class OracleDSLTest extends AnyFunSuite {
 
       val query = customersRepo.select.where(cust => cust.name.isEqual("NYC Customer"))
 
-      val results = query.toList(c)
+      val results = query.toList(summon[Connection])
       val _ = assert(results.size() > 0)
       val _ = assert(results.get(0).name == "NYC Customer")
     }
   }
 
   test("delete with DSL") {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       val price = new MoneyT(new java.math.BigDecimal("10.00"), "USD")
       val inserted = productsRepo.insert(
         new ProductsRowUnsaved(
@@ -167,7 +161,7 @@ class OracleDSLTest extends AnyFunSuite {
 
       val deleteQuery = productsRepo.delete.where(p => p.sku.isEqual("DELETE-DSL"))
 
-      val deleted = deleteQuery.execute(c)
+      val deleted = deleteQuery.execute(summon[Connection])
       val _ = assert(deleted > 0)
 
       val found = productsRepo.selectById(inserted)

@@ -5,89 +5,88 @@
  */
 package testdb.departments
 
-import dev.typr.foundations.DuckDbTypes
-import dev.typr.foundations.scala.DbTypeOps
-import dev.typr.foundations.scala.DeleteBuilder
-import dev.typr.foundations.scala.Dialect
-import dev.typr.foundations.scala.Fragment
-import dev.typr.foundations.scala.ScalaDbTypes
-import dev.typr.foundations.scala.SelectBuilder
-import dev.typr.foundations.scala.UpdateBuilder
-import java.sql.Connection
+import dev.typr.dslsc.DeleteBuilder
+import dev.typr.dslsc.Dialect
+import dev.typr.dslsc.SelectBuilder
+import dev.typr.dslsc.UpdateBuilder
+import dev.typr.foundationssc.Connection
+import dev.typr.foundationssc.ConnectionRead
+import dev.typr.foundationssc.DuckDbTypes
+import dev.typr.foundationssc.Fragment
 import scala.collection.mutable.ListBuffer
-import dev.typr.foundations.scala.Fragment.sql
+import dev.typr.foundationssc.Fragment.sql
 
 class DepartmentsRepoImpl extends DepartmentsRepo {
   override def delete: DeleteBuilder[DepartmentsFields, DepartmentsRow] = DeleteBuilder.of(""""departments"""", DepartmentsFields.structure, Dialect.DUCKDB)
 
-  override def deleteById(compositeId: DepartmentsId)(using c: Connection): Boolean = sql"""delete from "departments" where "dept_code" = ${Fragment.encode(DuckDbTypes.varchar, compositeId.deptCode)} AND "dept_region" = ${Fragment.encode(DuckDbTypes.varchar, compositeId.deptRegion)}""".update().runUnchecked(c) > 0
+  override def deleteById(compositeId: DepartmentsId)(using c: Connection): Boolean = sql"""delete from "departments" where "dept_code" = ${Fragment.encode(DuckDbTypes.varchar, compositeId.deptCode)} AND "dept_region" = ${Fragment.encode(DuckDbTypes.varchar, compositeId.deptRegion)}""".update().run(using c) > 0
 
-  override def deleteByIds(compositeIds: Array[DepartmentsId])(using c: Connection): Int = {
+  override def deleteByIds(compositeIds: List[DepartmentsId])(using c: Connection): Int = {
     val orClauses: ListBuffer[Fragment] = ListBuffer()
-    compositeIds.foreach { id => orClauses.addOne(Fragment.interpolate(Fragment.lit("("), Fragment.lit(""""dept_code" = """), Fragment.encode(DuckDbTypes.varchar, id.deptCode), Fragment.lit(" AND "), Fragment.lit(""""dept_region" = """), Fragment.encode(DuckDbTypes.varchar, id.deptRegion), Fragment.lit(")"))): @scala.annotation.nowarn }
-    return Fragment.interpolate(Fragment.lit("""delete
+    compositeIds.foreach { id => orClauses.addOne(Fragment.concat(Fragment.of("("), Fragment.of(""""dept_code" = """), Fragment.encode(DuckDbTypes.varchar, id.deptCode), Fragment.of(" AND "), Fragment.of(""""dept_region" = """), Fragment.encode(DuckDbTypes.varchar, id.deptRegion), Fragment.of(")"))): @scala.annotation.nowarn }
+    return Fragment.concat(Fragment.of("""delete
     from "departments"
-    where """), Fragment.or(orClauses.toList), Fragment.lit("""
-    """)).update().runUnchecked(c)
+    where """), Fragment.or(orClauses.toList), Fragment.of("""
+    """)).update().run(using c)
   }
 
   override def insert(unsaved: DepartmentsRow)(using c: Connection): DepartmentsRow = {
   sql"""insert into "departments"("dept_code", "dept_region", "dept_name", "budget")
-    values (${Fragment.encode(DuckDbTypes.varchar, unsaved.deptCode)}, ${Fragment.encode(DuckDbTypes.varchar, unsaved.deptRegion)}, ${Fragment.encode(DuckDbTypes.varchar, unsaved.deptName)}, ${Fragment.encode(ScalaDbTypes.DuckDbTypes.numeric.nullable, unsaved.budget)})
+    values (${Fragment.encode(DuckDbTypes.varchar, unsaved.deptCode)}, ${Fragment.encode(DuckDbTypes.varchar, unsaved.deptRegion)}, ${Fragment.encode(DuckDbTypes.varchar, unsaved.deptName)}, ${Fragment.encode(DuckDbTypes.numeric.opt, unsaved.budget)})
     RETURNING "dept_code", "dept_region", "dept_name", "budget"
     """
-    .updateReturning(DepartmentsRow.`_rowParser`.exactlyOne()).runUnchecked(c)
+    .updateReturning(DepartmentsRow.rowCodec.exactlyOne()).run(using c)
   }
 
-  override def select: SelectBuilder[DepartmentsFields, DepartmentsRow] = SelectBuilder.of(""""departments"""", DepartmentsFields.structure, DepartmentsRow.`_rowParser`, Dialect.DUCKDB)
+  override def select: SelectBuilder[DepartmentsFields, DepartmentsRow] = SelectBuilder.of(""""departments"""", DepartmentsFields.structure, DepartmentsRow.rowCodec, Dialect.DUCKDB)
 
-  override def selectAll(using c: Connection): List[DepartmentsRow] = {
+  override def selectAll(using c: ConnectionRead): List[DepartmentsRow] = {
     sql"""select "dept_code", "dept_region", "dept_name", "budget"
     from "departments"
-    """.query(DepartmentsRow.`_rowParser`.all()).runUnchecked(c)
+    """.query(DepartmentsRow.rowCodec.all()).run(using c)
   }
 
-  override def selectById(compositeId: DepartmentsId)(using c: Connection): Option[DepartmentsRow] = {
+  override def selectById(compositeId: DepartmentsId)(using c: ConnectionRead): Option[DepartmentsRow] = {
     sql"""select "dept_code", "dept_region", "dept_name", "budget"
     from "departments"
-    where "dept_code" = ${Fragment.encode(DuckDbTypes.varchar, compositeId.deptCode)} AND "dept_region" = ${Fragment.encode(DuckDbTypes.varchar, compositeId.deptRegion)}""".query(DepartmentsRow.`_rowParser`.first()).runUnchecked(c)
+    where "dept_code" = ${Fragment.encode(DuckDbTypes.varchar, compositeId.deptCode)} AND "dept_region" = ${Fragment.encode(DuckDbTypes.varchar, compositeId.deptRegion)}""".query(DepartmentsRow.rowCodec.first()).run(using c)
   }
 
-  override def selectByIds(compositeIds: Array[DepartmentsId])(using c: Connection): List[DepartmentsRow] = {
+  override def selectByIds(compositeIds: List[DepartmentsId])(using c: ConnectionRead): List[DepartmentsRow] = {
     val orClauses: ListBuffer[Fragment] = ListBuffer()
-    compositeIds.foreach { id => orClauses.addOne(Fragment.interpolate(Fragment.lit("("), Fragment.lit(""""dept_code" = """), Fragment.encode(DuckDbTypes.varchar, id.deptCode), Fragment.lit(" AND "), Fragment.lit(""""dept_region" = """), Fragment.encode(DuckDbTypes.varchar, id.deptRegion), Fragment.lit(")"))): @scala.annotation.nowarn }
-    return Fragment.interpolate(Fragment.lit("""select "dept_code", "dept_region", "dept_name", "budget"
+    compositeIds.foreach { id => orClauses.addOne(Fragment.concat(Fragment.of("("), Fragment.of(""""dept_code" = """), Fragment.encode(DuckDbTypes.varchar, id.deptCode), Fragment.of(" AND "), Fragment.of(""""dept_region" = """), Fragment.encode(DuckDbTypes.varchar, id.deptRegion), Fragment.of(")"))): @scala.annotation.nowarn }
+    return Fragment.concat(Fragment.of("""select "dept_code", "dept_region", "dept_name", "budget"
     from "departments"
-    where """), Fragment.or(orClauses.toList), Fragment.lit("""
-    """)).query(DepartmentsRow.`_rowParser`.all()).runUnchecked(c)
+    where """), Fragment.or(orClauses.toList), Fragment.of("""
+    """)).query(DepartmentsRow.rowCodec.all()).run(using c)
   }
 
-  override def selectByIdsTracked(compositeIds: Array[DepartmentsId])(using c: Connection): Map[DepartmentsId, DepartmentsRow] = {
+  override def selectByIdsTracked(compositeIds: List[DepartmentsId])(using c: ConnectionRead): Map[DepartmentsId, DepartmentsRow] = {
     val ret: scala.collection.mutable.Map[DepartmentsId, DepartmentsRow] = scala.collection.mutable.Map.empty[DepartmentsId, DepartmentsRow]
     selectByIds(compositeIds)(using c).foreach(row => ret.put(row.compositeId, row): @scala.annotation.nowarn)
     return ret.toMap
   }
 
-  override def update: UpdateBuilder[DepartmentsFields, DepartmentsRow] = UpdateBuilder.of(""""departments"""", DepartmentsFields.structure, DepartmentsRow.`_rowParser`, Dialect.DUCKDB)
+  override def update: UpdateBuilder[DepartmentsFields, DepartmentsRow] = UpdateBuilder.of(""""departments"""", DepartmentsFields.structure, DepartmentsRow.rowCodec, Dialect.DUCKDB)
 
   override def update(row: DepartmentsRow)(using c: Connection): Boolean = {
     val compositeId: DepartmentsId = row.compositeId
     return sql"""update "departments"
     set "dept_name" = ${Fragment.encode(DuckDbTypes.varchar, row.deptName)},
-    "budget" = ${Fragment.encode(ScalaDbTypes.DuckDbTypes.numeric.nullable, row.budget)}
-    where "dept_code" = ${Fragment.encode(DuckDbTypes.varchar, compositeId.deptCode)} AND "dept_region" = ${Fragment.encode(DuckDbTypes.varchar, compositeId.deptRegion)}""".update().runUnchecked(c) > 0
+    "budget" = ${Fragment.encode(DuckDbTypes.numeric.opt, row.budget)}
+    where "dept_code" = ${Fragment.encode(DuckDbTypes.varchar, compositeId.deptCode)} AND "dept_region" = ${Fragment.encode(DuckDbTypes.varchar, compositeId.deptRegion)}""".update().run(using c) > 0
   }
 
   override def upsert(unsaved: DepartmentsRow)(using c: Connection): DepartmentsRow = {
   sql"""INSERT INTO "departments"("dept_code", "dept_region", "dept_name", "budget")
-    VALUES (${Fragment.encode(DuckDbTypes.varchar, unsaved.deptCode)}, ${Fragment.encode(DuckDbTypes.varchar, unsaved.deptRegion)}, ${Fragment.encode(DuckDbTypes.varchar, unsaved.deptName)}, ${Fragment.encode(ScalaDbTypes.DuckDbTypes.numeric.nullable, unsaved.budget)})
+    VALUES (${Fragment.encode(DuckDbTypes.varchar, unsaved.deptCode)}, ${Fragment.encode(DuckDbTypes.varchar, unsaved.deptRegion)}, ${Fragment.encode(DuckDbTypes.varchar, unsaved.deptName)}, ${Fragment.encode(DuckDbTypes.numeric.opt, unsaved.budget)})
     ON CONFLICT ("dept_code", "dept_region")
     DO UPDATE SET
       "dept_name" = EXCLUDED."dept_name",
     "budget" = EXCLUDED."budget"
     RETURNING "dept_code", "dept_region", "dept_name", "budget""""
-    .updateReturning(DepartmentsRow.`_rowParser`.exactlyOne())
-    .runUnchecked(c)
+    .updateReturning(DepartmentsRow.rowCodec.exactlyOne())
+    .run(using c)
   }
 
   override def upsertBatch(unsaved: Iterator[DepartmentsRow])(using c: Connection): List[DepartmentsRow] = {
@@ -98,7 +97,7 @@ class DepartmentsRepoImpl extends DepartmentsRepo {
       "dept_name" = EXCLUDED."dept_name",
     "budget" = EXCLUDED."budget"
     RETURNING "dept_code", "dept_region", "dept_name", "budget""""
-      .updateReturningEach(DepartmentsRow.`_rowParser`, unsaved)
-    .runUnchecked(c)
+      .updateReturningEach(DepartmentsRow.rowCodec, unsaved)
+    .run(using c)
   }
 }

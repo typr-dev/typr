@@ -6,24 +6,23 @@
 package adventureworks.public
 
 import com.fasterxml.jackson.annotation.JsonValue
-import dev.typr.foundations.PgType
-import dev.typr.foundations.PgTypes
-import dev.typr.foundations.internal.arrayMap
-import dev.typr.foundations.kotlin.Bijection
-import dev.typr.foundations.kotlin.KotlinDbTypes
+import dev.typr.foundationskt.Bijection
+import dev.typr.foundationskt.PgType
+import dev.typr.foundationskt.PgTypes
+import kotlin.collections.List
 
 /** Domain `public.NameStyle`
   * No constraint
   */
-data class NameStyle(@field:JsonValue val value: Boolean) {
+data class NameStyle(@field:JsonValue val value: kotlin.Boolean) {
   companion object {
-    val bijection: Bijection<NameStyle, Boolean> =
+    val bijection: Bijection<NameStyle, kotlin.Boolean> =
       Bijection.of(NameStyle::value, ::NameStyle)
 
     val pgType: PgType<NameStyle> =
-      KotlinDbTypes.PgTypes.bool.bimap(::NameStyle, NameStyle::value).renamed("\"public\".\"NameStyle\"")
+      PgType(PgTypes.bool.to(Bijection.of(::NameStyle, NameStyle::value)).underlying.renamed("\"public\".\"NameStyle\""))
 
-    val pgTypeArray: PgType<Array<NameStyle>> =
-      PgTypes.boolArray.bimap({ xs -> arrayMap.map(xs, ::NameStyle, NameStyle::class.java) }, { xs -> arrayMap.map(xs, NameStyle::value, Boolean::class.javaObjectType) }).renamed("\"public\".\"NameStyle\"[]")
+    val pgTypeArray: PgType<List<NameStyle>> =
+      pgType.array()
   }
 }

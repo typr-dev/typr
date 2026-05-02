@@ -6,12 +6,12 @@
 package adventureworks.person_detail
 
 import adventureworks.person.businessentity.BusinessentityId
-import java.sql.Connection
+import dev.typr.foundations.ConnectionRead
 import java.time.LocalDateTime
 
 trait PersonDetailSqlRepo {
   def apply(
     businessentityid: /* user-picked */ BusinessentityId,
     modifiedAfter: LocalDateTime
-  )(using c: Connection): java.util.List[PersonDetailSqlRow]
+  )(using c: ConnectionRead): java.util.List[PersonDetailSqlRow]
 }

@@ -5,14 +5,14 @@
  */
 package adventureworks.public.title_domain
 
-import dev.typr.foundations.RowParser
-import dev.typr.foundations.dsl.FieldsBase
-import dev.typr.foundations.dsl.Path
-import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.scala.RelationStructure
-import dev.typr.foundations.scala.SqlExpr
-import dev.typr.foundations.scala.SqlExpr.IdField
-import dev.typr.foundations.scala.TupleExpr1
+import dev.typr.dsl.FieldsBase
+import dev.typr.dsl.Path
+import dev.typr.dsl.SqlExpr.FieldLike
+import dev.typr.dslsc.RelationStructure
+import dev.typr.dslsc.SqlExpr
+import dev.typr.dslsc.SqlExpr.IdField
+import dev.typr.dslsc.TupleExpr1
+import dev.typr.foundations.RowCodec
 
 class TitleDomainFields(val `_path`: java.util.List[Path]) extends TupleExpr1[TitleDomainId] with RelationStructure[TitleDomainFields, TitleDomainRow]  with FieldsBase[TitleDomainRow] {
   def code: IdField[TitleDomainId, TitleDomainRow] = {
@@ -23,13 +23,13 @@ class TitleDomainFields(val `_path`: java.util.List[Path]) extends TupleExpr1[Ti
       None,
       Some("text"),
       (row, value) => row.copy(code = value),
-      TitleDomainId.pgType
+      TitleDomainId.pgType.underlying
     )
   }
 
   override def columns: java.util.List[FieldLike[?, TitleDomainRow]] = java.util.List.of(this.code.underlying)
 
-  override def rowParser: RowParser[TitleDomainRow] = TitleDomainRow._rowParser.underlying
+  override def rowCodec: RowCodec[TitleDomainRow] = TitleDomainRow.rowCodec.underlying
 
   override def withPaths(`_path`: java.util.List[Path]): RelationStructure[TitleDomainFields, TitleDomainRow] = new TitleDomainFields(`_path`)
 

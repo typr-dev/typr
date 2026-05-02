@@ -21,7 +21,7 @@ class ForeignKeyTest {
     private val customerStatusRepo = CustomerStatusRepoImpl()
     private val customersRepo = CustomersRepoImpl()
     private val ordersRepo = OrdersRepoImpl()
-    private val testInsert = TestInsert(Random(42))
+    private val testInsert = TestInsert(Random(173805009))
 
     @Test
     fun testCustomerStatusInsert() {

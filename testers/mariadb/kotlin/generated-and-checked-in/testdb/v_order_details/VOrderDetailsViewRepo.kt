@@ -5,12 +5,12 @@
  */
 package testdb.v_order_details
 
-import dev.typr.foundations.kotlin.SelectBuilder
-import java.sql.Connection
+import dev.typr.dslkt.SelectBuilder
+import dev.typr.foundationskt.ConnectionRead
 import kotlin.collections.List
 
 interface VOrderDetailsViewRepo {
   abstract fun select(): SelectBuilder<VOrderDetailsViewFields, VOrderDetailsViewRow>
 
-  abstract fun selectAll(c: Connection): List<VOrderDetailsViewRow>
+  abstract fun selectAll(c: ConnectionRead): List<VOrderDetailsViewRow>
 }

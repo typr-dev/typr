@@ -6,15 +6,15 @@
 package testdb.mariatest_unique
 
 import com.fasterxml.jackson.annotation.JsonValue
-import dev.typr.foundations.MariaType
-import dev.typr.foundations.scala.Bijection
-import dev.typr.foundations.scala.ScalaDbTypes
+import dev.typr.dslsc.Bijection
+import dev.typr.foundationssc.MariaType
+import dev.typr.foundationssc.MariaTypes
 
 /** Type for the primary key of table `mariatest_unique` */
 case class MariatestUniqueId(@JsonValue value: Int) extends scala.AnyVal
 
 object MariatestUniqueId {
-  given bijection: Bijection[MariatestUniqueId, Int] = Bijection.apply[MariatestUniqueId, Int](_.value)(MariatestUniqueId.apply)
+  given bijection: Bijection[MariatestUniqueId, Int] = Bijection.of[MariatestUniqueId, Int](_.value, MariatestUniqueId.apply)
 
-  given mariaType: MariaType[MariatestUniqueId] = ScalaDbTypes.MariaTypes.int_.bimap(MariatestUniqueId.apply, _.value)
+  given mariaType: MariaType[MariatestUniqueId] = MariaTypes.int_.to(Bijection.of(MariatestUniqueId.apply, _.value))
 }

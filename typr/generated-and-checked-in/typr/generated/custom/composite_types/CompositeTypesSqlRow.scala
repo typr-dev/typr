@@ -49,16 +49,16 @@ case class CompositeTypesSqlRow(
 )
 
 object CompositeTypesSqlRow {
-  implicit lazy val reads: Reads[CompositeTypesSqlRow] = {
+  given reads: Reads[CompositeTypesSqlRow] = {
     Reads[CompositeTypesSqlRow](json => JsResult.fromTry(
         Try(
           CompositeTypesSqlRow(
-            typeSchema = json.\("typeSchema").toOption.map(_.as(Reads.StringReads)),
-            typeName = json.\("typeName").as(Reads.StringReads),
-            attrName = json.\("attrName").as(Reads.StringReads),
-            attrNum = json.\("attrNum").as(TypoShort.reads),
-            attrType = json.\("attrType").as(Reads.StringReads),
-            attrNotNull = json.\("attrNotNull").as(Reads.BooleanReads)
+            typeSchema = json.\("typeSchema").toOption.map(_.as(using Reads.StringReads)),
+            typeName = json.\("typeName").as(using Reads.StringReads),
+            attrName = json.\("attrName").as(using Reads.StringReads),
+            attrNum = json.\("attrNum").as(using TypoShort.reads),
+            attrType = json.\("attrType").as(using Reads.StringReads),
+            attrNotNull = json.\("attrNotNull").as(using Reads.BooleanReads)
           )
         )
       ),
@@ -69,21 +69,21 @@ object CompositeTypesSqlRow {
     RowParser[CompositeTypesSqlRow] { row =>
       Success(
         CompositeTypesSqlRow(
-          typeSchema = row(idx + 0)(Column.columnToOption(Column.columnToString)),
-          typeName = row(idx + 1)(Column.columnToString),
-          attrName = row(idx + 2)(Column.columnToString),
-          attrNum = row(idx + 3)(TypoShort.column),
-          attrType = row(idx + 4)(Column.columnToString),
-          attrNotNull = row(idx + 5)(Column.columnToBoolean)
+          typeSchema = row(idx + 0)(using Column.columnToOption(using Column.columnToString)),
+          typeName = row(idx + 1)(using Column.columnToString),
+          attrName = row(idx + 2)(using Column.columnToString),
+          attrNum = row(idx + 3)(using TypoShort.column),
+          attrType = row(idx + 4)(using Column.columnToString),
+          attrNotNull = row(idx + 5)(using Column.columnToBoolean)
         )
       )
     }
   }
 
-  implicit lazy val writes: OWrites[CompositeTypesSqlRow] = {
+  given writes: OWrites[CompositeTypesSqlRow] = {
     OWrites[CompositeTypesSqlRow](o =>
       new JsObject(ListMap[String, JsValue](
-        "typeSchema" -> Writes.OptionWrites(Writes.StringWrites).writes(o.typeSchema),
+        "typeSchema" -> Writes.OptionWrites(using Writes.StringWrites).writes(o.typeSchema),
         "typeName" -> Writes.StringWrites.writes(o.typeName),
         "attrName" -> Writes.StringWrites.writes(o.attrName),
         "attrNum" -> TypoShort.writes.writes(o.attrNum),

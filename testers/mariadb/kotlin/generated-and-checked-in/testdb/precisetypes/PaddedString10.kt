@@ -6,15 +6,15 @@
 package testdb.precisetypes
 
 import com.fasterxml.jackson.annotation.JsonValue
-import dev.typr.foundations.MariaType
-import dev.typr.foundations.MariaTypes
 import dev.typr.foundations.data.precise.PaddedStringN
-import dev.typr.foundations.kotlin.Bijection
+import dev.typr.foundationskt.Bijection
+import dev.typr.foundationskt.MariaType
+import dev.typr.foundationskt.MariaTypes
 import java.lang.IllegalArgumentException
 
 @kotlin.ConsistentCopyVisibility
-data class PaddedString10 private constructor(@field:JsonValue val value: String) : PaddedStringN {
-  override fun equals(other: Any?): Boolean {
+data class PaddedString10 private constructor(@field:JsonValue val value: kotlin.String) : PaddedStringN {
+  override fun equals(other: Any?): kotlin.Boolean {
     if (this === other) return true
     if (other !is PaddedStringN) return false
     return trimmed() == other.trimmed()
@@ -24,32 +24,32 @@ data class PaddedString10 private constructor(@field:JsonValue val value: String
 
   override fun length(): Int = 10
 
-  override fun rawValue(): String = value
+  override fun rawValue(): kotlin.String = value
 
-  override fun semanticEquals(other: PaddedStringN): Boolean = if (other == null) false else trimmed() == other.trimmed()
+  override fun semanticEquals(other: PaddedStringN): kotlin.Boolean = if (other == null) false else (trimmed() == other.trimmed())
 
   override fun semanticHashCode(): Int = trimmed().hashCode()
 
-  override fun trimmed(): String = value.trimEnd()
+  override fun trimmed(): kotlin.String = value.trimEnd()
 
   override fun toString(): kotlin.String {
-    return value.toString()
+    return value
   }
 
   companion object {
-    val bijection: Bijection<PaddedString10, String> =
-      Bijection.of(PaddedString10::value, ::PaddedString10)
+    fun of(value: kotlin.String): PaddedString10? = if (value.length <= 10) PaddedString10(String.format("%-10s", value)) else null
 
-    val mariaType: MariaType<PaddedString10> =
-      MariaTypes.char_.bimap(::PaddedString10, PaddedString10::value)
-
-    fun of(value: String): PaddedString10? = if (value.length <= 10) PaddedString10(String.format("%-10s", value)) else null
-
-    fun unsafeForce(value: String): PaddedString10 {
+    fun unsafeForce(value: kotlin.String): PaddedString10 {
       if (value.length > 10) {
         throw IllegalArgumentException("Value length ${value.length} exceeds fixed length 10")
       }
       return PaddedString10(String.format("%-10s", value))
     }
+
+    val bijection: Bijection<PaddedString10, kotlin.String> =
+      Bijection.of(PaddedString10::value, ::PaddedString10)
+
+    val mariaType: MariaType<PaddedString10> =
+      MariaTypes.char_.to(Bijection.of(::PaddedString10, PaddedString10::value))
   }
 }

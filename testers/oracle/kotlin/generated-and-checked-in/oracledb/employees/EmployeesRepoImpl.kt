@@ -5,15 +5,14 @@
  */
 package oracledb.employees
 
-import dev.typr.foundations.OracleTypes
-import dev.typr.foundations.kotlin.DeleteBuilder
-import dev.typr.foundations.kotlin.Dialect
-import dev.typr.foundations.kotlin.Fragment
-import dev.typr.foundations.kotlin.KotlinDbTypes
-import dev.typr.foundations.kotlin.SelectBuilder
-import dev.typr.foundations.kotlin.UpdateBuilder
-import dev.typr.foundations.kotlin.nullable
-import java.sql.Connection
+import dev.typr.dslkt.DeleteBuilder
+import dev.typr.dslkt.Dialect
+import dev.typr.dslkt.SelectBuilder
+import dev.typr.dslkt.UpdateBuilder
+import dev.typr.foundationskt.Connection
+import dev.typr.foundationskt.ConnectionRead
+import dev.typr.foundationskt.Fragment
+import dev.typr.foundationskt.OracleTypes
 import java.util.ArrayList
 import kotlin.collections.Iterator
 import kotlin.collections.List
@@ -27,22 +26,22 @@ class EmployeesRepoImpl() : EmployeesRepo {
   override fun deleteById(
     compositeId: EmployeesId,
     c: Connection
-  ): Boolean = Fragment.interpolate(Fragment.lit("delete from \"EMPLOYEES\" where \"EMP_NUMBER\" = "), Fragment.encode(KotlinDbTypes.OracleTypes.number, compositeId.empNumber), Fragment.lit(" AND \"EMP_SUFFIX\" = "), Fragment.encode(OracleTypes.varchar2, compositeId.empSuffix), Fragment.lit("")).update().runUnchecked(c) > 0
+  ): kotlin.Boolean = Fragment.concat(Fragment.of("delete from \"EMPLOYEES\" where \"EMP_NUMBER\" = "), Fragment.encode(OracleTypes.number, compositeId.empNumber), Fragment.of(" AND \"EMP_SUFFIX\" = "), Fragment.encode(OracleTypes.varchar2, compositeId.empSuffix), Fragment.of("")).update().run(c) > 0
 
   override fun deleteByIds(
-    compositeIds: Array<EmployeesId>,
+    compositeIds: List<EmployeesId>,
     c: Connection
   ): Int {
     val fragments: ArrayList<Fragment> = ArrayList()
-    for (id in compositeIds) { fragments.add(Fragment.interpolate(Fragment.lit("("), Fragment.encode(KotlinDbTypes.OracleTypes.number, id.empNumber), Fragment.lit(", "), Fragment.encode(OracleTypes.varchar2, id.empSuffix), Fragment.lit(")"))) }
-    return Fragment.interpolate(Fragment.lit("delete from \"EMPLOYEES\" where (\"EMP_NUMBER\", \"EMP_SUFFIX\") in ("), Fragment.comma(fragments.toMutableList()), Fragment.lit(")")).update().runUnchecked(c)
+    for (id in compositeIds) { fragments.add(Fragment.concat(Fragment.of("("), Fragment.encode(OracleTypes.number, id.empNumber), Fragment.of(", "), Fragment.encode(OracleTypes.varchar2, id.empSuffix), Fragment.of(")"))) }
+    return Fragment.concat(Fragment.of("delete from \"EMPLOYEES\" where (\"EMP_NUMBER\", \"EMP_SUFFIX\") in ("), Fragment.comma(fragments.toMutableList()), Fragment.of(")")).update().run(c)
   }
 
   override fun insert(
     unsaved: EmployeesRow,
     c: Connection
-  ): EmployeesId = Fragment.interpolate(Fragment.lit("insert into \"EMPLOYEES\"(\"EMP_NUMBER\", \"EMP_SUFFIX\", \"DEPT_CODE\", \"DEPT_REGION\", \"EMP_NAME\", \"SALARY\", \"HIRE_DATE\")\nvalues ("), Fragment.encode(KotlinDbTypes.OracleTypes.number, unsaved.empNumber), Fragment.lit(", "), Fragment.encode(OracleTypes.varchar2, unsaved.empSuffix), Fragment.lit(", "), Fragment.encode(OracleTypes.varchar2, unsaved.deptCode), Fragment.lit(", "), Fragment.encode(OracleTypes.varchar2, unsaved.deptRegion), Fragment.lit(", "), Fragment.encode(OracleTypes.varchar2, unsaved.empName), Fragment.lit(", "), Fragment.encode(MoneyT.oracleType.nullable(), unsaved.salary), Fragment.lit(", "), Fragment.encode(OracleTypes.date, unsaved.hireDate), Fragment.lit(")\n"))
-    .updateReturningGeneratedKeys(arrayOf<String>("EMP_NUMBER", "EMP_SUFFIX"), EmployeesId._rowParser.exactlyOne()).runUnchecked(c)
+  ): EmployeesId = Fragment.concat(Fragment.of("insert into \"EMPLOYEES\"(\"EMP_NUMBER\", \"EMP_SUFFIX\", \"DEPT_CODE\", \"DEPT_REGION\", \"EMP_NAME\", \"SALARY\", \"HIRE_DATE\")\nvalues ("), Fragment.encode(OracleTypes.number, unsaved.empNumber), Fragment.of(", "), Fragment.encode(OracleTypes.varchar2, unsaved.empSuffix), Fragment.of(", "), Fragment.encode(OracleTypes.varchar2, unsaved.deptCode), Fragment.of(", "), Fragment.encode(OracleTypes.varchar2, unsaved.deptRegion), Fragment.of(", "), Fragment.encode(OracleTypes.varchar2, unsaved.empName), Fragment.of(", "), Fragment.encode(MoneyT.oracleType.opt(), unsaved.salary), Fragment.of(", "), Fragment.encode(OracleTypes.date, unsaved.hireDate), Fragment.of(")\n"))
+    .updateReturningGeneratedKeys(arrayOf<kotlin.String>("EMP_NUMBER", "EMP_SUFFIX"), EmployeesId.rowCodec.exactlyOne()).run(c)
 
   override fun insert(
     unsaved: EmployeesRowUnsaved,
@@ -50,79 +49,79 @@ class EmployeesRepoImpl() : EmployeesRepo {
   ): EmployeesId {
     val columns: ArrayList<Fragment> = ArrayList()
     val values: ArrayList<Fragment> = ArrayList()
-    columns.add(Fragment.lit("\"EMP_NUMBER\""))
-    values.add(Fragment.interpolate(Fragment.encode(KotlinDbTypes.OracleTypes.number, unsaved.empNumber), Fragment.lit("")))
-    columns.add(Fragment.lit("\"EMP_SUFFIX\""))
-    values.add(Fragment.interpolate(Fragment.encode(OracleTypes.varchar2, unsaved.empSuffix), Fragment.lit("")))
-    columns.add(Fragment.lit("\"DEPT_CODE\""))
-    values.add(Fragment.interpolate(Fragment.encode(OracleTypes.varchar2, unsaved.deptCode), Fragment.lit("")))
-    columns.add(Fragment.lit("\"DEPT_REGION\""))
-    values.add(Fragment.interpolate(Fragment.encode(OracleTypes.varchar2, unsaved.deptRegion), Fragment.lit("")))
-    columns.add(Fragment.lit("\"EMP_NAME\""))
-    values.add(Fragment.interpolate(Fragment.encode(OracleTypes.varchar2, unsaved.empName), Fragment.lit("")))
-    columns.add(Fragment.lit("\"SALARY\""))
-    values.add(Fragment.interpolate(Fragment.encode(MoneyT.oracleType.nullable(), unsaved.salary), Fragment.lit("")))
+    columns.add(Fragment.of("\"EMP_NUMBER\""))
+    values.add(Fragment.concat(Fragment.encode(OracleTypes.number, unsaved.empNumber), Fragment.of("")))
+    columns.add(Fragment.of("\"EMP_SUFFIX\""))
+    values.add(Fragment.concat(Fragment.encode(OracleTypes.varchar2, unsaved.empSuffix), Fragment.of("")))
+    columns.add(Fragment.of("\"DEPT_CODE\""))
+    values.add(Fragment.concat(Fragment.encode(OracleTypes.varchar2, unsaved.deptCode), Fragment.of("")))
+    columns.add(Fragment.of("\"DEPT_REGION\""))
+    values.add(Fragment.concat(Fragment.encode(OracleTypes.varchar2, unsaved.deptRegion), Fragment.of("")))
+    columns.add(Fragment.of("\"EMP_NAME\""))
+    values.add(Fragment.concat(Fragment.encode(OracleTypes.varchar2, unsaved.empName), Fragment.of("")))
+    columns.add(Fragment.of("\"SALARY\""))
+    values.add(Fragment.concat(Fragment.encode(MoneyT.oracleType.opt(), unsaved.salary), Fragment.of("")))
     unsaved.hireDate.visit(
       {  },
-      { value -> columns.add(Fragment.lit("\"HIRE_DATE\""))
-      values.add(Fragment.interpolate(Fragment.encode(OracleTypes.date, value), Fragment.lit(""))) }
+      { value -> columns.add(Fragment.of("\"HIRE_DATE\""))
+      values.add(Fragment.concat(Fragment.encode(OracleTypes.date, value), Fragment.of(""))) }
     );
-    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into \"EMPLOYEES\"("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\n"))
-    return q.updateReturningGeneratedKeys(arrayOf<String>("EMP_NUMBER", "EMP_SUFFIX"), EmployeesId._rowParser.exactlyOne()).runUnchecked(c)
+    val q: Fragment = Fragment.concat(Fragment.of("insert into \"EMPLOYEES\"("), Fragment.comma(columns.toMutableList()), Fragment.of(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.of(")\n"))
+    return q.updateReturningGeneratedKeys(arrayOf<kotlin.String>("EMP_NUMBER", "EMP_SUFFIX"), EmployeesId.rowCodec.exactlyOne()).run(c)
   }
 
-  override fun select(): SelectBuilder<EmployeesFields, EmployeesRow> = SelectBuilder.of("\"EMPLOYEES\"", EmployeesFields.structure, EmployeesRow._rowParser, Dialect.ORACLE)
+  override fun select(): SelectBuilder<EmployeesFields, EmployeesRow> = SelectBuilder.of("\"EMPLOYEES\"", EmployeesFields.structure, EmployeesRow.rowCodec, Dialect.ORACLE)
 
-  override fun selectAll(c: Connection): List<EmployeesRow> = Fragment.interpolate(Fragment.lit("select \"EMP_NUMBER\", \"EMP_SUFFIX\", \"DEPT_CODE\", \"DEPT_REGION\", \"EMP_NAME\", \"SALARY\", \"HIRE_DATE\"\nfrom \"EMPLOYEES\"\n")).query(EmployeesRow._rowParser.all()).runUnchecked(c)
+  override fun selectAll(c: ConnectionRead): List<EmployeesRow> = Fragment.concat(Fragment.of("select \"EMP_NUMBER\", \"EMP_SUFFIX\", \"DEPT_CODE\", \"DEPT_REGION\", \"EMP_NAME\", \"SALARY\", \"HIRE_DATE\"\nfrom \"EMPLOYEES\"\n")).query(EmployeesRow.rowCodec.all()).run(c)
 
   override fun selectById(
     compositeId: EmployeesId,
-    c: Connection
-  ): EmployeesRow? = Fragment.interpolate(Fragment.lit("select \"EMP_NUMBER\", \"EMP_SUFFIX\", \"DEPT_CODE\", \"DEPT_REGION\", \"EMP_NAME\", \"SALARY\", \"HIRE_DATE\"\nfrom \"EMPLOYEES\"\nwhere \"EMP_NUMBER\" = "), Fragment.encode(KotlinDbTypes.OracleTypes.number, compositeId.empNumber), Fragment.lit(" AND \"EMP_SUFFIX\" = "), Fragment.encode(OracleTypes.varchar2, compositeId.empSuffix), Fragment.lit("")).query(EmployeesRow._rowParser.first()).runUnchecked(c)
+    c: ConnectionRead
+  ): EmployeesRow? = Fragment.concat(Fragment.of("select \"EMP_NUMBER\", \"EMP_SUFFIX\", \"DEPT_CODE\", \"DEPT_REGION\", \"EMP_NAME\", \"SALARY\", \"HIRE_DATE\"\nfrom \"EMPLOYEES\"\nwhere \"EMP_NUMBER\" = "), Fragment.encode(OracleTypes.number, compositeId.empNumber), Fragment.of(" AND \"EMP_SUFFIX\" = "), Fragment.encode(OracleTypes.varchar2, compositeId.empSuffix), Fragment.of("")).query(EmployeesRow.rowCodec.first()).run(c)
 
   override fun selectByIds(
-    compositeIds: Array<EmployeesId>,
-    c: Connection
+    compositeIds: List<EmployeesId>,
+    c: ConnectionRead
   ): List<EmployeesRow> {
     val fragments: ArrayList<Fragment> = ArrayList()
-    for (id in compositeIds) { fragments.add(Fragment.interpolate(Fragment.lit("("), Fragment.encode(KotlinDbTypes.OracleTypes.number, id.empNumber), Fragment.lit(", "), Fragment.encode(OracleTypes.varchar2, id.empSuffix), Fragment.lit(")"))) }
-    return Fragment.interpolate(Fragment.lit("select \"EMP_NUMBER\", \"EMP_SUFFIX\", \"DEPT_CODE\", \"DEPT_REGION\", \"EMP_NAME\", \"SALARY\", \"HIRE_DATE\" from \"EMPLOYEES\" where (\"EMP_NUMBER\", \"EMP_SUFFIX\") in ("), Fragment.comma(fragments.toMutableList()), Fragment.lit(")")).query(EmployeesRow._rowParser.all()).runUnchecked(c)
+    for (id in compositeIds) { fragments.add(Fragment.concat(Fragment.of("("), Fragment.encode(OracleTypes.number, id.empNumber), Fragment.of(", "), Fragment.encode(OracleTypes.varchar2, id.empSuffix), Fragment.of(")"))) }
+    return Fragment.concat(Fragment.of("select \"EMP_NUMBER\", \"EMP_SUFFIX\", \"DEPT_CODE\", \"DEPT_REGION\", \"EMP_NAME\", \"SALARY\", \"HIRE_DATE\" from \"EMPLOYEES\" where (\"EMP_NUMBER\", \"EMP_SUFFIX\") in ("), Fragment.comma(fragments.toMutableList()), Fragment.of(")")).query(EmployeesRow.rowCodec.all()).run(c)
   }
 
   override fun selectByIdsTracked(
-    compositeIds: Array<EmployeesId>,
-    c: Connection
+    compositeIds: List<EmployeesId>,
+    c: ConnectionRead
   ): Map<EmployeesId, EmployeesRow> {
     val ret: MutableMap<EmployeesId, EmployeesRow> = mutableMapOf<EmployeesId, EmployeesRow>()
     selectByIds(compositeIds, c).forEach({ row -> ret.put(row.compositeId(), row) })
     return ret.toMap()
   }
 
-  override fun update(): UpdateBuilder<EmployeesFields, EmployeesRow> = UpdateBuilder.of("\"EMPLOYEES\"", EmployeesFields.structure, EmployeesRow._rowParser, Dialect.ORACLE)
+  override fun update(): UpdateBuilder<EmployeesFields, EmployeesRow> = UpdateBuilder.of("\"EMPLOYEES\"", EmployeesFields.structure, EmployeesRow.rowCodec, Dialect.ORACLE)
 
   override fun update(
     row: EmployeesRow,
     c: Connection
-  ): Boolean {
+  ): kotlin.Boolean {
     val compositeId: EmployeesId = row.compositeId()
-    return Fragment.interpolate(Fragment.lit("update \"EMPLOYEES\"\nset \"DEPT_CODE\" = "), Fragment.encode(OracleTypes.varchar2, row.deptCode), Fragment.lit(",\n\"DEPT_REGION\" = "), Fragment.encode(OracleTypes.varchar2, row.deptRegion), Fragment.lit(",\n\"EMP_NAME\" = "), Fragment.encode(OracleTypes.varchar2, row.empName), Fragment.lit(",\n\"SALARY\" = "), Fragment.encode(MoneyT.oracleType.nullable(), row.salary), Fragment.lit(",\n\"HIRE_DATE\" = "), Fragment.encode(OracleTypes.date, row.hireDate), Fragment.lit("\nwhere \"EMP_NUMBER\" = "), Fragment.encode(KotlinDbTypes.OracleTypes.number, compositeId.empNumber), Fragment.lit(" AND \"EMP_SUFFIX\" = "), Fragment.encode(OracleTypes.varchar2, compositeId.empSuffix), Fragment.lit("")).update().runUnchecked(c) > 0
+    return Fragment.concat(Fragment.of("update \"EMPLOYEES\"\nset \"DEPT_CODE\" = "), Fragment.encode(OracleTypes.varchar2, row.deptCode), Fragment.of(",\n\"DEPT_REGION\" = "), Fragment.encode(OracleTypes.varchar2, row.deptRegion), Fragment.of(",\n\"EMP_NAME\" = "), Fragment.encode(OracleTypes.varchar2, row.empName), Fragment.of(",\n\"SALARY\" = "), Fragment.encode(MoneyT.oracleType.opt(), row.salary), Fragment.of(",\n\"HIRE_DATE\" = "), Fragment.encode(OracleTypes.date, row.hireDate), Fragment.of("\nwhere \"EMP_NUMBER\" = "), Fragment.encode(OracleTypes.number, compositeId.empNumber), Fragment.of(" AND \"EMP_SUFFIX\" = "), Fragment.encode(OracleTypes.varchar2, compositeId.empSuffix), Fragment.of("")).update().run(c) > 0
   }
 
   override fun upsert(
     unsaved: EmployeesRow,
     c: Connection
   ) {
-    Fragment.interpolate(Fragment.lit("MERGE INTO \"EMPLOYEES\" t\nUSING (SELECT "), Fragment.encode(KotlinDbTypes.OracleTypes.number, unsaved.empNumber), Fragment.lit(", "), Fragment.encode(OracleTypes.varchar2, unsaved.empSuffix), Fragment.lit(", "), Fragment.encode(OracleTypes.varchar2, unsaved.deptCode), Fragment.lit(", "), Fragment.encode(OracleTypes.varchar2, unsaved.deptRegion), Fragment.lit(", "), Fragment.encode(OracleTypes.varchar2, unsaved.empName), Fragment.lit(", "), Fragment.encode(MoneyT.oracleType.nullable(), unsaved.salary), Fragment.lit(", "), Fragment.encode(OracleTypes.date, unsaved.hireDate), Fragment.lit(" FROM DUAL) s\nON (t.\"EMP_NUMBER\" = s.\"EMP_NUMBER\" AND t.\"EMP_SUFFIX\" = s.\"EMP_SUFFIX\")\nWHEN MATCHED THEN UPDATE SET t.\"DEPT_CODE\" = s.\"DEPT_CODE\",\nt.\"DEPT_REGION\" = s.\"DEPT_REGION\",\nt.\"EMP_NAME\" = s.\"EMP_NAME\",\nt.\"SALARY\" = s.\"SALARY\",\nt.\"HIRE_DATE\" = s.\"HIRE_DATE\"\nWHEN NOT MATCHED THEN INSERT (\"EMP_NUMBER\", \"EMP_SUFFIX\", \"DEPT_CODE\", \"DEPT_REGION\", \"EMP_NAME\", \"SALARY\", \"HIRE_DATE\") VALUES ("), Fragment.encode(KotlinDbTypes.OracleTypes.number, unsaved.empNumber), Fragment.lit(", "), Fragment.encode(OracleTypes.varchar2, unsaved.empSuffix), Fragment.lit(", "), Fragment.encode(OracleTypes.varchar2, unsaved.deptCode), Fragment.lit(", "), Fragment.encode(OracleTypes.varchar2, unsaved.deptRegion), Fragment.lit(", "), Fragment.encode(OracleTypes.varchar2, unsaved.empName), Fragment.lit(", "), Fragment.encode(MoneyT.oracleType.nullable(), unsaved.salary), Fragment.lit(", "), Fragment.encode(OracleTypes.date, unsaved.hireDate), Fragment.lit(")"))
+    Fragment.concat(Fragment.of("MERGE INTO \"EMPLOYEES\" t\nUSING (SELECT "), Fragment.encode(OracleTypes.number, unsaved.empNumber), Fragment.of(", "), Fragment.encode(OracleTypes.varchar2, unsaved.empSuffix), Fragment.of(", "), Fragment.encode(OracleTypes.varchar2, unsaved.deptCode), Fragment.of(", "), Fragment.encode(OracleTypes.varchar2, unsaved.deptRegion), Fragment.of(", "), Fragment.encode(OracleTypes.varchar2, unsaved.empName), Fragment.of(", "), Fragment.encode(MoneyT.oracleType.opt(), unsaved.salary), Fragment.of(", "), Fragment.encode(OracleTypes.date, unsaved.hireDate), Fragment.of(" FROM DUAL) s\nON (t.\"EMP_NUMBER\" = s.\"EMP_NUMBER\" AND t.\"EMP_SUFFIX\" = s.\"EMP_SUFFIX\")\nWHEN MATCHED THEN UPDATE SET t.\"DEPT_CODE\" = s.\"DEPT_CODE\",\nt.\"DEPT_REGION\" = s.\"DEPT_REGION\",\nt.\"EMP_NAME\" = s.\"EMP_NAME\",\nt.\"SALARY\" = s.\"SALARY\",\nt.\"HIRE_DATE\" = s.\"HIRE_DATE\"\nWHEN NOT MATCHED THEN INSERT (\"EMP_NUMBER\", \"EMP_SUFFIX\", \"DEPT_CODE\", \"DEPT_REGION\", \"EMP_NAME\", \"SALARY\", \"HIRE_DATE\") VALUES ("), Fragment.encode(OracleTypes.number, unsaved.empNumber), Fragment.of(", "), Fragment.encode(OracleTypes.varchar2, unsaved.empSuffix), Fragment.of(", "), Fragment.encode(OracleTypes.varchar2, unsaved.deptCode), Fragment.of(", "), Fragment.encode(OracleTypes.varchar2, unsaved.deptRegion), Fragment.of(", "), Fragment.encode(OracleTypes.varchar2, unsaved.empName), Fragment.of(", "), Fragment.encode(MoneyT.oracleType.opt(), unsaved.salary), Fragment.of(", "), Fragment.encode(OracleTypes.date, unsaved.hireDate), Fragment.of(")"))
       .update()
-      .runUnchecked(c)
+      .run(c)
   }
 
   override fun upsertBatch(
     unsaved: Iterator<EmployeesRow>,
     c: Connection
   ) {
-    Fragment.interpolate(Fragment.lit("MERGE INTO \"EMPLOYEES\" t\nUSING (SELECT ?, ?, ?, ?, ?, ?, ? FROM DUAL) s\nON (t.\"EMP_NUMBER\" = s.\"EMP_NUMBER\" AND t.\"EMP_SUFFIX\" = s.\"EMP_SUFFIX\")\nWHEN MATCHED THEN UPDATE SET t.\"DEPT_CODE\" = s.\"DEPT_CODE\",\nt.\"DEPT_REGION\" = s.\"DEPT_REGION\",\nt.\"EMP_NAME\" = s.\"EMP_NAME\",\nt.\"SALARY\" = s.\"SALARY\",\nt.\"HIRE_DATE\" = s.\"HIRE_DATE\"\nWHEN NOT MATCHED THEN INSERT (\"EMP_NUMBER\", \"EMP_SUFFIX\", \"DEPT_CODE\", \"DEPT_REGION\", \"EMP_NAME\", \"SALARY\", \"HIRE_DATE\") VALUES (?, ?, ?, ?, ?, ?, ?)"))
-      .updateMany(EmployeesRow._rowParser, unsaved)
-      .runUnchecked(c)
+    Fragment.concat(Fragment.of("MERGE INTO \"EMPLOYEES\" t\nUSING (SELECT ?, ?, ?, ?, ?, ?, ? FROM DUAL) s\nON (t.\"EMP_NUMBER\" = s.\"EMP_NUMBER\" AND t.\"EMP_SUFFIX\" = s.\"EMP_SUFFIX\")\nWHEN MATCHED THEN UPDATE SET t.\"DEPT_CODE\" = s.\"DEPT_CODE\",\nt.\"DEPT_REGION\" = s.\"DEPT_REGION\",\nt.\"EMP_NAME\" = s.\"EMP_NAME\",\nt.\"SALARY\" = s.\"SALARY\",\nt.\"HIRE_DATE\" = s.\"HIRE_DATE\"\nWHEN NOT MATCHED THEN INSERT (\"EMP_NUMBER\", \"EMP_SUFFIX\", \"DEPT_CODE\", \"DEPT_REGION\", \"EMP_NAME\", \"SALARY\", \"HIRE_DATE\") VALUES (?, ?, ?, ?, ?, ?, ?)"))
+      .updateMany(EmployeesRow.rowCodec, unsaved)
+      .run(c)
   }
 }

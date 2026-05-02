@@ -6,12 +6,10 @@
 package testdb.check_constraint_test
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import dev.typr.foundations.Db2Types
+import dev.typr.dslsc.RowCodecs
 import dev.typr.foundations.Tuple.Tuple4
-import dev.typr.foundations.scala.DbTypeOps
-import dev.typr.foundations.scala.RowParser
-import dev.typr.foundations.scala.RowParsers
-import dev.typr.foundations.scala.ScalaDbTypes
+import dev.typr.foundationssc.Db2Types
+import dev.typr.foundationssc.RowCodec
 
 /** Table: CHECK_CONSTRAINT_TEST
  * Primary key: ID
@@ -35,5 +33,5 @@ case class CheckConstraintTestRow(
 }
 
 object CheckConstraintTestRow {
-  val `_rowParser`: RowParser[CheckConstraintTestRow] = RowParsers.of(CheckConstraintTestId.db2Type, ScalaDbTypes.Db2Types.integer, Db2Types.varchar, ScalaDbTypes.Db2Types.decimal.nullable)(CheckConstraintTestRow.apply)(row => Array[Any](row.id, row.age, row.status, row.price))
+  val rowCodec: RowCodec[CheckConstraintTestRow] = RowCodecs.of(CheckConstraintTestId.db2Type, Db2Types.integer, Db2Types.varchar, Db2Types.decimal.opt)(CheckConstraintTestRow.apply)(row => Array[Any](row.id, row.age, row.status, row.price))
 }

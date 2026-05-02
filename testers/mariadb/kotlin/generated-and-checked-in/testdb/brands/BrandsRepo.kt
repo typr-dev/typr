@@ -5,10 +5,11 @@
  */
 package testdb.brands
 
-import dev.typr.foundations.kotlin.DeleteBuilder
-import dev.typr.foundations.kotlin.SelectBuilder
-import dev.typr.foundations.kotlin.UpdateBuilder
-import java.sql.Connection
+import dev.typr.dslkt.DeleteBuilder
+import dev.typr.dslkt.SelectBuilder
+import dev.typr.dslkt.UpdateBuilder
+import dev.typr.foundationskt.Connection
+import dev.typr.foundationskt.ConnectionRead
 import kotlin.collections.Iterator
 import kotlin.collections.List
 import kotlin.collections.Map
@@ -19,10 +20,10 @@ interface BrandsRepo {
   abstract fun deleteById(
     brandId: BrandsId,
     c: Connection
-  ): Boolean
+  ): kotlin.Boolean
 
   abstract fun deleteByIds(
-    brandIds: Array<BrandsId>,
+    brandIds: List<BrandsId>,
     c: Connection
   ): Int
 
@@ -38,26 +39,26 @@ interface BrandsRepo {
 
   abstract fun select(): SelectBuilder<BrandsFields, BrandsRow>
 
-  abstract fun selectAll(c: Connection): List<BrandsRow>
+  abstract fun selectAll(c: ConnectionRead): List<BrandsRow>
 
   abstract fun selectById(
     brandId: BrandsId,
-    c: Connection
+    c: ConnectionRead
   ): BrandsRow?
 
   abstract fun selectByIds(
-    brandIds: Array<BrandsId>,
-    c: Connection
+    brandIds: List<BrandsId>,
+    c: ConnectionRead
   ): List<BrandsRow>
 
   abstract fun selectByIdsTracked(
-    brandIds: Array<BrandsId>,
-    c: Connection
+    brandIds: List<BrandsId>,
+    c: ConnectionRead
   ): Map<BrandsId, BrandsRow>
 
   abstract fun selectByUniqueSlug(
-    slug: String,
-    c: Connection
+    slug: kotlin.String,
+    c: ConnectionRead
   ): BrandsRow?
 
   abstract fun update(): UpdateBuilder<BrandsFields, BrandsRow>
@@ -65,7 +66,7 @@ interface BrandsRepo {
   abstract fun update(
     row: BrandsRow,
     c: Connection
-  ): Boolean
+  ): kotlin.Boolean
 
   abstract fun upsert(
     unsaved: BrandsRow,

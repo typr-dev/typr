@@ -5,32 +5,32 @@
  */
 package testdb.mariatest_identity
 
-import dev.typr.foundations.MariaTypes
-import dev.typr.foundations.RowParser
-import dev.typr.foundations.dsl.FieldsBase
-import dev.typr.foundations.dsl.Path
-import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.kotlin.RelationStructure
-import dev.typr.foundations.kotlin.SqlExpr
-import dev.typr.foundations.kotlin.SqlExpr.Field
-import dev.typr.foundations.kotlin.SqlExpr.IdField
-import dev.typr.foundations.kotlin.TupleExpr2
+import dev.typr.dsl.FieldsBase
+import dev.typr.dsl.Path
+import dev.typr.dsl.SqlExpr.FieldLike
+import dev.typr.dslkt.RelationStructure
+import dev.typr.dslkt.SqlExpr
+import dev.typr.dslkt.SqlExpr.Field
+import dev.typr.dslkt.SqlExpr.IdField
+import dev.typr.dslkt.TupleExpr2
+import dev.typr.foundations.RowCodec
+import dev.typr.foundationskt.MariaTypes
 import kotlin.collections.List
 
-data class MariatestIdentityFields(val _path: List<Path>) : TupleExpr2<MariatestIdentityId, String>, RelationStructure<MariatestIdentityFields, MariatestIdentityRow>, FieldsBase<MariatestIdentityRow> {
+data class MariatestIdentityFields(val _path: List<Path>) : TupleExpr2<MariatestIdentityId, kotlin.String>, RelationStructure<MariatestIdentityFields, MariatestIdentityRow>, FieldsBase<MariatestIdentityRow> {
   override fun _1(): SqlExpr<MariatestIdentityId> = id()
 
-  override fun _2(): SqlExpr<String> = name()
+  override fun _2(): SqlExpr<kotlin.String> = name()
 
   override fun _path(): List<Path> = _path
 
   override fun columns(): List<FieldLike<*, MariatestIdentityRow>> = listOf(this.id().underlying, this.name().underlying)
 
-  fun id(): IdField<MariatestIdentityId, MariatestIdentityRow> = IdField<MariatestIdentityId, MariatestIdentityRow>(_path, "id", MariatestIdentityRow::id, null, null, { row, value -> row.copy(id = value) }, MariatestIdentityId.mariaType)
+  fun id(): IdField<MariatestIdentityId, MariatestIdentityRow> = IdField<MariatestIdentityId, MariatestIdentityRow>(_path, "id", MariatestIdentityRow::id, null, null, { row, value -> row.copy(id = value) }, MariatestIdentityId.mariaType.underlying)
 
-  fun name(): Field<String, MariatestIdentityRow> = Field<String, MariatestIdentityRow>(_path, "name", MariatestIdentityRow::name, null, null, { row, value -> row.copy(name = value) }, MariaTypes.varchar)
+  fun name(): Field<kotlin.String, MariatestIdentityRow> = Field<kotlin.String, MariatestIdentityRow>(_path, "name", MariatestIdentityRow::name, null, null, { row, value -> row.copy(name = value) }, MariaTypes.varchar.underlying)
 
-  override fun rowParser(): RowParser<MariatestIdentityRow> = MariatestIdentityRow._rowParser.underlying
+  override fun rowCodec(): RowCodec<MariatestIdentityRow> = MariatestIdentityRow.rowCodec.underlying
 
   override fun withPaths(_path: List<Path>): RelationStructure<MariatestIdentityFields, MariatestIdentityRow> = MariatestIdentityFields(_path)
 

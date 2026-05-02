@@ -5,8 +5,8 @@
  */
 package testdb.employee_salary_update
 
+import dev.typr.foundationskt.ConnectionRead
 import java.math.BigDecimal
-import java.sql.Connection
 import kotlin.collections.List
 
 interface EmployeeSalaryUpdateSqlRepo {
@@ -14,7 +14,7 @@ interface EmployeeSalaryUpdateSqlRepo {
     raisePercentage: BigDecimal?,
     newSalary: BigDecimal,
     empNumber: Int,
-    empSuffix: String,
-    c: Connection
+    empSuffix: kotlin.String,
+    c: ConnectionRead
   ): List<EmployeeSalaryUpdateSqlRow>
 }

@@ -5,20 +5,19 @@
  */
 package testdb.products
 
-import dev.typr.foundations.MariaTypes
-import dev.typr.foundations.RowParser
+import dev.typr.dsl.FieldsBase
+import dev.typr.dsl.Path
+import dev.typr.dsl.SqlExpr.FieldLike
+import dev.typr.dslkt.ForeignKey
+import dev.typr.dslkt.RelationStructure
+import dev.typr.dslkt.SqlExpr
+import dev.typr.dslkt.SqlExpr.Field
+import dev.typr.dslkt.SqlExpr.IdField
+import dev.typr.dslkt.SqlExpr.OptField
+import dev.typr.dslkt.TupleExpr18
+import dev.typr.foundations.RowCodec
 import dev.typr.foundations.data.Json
-import dev.typr.foundations.dsl.FieldsBase
-import dev.typr.foundations.dsl.Path
-import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.kotlin.ForeignKey
-import dev.typr.foundations.kotlin.KotlinDbTypes
-import dev.typr.foundations.kotlin.RelationStructure
-import dev.typr.foundations.kotlin.SqlExpr
-import dev.typr.foundations.kotlin.SqlExpr.Field
-import dev.typr.foundations.kotlin.SqlExpr.IdField
-import dev.typr.foundations.kotlin.SqlExpr.OptField
-import dev.typr.foundations.kotlin.TupleExpr18
+import dev.typr.foundationskt.MariaTypes
 import java.math.BigDecimal
 import java.time.LocalDateTime
 import kotlin.collections.List
@@ -27,14 +26,14 @@ import testdb.brands.BrandsFields
 import testdb.brands.BrandsId
 import testdb.brands.BrandsRow
 
-data class ProductsFields(val _path: List<Path>) : TupleExpr18<ProductsId, String, BrandsId, String, String, String, BigDecimal, BigDecimal, BigDecimal, Json, String, String, BestsellerClearanceFSet, Json, Json, LocalDateTime, LocalDateTime, LocalDateTime>, RelationStructure<ProductsFields, ProductsRow>, FieldsBase<ProductsRow> {
+data class ProductsFields(val _path: List<Path>) : TupleExpr18<ProductsId, kotlin.String, BrandsId, kotlin.String, kotlin.String, kotlin.String, BigDecimal, BigDecimal, BigDecimal, Json, kotlin.String, kotlin.String, BestsellerClearanceFSet, Json, Json, LocalDateTime, LocalDateTime, LocalDateTime>, RelationStructure<ProductsFields, ProductsRow>, FieldsBase<ProductsRow> {
   override fun _1(): SqlExpr<ProductsId> = productId()
 
   override fun _10(): SqlExpr<Json> = dimensionsJson()
 
-  override fun _11(): SqlExpr<String> = status()
+  override fun _11(): SqlExpr<kotlin.String> = status()
 
-  override fun _12(): SqlExpr<String> = taxClass()
+  override fun _12(): SqlExpr<kotlin.String> = taxClass()
 
   override fun _13(): SqlExpr<BestsellerClearanceFSet> = tags()
 
@@ -48,15 +47,15 @@ data class ProductsFields(val _path: List<Path>) : TupleExpr18<ProductsId, Strin
 
   override fun _18(): SqlExpr<LocalDateTime> = publishedAt()
 
-  override fun _2(): SqlExpr<String> = sku()
+  override fun _2(): SqlExpr<kotlin.String> = sku()
 
   override fun _3(): SqlExpr<BrandsId> = brandId()
 
-  override fun _4(): SqlExpr<String> = name()
+  override fun _4(): SqlExpr<kotlin.String> = name()
 
-  override fun _5(): SqlExpr<String> = shortDescription()
+  override fun _5(): SqlExpr<kotlin.String> = shortDescription()
 
-  override fun _6(): SqlExpr<String> = fullDescription()
+  override fun _6(): SqlExpr<kotlin.String> = fullDescription()
 
   override fun _7(): SqlExpr<BigDecimal> = basePrice()
 
@@ -66,47 +65,47 @@ data class ProductsFields(val _path: List<Path>) : TupleExpr18<ProductsId, Strin
 
   override fun _path(): List<Path> = _path
 
-  fun attributes(): OptField<Json, ProductsRow> = OptField<Json, ProductsRow>(_path, "attributes", ProductsRow::attributes, null, null, { row, value -> row.copy(attributes = value) }, MariaTypes.json)
+  fun attributes(): OptField<Json, ProductsRow> = OptField<Json, ProductsRow>(_path, "attributes", ProductsRow::attributes, null, null, { row, value -> row.copy(attributes = value) }, MariaTypes.json.underlying)
 
-  fun basePrice(): Field<BigDecimal, ProductsRow> = Field<BigDecimal, ProductsRow>(_path, "base_price", ProductsRow::basePrice, null, null, { row, value -> row.copy(basePrice = value) }, KotlinDbTypes.MariaTypes.numeric)
+  fun basePrice(): Field<BigDecimal, ProductsRow> = Field<BigDecimal, ProductsRow>(_path, "base_price", ProductsRow::basePrice, null, null, { row, value -> row.copy(basePrice = value) }, MariaTypes.numeric.underlying)
 
-  fun brandId(): OptField<BrandsId, ProductsRow> = OptField<BrandsId, ProductsRow>(_path, "brand_id", ProductsRow::brandId, null, null, { row, value -> row.copy(brandId = value) }, BrandsId.mariaType)
+  fun brandId(): OptField<BrandsId, ProductsRow> = OptField<BrandsId, ProductsRow>(_path, "brand_id", ProductsRow::brandId, null, null, { row, value -> row.copy(brandId = value) }, BrandsId.mariaType.underlying)
 
   override fun columns(): List<FieldLike<*, ProductsRow>> = listOf(this.productId().underlying, this.sku().underlying, this.brandId().underlying, this.name().underlying, this.shortDescription().underlying, this.fullDescription().underlying, this.basePrice().underlying, this.costPrice().underlying, this.weightKg().underlying, this.dimensionsJson().underlying, this.status().underlying, this.taxClass().underlying, this.tags().underlying, this.attributes().underlying, this.seoMetadata().underlying, this.createdAt().underlying, this.updatedAt().underlying, this.publishedAt().underlying)
 
-  fun costPrice(): OptField<BigDecimal, ProductsRow> = OptField<BigDecimal, ProductsRow>(_path, "cost_price", ProductsRow::costPrice, null, null, { row, value -> row.copy(costPrice = value) }, KotlinDbTypes.MariaTypes.numeric)
+  fun costPrice(): OptField<BigDecimal, ProductsRow> = OptField<BigDecimal, ProductsRow>(_path, "cost_price", ProductsRow::costPrice, null, null, { row, value -> row.copy(costPrice = value) }, MariaTypes.numeric.underlying)
 
-  fun createdAt(): Field<LocalDateTime, ProductsRow> = Field<LocalDateTime, ProductsRow>(_path, "created_at", ProductsRow::createdAt, null, null, { row, value -> row.copy(createdAt = value) }, MariaTypes.datetime)
+  fun createdAt(): Field<LocalDateTime, ProductsRow> = Field<LocalDateTime, ProductsRow>(_path, "created_at", ProductsRow::createdAt, null, null, { row, value -> row.copy(createdAt = value) }, MariaTypes.datetime.underlying)
 
-  fun dimensionsJson(): OptField<Json, ProductsRow> = OptField<Json, ProductsRow>(_path, "dimensions_json", ProductsRow::dimensionsJson, null, null, { row, value -> row.copy(dimensionsJson = value) }, MariaTypes.json)
+  fun dimensionsJson(): OptField<Json, ProductsRow> = OptField<Json, ProductsRow>(_path, "dimensions_json", ProductsRow::dimensionsJson, null, null, { row, value -> row.copy(dimensionsJson = value) }, MariaTypes.json.underlying)
 
   fun fkBrands(): ForeignKey<BrandsFields, BrandsRow> = ForeignKey.of<BrandsFields, BrandsRow>("fk_product_brand").withColumnPair<BrandsId>(brandId(), BrandsFields::brandId)
 
-  fun fullDescription(): OptField<String, ProductsRow> = OptField<String, ProductsRow>(_path, "full_description", ProductsRow::fullDescription, null, null, { row, value -> row.copy(fullDescription = value) }, MariaTypes.longtext)
+  fun fullDescription(): OptField<kotlin.String, ProductsRow> = OptField<kotlin.String, ProductsRow>(_path, "full_description", ProductsRow::fullDescription, null, null, { row, value -> row.copy(fullDescription = value) }, MariaTypes.longtext.underlying)
 
-  fun name(): Field<String, ProductsRow> = Field<String, ProductsRow>(_path, "name", ProductsRow::name, null, null, { row, value -> row.copy(name = value) }, MariaTypes.varchar)
+  fun name(): Field<kotlin.String, ProductsRow> = Field<kotlin.String, ProductsRow>(_path, "name", ProductsRow::name, null, null, { row, value -> row.copy(name = value) }, MariaTypes.varchar.underlying)
 
-  fun productId(): IdField<ProductsId, ProductsRow> = IdField<ProductsId, ProductsRow>(_path, "product_id", ProductsRow::productId, null, null, { row, value -> row.copy(productId = value) }, ProductsId.mariaType)
+  fun productId(): IdField<ProductsId, ProductsRow> = IdField<ProductsId, ProductsRow>(_path, "product_id", ProductsRow::productId, null, null, { row, value -> row.copy(productId = value) }, ProductsId.mariaType.underlying)
 
-  fun publishedAt(): OptField<LocalDateTime, ProductsRow> = OptField<LocalDateTime, ProductsRow>(_path, "published_at", ProductsRow::publishedAt, null, null, { row, value -> row.copy(publishedAt = value) }, MariaTypes.datetime)
+  fun publishedAt(): OptField<LocalDateTime, ProductsRow> = OptField<LocalDateTime, ProductsRow>(_path, "published_at", ProductsRow::publishedAt, null, null, { row, value -> row.copy(publishedAt = value) }, MariaTypes.datetime.underlying)
 
-  override fun rowParser(): RowParser<ProductsRow> = ProductsRow._rowParser.underlying
+  override fun rowCodec(): RowCodec<ProductsRow> = ProductsRow.rowCodec.underlying
 
-  fun seoMetadata(): OptField<Json, ProductsRow> = OptField<Json, ProductsRow>(_path, "seo_metadata", ProductsRow::seoMetadata, null, null, { row, value -> row.copy(seoMetadata = value) }, MariaTypes.json)
+  fun seoMetadata(): OptField<Json, ProductsRow> = OptField<Json, ProductsRow>(_path, "seo_metadata", ProductsRow::seoMetadata, null, null, { row, value -> row.copy(seoMetadata = value) }, MariaTypes.json.underlying)
 
-  fun shortDescription(): OptField<String, ProductsRow> = OptField<String, ProductsRow>(_path, "short_description", ProductsRow::shortDescription, null, null, { row, value -> row.copy(shortDescription = value) }, MariaTypes.varchar)
+  fun shortDescription(): OptField<kotlin.String, ProductsRow> = OptField<kotlin.String, ProductsRow>(_path, "short_description", ProductsRow::shortDescription, null, null, { row, value -> row.copy(shortDescription = value) }, MariaTypes.varchar.underlying)
 
-  fun sku(): Field<String, ProductsRow> = Field<String, ProductsRow>(_path, "sku", ProductsRow::sku, null, null, { row, value -> row.copy(sku = value) }, MariaTypes.varchar)
+  fun sku(): Field<kotlin.String, ProductsRow> = Field<kotlin.String, ProductsRow>(_path, "sku", ProductsRow::sku, null, null, { row, value -> row.copy(sku = value) }, MariaTypes.varchar.underlying)
 
-  fun status(): Field<String, ProductsRow> = Field<String, ProductsRow>(_path, "status", ProductsRow::status, null, null, { row, value -> row.copy(status = value) }, MariaTypes.text)
+  fun status(): Field<kotlin.String, ProductsRow> = Field<kotlin.String, ProductsRow>(_path, "status", ProductsRow::status, null, null, { row, value -> row.copy(status = value) }, MariaTypes.text.underlying)
 
-  fun tags(): OptField<BestsellerClearanceFSet, ProductsRow> = OptField<BestsellerClearanceFSet, ProductsRow>(_path, "tags", ProductsRow::tags, null, null, { row, value -> row.copy(tags = value) }, BestsellerClearanceFSet.mariaType)
+  fun tags(): OptField<BestsellerClearanceFSet, ProductsRow> = OptField<BestsellerClearanceFSet, ProductsRow>(_path, "tags", ProductsRow::tags, null, null, { row, value -> row.copy(tags = value) }, BestsellerClearanceFSet.mariaType.underlying)
 
-  fun taxClass(): Field<String, ProductsRow> = Field<String, ProductsRow>(_path, "tax_class", ProductsRow::taxClass, null, null, { row, value -> row.copy(taxClass = value) }, MariaTypes.text)
+  fun taxClass(): Field<kotlin.String, ProductsRow> = Field<kotlin.String, ProductsRow>(_path, "tax_class", ProductsRow::taxClass, null, null, { row, value -> row.copy(taxClass = value) }, MariaTypes.text.underlying)
 
-  fun updatedAt(): Field<LocalDateTime, ProductsRow> = Field<LocalDateTime, ProductsRow>(_path, "updated_at", ProductsRow::updatedAt, null, null, { row, value -> row.copy(updatedAt = value) }, MariaTypes.datetime)
+  fun updatedAt(): Field<LocalDateTime, ProductsRow> = Field<LocalDateTime, ProductsRow>(_path, "updated_at", ProductsRow::updatedAt, null, null, { row, value -> row.copy(updatedAt = value) }, MariaTypes.datetime.underlying)
 
-  fun weightKg(): OptField<BigDecimal, ProductsRow> = OptField<BigDecimal, ProductsRow>(_path, "weight_kg", ProductsRow::weightKg, null, null, { row, value -> row.copy(weightKg = value) }, KotlinDbTypes.MariaTypes.numeric)
+  fun weightKg(): OptField<BigDecimal, ProductsRow> = OptField<BigDecimal, ProductsRow>(_path, "weight_kg", ProductsRow::weightKg, null, null, { row, value -> row.copy(weightKg = value) }, MariaTypes.numeric.underlying)
 
   override fun withPaths(_path: List<Path>): RelationStructure<ProductsFields, ProductsRow> = ProductsFields(_path)
 

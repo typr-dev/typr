@@ -5,19 +5,18 @@
  */
 package testdb.orders
 
-import dev.typr.foundations.RowParser
-import dev.typr.foundations.SqlServerTypes
-import dev.typr.foundations.dsl.FieldsBase
-import dev.typr.foundations.dsl.Path
-import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.kotlin.ForeignKey
-import dev.typr.foundations.kotlin.KotlinDbTypes
-import dev.typr.foundations.kotlin.RelationStructure
-import dev.typr.foundations.kotlin.SqlExpr
-import dev.typr.foundations.kotlin.SqlExpr.Field
-import dev.typr.foundations.kotlin.SqlExpr.IdField
-import dev.typr.foundations.kotlin.SqlExpr.OptField
-import dev.typr.foundations.kotlin.TupleExpr4
+import dev.typr.dsl.FieldsBase
+import dev.typr.dsl.Path
+import dev.typr.dsl.SqlExpr.FieldLike
+import dev.typr.dslkt.ForeignKey
+import dev.typr.dslkt.RelationStructure
+import dev.typr.dslkt.SqlExpr
+import dev.typr.dslkt.SqlExpr.Field
+import dev.typr.dslkt.SqlExpr.IdField
+import dev.typr.dslkt.SqlExpr.OptField
+import dev.typr.dslkt.TupleExpr4
+import dev.typr.foundations.RowCodec
+import dev.typr.foundationskt.SqlServerTypes
 import java.math.BigDecimal
 import java.time.LocalDateTime
 import kotlin.collections.List
@@ -38,17 +37,17 @@ data class OrdersFields(val _path: List<Path>) : TupleExpr4<OrdersId, CustomersI
 
   override fun columns(): List<FieldLike<*, OrdersRow>> = listOf(this.orderId().underlying, this.customerId().underlying, this.orderDate().underlying, this.totalAmount().underlying)
 
-  fun customerId(): Field<CustomersId, OrdersRow> = Field<CustomersId, OrdersRow>(_path, "customer_id", OrdersRow::customerId, null, null, { row, value -> row.copy(customerId = value) }, CustomersId.sqlServerType)
+  fun customerId(): Field<CustomersId, OrdersRow> = Field<CustomersId, OrdersRow>(_path, "customer_id", OrdersRow::customerId, null, null, { row, value -> row.copy(customerId = value) }, CustomersId.sqlServerType.underlying)
 
-  fun fkCustomers(): ForeignKey<CustomersFields, CustomersRow> = ForeignKey.of<CustomersFields, CustomersRow>("FK__orders__customer__412EB0B6").withColumnPair<CustomersId>(customerId(), CustomersFields::customerId)
+  fun fkCustomers(): ForeignKey<CustomersFields, CustomersRow> = ForeignKey.of<CustomersFields, CustomersRow>("FK__orders__customer__440B1D61").withColumnPair<CustomersId>(customerId(), CustomersFields::customerId)
 
-  fun orderDate(): OptField<LocalDateTime, OrdersRow> = OptField<LocalDateTime, OrdersRow>(_path, "order_date", OrdersRow::orderDate, null, null, { row, value -> row.copy(orderDate = value) }, SqlServerTypes.datetime2)
+  fun orderDate(): OptField<LocalDateTime, OrdersRow> = OptField<LocalDateTime, OrdersRow>(_path, "order_date", OrdersRow::orderDate, null, null, { row, value -> row.copy(orderDate = value) }, SqlServerTypes.datetime2.underlying)
 
-  fun orderId(): IdField<OrdersId, OrdersRow> = IdField<OrdersId, OrdersRow>(_path, "order_id", OrdersRow::orderId, null, null, { row, value -> row.copy(orderId = value) }, OrdersId.sqlServerType)
+  fun orderId(): IdField<OrdersId, OrdersRow> = IdField<OrdersId, OrdersRow>(_path, "order_id", OrdersRow::orderId, null, null, { row, value -> row.copy(orderId = value) }, OrdersId.sqlServerType.underlying)
 
-  override fun rowParser(): RowParser<OrdersRow> = OrdersRow._rowParser.underlying
+  override fun rowCodec(): RowCodec<OrdersRow> = OrdersRow.rowCodec.underlying
 
-  fun totalAmount(): Field<BigDecimal, OrdersRow> = Field<BigDecimal, OrdersRow>(_path, "total_amount", OrdersRow::totalAmount, null, null, { row, value -> row.copy(totalAmount = value) }, KotlinDbTypes.SqlServerTypes.money)
+  fun totalAmount(): Field<BigDecimal, OrdersRow> = Field<BigDecimal, OrdersRow>(_path, "total_amount", OrdersRow::totalAmount, null, null, { row, value -> row.copy(totalAmount = value) }, SqlServerTypes.money.underlying)
 
   override fun withPaths(_path: List<Path>): RelationStructure<OrdersFields, OrdersRow> = OrdersFields(_path)
 

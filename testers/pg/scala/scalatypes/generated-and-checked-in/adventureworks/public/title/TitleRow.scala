@@ -5,10 +5,10 @@
  */
 package adventureworks.public.title
 
+import dev.typr.dslsc.RowCodecs
 import dev.typr.foundations.PgText
 import dev.typr.foundations.Tuple.Tuple1
-import dev.typr.foundations.scala.RowParser
-import dev.typr.foundations.scala.RowParsers
+import dev.typr.foundationssc.RowCodec
 
 /** Table: public.title
  * Primary key: code
@@ -20,7 +20,7 @@ case class TitleRow(code: TitleId) extends Tuple1[TitleId] {
 }
 
 object TitleRow {
-  val `_rowParser`: RowParser[TitleRow] = RowParsers.of(TitleId.pgType)(TitleRow.apply)(row => Array[Any](row.code))
+  given pgText: PgText[TitleRow] = PgText.from(rowCodec.underlying)
 
-  given pgText: PgText[TitleRow] = PgText.from(`_rowParser`.underlying)
+  val rowCodec: RowCodec[TitleRow] = RowCodecs.of(TitleId.pgType)(TitleRow.apply)(row => Array[Any](row.code))
 }

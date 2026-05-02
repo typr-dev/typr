@@ -6,14 +6,12 @@
 package testdb.payments
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import dev.typr.foundations.MariaTypes
+import dev.typr.dslsc.RowCodecs
 import dev.typr.foundations.Tuple.Tuple12
 import dev.typr.foundations.data.Json
 import dev.typr.foundations.data.maria.Inet6
-import dev.typr.foundations.scala.DbTypeOps
-import dev.typr.foundations.scala.RowParser
-import dev.typr.foundations.scala.RowParsers
-import dev.typr.foundations.scala.ScalaDbTypes
+import dev.typr.foundationssc.MariaTypes
+import dev.typr.foundationssc.RowCodec
 import java.time.LocalDateTime
 import testdb.customtypes.Defaulted
 import testdb.orders.OrdersId
@@ -123,5 +121,5 @@ case class PaymentsRow(
 }
 
 object PaymentsRow {
-  val `_rowParser`: RowParser[PaymentsRow] = RowParsers.of(PaymentsId.mariaType, OrdersId.mariaType, PaymentMethodsId.mariaType, MariaTypes.varchar.nullable, ScalaDbTypes.MariaTypes.numeric, MariaTypes.char_, MariaTypes.text, MariaTypes.json.nullable, MariaTypes.varchar.nullable, MariaTypes.inet6.nullable, MariaTypes.datetime, MariaTypes.datetime.nullable)(PaymentsRow.apply)(row => Array[Any](row.paymentId, row.orderId, row.methodId, row.transactionId, row.amount, row.currencyCode, row.status, row.processorResponse, row.errorMessage, row.ipAddress, row.createdAt, row.processedAt))
+  val rowCodec: RowCodec[PaymentsRow] = RowCodecs.of(PaymentsId.mariaType, OrdersId.mariaType, PaymentMethodsId.mariaType, MariaTypes.varchar.opt, MariaTypes.numeric, MariaTypes.char_, MariaTypes.text, MariaTypes.json.opt, MariaTypes.varchar.opt, MariaTypes.inet6.opt, MariaTypes.datetime, MariaTypes.datetime.opt)(PaymentsRow.apply)(row => Array[Any](row.paymentId, row.orderId, row.methodId, row.transactionId, row.amount, row.currencyCode, row.status, row.processorResponse, row.errorMessage, row.ipAddress, row.createdAt, row.processedAt))
 }

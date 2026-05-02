@@ -6,10 +6,10 @@
 package oracledb.precisetypes
 
 import com.fasterxml.jackson.annotation.JsonValue
-import dev.typr.foundations.OracleType
-import dev.typr.foundations.OracleTypes
 import dev.typr.foundations.data.precise.DecimalN
-import dev.typr.foundations.kotlin.Bijection
+import dev.typr.foundationskt.Bijection
+import dev.typr.foundationskt.OracleType
+import dev.typr.foundationskt.OracleTypes
 import java.lang.IllegalArgumentException
 import java.math.BigDecimal
 import java.math.BigInteger
@@ -18,7 +18,7 @@ import java.math.BigInteger
 data class Int10 private constructor(@field:JsonValue val value: BigInteger) : DecimalN {
   override fun decimalValue(): BigDecimal = BigDecimal(value)
 
-  override fun equals(other: Any?): Boolean {
+  override fun equals(other: Any?): kotlin.Boolean {
     if (this === other) return true
     if (other !is DecimalN) return false
     return decimalValue().compareTo(other.decimalValue()) == 0
@@ -30,7 +30,7 @@ data class Int10 private constructor(@field:JsonValue val value: BigInteger) : D
 
   override fun scale(): Int = 0
 
-  override fun semanticEquals(other: DecimalN): Boolean = if (other == null) false else decimalValue().compareTo(other.decimalValue()) == 0
+  override fun semanticEquals(other: DecimalN): kotlin.Boolean = if (other == null) false else decimalValue().compareTo(other.decimalValue()) == 0
 
   override fun semanticHashCode(): Int = decimalValue().stripTrailingZeros().hashCode()
 
@@ -39,20 +39,7 @@ data class Int10 private constructor(@field:JsonValue val value: BigInteger) : D
   }
 
   companion object {
-    val Zero: Int10 =
-      Int10(BigInteger.ZERO)
-
-    val bijection: Bijection<Int10, BigInteger> =
-      Bijection.of(Int10::value, ::Int10)
-
     fun of(value: BigInteger): Int10? = if (value.bitLength() <= 40) Int10(value) else null
-
-    fun of(value: Int): Int10 = Int10(BigInteger.valueOf(value.toLong()))
-
-    fun of(value: Long): Int10? = Int10.of(BigInteger.valueOf(value))
-
-    val oracleType: OracleType<Int10> =
-      OracleTypes.number.bimap({ bd: BigDecimal -> Int10(bd.toBigIntegerExact()) }, { v: Int10 -> BigDecimal(v.value) })
 
     fun unsafeForce(value: BigInteger): Int10 {
       if (value.bitLength() > 40) {
@@ -60,5 +47,18 @@ data class Int10 private constructor(@field:JsonValue val value: BigInteger) : D
       }
       return Int10(value)
     }
+
+    fun of(value: Int): Int10 = Int10(BigInteger.valueOf(value.toLong()))
+
+    fun of(value: kotlin.Long): Int10? = Int10.of(BigInteger.valueOf(value))
+
+    val Zero: Int10 =
+      Int10(BigInteger.ZERO)
+
+    val bijection: Bijection<Int10, BigInteger> =
+      Bijection.of(Int10::value, ::Int10)
+
+    val oracleType: OracleType<Int10> =
+      OracleTypes.number.to(Bijection.of({ bd: BigDecimal -> Int10(bd.toBigIntegerExact()) }, { v: Int10 -> BigDecimal(v.value) }))
   }
 }

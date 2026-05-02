@@ -5,17 +5,18 @@
  */
 package adventureworks.person.address
 
-import dev.typr.foundations.scala.DeleteBuilder
-import dev.typr.foundations.scala.DeleteBuilderMock
-import dev.typr.foundations.scala.DeleteParams
-import dev.typr.foundations.scala.SelectBuilder
-import dev.typr.foundations.scala.SelectBuilderMock
-import dev.typr.foundations.scala.SelectParams
-import dev.typr.foundations.scala.UpdateBuilder
-import dev.typr.foundations.scala.UpdateBuilderMock
-import dev.typr.foundations.scala.UpdateParams
+import dev.typr.dslsc.DeleteBuilder
+import dev.typr.dslsc.DeleteBuilderMock
+import dev.typr.dslsc.DeleteParams
+import dev.typr.dslsc.SelectBuilder
+import dev.typr.dslsc.SelectBuilderMock
+import dev.typr.dslsc.SelectParams
+import dev.typr.dslsc.UpdateBuilder
+import dev.typr.dslsc.UpdateBuilderMock
+import dev.typr.dslsc.UpdateParams
+import dev.typr.foundationssc.Connection
+import dev.typr.foundationssc.ConnectionRead
 import java.lang.RuntimeException
-import java.sql.Connection
 
 case class AddressRepoMock(
   toRow: AddressRowUnsaved => AddressRow,
@@ -25,7 +26,7 @@ case class AddressRepoMock(
 
   override def deleteById(addressid: AddressId)(using c: Connection): Boolean = map.remove(addressid).isDefined
 
-  override def deleteByIds(addressids: Array[AddressId])(using c: Connection): Int = {
+  override def deleteByIds(addressids: List[AddressId])(using c: Connection): Int = {
     var count = 0
     addressids.foreach { id => if (map.remove(id).isDefined) {
       count = count + 1
@@ -67,13 +68,13 @@ case class AddressRepoMock(
 
   override def select: SelectBuilder[AddressFields, AddressRow] = SelectBuilderMock(AddressFields.structure, () => map.values.toList, SelectParams.empty())
 
-  override def selectAll(using c: Connection): List[AddressRow] = map.values.toList
+  override def selectAll(using c: ConnectionRead): List[AddressRow] = map.values.toList
 
-  override def selectById(addressid: AddressId)(using c: Connection): Option[AddressRow] = map.get(addressid)
+  override def selectById(addressid: AddressId)(using c: ConnectionRead): Option[AddressRow] = map.get(addressid)
 
-  override def selectByIds(addressids: Array[AddressId])(using c: Connection): List[AddressRow] = addressids.flatMap(map.get(_)).toList
+  override def selectByIds(addressids: List[AddressId])(using c: ConnectionRead): List[AddressRow] = addressids.flatMap(map.get(_)).toList
 
-  override def selectByIdsTracked(addressids: Array[AddressId])(using c: Connection): Map[AddressId, AddressRow] = selectByIds(addressids)(using c).map(x => (((row: AddressRow) => row.addressid).apply(x), x)).toMap
+  override def selectByIdsTracked(addressids: List[AddressId])(using c: ConnectionRead): Map[AddressId, AddressRow] = selectByIds(addressids)(using c).map(x => (((row: AddressRow) => row.addressid).apply(x), x)).toMap
 
   override def update: UpdateBuilder[AddressFields, AddressRow] = UpdateBuilderMock(AddressFields.structure, () => map.values.toList, UpdateParams.empty(), row => row)
 

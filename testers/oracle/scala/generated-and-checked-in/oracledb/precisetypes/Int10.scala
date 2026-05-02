@@ -6,10 +6,10 @@
 package oracledb.precisetypes
 
 import com.fasterxml.jackson.annotation.JsonValue
+import dev.typr.foundations.Bijection
 import dev.typr.foundations.OracleType
 import dev.typr.foundations.OracleTypes
 import dev.typr.foundations.data.precise.DecimalN
-import dev.typr.foundations.dsl.Bijection
 import java.lang.IllegalArgumentException
 import java.math.BigInteger
 import java.util.Optional
@@ -33,7 +33,7 @@ case class Int10 private(@JsonValue value: BigInteger) extends DecimalN {
 object Int10 {
   given Zero: Int10 = new Int10(BigInteger.ZERO)
 
-  given bijection: Bijection[Int10, BigInteger] = Bijection.apply[Int10, BigInteger](_.value)(Int10.apply)
+  given bijection: Bijection[Int10, BigInteger] = Bijection.of[Int10, BigInteger](_.value, Int10.apply)
 
   def of(value: BigInteger): Optional[Int10] = (if (value.bitLength <= 40) Optional.of(new Int10(value)) else Optional.empty())
 
@@ -41,7 +41,7 @@ object Int10 {
 
   def of(value: java.lang.Long): Optional[Int10] = Int10.of(BigInteger.valueOf(value))
 
-  given oracleType: OracleType[Int10] = OracleTypes.number.bimap(bd => new Int10(bd.toBigIntegerExact()), v => new java.math.BigDecimal(v.value))
+  given oracleType: OracleType[Int10] = OracleTypes.number.to(Bijection.of(bd => new Int10(bd.toBigIntegerExact()), v => new java.math.BigDecimal(v.value)))
 
   def unsafeForce(value: BigInteger): Int10 = {
     if (value.bitLength > 40) {

@@ -6,10 +6,10 @@
 package testdb.precisetypes
 
 import com.fasterxml.jackson.annotation.JsonValue
-import dev.typr.foundations.MariaType
-import dev.typr.foundations.MariaTypes
+import dev.typr.dslsc.Bijection
 import dev.typr.foundations.data.precise.BinaryN
-import dev.typr.foundations.scala.Bijection
+import dev.typr.foundationssc.MariaType
+import dev.typr.foundationssc.MariaTypes
 import java.lang.IllegalArgumentException
 import java.util.Arrays
 
@@ -28,9 +28,9 @@ case class Binary16 private(@JsonValue value: Array[Byte]) extends BinaryN {
 }
 
 object Binary16 {
-  given bijection: Bijection[Binary16, Array[Byte]] = Bijection.apply[Binary16, Array[Byte]](_.value)(Binary16.apply)
+  given bijection: Bijection[Binary16, Array[Byte]] = Bijection.of[Binary16, Array[Byte]](_.value, Binary16.apply)
 
-  given mariaType: MariaType[Binary16] = MariaTypes.binary.bimap(Binary16.apply, _.value)
+  given mariaType: MariaType[Binary16] = MariaTypes.binary.to(Bijection.of(Binary16.apply, _.value))
 
   def of(value: Array[Byte]): Option[Binary16] = (if (value.length <= 16) Some(new Binary16(value)) else None)
 

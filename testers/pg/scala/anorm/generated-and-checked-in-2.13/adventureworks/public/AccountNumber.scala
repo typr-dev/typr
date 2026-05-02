@@ -24,7 +24,7 @@ object AccountNumber {
 
   implicit lazy val arrayToStatement: ToStatement[Array[AccountNumber]] = ToStatement.arrayToParameter(ParameterMetaData.StringParameterMetaData).contramap(_.map(_.value))
 
-  implicit lazy val bijection: Bijection[AccountNumber, String] = Bijection.apply[AccountNumber, String](_.value)(AccountNumber.apply)
+  implicit lazy val bijection: Bijection[AccountNumber, String] = Bijection[AccountNumber, String](_.value)(AccountNumber.apply)
 
   implicit lazy val column: Column[AccountNumber] = Column.columnToString.map(AccountNumber.apply)
 

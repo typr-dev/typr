@@ -6,11 +6,10 @@
 package testdb.brands
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import dev.typr.foundations.MariaTypes
+import dev.typr.dslsc.RowCodecs
 import dev.typr.foundations.Tuple.Tuple7
-import dev.typr.foundations.scala.DbTypeOps
-import dev.typr.foundations.scala.RowParser
-import dev.typr.foundations.scala.RowParsers
+import dev.typr.foundationssc.MariaTypes
+import dev.typr.foundationssc.RowCodec
 import testdb.customtypes.Defaulted
 import testdb.userdefined.IsActive
 
@@ -77,5 +76,5 @@ case class BrandsRow(
 }
 
 object BrandsRow {
-  val `_rowParser`: RowParser[BrandsRow] = RowParsers.of(BrandsId.mariaType, MariaTypes.varchar, MariaTypes.varchar, MariaTypes.mediumblob.nullable, MariaTypes.varchar.nullable, MariaTypes.char_.nullable, IsActive.mariaType)(BrandsRow.apply)(row => Array[Any](row.brandId, row.name, row.slug, row.logoBlob, row.websiteUrl, row.countryOfOrigin, row.isActive))
+  val rowCodec: RowCodec[BrandsRow] = RowCodecs.of(BrandsId.mariaType, MariaTypes.varchar, MariaTypes.varchar, MariaTypes.mediumblob.opt, MariaTypes.varchar.opt, MariaTypes.char_.opt, IsActive.mariaType)(BrandsRow.apply)(row => Array[Any](row.brandId, row.name, row.slug, row.logoBlob, row.websiteUrl, row.countryOfOrigin, row.isActive))
 }

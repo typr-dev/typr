@@ -5,17 +5,18 @@
  */
 package testdb.audit_log
 
-import dev.typr.foundations.scala.DeleteBuilder
-import dev.typr.foundations.scala.DeleteBuilderMock
-import dev.typr.foundations.scala.DeleteParams
-import dev.typr.foundations.scala.SelectBuilder
-import dev.typr.foundations.scala.SelectBuilderMock
-import dev.typr.foundations.scala.SelectParams
-import dev.typr.foundations.scala.UpdateBuilder
-import dev.typr.foundations.scala.UpdateBuilderMock
-import dev.typr.foundations.scala.UpdateParams
+import dev.typr.dslsc.DeleteBuilder
+import dev.typr.dslsc.DeleteBuilderMock
+import dev.typr.dslsc.DeleteParams
+import dev.typr.dslsc.SelectBuilder
+import dev.typr.dslsc.SelectBuilderMock
+import dev.typr.dslsc.SelectParams
+import dev.typr.dslsc.UpdateBuilder
+import dev.typr.dslsc.UpdateBuilderMock
+import dev.typr.dslsc.UpdateParams
+import dev.typr.foundationssc.Connection
+import dev.typr.foundationssc.ConnectionRead
 import java.lang.RuntimeException
-import java.sql.Connection
 
 case class AuditLogRepoMock(
   toRow: AuditLogRowUnsaved => AuditLogRow,
@@ -25,7 +26,7 @@ case class AuditLogRepoMock(
 
   override def deleteById(logId: AuditLogId)(using c: Connection): Boolean = map.remove(logId).isDefined
 
-  override def deleteByIds(logIds: Array[AuditLogId])(using c: Connection): Int = {
+  override def deleteByIds(logIds: List[AuditLogId])(using c: Connection): Int = {
     var count = 0
     logIds.foreach { id => if (map.remove(id).isDefined) {
       count = count + 1
@@ -45,13 +46,13 @@ case class AuditLogRepoMock(
 
   override def select: SelectBuilder[AuditLogFields, AuditLogRow] = SelectBuilderMock(AuditLogFields.structure, () => map.values.toList, SelectParams.empty())
 
-  override def selectAll(using c: Connection): List[AuditLogRow] = map.values.toList
+  override def selectAll(using c: ConnectionRead): List[AuditLogRow] = map.values.toList
 
-  override def selectById(logId: AuditLogId)(using c: Connection): Option[AuditLogRow] = map.get(logId)
+  override def selectById(logId: AuditLogId)(using c: ConnectionRead): Option[AuditLogRow] = map.get(logId)
 
-  override def selectByIds(logIds: Array[AuditLogId])(using c: Connection): List[AuditLogRow] = logIds.flatMap(map.get(_)).toList
+  override def selectByIds(logIds: List[AuditLogId])(using c: ConnectionRead): List[AuditLogRow] = logIds.flatMap(map.get(_)).toList
 
-  override def selectByIdsTracked(logIds: Array[AuditLogId])(using c: Connection): Map[AuditLogId, AuditLogRow] = selectByIds(logIds)(using c).map(x => (((row: AuditLogRow) => row.logId).apply(x), x)).toMap
+  override def selectByIdsTracked(logIds: List[AuditLogId])(using c: ConnectionRead): Map[AuditLogId, AuditLogRow] = selectByIds(logIds)(using c).map(x => (((row: AuditLogRow) => row.logId).apply(x), x)).toMap
 
   override def update: UpdateBuilder[AuditLogFields, AuditLogRow] = UpdateBuilderMock(AuditLogFields.structure, () => map.values.toList, UpdateParams.empty(), row => row)
 

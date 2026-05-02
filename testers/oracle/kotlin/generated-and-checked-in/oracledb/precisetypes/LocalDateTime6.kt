@@ -6,18 +6,18 @@
 package oracledb.precisetypes
 
 import com.fasterxml.jackson.annotation.JsonValue
-import dev.typr.foundations.OracleType
-import dev.typr.foundations.OracleTypes
+import dev.typr.dslkt.RowCodecs
 import dev.typr.foundations.data.precise.LocalDateTimeN
-import dev.typr.foundations.kotlin.Bijection
-import dev.typr.foundations.kotlin.RowParser
-import dev.typr.foundations.kotlin.RowParsers
+import dev.typr.foundationskt.Bijection
+import dev.typr.foundationskt.OracleType
+import dev.typr.foundationskt.OracleTypes
+import dev.typr.foundationskt.RowCodec
 import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
 
 @kotlin.ConsistentCopyVisibility
 data class LocalDateTime6 private constructor(@field:JsonValue val value: LocalDateTime) : LocalDateTimeN {
-  override fun equals(other: Any?): Boolean {
+  override fun equals(other: Any?): kotlin.Boolean {
     if (this === other) return true
     if (other !is LocalDateTimeN) return false
     return value == other.rawValue()
@@ -29,7 +29,7 @@ data class LocalDateTime6 private constructor(@field:JsonValue val value: LocalD
 
   override fun rawValue(): LocalDateTime = value
 
-  override fun semanticEquals(other: LocalDateTimeN): Boolean = if (other == null) false else value == other.rawValue()
+  override fun semanticEquals(other: LocalDateTimeN): kotlin.Boolean = if (other == null) false else (value == other.rawValue())
 
   override fun semanticHashCode(): Int = value.hashCode()
 
@@ -38,17 +38,17 @@ data class LocalDateTime6 private constructor(@field:JsonValue val value: LocalD
   }
 
   companion object {
-    val _rowParser: RowParser<LocalDateTime6> =
-      RowParsers.of(OracleTypes.timestamp.bimap(::LocalDateTime6, LocalDateTime6::value), { x -> x }, { id -> arrayOf<Any?>(id) })
+    fun of(value: LocalDateTime): LocalDateTime6 = LocalDateTime6(value.truncatedTo(ChronoUnit.MICROS))
+
+    fun now(): LocalDateTime6 = LocalDateTime6(LocalDateTime.now().truncatedTo(ChronoUnit.MICROS))
 
     val bijection: Bijection<LocalDateTime6, LocalDateTime> =
       Bijection.of(LocalDateTime6::value, ::LocalDateTime6)
 
-    fun now(): LocalDateTime6 = LocalDateTime6(LocalDateTime.now().truncatedTo(ChronoUnit.MICROS))
-
-    fun of(value: LocalDateTime): LocalDateTime6 = LocalDateTime6(value.truncatedTo(ChronoUnit.MICROS))
-
     val oracleType: OracleType<LocalDateTime6> =
-      OracleTypes.timestamp.bimap(::LocalDateTime6, LocalDateTime6::value)
+      OracleTypes.timestamp.to(Bijection.of(::LocalDateTime6, LocalDateTime6::value))
+
+    val rowCodec: RowCodec<LocalDateTime6> =
+      RowCodecs.of(OracleTypes.timestamp.to(Bijection.of(::LocalDateTime6, LocalDateTime6::value)), { x -> x }, { id -> arrayOf<Any?>(id) })
   }
 }

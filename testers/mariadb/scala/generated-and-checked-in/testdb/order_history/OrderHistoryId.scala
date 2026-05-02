@@ -6,16 +6,16 @@
 package testdb.order_history
 
 import com.fasterxml.jackson.annotation.JsonValue
-import dev.typr.foundations.MariaType
-import dev.typr.foundations.MariaTypes
+import dev.typr.dslsc.Bijection
 import dev.typr.foundations.data.Uint8
-import dev.typr.foundations.scala.Bijection
+import dev.typr.foundationssc.MariaType
+import dev.typr.foundationssc.MariaTypes
 
 /** Type for the primary key of table `order_history` */
 case class OrderHistoryId(@JsonValue value: Uint8) extends scala.AnyVal
 
 object OrderHistoryId {
-  given bijection: Bijection[OrderHistoryId, Uint8] = Bijection.apply[OrderHistoryId, Uint8](_.value)(OrderHistoryId.apply)
+  given bijection: Bijection[OrderHistoryId, Uint8] = Bijection.of[OrderHistoryId, Uint8](_.value, OrderHistoryId.apply)
 
-  given mariaType: MariaType[OrderHistoryId] = MariaTypes.bigintUnsigned.bimap(OrderHistoryId.apply, _.value)
+  given mariaType: MariaType[OrderHistoryId] = MariaTypes.bigintUnsigned.to(Bijection.of(OrderHistoryId.apply, _.value))
 }

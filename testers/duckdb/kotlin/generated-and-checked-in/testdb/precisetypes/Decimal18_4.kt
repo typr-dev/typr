@@ -6,20 +6,20 @@
 package testdb.precisetypes
 
 import com.fasterxml.jackson.annotation.JsonValue
-import dev.typr.foundations.DuckDbType
-import dev.typr.foundations.DuckDbTypes
 import dev.typr.foundations.data.precise.DecimalN
-import dev.typr.foundations.internal.arrayMap
-import dev.typr.foundations.kotlin.Bijection
+import dev.typr.foundationskt.Bijection
+import dev.typr.foundationskt.DuckDbType
+import dev.typr.foundationskt.DuckDbTypes
 import java.lang.IllegalArgumentException
 import java.math.BigDecimal
 import java.math.RoundingMode
+import kotlin.collections.List
 
 @kotlin.ConsistentCopyVisibility
 data class Decimal18_4 private constructor(@field:JsonValue val value: BigDecimal) : DecimalN {
   override fun decimalValue(): BigDecimal = value
 
-  override fun equals(other: Any?): Boolean {
+  override fun equals(other: Any?): kotlin.Boolean {
     if (this === other) return true
     if (other !is DecimalN) return false
     return decimalValue().compareTo(other.decimalValue()) == 0
@@ -31,7 +31,7 @@ data class Decimal18_4 private constructor(@field:JsonValue val value: BigDecima
 
   override fun scale(): Int = 4
 
-  override fun semanticEquals(other: DecimalN): Boolean = if (other == null) false else decimalValue().compareTo(other.decimalValue()) == 0
+  override fun semanticEquals(other: DecimalN): kotlin.Boolean = if (other == null) false else decimalValue().compareTo(other.decimalValue()) == 0
 
   override fun semanticHashCode(): Int = decimalValue().stripTrailingZeros().hashCode()
 
@@ -40,6 +40,23 @@ data class Decimal18_4 private constructor(@field:JsonValue val value: BigDecima
   }
 
   companion object {
+    fun of(value: BigDecimal): Decimal18_4? {
+      val scaled = value.setScale(4, RoundingMode.HALF_UP)
+      return if (scaled.precision() <= 18) Decimal18_4(scaled) else null
+    }
+
+    fun unsafeForce(value: BigDecimal): Decimal18_4 {
+      val scaled = value.setScale(4, RoundingMode.HALF_UP)
+      if (scaled.precision() > 18) throw IllegalArgumentException("Value exceeds precision(18, 4)")
+      return Decimal18_4(scaled)
+    }
+
+    fun of(value: Int): Decimal18_4 = Decimal18_4(BigDecimal.valueOf(value.toLong()))
+
+    fun of(value: kotlin.Long): Decimal18_4? = Decimal18_4.of(BigDecimal.valueOf(value))
+
+    fun of(value: kotlin.Double): Decimal18_4? = Decimal18_4.of(BigDecimal.valueOf(value))
+
     val Zero: Decimal18_4 =
       Decimal18_4(BigDecimal.ZERO)
 
@@ -47,26 +64,9 @@ data class Decimal18_4 private constructor(@field:JsonValue val value: BigDecima
       Bijection.of(Decimal18_4::value, ::Decimal18_4)
 
     val duckDbType: DuckDbType<Decimal18_4> =
-      DuckDbTypes.numeric.bimap(::Decimal18_4, Decimal18_4::value)
+      DuckDbTypes.numeric.to(Bijection.of(::Decimal18_4, Decimal18_4::value))
 
-    val duckDbTypeArray: DuckDbType<Array<Decimal18_4>> =
-      DuckDbTypes.decimalArray.bimap({ xs -> arrayMap.map(xs, ::Decimal18_4, Decimal18_4::class.java) }, { xs -> arrayMap.map(xs, Decimal18_4::value, BigDecimal::class.java) })
-
-    fun of(value: BigDecimal): Decimal18_4? {
-      val scaled = value.setScale(4, RoundingMode.HALF_UP)
-      return if (scaled.precision() <= 18) Decimal18_4(scaled) else null
-    }
-
-    fun of(value: Int): Decimal18_4 = Decimal18_4(BigDecimal.valueOf(value.toLong()))
-
-    fun of(value: Long): Decimal18_4? = Decimal18_4.of(BigDecimal.valueOf(value))
-
-    fun of(value: Double): Decimal18_4? = Decimal18_4.of(BigDecimal.valueOf(value))
-
-    fun unsafeForce(value: BigDecimal): Decimal18_4 {
-      val scaled = value.setScale(4, RoundingMode.HALF_UP)
-      if (scaled.precision() > 18) throw IllegalArgumentException("Value exceeds precision(18, 4)")
-      return Decimal18_4(scaled)
-    }
+    val duckDbTypeArray: DuckDbType<List<Decimal18_4>> =
+      duckDbType.list()
   }
 }

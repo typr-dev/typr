@@ -2,7 +2,7 @@ package testdb
 
 import dev.typr.foundations.data.{Json, Uint1, Uint2, Uint4, Uint8}
 import dev.typr.foundations.data.maria.{Inet4, Inet6}
-import dev.typr.foundations.dsl.Bijection
+import dev.typr.foundations.Bijection
 import org.scalatest.funsuite.AnyFunSuite
 import testdb.mariatest.*
 import testdb.mariatest_identity.*
@@ -59,8 +59,7 @@ class DSLTest extends AnyFunSuite {
   )
 
   test("selectWithWhere") {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       val row1 = mariatestRepo.insert(createSampleRow(1001).copy(varcharCol = "test_varchar_dsl"))
 
       val results = mariatestRepo.select
@@ -75,8 +74,7 @@ class DSLTest extends AnyFunSuite {
   }
 
   test("selectWithOrdering") {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       val _ = identityRepo.insert(MariatestIdentityRowUnsaved("DSL_Zulu"))
       val _ = identityRepo.insert(MariatestIdentityRowUnsaved("DSL_Alpha"))
       val _ = identityRepo.insert(MariatestIdentityRowUnsaved("DSL_Mike"))
@@ -93,8 +91,7 @@ class DSLTest extends AnyFunSuite {
   }
 
   test("selectWithOrderByDesc") {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       val _ = identityRepo.insert(MariatestIdentityRowUnsaved("DSLDescA"))
       val _ = identityRepo.insert(MariatestIdentityRowUnsaved("DSLDescB"))
       val _ = identityRepo.insert(MariatestIdentityRowUnsaved("DSLDescC"))
@@ -112,8 +109,7 @@ class DSLTest extends AnyFunSuite {
   }
 
   test("selectWithLimit") {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       for (i <- 0 until 10) {
         val _ = identityRepo.insert(MariatestIdentityRowUnsaved(s"Limit$i"))
       }
@@ -128,8 +124,7 @@ class DSLTest extends AnyFunSuite {
   }
 
   test("selectWithOffset") {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       val _ = identityRepo.insert(MariatestIdentityRowUnsaved("OffsetA"))
       val _ = identityRepo.insert(MariatestIdentityRowUnsaved("OffsetB"))
       val _ = identityRepo.insert(MariatestIdentityRowUnsaved("OffsetC"))
@@ -149,8 +144,7 @@ class DSLTest extends AnyFunSuite {
   }
 
   test("selectWithCount") {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       val _ = identityRepo.insert(MariatestIdentityRowUnsaved("CountA"))
       val _ = identityRepo.insert(MariatestIdentityRowUnsaved("CountB"))
       val _ = identityRepo.insert(MariatestIdentityRowUnsaved("CountC"))
@@ -164,8 +158,7 @@ class DSLTest extends AnyFunSuite {
   }
 
   test("selectWithGreaterThan") {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       val row1 = identityRepo.insert(MariatestIdentityRowUnsaved("GT1"))
       val _ = identityRepo.insert(MariatestIdentityRowUnsaved("GT2"))
       val _ = identityRepo.insert(MariatestIdentityRowUnsaved("GT3"))
@@ -180,8 +173,7 @@ class DSLTest extends AnyFunSuite {
   }
 
   test("selectWithLike") {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       val _ = identityRepo.insert(MariatestIdentityRowUnsaved("LikeTest_ABC"))
       val _ = identityRepo.insert(MariatestIdentityRowUnsaved("LikeTest_XYZ"))
       val _ = identityRepo.insert(MariatestIdentityRowUnsaved("OtherName"))
@@ -195,8 +187,7 @@ class DSLTest extends AnyFunSuite {
   }
 
   test("selectWithIn") {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       val row1 = identityRepo.insert(MariatestIdentityRowUnsaved("InTest1"))
       val _ = identityRepo.insert(MariatestIdentityRowUnsaved("InTest2"))
       val row3 = identityRepo.insert(MariatestIdentityRowUnsaved("InTest3"))
@@ -210,8 +201,7 @@ class DSLTest extends AnyFunSuite {
   }
 
   test("selectWithProjection") {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       val row = identityRepo.insert(MariatestIdentityRowUnsaved("ProjectionTest"))
 
       val results = identityRepo.select
@@ -226,8 +216,7 @@ class DSLTest extends AnyFunSuite {
   }
 
   test("deleteWithDSL") {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       val row = identityRepo.insert(MariatestIdentityRowUnsaved("ToDeleteDSL"))
 
       val beforeCount = identityRepo.select

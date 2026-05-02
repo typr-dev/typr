@@ -6,12 +6,10 @@
 package testdb.inventory
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import dev.typr.foundations.MariaTypes
+import dev.typr.dslsc.RowCodecs
 import dev.typr.foundations.Tuple.Tuple11
-import dev.typr.foundations.scala.DbTypeOps
-import dev.typr.foundations.scala.RowParser
-import dev.typr.foundations.scala.RowParsers
-import dev.typr.foundations.scala.ScalaDbTypes
+import dev.typr.foundationssc.MariaTypes
+import dev.typr.foundationssc.RowCodec
 import java.time.LocalDateTime
 import testdb.customtypes.Defaulted
 import testdb.products.ProductsId
@@ -116,5 +114,5 @@ case class InventoryRow(
 }
 
 object InventoryRow {
-  val `_rowParser`: RowParser[InventoryRow] = RowParsers.of(InventoryId.mariaType, ProductsId.mariaType, WarehousesId.mariaType, ScalaDbTypes.MariaTypes.int_, ScalaDbTypes.MariaTypes.int_, ScalaDbTypes.MariaTypes.int_, ScalaDbTypes.MariaTypes.int_, ScalaDbTypes.MariaTypes.int_, MariaTypes.varchar.nullable, MariaTypes.datetime.nullable, MariaTypes.datetime)(InventoryRow.apply)(row => Array[Any](row.inventoryId, row.productId, row.warehouseId, row.quantityOnHand, row.quantityReserved, row.quantityOnOrder, row.reorderPoint, row.reorderQuantity, row.binLocation, row.lastCountedAt, row.updatedAt))
+  val rowCodec: RowCodec[InventoryRow] = RowCodecs.of(InventoryId.mariaType, ProductsId.mariaType, WarehousesId.mariaType, MariaTypes.int_, MariaTypes.int_, MariaTypes.int_, MariaTypes.int_, MariaTypes.int_, MariaTypes.varchar.opt, MariaTypes.datetime.opt, MariaTypes.datetime)(InventoryRow.apply)(row => Array[Any](row.inventoryId, row.productId, row.warehouseId, row.quantityOnHand, row.quantityReserved, row.quantityOnOrder, row.reorderPoint, row.reorderQuantity, row.binLocation, row.lastCountedAt, row.updatedAt))
 }

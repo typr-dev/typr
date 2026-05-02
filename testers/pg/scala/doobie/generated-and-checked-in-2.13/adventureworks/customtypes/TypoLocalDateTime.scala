@@ -36,7 +36,7 @@ object TypoLocalDateTime {
       .contramap(_.map(v => v.value.toString()))
   }
 
-  implicit lazy val bijection: Bijection[TypoLocalDateTime, LocalDateTime] = Bijection.apply[TypoLocalDateTime, LocalDateTime](_.value)(TypoLocalDateTime.apply)
+  implicit lazy val bijection: Bijection[TypoLocalDateTime, LocalDateTime] = Bijection[TypoLocalDateTime, LocalDateTime](_.value)(TypoLocalDateTime.apply)
 
   implicit lazy val decoder: Decoder[TypoLocalDateTime] = Decoder.decodeLocalDateTime.map(TypoLocalDateTime.apply)
 

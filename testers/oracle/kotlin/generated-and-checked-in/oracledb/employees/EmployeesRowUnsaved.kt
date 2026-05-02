@@ -15,12 +15,12 @@ import oracledb.customtypes.Defaulted.UseDefault
 /** This class corresponds to a row in table `EMPLOYEES` which has not been persisted yet */
 data class EmployeesRowUnsaved(
   @field:JsonProperty("EMP_NUMBER") val empNumber: BigDecimal,
-  @field:JsonProperty("EMP_SUFFIX") val empSuffix: String,
+  @field:JsonProperty("EMP_SUFFIX") val empSuffix: kotlin.String,
   /** Points to [oracledb.departments.DepartmentsRow.deptCode] */
-  @field:JsonProperty("DEPT_CODE") val deptCode: String,
+  @field:JsonProperty("DEPT_CODE") val deptCode: kotlin.String,
   /** Points to [oracledb.departments.DepartmentsRow.deptRegion] */
-  @field:JsonProperty("DEPT_REGION") val deptRegion: String,
-  @field:JsonProperty("EMP_NAME") val empName: String,
+  @field:JsonProperty("DEPT_REGION") val deptRegion: kotlin.String,
+  @field:JsonProperty("EMP_NAME") val empName: kotlin.String,
   @field:JsonProperty("SALARY") val salary: MoneyT? = null,
   /** Default: SYSDATE  */
   @field:JsonProperty("HIRE_DATE") val hireDate: Defaulted<LocalDateTime> = UseDefault()

@@ -6,23 +6,23 @@
 package adventureworks.public
 
 import com.fasterxml.jackson.annotation.JsonValue
-import dev.typr.foundations.PgType
-import dev.typr.foundations.PgTypes
-import dev.typr.foundations.internal.arrayMap
-import dev.typr.foundations.kotlin.Bijection
+import dev.typr.foundationskt.Bijection
+import dev.typr.foundationskt.PgType
+import dev.typr.foundationskt.PgTypes
+import kotlin.collections.List
 
 /** Domain `public.Phone`
   * No constraint
   */
-data class Phone(@field:JsonValue val value: String) {
+data class Phone(@field:JsonValue val value: kotlin.String) {
   companion object {
-    val bijection: Bijection<Phone, String> =
+    val bijection: Bijection<Phone, kotlin.String> =
       Bijection.of(Phone::value, ::Phone)
 
     val pgType: PgType<Phone> =
-      PgTypes.text.bimap(::Phone, Phone::value).renamed("\"public\".\"Phone\"")
+      PgType(PgTypes.text.to(Bijection.of(::Phone, Phone::value)).underlying.renamed("\"public\".\"Phone\""))
 
-    val pgTypeArray: PgType<Array<Phone>> =
-      PgTypes.textArray.bimap({ xs -> arrayMap.map(xs, ::Phone, Phone::class.java) }, { xs -> arrayMap.map(xs, Phone::value, String::class.java) }).renamed("\"public\".\"Phone\"[]")
+    val pgTypeArray: PgType<List<Phone>> =
+      pgType.array()
   }
 }

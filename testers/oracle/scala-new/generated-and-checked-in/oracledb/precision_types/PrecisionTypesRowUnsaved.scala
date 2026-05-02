@@ -43,7 +43,7 @@ case class PrecisionTypesRowUnsaved(
   @JsonProperty("TS3") ts3: LocalDateTime3,
   @JsonProperty("TS6") ts6: LocalDateTime6,
   @JsonProperty("TS9") ts9: LocalDateTime9,
-  /** Default: "TYPR"."ISEQ$$_72873".nextval */
+  /** Default: "TYPR"."ISEQ$$_72863".nextval */
   @JsonProperty("ID") id: Defaulted[PrecisionTypesId] = new UseDefault()
 ) {
   def toRow(idDefault: => PrecisionTypesId): PrecisionTypesRow = {

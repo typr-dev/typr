@@ -15,11 +15,9 @@ import adventureworks.precisetypes.String255
 import adventureworks.precisetypes.String50
 import com.fasterxml.jackson.annotation.JsonProperty
 import dev.typr.foundations.PgText
-import dev.typr.foundations.PgTypes
 import dev.typr.foundations.Tuple.Tuple25
-import dev.typr.foundations.kotlin.RowParser
-import dev.typr.foundations.kotlin.RowParsers
-import dev.typr.foundations.kotlin.nullable
+import dev.typr.foundationskt.PgTypes
+import dev.typr.foundationskt.RowCodec
 import java.math.BigDecimal
 import java.time.Instant
 import java.time.LocalDateTime
@@ -110,9 +108,9 @@ data class PrecisionTypesNullRow(
   fun toUnsavedRow(id: Defaulted<PrecisionTypesNullId>): PrecisionTypesNullRowUnsaved = PrecisionTypesNullRowUnsaved(string10, string20, string50, string100, string255, bpchar3, bpchar10, decimal52, decimal102, decimal184, numeric82, numeric124, timestamp0, timestamp3, timestamp6, timestamptz0, timestamptz3, timestamptz6, time0, time3, time6, timetz0, timetz3, timetz6, id)
 
   companion object {
-    val _rowParser: RowParser<PrecisionTypesNullRow> = RowParsers.of(PrecisionTypesNullId.pgType, String10.pgType.nullable(), String20.pgType.nullable(), String50.pgType.nullable(), String100.pgType.nullable(), String255.pgType.nullable(), PaddedString3.pgType.nullable(), PaddedString10.pgType.nullable(), PgTypes.numeric.nullable(), PgTypes.numeric.nullable(), PgTypes.numeric.nullable(), PgTypes.numeric.nullable(), PgTypes.numeric.nullable(), PgTypes.timestamp.nullable(), PgTypes.timestamp.nullable(), PgTypes.timestamp.nullable(), PgTypes.timestamptz.nullable(), PgTypes.timestamptz.nullable(), PgTypes.timestamptz.nullable(), PgTypes.time.nullable(), PgTypes.time.nullable(), PgTypes.time.nullable(), PgTypes.timetz.nullable(), PgTypes.timetz.nullable(), PgTypes.timetz.nullable(), { t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15, t16, t17, t18, t19, t20, t21, t22, t23, t24 -> PrecisionTypesNullRow(t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15, t16, t17, t18, t19, t20, t21, t22, t23, t24) }, { row -> arrayOf<Any?>(row.id, row.string10, row.string20, row.string50, row.string100, row.string255, row.bpchar3, row.bpchar10, row.decimal52, row.decimal102, row.decimal184, row.numeric82, row.numeric124, row.timestamp0, row.timestamp3, row.timestamp6, row.timestamptz0, row.timestamptz3, row.timestamptz6, row.time0, row.time3, row.time6, row.timetz0, row.timetz3, row.timetz6) })
+    val rowCodec: RowCodec<PrecisionTypesNullRow> = RowCodec(dev.typr.foundations.RowCodec.create(listOf(PrecisionTypesNullId.pgType.underlying, String10.pgType.opt().underlying, String20.pgType.opt().underlying, String50.pgType.opt().underlying, String100.pgType.opt().underlying, String255.pgType.opt().underlying, PaddedString3.pgType.opt().underlying, PaddedString10.pgType.opt().underlying, PgTypes.numeric.opt().underlying, PgTypes.numeric.opt().underlying, PgTypes.numeric.opt().underlying, PgTypes.numeric.opt().underlying, PgTypes.numeric.opt().underlying, PgTypes.timestamp.opt().underlying, PgTypes.timestamp.opt().underlying, PgTypes.timestamp.opt().underlying, PgTypes.timestamptz.opt().underlying, PgTypes.timestamptz.opt().underlying, PgTypes.timestamptz.opt().underlying, PgTypes.time.opt().underlying, PgTypes.time.opt().underlying, PgTypes.time.opt().underlying, PgTypes.timetz.opt().underlying, PgTypes.timetz.opt().underlying, PgTypes.timetz.opt().underlying), { a -> PrecisionTypesNullRow(a[0] as PrecisionTypesNullId, a[1] as String10?, a[2] as String20?, a[3] as String50?, a[4] as String100?, a[5] as String255?, a[6] as PaddedString3?, a[7] as PaddedString10?, a[8] as BigDecimal?, a[9] as BigDecimal?, a[10] as BigDecimal?, a[11] as BigDecimal?, a[12] as BigDecimal?, a[13] as LocalDateTime?, a[14] as LocalDateTime?, a[15] as LocalDateTime?, a[16] as Instant?, a[17] as Instant?, a[18] as Instant?, a[19] as LocalTime?, a[20] as LocalTime?, a[21] as LocalTime?, a[22] as OffsetTime?, a[23] as OffsetTime?, a[24] as OffsetTime?) }, { row: PrecisionTypesNullRow -> arrayOf<Any?>(row.id, row.string10, row.string20, row.string50, row.string100, row.string255, row.bpchar3, row.bpchar10, row.decimal52, row.decimal102, row.decimal184, row.numeric82, row.numeric124, row.timestamp0, row.timestamp3, row.timestamp6, row.timestamptz0, row.timestamptz3, row.timestamptz6, row.time0, row.time3, row.time6, row.timetz0, row.timetz3, row.timetz6) }))
 
     val pgText: PgText<PrecisionTypesNullRow> =
-      PgText.from(_rowParser.underlying)
+      PgText.from(rowCodec.underlying)
   }
 }

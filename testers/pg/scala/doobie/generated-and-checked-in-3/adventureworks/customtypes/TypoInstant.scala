@@ -37,7 +37,7 @@ object TypoInstant {
       .contramap(_.map(v => v.value.toString()))
   }
 
-  given bijection: Bijection[TypoInstant, Instant] = Bijection.apply[TypoInstant, Instant](_.value)(TypoInstant.apply)
+  given bijection: Bijection[TypoInstant, Instant] = Bijection[TypoInstant, Instant](_.value)(TypoInstant.apply)
 
   given decoder: Decoder[TypoInstant] = Decoder.decodeInstant.map(TypoInstant.apply)
 

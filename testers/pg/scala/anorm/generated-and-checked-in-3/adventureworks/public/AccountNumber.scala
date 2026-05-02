@@ -24,7 +24,7 @@ object AccountNumber {
 
   given arrayToStatement: ToStatement[Array[AccountNumber]] = ToStatement.arrayToParameter(using ParameterMetaData.StringParameterMetaData).contramap(_.map(_.value))
 
-  given bijection: Bijection[AccountNumber, String] = Bijection.apply[AccountNumber, String](_.value)(AccountNumber.apply)
+  given bijection: Bijection[AccountNumber, String] = Bijection[AccountNumber, String](_.value)(AccountNumber.apply)
 
   given column: Column[AccountNumber] = Column.columnToString.map(AccountNumber.apply)
 

@@ -6,10 +6,10 @@
 package testdb.departments
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import dev.typr.foundations.DuckDbTypes
+import dev.typr.dslsc.RowCodecs
 import dev.typr.foundations.Tuple.Tuple2
-import dev.typr.foundations.scala.RowParser
-import dev.typr.foundations.scala.RowParsers
+import dev.typr.foundationssc.DuckDbTypes
+import dev.typr.foundationssc.RowCodec
 
 /** Type for the composite primary key of table `departments` */
 case class DepartmentsId(
@@ -22,5 +22,5 @@ case class DepartmentsId(
 }
 
 object DepartmentsId {
-  val `_rowParser`: RowParser[DepartmentsId] = RowParsers.of(DuckDbTypes.varchar, DuckDbTypes.varchar)(DepartmentsId.apply)(row => Array[Any](row.deptCode, row.deptRegion))
+  val rowCodec: RowCodec[DepartmentsId] = RowCodecs.of(DuckDbTypes.varchar, DuckDbTypes.varchar)(DepartmentsId.apply)(row => Array[Any](row.deptCode, row.deptRegion))
 }

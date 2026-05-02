@@ -9,12 +9,11 @@ import adventureworks.customtypes.Defaulted
 import adventureworks.humanresources.department.DepartmentId
 import adventureworks.humanresources.shift.ShiftId
 import adventureworks.person.businessentity.BusinessentityId
+import dev.typr.dslkt.RowCodecs
 import dev.typr.foundations.PgText
-import dev.typr.foundations.PgTypes
 import dev.typr.foundations.Tuple.Tuple6
-import dev.typr.foundations.kotlin.RowParser
-import dev.typr.foundations.kotlin.RowParsers
-import dev.typr.foundations.kotlin.nullable
+import dev.typr.foundationskt.PgTypes
+import dev.typr.foundationskt.RowCodec
 import java.time.LocalDate
 import java.time.LocalDateTime
 
@@ -65,15 +64,15 @@ data class EmployeedepartmenthistoryRow(
   fun toUnsavedRow(modifieddate: Defaulted<LocalDateTime> = Defaulted.Provided(this.modifieddate)): EmployeedepartmenthistoryRowUnsaved = EmployeedepartmenthistoryRowUnsaved(businessentityid, departmentid, shiftid, startdate, enddate, modifieddate)
 
   companion object {
-    val _rowParser: RowParser<EmployeedepartmenthistoryRow> = RowParsers.of(BusinessentityId.pgType, DepartmentId.pgType, ShiftId.pgType, PgTypes.date, PgTypes.date.nullable(), PgTypes.timestamp, { t0, t1, t2, t3, t4, t5 -> EmployeedepartmenthistoryRow(t0, t1, t2, t3, t4, t5) }, { row -> arrayOf<Any?>(row.businessentityid, row.departmentid, row.shiftid, row.startdate, row.enddate, row.modifieddate) })
+    val rowCodec: RowCodec<EmployeedepartmenthistoryRow> = RowCodecs.of(BusinessentityId.pgType, DepartmentId.pgType, ShiftId.pgType, PgTypes.date, PgTypes.date.opt(), PgTypes.timestamp, { t0: BusinessentityId, t1: DepartmentId, t2: ShiftId, t3: LocalDate, t4: LocalDate?, t5: LocalDateTime -> EmployeedepartmenthistoryRow(t0, t1, t2, t3, t4, t5) }, { row: EmployeedepartmenthistoryRow -> arrayOf<Any?>(row.businessentityid, row.departmentid, row.shiftid, row.startdate, row.enddate, row.modifieddate) })
+
+    val pgText: PgText<EmployeedepartmenthistoryRow> =
+      PgText.from(rowCodec.underlying)
 
     fun apply(
       compositeId: EmployeedepartmenthistoryId,
       enddate: LocalDate?,
       modifieddate: LocalDateTime
     ): EmployeedepartmenthistoryRow = EmployeedepartmenthistoryRow(compositeId.businessentityid, compositeId.departmentid, compositeId.shiftid, compositeId.startdate, enddate, modifieddate)
-
-    val pgText: PgText<EmployeedepartmenthistoryRow> =
-      PgText.from(_rowParser.underlying)
   }
 }

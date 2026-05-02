@@ -36,7 +36,7 @@ object TypoUnknownCitext {
 
   given arrayToStatement: ToStatement[Array[TypoUnknownCitext]] = ToStatement[Array[TypoUnknownCitext]]((s, index, v) => s.setArray(index, s.getConnection.createArrayOf("citext", v.map(v => v.value))))
 
-  given bijection: Bijection[TypoUnknownCitext, String] = Bijection.apply[TypoUnknownCitext, String](_.value)(TypoUnknownCitext.apply)
+  given bijection: Bijection[TypoUnknownCitext, String] = Bijection[TypoUnknownCitext, String](_.value)(TypoUnknownCitext.apply)
 
   given column: Column[TypoUnknownCitext] = {
     Column.nonNull[TypoUnknownCitext]((v1: Any, _) =>

@@ -6,12 +6,11 @@
 package testdb.shipping_carriers
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import dev.typr.foundations.MariaTypes
+import dev.typr.dslsc.RowCodecs
 import dev.typr.foundations.Tuple.Tuple6
 import dev.typr.foundations.data.Json
-import dev.typr.foundations.scala.DbTypeOps
-import dev.typr.foundations.scala.RowParser
-import dev.typr.foundations.scala.RowParsers
+import dev.typr.foundationssc.MariaTypes
+import dev.typr.foundationssc.RowCodec
 import testdb.customtypes.Defaulted
 import testdb.userdefined.IsActive
 
@@ -70,5 +69,5 @@ case class ShippingCarriersRow(
 }
 
 object ShippingCarriersRow {
-  val `_rowParser`: RowParser[ShippingCarriersRow] = RowParsers.of(ShippingCarriersId.mariaType, MariaTypes.varchar, MariaTypes.varchar, MariaTypes.varchar.nullable, MariaTypes.json.nullable, IsActive.mariaType)(ShippingCarriersRow.apply)(row => Array[Any](row.carrierId, row.code, row.name, row.trackingUrlTemplate, row.apiConfig, row.isActive))
+  val rowCodec: RowCodec[ShippingCarriersRow] = RowCodecs.of(ShippingCarriersId.mariaType, MariaTypes.varchar, MariaTypes.varchar, MariaTypes.varchar.opt, MariaTypes.json.opt, IsActive.mariaType)(ShippingCarriersRow.apply)(row => Array[Any](row.carrierId, row.code, row.name, row.trackingUrlTemplate, row.apiConfig, row.isActive))
 }

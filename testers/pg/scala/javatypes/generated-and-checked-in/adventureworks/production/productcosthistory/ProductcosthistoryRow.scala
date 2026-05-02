@@ -7,10 +7,10 @@ package adventureworks.production.productcosthistory
 
 import adventureworks.customtypes.Defaulted
 import adventureworks.production.product.ProductId
+import dev.typr.dsl.RowCodecs
 import dev.typr.foundations.PgText
 import dev.typr.foundations.PgTypes
-import dev.typr.foundations.RowParser
-import dev.typr.foundations.RowParsers
+import dev.typr.foundations.RowCodec
 import dev.typr.foundations.Tuple.Tuple5
 import java.time.LocalDateTime
 import java.util.Optional
@@ -65,8 +65,6 @@ case class ProductcosthistoryRow(
 }
 
 object ProductcosthistoryRow {
-  val `_rowParser`: RowParser[ProductcosthistoryRow] = RowParsers.of(ProductId.pgType, PgTypes.timestamp, PgTypes.timestamp.opt(), PgTypes.numeric, PgTypes.timestamp, ProductcosthistoryRow.apply, row => Array[Any](row.productid, row.startdate, row.enddate, row.standardcost, row.modifieddate))
-
   def apply(
     compositeId: ProductcosthistoryId,
     enddate: Optional[LocalDateTime],
@@ -82,5 +80,7 @@ object ProductcosthistoryRow {
     )
   }
 
-  given pgText: PgText[ProductcosthistoryRow] = PgText.from(`_rowParser`)
+  given pgText: PgText[ProductcosthistoryRow] = PgText.from(rowCodec)
+
+  val rowCodec: RowCodec[ProductcosthistoryRow] = RowCodecs.of(ProductId.pgType, PgTypes.timestamp, PgTypes.timestamp.opt, PgTypes.numeric, PgTypes.timestamp, ProductcosthistoryRow.apply, row => Array[Any](row.productid, row.startdate, row.enddate, row.standardcost, row.modifieddate))
 }

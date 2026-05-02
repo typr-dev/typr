@@ -5,11 +5,11 @@
  */
 package testdb.v_inventory_status
 
-import dev.typr.foundations.scala.SelectBuilder
-import java.sql.Connection
+import dev.typr.dslsc.SelectBuilder
+import dev.typr.foundationssc.ConnectionRead
 
 trait VInventoryStatusViewRepo {
   def select: SelectBuilder[VInventoryStatusViewFields, VInventoryStatusViewRow]
 
-  def selectAll(using c: Connection): List[VInventoryStatusViewRow]
+  def selectAll(using c: ConnectionRead): List[VInventoryStatusViewRow]
 }

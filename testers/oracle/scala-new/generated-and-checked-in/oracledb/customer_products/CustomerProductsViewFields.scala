@@ -5,17 +5,16 @@
  */
 package oracledb.customer_products
 
-import dev.typr.foundations.OracleTypes
-import dev.typr.foundations.RowParser
-import dev.typr.foundations.dsl.FieldsBase
-import dev.typr.foundations.dsl.Path
-import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.scala.RelationStructure
-import dev.typr.foundations.scala.ScalaDbTypes
-import dev.typr.foundations.scala.SqlExpr
-import dev.typr.foundations.scala.SqlExpr.Field
-import dev.typr.foundations.scala.SqlExpr.OptField
-import dev.typr.foundations.scala.TupleExpr6
+import dev.typr.dsl.FieldsBase
+import dev.typr.dsl.Path
+import dev.typr.dsl.SqlExpr.FieldLike
+import dev.typr.dslsc.RelationStructure
+import dev.typr.dslsc.SqlExpr
+import dev.typr.dslsc.SqlExpr.Field
+import dev.typr.dslsc.SqlExpr.OptField
+import dev.typr.dslsc.TupleExpr6
+import dev.typr.foundations.RowCodec
+import dev.typr.foundationssc.OracleTypes
 import oracledb.AddressT
 import oracledb.MoneyT
 
@@ -28,7 +27,7 @@ class CustomerProductsViewFields(val `_path`: java.util.List[Path]) extends Tupl
       None,
       None,
       (row, value) => row.copy(customerId = value),
-      ScalaDbTypes.OracleTypes.number
+      OracleTypes.number.underlying
     )
   }
 
@@ -40,7 +39,7 @@ class CustomerProductsViewFields(val `_path`: java.util.List[Path]) extends Tupl
       None,
       None,
       (row, value) => row.copy(customerName = value),
-      OracleTypes.varchar2
+      OracleTypes.varchar2.underlying
     )
   }
 
@@ -52,7 +51,7 @@ class CustomerProductsViewFields(val `_path`: java.util.List[Path]) extends Tupl
       None,
       None,
       (row, value) => row.copy(billingAddress = value),
-      AddressT.oracleType
+      AddressT.oracleType.underlying
     )
   }
 
@@ -64,7 +63,7 @@ class CustomerProductsViewFields(val `_path`: java.util.List[Path]) extends Tupl
       None,
       None,
       (row, value) => row.copy(productId = value),
-      ScalaDbTypes.OracleTypes.number
+      OracleTypes.number.underlying
     )
   }
 
@@ -76,7 +75,7 @@ class CustomerProductsViewFields(val `_path`: java.util.List[Path]) extends Tupl
       None,
       None,
       (row, value) => row.copy(productName = value),
-      OracleTypes.varchar2
+      OracleTypes.varchar2.underlying
     )
   }
 
@@ -88,13 +87,13 @@ class CustomerProductsViewFields(val `_path`: java.util.List[Path]) extends Tupl
       None,
       None,
       (row, value) => row.copy(price = value),
-      MoneyT.oracleType
+      MoneyT.oracleType.underlying
     )
   }
 
   override def columns: java.util.List[FieldLike[?, CustomerProductsViewRow]] = java.util.List.of(this.customerId.underlying, this.customerName.underlying, this.billingAddress.underlying, this.productId.underlying, this.productName.underlying, this.price.underlying)
 
-  override def rowParser: RowParser[CustomerProductsViewRow] = CustomerProductsViewRow._rowParser.underlying
+  override def rowCodec: RowCodec[CustomerProductsViewRow] = CustomerProductsViewRow.rowCodec.underlying
 
   override def withPaths(`_path`: java.util.List[Path]): RelationStructure[CustomerProductsViewFields, CustomerProductsViewRow] = new CustomerProductsViewFields(`_path`)
 

@@ -6,13 +6,12 @@
 package testdb.audit_log
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import dev.typr.foundations.MariaTypes
+import dev.typr.dslsc.RowCodecs
 import dev.typr.foundations.Tuple.Tuple10
 import dev.typr.foundations.data.Json
 import dev.typr.foundations.data.maria.Inet6
-import dev.typr.foundations.scala.DbTypeOps
-import dev.typr.foundations.scala.RowParser
-import dev.typr.foundations.scala.RowParsers
+import dev.typr.foundationssc.MariaTypes
+import dev.typr.foundationssc.RowCodec
 import java.time.LocalDateTime
 import testdb.customtypes.Defaulted
 
@@ -100,5 +99,5 @@ case class AuditLogRow(
 }
 
 object AuditLogRow {
-  val `_rowParser`: RowParser[AuditLogRow] = RowParsers.of(AuditLogId.mariaType, MariaTypes.varchar, MariaTypes.varchar, MariaTypes.text, MariaTypes.json.nullable, MariaTypes.json.nullable, MariaTypes.varchar.nullable, MariaTypes.datetime, MariaTypes.inet6.nullable, MariaTypes.varbinary.nullable)(AuditLogRow.apply)(row => Array[Any](row.logId, row.tableName, row.recordId, row.action, row.oldValues, row.newValues, row.changedBy, row.changedAt, row.clientIp, row.sessionId))
+  val rowCodec: RowCodec[AuditLogRow] = RowCodecs.of(AuditLogId.mariaType, MariaTypes.varchar, MariaTypes.varchar, MariaTypes.text, MariaTypes.json.opt, MariaTypes.json.opt, MariaTypes.varchar.opt, MariaTypes.datetime, MariaTypes.inet6.opt, MariaTypes.varbinary.opt)(AuditLogRow.apply)(row => Array[Any](row.logId, row.tableName, row.recordId, row.action, row.oldValues, row.newValues, row.changedBy, row.changedAt, row.clientIp, row.sessionId))
 }

@@ -5,17 +5,16 @@
  */
 package testdb.customer_orders
 
-import dev.typr.foundations.MariaTypes
-import dev.typr.foundations.kotlin.Fragment
-import dev.typr.foundations.kotlin.nullable
-import java.sql.Connection
+import dev.typr.foundationskt.ConnectionRead
+import dev.typr.foundationskt.Fragment
+import dev.typr.foundationskt.MariaTypes
 import kotlin.collections.List
 import testdb.customers.CustomersId
 
 class CustomerOrdersSqlRepoImpl() : CustomerOrdersSqlRepo {
   override fun apply(
     customerId: /* user-picked */ CustomersId,
-    orderStatus: String?,
-    c: Connection
-  ): List<CustomerOrdersSqlRow> = Fragment.interpolate(Fragment.lit("-- Query customers with their orders\nSELECT c.customer_id,\n       c.email,\n       c.first_name,\n       c.last_name,\n       c.tier,\n       o.order_id,\n       o.order_number,\n       o.order_status,\n       o.total_amount,\n       o.ordered_at\nFROM customers c\nLEFT JOIN orders o ON c.customer_id = o.customer_id\nWHERE c.customer_id = "), Fragment.encode(CustomersId.mariaType, customerId), Fragment.lit("\n  AND ("), Fragment.encode(MariaTypes.text.nullable(), orderStatus), Fragment.lit(" IS NULL OR o.order_status = "), Fragment.encode(MariaTypes.text.nullable(), orderStatus), Fragment.lit(")\n")).query(CustomerOrdersSqlRow._rowParser.all()).runUnchecked(c)
+    orderStatus: kotlin.String?,
+    c: ConnectionRead
+  ): List<CustomerOrdersSqlRow> = Fragment.concat(Fragment.of("-- Query customers with their orders\nSELECT c.customer_id,\n       c.email,\n       c.first_name,\n       c.last_name,\n       c.tier,\n       o.order_id,\n       o.order_number,\n       o.order_status,\n       o.total_amount,\n       o.ordered_at\nFROM customers c\nLEFT JOIN orders o ON c.customer_id = o.customer_id\nWHERE c.customer_id = "), Fragment.encode(CustomersId.mariaType, customerId), Fragment.of("\n  AND ("), Fragment.encode(MariaTypes.text.opt(), orderStatus), Fragment.of(" IS NULL OR o.order_status = "), Fragment.encode(MariaTypes.text.opt(), orderStatus), Fragment.of(")\n")).query(CustomerOrdersSqlRow.rowCodec.all()).run(c)
 }

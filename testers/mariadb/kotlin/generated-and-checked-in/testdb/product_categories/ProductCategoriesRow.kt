@@ -6,10 +6,10 @@
 package testdb.product_categories
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import dev.typr.dslkt.RowCodecs
 import dev.typr.foundations.Tuple.Tuple4
-import dev.typr.foundations.kotlin.KotlinDbTypes
-import dev.typr.foundations.kotlin.RowParser
-import dev.typr.foundations.kotlin.RowParsers
+import dev.typr.foundationskt.MariaTypes
+import dev.typr.foundationskt.RowCodec
 import testdb.categories.CategoriesId
 import testdb.customtypes.Defaulted
 import testdb.products.ProductsId
@@ -34,15 +34,15 @@ data class ProductCategoriesRow(
   /** 
     * Default: 0
     */
-  @field:JsonProperty("sort_order") val sortOrder: Short
-) : Tuple4<ProductsId, CategoriesId, /* user-picked */ IsPrimary, Short> {
+  @field:JsonProperty("sort_order") val sortOrder: kotlin.Short
+) : Tuple4<ProductsId, CategoriesId, /* user-picked */ IsPrimary, kotlin.Short> {
   override fun _1(): ProductsId = productId
 
   override fun _2(): CategoriesId = categoryId
 
   override fun _3(): /* user-picked */ IsPrimary = isPrimary
 
-  override fun _4(): Short = sortOrder
+  override fun _4(): kotlin.Short = sortOrder
 
   fun compositeId(): ProductCategoriesId = ProductCategoriesId(productId, categoryId)
 
@@ -50,16 +50,16 @@ data class ProductCategoriesRow(
 
   fun toUnsavedRow(
     isPrimary: Defaulted</* user-picked */ IsPrimary> = Defaulted.Provided(this.isPrimary),
-    sortOrder: Defaulted<Short> = Defaulted.Provided(this.sortOrder)
+    sortOrder: Defaulted<kotlin.Short> = Defaulted.Provided(this.sortOrder)
   ): ProductCategoriesRowUnsaved = ProductCategoriesRowUnsaved(productId, categoryId, isPrimary, sortOrder)
 
   companion object {
-    val _rowParser: RowParser<ProductCategoriesRow> = RowParsers.of(ProductsId.mariaType, CategoriesId.mariaType, IsPrimary.mariaType, KotlinDbTypes.MariaTypes.smallint, { t0, t1, t2, t3 -> ProductCategoriesRow(t0, t1, t2, t3) }, { row -> arrayOf<Any?>(row.productId, row.categoryId, row.isPrimary, row.sortOrder) })
+    val rowCodec: RowCodec<ProductCategoriesRow> = RowCodecs.of(ProductsId.mariaType, CategoriesId.mariaType, IsPrimary.mariaType, MariaTypes.smallint, { t0: ProductsId, t1: CategoriesId, t2: /* user-picked */ IsPrimary, t3: kotlin.Short -> ProductCategoriesRow(t0, t1, t2, t3) }, { row: ProductCategoriesRow -> arrayOf<Any?>(row.productId, row.categoryId, row.isPrimary, row.sortOrder) })
 
     fun apply(
       compositeId: ProductCategoriesId,
       isPrimary: /* user-picked */ IsPrimary,
-      sortOrder: Short
+      sortOrder: kotlin.Short
     ): ProductCategoriesRow = ProductCategoriesRow(compositeId.productId, compositeId.categoryId, isPrimary, sortOrder)
   }
 }

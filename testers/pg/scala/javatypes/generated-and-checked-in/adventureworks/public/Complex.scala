@@ -5,10 +5,9 @@
  */
 package adventureworks.public
 
-import dev.typr.foundations.PgRead
-import dev.typr.foundations.PgStruct
 import dev.typr.foundations.PgType
 import dev.typr.foundations.PgTypes
+import dev.typr.foundations.RowCodec
 import java.util.Optional
 
 /** PostgreSQL composite type: public.complex */
@@ -18,9 +17,7 @@ case class Complex(
 )
 
 object Complex {
-  given pgStruct: PgStruct[Complex] = PgStruct.builder[Complex]("public.complex").optField("r", PgTypes.float8, (v: Complex) => v.r).optField("i", PgTypes.float8, (v: Complex) => v.i).build(arr => Complex(r = Optional.ofNullable(arr(0).asInstanceOf[java.lang.Double]), i = Optional.ofNullable(arr(1).asInstanceOf[java.lang.Double])))
+  given pgType: PgType[Complex] = PgTypes.compositeOf("public.complex", RowCodec.namedBuilder[Complex]().field("r", PgTypes.float8.opt(), (v: Complex) => v.r).field("i", PgTypes.float8.opt(), (v: Complex) => v.i).build((t0, t1) => Complex(r = t0, i = t1)))
 
-  given pgType: PgType[Complex] = pgStruct.asType()
-
-  given pgTypeArray: PgType[Array[Complex]] = pgType.array(PgRead.readCompositeArray(pgType.pgCompositeText(), n => new Array[Complex](n)), n => new Array[Complex](n))
+  given pgTypeArray: PgType[java.util.List[Complex]] = pgType.array()
 }

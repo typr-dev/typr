@@ -5,8 +5,8 @@
  */
 package testdb.all_scalar_types_search
 
+import dev.typr.foundationskt.ConnectionRead
 import java.math.BigDecimal
-import java.sql.Connection
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.UUID
@@ -17,15 +17,15 @@ interface AllScalarTypesSearchSqlRepo {
   abstract fun apply(
     id: Int?,
     minInteger: Int?,
-    maxBigint: Long?,
-    booleanValue: Boolean?,
-    varcharPattern: String?,
+    maxBigint: kotlin.Long?,
+    booleanValue: kotlin.Boolean?,
+    varcharPattern: kotlin.String?,
     minDate: LocalDate?,
     maxDate: LocalDate?,
     afterTimestamp: LocalDateTime?,
     uuidValue: UUID?,
     moodValue: /* user-picked */ Mood?,
     minDecimal: BigDecimal?,
-    c: Connection
+    c: ConnectionRead
   ): List<AllScalarTypesSearchSqlRow>
 }

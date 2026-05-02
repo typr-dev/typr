@@ -50,7 +50,7 @@ object TypoLocalDate {
     )
   }
 
-  implicit lazy val bijection: Bijection[TypoLocalDate, LocalDate] = Bijection.apply[TypoLocalDate, LocalDate](_.value)(TypoLocalDate.apply)
+  implicit lazy val bijection: Bijection[TypoLocalDate, LocalDate] = Bijection[TypoLocalDate, LocalDate](_.value)(TypoLocalDate.apply)
 
   implicit lazy val jdbcDecoder: JdbcDecoder[TypoLocalDate] = {
     JdbcDecoder[TypoLocalDate](

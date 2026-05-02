@@ -27,6 +27,19 @@ data class OrderSummary(
   }
 
   companion object {
+    @Throws(IOException::class)
+    fun parseFrom(input: CodedInputStream): OrderSummary {
+      var totalOrders: Int = 0
+      var totalAmountCents: kotlin.Long = 0L
+      while (!input.isAtEnd()) {
+        val tag = input.readTag()
+        if (WireFormat.getTagFieldNumber(tag) == 1) { totalOrders = input.readInt32() }
+        else if (WireFormat.getTagFieldNumber(tag) == 2) { totalAmountCents = input.readInt64() }
+        else { input.skipField(tag) }
+      }
+      return OrderSummary(totalOrders, totalAmountCents)
+    }
+
     val MARSHALLER: Marshaller<OrderSummary> =
       object : Marshaller<OrderSummary> {
         override fun stream(value: OrderSummary): InputStream {
@@ -48,18 +61,5 @@ data class OrderSummary(
           } 
         }
       }
-
-    @Throws(IOException::class)
-    fun parseFrom(input: CodedInputStream): OrderSummary {
-      var totalOrders: Int = 0
-      var totalAmountCents: kotlin.Long = 0L
-      while (!input.isAtEnd()) {
-        val tag = input.readTag()
-        if (WireFormat.getTagFieldNumber(tag) == 1) { totalOrders = input.readInt32() }
-        else if (WireFormat.getTagFieldNumber(tag) == 2) { totalAmountCents = input.readInt64() }
-        else { input.skipField(tag) }
-      }
-      return OrderSummary(totalOrders, totalAmountCents)
-    }
   }
 }

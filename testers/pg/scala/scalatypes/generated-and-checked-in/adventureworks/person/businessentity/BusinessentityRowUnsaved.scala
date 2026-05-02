@@ -8,7 +8,7 @@ package adventureworks.person.businessentity
 import adventureworks.customtypes.Defaulted
 import adventureworks.customtypes.Defaulted.UseDefault
 import dev.typr.foundations.PgText
-import dev.typr.foundations.PgTypes
+import dev.typr.foundationssc.PgTypes
 import java.time.LocalDateTime
 import java.util.UUID
 
@@ -31,5 +31,5 @@ case class BusinessentityRowUnsaved(
 }
 
 object BusinessentityRowUnsaved {
-  given pgText: PgText[BusinessentityRowUnsaved] = PgText.instance((row, sb) => { Defaulted.pgText(using BusinessentityId.pgType.text).unsafeEncode(row.businessentityid, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using PgTypes.uuid.text).unsafeEncode(row.rowguid, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using PgTypes.timestamp.text).unsafeEncode(row.modifieddate, sb) })
+  given pgText: PgText[BusinessentityRowUnsaved] = PgText.instance((row, sb) => { Defaulted.pgText(using BusinessentityId.pgType.pgText()).unsafeEncode(row.businessentityid, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using PgTypes.uuid.pgText()).unsafeEncode(row.rowguid, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using PgTypes.timestamp.pgText()).unsafeEncode(row.modifieddate, sb) })
 }

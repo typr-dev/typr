@@ -5,17 +5,17 @@
  */
 package testdb.brands
 
-import dev.typr.foundations.MariaTypes
-import dev.typr.foundations.RowParser
-import dev.typr.foundations.dsl.FieldsBase
-import dev.typr.foundations.dsl.Path
-import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.scala.RelationStructure
-import dev.typr.foundations.scala.SqlExpr
-import dev.typr.foundations.scala.SqlExpr.Field
-import dev.typr.foundations.scala.SqlExpr.IdField
-import dev.typr.foundations.scala.SqlExpr.OptField
-import dev.typr.foundations.scala.TupleExpr7
+import dev.typr.dsl.FieldsBase
+import dev.typr.dsl.Path
+import dev.typr.dsl.SqlExpr.FieldLike
+import dev.typr.dslsc.RelationStructure
+import dev.typr.dslsc.SqlExpr
+import dev.typr.dslsc.SqlExpr.Field
+import dev.typr.dslsc.SqlExpr.IdField
+import dev.typr.dslsc.SqlExpr.OptField
+import dev.typr.dslsc.TupleExpr7
+import dev.typr.foundations.RowCodec
+import dev.typr.foundationssc.MariaTypes
 import testdb.userdefined.IsActive
 
 class BrandsFields(val `_path`: java.util.List[Path]) extends TupleExpr7[BrandsId, String, String, Array[Byte], String, String, /* user-picked */ IsActive] with RelationStructure[BrandsFields, BrandsRow]  with FieldsBase[BrandsRow] {
@@ -27,7 +27,7 @@ class BrandsFields(val `_path`: java.util.List[Path]) extends TupleExpr7[BrandsI
       None,
       None,
       (row, value) => row.copy(brandId = value),
-      BrandsId.mariaType
+      BrandsId.mariaType.underlying
     )
   }
 
@@ -39,7 +39,7 @@ class BrandsFields(val `_path`: java.util.List[Path]) extends TupleExpr7[BrandsI
       None,
       None,
       (row, value) => row.copy(name = value),
-      MariaTypes.varchar
+      MariaTypes.varchar.underlying
     )
   }
 
@@ -51,7 +51,7 @@ class BrandsFields(val `_path`: java.util.List[Path]) extends TupleExpr7[BrandsI
       None,
       None,
       (row, value) => row.copy(slug = value),
-      MariaTypes.varchar
+      MariaTypes.varchar.underlying
     )
   }
 
@@ -63,7 +63,7 @@ class BrandsFields(val `_path`: java.util.List[Path]) extends TupleExpr7[BrandsI
       None,
       None,
       (row, value) => row.copy(logoBlob = value),
-      MariaTypes.mediumblob
+      MariaTypes.mediumblob.underlying
     )
   }
 
@@ -75,7 +75,7 @@ class BrandsFields(val `_path`: java.util.List[Path]) extends TupleExpr7[BrandsI
       None,
       None,
       (row, value) => row.copy(websiteUrl = value),
-      MariaTypes.varchar
+      MariaTypes.varchar.underlying
     )
   }
 
@@ -87,7 +87,7 @@ class BrandsFields(val `_path`: java.util.List[Path]) extends TupleExpr7[BrandsI
       None,
       None,
       (row, value) => row.copy(countryOfOrigin = value),
-      MariaTypes.char_
+      MariaTypes.char_.underlying
     )
   }
 
@@ -99,13 +99,13 @@ class BrandsFields(val `_path`: java.util.List[Path]) extends TupleExpr7[BrandsI
       None,
       None,
       (row, value) => row.copy(isActive = value),
-      IsActive.mariaType
+      IsActive.mariaType.underlying
     )
   }
 
   override def columns: java.util.List[FieldLike[?, BrandsRow]] = java.util.List.of(this.brandId.underlying, this.name.underlying, this.slug.underlying, this.logoBlob.underlying, this.websiteUrl.underlying, this.countryOfOrigin.underlying, this.isActive.underlying)
 
-  override def rowParser: RowParser[BrandsRow] = BrandsRow._rowParser.underlying
+  override def rowCodec: RowCodec[BrandsRow] = BrandsRow.rowCodec.underlying
 
   override def withPaths(`_path`: java.util.List[Path]): RelationStructure[BrandsFields, BrandsRow] = new BrandsFields(`_path`)
 

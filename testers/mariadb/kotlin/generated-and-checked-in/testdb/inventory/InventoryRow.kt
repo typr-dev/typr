@@ -6,12 +6,10 @@
 package testdb.inventory
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import dev.typr.foundations.MariaTypes
+import dev.typr.dslkt.RowCodecs
 import dev.typr.foundations.Tuple.Tuple11
-import dev.typr.foundations.kotlin.KotlinDbTypes
-import dev.typr.foundations.kotlin.RowParser
-import dev.typr.foundations.kotlin.RowParsers
-import dev.typr.foundations.kotlin.nullable
+import dev.typr.foundationskt.MariaTypes
+import dev.typr.foundationskt.RowCodec
 import java.time.LocalDateTime
 import testdb.customtypes.Defaulted
 import testdb.products.ProductsId
@@ -56,7 +54,7 @@ data class InventoryRow(
   /** 
     * Default: NULL
     */
-  @field:JsonProperty("bin_location") val binLocation: String?,
+  @field:JsonProperty("bin_location") val binLocation: kotlin.String?,
   /** 
     * Default: NULL
     */
@@ -65,7 +63,7 @@ data class InventoryRow(
     * Default: current_timestamp(6)
     */
   @field:JsonProperty("updated_at") val updatedAt: LocalDateTime
-) : Tuple11<InventoryId, ProductsId, WarehousesId, Int, Int, Int, Int, Int, String?, LocalDateTime?, LocalDateTime> {
+) : Tuple11<InventoryId, ProductsId, WarehousesId, Int, Int, Int, Int, Int, kotlin.String?, LocalDateTime?, LocalDateTime> {
   override fun _1(): InventoryId = inventoryId
 
   override fun _10(): LocalDateTime? = lastCountedAt
@@ -86,7 +84,7 @@ data class InventoryRow(
 
   override fun _8(): Int = reorderQuantity
 
-  override fun _9(): String? = binLocation
+  override fun _9(): kotlin.String? = binLocation
 
   fun id(): InventoryId = inventoryId
 
@@ -96,12 +94,12 @@ data class InventoryRow(
     quantityOnOrder: Defaulted<Int> = Defaulted.Provided(this.quantityOnOrder),
     reorderPoint: Defaulted<Int> = Defaulted.Provided(this.reorderPoint),
     reorderQuantity: Defaulted<Int> = Defaulted.Provided(this.reorderQuantity),
-    binLocation: Defaulted<String?> = Defaulted.Provided(this.binLocation),
+    binLocation: Defaulted<kotlin.String?> = Defaulted.Provided(this.binLocation),
     lastCountedAt: Defaulted<LocalDateTime?> = Defaulted.Provided(this.lastCountedAt),
     updatedAt: Defaulted<LocalDateTime> = Defaulted.Provided(this.updatedAt)
   ): InventoryRowUnsaved = InventoryRowUnsaved(productId, warehouseId, quantityOnHand, quantityReserved, quantityOnOrder, reorderPoint, reorderQuantity, binLocation, lastCountedAt, updatedAt)
 
   companion object {
-    val _rowParser: RowParser<InventoryRow> = RowParsers.of(InventoryId.mariaType, ProductsId.mariaType, WarehousesId.mariaType, KotlinDbTypes.MariaTypes.int_, KotlinDbTypes.MariaTypes.int_, KotlinDbTypes.MariaTypes.int_, KotlinDbTypes.MariaTypes.int_, KotlinDbTypes.MariaTypes.int_, MariaTypes.varchar.nullable(), MariaTypes.datetime.nullable(), MariaTypes.datetime, { t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10 -> InventoryRow(t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10) }, { row -> arrayOf<Any?>(row.inventoryId, row.productId, row.warehouseId, row.quantityOnHand, row.quantityReserved, row.quantityOnOrder, row.reorderPoint, row.reorderQuantity, row.binLocation, row.lastCountedAt, row.updatedAt) })
+    val rowCodec: RowCodec<InventoryRow> = RowCodecs.of(InventoryId.mariaType, ProductsId.mariaType, WarehousesId.mariaType, MariaTypes.int_, MariaTypes.int_, MariaTypes.int_, MariaTypes.int_, MariaTypes.int_, MariaTypes.varchar.opt(), MariaTypes.datetime.opt(), MariaTypes.datetime, { t0: InventoryId, t1: ProductsId, t2: WarehousesId, t3: Int, t4: Int, t5: Int, t6: Int, t7: Int, t8: kotlin.String?, t9: LocalDateTime?, t10: LocalDateTime -> InventoryRow(t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10) }, { row: InventoryRow -> arrayOf<Any?>(row.inventoryId, row.productId, row.warehouseId, row.quantityOnHand, row.quantityReserved, row.quantityOnOrder, row.reorderPoint, row.reorderQuantity, row.binLocation, row.lastCountedAt, row.updatedAt) })
   }
 }

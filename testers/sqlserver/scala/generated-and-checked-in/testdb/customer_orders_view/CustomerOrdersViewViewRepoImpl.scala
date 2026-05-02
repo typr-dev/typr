@@ -5,17 +5,17 @@
  */
 package testdb.customer_orders_view
 
-import dev.typr.foundations.scala.Dialect
-import dev.typr.foundations.scala.SelectBuilder
-import java.sql.Connection
-import dev.typr.foundations.scala.Fragment.sql
+import dev.typr.dslsc.Dialect
+import dev.typr.dslsc.SelectBuilder
+import dev.typr.foundationssc.ConnectionRead
+import dev.typr.foundationssc.Fragment.sql
 
 class CustomerOrdersViewViewRepoImpl extends CustomerOrdersViewViewRepo {
-  override def select: SelectBuilder[CustomerOrdersViewViewFields, CustomerOrdersViewViewRow] = SelectBuilder.of("[customer_orders_view]", CustomerOrdersViewViewFields.structure, CustomerOrdersViewViewRow.`_rowParser`, Dialect.SQLSERVER)
+  override def select: SelectBuilder[CustomerOrdersViewViewFields, CustomerOrdersViewViewRow] = SelectBuilder.of("[customer_orders_view]", CustomerOrdersViewViewFields.structure, CustomerOrdersViewViewRow.rowCodec, Dialect.SQLSERVER)
 
-  override def selectAll(using c: Connection): List[CustomerOrdersViewViewRow] = {
+  override def selectAll(using c: ConnectionRead): List[CustomerOrdersViewViewRow] = {
     sql"""select [customer_id], [customer_name], [customer_email], [order_id], [order_date], [order_total]
     from [customer_orders_view]
-    """.query(CustomerOrdersViewViewRow.`_rowParser`.all()).runUnchecked(c)
+    """.query(CustomerOrdersViewViewRow.rowCodec.all()).run(using c)
   }
 }

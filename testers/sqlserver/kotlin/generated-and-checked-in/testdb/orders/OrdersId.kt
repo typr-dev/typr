@@ -6,9 +6,9 @@
 package testdb.orders
 
 import com.fasterxml.jackson.annotation.JsonValue
-import dev.typr.foundations.SqlServerType
-import dev.typr.foundations.kotlin.Bijection
-import dev.typr.foundations.kotlin.KotlinDbTypes
+import dev.typr.foundationskt.Bijection
+import dev.typr.foundationskt.SqlServerType
+import dev.typr.foundationskt.SqlServerTypes
 
 /** Type for the primary key of table `orders` */
 data class OrdersId(@field:JsonValue val value: Int) {
@@ -21,6 +21,6 @@ data class OrdersId(@field:JsonValue val value: Int) {
       Bijection.of(OrdersId::value, ::OrdersId)
 
     val sqlServerType: SqlServerType<OrdersId> =
-      KotlinDbTypes.SqlServerTypes.int_.bimap(::OrdersId, OrdersId::value)
+      SqlServerTypes.int_.to(Bijection.of(::OrdersId, OrdersId::value))
   }
 }

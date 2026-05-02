@@ -6,25 +6,25 @@
 package adventureworks.production.unitmeasure
 
 import com.fasterxml.jackson.annotation.JsonValue
-import dev.typr.foundations.PgType
-import dev.typr.foundations.PgTypes
-import dev.typr.foundations.internal.arrayMap
-import dev.typr.foundations.kotlin.Bijection
+import dev.typr.foundationskt.Bijection
+import dev.typr.foundationskt.PgType
+import dev.typr.foundationskt.PgTypes
+import kotlin.collections.List
 
 /** Type for the primary key of table `production.unitmeasure` */
-data class UnitmeasureId(@field:JsonValue val value: String) {
+data class UnitmeasureId(@field:JsonValue val value: kotlin.String) {
   override fun toString(): kotlin.String {
-    return value.toString()
+    return value
   }
 
   companion object {
-    val bijection: Bijection<UnitmeasureId, String> =
+    val bijection: Bijection<UnitmeasureId, kotlin.String> =
       Bijection.of(UnitmeasureId::value, ::UnitmeasureId)
 
     val pgType: PgType<UnitmeasureId> =
-      PgTypes.bpchar.bimap(::UnitmeasureId, UnitmeasureId::value)
+      PgTypes.bpchar.to(Bijection.of(::UnitmeasureId, UnitmeasureId::value))
 
-    val pgTypeArray: PgType<Array<UnitmeasureId>> =
-      PgTypes.bpcharArray.bimap({ xs -> arrayMap.map(xs, ::UnitmeasureId, UnitmeasureId::class.java) }, { xs -> arrayMap.map(xs, UnitmeasureId::value, String::class.java) })
+    val pgTypeArray: PgType<List<UnitmeasureId>> =
+      pgType.array()
   }
 }

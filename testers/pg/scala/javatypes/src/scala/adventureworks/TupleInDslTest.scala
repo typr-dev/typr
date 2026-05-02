@@ -3,12 +3,12 @@ package adventureworks
 import adventureworks.humanresources.department.*
 import adventureworks.public.Name
 import dev.typr.foundations.Tuple
-import dev.typr.foundations.dsl.Bijection
+import dev.typr.foundations.Bijection
 import org.junit.Assert.*
 import org.junit.Ignore
 import org.junit.Test
 
-import java.sql.Connection
+import dev.typr.foundations.Connection
 import scala.jdk.CollectionConverters.*
 
 /** Tests for tuple IN operations using the DSL.

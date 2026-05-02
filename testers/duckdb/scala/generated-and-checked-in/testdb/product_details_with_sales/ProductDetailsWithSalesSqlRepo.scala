@@ -5,13 +5,13 @@
  */
 package testdb.product_details_with_sales
 
-import java.sql.Connection
+import dev.typr.foundationssc.ConnectionRead
 
 trait ProductDetailsWithSalesSqlRepo {
   def apply(
-    productIds: Option[Array[Int]],
+    productIds: Option[List[Int]],
     skuPattern: Option[String],
     minPrice: Option[BigDecimal],
     maxPrice: Option[BigDecimal]
-  )(using c: Connection): List[ProductDetailsWithSalesSqlRow]
+  )(using c: ConnectionRead): List[ProductDetailsWithSalesSqlRow]
 }

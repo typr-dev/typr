@@ -6,23 +6,23 @@
 package adventureworks.public
 
 import com.fasterxml.jackson.annotation.JsonValue
-import dev.typr.foundations.PgType
-import dev.typr.foundations.PgTypes
-import dev.typr.foundations.internal.arrayMap
-import dev.typr.foundations.kotlin.Bijection
+import dev.typr.foundationskt.Bijection
+import dev.typr.foundationskt.PgType
+import dev.typr.foundationskt.PgTypes
+import kotlin.collections.List
 
 /** Domain `public.OrderNumber`
   * No constraint
   */
-data class OrderNumber(@field:JsonValue val value: String) {
+data class OrderNumber(@field:JsonValue val value: kotlin.String) {
   companion object {
-    val bijection: Bijection<OrderNumber, String> =
+    val bijection: Bijection<OrderNumber, kotlin.String> =
       Bijection.of(OrderNumber::value, ::OrderNumber)
 
     val pgType: PgType<OrderNumber> =
-      PgTypes.text.bimap(::OrderNumber, OrderNumber::value).renamed("\"public\".\"OrderNumber\"")
+      PgType(PgTypes.text.to(Bijection.of(::OrderNumber, OrderNumber::value)).underlying.renamed("\"public\".\"OrderNumber\""))
 
-    val pgTypeArray: PgType<Array<OrderNumber>> =
-      PgTypes.textArray.bimap({ xs -> arrayMap.map(xs, ::OrderNumber, OrderNumber::class.java) }, { xs -> arrayMap.map(xs, OrderNumber::value, String::class.java) }).renamed("\"public\".\"OrderNumber\"[]")
+    val pgTypeArray: PgType<List<OrderNumber>> =
+      pgType.array()
   }
 }

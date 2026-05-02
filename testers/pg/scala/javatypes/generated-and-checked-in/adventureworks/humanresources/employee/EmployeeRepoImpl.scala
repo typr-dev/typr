@@ -8,158 +8,159 @@ package adventureworks.humanresources.employee
 import adventureworks.person.businessentity.BusinessentityId
 import adventureworks.userdefined.CurrentFlag
 import adventureworks.userdefined.SalariedFlag
+import dev.typr.dsl.DeleteBuilder
+import dev.typr.dsl.Dialect
+import dev.typr.dsl.SelectBuilder
+import dev.typr.dsl.UpdateBuilder
+import dev.typr.foundations.Connection
+import dev.typr.foundations.ConnectionRead
 import dev.typr.foundations.Fragment
 import dev.typr.foundations.PgTypes
-import dev.typr.foundations.dsl.DeleteBuilder
-import dev.typr.foundations.dsl.Dialect
-import dev.typr.foundations.dsl.SelectBuilder
-import dev.typr.foundations.dsl.UpdateBuilder
-import dev.typr.foundations.streamingInsert
-import java.sql.Connection
+import dev.typr.foundations.StreamingInsert
 import java.util.ArrayList
 import java.util.HashMap
 import java.util.Optional
-import dev.typr.foundations.Fragment.interpolate
+import dev.typr.foundations.Fragment.concat
 
 class EmployeeRepoImpl extends EmployeeRepo {
   override def delete: DeleteBuilder[EmployeeFields, EmployeeRow] = DeleteBuilder.of(""""humanresources"."employee"""", EmployeeFields.structure, Dialect.POSTGRESQL)
 
-  override def deleteById(businessentityid: BusinessentityId)(using c: Connection): java.lang.Boolean = interpolate(Fragment.lit("""delete from "humanresources"."employee" where "businessentityid" = """), Fragment.encode(BusinessentityId.pgType, businessentityid), Fragment.lit("")).update().runUnchecked(c) > 0
+  override def deleteById(businessentityid: BusinessentityId)(using c: Connection): java.lang.Boolean = concat(Fragment.of("""delete from "humanresources"."employee" where "businessentityid" = """), Fragment.encode(BusinessentityId.pgType, businessentityid), Fragment.of("")).update().run(c) > 0
 
-  override def deleteByIds(businessentityids: Array[BusinessentityId])(using c: Connection): Integer = {
-    interpolate(Fragment.lit("""delete
+  override def deleteByIds(businessentityids: java.util.List[BusinessentityId])(using c: Connection): Integer = {
+    concat(Fragment.of("""delete
     from "humanresources"."employee"
-    where "businessentityid" = ANY("""), Fragment.encode(BusinessentityId.pgTypeArray, businessentityids), Fragment.lit(")"))
+    where "businessentityid" = ANY("""), Fragment.encode(BusinessentityId.pgType.array(), businessentityids), Fragment.of(")"))
       .update()
-      .runUnchecked(c)
+      .run(c)
   }
 
   override def insert(unsaved: EmployeeRow)(using c: Connection): EmployeeRow = {
-  interpolate(Fragment.lit("""insert into "humanresources"."employee"("businessentityid", "nationalidnumber", "loginid", "jobtitle", "birthdate", "maritalstatus", "gender", "hiredate", "salariedflag", "vacationhours", "sickleavehours", "currentflag", "rowguid", "modifieddate", "organizationnode")
-    values ("""), Fragment.encode(BusinessentityId.pgType, unsaved.businessentityid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.text, unsaved.nationalidnumber), Fragment.lit(", "), Fragment.encode(PgTypes.text, unsaved.loginid), Fragment.lit(", "), Fragment.encode(PgTypes.text, unsaved.jobtitle), Fragment.lit(", "), Fragment.encode(PgTypes.date, unsaved.birthdate), Fragment.lit("::date, "), Fragment.encode(PgTypes.bpchar, unsaved.maritalstatus), Fragment.lit("::bpchar, "), Fragment.encode(PgTypes.bpchar, unsaved.gender), Fragment.lit("::bpchar, "), Fragment.encode(PgTypes.date, unsaved.hiredate), Fragment.lit("::date, "), Fragment.encode(SalariedFlag.pgType, unsaved.salariedflag), Fragment.lit("::bool, "), Fragment.encode(PgTypes.int2, unsaved.vacationhours), Fragment.lit("::int2, "), Fragment.encode(PgTypes.int2, unsaved.sickleavehours), Fragment.lit("::int2, "), Fragment.encode(CurrentFlag.pgType, unsaved.currentflag), Fragment.lit("::bool, "), Fragment.encode(PgTypes.uuid, unsaved.rowguid), Fragment.lit("::uuid, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp, "), Fragment.encode(PgTypes.text.opt(), unsaved.organizationnode), Fragment.lit(""")
+  concat(Fragment.of("""insert into "humanresources"."employee"("businessentityid", "nationalidnumber", "loginid", "jobtitle", "birthdate", "maritalstatus", "gender", "hiredate", "salariedflag", "vacationhours", "sickleavehours", "currentflag", "rowguid", "modifieddate", "organizationnode")
+    values ("""), Fragment.encode(BusinessentityId.pgType, unsaved.businessentityid), Fragment.of("::int4, "), Fragment.encode(PgTypes.text, unsaved.nationalidnumber), Fragment.of(", "), Fragment.encode(PgTypes.text, unsaved.loginid), Fragment.of(", "), Fragment.encode(PgTypes.text, unsaved.jobtitle), Fragment.of(", "), Fragment.encode(PgTypes.date, unsaved.birthdate), Fragment.of("::date, "), Fragment.encode(PgTypes.bpchar, unsaved.maritalstatus), Fragment.of("::bpchar, "), Fragment.encode(PgTypes.bpchar, unsaved.gender), Fragment.of("::bpchar, "), Fragment.encode(PgTypes.date, unsaved.hiredate), Fragment.of("::date, "), Fragment.encode(SalariedFlag.pgType, unsaved.salariedflag), Fragment.of("::bool, "), Fragment.encode(PgTypes.int2, unsaved.vacationhours), Fragment.of("::int2, "), Fragment.encode(PgTypes.int2, unsaved.sickleavehours), Fragment.of("::int2, "), Fragment.encode(CurrentFlag.pgType, unsaved.currentflag), Fragment.of("::bool, "), Fragment.encode(PgTypes.uuid, unsaved.rowguid), Fragment.of("::uuid, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.of("::timestamp, "), Fragment.encode(PgTypes.text.opt, unsaved.organizationnode), Fragment.of(""")
     RETURNING "businessentityid", "nationalidnumber", "loginid", "jobtitle", "birthdate", "maritalstatus", "gender", "hiredate", "salariedflag", "vacationhours", "sickleavehours", "currentflag", "rowguid", "modifieddate", "organizationnode"
     """))
-    .updateReturning(EmployeeRow.`_rowParser`.exactlyOne()).runUnchecked(c)
+    .updateReturning(EmployeeRow.rowCodec.exactlyOne()).run(c)
   }
 
   override def insert(unsaved: EmployeeRowUnsaved)(using c: Connection): EmployeeRow = {
     val columns: ArrayList[Fragment] = new ArrayList()
     val values: ArrayList[Fragment] = new ArrayList()
-    columns.add(Fragment.lit(""""businessentityid"""")): @scala.annotation.nowarn
-    values.add(interpolate(Fragment.encode(BusinessentityId.pgType, unsaved.businessentityid), Fragment.lit("::int4"))): @scala.annotation.nowarn
-    columns.add(Fragment.lit(""""nationalidnumber"""")): @scala.annotation.nowarn
-    values.add(interpolate(Fragment.encode(PgTypes.text, unsaved.nationalidnumber), Fragment.lit(""))): @scala.annotation.nowarn
-    columns.add(Fragment.lit(""""loginid"""")): @scala.annotation.nowarn
-    values.add(interpolate(Fragment.encode(PgTypes.text, unsaved.loginid), Fragment.lit(""))): @scala.annotation.nowarn
-    columns.add(Fragment.lit(""""jobtitle"""")): @scala.annotation.nowarn
-    values.add(interpolate(Fragment.encode(PgTypes.text, unsaved.jobtitle), Fragment.lit(""))): @scala.annotation.nowarn
-    columns.add(Fragment.lit(""""birthdate"""")): @scala.annotation.nowarn
-    values.add(interpolate(Fragment.encode(PgTypes.date, unsaved.birthdate), Fragment.lit("::date"))): @scala.annotation.nowarn
-    columns.add(Fragment.lit(""""maritalstatus"""")): @scala.annotation.nowarn
-    values.add(interpolate(Fragment.encode(PgTypes.bpchar, unsaved.maritalstatus), Fragment.lit("::bpchar"))): @scala.annotation.nowarn
-    columns.add(Fragment.lit(""""gender"""")): @scala.annotation.nowarn
-    values.add(interpolate(Fragment.encode(PgTypes.bpchar, unsaved.gender), Fragment.lit("::bpchar"))): @scala.annotation.nowarn
-    columns.add(Fragment.lit(""""hiredate"""")): @scala.annotation.nowarn
-    values.add(interpolate(Fragment.encode(PgTypes.date, unsaved.hiredate), Fragment.lit("::date"))): @scala.annotation.nowarn
+    columns.add(Fragment.of(""""businessentityid"""")): @scala.annotation.nowarn
+    values.add(concat(Fragment.encode(BusinessentityId.pgType, unsaved.businessentityid), Fragment.of("::int4"))): @scala.annotation.nowarn
+    columns.add(Fragment.of(""""nationalidnumber"""")): @scala.annotation.nowarn
+    values.add(concat(Fragment.encode(PgTypes.text, unsaved.nationalidnumber), Fragment.of(""))): @scala.annotation.nowarn
+    columns.add(Fragment.of(""""loginid"""")): @scala.annotation.nowarn
+    values.add(concat(Fragment.encode(PgTypes.text, unsaved.loginid), Fragment.of(""))): @scala.annotation.nowarn
+    columns.add(Fragment.of(""""jobtitle"""")): @scala.annotation.nowarn
+    values.add(concat(Fragment.encode(PgTypes.text, unsaved.jobtitle), Fragment.of(""))): @scala.annotation.nowarn
+    columns.add(Fragment.of(""""birthdate"""")): @scala.annotation.nowarn
+    values.add(concat(Fragment.encode(PgTypes.date, unsaved.birthdate), Fragment.of("::date"))): @scala.annotation.nowarn
+    columns.add(Fragment.of(""""maritalstatus"""")): @scala.annotation.nowarn
+    values.add(concat(Fragment.encode(PgTypes.bpchar, unsaved.maritalstatus), Fragment.of("::bpchar"))): @scala.annotation.nowarn
+    columns.add(Fragment.of(""""gender"""")): @scala.annotation.nowarn
+    values.add(concat(Fragment.encode(PgTypes.bpchar, unsaved.gender), Fragment.of("::bpchar"))): @scala.annotation.nowarn
+    columns.add(Fragment.of(""""hiredate"""")): @scala.annotation.nowarn
+    values.add(concat(Fragment.encode(PgTypes.date, unsaved.hiredate), Fragment.of("::date"))): @scala.annotation.nowarn
     unsaved.salariedflag.visit(
       {  },
-      value => { columns.add(Fragment.lit(""""salariedflag"""")): @scala.annotation.nowarn; values.add(interpolate(Fragment.encode(SalariedFlag.pgType, value), Fragment.lit("::bool"))): @scala.annotation.nowarn }
+      value => { columns.add(Fragment.of(""""salariedflag"""")): @scala.annotation.nowarn; values.add(concat(Fragment.encode(SalariedFlag.pgType, value), Fragment.of("::bool"))): @scala.annotation.nowarn }
     );
     unsaved.vacationhours.visit(
       {  },
-      value => { columns.add(Fragment.lit(""""vacationhours"""")): @scala.annotation.nowarn; values.add(interpolate(Fragment.encode(PgTypes.int2, value), Fragment.lit("::int2"))): @scala.annotation.nowarn }
+      value => { columns.add(Fragment.of(""""vacationhours"""")): @scala.annotation.nowarn; values.add(concat(Fragment.encode(PgTypes.int2, value), Fragment.of("::int2"))): @scala.annotation.nowarn }
     );
     unsaved.sickleavehours.visit(
       {  },
-      value => { columns.add(Fragment.lit(""""sickleavehours"""")): @scala.annotation.nowarn; values.add(interpolate(Fragment.encode(PgTypes.int2, value), Fragment.lit("::int2"))): @scala.annotation.nowarn }
+      value => { columns.add(Fragment.of(""""sickleavehours"""")): @scala.annotation.nowarn; values.add(concat(Fragment.encode(PgTypes.int2, value), Fragment.of("::int2"))): @scala.annotation.nowarn }
     );
     unsaved.currentflag.visit(
       {  },
-      value => { columns.add(Fragment.lit(""""currentflag"""")): @scala.annotation.nowarn; values.add(interpolate(Fragment.encode(CurrentFlag.pgType, value), Fragment.lit("::bool"))): @scala.annotation.nowarn }
+      value => { columns.add(Fragment.of(""""currentflag"""")): @scala.annotation.nowarn; values.add(concat(Fragment.encode(CurrentFlag.pgType, value), Fragment.of("::bool"))): @scala.annotation.nowarn }
     );
     unsaved.rowguid.visit(
       {  },
-      value => { columns.add(Fragment.lit(""""rowguid"""")): @scala.annotation.nowarn; values.add(interpolate(Fragment.encode(PgTypes.uuid, value), Fragment.lit("::uuid"))): @scala.annotation.nowarn }
+      value => { columns.add(Fragment.of(""""rowguid"""")): @scala.annotation.nowarn; values.add(concat(Fragment.encode(PgTypes.uuid, value), Fragment.of("::uuid"))): @scala.annotation.nowarn }
     );
     unsaved.modifieddate.visit(
       {  },
-      value => { columns.add(Fragment.lit(""""modifieddate"""")): @scala.annotation.nowarn; values.add(interpolate(Fragment.encode(PgTypes.timestamp, value), Fragment.lit("::timestamp"))): @scala.annotation.nowarn }
+      value => { columns.add(Fragment.of(""""modifieddate"""")): @scala.annotation.nowarn; values.add(concat(Fragment.encode(PgTypes.timestamp, value), Fragment.of("::timestamp"))): @scala.annotation.nowarn }
     );
     unsaved.organizationnode.visit(
       {  },
-      value => { columns.add(Fragment.lit(""""organizationnode"""")): @scala.annotation.nowarn; values.add(interpolate(Fragment.encode(PgTypes.text.opt(), value), Fragment.lit(""))): @scala.annotation.nowarn }
+      value => { columns.add(Fragment.of(""""organizationnode"""")): @scala.annotation.nowarn; values.add(concat(Fragment.encode(PgTypes.text.opt, value), Fragment.of(""))): @scala.annotation.nowarn }
     );
     val q: Fragment = {
-      interpolate(Fragment.lit("""insert into "humanresources"."employee"("""), Fragment.comma(columns), Fragment.lit(""")
-      values ("""), Fragment.comma(values), Fragment.lit(""")
+      concat(Fragment.of("""insert into "humanresources"."employee"("""), Fragment.comma(columns), Fragment.of(""")
+      values ("""), Fragment.comma(values), Fragment.of(""")
       RETURNING "businessentityid", "nationalidnumber", "loginid", "jobtitle", "birthdate", "maritalstatus", "gender", "hiredate", "salariedflag", "vacationhours", "sickleavehours", "currentflag", "rowguid", "modifieddate", "organizationnode"
       """))
     }
-    return q.updateReturning(EmployeeRow.`_rowParser`.exactlyOne()).runUnchecked(c)
+    return q.updateReturning(EmployeeRow.rowCodec.exactlyOne()).run(c)
   }
 
   override def insertStreaming(
     unsaved: java.util.Iterator[EmployeeRow],
     batchSize: Integer = 10000
-  )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "humanresources"."employee"("businessentityid", "nationalidnumber", "loginid", "jobtitle", "birthdate", "maritalstatus", "gender", "hiredate", "salariedflag", "vacationhours", "sickleavehours", "currentflag", "rowguid", "modifieddate", "organizationnode") FROM STDIN""", batchSize, unsaved, c, EmployeeRow.pgText)
+  )(using c: Connection): java.lang.Long = StreamingInsert.of(s"""COPY "humanresources"."employee"("businessentityid", "nationalidnumber", "loginid", "jobtitle", "birthdate", "maritalstatus", "gender", "hiredate", "salariedflag", "vacationhours", "sickleavehours", "currentflag", "rowguid", "modifieddate", "organizationnode") FROM STDIN""", batchSize, unsaved, EmployeeRow.pgText).run(c)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
   override def insertUnsavedStreaming(
     unsaved: java.util.Iterator[EmployeeRowUnsaved],
     batchSize: Integer = 10000
-  )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "humanresources"."employee"("businessentityid", "nationalidnumber", "loginid", "jobtitle", "birthdate", "maritalstatus", "gender", "hiredate", "salariedflag", "vacationhours", "sickleavehours", "currentflag", "rowguid", "modifieddate", "organizationnode") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved, c, EmployeeRowUnsaved.pgText)
+  )(using c: Connection): java.lang.Long = StreamingInsert.of(s"""COPY "humanresources"."employee"("businessentityid", "nationalidnumber", "loginid", "jobtitle", "birthdate", "maritalstatus", "gender", "hiredate", "salariedflag", "vacationhours", "sickleavehours", "currentflag", "rowguid", "modifieddate", "organizationnode") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved, EmployeeRowUnsaved.pgText).run(c)
 
-  override def select: SelectBuilder[EmployeeFields, EmployeeRow] = SelectBuilder.of(""""humanresources"."employee"""", EmployeeFields.structure, EmployeeRow.`_rowParser`, Dialect.POSTGRESQL)
+  override def select: SelectBuilder[EmployeeFields, EmployeeRow] = SelectBuilder.of(""""humanresources"."employee"""", EmployeeFields.structure, EmployeeRow.rowCodec, Dialect.POSTGRESQL)
 
-  override def selectAll(using c: Connection): java.util.List[EmployeeRow] = {
-    interpolate(Fragment.lit("""select "businessentityid", "nationalidnumber", "loginid", "jobtitle", "birthdate", "maritalstatus", "gender", "hiredate", "salariedflag", "vacationhours", "sickleavehours", "currentflag", "rowguid", "modifieddate", "organizationnode"
+  override def selectAll(using c: ConnectionRead): java.util.List[EmployeeRow] = {
+    concat(Fragment.of("""select "businessentityid", "nationalidnumber", "loginid", "jobtitle", "birthdate", "maritalstatus", "gender", "hiredate", "salariedflag", "vacationhours", "sickleavehours", "currentflag", "rowguid", "modifieddate", "organizationnode"
     from "humanresources"."employee"
-    """)).query(EmployeeRow.`_rowParser`.all()).runUnchecked(c)
+    """)).query(EmployeeRow.rowCodec.all()).run(c)
   }
 
-  override def selectById(businessentityid: BusinessentityId)(using c: Connection): Optional[EmployeeRow] = {
-    interpolate(Fragment.lit("""select "businessentityid", "nationalidnumber", "loginid", "jobtitle", "birthdate", "maritalstatus", "gender", "hiredate", "salariedflag", "vacationhours", "sickleavehours", "currentflag", "rowguid", "modifieddate", "organizationnode"
+  override def selectById(businessentityid: BusinessentityId)(using c: ConnectionRead): Optional[EmployeeRow] = {
+    concat(Fragment.of("""select "businessentityid", "nationalidnumber", "loginid", "jobtitle", "birthdate", "maritalstatus", "gender", "hiredate", "salariedflag", "vacationhours", "sickleavehours", "currentflag", "rowguid", "modifieddate", "organizationnode"
     from "humanresources"."employee"
-    where "businessentityid" = """), Fragment.encode(BusinessentityId.pgType, businessentityid), Fragment.lit("")).query(EmployeeRow.`_rowParser`.first()).runUnchecked(c)
+    where "businessentityid" = """), Fragment.encode(BusinessentityId.pgType, businessentityid), Fragment.of("")).query(EmployeeRow.rowCodec.first()).run(c)
   }
 
-  override def selectByIds(businessentityids: Array[BusinessentityId])(using c: Connection): java.util.List[EmployeeRow] = {
-    interpolate(Fragment.lit("""select "businessentityid", "nationalidnumber", "loginid", "jobtitle", "birthdate", "maritalstatus", "gender", "hiredate", "salariedflag", "vacationhours", "sickleavehours", "currentflag", "rowguid", "modifieddate", "organizationnode"
+  override def selectByIds(businessentityids: java.util.List[BusinessentityId])(using c: ConnectionRead): java.util.List[EmployeeRow] = {
+    concat(Fragment.of("""select "businessentityid", "nationalidnumber", "loginid", "jobtitle", "birthdate", "maritalstatus", "gender", "hiredate", "salariedflag", "vacationhours", "sickleavehours", "currentflag", "rowguid", "modifieddate", "organizationnode"
     from "humanresources"."employee"
-    where "businessentityid" = ANY("""), Fragment.encode(BusinessentityId.pgTypeArray, businessentityids), Fragment.lit(")")).query(EmployeeRow.`_rowParser`.all()).runUnchecked(c)
+    where "businessentityid" = ANY("""), Fragment.encode(BusinessentityId.pgType.array(), businessentityids), Fragment.of(")")).query(EmployeeRow.rowCodec.all()).run(c)
   }
 
-  override def selectByIdsTracked(businessentityids: Array[BusinessentityId])(using c: Connection): java.util.Map[BusinessentityId, EmployeeRow] = {
+  override def selectByIdsTracked(businessentityids: java.util.List[BusinessentityId])(using c: ConnectionRead): java.util.Map[BusinessentityId, EmployeeRow] = {
     val ret: HashMap[BusinessentityId, EmployeeRow] = new HashMap[BusinessentityId, EmployeeRow]()
     selectByIds(businessentityids)(using c).forEach(row => ret.put(row.businessentityid, row): @scala.annotation.nowarn)
     return ret
   }
 
-  override def update: UpdateBuilder[EmployeeFields, EmployeeRow] = UpdateBuilder.of(""""humanresources"."employee"""", EmployeeFields.structure, EmployeeRow.`_rowParser`, Dialect.POSTGRESQL)
+  override def update: UpdateBuilder[EmployeeFields, EmployeeRow] = UpdateBuilder.of(""""humanresources"."employee"""", EmployeeFields.structure, EmployeeRow.rowCodec, Dialect.POSTGRESQL)
 
   override def update(row: EmployeeRow)(using c: Connection): java.lang.Boolean = {
     val businessentityid: BusinessentityId = row.businessentityid
-    return interpolate(Fragment.lit("""update "humanresources"."employee"
-    set "nationalidnumber" = """), Fragment.encode(PgTypes.text, row.nationalidnumber), Fragment.lit(""",
-    "loginid" = """), Fragment.encode(PgTypes.text, row.loginid), Fragment.lit(""",
-    "jobtitle" = """), Fragment.encode(PgTypes.text, row.jobtitle), Fragment.lit(""",
-    "birthdate" = """), Fragment.encode(PgTypes.date, row.birthdate), Fragment.lit("""::date,
-    "maritalstatus" = """), Fragment.encode(PgTypes.bpchar, row.maritalstatus), Fragment.lit("""::bpchar,
-    "gender" = """), Fragment.encode(PgTypes.bpchar, row.gender), Fragment.lit("""::bpchar,
-    "hiredate" = """), Fragment.encode(PgTypes.date, row.hiredate), Fragment.lit("""::date,
-    "salariedflag" = """), Fragment.encode(SalariedFlag.pgType, row.salariedflag), Fragment.lit("""::bool,
-    "vacationhours" = """), Fragment.encode(PgTypes.int2, row.vacationhours), Fragment.lit("""::int2,
-    "sickleavehours" = """), Fragment.encode(PgTypes.int2, row.sickleavehours), Fragment.lit("""::int2,
-    "currentflag" = """), Fragment.encode(CurrentFlag.pgType, row.currentflag), Fragment.lit("""::bool,
-    "rowguid" = """), Fragment.encode(PgTypes.uuid, row.rowguid), Fragment.lit("""::uuid,
-    "modifieddate" = """), Fragment.encode(PgTypes.timestamp, row.modifieddate), Fragment.lit("""::timestamp,
-    "organizationnode" = """), Fragment.encode(PgTypes.text.opt(), row.organizationnode), Fragment.lit("""
-    where "businessentityid" = """), Fragment.encode(BusinessentityId.pgType, businessentityid), Fragment.lit("")).update().runUnchecked(c) > 0
+    return concat(Fragment.of("""update "humanresources"."employee"
+    set "nationalidnumber" = """), Fragment.encode(PgTypes.text, row.nationalidnumber), Fragment.of(""",
+    "loginid" = """), Fragment.encode(PgTypes.text, row.loginid), Fragment.of(""",
+    "jobtitle" = """), Fragment.encode(PgTypes.text, row.jobtitle), Fragment.of(""",
+    "birthdate" = """), Fragment.encode(PgTypes.date, row.birthdate), Fragment.of("""::date,
+    "maritalstatus" = """), Fragment.encode(PgTypes.bpchar, row.maritalstatus), Fragment.of("""::bpchar,
+    "gender" = """), Fragment.encode(PgTypes.bpchar, row.gender), Fragment.of("""::bpchar,
+    "hiredate" = """), Fragment.encode(PgTypes.date, row.hiredate), Fragment.of("""::date,
+    "salariedflag" = """), Fragment.encode(SalariedFlag.pgType, row.salariedflag), Fragment.of("""::bool,
+    "vacationhours" = """), Fragment.encode(PgTypes.int2, row.vacationhours), Fragment.of("""::int2,
+    "sickleavehours" = """), Fragment.encode(PgTypes.int2, row.sickleavehours), Fragment.of("""::int2,
+    "currentflag" = """), Fragment.encode(CurrentFlag.pgType, row.currentflag), Fragment.of("""::bool,
+    "rowguid" = """), Fragment.encode(PgTypes.uuid, row.rowguid), Fragment.of("""::uuid,
+    "modifieddate" = """), Fragment.encode(PgTypes.timestamp, row.modifieddate), Fragment.of("""::timestamp,
+    "organizationnode" = """), Fragment.encode(PgTypes.text.opt, row.organizationnode), Fragment.of("""
+    where "businessentityid" = """), Fragment.encode(BusinessentityId.pgType, businessentityid), Fragment.of("")).update().run(c) > 0
   }
 
   override def upsert(unsaved: EmployeeRow)(using c: Connection): EmployeeRow = {
-  interpolate(Fragment.lit("""insert into "humanresources"."employee"("businessentityid", "nationalidnumber", "loginid", "jobtitle", "birthdate", "maritalstatus", "gender", "hiredate", "salariedflag", "vacationhours", "sickleavehours", "currentflag", "rowguid", "modifieddate", "organizationnode")
-    values ("""), Fragment.encode(BusinessentityId.pgType, unsaved.businessentityid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.text, unsaved.nationalidnumber), Fragment.lit(", "), Fragment.encode(PgTypes.text, unsaved.loginid), Fragment.lit(", "), Fragment.encode(PgTypes.text, unsaved.jobtitle), Fragment.lit(", "), Fragment.encode(PgTypes.date, unsaved.birthdate), Fragment.lit("::date, "), Fragment.encode(PgTypes.bpchar, unsaved.maritalstatus), Fragment.lit("::bpchar, "), Fragment.encode(PgTypes.bpchar, unsaved.gender), Fragment.lit("::bpchar, "), Fragment.encode(PgTypes.date, unsaved.hiredate), Fragment.lit("::date, "), Fragment.encode(SalariedFlag.pgType, unsaved.salariedflag), Fragment.lit("::bool, "), Fragment.encode(PgTypes.int2, unsaved.vacationhours), Fragment.lit("::int2, "), Fragment.encode(PgTypes.int2, unsaved.sickleavehours), Fragment.lit("::int2, "), Fragment.encode(CurrentFlag.pgType, unsaved.currentflag), Fragment.lit("::bool, "), Fragment.encode(PgTypes.uuid, unsaved.rowguid), Fragment.lit("::uuid, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp, "), Fragment.encode(PgTypes.text.opt(), unsaved.organizationnode), Fragment.lit(""")
+  concat(Fragment.of("""insert into "humanresources"."employee"("businessentityid", "nationalidnumber", "loginid", "jobtitle", "birthdate", "maritalstatus", "gender", "hiredate", "salariedflag", "vacationhours", "sickleavehours", "currentflag", "rowguid", "modifieddate", "organizationnode")
+    values ("""), Fragment.encode(BusinessentityId.pgType, unsaved.businessentityid), Fragment.of("::int4, "), Fragment.encode(PgTypes.text, unsaved.nationalidnumber), Fragment.of(", "), Fragment.encode(PgTypes.text, unsaved.loginid), Fragment.of(", "), Fragment.encode(PgTypes.text, unsaved.jobtitle), Fragment.of(", "), Fragment.encode(PgTypes.date, unsaved.birthdate), Fragment.of("::date, "), Fragment.encode(PgTypes.bpchar, unsaved.maritalstatus), Fragment.of("::bpchar, "), Fragment.encode(PgTypes.bpchar, unsaved.gender), Fragment.of("::bpchar, "), Fragment.encode(PgTypes.date, unsaved.hiredate), Fragment.of("::date, "), Fragment.encode(SalariedFlag.pgType, unsaved.salariedflag), Fragment.of("::bool, "), Fragment.encode(PgTypes.int2, unsaved.vacationhours), Fragment.of("::int2, "), Fragment.encode(PgTypes.int2, unsaved.sickleavehours), Fragment.of("::int2, "), Fragment.encode(CurrentFlag.pgType, unsaved.currentflag), Fragment.of("::bool, "), Fragment.encode(PgTypes.uuid, unsaved.rowguid), Fragment.of("::uuid, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.of("::timestamp, "), Fragment.encode(PgTypes.text.opt, unsaved.organizationnode), Fragment.of(""")
     on conflict ("businessentityid")
     do update set
       "nationalidnumber" = EXCLUDED."nationalidnumber",
@@ -177,12 +178,12 @@ class EmployeeRepoImpl extends EmployeeRepo {
     "modifieddate" = EXCLUDED."modifieddate",
     "organizationnode" = EXCLUDED."organizationnode"
     returning "businessentityid", "nationalidnumber", "loginid", "jobtitle", "birthdate", "maritalstatus", "gender", "hiredate", "salariedflag", "vacationhours", "sickleavehours", "currentflag", "rowguid", "modifieddate", "organizationnode""""))
-    .updateReturning(EmployeeRow.`_rowParser`.exactlyOne())
-    .runUnchecked(c)
+    .updateReturning(EmployeeRow.rowCodec.exactlyOne())
+    .run(c)
   }
 
   override def upsertBatch(unsaved: java.util.Iterator[EmployeeRow])(using c: Connection): java.util.List[EmployeeRow] = {
-    interpolate(Fragment.lit("""insert into "humanresources"."employee"("businessentityid", "nationalidnumber", "loginid", "jobtitle", "birthdate", "maritalstatus", "gender", "hiredate", "salariedflag", "vacationhours", "sickleavehours", "currentflag", "rowguid", "modifieddate", "organizationnode")
+    concat(Fragment.of("""insert into "humanresources"."employee"("businessentityid", "nationalidnumber", "loginid", "jobtitle", "birthdate", "maritalstatus", "gender", "hiredate", "salariedflag", "vacationhours", "sickleavehours", "currentflag", "rowguid", "modifieddate", "organizationnode")
     values (?::int4, ?, ?, ?, ?::date, ?::bpchar, ?::bpchar, ?::date, ?::bool, ?::int2, ?::int2, ?::bool, ?::uuid, ?::timestamp, ?)
     on conflict ("businessentityid")
     do update set
@@ -201,8 +202,8 @@ class EmployeeRepoImpl extends EmployeeRepo {
     "modifieddate" = EXCLUDED."modifieddate",
     "organizationnode" = EXCLUDED."organizationnode"
     returning "businessentityid", "nationalidnumber", "loginid", "jobtitle", "birthdate", "maritalstatus", "gender", "hiredate", "salariedflag", "vacationhours", "sickleavehours", "currentflag", "rowguid", "modifieddate", "organizationnode""""))
-      .updateManyReturning(EmployeeRow.`_rowParser`, unsaved)
-    .runUnchecked(c)
+      .updateManyReturning(EmployeeRow.rowCodec, unsaved)
+    .run(c)
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
@@ -210,9 +211,9 @@ class EmployeeRepoImpl extends EmployeeRepo {
     unsaved: java.util.Iterator[EmployeeRow],
     batchSize: Integer = 10000
   )(using c: Connection): Integer = {
-    interpolate(Fragment.lit("""create temporary table employee_TEMP (like "humanresources"."employee") on commit drop""")).update().runUnchecked(c): @scala.annotation.nowarn
-    streamingInsert.insertUnchecked(s"""copy employee_TEMP("businessentityid", "nationalidnumber", "loginid", "jobtitle", "birthdate", "maritalstatus", "gender", "hiredate", "salariedflag", "vacationhours", "sickleavehours", "currentflag", "rowguid", "modifieddate", "organizationnode") from stdin""", batchSize, unsaved, c, EmployeeRow.pgText): @scala.annotation.nowarn
-    return interpolate(Fragment.lit("""insert into "humanresources"."employee"("businessentityid", "nationalidnumber", "loginid", "jobtitle", "birthdate", "maritalstatus", "gender", "hiredate", "salariedflag", "vacationhours", "sickleavehours", "currentflag", "rowguid", "modifieddate", "organizationnode")
+    concat(Fragment.of("""create temporary table employee_TEMP (like "humanresources"."employee") on commit drop""")).update().run(c): @scala.annotation.nowarn
+    StreamingInsert.of(s"""copy employee_TEMP("businessentityid", "nationalidnumber", "loginid", "jobtitle", "birthdate", "maritalstatus", "gender", "hiredate", "salariedflag", "vacationhours", "sickleavehours", "currentflag", "rowguid", "modifieddate", "organizationnode") from stdin""", batchSize, unsaved, EmployeeRow.pgText).run(c): @scala.annotation.nowarn
+    return concat(Fragment.of("""insert into "humanresources"."employee"("businessentityid", "nationalidnumber", "loginid", "jobtitle", "birthdate", "maritalstatus", "gender", "hiredate", "salariedflag", "vacationhours", "sickleavehours", "currentflag", "rowguid", "modifieddate", "organizationnode")
     select * from employee_TEMP
     on conflict ("businessentityid")
     do update set
@@ -231,6 +232,6 @@ class EmployeeRepoImpl extends EmployeeRepo {
     "modifieddate" = EXCLUDED."modifieddate",
     "organizationnode" = EXCLUDED."organizationnode"
     ;
-    drop table employee_TEMP;""")).update().runUnchecked(c)
+    drop table employee_TEMP;""")).update().run(c)
   }
 }

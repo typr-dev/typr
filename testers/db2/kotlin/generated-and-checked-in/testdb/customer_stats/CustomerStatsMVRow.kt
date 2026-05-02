@@ -6,29 +6,28 @@
 package testdb.customer_stats
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import dev.typr.foundations.Db2Types
+import dev.typr.dslkt.RowCodecs
 import dev.typr.foundations.Tuple.Tuple4
-import dev.typr.foundations.kotlin.KotlinDbTypes
-import dev.typr.foundations.kotlin.RowParser
-import dev.typr.foundations.kotlin.RowParsers
+import dev.typr.foundationskt.Db2Types
+import dev.typr.foundationskt.RowCodec
 import java.math.BigDecimal
 
 /** Materialized View: CUSTOMER_STATS */
 data class CustomerStatsMVRow(
   @field:JsonProperty("CUSTOMER_ID") val customerId: Int,
-  @field:JsonProperty("CUSTOMER_NAME") val customerName: String,
+  @field:JsonProperty("CUSTOMER_NAME") val customerName: kotlin.String,
   @field:JsonProperty("TOTAL_ORDERS") val totalOrders: Int,
   @field:JsonProperty("TOTAL_REVENUE") val totalRevenue: BigDecimal
-) : Tuple4<Int, String, Int, BigDecimal> {
+) : Tuple4<Int, kotlin.String, Int, BigDecimal> {
   override fun _1(): Int = customerId
 
-  override fun _2(): String = customerName
+  override fun _2(): kotlin.String = customerName
 
   override fun _3(): Int = totalOrders
 
   override fun _4(): BigDecimal = totalRevenue
 
   companion object {
-    val _rowParser: RowParser<CustomerStatsMVRow> = RowParsers.of(KotlinDbTypes.Db2Types.integer, Db2Types.varchar, KotlinDbTypes.Db2Types.integer, KotlinDbTypes.Db2Types.decimal, { t0, t1, t2, t3 -> CustomerStatsMVRow(t0, t1, t2, t3) }, { row -> arrayOf<Any?>(row.customerId, row.customerName, row.totalOrders, row.totalRevenue) })
+    val rowCodec: RowCodec<CustomerStatsMVRow> = RowCodecs.of(Db2Types.integer, Db2Types.varchar, Db2Types.integer, Db2Types.decimal, { t0: Int, t1: kotlin.String, t2: Int, t3: BigDecimal -> CustomerStatsMVRow(t0, t1, t2, t3) }, { row: CustomerStatsMVRow -> arrayOf<Any?>(row.customerId, row.customerName, row.totalOrders, row.totalRevenue) })
   }
 }

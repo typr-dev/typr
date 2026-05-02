@@ -5,8 +5,9 @@
  */
 package oracledb
 
-import dev.typr.foundations.OracleType
+import dev.typr.foundations.Bijection
 import dev.typr.foundations.OracleVArray
+import dev.typr.foundationssc.OracleType
 import scala.jdk.CollectionConverters.ListHasAsScala
 import scala.jdk.CollectionConverters.SeqHasAsJava
 
@@ -14,5 +15,5 @@ import scala.jdk.CollectionConverters.SeqHasAsJava
 case class AllTypesStructNoLobsArray(value: Array[AllTypesStructNoLobs])
 
 object AllTypesStructNoLobsArray {
-  val oracleType: OracleType[AllTypesStructNoLobsArray] = OracleVArray.of("ALL_TYPES_STRUCT_NO_LOBS_ARRAY", 10, oracledb.AllTypesStructNoLobs.oracleType).bimap(list => new AllTypesStructNoLobsArray(list.asScala.toList.toArray), wrapper => wrapper.value.toList.asJava)
+  val oracleType: OracleType[AllTypesStructNoLobsArray] = OracleType(OracleVArray.of("ALL_TYPES_STRUCT_NO_LOBS_ARRAY", 10, oracledb.AllTypesStructNoLobs.oracleType.underlying).to(Bijection.of(list => new AllTypesStructNoLobsArray(list.asScala.toList.toArray), wrapper => wrapper.value.toList.asJava)))
 }

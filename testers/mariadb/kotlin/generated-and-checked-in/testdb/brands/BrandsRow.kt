@@ -6,11 +6,10 @@
 package testdb.brands
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import dev.typr.foundations.MariaTypes
+import dev.typr.dslkt.RowCodecs
 import dev.typr.foundations.Tuple.Tuple7
-import dev.typr.foundations.kotlin.RowParser
-import dev.typr.foundations.kotlin.RowParsers
-import dev.typr.foundations.kotlin.nullable
+import dev.typr.foundationskt.MariaTypes
+import dev.typr.foundationskt.RowCodec
 import testdb.customtypes.Defaulted
 import testdb.userdefined.IsActive
 
@@ -23,9 +22,9 @@ data class BrandsRow(
     */
   @field:JsonProperty("brand_id") val brandId: BrandsId,
   /**  */
-  val name: String,
+  val name: kotlin.String,
   /**  */
-  val slug: String,
+  val slug: kotlin.String,
   /** 
     * Default: NULL
     */
@@ -33,27 +32,27 @@ data class BrandsRow(
   /** 
     * Default: NULL
     */
-  @field:JsonProperty("website_url") val websiteUrl: String?,
+  @field:JsonProperty("website_url") val websiteUrl: kotlin.String?,
   /** 
     * Default: NULL
     */
-  @field:JsonProperty("country_of_origin") val countryOfOrigin: String?,
+  @field:JsonProperty("country_of_origin") val countryOfOrigin: kotlin.String?,
   /** 
     * Default: 1
     */
   @field:JsonProperty("is_active") val isActive: /* user-picked */ IsActive
-) : Tuple7<BrandsId, String, String, ByteArray?, String?, String?, /* user-picked */ IsActive> {
+) : Tuple7<BrandsId, kotlin.String, kotlin.String, ByteArray?, kotlin.String?, kotlin.String?, /* user-picked */ IsActive> {
   override fun _1(): BrandsId = brandId
 
-  override fun _2(): String = name
+  override fun _2(): kotlin.String = name
 
-  override fun _3(): String = slug
+  override fun _3(): kotlin.String = slug
 
   override fun _4(): ByteArray? = logoBlob
 
-  override fun _5(): String? = websiteUrl
+  override fun _5(): kotlin.String? = websiteUrl
 
-  override fun _6(): String? = countryOfOrigin
+  override fun _6(): kotlin.String? = countryOfOrigin
 
   override fun _7(): /* user-picked */ IsActive = isActive
 
@@ -61,12 +60,12 @@ data class BrandsRow(
 
   fun toUnsavedRow(
     logoBlob: Defaulted<ByteArray?> = Defaulted.Provided(this.logoBlob),
-    websiteUrl: Defaulted<String?> = Defaulted.Provided(this.websiteUrl),
-    countryOfOrigin: Defaulted<String?> = Defaulted.Provided(this.countryOfOrigin),
+    websiteUrl: Defaulted<kotlin.String?> = Defaulted.Provided(this.websiteUrl),
+    countryOfOrigin: Defaulted<kotlin.String?> = Defaulted.Provided(this.countryOfOrigin),
     isActive: Defaulted</* user-picked */ IsActive> = Defaulted.Provided(this.isActive)
   ): BrandsRowUnsaved = BrandsRowUnsaved(name, slug, logoBlob, websiteUrl, countryOfOrigin, isActive)
 
   companion object {
-    val _rowParser: RowParser<BrandsRow> = RowParsers.of(BrandsId.mariaType, MariaTypes.varchar, MariaTypes.varchar, MariaTypes.mediumblob.nullable(), MariaTypes.varchar.nullable(), MariaTypes.char_.nullable(), IsActive.mariaType, { t0, t1, t2, t3, t4, t5, t6 -> BrandsRow(t0, t1, t2, t3, t4, t5, t6) }, { row -> arrayOf<Any?>(row.brandId, row.name, row.slug, row.logoBlob, row.websiteUrl, row.countryOfOrigin, row.isActive) })
+    val rowCodec: RowCodec<BrandsRow> = RowCodecs.of(BrandsId.mariaType, MariaTypes.varchar, MariaTypes.varchar, MariaTypes.mediumblob.opt(), MariaTypes.varchar.opt(), MariaTypes.char_.opt(), IsActive.mariaType, { t0: BrandsId, t1: kotlin.String, t2: kotlin.String, t3: ByteArray?, t4: kotlin.String?, t5: kotlin.String?, t6: /* user-picked */ IsActive -> BrandsRow(t0, t1, t2, t3, t4, t5, t6) }, { row: BrandsRow -> arrayOf<Any?>(row.brandId, row.name, row.slug, row.logoBlob, row.websiteUrl, row.countryOfOrigin, row.isActive) })
   }
 }

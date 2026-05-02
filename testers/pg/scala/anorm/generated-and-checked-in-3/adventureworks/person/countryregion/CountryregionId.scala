@@ -21,7 +21,7 @@ object CountryregionId {
 
   given arrayToStatement: ToStatement[Array[CountryregionId]] = ToStatement.arrayToParameter(using ParameterMetaData.StringParameterMetaData).contramap(_.map(_.value))
 
-  given bijection: Bijection[CountryregionId, String] = Bijection.apply[CountryregionId, String](_.value)(CountryregionId.apply)
+  given bijection: Bijection[CountryregionId, String] = Bijection[CountryregionId, String](_.value)(CountryregionId.apply)
 
   given column: Column[CountryregionId] = Column.columnToString.map(CountryregionId.apply)
 

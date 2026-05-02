@@ -6,9 +6,9 @@
 package testdb.all_scalar_types
 
 import com.fasterxml.jackson.annotation.JsonValue
-import dev.typr.foundations.SqlServerType
-import dev.typr.foundations.kotlin.Bijection
-import dev.typr.foundations.kotlin.KotlinDbTypes
+import dev.typr.foundationskt.Bijection
+import dev.typr.foundationskt.SqlServerType
+import dev.typr.foundationskt.SqlServerTypes
 
 /** Type for the primary key of table `all_scalar_types` */
 data class AllScalarTypesId(@field:JsonValue val value: Int) {
@@ -21,6 +21,6 @@ data class AllScalarTypesId(@field:JsonValue val value: Int) {
       Bijection.of(AllScalarTypesId::value, ::AllScalarTypesId)
 
     val sqlServerType: SqlServerType<AllScalarTypesId> =
-      KotlinDbTypes.SqlServerTypes.int_.bimap(::AllScalarTypesId, AllScalarTypesId::value)
+      SqlServerTypes.int_.to(Bijection.of(::AllScalarTypesId, AllScalarTypesId::value))
   }
 }

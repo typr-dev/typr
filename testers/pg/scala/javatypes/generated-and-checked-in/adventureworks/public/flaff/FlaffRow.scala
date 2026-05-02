@@ -7,10 +7,10 @@ package adventureworks.public.flaff
 
 import adventureworks.public.ShortText
 import com.fasterxml.jackson.annotation.JsonProperty
+import dev.typr.dsl.RowCodecs
 import dev.typr.foundations.PgText
 import dev.typr.foundations.PgTypes
-import dev.typr.foundations.RowParser
-import dev.typr.foundations.RowParsers
+import dev.typr.foundations.RowCodec
 import dev.typr.foundations.Tuple.Tuple5
 import java.util.Optional
 
@@ -51,8 +51,6 @@ case class FlaffRow(
 }
 
 object FlaffRow {
-  val `_rowParser`: RowParser[FlaffRow] = RowParsers.of(ShortText.pgType, PgTypes.text, PgTypes.int4, ShortText.pgType, ShortText.pgType.opt(), FlaffRow.apply, row => Array[Any](row.code, row.anotherCode, row.someNumber, row.specifier, row.parentspecifier))
-
   def apply(
     compositeId: FlaffId,
     parentspecifier: Optional[ShortText]
@@ -66,5 +64,7 @@ object FlaffRow {
     )
   }
 
-  given pgText: PgText[FlaffRow] = PgText.from(`_rowParser`)
+  given pgText: PgText[FlaffRow] = PgText.from(rowCodec)
+
+  val rowCodec: RowCodec[FlaffRow] = RowCodecs.of(ShortText.pgType, PgTypes.text, PgTypes.int4, ShortText.pgType, ShortText.pgType.opt, FlaffRow.apply, row => Array[Any](row.code, row.anotherCode, row.someNumber, row.specifier, row.parentspecifier))
 }

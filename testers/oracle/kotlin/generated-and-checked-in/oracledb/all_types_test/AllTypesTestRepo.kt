@@ -5,10 +5,11 @@
  */
 package oracledb.all_types_test
 
-import dev.typr.foundations.kotlin.DeleteBuilder
-import dev.typr.foundations.kotlin.SelectBuilder
-import dev.typr.foundations.kotlin.UpdateBuilder
-import java.sql.Connection
+import dev.typr.dslkt.DeleteBuilder
+import dev.typr.dslkt.SelectBuilder
+import dev.typr.dslkt.UpdateBuilder
+import dev.typr.foundationskt.Connection
+import dev.typr.foundationskt.ConnectionRead
 import kotlin.collections.Iterator
 import kotlin.collections.List
 import kotlin.collections.Map
@@ -19,10 +20,10 @@ interface AllTypesTestRepo {
   abstract fun deleteById(
     id: AllTypesTestId,
     c: Connection
-  ): Boolean
+  ): kotlin.Boolean
 
   abstract fun deleteByIds(
-    ids: Array<AllTypesTestId>,
+    ids: List<AllTypesTestId>,
     c: Connection
   ): Int
 
@@ -38,21 +39,21 @@ interface AllTypesTestRepo {
 
   abstract fun select(): SelectBuilder<AllTypesTestFields, AllTypesTestRow>
 
-  abstract fun selectAll(c: Connection): List<AllTypesTestRow>
+  abstract fun selectAll(c: ConnectionRead): List<AllTypesTestRow>
 
   abstract fun selectById(
     id: AllTypesTestId,
-    c: Connection
+    c: ConnectionRead
   ): AllTypesTestRow?
 
   abstract fun selectByIds(
-    ids: Array<AllTypesTestId>,
-    c: Connection
+    ids: List<AllTypesTestId>,
+    c: ConnectionRead
   ): List<AllTypesTestRow>
 
   abstract fun selectByIdsTracked(
-    ids: Array<AllTypesTestId>,
-    c: Connection
+    ids: List<AllTypesTestId>,
+    c: ConnectionRead
   ): Map<AllTypesTestId, AllTypesTestRow>
 
   abstract fun update(): UpdateBuilder<AllTypesTestFields, AllTypesTestRow>
@@ -60,7 +61,7 @@ interface AllTypesTestRepo {
   abstract fun update(
     row: AllTypesTestRow,
     c: Connection
-  ): Boolean
+  ): kotlin.Boolean
 
   abstract fun upsert(
     unsaved: AllTypesTestRow,

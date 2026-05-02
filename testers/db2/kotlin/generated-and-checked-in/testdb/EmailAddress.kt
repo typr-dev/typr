@@ -6,19 +6,19 @@
 package testdb
 
 import com.fasterxml.jackson.annotation.JsonValue
-import dev.typr.foundations.Db2Type
-import dev.typr.foundations.Db2Types
-import dev.typr.foundations.kotlin.Bijection
+import dev.typr.foundationskt.Bijection
+import dev.typr.foundationskt.Db2Type
+import dev.typr.foundationskt.Db2Types
 
 /** Domain `EMAIL_ADDRESS`
   * No constraint
   */
-data class EmailAddress(@field:JsonValue val value: String) {
+data class EmailAddress(@field:JsonValue val value: kotlin.String) {
   companion object {
-    val bijection: Bijection<EmailAddress, String> =
+    val bijection: Bijection<EmailAddress, kotlin.String> =
       Bijection.of(EmailAddress::value, ::EmailAddress)
 
     val db2Type: Db2Type<EmailAddress> =
-      Db2Types.varchar.bimap(::EmailAddress, EmailAddress::value).renamed("\"EMAIL_ADDRESS\"")
+      Db2Type(Db2Types.varchar.to(Bijection.of(::EmailAddress, EmailAddress::value)).underlying.renamed("\"EMAIL_ADDRESS\""))
   }
 }

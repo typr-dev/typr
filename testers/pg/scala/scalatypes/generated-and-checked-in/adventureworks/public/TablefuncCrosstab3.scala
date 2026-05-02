@@ -5,11 +5,9 @@
  */
 package adventureworks.public
 
-import dev.typr.foundations.PgRead
-import dev.typr.foundations.PgStruct
-import dev.typr.foundations.PgType
-import dev.typr.foundations.PgTypes
-import scala.jdk.OptionConverters.RichOption
+import dev.typr.foundationssc.PgType
+import dev.typr.foundationssc.PgTypes
+import dev.typr.foundationssc.RowCodec
 
 /** PostgreSQL composite type: public.tablefunc_crosstab_3 */
 case class TablefuncCrosstab3(
@@ -20,9 +18,7 @@ case class TablefuncCrosstab3(
 )
 
 object TablefuncCrosstab3 {
-  given pgStruct: PgStruct[TablefuncCrosstab3] = PgStruct.builder[TablefuncCrosstab3]("public.tablefunc_crosstab_3").optField("rowName", PgTypes.text, (v: TablefuncCrosstab3) => v.rowName.asJava).optField("category1", PgTypes.text, (v: TablefuncCrosstab3) => v.category1.asJava).optField("category2", PgTypes.text, (v: TablefuncCrosstab3) => v.category2.asJava).optField("category3", PgTypes.text, (v: TablefuncCrosstab3) => v.category3.asJava).build(arr => TablefuncCrosstab3(rowName = Option(arr(0).asInstanceOf[String]), category1 = Option(arr(1).asInstanceOf[String]), category2 = Option(arr(2).asInstanceOf[String]), category3 = Option(arr(3).asInstanceOf[String])))
+  given pgType: PgType[TablefuncCrosstab3] = PgTypes.compositeOf("public.tablefunc_crosstab_3", RowCodec.namedBuilder[TablefuncCrosstab3]().field("rowName", PgTypes.text.opt)((v: TablefuncCrosstab3) => v.rowName).field("category1", PgTypes.text.opt)((v: TablefuncCrosstab3) => v.category1).field("category2", PgTypes.text.opt)((v: TablefuncCrosstab3) => v.category2).field("category3", PgTypes.text.opt)((v: TablefuncCrosstab3) => v.category3).build((t0, t1, t2, t3) => TablefuncCrosstab3(rowName = t0, category1 = t1, category2 = t2, category3 = t3)))
 
-  given pgType: PgType[TablefuncCrosstab3] = pgStruct.asType()
-
-  given pgTypeArray: PgType[Array[TablefuncCrosstab3]] = pgType.array(PgRead.readCompositeArray(pgType.pgCompositeText(), n => new Array[TablefuncCrosstab3](n)), n => new Array[TablefuncCrosstab3](n))
+  given pgTypeArray: PgType[scala.collection.immutable.List[TablefuncCrosstab3]] = pgType.array
 }

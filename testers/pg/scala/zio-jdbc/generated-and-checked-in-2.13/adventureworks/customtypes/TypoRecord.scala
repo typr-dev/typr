@@ -53,7 +53,7 @@ object TypoRecord {
     )
   }
 
-  implicit lazy val bijection: Bijection[TypoRecord, String] = Bijection.apply[TypoRecord, String](_.value)(TypoRecord.apply)
+  implicit lazy val bijection: Bijection[TypoRecord, String] = Bijection[TypoRecord, String](_.value)(TypoRecord.apply)
 
   implicit lazy val jdbcDecoder: JdbcDecoder[TypoRecord] = {
     JdbcDecoder[TypoRecord](

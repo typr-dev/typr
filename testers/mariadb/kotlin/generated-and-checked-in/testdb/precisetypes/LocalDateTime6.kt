@@ -6,16 +6,16 @@
 package testdb.precisetypes
 
 import com.fasterxml.jackson.annotation.JsonValue
-import dev.typr.foundations.MariaType
-import dev.typr.foundations.MariaTypes
 import dev.typr.foundations.data.precise.LocalDateTimeN
-import dev.typr.foundations.kotlin.Bijection
+import dev.typr.foundationskt.Bijection
+import dev.typr.foundationskt.MariaType
+import dev.typr.foundationskt.MariaTypes
 import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
 
 @kotlin.ConsistentCopyVisibility
 data class LocalDateTime6 private constructor(@field:JsonValue val value: LocalDateTime) : LocalDateTimeN {
-  override fun equals(other: Any?): Boolean {
+  override fun equals(other: Any?): kotlin.Boolean {
     if (this === other) return true
     if (other !is LocalDateTimeN) return false
     return value == other.rawValue()
@@ -27,7 +27,7 @@ data class LocalDateTime6 private constructor(@field:JsonValue val value: LocalD
 
   override fun rawValue(): LocalDateTime = value
 
-  override fun semanticEquals(other: LocalDateTimeN): Boolean = if (other == null) false else value == other.rawValue()
+  override fun semanticEquals(other: LocalDateTimeN): kotlin.Boolean = if (other == null) false else (value == other.rawValue())
 
   override fun semanticHashCode(): Int = value.hashCode()
 
@@ -36,14 +36,14 @@ data class LocalDateTime6 private constructor(@field:JsonValue val value: LocalD
   }
 
   companion object {
+    fun of(value: LocalDateTime): LocalDateTime6 = LocalDateTime6(value.truncatedTo(ChronoUnit.MICROS))
+
+    fun now(): LocalDateTime6 = LocalDateTime6(LocalDateTime.now().truncatedTo(ChronoUnit.MICROS))
+
     val bijection: Bijection<LocalDateTime6, LocalDateTime> =
       Bijection.of(LocalDateTime6::value, ::LocalDateTime6)
 
     val mariaType: MariaType<LocalDateTime6> =
-      MariaTypes.timestamp.bimap(::LocalDateTime6, LocalDateTime6::value)
-
-    fun now(): LocalDateTime6 = LocalDateTime6(LocalDateTime.now().truncatedTo(ChronoUnit.MICROS))
-
-    fun of(value: LocalDateTime): LocalDateTime6 = LocalDateTime6(value.truncatedTo(ChronoUnit.MICROS))
+      MariaTypes.timestamp.to(Bijection.of(::LocalDateTime6, LocalDateTime6::value))
   }
 }

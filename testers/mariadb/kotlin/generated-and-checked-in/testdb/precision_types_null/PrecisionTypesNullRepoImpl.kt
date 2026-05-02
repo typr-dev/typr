@@ -5,14 +5,14 @@
  */
 package testdb.precision_types_null
 
-import dev.typr.foundations.MariaTypes
-import dev.typr.foundations.kotlin.DeleteBuilder
-import dev.typr.foundations.kotlin.Dialect
-import dev.typr.foundations.kotlin.Fragment
-import dev.typr.foundations.kotlin.SelectBuilder
-import dev.typr.foundations.kotlin.UpdateBuilder
-import dev.typr.foundations.kotlin.nullable
-import java.sql.Connection
+import dev.typr.dslkt.DeleteBuilder
+import dev.typr.dslkt.Dialect
+import dev.typr.dslkt.SelectBuilder
+import dev.typr.dslkt.UpdateBuilder
+import dev.typr.foundationskt.Connection
+import dev.typr.foundationskt.ConnectionRead
+import dev.typr.foundationskt.Fragment
+import dev.typr.foundationskt.MariaTypes
 import java.util.ArrayList
 import kotlin.collections.Iterator
 import kotlin.collections.List
@@ -43,22 +43,22 @@ class PrecisionTypesNullRepoImpl() : PrecisionTypesNullRepo {
   override fun deleteById(
     id: PrecisionTypesNullId,
     c: Connection
-  ): Boolean = Fragment.interpolate(Fragment.lit("delete from `precision_types_null` where `id` = "), Fragment.encode(PrecisionTypesNullId.mariaType, id), Fragment.lit("")).update().runUnchecked(c) > 0
+  ): kotlin.Boolean = Fragment.concat(Fragment.of("delete from `precision_types_null` where `id` = "), Fragment.encode(PrecisionTypesNullId.mariaType, id), Fragment.of("")).update().run(c) > 0
 
   override fun deleteByIds(
-    ids: Array<PrecisionTypesNullId>,
+    ids: List<PrecisionTypesNullId>,
     c: Connection
   ): Int {
     val fragments: ArrayList<Fragment> = ArrayList()
     for (id in ids) { fragments.add(Fragment.encode(PrecisionTypesNullId.mariaType, id)) }
-    return Fragment.interpolate(Fragment.lit("delete from `precision_types_null` where `id` in ("), Fragment.comma(fragments.toMutableList()), Fragment.lit(")")).update().runUnchecked(c)
+    return Fragment.concat(Fragment.of("delete from `precision_types_null` where `id` in ("), Fragment.comma(fragments.toMutableList()), Fragment.of(")")).update().run(c)
   }
 
   override fun insert(
     unsaved: PrecisionTypesNullRow,
     c: Connection
-  ): PrecisionTypesNullRow = Fragment.interpolate(Fragment.lit("insert into `precision_types_null`(`string10`, `string20`, `string50`, `string100`, `string255`, `char10`, `decimal5_2`, `decimal10_2`, `decimal18_4`, `numeric8_2`, `numeric12_4`, `binary16`, `binary32`, `binary64`, `time0`, `time3`, `time6`, `datetime0`, `datetime3`, `datetime6`, `ts0`, `ts3`, `ts6`)\nvalues ("), Fragment.encode(String10.mariaType.nullable(), unsaved.string10), Fragment.lit(", "), Fragment.encode(String20.mariaType.nullable(), unsaved.string20), Fragment.lit(", "), Fragment.encode(String50.mariaType.nullable(), unsaved.string50), Fragment.lit(", "), Fragment.encode(String100.mariaType.nullable(), unsaved.string100), Fragment.lit(", "), Fragment.encode(String255.mariaType.nullable(), unsaved.string255), Fragment.lit(", "), Fragment.encode(PaddedString10.mariaType.nullable(), unsaved.char10), Fragment.lit(", "), Fragment.encode(Decimal5_2.mariaType.nullable(), unsaved.decimal52), Fragment.lit(", "), Fragment.encode(Decimal10_2.mariaType.nullable(), unsaved.decimal102), Fragment.lit(", "), Fragment.encode(Decimal18_4.mariaType.nullable(), unsaved.decimal184), Fragment.lit(", "), Fragment.encode(Decimal8_2.mariaType.nullable(), unsaved.numeric82), Fragment.lit(", "), Fragment.encode(Decimal12_4.mariaType.nullable(), unsaved.numeric124), Fragment.lit(", "), Fragment.encode(Binary16.mariaType.nullable(), unsaved.binary16), Fragment.lit(", "), Fragment.encode(Binary32.mariaType.nullable(), unsaved.binary32), Fragment.lit(", "), Fragment.encode(Binary64.mariaType.nullable(), unsaved.binary64), Fragment.lit(", "), Fragment.encode(MariaTypes.time.nullable(), unsaved.time0), Fragment.lit(", "), Fragment.encode(LocalTime3.mariaType.nullable(), unsaved.time3), Fragment.lit(", "), Fragment.encode(LocalTime6.mariaType.nullable(), unsaved.time6), Fragment.lit(", "), Fragment.encode(MariaTypes.datetime.nullable(), unsaved.datetime0), Fragment.lit(", "), Fragment.encode(LocalDateTime3.mariaType.nullable(), unsaved.datetime3), Fragment.lit(", "), Fragment.encode(LocalDateTime6.mariaType.nullable(), unsaved.datetime6), Fragment.lit(", "), Fragment.encode(MariaTypes.timestamp.nullable(), unsaved.ts0), Fragment.lit(", "), Fragment.encode(LocalDateTime3.mariaType.nullable(), unsaved.ts3), Fragment.lit(", "), Fragment.encode(LocalDateTime6.mariaType.nullable(), unsaved.ts6), Fragment.lit(")\nRETURNING `id`, `string10`, `string20`, `string50`, `string100`, `string255`, `char10`, `decimal5_2`, `decimal10_2`, `decimal18_4`, `numeric8_2`, `numeric12_4`, `binary16`, `binary32`, `binary64`, `time0`, `time3`, `time6`, `datetime0`, `datetime3`, `datetime6`, `ts0`, `ts3`, `ts6`\n"))
-    .updateReturning(PrecisionTypesNullRow._rowParser.exactlyOne()).runUnchecked(c)
+  ): PrecisionTypesNullRow = Fragment.concat(Fragment.of("insert into `precision_types_null`(`string10`, `string20`, `string50`, `string100`, `string255`, `char10`, `decimal5_2`, `decimal10_2`, `decimal18_4`, `numeric8_2`, `numeric12_4`, `binary16`, `binary32`, `binary64`, `time0`, `time3`, `time6`, `datetime0`, `datetime3`, `datetime6`, `ts0`, `ts3`, `ts6`)\nvalues ("), Fragment.encode(String10.mariaType.opt(), unsaved.string10), Fragment.of(", "), Fragment.encode(String20.mariaType.opt(), unsaved.string20), Fragment.of(", "), Fragment.encode(String50.mariaType.opt(), unsaved.string50), Fragment.of(", "), Fragment.encode(String100.mariaType.opt(), unsaved.string100), Fragment.of(", "), Fragment.encode(String255.mariaType.opt(), unsaved.string255), Fragment.of(", "), Fragment.encode(PaddedString10.mariaType.opt(), unsaved.char10), Fragment.of(", "), Fragment.encode(Decimal5_2.mariaType.opt(), unsaved.decimal52), Fragment.of(", "), Fragment.encode(Decimal10_2.mariaType.opt(), unsaved.decimal102), Fragment.of(", "), Fragment.encode(Decimal18_4.mariaType.opt(), unsaved.decimal184), Fragment.of(", "), Fragment.encode(Decimal8_2.mariaType.opt(), unsaved.numeric82), Fragment.of(", "), Fragment.encode(Decimal12_4.mariaType.opt(), unsaved.numeric124), Fragment.of(", "), Fragment.encode(Binary16.mariaType.opt(), unsaved.binary16), Fragment.of(", "), Fragment.encode(Binary32.mariaType.opt(), unsaved.binary32), Fragment.of(", "), Fragment.encode(Binary64.mariaType.opt(), unsaved.binary64), Fragment.of(", "), Fragment.encode(MariaTypes.time.opt(), unsaved.time0), Fragment.of(", "), Fragment.encode(LocalTime3.mariaType.opt(), unsaved.time3), Fragment.of(", "), Fragment.encode(LocalTime6.mariaType.opt(), unsaved.time6), Fragment.of(", "), Fragment.encode(MariaTypes.datetime.opt(), unsaved.datetime0), Fragment.of(", "), Fragment.encode(LocalDateTime3.mariaType.opt(), unsaved.datetime3), Fragment.of(", "), Fragment.encode(LocalDateTime6.mariaType.opt(), unsaved.datetime6), Fragment.of(", "), Fragment.encode(MariaTypes.timestamp.opt(), unsaved.ts0), Fragment.of(", "), Fragment.encode(LocalDateTime3.mariaType.opt(), unsaved.ts3), Fragment.of(", "), Fragment.encode(LocalDateTime6.mariaType.opt(), unsaved.ts6), Fragment.of(")\nRETURNING `id`, `string10`, `string20`, `string50`, `string100`, `string255`, `char10`, `decimal5_2`, `decimal10_2`, `decimal18_4`, `numeric8_2`, `numeric12_4`, `binary16`, `binary32`, `binary64`, `time0`, `time3`, `time6`, `datetime0`, `datetime3`, `datetime6`, `ts0`, `ts3`, `ts6`\n"))
+    .updateReturning(PrecisionTypesNullRow.rowCodec.exactlyOne()).run(c)
 
   override fun insert(
     unsaved: PrecisionTypesNullRowUnsaved,
@@ -68,171 +68,171 @@ class PrecisionTypesNullRepoImpl() : PrecisionTypesNullRepo {
     val values: ArrayList<Fragment> = ArrayList()
     unsaved.string10.visit(
       {  },
-      { value -> columns.add(Fragment.lit("`string10`"))
-      values.add(Fragment.interpolate(Fragment.encode(String10.mariaType.nullable(), value), Fragment.lit(""))) }
+      { value -> columns.add(Fragment.of("`string10`"))
+      values.add(Fragment.concat(Fragment.encode(String10.mariaType.opt(), value), Fragment.of(""))) }
     );
     unsaved.string20.visit(
       {  },
-      { value -> columns.add(Fragment.lit("`string20`"))
-      values.add(Fragment.interpolate(Fragment.encode(String20.mariaType.nullable(), value), Fragment.lit(""))) }
+      { value -> columns.add(Fragment.of("`string20`"))
+      values.add(Fragment.concat(Fragment.encode(String20.mariaType.opt(), value), Fragment.of(""))) }
     );
     unsaved.string50.visit(
       {  },
-      { value -> columns.add(Fragment.lit("`string50`"))
-      values.add(Fragment.interpolate(Fragment.encode(String50.mariaType.nullable(), value), Fragment.lit(""))) }
+      { value -> columns.add(Fragment.of("`string50`"))
+      values.add(Fragment.concat(Fragment.encode(String50.mariaType.opt(), value), Fragment.of(""))) }
     );
     unsaved.string100.visit(
       {  },
-      { value -> columns.add(Fragment.lit("`string100`"))
-      values.add(Fragment.interpolate(Fragment.encode(String100.mariaType.nullable(), value), Fragment.lit(""))) }
+      { value -> columns.add(Fragment.of("`string100`"))
+      values.add(Fragment.concat(Fragment.encode(String100.mariaType.opt(), value), Fragment.of(""))) }
     );
     unsaved.string255.visit(
       {  },
-      { value -> columns.add(Fragment.lit("`string255`"))
-      values.add(Fragment.interpolate(Fragment.encode(String255.mariaType.nullable(), value), Fragment.lit(""))) }
+      { value -> columns.add(Fragment.of("`string255`"))
+      values.add(Fragment.concat(Fragment.encode(String255.mariaType.opt(), value), Fragment.of(""))) }
     );
     unsaved.char10.visit(
       {  },
-      { value -> columns.add(Fragment.lit("`char10`"))
-      values.add(Fragment.interpolate(Fragment.encode(PaddedString10.mariaType.nullable(), value), Fragment.lit(""))) }
+      { value -> columns.add(Fragment.of("`char10`"))
+      values.add(Fragment.concat(Fragment.encode(PaddedString10.mariaType.opt(), value), Fragment.of(""))) }
     );
     unsaved.decimal52.visit(
       {  },
-      { value -> columns.add(Fragment.lit("`decimal5_2`"))
-      values.add(Fragment.interpolate(Fragment.encode(Decimal5_2.mariaType.nullable(), value), Fragment.lit(""))) }
+      { value -> columns.add(Fragment.of("`decimal5_2`"))
+      values.add(Fragment.concat(Fragment.encode(Decimal5_2.mariaType.opt(), value), Fragment.of(""))) }
     );
     unsaved.decimal102.visit(
       {  },
-      { value -> columns.add(Fragment.lit("`decimal10_2`"))
-      values.add(Fragment.interpolate(Fragment.encode(Decimal10_2.mariaType.nullable(), value), Fragment.lit(""))) }
+      { value -> columns.add(Fragment.of("`decimal10_2`"))
+      values.add(Fragment.concat(Fragment.encode(Decimal10_2.mariaType.opt(), value), Fragment.of(""))) }
     );
     unsaved.decimal184.visit(
       {  },
-      { value -> columns.add(Fragment.lit("`decimal18_4`"))
-      values.add(Fragment.interpolate(Fragment.encode(Decimal18_4.mariaType.nullable(), value), Fragment.lit(""))) }
+      { value -> columns.add(Fragment.of("`decimal18_4`"))
+      values.add(Fragment.concat(Fragment.encode(Decimal18_4.mariaType.opt(), value), Fragment.of(""))) }
     );
     unsaved.numeric82.visit(
       {  },
-      { value -> columns.add(Fragment.lit("`numeric8_2`"))
-      values.add(Fragment.interpolate(Fragment.encode(Decimal8_2.mariaType.nullable(), value), Fragment.lit(""))) }
+      { value -> columns.add(Fragment.of("`numeric8_2`"))
+      values.add(Fragment.concat(Fragment.encode(Decimal8_2.mariaType.opt(), value), Fragment.of(""))) }
     );
     unsaved.numeric124.visit(
       {  },
-      { value -> columns.add(Fragment.lit("`numeric12_4`"))
-      values.add(Fragment.interpolate(Fragment.encode(Decimal12_4.mariaType.nullable(), value), Fragment.lit(""))) }
+      { value -> columns.add(Fragment.of("`numeric12_4`"))
+      values.add(Fragment.concat(Fragment.encode(Decimal12_4.mariaType.opt(), value), Fragment.of(""))) }
     );
     unsaved.binary16.visit(
       {  },
-      { value -> columns.add(Fragment.lit("`binary16`"))
-      values.add(Fragment.interpolate(Fragment.encode(Binary16.mariaType.nullable(), value), Fragment.lit(""))) }
+      { value -> columns.add(Fragment.of("`binary16`"))
+      values.add(Fragment.concat(Fragment.encode(Binary16.mariaType.opt(), value), Fragment.of(""))) }
     );
     unsaved.binary32.visit(
       {  },
-      { value -> columns.add(Fragment.lit("`binary32`"))
-      values.add(Fragment.interpolate(Fragment.encode(Binary32.mariaType.nullable(), value), Fragment.lit(""))) }
+      { value -> columns.add(Fragment.of("`binary32`"))
+      values.add(Fragment.concat(Fragment.encode(Binary32.mariaType.opt(), value), Fragment.of(""))) }
     );
     unsaved.binary64.visit(
       {  },
-      { value -> columns.add(Fragment.lit("`binary64`"))
-      values.add(Fragment.interpolate(Fragment.encode(Binary64.mariaType.nullable(), value), Fragment.lit(""))) }
+      { value -> columns.add(Fragment.of("`binary64`"))
+      values.add(Fragment.concat(Fragment.encode(Binary64.mariaType.opt(), value), Fragment.of(""))) }
     );
     unsaved.time0.visit(
       {  },
-      { value -> columns.add(Fragment.lit("`time0`"))
-      values.add(Fragment.interpolate(Fragment.encode(MariaTypes.time.nullable(), value), Fragment.lit(""))) }
+      { value -> columns.add(Fragment.of("`time0`"))
+      values.add(Fragment.concat(Fragment.encode(MariaTypes.time.opt(), value), Fragment.of(""))) }
     );
     unsaved.time3.visit(
       {  },
-      { value -> columns.add(Fragment.lit("`time3`"))
-      values.add(Fragment.interpolate(Fragment.encode(LocalTime3.mariaType.nullable(), value), Fragment.lit(""))) }
+      { value -> columns.add(Fragment.of("`time3`"))
+      values.add(Fragment.concat(Fragment.encode(LocalTime3.mariaType.opt(), value), Fragment.of(""))) }
     );
     unsaved.time6.visit(
       {  },
-      { value -> columns.add(Fragment.lit("`time6`"))
-      values.add(Fragment.interpolate(Fragment.encode(LocalTime6.mariaType.nullable(), value), Fragment.lit(""))) }
+      { value -> columns.add(Fragment.of("`time6`"))
+      values.add(Fragment.concat(Fragment.encode(LocalTime6.mariaType.opt(), value), Fragment.of(""))) }
     );
     unsaved.datetime0.visit(
       {  },
-      { value -> columns.add(Fragment.lit("`datetime0`"))
-      values.add(Fragment.interpolate(Fragment.encode(MariaTypes.datetime.nullable(), value), Fragment.lit(""))) }
+      { value -> columns.add(Fragment.of("`datetime0`"))
+      values.add(Fragment.concat(Fragment.encode(MariaTypes.datetime.opt(), value), Fragment.of(""))) }
     );
     unsaved.datetime3.visit(
       {  },
-      { value -> columns.add(Fragment.lit("`datetime3`"))
-      values.add(Fragment.interpolate(Fragment.encode(LocalDateTime3.mariaType.nullable(), value), Fragment.lit(""))) }
+      { value -> columns.add(Fragment.of("`datetime3`"))
+      values.add(Fragment.concat(Fragment.encode(LocalDateTime3.mariaType.opt(), value), Fragment.of(""))) }
     );
     unsaved.datetime6.visit(
       {  },
-      { value -> columns.add(Fragment.lit("`datetime6`"))
-      values.add(Fragment.interpolate(Fragment.encode(LocalDateTime6.mariaType.nullable(), value), Fragment.lit(""))) }
+      { value -> columns.add(Fragment.of("`datetime6`"))
+      values.add(Fragment.concat(Fragment.encode(LocalDateTime6.mariaType.opt(), value), Fragment.of(""))) }
     );
     unsaved.ts0.visit(
       {  },
-      { value -> columns.add(Fragment.lit("`ts0`"))
-      values.add(Fragment.interpolate(Fragment.encode(MariaTypes.timestamp.nullable(), value), Fragment.lit(""))) }
+      { value -> columns.add(Fragment.of("`ts0`"))
+      values.add(Fragment.concat(Fragment.encode(MariaTypes.timestamp.opt(), value), Fragment.of(""))) }
     );
     unsaved.ts3.visit(
       {  },
-      { value -> columns.add(Fragment.lit("`ts3`"))
-      values.add(Fragment.interpolate(Fragment.encode(LocalDateTime3.mariaType.nullable(), value), Fragment.lit(""))) }
+      { value -> columns.add(Fragment.of("`ts3`"))
+      values.add(Fragment.concat(Fragment.encode(LocalDateTime3.mariaType.opt(), value), Fragment.of(""))) }
     );
     unsaved.ts6.visit(
       {  },
-      { value -> columns.add(Fragment.lit("`ts6`"))
-      values.add(Fragment.interpolate(Fragment.encode(LocalDateTime6.mariaType.nullable(), value), Fragment.lit(""))) }
+      { value -> columns.add(Fragment.of("`ts6`"))
+      values.add(Fragment.concat(Fragment.encode(LocalDateTime6.mariaType.opt(), value), Fragment.of(""))) }
     );
-    val q: Fragment = (if (columns.isEmpty()) Fragment.interpolate(Fragment.lit("insert into `precision_types_null`() values ()\nRETURNING `id`, `string10`, `string20`, `string50`, `string100`, `string255`, `char10`, `decimal5_2`, `decimal10_2`, `decimal18_4`, `numeric8_2`, `numeric12_4`, `binary16`, `binary32`, `binary64`, `time0`, `time3`, `time6`, `datetime0`, `datetime3`, `datetime6`, `ts0`, `ts3`, `ts6`\n")) else Fragment.interpolate(Fragment.lit("insert into `precision_types_null`("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nRETURNING `id`, `string10`, `string20`, `string50`, `string100`, `string255`, `char10`, `decimal5_2`, `decimal10_2`, `decimal18_4`, `numeric8_2`, `numeric12_4`, `binary16`, `binary32`, `binary64`, `time0`, `time3`, `time6`, `datetime0`, `datetime3`, `datetime6`, `ts0`, `ts3`, `ts6`\n")))
-    return q.updateReturning(PrecisionTypesNullRow._rowParser.exactlyOne()).runUnchecked(c)
+    val q: Fragment = (if (columns.isEmpty()) Fragment.concat(Fragment.of("insert into `precision_types_null`() values ()\nRETURNING `id`, `string10`, `string20`, `string50`, `string100`, `string255`, `char10`, `decimal5_2`, `decimal10_2`, `decimal18_4`, `numeric8_2`, `numeric12_4`, `binary16`, `binary32`, `binary64`, `time0`, `time3`, `time6`, `datetime0`, `datetime3`, `datetime6`, `ts0`, `ts3`, `ts6`\n")) else Fragment.concat(Fragment.of("insert into `precision_types_null`("), Fragment.comma(columns.toMutableList()), Fragment.of(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.of(")\nRETURNING `id`, `string10`, `string20`, `string50`, `string100`, `string255`, `char10`, `decimal5_2`, `decimal10_2`, `decimal18_4`, `numeric8_2`, `numeric12_4`, `binary16`, `binary32`, `binary64`, `time0`, `time3`, `time6`, `datetime0`, `datetime3`, `datetime6`, `ts0`, `ts3`, `ts6`\n")))
+    return q.updateReturning(PrecisionTypesNullRow.rowCodec.exactlyOne()).run(c)
   }
 
-  override fun select(): SelectBuilder<PrecisionTypesNullFields, PrecisionTypesNullRow> = SelectBuilder.of("`precision_types_null`", PrecisionTypesNullFields.structure, PrecisionTypesNullRow._rowParser, Dialect.MARIADB)
+  override fun select(): SelectBuilder<PrecisionTypesNullFields, PrecisionTypesNullRow> = SelectBuilder.of("`precision_types_null`", PrecisionTypesNullFields.structure, PrecisionTypesNullRow.rowCodec, Dialect.MARIADB)
 
-  override fun selectAll(c: Connection): List<PrecisionTypesNullRow> = Fragment.interpolate(Fragment.lit("select `id`, `string10`, `string20`, `string50`, `string100`, `string255`, `char10`, `decimal5_2`, `decimal10_2`, `decimal18_4`, `numeric8_2`, `numeric12_4`, `binary16`, `binary32`, `binary64`, `time0`, `time3`, `time6`, `datetime0`, `datetime3`, `datetime6`, `ts0`, `ts3`, `ts6`\nfrom `precision_types_null`\n")).query(PrecisionTypesNullRow._rowParser.all()).runUnchecked(c)
+  override fun selectAll(c: ConnectionRead): List<PrecisionTypesNullRow> = Fragment.concat(Fragment.of("select `id`, `string10`, `string20`, `string50`, `string100`, `string255`, `char10`, `decimal5_2`, `decimal10_2`, `decimal18_4`, `numeric8_2`, `numeric12_4`, `binary16`, `binary32`, `binary64`, `time0`, `time3`, `time6`, `datetime0`, `datetime3`, `datetime6`, `ts0`, `ts3`, `ts6`\nfrom `precision_types_null`\n")).query(PrecisionTypesNullRow.rowCodec.all()).run(c)
 
   override fun selectById(
     id: PrecisionTypesNullId,
-    c: Connection
-  ): PrecisionTypesNullRow? = Fragment.interpolate(Fragment.lit("select `id`, `string10`, `string20`, `string50`, `string100`, `string255`, `char10`, `decimal5_2`, `decimal10_2`, `decimal18_4`, `numeric8_2`, `numeric12_4`, `binary16`, `binary32`, `binary64`, `time0`, `time3`, `time6`, `datetime0`, `datetime3`, `datetime6`, `ts0`, `ts3`, `ts6`\nfrom `precision_types_null`\nwhere `id` = "), Fragment.encode(PrecisionTypesNullId.mariaType, id), Fragment.lit("")).query(PrecisionTypesNullRow._rowParser.first()).runUnchecked(c)
+    c: ConnectionRead
+  ): PrecisionTypesNullRow? = Fragment.concat(Fragment.of("select `id`, `string10`, `string20`, `string50`, `string100`, `string255`, `char10`, `decimal5_2`, `decimal10_2`, `decimal18_4`, `numeric8_2`, `numeric12_4`, `binary16`, `binary32`, `binary64`, `time0`, `time3`, `time6`, `datetime0`, `datetime3`, `datetime6`, `ts0`, `ts3`, `ts6`\nfrom `precision_types_null`\nwhere `id` = "), Fragment.encode(PrecisionTypesNullId.mariaType, id), Fragment.of("")).query(PrecisionTypesNullRow.rowCodec.first()).run(c)
 
   override fun selectByIds(
-    ids: Array<PrecisionTypesNullId>,
-    c: Connection
+    ids: List<PrecisionTypesNullId>,
+    c: ConnectionRead
   ): List<PrecisionTypesNullRow> {
     val fragments: ArrayList<Fragment> = ArrayList()
     for (id in ids) { fragments.add(Fragment.encode(PrecisionTypesNullId.mariaType, id)) }
-    return Fragment.interpolate(Fragment.lit("select `id`, `string10`, `string20`, `string50`, `string100`, `string255`, `char10`, `decimal5_2`, `decimal10_2`, `decimal18_4`, `numeric8_2`, `numeric12_4`, `binary16`, `binary32`, `binary64`, `time0`, `time3`, `time6`, `datetime0`, `datetime3`, `datetime6`, `ts0`, `ts3`, `ts6` from `precision_types_null` where `id` in ("), Fragment.comma(fragments.toMutableList()), Fragment.lit(")")).query(PrecisionTypesNullRow._rowParser.all()).runUnchecked(c)
+    return Fragment.concat(Fragment.of("select `id`, `string10`, `string20`, `string50`, `string100`, `string255`, `char10`, `decimal5_2`, `decimal10_2`, `decimal18_4`, `numeric8_2`, `numeric12_4`, `binary16`, `binary32`, `binary64`, `time0`, `time3`, `time6`, `datetime0`, `datetime3`, `datetime6`, `ts0`, `ts3`, `ts6` from `precision_types_null` where `id` in ("), Fragment.comma(fragments.toMutableList()), Fragment.of(")")).query(PrecisionTypesNullRow.rowCodec.all()).run(c)
   }
 
   override fun selectByIdsTracked(
-    ids: Array<PrecisionTypesNullId>,
-    c: Connection
+    ids: List<PrecisionTypesNullId>,
+    c: ConnectionRead
   ): Map<PrecisionTypesNullId, PrecisionTypesNullRow> {
     val ret: MutableMap<PrecisionTypesNullId, PrecisionTypesNullRow> = mutableMapOf<PrecisionTypesNullId, PrecisionTypesNullRow>()
     selectByIds(ids, c).forEach({ row -> ret.put(row.id, row) })
     return ret.toMap()
   }
 
-  override fun update(): UpdateBuilder<PrecisionTypesNullFields, PrecisionTypesNullRow> = UpdateBuilder.of("`precision_types_null`", PrecisionTypesNullFields.structure, PrecisionTypesNullRow._rowParser, Dialect.MARIADB)
+  override fun update(): UpdateBuilder<PrecisionTypesNullFields, PrecisionTypesNullRow> = UpdateBuilder.of("`precision_types_null`", PrecisionTypesNullFields.structure, PrecisionTypesNullRow.rowCodec, Dialect.MARIADB)
 
   override fun update(
     row: PrecisionTypesNullRow,
     c: Connection
-  ): Boolean {
+  ): kotlin.Boolean {
     val id: PrecisionTypesNullId = row.id
-    return Fragment.interpolate(Fragment.lit("update `precision_types_null`\nset `string10` = "), Fragment.encode(String10.mariaType.nullable(), row.string10), Fragment.lit(",\n`string20` = "), Fragment.encode(String20.mariaType.nullable(), row.string20), Fragment.lit(",\n`string50` = "), Fragment.encode(String50.mariaType.nullable(), row.string50), Fragment.lit(",\n`string100` = "), Fragment.encode(String100.mariaType.nullable(), row.string100), Fragment.lit(",\n`string255` = "), Fragment.encode(String255.mariaType.nullable(), row.string255), Fragment.lit(",\n`char10` = "), Fragment.encode(PaddedString10.mariaType.nullable(), row.char10), Fragment.lit(",\n`decimal5_2` = "), Fragment.encode(Decimal5_2.mariaType.nullable(), row.decimal52), Fragment.lit(",\n`decimal10_2` = "), Fragment.encode(Decimal10_2.mariaType.nullable(), row.decimal102), Fragment.lit(",\n`decimal18_4` = "), Fragment.encode(Decimal18_4.mariaType.nullable(), row.decimal184), Fragment.lit(",\n`numeric8_2` = "), Fragment.encode(Decimal8_2.mariaType.nullable(), row.numeric82), Fragment.lit(",\n`numeric12_4` = "), Fragment.encode(Decimal12_4.mariaType.nullable(), row.numeric124), Fragment.lit(",\n`binary16` = "), Fragment.encode(Binary16.mariaType.nullable(), row.binary16), Fragment.lit(",\n`binary32` = "), Fragment.encode(Binary32.mariaType.nullable(), row.binary32), Fragment.lit(",\n`binary64` = "), Fragment.encode(Binary64.mariaType.nullable(), row.binary64), Fragment.lit(",\n`time0` = "), Fragment.encode(MariaTypes.time.nullable(), row.time0), Fragment.lit(",\n`time3` = "), Fragment.encode(LocalTime3.mariaType.nullable(), row.time3), Fragment.lit(",\n`time6` = "), Fragment.encode(LocalTime6.mariaType.nullable(), row.time6), Fragment.lit(",\n`datetime0` = "), Fragment.encode(MariaTypes.datetime.nullable(), row.datetime0), Fragment.lit(",\n`datetime3` = "), Fragment.encode(LocalDateTime3.mariaType.nullable(), row.datetime3), Fragment.lit(",\n`datetime6` = "), Fragment.encode(LocalDateTime6.mariaType.nullable(), row.datetime6), Fragment.lit(",\n`ts0` = "), Fragment.encode(MariaTypes.timestamp.nullable(), row.ts0), Fragment.lit(",\n`ts3` = "), Fragment.encode(LocalDateTime3.mariaType.nullable(), row.ts3), Fragment.lit(",\n`ts6` = "), Fragment.encode(LocalDateTime6.mariaType.nullable(), row.ts6), Fragment.lit("\nwhere `id` = "), Fragment.encode(PrecisionTypesNullId.mariaType, id), Fragment.lit("")).update().runUnchecked(c) > 0
+    return Fragment.concat(Fragment.of("update `precision_types_null`\nset `string10` = "), Fragment.encode(String10.mariaType.opt(), row.string10), Fragment.of(",\n`string20` = "), Fragment.encode(String20.mariaType.opt(), row.string20), Fragment.of(",\n`string50` = "), Fragment.encode(String50.mariaType.opt(), row.string50), Fragment.of(",\n`string100` = "), Fragment.encode(String100.mariaType.opt(), row.string100), Fragment.of(",\n`string255` = "), Fragment.encode(String255.mariaType.opt(), row.string255), Fragment.of(",\n`char10` = "), Fragment.encode(PaddedString10.mariaType.opt(), row.char10), Fragment.of(",\n`decimal5_2` = "), Fragment.encode(Decimal5_2.mariaType.opt(), row.decimal52), Fragment.of(",\n`decimal10_2` = "), Fragment.encode(Decimal10_2.mariaType.opt(), row.decimal102), Fragment.of(",\n`decimal18_4` = "), Fragment.encode(Decimal18_4.mariaType.opt(), row.decimal184), Fragment.of(",\n`numeric8_2` = "), Fragment.encode(Decimal8_2.mariaType.opt(), row.numeric82), Fragment.of(",\n`numeric12_4` = "), Fragment.encode(Decimal12_4.mariaType.opt(), row.numeric124), Fragment.of(",\n`binary16` = "), Fragment.encode(Binary16.mariaType.opt(), row.binary16), Fragment.of(",\n`binary32` = "), Fragment.encode(Binary32.mariaType.opt(), row.binary32), Fragment.of(",\n`binary64` = "), Fragment.encode(Binary64.mariaType.opt(), row.binary64), Fragment.of(",\n`time0` = "), Fragment.encode(MariaTypes.time.opt(), row.time0), Fragment.of(",\n`time3` = "), Fragment.encode(LocalTime3.mariaType.opt(), row.time3), Fragment.of(",\n`time6` = "), Fragment.encode(LocalTime6.mariaType.opt(), row.time6), Fragment.of(",\n`datetime0` = "), Fragment.encode(MariaTypes.datetime.opt(), row.datetime0), Fragment.of(",\n`datetime3` = "), Fragment.encode(LocalDateTime3.mariaType.opt(), row.datetime3), Fragment.of(",\n`datetime6` = "), Fragment.encode(LocalDateTime6.mariaType.opt(), row.datetime6), Fragment.of(",\n`ts0` = "), Fragment.encode(MariaTypes.timestamp.opt(), row.ts0), Fragment.of(",\n`ts3` = "), Fragment.encode(LocalDateTime3.mariaType.opt(), row.ts3), Fragment.of(",\n`ts6` = "), Fragment.encode(LocalDateTime6.mariaType.opt(), row.ts6), Fragment.of("\nwhere `id` = "), Fragment.encode(PrecisionTypesNullId.mariaType, id), Fragment.of("")).update().run(c) > 0
   }
 
   override fun upsert(
     unsaved: PrecisionTypesNullRow,
     c: Connection
-  ): PrecisionTypesNullRow = Fragment.interpolate(Fragment.lit("INSERT INTO `precision_types_null`(`id`, `string10`, `string20`, `string50`, `string100`, `string255`, `char10`, `decimal5_2`, `decimal10_2`, `decimal18_4`, `numeric8_2`, `numeric12_4`, `binary16`, `binary32`, `binary64`, `time0`, `time3`, `time6`, `datetime0`, `datetime3`, `datetime6`, `ts0`, `ts3`, `ts6`)\nVALUES ("), Fragment.encode(PrecisionTypesNullId.mariaType, unsaved.id), Fragment.lit(", "), Fragment.encode(String10.mariaType.nullable(), unsaved.string10), Fragment.lit(", "), Fragment.encode(String20.mariaType.nullable(), unsaved.string20), Fragment.lit(", "), Fragment.encode(String50.mariaType.nullable(), unsaved.string50), Fragment.lit(", "), Fragment.encode(String100.mariaType.nullable(), unsaved.string100), Fragment.lit(", "), Fragment.encode(String255.mariaType.nullable(), unsaved.string255), Fragment.lit(", "), Fragment.encode(PaddedString10.mariaType.nullable(), unsaved.char10), Fragment.lit(", "), Fragment.encode(Decimal5_2.mariaType.nullable(), unsaved.decimal52), Fragment.lit(", "), Fragment.encode(Decimal10_2.mariaType.nullable(), unsaved.decimal102), Fragment.lit(", "), Fragment.encode(Decimal18_4.mariaType.nullable(), unsaved.decimal184), Fragment.lit(", "), Fragment.encode(Decimal8_2.mariaType.nullable(), unsaved.numeric82), Fragment.lit(", "), Fragment.encode(Decimal12_4.mariaType.nullable(), unsaved.numeric124), Fragment.lit(", "), Fragment.encode(Binary16.mariaType.nullable(), unsaved.binary16), Fragment.lit(", "), Fragment.encode(Binary32.mariaType.nullable(), unsaved.binary32), Fragment.lit(", "), Fragment.encode(Binary64.mariaType.nullable(), unsaved.binary64), Fragment.lit(", "), Fragment.encode(MariaTypes.time.nullable(), unsaved.time0), Fragment.lit(", "), Fragment.encode(LocalTime3.mariaType.nullable(), unsaved.time3), Fragment.lit(", "), Fragment.encode(LocalTime6.mariaType.nullable(), unsaved.time6), Fragment.lit(", "), Fragment.encode(MariaTypes.datetime.nullable(), unsaved.datetime0), Fragment.lit(", "), Fragment.encode(LocalDateTime3.mariaType.nullable(), unsaved.datetime3), Fragment.lit(", "), Fragment.encode(LocalDateTime6.mariaType.nullable(), unsaved.datetime6), Fragment.lit(", "), Fragment.encode(MariaTypes.timestamp.nullable(), unsaved.ts0), Fragment.lit(", "), Fragment.encode(LocalDateTime3.mariaType.nullable(), unsaved.ts3), Fragment.lit(", "), Fragment.encode(LocalDateTime6.mariaType.nullable(), unsaved.ts6), Fragment.lit(")\nON DUPLICATE KEY UPDATE `string10` = VALUES(`string10`),\n`string20` = VALUES(`string20`),\n`string50` = VALUES(`string50`),\n`string100` = VALUES(`string100`),\n`string255` = VALUES(`string255`),\n`char10` = VALUES(`char10`),\n`decimal5_2` = VALUES(`decimal5_2`),\n`decimal10_2` = VALUES(`decimal10_2`),\n`decimal18_4` = VALUES(`decimal18_4`),\n`numeric8_2` = VALUES(`numeric8_2`),\n`numeric12_4` = VALUES(`numeric12_4`),\n`binary16` = VALUES(`binary16`),\n`binary32` = VALUES(`binary32`),\n`binary64` = VALUES(`binary64`),\n`time0` = VALUES(`time0`),\n`time3` = VALUES(`time3`),\n`time6` = VALUES(`time6`),\n`datetime0` = VALUES(`datetime0`),\n`datetime3` = VALUES(`datetime3`),\n`datetime6` = VALUES(`datetime6`),\n`ts0` = VALUES(`ts0`),\n`ts3` = VALUES(`ts3`),\n`ts6` = VALUES(`ts6`)\nRETURNING `id`, `string10`, `string20`, `string50`, `string100`, `string255`, `char10`, `decimal5_2`, `decimal10_2`, `decimal18_4`, `numeric8_2`, `numeric12_4`, `binary16`, `binary32`, `binary64`, `time0`, `time3`, `time6`, `datetime0`, `datetime3`, `datetime6`, `ts0`, `ts3`, `ts6`"))
-    .updateReturning(PrecisionTypesNullRow._rowParser.exactlyOne())
-    .runUnchecked(c)
+  ): PrecisionTypesNullRow = Fragment.concat(Fragment.of("INSERT INTO `precision_types_null`(`id`, `string10`, `string20`, `string50`, `string100`, `string255`, `char10`, `decimal5_2`, `decimal10_2`, `decimal18_4`, `numeric8_2`, `numeric12_4`, `binary16`, `binary32`, `binary64`, `time0`, `time3`, `time6`, `datetime0`, `datetime3`, `datetime6`, `ts0`, `ts3`, `ts6`)\nVALUES ("), Fragment.encode(PrecisionTypesNullId.mariaType, unsaved.id), Fragment.of(", "), Fragment.encode(String10.mariaType.opt(), unsaved.string10), Fragment.of(", "), Fragment.encode(String20.mariaType.opt(), unsaved.string20), Fragment.of(", "), Fragment.encode(String50.mariaType.opt(), unsaved.string50), Fragment.of(", "), Fragment.encode(String100.mariaType.opt(), unsaved.string100), Fragment.of(", "), Fragment.encode(String255.mariaType.opt(), unsaved.string255), Fragment.of(", "), Fragment.encode(PaddedString10.mariaType.opt(), unsaved.char10), Fragment.of(", "), Fragment.encode(Decimal5_2.mariaType.opt(), unsaved.decimal52), Fragment.of(", "), Fragment.encode(Decimal10_2.mariaType.opt(), unsaved.decimal102), Fragment.of(", "), Fragment.encode(Decimal18_4.mariaType.opt(), unsaved.decimal184), Fragment.of(", "), Fragment.encode(Decimal8_2.mariaType.opt(), unsaved.numeric82), Fragment.of(", "), Fragment.encode(Decimal12_4.mariaType.opt(), unsaved.numeric124), Fragment.of(", "), Fragment.encode(Binary16.mariaType.opt(), unsaved.binary16), Fragment.of(", "), Fragment.encode(Binary32.mariaType.opt(), unsaved.binary32), Fragment.of(", "), Fragment.encode(Binary64.mariaType.opt(), unsaved.binary64), Fragment.of(", "), Fragment.encode(MariaTypes.time.opt(), unsaved.time0), Fragment.of(", "), Fragment.encode(LocalTime3.mariaType.opt(), unsaved.time3), Fragment.of(", "), Fragment.encode(LocalTime6.mariaType.opt(), unsaved.time6), Fragment.of(", "), Fragment.encode(MariaTypes.datetime.opt(), unsaved.datetime0), Fragment.of(", "), Fragment.encode(LocalDateTime3.mariaType.opt(), unsaved.datetime3), Fragment.of(", "), Fragment.encode(LocalDateTime6.mariaType.opt(), unsaved.datetime6), Fragment.of(", "), Fragment.encode(MariaTypes.timestamp.opt(), unsaved.ts0), Fragment.of(", "), Fragment.encode(LocalDateTime3.mariaType.opt(), unsaved.ts3), Fragment.of(", "), Fragment.encode(LocalDateTime6.mariaType.opt(), unsaved.ts6), Fragment.of(")\nON DUPLICATE KEY UPDATE `string10` = VALUES(`string10`),\n`string20` = VALUES(`string20`),\n`string50` = VALUES(`string50`),\n`string100` = VALUES(`string100`),\n`string255` = VALUES(`string255`),\n`char10` = VALUES(`char10`),\n`decimal5_2` = VALUES(`decimal5_2`),\n`decimal10_2` = VALUES(`decimal10_2`),\n`decimal18_4` = VALUES(`decimal18_4`),\n`numeric8_2` = VALUES(`numeric8_2`),\n`numeric12_4` = VALUES(`numeric12_4`),\n`binary16` = VALUES(`binary16`),\n`binary32` = VALUES(`binary32`),\n`binary64` = VALUES(`binary64`),\n`time0` = VALUES(`time0`),\n`time3` = VALUES(`time3`),\n`time6` = VALUES(`time6`),\n`datetime0` = VALUES(`datetime0`),\n`datetime3` = VALUES(`datetime3`),\n`datetime6` = VALUES(`datetime6`),\n`ts0` = VALUES(`ts0`),\n`ts3` = VALUES(`ts3`),\n`ts6` = VALUES(`ts6`)\nRETURNING `id`, `string10`, `string20`, `string50`, `string100`, `string255`, `char10`, `decimal5_2`, `decimal10_2`, `decimal18_4`, `numeric8_2`, `numeric12_4`, `binary16`, `binary32`, `binary64`, `time0`, `time3`, `time6`, `datetime0`, `datetime3`, `datetime6`, `ts0`, `ts3`, `ts6`"))
+    .updateReturning(PrecisionTypesNullRow.rowCodec.exactlyOne())
+    .run(c)
 
   override fun upsertBatch(
     unsaved: Iterator<PrecisionTypesNullRow>,
     c: Connection
-  ): List<PrecisionTypesNullRow> = Fragment.interpolate(Fragment.lit("INSERT INTO `precision_types_null`(`id`, `string10`, `string20`, `string50`, `string100`, `string255`, `char10`, `decimal5_2`, `decimal10_2`, `decimal18_4`, `numeric8_2`, `numeric12_4`, `binary16`, `binary32`, `binary64`, `time0`, `time3`, `time6`, `datetime0`, `datetime3`, `datetime6`, `ts0`, `ts3`, `ts6`)\nVALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)\nON DUPLICATE KEY UPDATE `string10` = VALUES(`string10`),\n`string20` = VALUES(`string20`),\n`string50` = VALUES(`string50`),\n`string100` = VALUES(`string100`),\n`string255` = VALUES(`string255`),\n`char10` = VALUES(`char10`),\n`decimal5_2` = VALUES(`decimal5_2`),\n`decimal10_2` = VALUES(`decimal10_2`),\n`decimal18_4` = VALUES(`decimal18_4`),\n`numeric8_2` = VALUES(`numeric8_2`),\n`numeric12_4` = VALUES(`numeric12_4`),\n`binary16` = VALUES(`binary16`),\n`binary32` = VALUES(`binary32`),\n`binary64` = VALUES(`binary64`),\n`time0` = VALUES(`time0`),\n`time3` = VALUES(`time3`),\n`time6` = VALUES(`time6`),\n`datetime0` = VALUES(`datetime0`),\n`datetime3` = VALUES(`datetime3`),\n`datetime6` = VALUES(`datetime6`),\n`ts0` = VALUES(`ts0`),\n`ts3` = VALUES(`ts3`),\n`ts6` = VALUES(`ts6`)\nRETURNING `id`, `string10`, `string20`, `string50`, `string100`, `string255`, `char10`, `decimal5_2`, `decimal10_2`, `decimal18_4`, `numeric8_2`, `numeric12_4`, `binary16`, `binary32`, `binary64`, `time0`, `time3`, `time6`, `datetime0`, `datetime3`, `datetime6`, `ts0`, `ts3`, `ts6`"))
-    .updateReturningEach(PrecisionTypesNullRow._rowParser, unsaved)
-  .runUnchecked(c)
+  ): List<PrecisionTypesNullRow> = Fragment.concat(Fragment.of("INSERT INTO `precision_types_null`(`id`, `string10`, `string20`, `string50`, `string100`, `string255`, `char10`, `decimal5_2`, `decimal10_2`, `decimal18_4`, `numeric8_2`, `numeric12_4`, `binary16`, `binary32`, `binary64`, `time0`, `time3`, `time6`, `datetime0`, `datetime3`, `datetime6`, `ts0`, `ts3`, `ts6`)\nVALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)\nON DUPLICATE KEY UPDATE `string10` = VALUES(`string10`),\n`string20` = VALUES(`string20`),\n`string50` = VALUES(`string50`),\n`string100` = VALUES(`string100`),\n`string255` = VALUES(`string255`),\n`char10` = VALUES(`char10`),\n`decimal5_2` = VALUES(`decimal5_2`),\n`decimal10_2` = VALUES(`decimal10_2`),\n`decimal18_4` = VALUES(`decimal18_4`),\n`numeric8_2` = VALUES(`numeric8_2`),\n`numeric12_4` = VALUES(`numeric12_4`),\n`binary16` = VALUES(`binary16`),\n`binary32` = VALUES(`binary32`),\n`binary64` = VALUES(`binary64`),\n`time0` = VALUES(`time0`),\n`time3` = VALUES(`time3`),\n`time6` = VALUES(`time6`),\n`datetime0` = VALUES(`datetime0`),\n`datetime3` = VALUES(`datetime3`),\n`datetime6` = VALUES(`datetime6`),\n`ts0` = VALUES(`ts0`),\n`ts3` = VALUES(`ts3`),\n`ts6` = VALUES(`ts6`)\nRETURNING `id`, `string10`, `string20`, `string50`, `string100`, `string255`, `char10`, `decimal5_2`, `decimal10_2`, `decimal18_4`, `numeric8_2`, `numeric12_4`, `binary16`, `binary32`, `binary64`, `time0`, `time3`, `time6`, `datetime0`, `datetime3`, `datetime6`, `ts0`, `ts3`, `ts6`"))
+    .updateReturningEach(PrecisionTypesNullRow.rowCodec, unsaved)
+  .run(c)
 }

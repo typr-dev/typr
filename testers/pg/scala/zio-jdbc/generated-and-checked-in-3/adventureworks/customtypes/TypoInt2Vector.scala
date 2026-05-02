@@ -53,7 +53,7 @@ object TypoInt2Vector {
     )
   }
 
-  given bijection: Bijection[TypoInt2Vector, String] = Bijection.apply[TypoInt2Vector, String](_.value)(TypoInt2Vector.apply)
+  given bijection: Bijection[TypoInt2Vector, String] = Bijection[TypoInt2Vector, String](_.value)(TypoInt2Vector.apply)
 
   given jdbcDecoder: JdbcDecoder[TypoInt2Vector] = {
     JdbcDecoder[TypoInt2Vector](

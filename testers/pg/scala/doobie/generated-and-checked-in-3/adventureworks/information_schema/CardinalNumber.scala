@@ -23,7 +23,7 @@ object CardinalNumber {
 
   given arrayPut: Put[Array[CardinalNumber]] = adventureworks.IntegerArrayMeta.put.contramap(_.map(_.value))
 
-  given bijection: Bijection[CardinalNumber, Int] = Bijection.apply[CardinalNumber, Int](_.value)(CardinalNumber.apply)
+  given bijection: Bijection[CardinalNumber, Int] = Bijection[CardinalNumber, Int](_.value)(CardinalNumber.apply)
 
   given decoder: Decoder[CardinalNumber] = Decoder.decodeInt.map(CardinalNumber.apply)
 

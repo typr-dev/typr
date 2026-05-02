@@ -38,7 +38,7 @@ object TypoPolygon {
 
   given arrayToStatement: ToStatement[Array[TypoPolygon]] = ToStatement[Array[TypoPolygon]]((s, index, v) => s.setArray(index, s.getConnection.createArrayOf("polygon", v.map(v => new PGpolygon(v.points.map(p => new PGpoint(p.x, p.y)).toArray)))))
 
-  given bijection: Bijection[TypoPolygon, List[TypoPoint]] = Bijection.apply[TypoPolygon, List[TypoPoint]](_.points)(TypoPolygon.apply)
+  given bijection: Bijection[TypoPolygon, List[TypoPoint]] = Bijection[TypoPolygon, List[TypoPoint]](_.points)(TypoPolygon.apply)
 
   given column: Column[TypoPolygon] = {
     Column.nonNull[TypoPolygon]((v1: Any, _) =>

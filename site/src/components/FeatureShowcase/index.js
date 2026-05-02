@@ -36,7 +36,7 @@ trait UserRepo {
   def deleteById(id: UserId)(implicit c: Connection): Boolean
   // + 20 more methods
 }`,
-        docs: "/db/setup"
+        docs: "/typr/boundaries/databases/setup"
       },
       {
         title: "Complete CRUD + Advanced Operations", 
@@ -56,7 +56,7 @@ userRepo.upsertBatch(users)  // Returns the upserted rows
 userRepo.selectByIds(userIds)
 userRepo.selectByIdsTracked(userIds) // tracks found/missing
 userRepo.insertStreaming(userStream)  // PostgreSQL COPY API`,
-        docs: "/db/what-is/relations"
+        docs: "/typr/boundaries/databases/what-is/relations"
       }
     ]
   },
@@ -86,7 +86,7 @@ orderRepo.select
   
 // joinFk knows the relationship from your schema!
 // Your IDE will autocomplete available foreign keys`,
-        docs: "/db/what-is/relations"
+        docs: "/typr/boundaries/databases/what-is/relations"
       },
       {
         title: "Type-Safe Foreign Key Navigation",
@@ -113,7 +113,7 @@ val query = productRepo.select
   
 // Each joinFk automatically uses the foreign key constraint
 // No manual ON clauses needed - Typr knows the relationships!`,
-        docs: "/db/other-features/dsl-in-depth"
+        docs: "/typr/boundaries/databases/other-features/dsl-in-depth"
       }
     ]
   },
@@ -133,7 +133,7 @@ def getUserOrders(userId: UserId): List[OrderRow] = {
     .toList
   // orderRepo.select.where(_.userId === productId.?) // ❌ Won't compile
 }`,
-        docs: "/db/type-safety/id-types"
+        docs: "/typr/boundaries/databases/type-safety/id-types"
       },
       {
         title: "Type Flow Through Relationships",
@@ -151,7 +151,7 @@ CREATE TABLE order (
         scalaCode: `// Generated code maintains relationships
 case class UserRow(id: UserId, name: String)
 case class OrderRow(id: OrderId, userId: Option[UserId]) // ✅ Specific type, not just UUID`,
-        docs: "/db/type-safety/type-flow"
+        docs: "/typr/boundaries/databases/type-safety/type-flow"
       },
       {
         title: "PostgreSQL Domain Types",
@@ -166,7 +166,7 @@ case class Email(value: String)
 
 // Usage in generated types:
 case class UserRow(id: UserId, email: String) // Type preserved`,
-        docs: "/db/type-safety/domains"
+        docs: "/typr/boundaries/databases/type-safety/domains"
       },
       {
         title: "Composite Primary Keys",
@@ -190,7 +190,7 @@ userPermissionRepo.insert(UserPermissionRowUnsaved(
   userId = userId,
   permissionId = permissionId
 ))`,
-        docs: "/db/type-safety/id-types#composite-keys"
+        docs: "/typr/boundaries/databases/type-safety/id-types#composite-keys"
       }
     ]
   },
@@ -226,7 +226,7 @@ orderItemRepo.delete
   .where(_.orderId.in(cancelledOrderIds))
   .where(_.shippedAt.isNull)
   .execute`,
-        docs: "/db/other-features/dsl-in-depth"
+        docs: "/typr/boundaries/databases/other-features/dsl-in-depth"
       }
     ]
   },
@@ -261,7 +261,7 @@ trait UserAnalyticsSqlRepo {
     limit: Int
   )(implicit c: Connection): List[UserAnalyticsSqlRow]
 }`,
-        docs: "/db/what-is/sql-is-king"
+        docs: "/typr/boundaries/databases/what-is/sql-is-king"
       },
       {
         title: "Smart Parameter Inference",
@@ -279,7 +279,7 @@ WHERE p.id = :person_id!               -- Required parameter
 -- Dynamic filtering patterns work perfectly
 -- Type inference follows foreign keys
 -- Custom domain types are preserved`,
-        docs: "/db/what-is/sql-is-king"
+        docs: "/typr/boundaries/databases/what-is/sql-is-king"
       },
       {
         title: "Updates with RETURNING Support",
@@ -305,7 +305,7 @@ trait UpdateUserStatusSqlRepo {
 }
 
 // Perfect for audit trails and optimistic locking`,
-        docs: "/db/what-is/sql-is-king"
+        docs: "/typr/boundaries/databases/what-is/sql-is-king"
       }
     ]
   },
@@ -335,7 +335,7 @@ val employees = List.fill(5)(
 // Every foreign key is valid!
 // All other fields are realistic random data!
 // Zero lingering state between tests!`,
-        docs: "/db/other-features/testing-with-random-values"
+        docs: "/typr/boundaries/databases/other-features/testing-with-random-values"
       },
       {
         title: "In-Memory Repository Stubs",
@@ -356,7 +356,7 @@ val result = orderService.calculateMonthlyReport(userId)
 
 // Runs instantly, no database needed
 // Full DSL support including complex joins`,
-        docs: "/db/other-features/testing-with-stubs"
+        docs: "/typr/boundaries/databases/other-features/testing-with-stubs"
       },
       {
         title: "Full DSL Support in Stubs",
@@ -374,7 +374,7 @@ val topCustomers = userRepo.select
 
 // This runs instantly in memory!
 // Same code as production database queries!`,
-        docs: "/db/other-features/testing-with-stubs"
+        docs: "/typr/boundaries/databases/other-features/testing-with-stubs"
       }
     ]
   },
@@ -399,7 +399,7 @@ productRepo.select
   .where(_.id.in(Array(id1, id2, id3)))
   .where(_.tags.getOrElse(Array.empty).contains("sale"))
   .toList`,
-        docs: "/db/type-safety/arrays"
+        docs: "/typr/boundaries/databases/type-safety/arrays"
       },
       {
         title: "Other PostgreSQL Types & Features",
@@ -417,7 +417,7 @@ case class LocationRow(
 locationRepo.select
   .where(_.name === "Main Office")
   .toList`,
-        docs: "/db/type-safety/typo-types"
+        docs: "/typr/boundaries/databases/type-safety/struct-types"
       }
     ]
   },
@@ -498,7 +498,7 @@ def getActiveUsers: ConnectionIO[List[UserRow]] =
 // ZIO-JDBC
 def getUsersZIO: ZIO[Connection, Throwable, List[UserRow]] =
   ZIO.serviceWithZIO[Connection](userRepo.selectAll(_))`,
-        docs: "/db/customization/overview#database-libraries"
+        docs: "/typr/boundaries/databases/customization/overview#database-libraries"
       },
       {
         title: "JSON Library Integration",
@@ -519,7 +519,7 @@ implicit val usersCodec: JsonCodec[UserRow] = UserRow.codec
 // Just use them - handles all complex types, arrays, nested objects
 val json = Json.toJson(user)
 val decoded = json.as[UserRow]`,
-        docs: "/db/other-features/json"
+        docs: "/typr/boundaries/databases/other-features/json"
       }
     ]
   }
@@ -595,7 +595,7 @@ export default function FeatureShowcase() {
             </div>
           </div>
           <div className={styles.moreFeaturesCTA}>
-            <Link className="button button--primary button--lg" to="/db">
+            <Link className="button button--primary button--lg" to="/typr/boundaries/databases/">
               Explore All Features
             </Link>
           </div>

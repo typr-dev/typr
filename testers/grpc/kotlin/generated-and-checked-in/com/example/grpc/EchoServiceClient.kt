@@ -45,22 +45,22 @@ data class EchoServiceClient(val channel: Channel) : EchoService {
   }
 
   companion object {
+    val ECHO_SCALAR_TYPES: MethodDescriptor<ScalarTypes, ScalarTypes> = MethodDescriptor.newBuilder(ScalarTypes.MARSHALLER, ScalarTypes.MARSHALLER).setType(MethodType.UNARY).setFullMethodName("testgrpc.EchoService/EchoScalarTypes").build()
+
     val ECHO_CUSTOMER: MethodDescriptor<Customer, Customer> = MethodDescriptor.newBuilder(Customer.MARSHALLER, Customer.MARSHALLER).setType(MethodType.UNARY).setFullMethodName("testgrpc.EchoService/EchoCustomer").build()
-
-    val ECHO_INVENTORY: MethodDescriptor<Inventory, Inventory> = MethodDescriptor.newBuilder(Inventory.MARSHALLER, Inventory.MARSHALLER).setType(MethodType.UNARY).setFullMethodName("testgrpc.EchoService/EchoInventory").build()
-
-    val ECHO_NOTIFICATION: MethodDescriptor<Notification, Notification> = MethodDescriptor.newBuilder(Notification.MARSHALLER, Notification.MARSHALLER).setType(MethodType.UNARY).setFullMethodName("testgrpc.EchoService/EchoNotification").build()
-
-    val ECHO_OPTIONAL_FIELDS: MethodDescriptor<OptionalFields, OptionalFields> = MethodDescriptor.newBuilder(OptionalFields.MARSHALLER, OptionalFields.MARSHALLER).setType(MethodType.UNARY).setFullMethodName("testgrpc.EchoService/EchoOptionalFields").build()
 
     val ECHO_ORDER: MethodDescriptor<Order, Order> = MethodDescriptor.newBuilder(Order.MARSHALLER, Order.MARSHALLER).setType(MethodType.UNARY).setFullMethodName("testgrpc.EchoService/EchoOrder").build()
 
+    val ECHO_INVENTORY: MethodDescriptor<Inventory, Inventory> = MethodDescriptor.newBuilder(Inventory.MARSHALLER, Inventory.MARSHALLER).setType(MethodType.UNARY).setFullMethodName("testgrpc.EchoService/EchoInventory").build()
+
     val ECHO_OUTER: MethodDescriptor<Outer, Outer> = MethodDescriptor.newBuilder(Outer.MARSHALLER, Outer.MARSHALLER).setType(MethodType.UNARY).setFullMethodName("testgrpc.EchoService/EchoOuter").build()
+
+    val ECHO_OPTIONAL_FIELDS: MethodDescriptor<OptionalFields, OptionalFields> = MethodDescriptor.newBuilder(OptionalFields.MARSHALLER, OptionalFields.MARSHALLER).setType(MethodType.UNARY).setFullMethodName("testgrpc.EchoService/EchoOptionalFields").build()
+
+    val ECHO_WELL_KNOWN_TYPES: MethodDescriptor<WellKnownTypesMessage, WellKnownTypesMessage> = MethodDescriptor.newBuilder(WellKnownTypesMessage.MARSHALLER, WellKnownTypesMessage.MARSHALLER).setType(MethodType.UNARY).setFullMethodName("testgrpc.EchoService/EchoWellKnownTypes").build()
 
     val ECHO_PAYMENT_METHOD: MethodDescriptor<PaymentMethod, PaymentMethod> = MethodDescriptor.newBuilder(PaymentMethod.MARSHALLER, PaymentMethod.MARSHALLER).setType(MethodType.UNARY).setFullMethodName("testgrpc.EchoService/EchoPaymentMethod").build()
 
-    val ECHO_SCALAR_TYPES: MethodDescriptor<ScalarTypes, ScalarTypes> = MethodDescriptor.newBuilder(ScalarTypes.MARSHALLER, ScalarTypes.MARSHALLER).setType(MethodType.UNARY).setFullMethodName("testgrpc.EchoService/EchoScalarTypes").build()
-
-    val ECHO_WELL_KNOWN_TYPES: MethodDescriptor<WellKnownTypesMessage, WellKnownTypesMessage> = MethodDescriptor.newBuilder(WellKnownTypesMessage.MARSHALLER, WellKnownTypesMessage.MARSHALLER).setType(MethodType.UNARY).setFullMethodName("testgrpc.EchoService/EchoWellKnownTypes").build()
+    val ECHO_NOTIFICATION: MethodDescriptor<Notification, Notification> = MethodDescriptor.newBuilder(Notification.MARSHALLER, Notification.MARSHALLER).setType(MethodType.UNARY).setFullMethodName("testgrpc.EchoService/EchoNotification").build()
   }
 }

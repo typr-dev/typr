@@ -6,13 +6,11 @@
 package testdb.order_items
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import dev.typr.foundations.MariaTypes
+import dev.typr.dslsc.RowCodecs
 import dev.typr.foundations.Tuple.Tuple13
 import dev.typr.foundations.data.Uint2
-import dev.typr.foundations.scala.DbTypeOps
-import dev.typr.foundations.scala.RowParser
-import dev.typr.foundations.scala.RowParsers
-import dev.typr.foundations.scala.ScalaDbTypes
+import dev.typr.foundationssc.MariaTypes
+import dev.typr.foundationssc.RowCodec
 import testdb.customtypes.Defaulted
 import testdb.orders.OrdersId
 import testdb.products.ProductsId
@@ -119,5 +117,5 @@ case class OrderItemsRow(
 }
 
 object OrderItemsRow {
-  val `_rowParser`: RowParser[OrderItemsRow] = RowParsers.of(OrderItemsId.mariaType, OrdersId.mariaType, ProductsId.mariaType, MariaTypes.varchar, MariaTypes.varchar, MariaTypes.smallintUnsigned, ScalaDbTypes.MariaTypes.numeric, ScalaDbTypes.MariaTypes.numeric, ScalaDbTypes.MariaTypes.numeric, ScalaDbTypes.MariaTypes.numeric, MariaTypes.text, WarehousesId.mariaType.nullable, MariaTypes.tinytext.nullable)(OrderItemsRow.apply)(row => Array[Any](row.itemId, row.orderId, row.productId, row.sku, row.productName, row.quantity, row.unitPrice, row.discountAmount, row.taxAmount, row.lineTotal, row.fulfillmentStatus, row.warehouseId, row.notes))
+  val rowCodec: RowCodec[OrderItemsRow] = RowCodecs.of(OrderItemsId.mariaType, OrdersId.mariaType, ProductsId.mariaType, MariaTypes.varchar, MariaTypes.varchar, MariaTypes.smallintUnsigned, MariaTypes.numeric, MariaTypes.numeric, MariaTypes.numeric, MariaTypes.numeric, MariaTypes.text, WarehousesId.mariaType.opt, MariaTypes.tinytext.opt)(OrderItemsRow.apply)(row => Array[Any](row.itemId, row.orderId, row.productId, row.sku, row.productName, row.quantity, row.unitPrice, row.discountAmount, row.taxAmount, row.lineTotal, row.fulfillmentStatus, row.warehouseId, row.notes))
 }

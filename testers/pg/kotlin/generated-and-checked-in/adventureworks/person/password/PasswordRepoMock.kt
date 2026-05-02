@@ -6,17 +6,18 @@
 package adventureworks.person.password
 
 import adventureworks.person.businessentity.BusinessentityId
-import dev.typr.foundations.kotlin.DeleteBuilder
-import dev.typr.foundations.kotlin.DeleteBuilderMock
-import dev.typr.foundations.kotlin.DeleteParams
-import dev.typr.foundations.kotlin.SelectBuilder
-import dev.typr.foundations.kotlin.SelectBuilderMock
-import dev.typr.foundations.kotlin.SelectParams
-import dev.typr.foundations.kotlin.UpdateBuilder
-import dev.typr.foundations.kotlin.UpdateBuilderMock
-import dev.typr.foundations.kotlin.UpdateParams
+import dev.typr.dslkt.DeleteBuilder
+import dev.typr.dslkt.DeleteBuilderMock
+import dev.typr.dslkt.DeleteParams
+import dev.typr.dslkt.SelectBuilder
+import dev.typr.dslkt.SelectBuilderMock
+import dev.typr.dslkt.SelectParams
+import dev.typr.dslkt.UpdateBuilder
+import dev.typr.dslkt.UpdateBuilderMock
+import dev.typr.dslkt.UpdateParams
+import dev.typr.foundationskt.Connection
+import dev.typr.foundationskt.ConnectionRead
 import java.lang.RuntimeException
-import java.sql.Connection
 import java.util.ArrayList
 import kotlin.collections.Iterator
 import kotlin.collections.List
@@ -32,10 +33,10 @@ data class PasswordRepoMock(
   override fun deleteById(
     businessentityid: BusinessentityId,
     c: Connection
-  ): Boolean = map.remove(businessentityid) != null
+  ): kotlin.Boolean = map.remove(businessentityid) != null
 
   override fun deleteByIds(
-    businessentityids: Array<BusinessentityId>,
+    businessentityids: List<BusinessentityId>,
     c: Connection
   ): Int {
     var count = 0
@@ -67,7 +68,7 @@ data class PasswordRepoMock(
     unsaved: Iterator<PasswordRow>,
     batchSize: Int,
     c: Connection
-  ): Long {
+  ): kotlin.Long {
     var count = 0L
     while (unsaved.hasNext()) {
       val row = unsaved.next()
@@ -82,7 +83,7 @@ data class PasswordRepoMock(
     unsaved: Iterator<PasswordRowUnsaved>,
     batchSize: Int,
     c: Connection
-  ): Long {
+  ): kotlin.Long {
     var count = 0L
     while (unsaved.hasNext()) {
       val unsavedRow = unsaved.next()
@@ -95,16 +96,16 @@ data class PasswordRepoMock(
 
   override fun select(): SelectBuilder<PasswordFields, PasswordRow> = SelectBuilderMock(PasswordFields.structure, { map.values.toList() }, SelectParams.empty())
 
-  override fun selectAll(c: Connection): List<PasswordRow> = map.values.toList()
+  override fun selectAll(c: ConnectionRead): List<PasswordRow> = map.values.toList()
 
   override fun selectById(
     businessentityid: BusinessentityId,
-    c: Connection
+    c: ConnectionRead
   ): PasswordRow? = map[businessentityid]
 
   override fun selectByIds(
-    businessentityids: Array<BusinessentityId>,
-    c: Connection
+    businessentityids: List<BusinessentityId>,
+    c: ConnectionRead
   ): List<PasswordRow> {
     val result = ArrayList<PasswordRow>()
     for (id in businessentityids) {
@@ -117,8 +118,8 @@ data class PasswordRepoMock(
   }
 
   override fun selectByIdsTracked(
-    businessentityids: Array<BusinessentityId>,
-    c: Connection
+    businessentityids: List<BusinessentityId>,
+    c: ConnectionRead
   ): Map<BusinessentityId, PasswordRow> = selectByIds(businessentityids, c).associateBy({ row: PasswordRow -> row.businessentityid })
 
   override fun update(): UpdateBuilder<PasswordFields, PasswordRow> = UpdateBuilderMock(PasswordFields.structure, { map.values.toList() }, UpdateParams.empty(), { row -> row })
@@ -126,7 +127,7 @@ data class PasswordRepoMock(
   override fun update(
     row: PasswordRow,
     c: Connection
-  ): Boolean {
+  ): kotlin.Boolean {
     val shouldUpdate = map[row.businessentityid]?.takeIf({ oldRow -> (oldRow != row) }) != null
     if (shouldUpdate) {
       map[row.businessentityid] = row

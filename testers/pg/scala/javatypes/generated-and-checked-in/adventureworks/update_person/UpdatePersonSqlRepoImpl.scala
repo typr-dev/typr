@@ -5,20 +5,20 @@
  */
 package adventureworks.update_person
 
+import dev.typr.foundations.Connection
 import dev.typr.foundations.Fragment
 import dev.typr.foundations.PgTypes
-import java.sql.Connection
 import java.time.LocalDateTime
 import java.util.Optional
-import dev.typr.foundations.Fragment.interpolate
+import dev.typr.foundations.Fragment.concat
 
 class UpdatePersonSqlRepoImpl extends UpdatePersonSqlRepo {
   override def apply(
     suffix: String,
     cutoff: Optional[LocalDateTime]
   )(using c: Connection): Integer = {
-    interpolate(Fragment.lit("""update person.person
-    set firstname = firstname || '-' || """), Fragment.encode(PgTypes.text, suffix), Fragment.lit("""
-    where modifieddate < """), Fragment.encode(PgTypes.timestamp.opt(), cutoff), Fragment.lit("::timestamp")).update().runUnchecked(c)
+    concat(Fragment.of("""update person.person
+    set firstname = firstname || '-' || """), Fragment.encode(PgTypes.text, suffix), Fragment.of("""
+    where modifieddate < """), Fragment.encode(PgTypes.timestamp.opt, cutoff), Fragment.of("::timestamp")).update().run(c)
   }
 }

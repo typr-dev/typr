@@ -6,10 +6,10 @@
 package adventureworks.production.productcosthistory
 
 import adventureworks.production.product.ProductId
-import dev.typr.foundations.PgTypes
+import dev.typr.dslsc.RowCodecs
 import dev.typr.foundations.Tuple.Tuple2
-import dev.typr.foundations.scala.RowParser
-import dev.typr.foundations.scala.RowParsers
+import dev.typr.foundationssc.PgTypes
+import dev.typr.foundationssc.RowCodec
 import java.time.LocalDateTime
 
 /** Type for the composite primary key of table `production.productcosthistory` */
@@ -23,5 +23,5 @@ case class ProductcosthistoryId(
 }
 
 object ProductcosthistoryId {
-  val `_rowParser`: RowParser[ProductcosthistoryId] = RowParsers.of(ProductId.pgType, PgTypes.timestamp)(ProductcosthistoryId.apply)(row => Array[Any](row.productid, row.startdate))
+  val rowCodec: RowCodec[ProductcosthistoryId] = RowCodecs.of(ProductId.pgType, PgTypes.timestamp)(ProductcosthistoryId.apply)(row => Array[Any](row.productid, row.startdate))
 }

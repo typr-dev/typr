@@ -27,7 +27,7 @@ object SqlIdentifier {
 
   given arraySetter: Setter[Array[SqlIdentifier]] = adventureworks.StringArraySetter.contramap(_.map(_.value))
 
-  given bijection: Bijection[SqlIdentifier, String] = Bijection.apply[SqlIdentifier, String](_.value)(SqlIdentifier.apply)
+  given bijection: Bijection[SqlIdentifier, String] = Bijection[SqlIdentifier, String](_.value)(SqlIdentifier.apply)
 
   given jdbcDecoder: JdbcDecoder[SqlIdentifier] = JdbcDecoder.stringDecoder.map(SqlIdentifier.apply)
 

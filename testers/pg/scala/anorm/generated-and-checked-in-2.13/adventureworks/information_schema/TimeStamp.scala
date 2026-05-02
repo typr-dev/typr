@@ -25,7 +25,7 @@ object TimeStamp {
 
   implicit lazy val arrayToStatement: ToStatement[Array[TimeStamp]] = TypoInstant.arrayToStatement.contramap(_.map(_.value))
 
-  implicit lazy val bijection: Bijection[TimeStamp, TypoInstant] = Bijection.apply[TimeStamp, TypoInstant](_.value)(TimeStamp.apply)
+  implicit lazy val bijection: Bijection[TimeStamp, TypoInstant] = Bijection[TimeStamp, TypoInstant](_.value)(TimeStamp.apply)
 
   implicit lazy val column: Column[TimeStamp] = TypoInstant.column.map(TimeStamp.apply)
 

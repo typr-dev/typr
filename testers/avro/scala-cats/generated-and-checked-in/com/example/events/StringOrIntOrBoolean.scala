@@ -1,5 +1,7 @@
 package com.example.events
 
+import com.example.events.StringOrIntOrBoolean.BooleanValue
+import com.example.events.StringOrIntOrBoolean.IntValue
 import java.lang.UnsupportedOperationException
 
 /** Union type for: string | int | boolean */

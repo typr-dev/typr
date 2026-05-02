@@ -21,7 +21,7 @@ object UnitmeasureId {
 
   given arrayToStatement: ToStatement[Array[UnitmeasureId]] = ToStatement.arrayToParameter(using ParameterMetaData.StringParameterMetaData).contramap(_.map(_.value))
 
-  given bijection: Bijection[UnitmeasureId, String] = Bijection.apply[UnitmeasureId, String](_.value)(UnitmeasureId.apply)
+  given bijection: Bijection[UnitmeasureId, String] = Bijection[UnitmeasureId, String](_.value)(UnitmeasureId.apply)
 
   given column: Column[UnitmeasureId] = Column.columnToString.map(UnitmeasureId.apply)
 

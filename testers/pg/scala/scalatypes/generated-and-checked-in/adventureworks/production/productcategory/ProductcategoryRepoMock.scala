@@ -5,17 +5,18 @@
  */
 package adventureworks.production.productcategory
 
-import dev.typr.foundations.scala.DeleteBuilder
-import dev.typr.foundations.scala.DeleteBuilderMock
-import dev.typr.foundations.scala.DeleteParams
-import dev.typr.foundations.scala.SelectBuilder
-import dev.typr.foundations.scala.SelectBuilderMock
-import dev.typr.foundations.scala.SelectParams
-import dev.typr.foundations.scala.UpdateBuilder
-import dev.typr.foundations.scala.UpdateBuilderMock
-import dev.typr.foundations.scala.UpdateParams
+import dev.typr.dslsc.DeleteBuilder
+import dev.typr.dslsc.DeleteBuilderMock
+import dev.typr.dslsc.DeleteParams
+import dev.typr.dslsc.SelectBuilder
+import dev.typr.dslsc.SelectBuilderMock
+import dev.typr.dslsc.SelectParams
+import dev.typr.dslsc.UpdateBuilder
+import dev.typr.dslsc.UpdateBuilderMock
+import dev.typr.dslsc.UpdateParams
+import dev.typr.foundationssc.Connection
+import dev.typr.foundationssc.ConnectionRead
 import java.lang.RuntimeException
-import java.sql.Connection
 
 case class ProductcategoryRepoMock(
   toRow: ProductcategoryRowUnsaved => ProductcategoryRow,
@@ -25,7 +26,7 @@ case class ProductcategoryRepoMock(
 
   override def deleteById(productcategoryid: ProductcategoryId)(using c: Connection): Boolean = map.remove(productcategoryid).isDefined
 
-  override def deleteByIds(productcategoryids: Array[ProductcategoryId])(using c: Connection): Int = {
+  override def deleteByIds(productcategoryids: List[ProductcategoryId])(using c: Connection): Int = {
     var count = 0
     productcategoryids.foreach { id => if (map.remove(id).isDefined) {
       count = count + 1
@@ -67,13 +68,13 @@ case class ProductcategoryRepoMock(
 
   override def select: SelectBuilder[ProductcategoryFields, ProductcategoryRow] = SelectBuilderMock(ProductcategoryFields.structure, () => map.values.toList, SelectParams.empty())
 
-  override def selectAll(using c: Connection): List[ProductcategoryRow] = map.values.toList
+  override def selectAll(using c: ConnectionRead): List[ProductcategoryRow] = map.values.toList
 
-  override def selectById(productcategoryid: ProductcategoryId)(using c: Connection): Option[ProductcategoryRow] = map.get(productcategoryid)
+  override def selectById(productcategoryid: ProductcategoryId)(using c: ConnectionRead): Option[ProductcategoryRow] = map.get(productcategoryid)
 
-  override def selectByIds(productcategoryids: Array[ProductcategoryId])(using c: Connection): List[ProductcategoryRow] = productcategoryids.flatMap(map.get(_)).toList
+  override def selectByIds(productcategoryids: List[ProductcategoryId])(using c: ConnectionRead): List[ProductcategoryRow] = productcategoryids.flatMap(map.get(_)).toList
 
-  override def selectByIdsTracked(productcategoryids: Array[ProductcategoryId])(using c: Connection): Map[ProductcategoryId, ProductcategoryRow] = selectByIds(productcategoryids)(using c).map(x => (((row: ProductcategoryRow) => row.productcategoryid).apply(x), x)).toMap
+  override def selectByIdsTracked(productcategoryids: List[ProductcategoryId])(using c: ConnectionRead): Map[ProductcategoryId, ProductcategoryRow] = selectByIds(productcategoryids)(using c).map(x => (((row: ProductcategoryRow) => row.productcategoryid).apply(x), x)).toMap
 
   override def update: UpdateBuilder[ProductcategoryFields, ProductcategoryRow] = UpdateBuilderMock(ProductcategoryFields.structure, () => map.values.toList, UpdateParams.empty(), row => row)
 

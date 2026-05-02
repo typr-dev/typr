@@ -6,9 +6,9 @@
 package adventureworks.public.only_pk_columns
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import dev.typr.dsl.RowCodecs
 import dev.typr.foundations.PgTypes
-import dev.typr.foundations.RowParser
-import dev.typr.foundations.RowParsers
+import dev.typr.foundations.RowCodec
 import dev.typr.foundations.Tuple.Tuple2
 
 /** Type for the composite primary key of table `public.only_pk_columns` */
@@ -22,5 +22,5 @@ case class OnlyPkColumnsId(
 }
 
 object OnlyPkColumnsId {
-  val `_rowParser`: RowParser[OnlyPkColumnsId] = RowParsers.of(PgTypes.text, PgTypes.int4, OnlyPkColumnsId.apply, row => Array[Any](row.keyColumn1, row.keyColumn2))
+  val rowCodec: RowCodec[OnlyPkColumnsId] = RowCodecs.of(PgTypes.text, PgTypes.int4, OnlyPkColumnsId.apply, row => Array[Any](row.keyColumn1, row.keyColumn2))
 }

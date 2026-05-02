@@ -1,0 +1,33 @@
+{
+  "type": "record",
+  "name": "PaymentCallback",
+  "namespace": "com.example.events",
+  "doc": "Callback received from payment provider when payment status changes",
+  "fields": [
+    {
+      "name": "orderId",
+      "type": "string",
+      "doc": "Order ID for correlation"
+    },
+    {
+      "name": "paymentId",
+      "type": "string",
+      "doc": "Payment provider's payment ID"
+    },
+    {
+      "name": "transactionId",
+      "type": "string",
+      "doc": "Payment provider's transaction ID"
+    },
+    {
+      "name": "amount",
+      "type": "long",
+      "doc": "Amount in smallest currency unit"
+    },
+    {
+      "name": "paidAt",
+      "type": {"type": "long", "logicalType": "timestamp-millis"},
+      "doc": "When the payment was charged"
+    }
+  ]
+}

@@ -6,7 +6,7 @@
 package testdb.product_search
 
 import dev.typr.foundations.data.Uint2
-import java.sql.Connection
+import dev.typr.foundationssc.ConnectionRead
 
 trait ProductSearchSqlRepo {
   def apply(
@@ -15,5 +15,5 @@ trait ProductSearchSqlRepo {
     maxPrice: Option[BigDecimal],
     status: Option[String],
     limit: Long
-  )(using c: Connection): List[ProductSearchSqlRow]
+  )(using c: ConnectionRead): List[ProductSearchSqlRow]
 }

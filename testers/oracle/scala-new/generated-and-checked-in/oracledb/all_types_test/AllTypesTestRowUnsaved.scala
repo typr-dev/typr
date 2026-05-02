@@ -16,7 +16,7 @@ case class AllTypesTestRowUnsaved(
   @JsonProperty("NAME") name: String,
   @JsonProperty("DATA") data: Option[AllTypesStructNoLobs] = None,
   @JsonProperty("DATA_ARRAY") dataArray: Option[AllTypesStructNoLobsArray] = None,
-  /** Default: "TYPR"."ISEQ$$_72879".nextval */
+  /** Default: "TYPR"."ISEQ$$_72869".nextval */
   @JsonProperty("ID") id: Defaulted[AllTypesTestId] = new UseDefault()
 ) {
   def toRow(idDefault: => AllTypesTestId): AllTypesTestRow = {

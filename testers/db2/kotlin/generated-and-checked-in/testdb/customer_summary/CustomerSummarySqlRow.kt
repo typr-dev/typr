@@ -6,33 +6,31 @@
 package testdb.customer_summary
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import dev.typr.foundations.Db2Types
+import dev.typr.dslkt.RowCodecs
 import dev.typr.foundations.Tuple.Tuple5
-import dev.typr.foundations.kotlin.KotlinDbTypes
-import dev.typr.foundations.kotlin.RowParser
-import dev.typr.foundations.kotlin.RowParsers
-import dev.typr.foundations.kotlin.nullable
+import dev.typr.foundationskt.Db2Types
+import dev.typr.foundationskt.RowCodec
 import java.math.BigDecimal
 
 /** SQL file: customer_summary.sql */
 data class CustomerSummarySqlRow(
   @field:JsonProperty("customer_id") val customerId: Int,
-  val name: String,
-  val email: String,
+  val name: kotlin.String,
+  val email: kotlin.String,
   @field:JsonProperty("order_count") val orderCount: Int?,
   @field:JsonProperty("total_spent") val totalSpent: BigDecimal?
-) : Tuple5<Int, String, String, Int?, BigDecimal?> {
+) : Tuple5<Int, kotlin.String, kotlin.String, Int?, BigDecimal?> {
   override fun _1(): Int = customerId
 
-  override fun _2(): String = name
+  override fun _2(): kotlin.String = name
 
-  override fun _3(): String = email
+  override fun _3(): kotlin.String = email
 
   override fun _4(): Int? = orderCount
 
   override fun _5(): BigDecimal? = totalSpent
 
   companion object {
-    val _rowParser: RowParser<CustomerSummarySqlRow> = RowParsers.of(KotlinDbTypes.Db2Types.integer, Db2Types.varchar, Db2Types.varchar, KotlinDbTypes.Db2Types.integer.nullable(), KotlinDbTypes.Db2Types.decimal.nullable(), { t0, t1, t2, t3, t4 -> CustomerSummarySqlRow(t0, t1, t2, t3, t4) }, { row -> arrayOf<Any?>(row.customerId, row.name, row.email, row.orderCount, row.totalSpent) })
+    val rowCodec: RowCodec<CustomerSummarySqlRow> = RowCodecs.of(Db2Types.integer, Db2Types.varchar, Db2Types.varchar, Db2Types.integer.opt(), Db2Types.decimal.opt(), { t0: Int, t1: kotlin.String, t2: kotlin.String, t3: Int?, t4: BigDecimal? -> CustomerSummarySqlRow(t0, t1, t2, t3, t4) }, { row: CustomerSummarySqlRow -> arrayOf<Any?>(row.customerId, row.name, row.email, row.orderCount, row.totalSpent) })
   }
 }

@@ -5,15 +5,14 @@
  */
 package oracledb.all_scalar_types
 
-import dev.typr.foundations.OracleTypes
-import dev.typr.foundations.kotlin.DeleteBuilder
-import dev.typr.foundations.kotlin.Dialect
-import dev.typr.foundations.kotlin.Fragment
-import dev.typr.foundations.kotlin.KotlinDbTypes
-import dev.typr.foundations.kotlin.SelectBuilder
-import dev.typr.foundations.kotlin.UpdateBuilder
-import dev.typr.foundations.kotlin.nullable
-import java.sql.Connection
+import dev.typr.dslkt.DeleteBuilder
+import dev.typr.dslkt.Dialect
+import dev.typr.dslkt.SelectBuilder
+import dev.typr.dslkt.UpdateBuilder
+import dev.typr.foundationskt.Connection
+import dev.typr.foundationskt.ConnectionRead
+import dev.typr.foundationskt.Fragment
+import dev.typr.foundationskt.OracleTypes
 import java.util.ArrayList
 import kotlin.collections.Iterator
 import kotlin.collections.List
@@ -26,22 +25,22 @@ class AllScalarTypesRepoImpl() : AllScalarTypesRepo {
   override fun deleteById(
     id: AllScalarTypesId,
     c: Connection
-  ): Boolean = Fragment.interpolate(Fragment.lit("delete from \"ALL_SCALAR_TYPES\" where \"ID\" = "), Fragment.encode(AllScalarTypesId.oracleType, id), Fragment.lit("")).update().runUnchecked(c) > 0
+  ): kotlin.Boolean = Fragment.concat(Fragment.of("delete from \"ALL_SCALAR_TYPES\" where \"ID\" = "), Fragment.encode(AllScalarTypesId.oracleType, id), Fragment.of("")).update().run(c) > 0
 
   override fun deleteByIds(
-    ids: Array<AllScalarTypesId>,
+    ids: List<AllScalarTypesId>,
     c: Connection
   ): Int {
     val fragments: ArrayList<Fragment> = ArrayList()
     for (id in ids) { fragments.add(Fragment.encode(AllScalarTypesId.oracleType, id)) }
-    return Fragment.interpolate(Fragment.lit("delete from \"ALL_SCALAR_TYPES\" where \"ID\" in ("), Fragment.comma(fragments.toMutableList()), Fragment.lit(")")).update().runUnchecked(c)
+    return Fragment.concat(Fragment.of("delete from \"ALL_SCALAR_TYPES\" where \"ID\" in ("), Fragment.comma(fragments.toMutableList()), Fragment.of(")")).update().run(c)
   }
 
   override fun insert(
     unsaved: AllScalarTypesRow,
     c: Connection
-  ): AllScalarTypesRow = Fragment.interpolate(Fragment.lit("insert into \"ALL_SCALAR_TYPES\"(\"ID\", \"COL_VARCHAR2\", \"COL_NUMBER\", \"COL_DATE\", \"COL_TIMESTAMP\", \"COL_CLOB\", \"COL_NOT_NULL\")\nvalues ("), Fragment.encode(AllScalarTypesId.oracleType, unsaved.id), Fragment.lit(", "), Fragment.encode(OracleTypes.varchar2.nullable(), unsaved.colVarchar2), Fragment.lit(", "), Fragment.encode(KotlinDbTypes.OracleTypes.number.nullable(), unsaved.colNumber), Fragment.lit(", "), Fragment.encode(OracleTypes.date.nullable(), unsaved.colDate), Fragment.lit(", "), Fragment.encode(OracleTypes.timestamp.nullable(), unsaved.colTimestamp), Fragment.lit(", "), Fragment.encode(OracleTypes.clob.nullable(), unsaved.colClob), Fragment.lit(", "), Fragment.encode(OracleTypes.varchar2, unsaved.colNotNull), Fragment.lit(")\n"))
-    .updateReturningGeneratedKeys(arrayOf<String>("ID", "COL_VARCHAR2", "COL_NUMBER", "COL_DATE", "COL_TIMESTAMP", "COL_CLOB", "COL_NOT_NULL"), AllScalarTypesRow._rowParser.exactlyOne()).runUnchecked(c)
+  ): AllScalarTypesRow = Fragment.concat(Fragment.of("insert into \"ALL_SCALAR_TYPES\"(\"ID\", \"COL_VARCHAR2\", \"COL_NUMBER\", \"COL_DATE\", \"COL_TIMESTAMP\", \"COL_CLOB\", \"COL_NOT_NULL\")\nvalues ("), Fragment.encode(AllScalarTypesId.oracleType, unsaved.id), Fragment.of(", "), Fragment.encode(OracleTypes.varchar2.opt(), unsaved.colVarchar2), Fragment.of(", "), Fragment.encode(OracleTypes.number.opt(), unsaved.colNumber), Fragment.of(", "), Fragment.encode(OracleTypes.date.opt(), unsaved.colDate), Fragment.of(", "), Fragment.encode(OracleTypes.timestamp.opt(), unsaved.colTimestamp), Fragment.of(", "), Fragment.encode(OracleTypes.clob.opt(), unsaved.colClob), Fragment.of(", "), Fragment.encode(OracleTypes.varchar2, unsaved.colNotNull), Fragment.of(")\n"))
+    .updateReturningGeneratedKeys(arrayOf<kotlin.String>("ID", "COL_VARCHAR2", "COL_NUMBER", "COL_DATE", "COL_TIMESTAMP", "COL_CLOB", "COL_NOT_NULL"), AllScalarTypesRow.rowCodec.exactlyOne()).run(c)
 
   override fun insert(
     unsaved: AllScalarTypesRowUnsaved,
@@ -49,79 +48,79 @@ class AllScalarTypesRepoImpl() : AllScalarTypesRepo {
   ): AllScalarTypesRow {
     val columns: ArrayList<Fragment> = ArrayList()
     val values: ArrayList<Fragment> = ArrayList()
-    columns.add(Fragment.lit("\"COL_VARCHAR2\""))
-    values.add(Fragment.interpolate(Fragment.encode(OracleTypes.varchar2.nullable(), unsaved.colVarchar2), Fragment.lit("")))
-    columns.add(Fragment.lit("\"COL_NUMBER\""))
-    values.add(Fragment.interpolate(Fragment.encode(KotlinDbTypes.OracleTypes.number.nullable(), unsaved.colNumber), Fragment.lit("")))
-    columns.add(Fragment.lit("\"COL_DATE\""))
-    values.add(Fragment.interpolate(Fragment.encode(OracleTypes.date.nullable(), unsaved.colDate), Fragment.lit("")))
-    columns.add(Fragment.lit("\"COL_TIMESTAMP\""))
-    values.add(Fragment.interpolate(Fragment.encode(OracleTypes.timestamp.nullable(), unsaved.colTimestamp), Fragment.lit("")))
-    columns.add(Fragment.lit("\"COL_CLOB\""))
-    values.add(Fragment.interpolate(Fragment.encode(OracleTypes.clob.nullable(), unsaved.colClob), Fragment.lit("")))
-    columns.add(Fragment.lit("\"COL_NOT_NULL\""))
-    values.add(Fragment.interpolate(Fragment.encode(OracleTypes.varchar2, unsaved.colNotNull), Fragment.lit("")))
+    columns.add(Fragment.of("\"COL_VARCHAR2\""))
+    values.add(Fragment.concat(Fragment.encode(OracleTypes.varchar2.opt(), unsaved.colVarchar2), Fragment.of("")))
+    columns.add(Fragment.of("\"COL_NUMBER\""))
+    values.add(Fragment.concat(Fragment.encode(OracleTypes.number.opt(), unsaved.colNumber), Fragment.of("")))
+    columns.add(Fragment.of("\"COL_DATE\""))
+    values.add(Fragment.concat(Fragment.encode(OracleTypes.date.opt(), unsaved.colDate), Fragment.of("")))
+    columns.add(Fragment.of("\"COL_TIMESTAMP\""))
+    values.add(Fragment.concat(Fragment.encode(OracleTypes.timestamp.opt(), unsaved.colTimestamp), Fragment.of("")))
+    columns.add(Fragment.of("\"COL_CLOB\""))
+    values.add(Fragment.concat(Fragment.encode(OracleTypes.clob.opt(), unsaved.colClob), Fragment.of("")))
+    columns.add(Fragment.of("\"COL_NOT_NULL\""))
+    values.add(Fragment.concat(Fragment.encode(OracleTypes.varchar2, unsaved.colNotNull), Fragment.of("")))
     unsaved.id.visit(
       {  },
-      { value -> columns.add(Fragment.lit("\"ID\""))
-      values.add(Fragment.interpolate(Fragment.encode(AllScalarTypesId.oracleType, value), Fragment.lit(""))) }
+      { value -> columns.add(Fragment.of("\"ID\""))
+      values.add(Fragment.concat(Fragment.encode(AllScalarTypesId.oracleType, value), Fragment.of(""))) }
     );
-    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into \"ALL_SCALAR_TYPES\"("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\n"))
-    return q.updateReturningGeneratedKeys(arrayOf<String>("ID", "COL_VARCHAR2", "COL_NUMBER", "COL_DATE", "COL_TIMESTAMP", "COL_CLOB", "COL_NOT_NULL"), AllScalarTypesRow._rowParser.exactlyOne()).runUnchecked(c)
+    val q: Fragment = Fragment.concat(Fragment.of("insert into \"ALL_SCALAR_TYPES\"("), Fragment.comma(columns.toMutableList()), Fragment.of(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.of(")\n"))
+    return q.updateReturningGeneratedKeys(arrayOf<kotlin.String>("ID", "COL_VARCHAR2", "COL_NUMBER", "COL_DATE", "COL_TIMESTAMP", "COL_CLOB", "COL_NOT_NULL"), AllScalarTypesRow.rowCodec.exactlyOne()).run(c)
   }
 
-  override fun select(): SelectBuilder<AllScalarTypesFields, AllScalarTypesRow> = SelectBuilder.of("\"ALL_SCALAR_TYPES\"", AllScalarTypesFields.structure, AllScalarTypesRow._rowParser, Dialect.ORACLE)
+  override fun select(): SelectBuilder<AllScalarTypesFields, AllScalarTypesRow> = SelectBuilder.of("\"ALL_SCALAR_TYPES\"", AllScalarTypesFields.structure, AllScalarTypesRow.rowCodec, Dialect.ORACLE)
 
-  override fun selectAll(c: Connection): List<AllScalarTypesRow> = Fragment.interpolate(Fragment.lit("select \"ID\", \"COL_VARCHAR2\", \"COL_NUMBER\", \"COL_DATE\", \"COL_TIMESTAMP\", \"COL_CLOB\", \"COL_NOT_NULL\"\nfrom \"ALL_SCALAR_TYPES\"\n")).query(AllScalarTypesRow._rowParser.all()).runUnchecked(c)
+  override fun selectAll(c: ConnectionRead): List<AllScalarTypesRow> = Fragment.concat(Fragment.of("select \"ID\", \"COL_VARCHAR2\", \"COL_NUMBER\", \"COL_DATE\", \"COL_TIMESTAMP\", \"COL_CLOB\", \"COL_NOT_NULL\"\nfrom \"ALL_SCALAR_TYPES\"\n")).query(AllScalarTypesRow.rowCodec.all()).run(c)
 
   override fun selectById(
     id: AllScalarTypesId,
-    c: Connection
-  ): AllScalarTypesRow? = Fragment.interpolate(Fragment.lit("select \"ID\", \"COL_VARCHAR2\", \"COL_NUMBER\", \"COL_DATE\", \"COL_TIMESTAMP\", \"COL_CLOB\", \"COL_NOT_NULL\"\nfrom \"ALL_SCALAR_TYPES\"\nwhere \"ID\" = "), Fragment.encode(AllScalarTypesId.oracleType, id), Fragment.lit("")).query(AllScalarTypesRow._rowParser.first()).runUnchecked(c)
+    c: ConnectionRead
+  ): AllScalarTypesRow? = Fragment.concat(Fragment.of("select \"ID\", \"COL_VARCHAR2\", \"COL_NUMBER\", \"COL_DATE\", \"COL_TIMESTAMP\", \"COL_CLOB\", \"COL_NOT_NULL\"\nfrom \"ALL_SCALAR_TYPES\"\nwhere \"ID\" = "), Fragment.encode(AllScalarTypesId.oracleType, id), Fragment.of("")).query(AllScalarTypesRow.rowCodec.first()).run(c)
 
   override fun selectByIds(
-    ids: Array<AllScalarTypesId>,
-    c: Connection
+    ids: List<AllScalarTypesId>,
+    c: ConnectionRead
   ): List<AllScalarTypesRow> {
     val fragments: ArrayList<Fragment> = ArrayList()
     for (id in ids) { fragments.add(Fragment.encode(AllScalarTypesId.oracleType, id)) }
-    return Fragment.interpolate(Fragment.lit("select \"ID\", \"COL_VARCHAR2\", \"COL_NUMBER\", \"COL_DATE\", \"COL_TIMESTAMP\", \"COL_CLOB\", \"COL_NOT_NULL\" from \"ALL_SCALAR_TYPES\" where \"ID\" in ("), Fragment.comma(fragments.toMutableList()), Fragment.lit(")")).query(AllScalarTypesRow._rowParser.all()).runUnchecked(c)
+    return Fragment.concat(Fragment.of("select \"ID\", \"COL_VARCHAR2\", \"COL_NUMBER\", \"COL_DATE\", \"COL_TIMESTAMP\", \"COL_CLOB\", \"COL_NOT_NULL\" from \"ALL_SCALAR_TYPES\" where \"ID\" in ("), Fragment.comma(fragments.toMutableList()), Fragment.of(")")).query(AllScalarTypesRow.rowCodec.all()).run(c)
   }
 
   override fun selectByIdsTracked(
-    ids: Array<AllScalarTypesId>,
-    c: Connection
+    ids: List<AllScalarTypesId>,
+    c: ConnectionRead
   ): Map<AllScalarTypesId, AllScalarTypesRow> {
     val ret: MutableMap<AllScalarTypesId, AllScalarTypesRow> = mutableMapOf<AllScalarTypesId, AllScalarTypesRow>()
     selectByIds(ids, c).forEach({ row -> ret.put(row.id, row) })
     return ret.toMap()
   }
 
-  override fun update(): UpdateBuilder<AllScalarTypesFields, AllScalarTypesRow> = UpdateBuilder.of("\"ALL_SCALAR_TYPES\"", AllScalarTypesFields.structure, AllScalarTypesRow._rowParser, Dialect.ORACLE)
+  override fun update(): UpdateBuilder<AllScalarTypesFields, AllScalarTypesRow> = UpdateBuilder.of("\"ALL_SCALAR_TYPES\"", AllScalarTypesFields.structure, AllScalarTypesRow.rowCodec, Dialect.ORACLE)
 
   override fun update(
     row: AllScalarTypesRow,
     c: Connection
-  ): Boolean {
+  ): kotlin.Boolean {
     val id: AllScalarTypesId = row.id
-    return Fragment.interpolate(Fragment.lit("update \"ALL_SCALAR_TYPES\"\nset \"COL_VARCHAR2\" = "), Fragment.encode(OracleTypes.varchar2.nullable(), row.colVarchar2), Fragment.lit(",\n\"COL_NUMBER\" = "), Fragment.encode(KotlinDbTypes.OracleTypes.number.nullable(), row.colNumber), Fragment.lit(",\n\"COL_DATE\" = "), Fragment.encode(OracleTypes.date.nullable(), row.colDate), Fragment.lit(",\n\"COL_TIMESTAMP\" = "), Fragment.encode(OracleTypes.timestamp.nullable(), row.colTimestamp), Fragment.lit(",\n\"COL_CLOB\" = "), Fragment.encode(OracleTypes.clob.nullable(), row.colClob), Fragment.lit(",\n\"COL_NOT_NULL\" = "), Fragment.encode(OracleTypes.varchar2, row.colNotNull), Fragment.lit("\nwhere \"ID\" = "), Fragment.encode(AllScalarTypesId.oracleType, id), Fragment.lit("")).update().runUnchecked(c) > 0
+    return Fragment.concat(Fragment.of("update \"ALL_SCALAR_TYPES\"\nset \"COL_VARCHAR2\" = "), Fragment.encode(OracleTypes.varchar2.opt(), row.colVarchar2), Fragment.of(",\n\"COL_NUMBER\" = "), Fragment.encode(OracleTypes.number.opt(), row.colNumber), Fragment.of(",\n\"COL_DATE\" = "), Fragment.encode(OracleTypes.date.opt(), row.colDate), Fragment.of(",\n\"COL_TIMESTAMP\" = "), Fragment.encode(OracleTypes.timestamp.opt(), row.colTimestamp), Fragment.of(",\n\"COL_CLOB\" = "), Fragment.encode(OracleTypes.clob.opt(), row.colClob), Fragment.of(",\n\"COL_NOT_NULL\" = "), Fragment.encode(OracleTypes.varchar2, row.colNotNull), Fragment.of("\nwhere \"ID\" = "), Fragment.encode(AllScalarTypesId.oracleType, id), Fragment.of("")).update().run(c) > 0
   }
 
   override fun upsert(
     unsaved: AllScalarTypesRow,
     c: Connection
   ) {
-    Fragment.interpolate(Fragment.lit("MERGE INTO \"ALL_SCALAR_TYPES\" t\nUSING (SELECT "), Fragment.encode(AllScalarTypesId.oracleType, unsaved.id), Fragment.lit(", "), Fragment.encode(OracleTypes.varchar2.nullable(), unsaved.colVarchar2), Fragment.lit(", "), Fragment.encode(KotlinDbTypes.OracleTypes.number.nullable(), unsaved.colNumber), Fragment.lit(", "), Fragment.encode(OracleTypes.date.nullable(), unsaved.colDate), Fragment.lit(", "), Fragment.encode(OracleTypes.timestamp.nullable(), unsaved.colTimestamp), Fragment.lit(", "), Fragment.encode(OracleTypes.clob.nullable(), unsaved.colClob), Fragment.lit(", "), Fragment.encode(OracleTypes.varchar2, unsaved.colNotNull), Fragment.lit(" FROM DUAL) s\nON (t.\"ID\" = s.\"ID\")\nWHEN MATCHED THEN UPDATE SET t.\"COL_VARCHAR2\" = s.\"COL_VARCHAR2\",\nt.\"COL_NUMBER\" = s.\"COL_NUMBER\",\nt.\"COL_DATE\" = s.\"COL_DATE\",\nt.\"COL_TIMESTAMP\" = s.\"COL_TIMESTAMP\",\nt.\"COL_CLOB\" = s.\"COL_CLOB\",\nt.\"COL_NOT_NULL\" = s.\"COL_NOT_NULL\"\nWHEN NOT MATCHED THEN INSERT (\"ID\", \"COL_VARCHAR2\", \"COL_NUMBER\", \"COL_DATE\", \"COL_TIMESTAMP\", \"COL_CLOB\", \"COL_NOT_NULL\") VALUES ("), Fragment.encode(AllScalarTypesId.oracleType, unsaved.id), Fragment.lit(", "), Fragment.encode(OracleTypes.varchar2.nullable(), unsaved.colVarchar2), Fragment.lit(", "), Fragment.encode(KotlinDbTypes.OracleTypes.number.nullable(), unsaved.colNumber), Fragment.lit(", "), Fragment.encode(OracleTypes.date.nullable(), unsaved.colDate), Fragment.lit(", "), Fragment.encode(OracleTypes.timestamp.nullable(), unsaved.colTimestamp), Fragment.lit(", "), Fragment.encode(OracleTypes.clob.nullable(), unsaved.colClob), Fragment.lit(", "), Fragment.encode(OracleTypes.varchar2, unsaved.colNotNull), Fragment.lit(")"))
+    Fragment.concat(Fragment.of("MERGE INTO \"ALL_SCALAR_TYPES\" t\nUSING (SELECT "), Fragment.encode(AllScalarTypesId.oracleType, unsaved.id), Fragment.of(", "), Fragment.encode(OracleTypes.varchar2.opt(), unsaved.colVarchar2), Fragment.of(", "), Fragment.encode(OracleTypes.number.opt(), unsaved.colNumber), Fragment.of(", "), Fragment.encode(OracleTypes.date.opt(), unsaved.colDate), Fragment.of(", "), Fragment.encode(OracleTypes.timestamp.opt(), unsaved.colTimestamp), Fragment.of(", "), Fragment.encode(OracleTypes.clob.opt(), unsaved.colClob), Fragment.of(", "), Fragment.encode(OracleTypes.varchar2, unsaved.colNotNull), Fragment.of(" FROM DUAL) s\nON (t.\"ID\" = s.\"ID\")\nWHEN MATCHED THEN UPDATE SET t.\"COL_VARCHAR2\" = s.\"COL_VARCHAR2\",\nt.\"COL_NUMBER\" = s.\"COL_NUMBER\",\nt.\"COL_DATE\" = s.\"COL_DATE\",\nt.\"COL_TIMESTAMP\" = s.\"COL_TIMESTAMP\",\nt.\"COL_CLOB\" = s.\"COL_CLOB\",\nt.\"COL_NOT_NULL\" = s.\"COL_NOT_NULL\"\nWHEN NOT MATCHED THEN INSERT (\"ID\", \"COL_VARCHAR2\", \"COL_NUMBER\", \"COL_DATE\", \"COL_TIMESTAMP\", \"COL_CLOB\", \"COL_NOT_NULL\") VALUES ("), Fragment.encode(AllScalarTypesId.oracleType, unsaved.id), Fragment.of(", "), Fragment.encode(OracleTypes.varchar2.opt(), unsaved.colVarchar2), Fragment.of(", "), Fragment.encode(OracleTypes.number.opt(), unsaved.colNumber), Fragment.of(", "), Fragment.encode(OracleTypes.date.opt(), unsaved.colDate), Fragment.of(", "), Fragment.encode(OracleTypes.timestamp.opt(), unsaved.colTimestamp), Fragment.of(", "), Fragment.encode(OracleTypes.clob.opt(), unsaved.colClob), Fragment.of(", "), Fragment.encode(OracleTypes.varchar2, unsaved.colNotNull), Fragment.of(")"))
       .update()
-      .runUnchecked(c)
+      .run(c)
   }
 
   override fun upsertBatch(
     unsaved: Iterator<AllScalarTypesRow>,
     c: Connection
   ) {
-    Fragment.interpolate(Fragment.lit("MERGE INTO \"ALL_SCALAR_TYPES\" t\nUSING (SELECT ?, ?, ?, ?, ?, ?, ? FROM DUAL) s\nON (t.\"ID\" = s.\"ID\")\nWHEN MATCHED THEN UPDATE SET t.\"COL_VARCHAR2\" = s.\"COL_VARCHAR2\",\nt.\"COL_NUMBER\" = s.\"COL_NUMBER\",\nt.\"COL_DATE\" = s.\"COL_DATE\",\nt.\"COL_TIMESTAMP\" = s.\"COL_TIMESTAMP\",\nt.\"COL_CLOB\" = s.\"COL_CLOB\",\nt.\"COL_NOT_NULL\" = s.\"COL_NOT_NULL\"\nWHEN NOT MATCHED THEN INSERT (\"ID\", \"COL_VARCHAR2\", \"COL_NUMBER\", \"COL_DATE\", \"COL_TIMESTAMP\", \"COL_CLOB\", \"COL_NOT_NULL\") VALUES (?, ?, ?, ?, ?, ?, ?)"))
-      .updateMany(AllScalarTypesRow._rowParser, unsaved)
-      .runUnchecked(c)
+    Fragment.concat(Fragment.of("MERGE INTO \"ALL_SCALAR_TYPES\" t\nUSING (SELECT ?, ?, ?, ?, ?, ?, ? FROM DUAL) s\nON (t.\"ID\" = s.\"ID\")\nWHEN MATCHED THEN UPDATE SET t.\"COL_VARCHAR2\" = s.\"COL_VARCHAR2\",\nt.\"COL_NUMBER\" = s.\"COL_NUMBER\",\nt.\"COL_DATE\" = s.\"COL_DATE\",\nt.\"COL_TIMESTAMP\" = s.\"COL_TIMESTAMP\",\nt.\"COL_CLOB\" = s.\"COL_CLOB\",\nt.\"COL_NOT_NULL\" = s.\"COL_NOT_NULL\"\nWHEN NOT MATCHED THEN INSERT (\"ID\", \"COL_VARCHAR2\", \"COL_NUMBER\", \"COL_DATE\", \"COL_TIMESTAMP\", \"COL_CLOB\", \"COL_NOT_NULL\") VALUES (?, ?, ?, ?, ?, ?, ?)"))
+      .updateMany(AllScalarTypesRow.rowCodec, unsaved)
+      .run(c)
   }
 }

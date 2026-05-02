@@ -6,11 +6,10 @@
 package testdb.customer_order_summary
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import dev.typr.foundations.Db2Types
+import dev.typr.dslsc.RowCodecs
 import dev.typr.foundations.Tuple.Tuple4
-import dev.typr.foundations.scala.RowParser
-import dev.typr.foundations.scala.RowParsers
-import dev.typr.foundations.scala.ScalaDbTypes
+import dev.typr.foundationssc.Db2Types
+import dev.typr.foundationssc.RowCodec
 
 /** View: CUSTOMER_ORDER_SUMMARY */
 case class CustomerOrderSummaryViewRow(
@@ -29,5 +28,5 @@ case class CustomerOrderSummaryViewRow(
 }
 
 object CustomerOrderSummaryViewRow {
-  val `_rowParser`: RowParser[CustomerOrderSummaryViewRow] = RowParsers.of(ScalaDbTypes.Db2Types.integer, Db2Types.varchar, ScalaDbTypes.Db2Types.integer, ScalaDbTypes.Db2Types.decimal)(CustomerOrderSummaryViewRow.apply)(row => Array[Any](row.customerId, row.name, row.orderCount, row.totalSpent))
+  val rowCodec: RowCodec[CustomerOrderSummaryViewRow] = RowCodecs.of(Db2Types.integer, Db2Types.varchar, Db2Types.integer, Db2Types.decimal)(CustomerOrderSummaryViewRow.apply)(row => Array[Any](row.customerId, row.name, row.orderCount, row.totalSpent))
 }

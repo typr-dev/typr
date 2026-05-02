@@ -6,10 +6,10 @@
 package testdb.precision_types
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import dev.typr.foundations.MariaTypes
+import dev.typr.dslsc.RowCodecs
 import dev.typr.foundations.Tuple.Tuple24
-import dev.typr.foundations.scala.RowParser
-import dev.typr.foundations.scala.RowParsers
+import dev.typr.foundationssc.MariaTypes
+import dev.typr.foundationssc.RowCodec
 import java.time.LocalDateTime
 import java.time.LocalTime
 import testdb.customtypes.Defaulted
@@ -175,5 +175,5 @@ case class PrecisionTypesRow(
 }
 
 object PrecisionTypesRow {
-  val `_rowParser`: RowParser[PrecisionTypesRow] = RowParsers.of(PrecisionTypesId.mariaType, String10.mariaType, String20.mariaType, String50.mariaType, String100.mariaType, String255.mariaType, PaddedString10.mariaType, Decimal5_2.mariaType, Decimal10_2.mariaType, Decimal18_4.mariaType, Decimal8_2.mariaType, Decimal12_4.mariaType, Binary16.mariaType, Binary32.mariaType, Binary64.mariaType, MariaTypes.time, LocalTime3.mariaType, LocalTime6.mariaType, MariaTypes.datetime, LocalDateTime3.mariaType, LocalDateTime6.mariaType, MariaTypes.timestamp, LocalDateTime3.mariaType, LocalDateTime6.mariaType)(PrecisionTypesRow.apply)(row => Array[Any](row.id, row.string10, row.string20, row.string50, row.string100, row.string255, row.char10, row.decimal52, row.decimal102, row.decimal184, row.numeric82, row.numeric124, row.binary16, row.binary32, row.binary64, row.time0, row.time3, row.time6, row.datetime0, row.datetime3, row.datetime6, row.ts0, row.ts3, row.ts6))
+  val rowCodec: RowCodec[PrecisionTypesRow] = RowCodecs.of(PrecisionTypesId.mariaType, String10.mariaType, String20.mariaType, String50.mariaType, String100.mariaType, String255.mariaType, PaddedString10.mariaType, Decimal5_2.mariaType, Decimal10_2.mariaType, Decimal18_4.mariaType, Decimal8_2.mariaType, Decimal12_4.mariaType, Binary16.mariaType, Binary32.mariaType, Binary64.mariaType, MariaTypes.time, LocalTime3.mariaType, LocalTime6.mariaType, MariaTypes.datetime, LocalDateTime3.mariaType, LocalDateTime6.mariaType, MariaTypes.timestamp, LocalDateTime3.mariaType, LocalDateTime6.mariaType)(PrecisionTypesRow.apply)(row => Array[Any](row.id, row.string10, row.string20, row.string50, row.string100, row.string255, row.char10, row.decimal52, row.decimal102, row.decimal184, row.numeric82, row.numeric124, row.binary16, row.binary32, row.binary64, row.time0, row.time3, row.time6, row.datetime0, row.datetime3, row.datetime6, row.ts0, row.ts3, row.ts6))
 }

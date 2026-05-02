@@ -6,33 +6,31 @@
 package testdb.nullability_test
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import dev.typr.foundations.Db2Types
+import dev.typr.dslkt.RowCodecs
 import dev.typr.foundations.Tuple.Tuple4
-import dev.typr.foundations.kotlin.KotlinDbTypes
-import dev.typr.foundations.kotlin.RowParser
-import dev.typr.foundations.kotlin.RowParsers
-import dev.typr.foundations.kotlin.nullable
+import dev.typr.foundationskt.Db2Types
+import dev.typr.foundationskt.RowCodec
 import testdb.customtypes.Defaulted
 
 /** Table: NULLABILITY_TEST */
 data class NullabilityTestRow(
   @field:JsonProperty("ID") val id: Int,
-  @field:JsonProperty("REQUIRED_COL") val requiredCol: String,
-  @field:JsonProperty("OPTIONAL_COL") val optionalCol: String?,
+  @field:JsonProperty("REQUIRED_COL") val requiredCol: kotlin.String,
+  @field:JsonProperty("OPTIONAL_COL") val optionalCol: kotlin.String?,
   /** Default: 'default_value' */
-  @field:JsonProperty("DEFAULTED_COL") val defaultedCol: String?
-) : Tuple4<Int, String, String?, String?> {
+  @field:JsonProperty("DEFAULTED_COL") val defaultedCol: kotlin.String?
+) : Tuple4<Int, kotlin.String, kotlin.String?, kotlin.String?> {
   override fun _1(): Int = id
 
-  override fun _2(): String = requiredCol
+  override fun _2(): kotlin.String = requiredCol
 
-  override fun _3(): String? = optionalCol
+  override fun _3(): kotlin.String? = optionalCol
 
-  override fun _4(): String? = defaultedCol
+  override fun _4(): kotlin.String? = defaultedCol
 
-  fun toUnsavedRow(defaultedCol: Defaulted<String?> = Defaulted.Provided(this.defaultedCol)): NullabilityTestRowUnsaved = NullabilityTestRowUnsaved(id, requiredCol, optionalCol, defaultedCol)
+  fun toUnsavedRow(defaultedCol: Defaulted<kotlin.String?> = Defaulted.Provided(this.defaultedCol)): NullabilityTestRowUnsaved = NullabilityTestRowUnsaved(id, requiredCol, optionalCol, defaultedCol)
 
   companion object {
-    val _rowParser: RowParser<NullabilityTestRow> = RowParsers.of(KotlinDbTypes.Db2Types.integer, Db2Types.varchar, Db2Types.varchar.nullable(), Db2Types.varchar.nullable(), { t0, t1, t2, t3 -> NullabilityTestRow(t0, t1, t2, t3) }, { row -> arrayOf<Any?>(row.id, row.requiredCol, row.optionalCol, row.defaultedCol) })
+    val rowCodec: RowCodec<NullabilityTestRow> = RowCodecs.of(Db2Types.integer, Db2Types.varchar, Db2Types.varchar.opt(), Db2Types.varchar.opt(), { t0: Int, t1: kotlin.String, t2: kotlin.String?, t3: kotlin.String? -> NullabilityTestRow(t0, t1, t2, t3) }, { row: NullabilityTestRow -> arrayOf<Any?>(row.id, row.requiredCol, row.optionalCol, row.defaultedCol) })
   }
 }

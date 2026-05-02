@@ -5,17 +5,18 @@
  */
 package testdb.customer_status
 
-import dev.typr.foundations.scala.DeleteBuilder
-import dev.typr.foundations.scala.SelectBuilder
-import dev.typr.foundations.scala.UpdateBuilder
-import java.sql.Connection
+import dev.typr.dslsc.DeleteBuilder
+import dev.typr.dslsc.SelectBuilder
+import dev.typr.dslsc.UpdateBuilder
+import dev.typr.foundationssc.Connection
+import dev.typr.foundationssc.ConnectionRead
 
 trait CustomerStatusRepo {
   def delete: DeleteBuilder[CustomerStatusFields, CustomerStatusRow]
 
   def deleteById(statusCode: CustomerStatusId)(using c: Connection): Boolean
 
-  def deleteByIds(statusCodes: Array[CustomerStatusId])(using c: Connection): Int
+  def deleteByIds(statusCodes: List[CustomerStatusId])(using c: Connection): Int
 
   def insert(unsaved: CustomerStatusRow)(using c: Connection): CustomerStatusRow
 
@@ -23,13 +24,13 @@ trait CustomerStatusRepo {
 
   def select: SelectBuilder[CustomerStatusFields, CustomerStatusRow]
 
-  def selectAll(using c: Connection): List[CustomerStatusRow]
+  def selectAll(using c: ConnectionRead): List[CustomerStatusRow]
 
-  def selectById(statusCode: CustomerStatusId)(using c: Connection): Option[CustomerStatusRow]
+  def selectById(statusCode: CustomerStatusId)(using c: ConnectionRead): Option[CustomerStatusRow]
 
-  def selectByIds(statusCodes: Array[CustomerStatusId])(using c: Connection): List[CustomerStatusRow]
+  def selectByIds(statusCodes: List[CustomerStatusId])(using c: ConnectionRead): List[CustomerStatusRow]
 
-  def selectByIdsTracked(statusCodes: Array[CustomerStatusId])(using c: Connection): Map[CustomerStatusId, CustomerStatusRow]
+  def selectByIdsTracked(statusCodes: List[CustomerStatusId])(using c: ConnectionRead): Map[CustomerStatusId, CustomerStatusRow]
 
   def update: UpdateBuilder[CustomerStatusFields, CustomerStatusRow]
 

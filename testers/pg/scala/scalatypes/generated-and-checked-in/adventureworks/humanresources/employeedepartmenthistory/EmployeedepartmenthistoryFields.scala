@@ -14,19 +14,19 @@ import adventureworks.humanresources.shift.ShiftFields
 import adventureworks.humanresources.shift.ShiftId
 import adventureworks.humanresources.shift.ShiftRow
 import adventureworks.person.businessentity.BusinessentityId
-import dev.typr.foundations.PgTypes
-import dev.typr.foundations.RowParser
-import dev.typr.foundations.dsl.FieldsBase
-import dev.typr.foundations.dsl.Path
-import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.scala.ForeignKey
-import dev.typr.foundations.scala.RelationStructure
-import dev.typr.foundations.scala.SqlExpr
-import dev.typr.foundations.scala.SqlExpr.Field
-import dev.typr.foundations.scala.SqlExpr.IdField
-import dev.typr.foundations.scala.SqlExpr.OptField
-import dev.typr.foundations.scala.TupleExpr
-import dev.typr.foundations.scala.TupleExpr6
+import dev.typr.dsl.FieldsBase
+import dev.typr.dsl.Path
+import dev.typr.dsl.SqlExpr.FieldLike
+import dev.typr.dslsc.ForeignKey
+import dev.typr.dslsc.RelationStructure
+import dev.typr.dslsc.SqlExpr
+import dev.typr.dslsc.SqlExpr.Field
+import dev.typr.dslsc.SqlExpr.IdField
+import dev.typr.dslsc.SqlExpr.OptField
+import dev.typr.dslsc.TupleExpr
+import dev.typr.dslsc.TupleExpr6
+import dev.typr.foundations.RowCodec
+import dev.typr.foundationssc.PgTypes
 import java.time.LocalDate
 import java.time.LocalDateTime
 
@@ -39,7 +39,7 @@ class EmployeedepartmenthistoryFields(val `_path`: java.util.List[Path]) extends
       None,
       Some("int4"),
       (row, value) => row.copy(businessentityid = value),
-      BusinessentityId.pgType
+      BusinessentityId.pgType.underlying
     )
   }
 
@@ -51,7 +51,7 @@ class EmployeedepartmenthistoryFields(val `_path`: java.util.List[Path]) extends
       None,
       Some("int2"),
       (row, value) => row.copy(departmentid = value),
-      DepartmentId.pgType
+      DepartmentId.pgType.underlying
     )
   }
 
@@ -63,7 +63,7 @@ class EmployeedepartmenthistoryFields(val `_path`: java.util.List[Path]) extends
       None,
       Some("int2"),
       (row, value) => row.copy(shiftid = value),
-      ShiftId.pgType
+      ShiftId.pgType.underlying
     )
   }
 
@@ -75,7 +75,7 @@ class EmployeedepartmenthistoryFields(val `_path`: java.util.List[Path]) extends
       None,
       Some("date"),
       (row, value) => row.copy(startdate = value),
-      PgTypes.date
+      PgTypes.date.underlying
     )
   }
 
@@ -87,7 +87,7 @@ class EmployeedepartmenthistoryFields(val `_path`: java.util.List[Path]) extends
       None,
       Some("date"),
       (row, value) => row.copy(enddate = value),
-      PgTypes.date
+      PgTypes.date.underlying
     )
   }
 
@@ -99,7 +99,7 @@ class EmployeedepartmenthistoryFields(val `_path`: java.util.List[Path]) extends
       None,
       Some("timestamp"),
       (row, value) => row.copy(modifieddate = value),
-      PgTypes.timestamp
+      PgTypes.timestamp.underlying
     )
   }
 
@@ -115,7 +115,7 @@ class EmployeedepartmenthistoryFields(val `_path`: java.util.List[Path]) extends
 
   override def columns: java.util.List[FieldLike[?, EmployeedepartmenthistoryRow]] = java.util.List.of(this.businessentityid.underlying, this.departmentid.underlying, this.shiftid.underlying, this.startdate.underlying, this.enddate.underlying, this.modifieddate.underlying)
 
-  override def rowParser: RowParser[EmployeedepartmenthistoryRow] = EmployeedepartmenthistoryRow._rowParser.underlying
+  override def rowCodec: RowCodec[EmployeedepartmenthistoryRow] = EmployeedepartmenthistoryRow.rowCodec.underlying
 
   override def withPaths(`_path`: java.util.List[Path]): RelationStructure[EmployeedepartmenthistoryFields, EmployeedepartmenthistoryRow] = new EmployeedepartmenthistoryFields(`_path`)
 

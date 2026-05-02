@@ -21,7 +21,7 @@ object IdentityTestId {
 
   given arrayPut: Put[Array[IdentityTestId]] = adventureworks.StringArrayMeta.put.contramap(_.map(_.value))
 
-  given bijection: Bijection[IdentityTestId, String] = Bijection.apply[IdentityTestId, String](_.value)(IdentityTestId.apply)
+  given bijection: Bijection[IdentityTestId, String] = Bijection[IdentityTestId, String](_.value)(IdentityTestId.apply)
 
   given decoder: Decoder[IdentityTestId] = Decoder.decodeString.map(IdentityTestId.apply)
 

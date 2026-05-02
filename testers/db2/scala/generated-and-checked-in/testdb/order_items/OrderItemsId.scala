@@ -6,10 +6,10 @@
 package testdb.order_items
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import dev.typr.dslsc.RowCodecs
 import dev.typr.foundations.Tuple.Tuple2
-import dev.typr.foundations.scala.RowParser
-import dev.typr.foundations.scala.RowParsers
-import dev.typr.foundations.scala.ScalaDbTypes
+import dev.typr.foundationssc.Db2Types
+import dev.typr.foundationssc.RowCodec
 import testdb.orders.OrdersId
 
 /** Type for the composite primary key of table `ORDER_ITEMS` */
@@ -23,5 +23,5 @@ case class OrderItemsId(
 }
 
 object OrderItemsId {
-  val `_rowParser`: RowParser[OrderItemsId] = RowParsers.of(OrdersId.db2Type, ScalaDbTypes.Db2Types.integer)(OrderItemsId.apply)(row => Array[Any](row.orderId, row.itemNumber))
+  val rowCodec: RowCodec[OrderItemsId] = RowCodecs.of(OrdersId.db2Type, Db2Types.integer)(OrderItemsId.apply)(row => Array[Any](row.orderId, row.itemNumber))
 }

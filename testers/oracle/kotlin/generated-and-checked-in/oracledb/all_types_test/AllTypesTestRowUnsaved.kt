@@ -13,10 +13,10 @@ import oracledb.customtypes.Defaulted.UseDefault
 
 /** This class corresponds to a row in table `ALL_TYPES_TEST` which has not been persisted yet */
 data class AllTypesTestRowUnsaved(
-  @field:JsonProperty("NAME") val name: String,
+  @field:JsonProperty("NAME") val name: kotlin.String,
   @field:JsonProperty("DATA") val data: AllTypesStructNoLobs? = null,
   @field:JsonProperty("DATA_ARRAY") val dataArray: AllTypesStructNoLobsArray? = null,
-  /** Default: "TYPR"."ISEQ$$_72879".nextval */
+  /** Default: "TYPR"."ISEQ$$_72869".nextval */
   @field:JsonProperty("ID") val id: Defaulted<AllTypesTestId> = UseDefault()
 ) {
   fun toRow(idDefault: () -> AllTypesTestId): AllTypesTestRow = AllTypesTestRow(id = id.getOrElse(idDefault), name = name, data = data, dataArray = dataArray)

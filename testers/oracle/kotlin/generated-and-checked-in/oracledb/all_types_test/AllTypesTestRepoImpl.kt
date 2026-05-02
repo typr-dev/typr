@@ -5,14 +5,14 @@
  */
 package oracledb.all_types_test
 
-import dev.typr.foundations.OracleTypes
-import dev.typr.foundations.kotlin.DeleteBuilder
-import dev.typr.foundations.kotlin.Dialect
-import dev.typr.foundations.kotlin.Fragment
-import dev.typr.foundations.kotlin.SelectBuilder
-import dev.typr.foundations.kotlin.UpdateBuilder
-import dev.typr.foundations.kotlin.nullable
-import java.sql.Connection
+import dev.typr.dslkt.DeleteBuilder
+import dev.typr.dslkt.Dialect
+import dev.typr.dslkt.SelectBuilder
+import dev.typr.dslkt.UpdateBuilder
+import dev.typr.foundationskt.Connection
+import dev.typr.foundationskt.ConnectionRead
+import dev.typr.foundationskt.Fragment
+import dev.typr.foundationskt.OracleTypes
 import java.util.ArrayList
 import kotlin.collections.Iterator
 import kotlin.collections.List
@@ -27,22 +27,22 @@ class AllTypesTestRepoImpl() : AllTypesTestRepo {
   override fun deleteById(
     id: AllTypesTestId,
     c: Connection
-  ): Boolean = Fragment.interpolate(Fragment.lit("delete from \"ALL_TYPES_TEST\" where \"ID\" = "), Fragment.encode(AllTypesTestId.oracleType, id), Fragment.lit("")).update().runUnchecked(c) > 0
+  ): kotlin.Boolean = Fragment.concat(Fragment.of("delete from \"ALL_TYPES_TEST\" where \"ID\" = "), Fragment.encode(AllTypesTestId.oracleType, id), Fragment.of("")).update().run(c) > 0
 
   override fun deleteByIds(
-    ids: Array<AllTypesTestId>,
+    ids: List<AllTypesTestId>,
     c: Connection
   ): Int {
     val fragments: ArrayList<Fragment> = ArrayList()
     for (id in ids) { fragments.add(Fragment.encode(AllTypesTestId.oracleType, id)) }
-    return Fragment.interpolate(Fragment.lit("delete from \"ALL_TYPES_TEST\" where \"ID\" in ("), Fragment.comma(fragments.toMutableList()), Fragment.lit(")")).update().runUnchecked(c)
+    return Fragment.concat(Fragment.of("delete from \"ALL_TYPES_TEST\" where \"ID\" in ("), Fragment.comma(fragments.toMutableList()), Fragment.of(")")).update().run(c)
   }
 
   override fun insert(
     unsaved: AllTypesTestRow,
     c: Connection
-  ): AllTypesTestId = Fragment.interpolate(Fragment.lit("insert into \"ALL_TYPES_TEST\"(\"ID\", \"NAME\", \"DATA\", \"DATA_ARRAY\")\nvalues ("), Fragment.encode(AllTypesTestId.oracleType, unsaved.id), Fragment.lit(", "), Fragment.encode(OracleTypes.varchar2, unsaved.name), Fragment.lit(", "), Fragment.encode(AllTypesStructNoLobs.oracleType.nullable(), unsaved.data), Fragment.lit(", "), Fragment.encode(AllTypesStructNoLobsArray.oracleType.nullable(), unsaved.dataArray), Fragment.lit(")\n"))
-    .updateReturningGeneratedKeys(arrayOf<String>("ID"), AllTypesTestId._rowParser.exactlyOne()).runUnchecked(c)
+  ): AllTypesTestId = Fragment.concat(Fragment.of("insert into \"ALL_TYPES_TEST\"(\"ID\", \"NAME\", \"DATA\", \"DATA_ARRAY\")\nvalues ("), Fragment.encode(AllTypesTestId.oracleType, unsaved.id), Fragment.of(", "), Fragment.encode(OracleTypes.varchar2, unsaved.name), Fragment.of(", "), Fragment.encode(AllTypesStructNoLobs.oracleType.opt(), unsaved.data), Fragment.of(", "), Fragment.encode(AllTypesStructNoLobsArray.oracleType.opt(), unsaved.dataArray), Fragment.of(")\n"))
+    .updateReturningGeneratedKeys(arrayOf<kotlin.String>("ID"), AllTypesTestId.rowCodec.exactlyOne()).run(c)
 
   override fun insert(
     unsaved: AllTypesTestRowUnsaved,
@@ -50,73 +50,73 @@ class AllTypesTestRepoImpl() : AllTypesTestRepo {
   ): AllTypesTestId {
     val columns: ArrayList<Fragment> = ArrayList()
     val values: ArrayList<Fragment> = ArrayList()
-    columns.add(Fragment.lit("\"NAME\""))
-    values.add(Fragment.interpolate(Fragment.encode(OracleTypes.varchar2, unsaved.name), Fragment.lit("")))
-    columns.add(Fragment.lit("\"DATA\""))
-    values.add(Fragment.interpolate(Fragment.encode(AllTypesStructNoLobs.oracleType.nullable(), unsaved.data), Fragment.lit("")))
-    columns.add(Fragment.lit("\"DATA_ARRAY\""))
-    values.add(Fragment.interpolate(Fragment.encode(AllTypesStructNoLobsArray.oracleType.nullable(), unsaved.dataArray), Fragment.lit("")))
+    columns.add(Fragment.of("\"NAME\""))
+    values.add(Fragment.concat(Fragment.encode(OracleTypes.varchar2, unsaved.name), Fragment.of("")))
+    columns.add(Fragment.of("\"DATA\""))
+    values.add(Fragment.concat(Fragment.encode(AllTypesStructNoLobs.oracleType.opt(), unsaved.data), Fragment.of("")))
+    columns.add(Fragment.of("\"DATA_ARRAY\""))
+    values.add(Fragment.concat(Fragment.encode(AllTypesStructNoLobsArray.oracleType.opt(), unsaved.dataArray), Fragment.of("")))
     unsaved.id.visit(
       {  },
-      { value -> columns.add(Fragment.lit("\"ID\""))
-      values.add(Fragment.interpolate(Fragment.encode(AllTypesTestId.oracleType, value), Fragment.lit(""))) }
+      { value -> columns.add(Fragment.of("\"ID\""))
+      values.add(Fragment.concat(Fragment.encode(AllTypesTestId.oracleType, value), Fragment.of(""))) }
     );
-    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into \"ALL_TYPES_TEST\"("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\n"))
-    return q.updateReturningGeneratedKeys(arrayOf<String>("ID"), AllTypesTestId._rowParser.exactlyOne()).runUnchecked(c)
+    val q: Fragment = Fragment.concat(Fragment.of("insert into \"ALL_TYPES_TEST\"("), Fragment.comma(columns.toMutableList()), Fragment.of(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.of(")\n"))
+    return q.updateReturningGeneratedKeys(arrayOf<kotlin.String>("ID"), AllTypesTestId.rowCodec.exactlyOne()).run(c)
   }
 
-  override fun select(): SelectBuilder<AllTypesTestFields, AllTypesTestRow> = SelectBuilder.of("\"ALL_TYPES_TEST\"", AllTypesTestFields.structure, AllTypesTestRow._rowParser, Dialect.ORACLE)
+  override fun select(): SelectBuilder<AllTypesTestFields, AllTypesTestRow> = SelectBuilder.of("\"ALL_TYPES_TEST\"", AllTypesTestFields.structure, AllTypesTestRow.rowCodec, Dialect.ORACLE)
 
-  override fun selectAll(c: Connection): List<AllTypesTestRow> = Fragment.interpolate(Fragment.lit("select \"ID\", \"NAME\", \"DATA\", \"DATA_ARRAY\"\nfrom \"ALL_TYPES_TEST\"\n")).query(AllTypesTestRow._rowParser.all()).runUnchecked(c)
+  override fun selectAll(c: ConnectionRead): List<AllTypesTestRow> = Fragment.concat(Fragment.of("select \"ID\", \"NAME\", \"DATA\", \"DATA_ARRAY\"\nfrom \"ALL_TYPES_TEST\"\n")).query(AllTypesTestRow.rowCodec.all()).run(c)
 
   override fun selectById(
     id: AllTypesTestId,
-    c: Connection
-  ): AllTypesTestRow? = Fragment.interpolate(Fragment.lit("select \"ID\", \"NAME\", \"DATA\", \"DATA_ARRAY\"\nfrom \"ALL_TYPES_TEST\"\nwhere \"ID\" = "), Fragment.encode(AllTypesTestId.oracleType, id), Fragment.lit("")).query(AllTypesTestRow._rowParser.first()).runUnchecked(c)
+    c: ConnectionRead
+  ): AllTypesTestRow? = Fragment.concat(Fragment.of("select \"ID\", \"NAME\", \"DATA\", \"DATA_ARRAY\"\nfrom \"ALL_TYPES_TEST\"\nwhere \"ID\" = "), Fragment.encode(AllTypesTestId.oracleType, id), Fragment.of("")).query(AllTypesTestRow.rowCodec.first()).run(c)
 
   override fun selectByIds(
-    ids: Array<AllTypesTestId>,
-    c: Connection
+    ids: List<AllTypesTestId>,
+    c: ConnectionRead
   ): List<AllTypesTestRow> {
     val fragments: ArrayList<Fragment> = ArrayList()
     for (id in ids) { fragments.add(Fragment.encode(AllTypesTestId.oracleType, id)) }
-    return Fragment.interpolate(Fragment.lit("select \"ID\", \"NAME\", \"DATA\", \"DATA_ARRAY\" from \"ALL_TYPES_TEST\" where \"ID\" in ("), Fragment.comma(fragments.toMutableList()), Fragment.lit(")")).query(AllTypesTestRow._rowParser.all()).runUnchecked(c)
+    return Fragment.concat(Fragment.of("select \"ID\", \"NAME\", \"DATA\", \"DATA_ARRAY\" from \"ALL_TYPES_TEST\" where \"ID\" in ("), Fragment.comma(fragments.toMutableList()), Fragment.of(")")).query(AllTypesTestRow.rowCodec.all()).run(c)
   }
 
   override fun selectByIdsTracked(
-    ids: Array<AllTypesTestId>,
-    c: Connection
+    ids: List<AllTypesTestId>,
+    c: ConnectionRead
   ): Map<AllTypesTestId, AllTypesTestRow> {
     val ret: MutableMap<AllTypesTestId, AllTypesTestRow> = mutableMapOf<AllTypesTestId, AllTypesTestRow>()
     selectByIds(ids, c).forEach({ row -> ret.put(row.id, row) })
     return ret.toMap()
   }
 
-  override fun update(): UpdateBuilder<AllTypesTestFields, AllTypesTestRow> = UpdateBuilder.of("\"ALL_TYPES_TEST\"", AllTypesTestFields.structure, AllTypesTestRow._rowParser, Dialect.ORACLE)
+  override fun update(): UpdateBuilder<AllTypesTestFields, AllTypesTestRow> = UpdateBuilder.of("\"ALL_TYPES_TEST\"", AllTypesTestFields.structure, AllTypesTestRow.rowCodec, Dialect.ORACLE)
 
   override fun update(
     row: AllTypesTestRow,
     c: Connection
-  ): Boolean {
+  ): kotlin.Boolean {
     val id: AllTypesTestId = row.id
-    return Fragment.interpolate(Fragment.lit("update \"ALL_TYPES_TEST\"\nset \"NAME\" = "), Fragment.encode(OracleTypes.varchar2, row.name), Fragment.lit(",\n\"DATA\" = "), Fragment.encode(AllTypesStructNoLobs.oracleType.nullable(), row.data), Fragment.lit(",\n\"DATA_ARRAY\" = "), Fragment.encode(AllTypesStructNoLobsArray.oracleType.nullable(), row.dataArray), Fragment.lit("\nwhere \"ID\" = "), Fragment.encode(AllTypesTestId.oracleType, id), Fragment.lit("")).update().runUnchecked(c) > 0
+    return Fragment.concat(Fragment.of("update \"ALL_TYPES_TEST\"\nset \"NAME\" = "), Fragment.encode(OracleTypes.varchar2, row.name), Fragment.of(",\n\"DATA\" = "), Fragment.encode(AllTypesStructNoLobs.oracleType.opt(), row.data), Fragment.of(",\n\"DATA_ARRAY\" = "), Fragment.encode(AllTypesStructNoLobsArray.oracleType.opt(), row.dataArray), Fragment.of("\nwhere \"ID\" = "), Fragment.encode(AllTypesTestId.oracleType, id), Fragment.of("")).update().run(c) > 0
   }
 
   override fun upsert(
     unsaved: AllTypesTestRow,
     c: Connection
   ) {
-    Fragment.interpolate(Fragment.lit("MERGE INTO \"ALL_TYPES_TEST\" t\nUSING (SELECT "), Fragment.encode(AllTypesTestId.oracleType, unsaved.id), Fragment.lit(", "), Fragment.encode(OracleTypes.varchar2, unsaved.name), Fragment.lit(", "), Fragment.encode(AllTypesStructNoLobs.oracleType.nullable(), unsaved.data), Fragment.lit(", "), Fragment.encode(AllTypesStructNoLobsArray.oracleType.nullable(), unsaved.dataArray), Fragment.lit(" FROM DUAL) s\nON (t.\"ID\" = s.\"ID\")\nWHEN MATCHED THEN UPDATE SET t.\"NAME\" = s.\"NAME\",\nt.\"DATA\" = s.\"DATA\",\nt.\"DATA_ARRAY\" = s.\"DATA_ARRAY\"\nWHEN NOT MATCHED THEN INSERT (\"ID\", \"NAME\", \"DATA\", \"DATA_ARRAY\") VALUES ("), Fragment.encode(AllTypesTestId.oracleType, unsaved.id), Fragment.lit(", "), Fragment.encode(OracleTypes.varchar2, unsaved.name), Fragment.lit(", "), Fragment.encode(AllTypesStructNoLobs.oracleType.nullable(), unsaved.data), Fragment.lit(", "), Fragment.encode(AllTypesStructNoLobsArray.oracleType.nullable(), unsaved.dataArray), Fragment.lit(")"))
+    Fragment.concat(Fragment.of("MERGE INTO \"ALL_TYPES_TEST\" t\nUSING (SELECT "), Fragment.encode(AllTypesTestId.oracleType, unsaved.id), Fragment.of(", "), Fragment.encode(OracleTypes.varchar2, unsaved.name), Fragment.of(", "), Fragment.encode(AllTypesStructNoLobs.oracleType.opt(), unsaved.data), Fragment.of(", "), Fragment.encode(AllTypesStructNoLobsArray.oracleType.opt(), unsaved.dataArray), Fragment.of(" FROM DUAL) s\nON (t.\"ID\" = s.\"ID\")\nWHEN MATCHED THEN UPDATE SET t.\"NAME\" = s.\"NAME\",\nt.\"DATA\" = s.\"DATA\",\nt.\"DATA_ARRAY\" = s.\"DATA_ARRAY\"\nWHEN NOT MATCHED THEN INSERT (\"ID\", \"NAME\", \"DATA\", \"DATA_ARRAY\") VALUES ("), Fragment.encode(AllTypesTestId.oracleType, unsaved.id), Fragment.of(", "), Fragment.encode(OracleTypes.varchar2, unsaved.name), Fragment.of(", "), Fragment.encode(AllTypesStructNoLobs.oracleType.opt(), unsaved.data), Fragment.of(", "), Fragment.encode(AllTypesStructNoLobsArray.oracleType.opt(), unsaved.dataArray), Fragment.of(")"))
       .update()
-      .runUnchecked(c)
+      .run(c)
   }
 
   override fun upsertBatch(
     unsaved: Iterator<AllTypesTestRow>,
     c: Connection
   ) {
-    Fragment.interpolate(Fragment.lit("MERGE INTO \"ALL_TYPES_TEST\" t\nUSING (SELECT ?, ?, ?, ? FROM DUAL) s\nON (t.\"ID\" = s.\"ID\")\nWHEN MATCHED THEN UPDATE SET t.\"NAME\" = s.\"NAME\",\nt.\"DATA\" = s.\"DATA\",\nt.\"DATA_ARRAY\" = s.\"DATA_ARRAY\"\nWHEN NOT MATCHED THEN INSERT (\"ID\", \"NAME\", \"DATA\", \"DATA_ARRAY\") VALUES (?, ?, ?, ?)"))
-      .updateMany(AllTypesTestRow._rowParser, unsaved)
-      .runUnchecked(c)
+    Fragment.concat(Fragment.of("MERGE INTO \"ALL_TYPES_TEST\" t\nUSING (SELECT ?, ?, ?, ? FROM DUAL) s\nON (t.\"ID\" = s.\"ID\")\nWHEN MATCHED THEN UPDATE SET t.\"NAME\" = s.\"NAME\",\nt.\"DATA\" = s.\"DATA\",\nt.\"DATA_ARRAY\" = s.\"DATA_ARRAY\"\nWHEN NOT MATCHED THEN INSERT (\"ID\", \"NAME\", \"DATA\", \"DATA_ARRAY\") VALUES (?, ?, ?, ?)"))
+      .updateMany(AllTypesTestRow.rowCodec, unsaved)
+      .run(c)
   }
 }

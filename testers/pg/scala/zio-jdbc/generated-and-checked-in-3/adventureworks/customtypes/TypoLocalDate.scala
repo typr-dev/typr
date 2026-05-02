@@ -50,7 +50,7 @@ object TypoLocalDate {
     )
   }
 
-  given bijection: Bijection[TypoLocalDate, LocalDate] = Bijection.apply[TypoLocalDate, LocalDate](_.value)(TypoLocalDate.apply)
+  given bijection: Bijection[TypoLocalDate, LocalDate] = Bijection[TypoLocalDate, LocalDate](_.value)(TypoLocalDate.apply)
 
   given jdbcDecoder: JdbcDecoder[TypoLocalDate] = {
     JdbcDecoder[TypoLocalDate](

@@ -6,23 +6,23 @@
 package testdb.userdefined
 
 import com.fasterxml.jackson.annotation.JsonValue
-import dev.typr.foundations.SqlServerType
-import dev.typr.foundations.SqlServerTypes
-import dev.typr.foundations.kotlin.Bijection
+import dev.typr.foundationskt.Bijection
+import dev.typr.foundationskt.SqlServerType
+import dev.typr.foundationskt.SqlServerTypes
 
 /** Shared type `Email`
   * Generated from TypeDefinitions matching
   */
-data class Email(@field:JsonValue val value: String) {
+data class Email(@field:JsonValue val value: kotlin.String) {
   override fun toString(): kotlin.String {
-    return value.toString()
+    return value
   }
 
   companion object {
-    val bijection: Bijection<Email, String> =
+    val bijection: Bijection<Email, kotlin.String> =
       Bijection.of(Email::value, ::Email)
 
     val sqlServerType: SqlServerType<Email> =
-      SqlServerTypes.nvarchar.bimap(::Email, Email::value)
+      SqlServerTypes.nvarchar.to(Bijection.of(::Email, Email::value))
   }
 }

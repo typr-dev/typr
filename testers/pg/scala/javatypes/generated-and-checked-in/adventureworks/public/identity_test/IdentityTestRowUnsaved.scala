@@ -24,5 +24,5 @@ case class IdentityTestRowUnsaved(
 }
 
 object IdentityTestRowUnsaved {
-  given pgText: PgText[IdentityTestRowUnsaved] = PgText.instance((row, sb) => { IdentityTestId.pgType.text.unsafeEncode(row.name, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using PgTypes.int4.text).unsafeEncode(row.defaultGenerated, sb) })
+  given pgText: PgText[IdentityTestRowUnsaved] = PgText.instance((row, sb) => { IdentityTestId.pgType.pgText().unsafeEncode(row.name, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using PgTypes.int4.pgText()).unsafeEncode(row.defaultGenerated, sb) })
 }

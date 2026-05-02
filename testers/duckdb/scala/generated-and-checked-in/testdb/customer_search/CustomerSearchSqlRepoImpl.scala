@@ -5,14 +5,12 @@
  */
 package testdb.customer_search
 
-import dev.typr.foundations.DuckDbTypes
-import dev.typr.foundations.scala.DbTypeOps
-import dev.typr.foundations.scala.Fragment
-import dev.typr.foundations.scala.ScalaDbTypes
-import java.sql.Connection
+import dev.typr.foundationssc.ConnectionRead
+import dev.typr.foundationssc.DuckDbTypes
+import dev.typr.foundationssc.Fragment
 import java.time.LocalDateTime
 import testdb.Priority
-import dev.typr.foundations.scala.Fragment.sql
+import dev.typr.foundationssc.Fragment.sql
 
 class CustomerSearchSqlRepoImpl extends CustomerSearchSqlRepo {
   override def apply(
@@ -21,7 +19,7 @@ class CustomerSearchSqlRepoImpl extends CustomerSearchSqlRepo {
     minPriority: Option[/* user-picked */ Priority],
     createdAfter: Option[LocalDateTime],
     maxResults: Long
-  )(using c: Connection): List[CustomerSearchSqlRow] = {
+  )(using c: ConnectionRead): List[CustomerSearchSqlRow] = {
     sql"""-- Customer search with multiple optional filters and enum handling
     -- Tests: optional parameters, enum types, LIKE patterns, complex WHERE
   
@@ -33,11 +31,11 @@ class CustomerSearchSqlRepoImpl extends CustomerSearchSqlRepo {
         priority
     FROM customers
     WHERE
-        (${Fragment.encode(DuckDbTypes.varchar.nullable, namePattern)} IS NULL OR name LIKE ${Fragment.encode(DuckDbTypes.varchar.nullable, namePattern)})
-        AND (${Fragment.encode(DuckDbTypes.varchar.nullable, emailPattern)} IS NULL OR email LIKE ${Fragment.encode(DuckDbTypes.varchar.nullable, emailPattern)})
-        AND (${Fragment.encode(Priority.duckDbType.nullable, minPriority)} IS NULL OR priority >= ${Fragment.encode(Priority.duckDbType.nullable, minPriority)})
-        AND (${Fragment.encode(DuckDbTypes.timestamp.nullable, createdAfter)} IS NULL OR created_at >= ${Fragment.encode(DuckDbTypes.timestamp.nullable, createdAfter)})
+        (${Fragment.encode(DuckDbTypes.varchar.opt, namePattern)} IS NULL OR name LIKE ${Fragment.encode(DuckDbTypes.varchar.opt, namePattern)})
+        AND (${Fragment.encode(DuckDbTypes.varchar.opt, emailPattern)} IS NULL OR email LIKE ${Fragment.encode(DuckDbTypes.varchar.opt, emailPattern)})
+        AND (${Fragment.encode(Priority.duckDbType.opt, minPriority)} IS NULL OR priority >= ${Fragment.encode(Priority.duckDbType.opt, minPriority)})
+        AND (${Fragment.encode(DuckDbTypes.timestamp.opt, createdAfter)} IS NULL OR created_at >= ${Fragment.encode(DuckDbTypes.timestamp.opt, createdAfter)})
     ORDER BY created_at DESC, customer_id
-    LIMIT ${Fragment.encode(ScalaDbTypes.DuckDbTypes.bigint, maxResults)}""".query(CustomerSearchSqlRow.`_rowParser`.all()).runUnchecked(c)
+    LIMIT ${Fragment.encode(DuckDbTypes.bigint, maxResults)}""".query(CustomerSearchSqlRow.rowCodec.all()).run(using c)
   }
 }

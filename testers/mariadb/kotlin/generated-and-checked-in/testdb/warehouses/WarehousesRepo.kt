@@ -5,10 +5,11 @@
  */
 package testdb.warehouses
 
-import dev.typr.foundations.kotlin.DeleteBuilder
-import dev.typr.foundations.kotlin.SelectBuilder
-import dev.typr.foundations.kotlin.UpdateBuilder
-import java.sql.Connection
+import dev.typr.dslkt.DeleteBuilder
+import dev.typr.dslkt.SelectBuilder
+import dev.typr.dslkt.UpdateBuilder
+import dev.typr.foundationskt.Connection
+import dev.typr.foundationskt.ConnectionRead
 import kotlin.collections.Iterator
 import kotlin.collections.List
 import kotlin.collections.Map
@@ -19,10 +20,10 @@ interface WarehousesRepo {
   abstract fun deleteById(
     warehouseId: WarehousesId,
     c: Connection
-  ): Boolean
+  ): kotlin.Boolean
 
   abstract fun deleteByIds(
-    warehouseIds: Array<WarehousesId>,
+    warehouseIds: List<WarehousesId>,
     c: Connection
   ): Int
 
@@ -38,26 +39,26 @@ interface WarehousesRepo {
 
   abstract fun select(): SelectBuilder<WarehousesFields, WarehousesRow>
 
-  abstract fun selectAll(c: Connection): List<WarehousesRow>
+  abstract fun selectAll(c: ConnectionRead): List<WarehousesRow>
 
   abstract fun selectById(
     warehouseId: WarehousesId,
-    c: Connection
+    c: ConnectionRead
   ): WarehousesRow?
 
   abstract fun selectByIds(
-    warehouseIds: Array<WarehousesId>,
-    c: Connection
+    warehouseIds: List<WarehousesId>,
+    c: ConnectionRead
   ): List<WarehousesRow>
 
   abstract fun selectByIdsTracked(
-    warehouseIds: Array<WarehousesId>,
-    c: Connection
+    warehouseIds: List<WarehousesId>,
+    c: ConnectionRead
   ): Map<WarehousesId, WarehousesRow>
 
   abstract fun selectByUniqueCode(
-    code: String,
-    c: Connection
+    code: kotlin.String,
+    c: ConnectionRead
   ): WarehousesRow?
 
   abstract fun update(): UpdateBuilder<WarehousesFields, WarehousesRow>
@@ -65,7 +66,7 @@ interface WarehousesRepo {
   abstract fun update(
     row: WarehousesRow,
     c: Connection
-  ): Boolean
+  ): kotlin.Boolean
 
   abstract fun upsert(
     unsaved: WarehousesRow,

@@ -5,12 +5,12 @@
  */
 package adventureworks.humanresources.vemployee
 
-import dev.typr.foundations.kotlin.SelectBuilder
-import java.sql.Connection
+import dev.typr.dslkt.SelectBuilder
+import dev.typr.foundationskt.ConnectionRead
 import kotlin.collections.List
 
 interface VemployeeViewRepo {
   abstract fun select(): SelectBuilder<VemployeeViewFields, VemployeeViewRow>
 
-  abstract fun selectAll(c: Connection): List<VemployeeViewRow>
+  abstract fun selectAll(c: ConnectionRead): List<VemployeeViewRow>
 }

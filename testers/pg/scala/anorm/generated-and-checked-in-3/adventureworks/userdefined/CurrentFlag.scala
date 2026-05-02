@@ -24,7 +24,7 @@ object CurrentFlag {
 
   given arrayToStatement: ToStatement[Array[CurrentFlag]] = Flag.arrayToStatement.contramap(_.map(_.value))
 
-  given bijection: Bijection[CurrentFlag, Flag] = Bijection.apply[CurrentFlag, Flag](_.value)(CurrentFlag.apply)
+  given bijection: Bijection[CurrentFlag, Flag] = Bijection[CurrentFlag, Flag](_.value)(CurrentFlag.apply)
 
   given column: Column[CurrentFlag] = Flag.column.map(CurrentFlag.apply)
 

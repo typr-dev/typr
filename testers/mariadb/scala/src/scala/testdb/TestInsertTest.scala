@@ -8,11 +8,10 @@ import scala.util.Random
 
 /** Tests for TestInsert functionality - automatic random data generation for testing. */
 class TestInsertTest extends AnyFunSuite {
-  val testInsert: TestInsert = new TestInsert(new Random(42))
+  val testInsert: TestInsert = new TestInsert(new Random(69091155))
 
   test("mariatestIdentityInsert") {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       // TestInsert generates random data for required fields and inserts directly
       val row = testInsert.MariatestIdentity()
 
@@ -23,8 +22,7 @@ class TestInsertTest extends AnyFunSuite {
   }
 
   test("mariatestIdentityWithCustomName") {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       // Customize by passing parameters
       val row = testInsert.MariatestIdentity(name = "Custom Name")
 
@@ -34,8 +32,7 @@ class TestInsertTest extends AnyFunSuite {
   }
 
   test("mariatestInsert") {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       // Mariatest requires additional parameters for complex types
       val row = testInsert.Mariatest(
         bitCol = Array(0xff.toByte),
@@ -58,8 +55,7 @@ class TestInsertTest extends AnyFunSuite {
   }
 
   test("customerStatusInsert") {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       val row = testInsert.CustomerStatus()
 
       val _ = assert(row != null)
@@ -69,8 +65,7 @@ class TestInsertTest extends AnyFunSuite {
   }
 
   test("customersInsertWithForeignKey") {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       // First create the required customer status
       val _ = testInsert.CustomerStatus()
 
@@ -84,8 +79,7 @@ class TestInsertTest extends AnyFunSuite {
   }
 
   test("ordersInsertChain") {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       // Create required dependencies
       val _ = testInsert.CustomerStatus()
       val customer = testInsert.Customers(passwordHash = Array[Byte](1, 2, 3))
@@ -100,8 +94,7 @@ class TestInsertTest extends AnyFunSuite {
   }
 
   test("mariatestUniqueInsert") {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       val row = testInsert.MariatestUnique()
 
       // Row and its fields are non-null by design
@@ -113,8 +106,7 @@ class TestInsertTest extends AnyFunSuite {
   }
 
   test("mariatestnullInsert") {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       // Mariatestnull has all nullable columns - use short constructor
       val row = testInsert.Mariatestnull()
 
@@ -125,8 +117,7 @@ class TestInsertTest extends AnyFunSuite {
   }
 
   test("multipleInserts") {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       // Insert multiple rows using same TestInsert instance
       val row1 = testInsert.MariatestIdentity()
       val row2 = testInsert.MariatestIdentity()
@@ -139,8 +130,7 @@ class TestInsertTest extends AnyFunSuite {
   }
 
   test("insertWithSeededRandom") {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       // Using seeded random for reproducible tests
       val testInsert1 = new TestInsert(new Random(123))
       val testInsert2 = new TestInsert(new Random(123))

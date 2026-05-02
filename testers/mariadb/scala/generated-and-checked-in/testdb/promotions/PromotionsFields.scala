@@ -5,21 +5,20 @@
  */
 package testdb.promotions
 
-import dev.typr.foundations.MariaTypes
-import dev.typr.foundations.RowParser
+import dev.typr.dsl.FieldsBase
+import dev.typr.dsl.Path
+import dev.typr.dsl.SqlExpr.FieldLike
+import dev.typr.dslsc.RelationStructure
+import dev.typr.dslsc.SqlExpr
+import dev.typr.dslsc.SqlExpr.Field
+import dev.typr.dslsc.SqlExpr.IdField
+import dev.typr.dslsc.SqlExpr.OptField
+import dev.typr.dslsc.TupleExpr16
+import dev.typr.foundations.RowCodec
 import dev.typr.foundations.data.Json
 import dev.typr.foundations.data.Uint1
 import dev.typr.foundations.data.Uint4
-import dev.typr.foundations.dsl.FieldsBase
-import dev.typr.foundations.dsl.Path
-import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.scala.RelationStructure
-import dev.typr.foundations.scala.ScalaDbTypes
-import dev.typr.foundations.scala.SqlExpr
-import dev.typr.foundations.scala.SqlExpr.Field
-import dev.typr.foundations.scala.SqlExpr.IdField
-import dev.typr.foundations.scala.SqlExpr.OptField
-import dev.typr.foundations.scala.TupleExpr16
+import dev.typr.foundationssc.MariaTypes
 import java.time.LocalDateTime
 import testdb.AllBrandsCategoriesCSet
 import testdb.userdefined.IsActive
@@ -33,7 +32,7 @@ class PromotionsFields(val `_path`: java.util.List[Path]) extends TupleExpr16[Pr
       None,
       None,
       (row, value) => row.copy(promotionId = value),
-      PromotionsId.mariaType
+      PromotionsId.mariaType.underlying
     )
   }
 
@@ -45,7 +44,7 @@ class PromotionsFields(val `_path`: java.util.List[Path]) extends TupleExpr16[Pr
       None,
       None,
       (row, value) => row.copy(code = value),
-      MariaTypes.varchar
+      MariaTypes.varchar.underlying
     )
   }
 
@@ -57,7 +56,7 @@ class PromotionsFields(val `_path`: java.util.List[Path]) extends TupleExpr16[Pr
       None,
       None,
       (row, value) => row.copy(name = value),
-      MariaTypes.varchar
+      MariaTypes.varchar.underlying
     )
   }
 
@@ -69,7 +68,7 @@ class PromotionsFields(val `_path`: java.util.List[Path]) extends TupleExpr16[Pr
       None,
       None,
       (row, value) => row.copy(description = value),
-      MariaTypes.text
+      MariaTypes.text.underlying
     )
   }
 
@@ -81,7 +80,7 @@ class PromotionsFields(val `_path`: java.util.List[Path]) extends TupleExpr16[Pr
       None,
       None,
       (row, value) => row.copy(discountType = value),
-      MariaTypes.text
+      MariaTypes.text.underlying
     )
   }
 
@@ -93,7 +92,7 @@ class PromotionsFields(val `_path`: java.util.List[Path]) extends TupleExpr16[Pr
       None,
       None,
       (row, value) => row.copy(discountValue = value),
-      ScalaDbTypes.MariaTypes.numeric
+      MariaTypes.numeric.underlying
     )
   }
 
@@ -105,7 +104,7 @@ class PromotionsFields(val `_path`: java.util.List[Path]) extends TupleExpr16[Pr
       None,
       None,
       (row, value) => row.copy(minOrderAmount = value),
-      ScalaDbTypes.MariaTypes.numeric
+      MariaTypes.numeric.underlying
     )
   }
 
@@ -117,7 +116,7 @@ class PromotionsFields(val `_path`: java.util.List[Path]) extends TupleExpr16[Pr
       None,
       None,
       (row, value) => row.copy(maxUses = value),
-      MariaTypes.intUnsigned
+      MariaTypes.intUnsigned.underlying
     )
   }
 
@@ -129,7 +128,7 @@ class PromotionsFields(val `_path`: java.util.List[Path]) extends TupleExpr16[Pr
       None,
       None,
       (row, value) => row.copy(usesCount = value),
-      MariaTypes.intUnsigned
+      MariaTypes.intUnsigned.underlying
     )
   }
 
@@ -141,7 +140,7 @@ class PromotionsFields(val `_path`: java.util.List[Path]) extends TupleExpr16[Pr
       None,
       None,
       (row, value) => row.copy(maxUsesPerCustomer = value),
-      MariaTypes.tinyintUnsigned
+      MariaTypes.tinyintUnsigned.underlying
     )
   }
 
@@ -153,7 +152,7 @@ class PromotionsFields(val `_path`: java.util.List[Path]) extends TupleExpr16[Pr
       None,
       None,
       (row, value) => row.copy(applicableTo = value),
-      AllBrandsCategoriesCSet.mariaType
+      AllBrandsCategoriesCSet.mariaType.underlying
     )
   }
 
@@ -165,7 +164,7 @@ class PromotionsFields(val `_path`: java.util.List[Path]) extends TupleExpr16[Pr
       None,
       None,
       (row, value) => row.copy(rulesJson = value),
-      MariaTypes.json
+      MariaTypes.json.underlying
     )
   }
 
@@ -177,7 +176,7 @@ class PromotionsFields(val `_path`: java.util.List[Path]) extends TupleExpr16[Pr
       None,
       None,
       (row, value) => row.copy(validFrom = value),
-      MariaTypes.datetime
+      MariaTypes.datetime.underlying
     )
   }
 
@@ -189,7 +188,7 @@ class PromotionsFields(val `_path`: java.util.List[Path]) extends TupleExpr16[Pr
       None,
       None,
       (row, value) => row.copy(validTo = value),
-      MariaTypes.datetime
+      MariaTypes.datetime.underlying
     )
   }
 
@@ -201,7 +200,7 @@ class PromotionsFields(val `_path`: java.util.List[Path]) extends TupleExpr16[Pr
       None,
       None,
       (row, value) => row.copy(isActive = value),
-      IsActive.mariaType
+      IsActive.mariaType.underlying
     )
   }
 
@@ -213,13 +212,13 @@ class PromotionsFields(val `_path`: java.util.List[Path]) extends TupleExpr16[Pr
       None,
       None,
       (row, value) => row.copy(createdAt = value),
-      MariaTypes.datetime
+      MariaTypes.datetime.underlying
     )
   }
 
   override def columns: java.util.List[FieldLike[?, PromotionsRow]] = java.util.List.of(this.promotionId.underlying, this.code.underlying, this.name.underlying, this.description.underlying, this.discountType.underlying, this.discountValue.underlying, this.minOrderAmount.underlying, this.maxUses.underlying, this.usesCount.underlying, this.maxUsesPerCustomer.underlying, this.applicableTo.underlying, this.rulesJson.underlying, this.validFrom.underlying, this.validTo.underlying, this.isActive.underlying, this.createdAt.underlying)
 
-  override def rowParser: RowParser[PromotionsRow] = PromotionsRow._rowParser.underlying
+  override def rowCodec: RowCodec[PromotionsRow] = PromotionsRow.rowCodec.underlying
 
   override def withPaths(`_path`: java.util.List[Path]): RelationStructure[PromotionsFields, PromotionsRow] = new PromotionsFields(`_path`)
 

@@ -6,12 +6,11 @@
 package testdb.price_tiers
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import dev.typr.foundations.MariaTypes
+import dev.typr.dslsc.RowCodecs
 import dev.typr.foundations.Tuple.Tuple5
 import dev.typr.foundations.data.Uint4
-import dev.typr.foundations.scala.RowParser
-import dev.typr.foundations.scala.RowParsers
-import dev.typr.foundations.scala.ScalaDbTypes
+import dev.typr.foundationssc.MariaTypes
+import dev.typr.foundationssc.RowCodec
 import testdb.customtypes.Defaulted
 
 /** Table: price_tiers
@@ -56,5 +55,5 @@ case class PriceTiersRow(
 }
 
 object PriceTiersRow {
-  val `_rowParser`: RowParser[PriceTiersRow] = RowParsers.of(PriceTiersId.mariaType, MariaTypes.varchar, MariaTypes.intUnsigned, MariaTypes.text, ScalaDbTypes.MariaTypes.numeric)(PriceTiersRow.apply)(row => Array[Any](row.tierId, row.name, row.minQuantity, row.discountType, row.discountValue))
+  val rowCodec: RowCodec[PriceTiersRow] = RowCodecs.of(PriceTiersId.mariaType, MariaTypes.varchar, MariaTypes.intUnsigned, MariaTypes.text, MariaTypes.numeric)(PriceTiersRow.apply)(row => Array[Any](row.tierId, row.name, row.minQuantity, row.discountType, row.discountValue))
 }

@@ -19,7 +19,7 @@ import typr.dsl.Bijection
 case class TypoBytea(value: Array[Byte])
 
 object TypoBytea {
-  given bijection: Bijection[TypoBytea, Array[Byte]] = Bijection.apply[TypoBytea, Array[Byte]](_.value)(TypoBytea.apply)
+  given bijection: Bijection[TypoBytea, Array[Byte]] = Bijection[TypoBytea, Array[Byte]](_.value)(TypoBytea.apply)
 
   given column: Column[TypoBytea] = {
     Column.nonNull[TypoBytea]((v1: Any, _) =>

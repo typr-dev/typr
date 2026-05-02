@@ -5,10 +5,11 @@
  */
 package testdb.mariatestnull
 
-import dev.typr.foundations.kotlin.DeleteBuilder
-import dev.typr.foundations.kotlin.SelectBuilder
-import dev.typr.foundations.kotlin.UpdateBuilder
-import java.sql.Connection
+import dev.typr.dslkt.DeleteBuilder
+import dev.typr.dslkt.SelectBuilder
+import dev.typr.dslkt.UpdateBuilder
+import dev.typr.foundationskt.Connection
+import dev.typr.foundationskt.ConnectionRead
 import kotlin.collections.List
 
 interface MariatestnullRepo {
@@ -26,7 +27,7 @@ interface MariatestnullRepo {
 
   abstract fun select(): SelectBuilder<MariatestnullFields, MariatestnullRow>
 
-  abstract fun selectAll(c: Connection): List<MariatestnullRow>
+  abstract fun selectAll(c: ConnectionRead): List<MariatestnullRow>
 
   abstract fun update(): UpdateBuilder<MariatestnullFields, MariatestnullRow>
 }

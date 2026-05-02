@@ -5,14 +5,15 @@
  */
 package adventureworks.public.identity_test
 
-import dev.typr.foundations.kotlin.DeleteBuilder
-import dev.typr.foundations.kotlin.Dialect
-import dev.typr.foundations.kotlin.Fragment
-import dev.typr.foundations.kotlin.KotlinDbTypes
-import dev.typr.foundations.kotlin.SelectBuilder
-import dev.typr.foundations.kotlin.UpdateBuilder
-import dev.typr.foundations.streamingInsert
-import java.sql.Connection
+import dev.typr.dslkt.DeleteBuilder
+import dev.typr.dslkt.Dialect
+import dev.typr.dslkt.SelectBuilder
+import dev.typr.dslkt.UpdateBuilder
+import dev.typr.foundationskt.Connection
+import dev.typr.foundationskt.ConnectionRead
+import dev.typr.foundationskt.Fragment
+import dev.typr.foundationskt.PgTypes
+import dev.typr.foundationskt.StreamingInsert
 import java.util.ArrayList
 import kotlin.collections.Iterator
 import kotlin.collections.List
@@ -25,20 +26,20 @@ class IdentityTestRepoImpl() : IdentityTestRepo {
   override fun deleteById(
     name: IdentityTestId,
     c: Connection
-  ): Boolean = Fragment.interpolate(Fragment.lit("delete from \"public\".\"identity-test\" where \"name\" = "), Fragment.encode(IdentityTestId.pgType, name), Fragment.lit("")).update().runUnchecked(c) > 0
+  ): kotlin.Boolean = Fragment.concat(Fragment.of("delete from \"public\".\"identity-test\" where \"name\" = "), Fragment.encode(IdentityTestId.pgType, name), Fragment.of("")).update().run(c) > 0
 
   override fun deleteByIds(
-    names: Array<IdentityTestId>,
+    names: List<IdentityTestId>,
     c: Connection
-  ): Int = Fragment.interpolate(Fragment.lit("delete\nfrom \"public\".\"identity-test\"\nwhere \"name\" = ANY("), Fragment.encode(IdentityTestId.pgTypeArray, names), Fragment.lit(")"))
+  ): Int = Fragment.concat(Fragment.of("delete\nfrom \"public\".\"identity-test\"\nwhere \"name\" = ANY("), Fragment.encode(IdentityTestId.pgType.array(), names), Fragment.of(")"))
     .update()
-    .runUnchecked(c)
+    .run(c)
 
   override fun insert(
     unsaved: IdentityTestRow,
     c: Connection
-  ): IdentityTestRow = Fragment.interpolate(Fragment.lit("insert into \"public\".\"identity-test\"(\"default_generated\", \"name\")\nvalues ("), Fragment.encode(KotlinDbTypes.PgTypes.int4, unsaved.defaultGenerated), Fragment.lit("::int4, "), Fragment.encode(IdentityTestId.pgType, unsaved.name), Fragment.lit(")\nRETURNING \"always_generated\", \"default_generated\", \"name\"\n"))
-    .updateReturning(IdentityTestRow._rowParser.exactlyOne()).runUnchecked(c)
+  ): IdentityTestRow = Fragment.concat(Fragment.of("insert into \"public\".\"identity-test\"(\"default_generated\", \"name\")\nvalues ("), Fragment.encode(PgTypes.int4, unsaved.defaultGenerated), Fragment.of("::int4, "), Fragment.encode(IdentityTestId.pgType, unsaved.name), Fragment.of(")\nRETURNING \"always_generated\", \"default_generated\", \"name\"\n"))
+    .updateReturning(IdentityTestRow.rowCodec.exactlyOne()).run(c)
 
   override fun insert(
     unsaved: IdentityTestRowUnsaved,
@@ -46,76 +47,76 @@ class IdentityTestRepoImpl() : IdentityTestRepo {
   ): IdentityTestRow {
     val columns: ArrayList<Fragment> = ArrayList()
     val values: ArrayList<Fragment> = ArrayList()
-    columns.add(Fragment.lit("\"name\""))
-    values.add(Fragment.interpolate(Fragment.encode(IdentityTestId.pgType, unsaved.name), Fragment.lit("")))
+    columns.add(Fragment.of("\"name\""))
+    values.add(Fragment.concat(Fragment.encode(IdentityTestId.pgType, unsaved.name), Fragment.of("")))
     unsaved.defaultGenerated.visit(
       {  },
-      { value -> columns.add(Fragment.lit("\"default_generated\""))
-      values.add(Fragment.interpolate(Fragment.encode(KotlinDbTypes.PgTypes.int4, value), Fragment.lit("::int4"))) }
+      { value -> columns.add(Fragment.of("\"default_generated\""))
+      values.add(Fragment.concat(Fragment.encode(PgTypes.int4, value), Fragment.of("::int4"))) }
     );
-    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into \"public\".\"identity-test\"("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nRETURNING \"always_generated\", \"default_generated\", \"name\"\n"))
-    return q.updateReturning(IdentityTestRow._rowParser.exactlyOne()).runUnchecked(c)
+    val q: Fragment = Fragment.concat(Fragment.of("insert into \"public\".\"identity-test\"("), Fragment.comma(columns.toMutableList()), Fragment.of(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.of(")\nRETURNING \"always_generated\", \"default_generated\", \"name\"\n"))
+    return q.updateReturning(IdentityTestRow.rowCodec.exactlyOne()).run(c)
   }
 
   override fun insertStreaming(
     unsaved: Iterator<IdentityTestRow>,
     batchSize: Int,
     c: Connection
-  ): Long = streamingInsert.insertUnchecked("COPY \"public\".\"identity-test\"(\"default_generated\", \"name\") FROM STDIN", batchSize, unsaved, c, IdentityTestRow.pgText)
+  ): kotlin.Long = StreamingInsert.of("COPY \"public\".\"identity-test\"(\"default_generated\", \"name\") FROM STDIN", batchSize, unsaved, IdentityTestRow.pgText).run(c)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
   override fun insertUnsavedStreaming(
     unsaved: Iterator<IdentityTestRowUnsaved>,
     batchSize: Int,
     c: Connection
-  ): Long = streamingInsert.insertUnchecked("COPY \"public\".\"identity-test\"(\"name\", \"default_generated\") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')", batchSize, unsaved, c, IdentityTestRowUnsaved.pgText)
+  ): kotlin.Long = StreamingInsert.of("COPY \"public\".\"identity-test\"(\"name\", \"default_generated\") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')", batchSize, unsaved, IdentityTestRowUnsaved.pgText).run(c)
 
-  override fun select(): SelectBuilder<IdentityTestFields, IdentityTestRow> = SelectBuilder.of("\"public\".\"identity-test\"", IdentityTestFields.structure, IdentityTestRow._rowParser, Dialect.POSTGRESQL)
+  override fun select(): SelectBuilder<IdentityTestFields, IdentityTestRow> = SelectBuilder.of("\"public\".\"identity-test\"", IdentityTestFields.structure, IdentityTestRow.rowCodec, Dialect.POSTGRESQL)
 
-  override fun selectAll(c: Connection): List<IdentityTestRow> = Fragment.interpolate(Fragment.lit("select \"always_generated\", \"default_generated\", \"name\"\nfrom \"public\".\"identity-test\"\n")).query(IdentityTestRow._rowParser.all()).runUnchecked(c)
+  override fun selectAll(c: ConnectionRead): List<IdentityTestRow> = Fragment.concat(Fragment.of("select \"always_generated\", \"default_generated\", \"name\"\nfrom \"public\".\"identity-test\"\n")).query(IdentityTestRow.rowCodec.all()).run(c)
 
   override fun selectById(
     name: IdentityTestId,
-    c: Connection
-  ): IdentityTestRow? = Fragment.interpolate(Fragment.lit("select \"always_generated\", \"default_generated\", \"name\"\nfrom \"public\".\"identity-test\"\nwhere \"name\" = "), Fragment.encode(IdentityTestId.pgType, name), Fragment.lit("")).query(IdentityTestRow._rowParser.first()).runUnchecked(c)
+    c: ConnectionRead
+  ): IdentityTestRow? = Fragment.concat(Fragment.of("select \"always_generated\", \"default_generated\", \"name\"\nfrom \"public\".\"identity-test\"\nwhere \"name\" = "), Fragment.encode(IdentityTestId.pgType, name), Fragment.of("")).query(IdentityTestRow.rowCodec.first()).run(c)
 
   override fun selectByIds(
-    names: Array<IdentityTestId>,
-    c: Connection
-  ): List<IdentityTestRow> = Fragment.interpolate(Fragment.lit("select \"always_generated\", \"default_generated\", \"name\"\nfrom \"public\".\"identity-test\"\nwhere \"name\" = ANY("), Fragment.encode(IdentityTestId.pgTypeArray, names), Fragment.lit(")")).query(IdentityTestRow._rowParser.all()).runUnchecked(c)
+    names: List<IdentityTestId>,
+    c: ConnectionRead
+  ): List<IdentityTestRow> = Fragment.concat(Fragment.of("select \"always_generated\", \"default_generated\", \"name\"\nfrom \"public\".\"identity-test\"\nwhere \"name\" = ANY("), Fragment.encode(IdentityTestId.pgType.array(), names), Fragment.of(")")).query(IdentityTestRow.rowCodec.all()).run(c)
 
   override fun selectByIdsTracked(
-    names: Array<IdentityTestId>,
-    c: Connection
+    names: List<IdentityTestId>,
+    c: ConnectionRead
   ): Map<IdentityTestId, IdentityTestRow> {
     val ret: MutableMap<IdentityTestId, IdentityTestRow> = mutableMapOf<IdentityTestId, IdentityTestRow>()
     selectByIds(names, c).forEach({ row -> ret.put(row.name, row) })
     return ret.toMap()
   }
 
-  override fun update(): UpdateBuilder<IdentityTestFields, IdentityTestRow> = UpdateBuilder.of("\"public\".\"identity-test\"", IdentityTestFields.structure, IdentityTestRow._rowParser, Dialect.POSTGRESQL)
+  override fun update(): UpdateBuilder<IdentityTestFields, IdentityTestRow> = UpdateBuilder.of("\"public\".\"identity-test\"", IdentityTestFields.structure, IdentityTestRow.rowCodec, Dialect.POSTGRESQL)
 
   override fun update(
     row: IdentityTestRow,
     c: Connection
-  ): Boolean {
+  ): kotlin.Boolean {
     val name: IdentityTestId = row.name
-    return Fragment.interpolate(Fragment.lit("update \"public\".\"identity-test\"\nset \"default_generated\" = "), Fragment.encode(KotlinDbTypes.PgTypes.int4, row.defaultGenerated), Fragment.lit("::int4\nwhere \"name\" = "), Fragment.encode(IdentityTestId.pgType, name), Fragment.lit("")).update().runUnchecked(c) > 0
+    return Fragment.concat(Fragment.of("update \"public\".\"identity-test\"\nset \"default_generated\" = "), Fragment.encode(PgTypes.int4, row.defaultGenerated), Fragment.of("::int4\nwhere \"name\" = "), Fragment.encode(IdentityTestId.pgType, name), Fragment.of("")).update().run(c) > 0
   }
 
   override fun upsert(
     unsaved: IdentityTestRow,
     c: Connection
-  ): IdentityTestRow = Fragment.interpolate(Fragment.lit("insert into \"public\".\"identity-test\"(\"default_generated\", \"name\")\nvalues ("), Fragment.encode(KotlinDbTypes.PgTypes.int4, unsaved.defaultGenerated), Fragment.lit("::int4, "), Fragment.encode(IdentityTestId.pgType, unsaved.name), Fragment.lit(")\non conflict (\"name\")\ndo update set\n  \"default_generated\" = EXCLUDED.\"default_generated\"\nreturning \"always_generated\", \"default_generated\", \"name\""))
-    .updateReturning(IdentityTestRow._rowParser.exactlyOne())
-    .runUnchecked(c)
+  ): IdentityTestRow = Fragment.concat(Fragment.of("insert into \"public\".\"identity-test\"(\"default_generated\", \"name\")\nvalues ("), Fragment.encode(PgTypes.int4, unsaved.defaultGenerated), Fragment.of("::int4, "), Fragment.encode(IdentityTestId.pgType, unsaved.name), Fragment.of(")\non conflict (\"name\")\ndo update set\n  \"default_generated\" = EXCLUDED.\"default_generated\"\nreturning \"always_generated\", \"default_generated\", \"name\""))
+    .updateReturning(IdentityTestRow.rowCodec.exactlyOne())
+    .run(c)
 
   override fun upsertBatch(
     unsaved: Iterator<IdentityTestRow>,
     c: Connection
-  ): List<IdentityTestRow> = Fragment.interpolate(Fragment.lit("insert into \"public\".\"identity-test\"(\"default_generated\", \"name\")\nvalues (?::int4, ?)\non conflict (\"name\")\ndo update set\n  \"default_generated\" = EXCLUDED.\"default_generated\"\nreturning \"always_generated\", \"default_generated\", \"name\""))
-    .updateManyReturning(IdentityTestRow._rowParser, unsaved)
-  .runUnchecked(c)
+  ): List<IdentityTestRow> = Fragment.concat(Fragment.of("insert into \"public\".\"identity-test\"(\"default_generated\", \"name\")\nvalues (?::int4, ?)\non conflict (\"name\")\ndo update set\n  \"default_generated\" = EXCLUDED.\"default_generated\"\nreturning \"always_generated\", \"default_generated\", \"name\""))
+    .updateManyReturning(IdentityTestRow.rowCodec, unsaved)
+  .run(c)
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
   override fun upsertStreaming(
@@ -123,8 +124,8 @@ class IdentityTestRepoImpl() : IdentityTestRepo {
     batchSize: Int,
     c: Connection
   ): Int {
-    Fragment.interpolate(Fragment.lit("create temporary table identity-test_TEMP (like \"public\".\"identity-test\") on commit drop")).update().runUnchecked(c)
-    streamingInsert.insertUnchecked("copy identity-test_TEMP(\"default_generated\", \"name\") from stdin", batchSize, unsaved, c, IdentityTestRow.pgText)
-    return Fragment.interpolate(Fragment.lit("insert into \"public\".\"identity-test\"(\"default_generated\", \"name\")\nselect * from identity-test_TEMP\non conflict (\"name\")\ndo update set\n  \"default_generated\" = EXCLUDED.\"default_generated\"\n;\ndrop table identity-test_TEMP;")).update().runUnchecked(c)
+    Fragment.concat(Fragment.of("create temporary table identity-test_TEMP (like \"public\".\"identity-test\") on commit drop")).update().run(c)
+    StreamingInsert.of("copy identity-test_TEMP(\"default_generated\", \"name\") from stdin", batchSize, unsaved, IdentityTestRow.pgText).run(c)
+    return Fragment.concat(Fragment.of("insert into \"public\".\"identity-test\"(\"default_generated\", \"name\")\nselect * from identity-test_TEMP\non conflict (\"name\")\ndo update set\n  \"default_generated\" = EXCLUDED.\"default_generated\"\n;\ndrop table identity-test_TEMP;")).update().run(c)
   }
 }

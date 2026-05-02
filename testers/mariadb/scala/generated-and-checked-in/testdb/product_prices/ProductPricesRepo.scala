@@ -5,17 +5,18 @@
  */
 package testdb.product_prices
 
-import dev.typr.foundations.scala.DeleteBuilder
-import dev.typr.foundations.scala.SelectBuilder
-import dev.typr.foundations.scala.UpdateBuilder
-import java.sql.Connection
+import dev.typr.dslsc.DeleteBuilder
+import dev.typr.dslsc.SelectBuilder
+import dev.typr.dslsc.UpdateBuilder
+import dev.typr.foundationssc.Connection
+import dev.typr.foundationssc.ConnectionRead
 
 trait ProductPricesRepo {
   def delete: DeleteBuilder[ProductPricesFields, ProductPricesRow]
 
   def deleteById(priceId: ProductPricesId)(using c: Connection): Boolean
 
-  def deleteByIds(priceIds: Array[ProductPricesId])(using c: Connection): Int
+  def deleteByIds(priceIds: List[ProductPricesId])(using c: Connection): Int
 
   def insert(unsaved: ProductPricesRow)(using c: Connection): ProductPricesRow
 
@@ -23,13 +24,13 @@ trait ProductPricesRepo {
 
   def select: SelectBuilder[ProductPricesFields, ProductPricesRow]
 
-  def selectAll(using c: Connection): List[ProductPricesRow]
+  def selectAll(using c: ConnectionRead): List[ProductPricesRow]
 
-  def selectById(priceId: ProductPricesId)(using c: Connection): Option[ProductPricesRow]
+  def selectById(priceId: ProductPricesId)(using c: ConnectionRead): Option[ProductPricesRow]
 
-  def selectByIds(priceIds: Array[ProductPricesId])(using c: Connection): List[ProductPricesRow]
+  def selectByIds(priceIds: List[ProductPricesId])(using c: ConnectionRead): List[ProductPricesRow]
 
-  def selectByIdsTracked(priceIds: Array[ProductPricesId])(using c: Connection): Map[ProductPricesId, ProductPricesRow]
+  def selectByIdsTracked(priceIds: List[ProductPricesId])(using c: ConnectionRead): Map[ProductPricesId, ProductPricesRow]
 
   def update: UpdateBuilder[ProductPricesFields, ProductPricesRow]
 

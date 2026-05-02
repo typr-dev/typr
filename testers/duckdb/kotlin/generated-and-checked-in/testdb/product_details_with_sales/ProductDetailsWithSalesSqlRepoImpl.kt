@@ -5,19 +5,18 @@
  */
 package testdb.product_details_with_sales
 
-import dev.typr.foundations.DuckDbTypes
-import dev.typr.foundations.kotlin.Fragment
-import dev.typr.foundations.kotlin.nullable
+import dev.typr.foundationskt.ConnectionRead
+import dev.typr.foundationskt.DuckDbTypes
+import dev.typr.foundationskt.Fragment
 import java.math.BigDecimal
-import java.sql.Connection
 import kotlin.collections.List
 
 class ProductDetailsWithSalesSqlRepoImpl() : ProductDetailsWithSalesSqlRepo {
   override fun apply(
-    productIds: Array<Int>?,
-    skuPattern: String?,
+    productIds: List<Int>?,
+    skuPattern: kotlin.String?,
     minPrice: BigDecimal?,
     maxPrice: BigDecimal?,
-    c: Connection
-  ): List<ProductDetailsWithSalesSqlRow> = Fragment.interpolate(Fragment.lit("-- Product details with sales statistics and JSON metadata\n-- Tests: JSON column handling, complex aggregations, CASE expressions\n\nSELECT\n    p.product_id,\n    p.sku,\n    p.name,\n    p.price,\n    p.metadata,\n    COUNT(DISTINCT oi.order_id) AS times_ordered,\n    COALESCE(SUM(oi.quantity), 0) AS total_quantity_sold,\n    COALESCE(SUM(oi.quantity * oi.unit_price), 0.0) AS total_revenue,\n    CASE\n        WHEN COUNT(DISTINCT oi.order_id) = 0 THEN 'never_ordered'\n        WHEN COUNT(DISTINCT oi.order_id) < 5 THEN 'low'\n        WHEN COUNT(DISTINCT oi.order_id) < 20 THEN 'medium'\n        ELSE 'high'\n    END AS popularity\nFROM products p\nLEFT JOIN order_items oi ON p.product_id = oi.product_id\nWHERE\n    ("), Fragment.encode(DuckDbTypes.integerArray.nullable(), productIds), Fragment.lit(" IS NULL OR p.product_id = ANY(CAST("), Fragment.encode(DuckDbTypes.integerArray.nullable(), productIds), Fragment.lit(" AS INTEGER[])))\n    AND ("), Fragment.encode(DuckDbTypes.text.nullable(), skuPattern), Fragment.lit(" IS NULL OR p.sku LIKE CAST("), Fragment.encode(DuckDbTypes.text.nullable(), skuPattern), Fragment.lit(" AS VARCHAR))\n    AND ("), Fragment.encode(DuckDbTypes.numeric.nullable(), minPrice), Fragment.lit(" IS NULL OR p.price >= CAST("), Fragment.encode(DuckDbTypes.numeric.nullable(), minPrice), Fragment.lit(" AS DECIMAL))\n    AND ("), Fragment.encode(DuckDbTypes.numeric.nullable(), maxPrice), Fragment.lit(" IS NULL OR p.price <= CAST("), Fragment.encode(DuckDbTypes.numeric.nullable(), maxPrice), Fragment.lit(" AS DECIMAL))\nGROUP BY p.product_id, p.sku, p.name, p.price, p.metadata\nORDER BY total_revenue DESC")).query(ProductDetailsWithSalesSqlRow._rowParser.all()).runUnchecked(c)
+    c: ConnectionRead
+  ): List<ProductDetailsWithSalesSqlRow> = Fragment.concat(Fragment.of("-- Product details with sales statistics and JSON metadata\n-- Tests: JSON column handling, complex aggregations, CASE expressions\n\nSELECT\n    p.product_id,\n    p.sku,\n    p.name,\n    p.price,\n    p.metadata,\n    COUNT(DISTINCT oi.order_id) AS times_ordered,\n    COALESCE(SUM(oi.quantity), 0) AS total_quantity_sold,\n    COALESCE(SUM(oi.quantity * oi.unit_price), 0.0) AS total_revenue,\n    CASE\n        WHEN COUNT(DISTINCT oi.order_id) = 0 THEN 'never_ordered'\n        WHEN COUNT(DISTINCT oi.order_id) < 5 THEN 'low'\n        WHEN COUNT(DISTINCT oi.order_id) < 20 THEN 'medium'\n        ELSE 'high'\n    END AS popularity\nFROM products p\nLEFT JOIN order_items oi ON p.product_id = oi.product_id\nWHERE\n    ("), Fragment.encode(DuckDbTypes.integer.list().opt(), productIds), Fragment.of(" IS NULL OR p.product_id = ANY(CAST("), Fragment.encode(DuckDbTypes.integer.list().opt(), productIds), Fragment.of(" AS INTEGER[])))\n    AND ("), Fragment.encode(DuckDbTypes.text.opt(), skuPattern), Fragment.of(" IS NULL OR p.sku LIKE CAST("), Fragment.encode(DuckDbTypes.text.opt(), skuPattern), Fragment.of(" AS VARCHAR))\n    AND ("), Fragment.encode(DuckDbTypes.numeric.opt(), minPrice), Fragment.of(" IS NULL OR p.price >= CAST("), Fragment.encode(DuckDbTypes.numeric.opt(), minPrice), Fragment.of(" AS DECIMAL))\n    AND ("), Fragment.encode(DuckDbTypes.numeric.opt(), maxPrice), Fragment.of(" IS NULL OR p.price <= CAST("), Fragment.encode(DuckDbTypes.numeric.opt(), maxPrice), Fragment.of(" AS DECIMAL))\nGROUP BY p.product_id, p.sku, p.name, p.price, p.metadata\nORDER BY total_revenue DESC")).query(ProductDetailsWithSalesSqlRow.rowCodec.all()).run(c)
 }

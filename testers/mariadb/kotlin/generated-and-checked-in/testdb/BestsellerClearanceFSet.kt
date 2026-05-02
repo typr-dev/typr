@@ -5,29 +5,28 @@
  */
 package testdb
 
-import dev.typr.foundations.MariaType
-import dev.typr.foundations.MariaTypes
 import dev.typr.foundations.data.maria.MariaSet
+import dev.typr.foundationskt.Bijection
+import dev.typr.foundationskt.MariaType
+import dev.typr.foundationskt.MariaTypes
 import java.util.EnumSet
 import kotlin.collections.List
 import kotlin.collections.Set
 
 /** MariaDB SET type with values: bestseller, clearance, featured, new, sale */
 data class BestsellerClearanceFSet(val members: Set<BestsellerClearanceFSetMember>) {
-  fun contains(member: BestsellerClearanceFSetMember): Boolean = members.contains(member)
+  fun contains(member: BestsellerClearanceFSetMember): kotlin.Boolean = members.contains(member)
 
-  fun isEmpty(): Boolean = members.isEmpty()
+  fun isEmpty(): kotlin.Boolean = members.isEmpty()
 
   fun size(): Int = members.size
 
-  fun toCommaSeparated(): String = members.joinToString(",") { it.value }
+  fun toCommaSeparated(): kotlin.String = members.joinToString(",") { it.value }
 
-  override fun toString(): String = toCommaSeparated()
+  override fun toString(): kotlin.String = toCommaSeparated()
 
   companion object {
-    fun empty(): BestsellerClearanceFSet = BestsellerClearanceFSet(EnumSet.noneOf(BestsellerClearanceFSetMember::class.java).toSet())
-
-    fun fromString(str: String): BestsellerClearanceFSet = run {
+    fun fromString(str: kotlin.String): BestsellerClearanceFSet = run {
       if (str.isNullOrEmpty()) BestsellerClearanceFSet(EnumSet.noneOf(BestsellerClearanceFSetMember::class.java).toSet())
       else {
         val set = EnumSet.noneOf(BestsellerClearanceFSetMember::class.java)
@@ -38,12 +37,14 @@ data class BestsellerClearanceFSet(val members: Set<BestsellerClearanceFSetMembe
       }
     }
 
-    val mariaType: MariaType<BestsellerClearanceFSet> =
-      MariaTypes.set.bimap({ ms: MariaSet -> BestsellerClearanceFSet.fromString(ms.toCommaSeparated()) }, { s: BestsellerClearanceFSet -> MariaSet.fromString(s.toCommaSeparated()) })
-
     fun of(members: List<BestsellerClearanceFSetMember>): BestsellerClearanceFSet = run {
       if (members.isEmpty()) BestsellerClearanceFSet(EnumSet.noneOf(BestsellerClearanceFSetMember::class.java).toSet())
       else BestsellerClearanceFSet(EnumSet.copyOf(members).toSet())
     }
+
+    fun empty(): BestsellerClearanceFSet = BestsellerClearanceFSet(EnumSet.noneOf(BestsellerClearanceFSetMember::class.java).toSet())
+
+    val mariaType: MariaType<BestsellerClearanceFSet> =
+      MariaTypes.set.to(Bijection.of({ ms: MariaSet -> BestsellerClearanceFSet.fromString(ms.toCommaSeparated()) }, { s: BestsellerClearanceFSet -> MariaSet.fromString(s.toCommaSeparated()) }))
   }
 }

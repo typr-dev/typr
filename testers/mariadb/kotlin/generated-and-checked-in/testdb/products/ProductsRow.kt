@@ -6,13 +6,11 @@
 package testdb.products
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import dev.typr.foundations.MariaTypes
+import dev.typr.dslkt.RowCodecs
 import dev.typr.foundations.Tuple.Tuple18
 import dev.typr.foundations.data.Json
-import dev.typr.foundations.kotlin.KotlinDbTypes
-import dev.typr.foundations.kotlin.RowParser
-import dev.typr.foundations.kotlin.RowParsers
-import dev.typr.foundations.kotlin.nullable
+import dev.typr.foundationskt.MariaTypes
+import dev.typr.foundationskt.RowCodec
 import java.math.BigDecimal
 import java.time.LocalDateTime
 import testdb.BestsellerClearanceFSet
@@ -28,22 +26,22 @@ data class ProductsRow(
     */
   @field:JsonProperty("product_id") val productId: ProductsId,
   /**  */
-  val sku: String,
+  val sku: kotlin.String,
   /** 
     * Default: NULL
     * Points to [testdb.brands.BrandsRow.brandId]
     */
   @field:JsonProperty("brand_id") val brandId: BrandsId?,
   /**  */
-  val name: String,
+  val name: kotlin.String,
   /** 
     * Default: NULL
     */
-  @field:JsonProperty("short_description") val shortDescription: String?,
+  @field:JsonProperty("short_description") val shortDescription: kotlin.String?,
   /** 
     * Default: NULL
     */
-  @field:JsonProperty("full_description") val fullDescription: String?,
+  @field:JsonProperty("full_description") val fullDescription: kotlin.String?,
   /**  */
   @field:JsonProperty("base_price") val basePrice: BigDecimal,
   /** 
@@ -61,11 +59,11 @@ data class ProductsRow(
   /** 
     * Default: 'draft'
     */
-  val status: String,
+  val status: kotlin.String,
   /** 
     * Default: 'standard'
     */
-  @field:JsonProperty("tax_class") val taxClass: String,
+  @field:JsonProperty("tax_class") val taxClass: kotlin.String,
   /** 
     * Default: NULL
     */
@@ -90,14 +88,14 @@ data class ProductsRow(
     * Default: NULL
     */
   @field:JsonProperty("published_at") val publishedAt: LocalDateTime?
-) : Tuple18<ProductsId, String, BrandsId?, String, String?, String?, BigDecimal, BigDecimal?, BigDecimal?, Json?, String, String, BestsellerClearanceFSet?, Json?, Json?, LocalDateTime, LocalDateTime, LocalDateTime?> {
+) : Tuple18<ProductsId, kotlin.String, BrandsId?, kotlin.String, kotlin.String?, kotlin.String?, BigDecimal, BigDecimal?, BigDecimal?, Json?, kotlin.String, kotlin.String, BestsellerClearanceFSet?, Json?, Json?, LocalDateTime, LocalDateTime, LocalDateTime?> {
   override fun _1(): ProductsId = productId
 
   override fun _10(): Json? = dimensionsJson
 
-  override fun _11(): String = status
+  override fun _11(): kotlin.String = status
 
-  override fun _12(): String = taxClass
+  override fun _12(): kotlin.String = taxClass
 
   override fun _13(): BestsellerClearanceFSet? = tags
 
@@ -111,15 +109,15 @@ data class ProductsRow(
 
   override fun _18(): LocalDateTime? = publishedAt
 
-  override fun _2(): String = sku
+  override fun _2(): kotlin.String = sku
 
   override fun _3(): BrandsId? = brandId
 
-  override fun _4(): String = name
+  override fun _4(): kotlin.String = name
 
-  override fun _5(): String? = shortDescription
+  override fun _5(): kotlin.String? = shortDescription
 
-  override fun _6(): String? = fullDescription
+  override fun _6(): kotlin.String? = fullDescription
 
   override fun _7(): BigDecimal = basePrice
 
@@ -131,13 +129,13 @@ data class ProductsRow(
 
   fun toUnsavedRow(
     brandId: Defaulted<BrandsId?> = Defaulted.Provided(this.brandId),
-    shortDescription: Defaulted<String?> = Defaulted.Provided(this.shortDescription),
-    fullDescription: Defaulted<String?> = Defaulted.Provided(this.fullDescription),
+    shortDescription: Defaulted<kotlin.String?> = Defaulted.Provided(this.shortDescription),
+    fullDescription: Defaulted<kotlin.String?> = Defaulted.Provided(this.fullDescription),
     costPrice: Defaulted<BigDecimal?> = Defaulted.Provided(this.costPrice),
     weightKg: Defaulted<BigDecimal?> = Defaulted.Provided(this.weightKg),
     dimensionsJson: Defaulted<Json?> = Defaulted.Provided(this.dimensionsJson),
-    status: Defaulted<String> = Defaulted.Provided(this.status),
-    taxClass: Defaulted<String> = Defaulted.Provided(this.taxClass),
+    status: Defaulted<kotlin.String> = Defaulted.Provided(this.status),
+    taxClass: Defaulted<kotlin.String> = Defaulted.Provided(this.taxClass),
     tags: Defaulted<BestsellerClearanceFSet?> = Defaulted.Provided(this.tags),
     attributes: Defaulted<Json?> = Defaulted.Provided(this.attributes),
     seoMetadata: Defaulted<Json?> = Defaulted.Provided(this.seoMetadata),
@@ -147,6 +145,6 @@ data class ProductsRow(
   ): ProductsRowUnsaved = ProductsRowUnsaved(sku, name, basePrice, brandId, shortDescription, fullDescription, costPrice, weightKg, dimensionsJson, status, taxClass, tags, attributes, seoMetadata, createdAt, updatedAt, publishedAt)
 
   companion object {
-    val _rowParser: RowParser<ProductsRow> = RowParsers.of(ProductsId.mariaType, MariaTypes.varchar, BrandsId.mariaType.nullable(), MariaTypes.varchar, MariaTypes.varchar.nullable(), MariaTypes.longtext.nullable(), KotlinDbTypes.MariaTypes.numeric, KotlinDbTypes.MariaTypes.numeric.nullable(), KotlinDbTypes.MariaTypes.numeric.nullable(), MariaTypes.json.nullable(), MariaTypes.text, MariaTypes.text, BestsellerClearanceFSet.mariaType.nullable(), MariaTypes.json.nullable(), MariaTypes.json.nullable(), MariaTypes.datetime, MariaTypes.datetime, MariaTypes.datetime.nullable(), { t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15, t16, t17 -> ProductsRow(t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15, t16, t17) }, { row -> arrayOf<Any?>(row.productId, row.sku, row.brandId, row.name, row.shortDescription, row.fullDescription, row.basePrice, row.costPrice, row.weightKg, row.dimensionsJson, row.status, row.taxClass, row.tags, row.attributes, row.seoMetadata, row.createdAt, row.updatedAt, row.publishedAt) })
+    val rowCodec: RowCodec<ProductsRow> = RowCodecs.of(ProductsId.mariaType, MariaTypes.varchar, BrandsId.mariaType.opt(), MariaTypes.varchar, MariaTypes.varchar.opt(), MariaTypes.longtext.opt(), MariaTypes.numeric, MariaTypes.numeric.opt(), MariaTypes.numeric.opt(), MariaTypes.json.opt(), MariaTypes.text, MariaTypes.text, BestsellerClearanceFSet.mariaType.opt(), MariaTypes.json.opt(), MariaTypes.json.opt(), MariaTypes.datetime, MariaTypes.datetime, MariaTypes.datetime.opt(), { t0: ProductsId, t1: kotlin.String, t2: BrandsId?, t3: kotlin.String, t4: kotlin.String?, t5: kotlin.String?, t6: BigDecimal, t7: BigDecimal?, t8: BigDecimal?, t9: Json?, t10: kotlin.String, t11: kotlin.String, t12: BestsellerClearanceFSet?, t13: Json?, t14: Json?, t15: LocalDateTime, t16: LocalDateTime, t17: LocalDateTime? -> ProductsRow(t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15, t16, t17) }, { row: ProductsRow -> arrayOf<Any?>(row.productId, row.sku, row.brandId, row.name, row.shortDescription, row.fullDescription, row.basePrice, row.costPrice, row.weightKg, row.dimensionsJson, row.status, row.taxClass, row.tags, row.attributes, row.seoMetadata, row.createdAt, row.updatedAt, row.publishedAt) })
   }
 }

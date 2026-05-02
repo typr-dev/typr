@@ -5,43 +5,42 @@
  */
 package testdb.products
 
-import dev.typr.foundations.RowParser
-import dev.typr.foundations.SqlServerTypes
-import dev.typr.foundations.dsl.FieldsBase
-import dev.typr.foundations.dsl.Path
-import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.kotlin.KotlinDbTypes
-import dev.typr.foundations.kotlin.RelationStructure
-import dev.typr.foundations.kotlin.SqlExpr
-import dev.typr.foundations.kotlin.SqlExpr.Field
-import dev.typr.foundations.kotlin.SqlExpr.IdField
-import dev.typr.foundations.kotlin.SqlExpr.OptField
-import dev.typr.foundations.kotlin.TupleExpr4
+import dev.typr.dsl.FieldsBase
+import dev.typr.dsl.Path
+import dev.typr.dsl.SqlExpr.FieldLike
+import dev.typr.dslkt.RelationStructure
+import dev.typr.dslkt.SqlExpr
+import dev.typr.dslkt.SqlExpr.Field
+import dev.typr.dslkt.SqlExpr.IdField
+import dev.typr.dslkt.SqlExpr.OptField
+import dev.typr.dslkt.TupleExpr4
+import dev.typr.foundations.RowCodec
+import dev.typr.foundationskt.SqlServerTypes
 import java.math.BigDecimal
 import kotlin.collections.List
 
-data class ProductsFields(val _path: List<Path>) : TupleExpr4<ProductsId, String, BigDecimal, String>, RelationStructure<ProductsFields, ProductsRow>, FieldsBase<ProductsRow> {
+data class ProductsFields(val _path: List<Path>) : TupleExpr4<ProductsId, kotlin.String, BigDecimal, kotlin.String>, RelationStructure<ProductsFields, ProductsRow>, FieldsBase<ProductsRow> {
   override fun _1(): SqlExpr<ProductsId> = productId()
 
-  override fun _2(): SqlExpr<String> = name()
+  override fun _2(): SqlExpr<kotlin.String> = name()
 
   override fun _3(): SqlExpr<BigDecimal> = price()
 
-  override fun _4(): SqlExpr<String> = description()
+  override fun _4(): SqlExpr<kotlin.String> = description()
 
   override fun _path(): List<Path> = _path
 
   override fun columns(): List<FieldLike<*, ProductsRow>> = listOf(this.productId().underlying, this.name().underlying, this.price().underlying, this.description().underlying)
 
-  fun description(): OptField<String, ProductsRow> = OptField<String, ProductsRow>(_path, "description", ProductsRow::description, null, null, { row, value -> row.copy(description = value) }, SqlServerTypes.nvarchar)
+  fun description(): OptField<kotlin.String, ProductsRow> = OptField<kotlin.String, ProductsRow>(_path, "description", ProductsRow::description, null, null, { row, value -> row.copy(description = value) }, SqlServerTypes.nvarchar.underlying)
 
-  fun name(): Field<String, ProductsRow> = Field<String, ProductsRow>(_path, "name", ProductsRow::name, null, null, { row, value -> row.copy(name = value) }, SqlServerTypes.nvarchar)
+  fun name(): Field<kotlin.String, ProductsRow> = Field<kotlin.String, ProductsRow>(_path, "name", ProductsRow::name, null, null, { row, value -> row.copy(name = value) }, SqlServerTypes.nvarchar.underlying)
 
-  fun price(): Field<BigDecimal, ProductsRow> = Field<BigDecimal, ProductsRow>(_path, "price", ProductsRow::price, null, null, { row, value -> row.copy(price = value) }, KotlinDbTypes.SqlServerTypes.money)
+  fun price(): Field<BigDecimal, ProductsRow> = Field<BigDecimal, ProductsRow>(_path, "price", ProductsRow::price, null, null, { row, value -> row.copy(price = value) }, SqlServerTypes.money.underlying)
 
-  fun productId(): IdField<ProductsId, ProductsRow> = IdField<ProductsId, ProductsRow>(_path, "product_id", ProductsRow::productId, null, null, { row, value -> row.copy(productId = value) }, ProductsId.sqlServerType)
+  fun productId(): IdField<ProductsId, ProductsRow> = IdField<ProductsId, ProductsRow>(_path, "product_id", ProductsRow::productId, null, null, { row, value -> row.copy(productId = value) }, ProductsId.sqlServerType.underlying)
 
-  override fun rowParser(): RowParser<ProductsRow> = ProductsRow._rowParser.underlying
+  override fun rowCodec(): RowCodec<ProductsRow> = ProductsRow.rowCodec.underlying
 
   override fun withPaths(_path: List<Path>): RelationStructure<ProductsFields, ProductsRow> = ProductsFields(_path)
 

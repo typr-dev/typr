@@ -6,19 +6,19 @@
 package oracledb.precision_types_null
 
 import com.fasterxml.jackson.annotation.JsonValue
-import dev.typr.foundations.OracleType
-import dev.typr.foundations.scala.Bijection
-import dev.typr.foundations.scala.RowParser
-import dev.typr.foundations.scala.RowParsers
-import dev.typr.foundations.scala.ScalaDbTypes
+import dev.typr.dslsc.Bijection
+import dev.typr.dslsc.RowCodecs
+import dev.typr.foundationssc.OracleType
+import dev.typr.foundationssc.OracleTypes
+import dev.typr.foundationssc.RowCodec
 
 /** Type for the primary key of table `PRECISION_TYPES_NULL` */
 case class PrecisionTypesNullId(@JsonValue value: BigDecimal) extends scala.AnyVal
 
 object PrecisionTypesNullId {
-  given `_rowParser`: RowParser[PrecisionTypesNullId] = RowParsers.of(ScalaDbTypes.OracleTypes.number.bimap(PrecisionTypesNullId.apply, _.value))(x => x)(id => Array[Any](id))
+  given bijection: Bijection[PrecisionTypesNullId, BigDecimal] = Bijection.of[PrecisionTypesNullId, BigDecimal](_.value, PrecisionTypesNullId.apply)
 
-  given bijection: Bijection[PrecisionTypesNullId, BigDecimal] = Bijection.apply[PrecisionTypesNullId, BigDecimal](_.value)(PrecisionTypesNullId.apply)
+  given oracleType: OracleType[PrecisionTypesNullId] = OracleTypes.number.to(Bijection.of(PrecisionTypesNullId.apply, _.value))
 
-  given oracleType: OracleType[PrecisionTypesNullId] = ScalaDbTypes.OracleTypes.number.bimap(PrecisionTypesNullId.apply, _.value)
+  given rowCodec: RowCodec[PrecisionTypesNullId] = RowCodecs.of(OracleTypes.number.to(Bijection.of(PrecisionTypesNullId.apply, _.value)))(x => x)(id => Array[Any](id))
 }

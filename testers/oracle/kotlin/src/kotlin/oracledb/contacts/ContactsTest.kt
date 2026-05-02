@@ -4,7 +4,6 @@ import oracledb.EmailTableT
 import oracledb.OracleTestHelper
 import oracledb.TagVarrayT
 import oracledb.customtypes.Defaulted
-import oracledb.userdefined.Email
 import org.junit.Assert.*
 import org.junit.Test
 
@@ -14,7 +13,7 @@ class ContactsTest {
     @Test
     fun testInsertContactWithNestedTableAndVarray() {
         OracleTestHelper.run { c ->
-            val emails = Email(EmailTableT(arrayOf("john@example.com", "john.doe@work.com", "jdoe@personal.net")))
+            val emails = (EmailTableT(arrayOf("john@example.com", "john.doe@work.com", "jdoe@personal.net")))
             val tags = TagVarrayT(arrayOf("customer", "vip"))
 
             val unsaved = ContactsRowUnsaved(
@@ -30,7 +29,7 @@ class ContactsTest {
             val inserted = repo.selectById(insertedId, c)!!
             assertEquals("John Doe", inserted.name)
             assertNotNull(inserted.emails)
-            assertEquals(3, inserted.emails!!.value.value.size)
+            assertEquals(3, inserted.emails!!.value.size)
             assertNotNull(inserted.tags)
             assertEquals(2, inserted.tags!!.value.size)
         }
@@ -39,7 +38,7 @@ class ContactsTest {
     @Test
     fun testInsertContactWithOnlyEmails() {
         OracleTestHelper.run { c ->
-            val emails = Email(EmailTableT(arrayOf("jane@example.com")))
+            val emails = (EmailTableT(arrayOf("jane@example.com")))
 
             val unsaved = ContactsRowUnsaved(
                 "Jane Smith",
@@ -52,7 +51,7 @@ class ContactsTest {
             val inserted = repo.selectById(insertedId, c)!!
 
             assertNotNull(inserted.emails)
-            assertEquals(1, inserted.emails!!.value.value.size)
+            assertEquals(1, inserted.emails!!.value.size)
             assertNull(inserted.tags)
         }
     }
@@ -99,7 +98,7 @@ class ContactsTest {
     @Test
     fun testUpdateContactEmails() {
         OracleTestHelper.run { c ->
-            val originalEmails = Email(EmailTableT(arrayOf("old@example.com")))
+            val originalEmails = (EmailTableT(arrayOf("old@example.com")))
             val tags = TagVarrayT(arrayOf("test"))
 
             val unsaved = ContactsRowUnsaved(
@@ -112,23 +111,23 @@ class ContactsTest {
             val insertedId = repo.insert(unsaved, c)
             val inserted = repo.selectById(insertedId, c)!!
 
-            val newEmails = Email(EmailTableT(arrayOf("new1@example.com", "new2@example.com")))
+            val newEmails = (EmailTableT(arrayOf("new1@example.com", "new2@example.com")))
             val updated = inserted.copy(emails = newEmails)
 
             val wasUpdated = repo.update(updated, c)
             assertTrue(wasUpdated)
 
             val fetched = repo.selectById(insertedId, c)!!
-            assertEquals(2, fetched.emails!!.value.value.size)
-            assertTrue(fetched.emails!!.value.value.contains("new1@example.com"))
-            assertTrue(fetched.emails!!.value.value.contains("new2@example.com"))
+            assertEquals(2, fetched.emails!!.value.size)
+            assertTrue(fetched.emails!!.value.contains("new1@example.com"))
+            assertTrue(fetched.emails!!.value.contains("new2@example.com"))
         }
     }
 
     @Test
     fun testUpdateContactTags() {
         OracleTestHelper.run { c ->
-            val emails = Email(EmailTableT(arrayOf("tags@example.com")))
+            val emails = (EmailTableT(arrayOf("tags@example.com")))
             val originalTags = TagVarrayT(arrayOf("old", "tags"))
 
             val unsaved = ContactsRowUnsaved(
@@ -156,7 +155,7 @@ class ContactsTest {
     @Test
     fun testDeleteContact() {
         OracleTestHelper.run { c ->
-            val emails = Email(EmailTableT(arrayOf("delete@example.com")))
+            val emails = (EmailTableT(arrayOf("delete@example.com")))
             val tags = TagVarrayT(arrayOf("delete"))
 
             val unsaved = ContactsRowUnsaved(
@@ -179,8 +178,8 @@ class ContactsTest {
     @Test
     fun testSelectAllContacts() {
         OracleTestHelper.run { c ->
-            val emails1 = Email(EmailTableT(arrayOf("contact1@example.com")))
-            val emails2 = Email(EmailTableT(arrayOf("contact2@example.com")))
+            val emails1 = (EmailTableT(arrayOf("contact1@example.com")))
+            val emails2 = (EmailTableT(arrayOf("contact2@example.com")))
 
             repo.insert(ContactsRowUnsaved("Contact 1", emails1, null, Defaulted.UseDefault()), c)
             repo.insert(ContactsRowUnsaved("Contact 2", emails2, null, Defaulted.UseDefault()), c)
@@ -194,7 +193,7 @@ class ContactsTest {
     fun testEmailTableRoundtrip() {
         OracleTestHelper.run { c ->
             val emailArray = arrayOf("email1@test.com", "email2@test.com", "email3@test.com", "email4@test.com", "email5@test.com")
-            val emails = Email(EmailTableT(emailArray))
+            val emails = (EmailTableT(emailArray))
 
             val unsaved = ContactsRowUnsaved(
                 "Email Roundtrip Test",
@@ -206,14 +205,14 @@ class ContactsTest {
             val insertedId = repo.insert(unsaved, c)
             val inserted = repo.selectById(insertedId, c)!!
 
-            assertArrayEquals(emailArray, inserted.emails!!.value.value)
+            assertArrayEquals(emailArray, inserted.emails!!.value)
         }
     }
 
     @Test
     fun testClearTags() {
         OracleTestHelper.run { c ->
-            val emails = Email(EmailTableT(arrayOf("clear@example.com")))
+            val emails = (EmailTableT(arrayOf("clear@example.com")))
             val originalTags = TagVarrayT(arrayOf("tag1", "tag2"))
 
             val unsaved = ContactsRowUnsaved(
@@ -239,7 +238,7 @@ class ContactsTest {
     @Test
     fun testUpdateBothCollections() {
         OracleTestHelper.run { c ->
-            val originalEmails = Email(EmailTableT(arrayOf("original@test.com")))
+            val originalEmails = (EmailTableT(arrayOf("original@test.com")))
             val originalTags = TagVarrayT(arrayOf("original"))
 
             val unsaved = ContactsRowUnsaved(
@@ -252,7 +251,7 @@ class ContactsTest {
             val insertedId = repo.insert(unsaved, c)
             val inserted = repo.selectById(insertedId, c)!!
 
-            val newEmails = Email(EmailTableT(arrayOf("updated1@test.com", "updated2@test.com")))
+            val newEmails = (EmailTableT(arrayOf("updated1@test.com", "updated2@test.com")))
             val newTags = TagVarrayT(arrayOf("updated1", "updated2", "updated3"))
 
             val updated = inserted.copy(emails = newEmails, tags = newTags)
@@ -262,7 +261,7 @@ class ContactsTest {
             val fetched = repo.selectById(insertedId, c)!!
             assertNotNull(fetched.emails)
             assertNotNull(fetched.tags)
-            assertEquals(2, fetched.emails!!.value.value.size)
+            assertEquals(2, fetched.emails!!.value.size)
             assertEquals(3, fetched.tags!!.value.size)
         }
     }
@@ -270,7 +269,7 @@ class ContactsTest {
     @Test
     fun testClearEmails() {
         OracleTestHelper.run { c ->
-            val emails = Email(EmailTableT(arrayOf("clear@test.com")))
+            val emails = (EmailTableT(arrayOf("clear@test.com")))
             val unsaved = ContactsRowUnsaved(
                 "Clear Emails Test",
                 emails,
@@ -295,7 +294,7 @@ class ContactsTest {
     fun testNestedTableWithManyEmails() {
         OracleTestHelper.run { c ->
             val manyEmails = Array(20) { i -> "email$i@test.com" }
-            val emails = Email(EmailTableT(manyEmails))
+            val emails = (EmailTableT(manyEmails))
 
             val unsaved = ContactsRowUnsaved(
                 "Many Emails Test",
@@ -307,7 +306,7 @@ class ContactsTest {
             val insertedId = repo.insert(unsaved, c)
             val inserted = repo.selectById(insertedId, c)!!
             assertNotNull(inserted.emails)
-            assertEquals(20, inserted.emails!!.value.value.size)
+            assertEquals(20, inserted.emails!!.value.size)
         }
     }
 
@@ -330,7 +329,7 @@ class ContactsTest {
     @Test
     fun testEmptyEmailArray() {
         OracleTestHelper.run { c ->
-            val emptyEmails = Email(EmailTableT(arrayOf()))
+            val emptyEmails = (EmailTableT(arrayOf()))
 
             val unsaved = ContactsRowUnsaved(
                 "Empty Emails Test",
@@ -342,7 +341,7 @@ class ContactsTest {
             val insertedId = repo.insert(unsaved, c)
             val inserted = repo.selectById(insertedId, c)!!
             assertNotNull(inserted.emails)
-            assertEquals(0, inserted.emails!!.value.value.size)
+            assertEquals(0, inserted.emails!!.value.size)
         }
     }
 }

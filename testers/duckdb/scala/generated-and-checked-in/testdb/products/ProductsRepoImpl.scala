@@ -5,86 +5,85 @@
  */
 package testdb.products
 
-import dev.typr.foundations.DuckDbTypes
-import dev.typr.foundations.scala.DbTypeOps
-import dev.typr.foundations.scala.DeleteBuilder
-import dev.typr.foundations.scala.Dialect
-import dev.typr.foundations.scala.Fragment
-import dev.typr.foundations.scala.ScalaDbTypes
-import dev.typr.foundations.scala.SelectBuilder
-import dev.typr.foundations.scala.UpdateBuilder
-import java.sql.Connection
-import dev.typr.foundations.scala.Fragment.sql
+import dev.typr.dslsc.DeleteBuilder
+import dev.typr.dslsc.Dialect
+import dev.typr.dslsc.SelectBuilder
+import dev.typr.dslsc.UpdateBuilder
+import dev.typr.foundationssc.Connection
+import dev.typr.foundationssc.ConnectionRead
+import dev.typr.foundationssc.DuckDbTypes
+import dev.typr.foundationssc.Fragment
+import dev.typr.foundationssc.Fragment.sql
 
 class ProductsRepoImpl extends ProductsRepo {
   override def delete: DeleteBuilder[ProductsFields, ProductsRow] = DeleteBuilder.of(""""products"""", ProductsFields.structure, Dialect.DUCKDB)
 
-  override def deleteById(productId: ProductsId)(using c: Connection): Boolean = sql"""delete from "products" where "product_id" = ${Fragment.encode(ProductsId.duckDbType, productId)}""".update().runUnchecked(c) > 0
+  override def deleteById(productId: ProductsId)(using c: Connection): Boolean = sql"""delete from "products" where "product_id" = ${Fragment.encode(ProductsId.duckDbType, productId)}""".update().run(using c) > 0
 
-  override def deleteByIds(productIds: Array[ProductsId])(using c: Connection): Int = {
+  override def deleteByIds(productIds: List[ProductsId])(using c: Connection): Int = {
     sql"""delete
     from "products"
     where "product_id" = ANY(${Fragment.encode(ProductsId.duckDbTypeArray, productIds)})"""
       .update()
-      .runUnchecked(c)
+      .run(using c)
   }
 
   override def insert(unsaved: ProductsRow)(using c: Connection): ProductsRow = {
   sql"""insert into "products"("product_id", "sku", "name", "price", "metadata")
-    values (${Fragment.encode(ProductsId.duckDbType, unsaved.productId)}, ${Fragment.encode(DuckDbTypes.varchar, unsaved.sku)}, ${Fragment.encode(DuckDbTypes.varchar, unsaved.name)}, ${Fragment.encode(ScalaDbTypes.DuckDbTypes.numeric, unsaved.price)}, ${Fragment.encode(DuckDbTypes.json.nullable, unsaved.metadata)})
+    values (${Fragment.encode(ProductsId.duckDbType, unsaved.productId)}, ${Fragment.encode(DuckDbTypes.varchar, unsaved.sku)}, ${Fragment.encode(DuckDbTypes.varchar, unsaved.name)}, ${Fragment.encode(DuckDbTypes.numeric, unsaved.price)}, ${Fragment.encode(DuckDbTypes.json.opt, unsaved.metadata)})
     RETURNING "product_id", "sku", "name", "price", "metadata"
     """
-    .updateReturning(ProductsRow.`_rowParser`.exactlyOne()).runUnchecked(c)
+    .updateReturning(ProductsRow.rowCodec.exactlyOne()).run(using c)
   }
 
-  override def select: SelectBuilder[ProductsFields, ProductsRow] = SelectBuilder.of(""""products"""", ProductsFields.structure, ProductsRow.`_rowParser`, Dialect.DUCKDB)
+  override def select: SelectBuilder[ProductsFields, ProductsRow] = SelectBuilder.of(""""products"""", ProductsFields.structure, ProductsRow.rowCodec, Dialect.DUCKDB)
 
-  override def selectAll(using c: Connection): List[ProductsRow] = {
+  override def selectAll(using c: ConnectionRead): List[ProductsRow] = {
     sql"""select "product_id", "sku", "name", "price", "metadata"
     from "products"
-    """.query(ProductsRow.`_rowParser`.all()).runUnchecked(c)
+    """.query(ProductsRow.rowCodec.all()).run(using c)
   }
 
-  override def selectById(productId: ProductsId)(using c: Connection): Option[ProductsRow] = {
+  override def selectById(productId: ProductsId)(using c: ConnectionRead): Option[ProductsRow] = {
     sql"""select "product_id", "sku", "name", "price", "metadata"
     from "products"
-    where "product_id" = ${Fragment.encode(ProductsId.duckDbType, productId)}""".query(ProductsRow.`_rowParser`.first()).runUnchecked(c)
+    where "product_id" = ${Fragment.encode(ProductsId.duckDbType, productId)}""".query(ProductsRow.rowCodec.first()).run(using c)
   }
 
-  override def selectByIds(productIds: Array[ProductsId])(using c: Connection): List[ProductsRow] = {
+  override def selectByIds(productIds: List[ProductsId])(using c: ConnectionRead): List[ProductsRow] = {
     sql"""select "product_id", "sku", "name", "price", "metadata"
     from "products"
-    where "product_id" = ANY(${Fragment.encode(ProductsId.duckDbTypeArray, productIds)})""".query(ProductsRow.`_rowParser`.all()).runUnchecked(c)
+    where "product_id" = ANY(${Fragment.encode(ProductsId.duckDbTypeArray, productIds)})""".query(ProductsRow.rowCodec.all()).run(using c)
   }
 
-  override def selectByIdsTracked(productIds: Array[ProductsId])(using c: Connection): Map[ProductsId, ProductsRow] = {
+  override def selectByIdsTracked(productIds: List[ProductsId])(using c: ConnectionRead): Map[ProductsId, ProductsRow] = {
     val ret: scala.collection.mutable.Map[ProductsId, ProductsRow] = scala.collection.mutable.Map.empty[ProductsId, ProductsRow]
     selectByIds(productIds)(using c).foreach(row => ret.put(row.productId, row): @scala.annotation.nowarn)
     return ret.toMap
   }
 
-  override def selectByUniqueSku(sku: String)(using c: Connection): Option[ProductsRow] = {
+  override def selectByUniqueSku(sku: String)(using c: ConnectionRead): Option[ProductsRow] = {
     sql"""select "product_id", "sku", "name", "price", "metadata"
     from "products"
     where "sku" = ${Fragment.encode(DuckDbTypes.varchar, sku)}
-    """.query(ProductsRow.`_rowParser`.first()).runUnchecked(c)
+    """.query(ProductsRow.rowCodec.first()).run(using c)
   }
 
-  override def update: UpdateBuilder[ProductsFields, ProductsRow] = UpdateBuilder.of(""""products"""", ProductsFields.structure, ProductsRow.`_rowParser`, Dialect.DUCKDB)
+  override def update: UpdateBuilder[ProductsFields, ProductsRow] = UpdateBuilder.of(""""products"""", ProductsFields.structure, ProductsRow.rowCodec, Dialect.DUCKDB)
 
   override def update(row: ProductsRow)(using c: Connection): Boolean = {
     val productId: ProductsId = row.productId
     return sql"""update "products"
     set "sku" = ${Fragment.encode(DuckDbTypes.varchar, row.sku)},
     "name" = ${Fragment.encode(DuckDbTypes.varchar, row.name)},
-    "price" = ${Fragment.encode(ScalaDbTypes.DuckDbTypes.numeric, row.price)},
-    "metadata" = ${Fragment.encode(DuckDbTypes.json.nullable, row.metadata)}
-    where "product_id" = ${Fragment.encode(ProductsId.duckDbType, productId)}""".update().runUnchecked(c) > 0
+    "price" = ${Fragment.encode(DuckDbTypes.numeric, row.price)},
+    "metadata" = ${Fragment.encode(DuckDbTypes.json.opt, row.metadata)}
+    where "product_id" = ${Fragment.encode(ProductsId.duckDbType, productId)}""".update().run(using c) > 0
   }
 
   override def upsert(unsaved: ProductsRow)(using c: Connection): ProductsRow = {
   sql"""INSERT INTO "products"("product_id", "sku", "name", "price", "metadata")
-    VALUES (${Fragment.encode(ProductsId.duckDbType, unsaved.productId)}, ${Fragment.encode(DuckDbTypes.varchar, unsaved.sku)}, ${Fragment.encode(DuckDbTypes.varchar, unsaved.name)}, ${Fragment.encode(ScalaDbTypes.DuckDbTypes.numeric, unsaved.price)}, ${Fragment.encode(DuckDbTypes.json.nullable, unsaved.metadata)})
+    VALUES (${Fragment.encode(ProductsId.duckDbType, unsaved.productId)}, ${Fragment.encode(DuckDbTypes.varchar, unsaved.sku)}, ${Fragment.encode(DuckDbTypes.varchar, unsaved.name)}, ${Fragment.encode(DuckDbTypes.numeric, unsaved.price)}, ${Fragment.encode(DuckDbTypes.json.opt, unsaved.metadata)})
     ON CONFLICT ("product_id")
     DO UPDATE SET
       "sku" = EXCLUDED."sku",
@@ -92,8 +91,8 @@ class ProductsRepoImpl extends ProductsRepo {
     "price" = EXCLUDED."price",
     "metadata" = EXCLUDED."metadata"
     RETURNING "product_id", "sku", "name", "price", "metadata""""
-    .updateReturning(ProductsRow.`_rowParser`.exactlyOne())
-    .runUnchecked(c)
+    .updateReturning(ProductsRow.rowCodec.exactlyOne())
+    .run(using c)
   }
 
   override def upsertBatch(unsaved: Iterator[ProductsRow])(using c: Connection): List[ProductsRow] = {
@@ -106,7 +105,7 @@ class ProductsRepoImpl extends ProductsRepo {
     "price" = EXCLUDED."price",
     "metadata" = EXCLUDED."metadata"
     RETURNING "product_id", "sku", "name", "price", "metadata""""
-      .updateReturningEach(ProductsRow.`_rowParser`, unsaved)
-    .runUnchecked(c)
+      .updateReturningEach(ProductsRow.rowCodec, unsaved)
+    .run(using c)
   }
 }

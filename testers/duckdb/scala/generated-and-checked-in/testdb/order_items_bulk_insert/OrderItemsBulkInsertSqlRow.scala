@@ -6,10 +6,10 @@
 package testdb.order_items_bulk_insert
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import dev.typr.dslsc.RowCodecs
 import dev.typr.foundations.Tuple.Tuple4
-import dev.typr.foundations.scala.RowParser
-import dev.typr.foundations.scala.RowParsers
-import dev.typr.foundations.scala.ScalaDbTypes
+import dev.typr.foundationssc.DuckDbTypes
+import dev.typr.foundationssc.RowCodec
 
 /** SQL file: order_items_bulk_insert.sql */
 case class OrderItemsBulkInsertSqlRow(
@@ -32,5 +32,5 @@ case class OrderItemsBulkInsertSqlRow(
 }
 
 object OrderItemsBulkInsertSqlRow {
-  val `_rowParser`: RowParser[OrderItemsBulkInsertSqlRow] = RowParsers.of(ScalaDbTypes.DuckDbTypes.integer, ScalaDbTypes.DuckDbTypes.integer, ScalaDbTypes.DuckDbTypes.integer, ScalaDbTypes.DuckDbTypes.numeric)(OrderItemsBulkInsertSqlRow.apply)(row => Array[Any](row.orderId, row.productId, row.quantity, row.unitPrice))
+  val rowCodec: RowCodec[OrderItemsBulkInsertSqlRow] = RowCodecs.of(DuckDbTypes.integer, DuckDbTypes.integer, DuckDbTypes.integer, DuckDbTypes.numeric)(OrderItemsBulkInsertSqlRow.apply)(row => Array[Any](row.orderId, row.productId, row.quantity, row.unitPrice))
 }

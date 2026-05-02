@@ -39,7 +39,7 @@ object TypoUUID {
 
   given arrayToStatement: ToStatement[Array[TypoUUID]] = ToStatement[Array[TypoUUID]]((s, index, v) => s.setArray(index, s.getConnection.createArrayOf("uuid", v.map(v => v.value))))
 
-  given bijection: Bijection[TypoUUID, UUID] = Bijection.apply[TypoUUID, UUID](_.value)(TypoUUID.apply)
+  given bijection: Bijection[TypoUUID, UUID] = Bijection[TypoUUID, UUID](_.value)(TypoUUID.apply)
 
   given column: Column[TypoUUID] = {
     Column.nonNull[TypoUUID]((v1: Any, _) =>

@@ -6,12 +6,10 @@
 package testdb.check_constraint_test
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import dev.typr.foundations.Db2Types
+import dev.typr.dslkt.RowCodecs
 import dev.typr.foundations.Tuple.Tuple4
-import dev.typr.foundations.kotlin.KotlinDbTypes
-import dev.typr.foundations.kotlin.RowParser
-import dev.typr.foundations.kotlin.RowParsers
-import dev.typr.foundations.kotlin.nullable
+import dev.typr.foundationskt.Db2Types
+import dev.typr.foundationskt.RowCodec
 import java.math.BigDecimal
 
 /** Table: CHECK_CONSTRAINT_TEST
@@ -22,19 +20,19 @@ data class CheckConstraintTestRow(
   /** Constraint CHK_AGE affecting columns AGE: AGE >= 0 AND AGE <= 150 */
   @field:JsonProperty("AGE") val age: Int,
   /** Constraint CHK_STATUS affecting columns STATUS: STATUS IN ('active', 'inactive', 'pending') */
-  @field:JsonProperty("STATUS") val status: String,
+  @field:JsonProperty("STATUS") val status: kotlin.String,
   /** Constraint CHK_PRICE affecting columns PRICE: PRICE >= 0 */
   @field:JsonProperty("PRICE") val price: BigDecimal?
-) : Tuple4<CheckConstraintTestId, Int, String, BigDecimal?> {
+) : Tuple4<CheckConstraintTestId, Int, kotlin.String, BigDecimal?> {
   override fun _1(): CheckConstraintTestId = id
 
   override fun _2(): Int = age
 
-  override fun _3(): String = status
+  override fun _3(): kotlin.String = status
 
   override fun _4(): BigDecimal? = price
 
   companion object {
-    val _rowParser: RowParser<CheckConstraintTestRow> = RowParsers.of(CheckConstraintTestId.db2Type, KotlinDbTypes.Db2Types.integer, Db2Types.varchar, KotlinDbTypes.Db2Types.decimal.nullable(), { t0, t1, t2, t3 -> CheckConstraintTestRow(t0, t1, t2, t3) }, { row -> arrayOf<Any?>(row.id, row.age, row.status, row.price) })
+    val rowCodec: RowCodec<CheckConstraintTestRow> = RowCodecs.of(CheckConstraintTestId.db2Type, Db2Types.integer, Db2Types.varchar, Db2Types.decimal.opt(), { t0: CheckConstraintTestId, t1: Int, t2: kotlin.String, t3: BigDecimal? -> CheckConstraintTestRow(t0, t1, t2, t3) }, { row: CheckConstraintTestRow -> arrayOf<Any?>(row.id, row.age, row.status, row.price) })
   }
 }

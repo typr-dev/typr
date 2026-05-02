@@ -1,5 +1,7 @@
 package com.example.grpc;
 
+
+
 /** Clean service interface for EchoService gRPC service */
 public interface EchoService {
   ScalarTypes echoScalarTypes(ScalarTypes request);

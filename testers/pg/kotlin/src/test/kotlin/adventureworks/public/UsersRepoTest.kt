@@ -10,7 +10,7 @@ import adventureworks.public.users.*
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
-import java.sql.Connection
+import dev.typr.foundationskt.Connection
 
 class UsersRepoTest {
     private fun testRoundtrip(usersRepo: UsersRepo) {

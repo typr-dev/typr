@@ -6,9 +6,9 @@
 package oracledb.all_scalar_types
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import dev.typr.dsl.RowCodecs
 import dev.typr.foundations.OracleTypes
-import dev.typr.foundations.RowParser
-import dev.typr.foundations.RowParsers
+import dev.typr.foundations.RowCodec
 import dev.typr.foundations.Tuple.Tuple7
 import java.time.LocalDateTime
 import java.util.Optional
@@ -18,7 +18,7 @@ import oracledb.customtypes.Defaulted
  * Primary key: ID
  */
 case class AllScalarTypesRow(
-  /** Default: "TYPR"."ISEQ$$_72845".nextval */
+  /** Default: "TYPR"."ISEQ$$_72835".nextval */
   @JsonProperty("ID") id: AllScalarTypesId,
   @JsonProperty("COL_VARCHAR2") colVarchar2: Optional[String],
   @JsonProperty("COL_NUMBER") colNumber: Optional[java.math.BigDecimal],
@@ -55,5 +55,5 @@ case class AllScalarTypesRow(
 }
 
 object AllScalarTypesRow {
-  val `_rowParser`: RowParser[AllScalarTypesRow] = RowParsers.of(AllScalarTypesId.oracleType, OracleTypes.varchar2.opt(), OracleTypes.number.opt(), OracleTypes.date.opt(), OracleTypes.timestamp.opt(), OracleTypes.clob.opt(), OracleTypes.varchar2, AllScalarTypesRow.apply, row => Array[Any](row.id, row.colVarchar2, row.colNumber, row.colDate, row.colTimestamp, row.colClob, row.colNotNull))
+  val rowCodec: RowCodec[AllScalarTypesRow] = RowCodecs.of(AllScalarTypesId.oracleType, OracleTypes.varchar2.opt, OracleTypes.number.opt, OracleTypes.date.opt, OracleTypes.timestamp.opt, OracleTypes.clob.opt, OracleTypes.varchar2, AllScalarTypesRow.apply, row => Array[Any](row.id, row.colVarchar2, row.colNumber, row.colDate, row.colTimestamp, row.colClob, row.colNotNull))
 }

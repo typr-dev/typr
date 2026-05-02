@@ -5,17 +5,18 @@
  */
 package adventureworks.person.emailaddress
 
-import dev.typr.foundations.scala.DeleteBuilder
-import dev.typr.foundations.scala.SelectBuilder
-import dev.typr.foundations.scala.UpdateBuilder
-import java.sql.Connection
+import dev.typr.dslsc.DeleteBuilder
+import dev.typr.dslsc.SelectBuilder
+import dev.typr.dslsc.UpdateBuilder
+import dev.typr.foundationssc.Connection
+import dev.typr.foundationssc.ConnectionRead
 
 trait EmailaddressRepo {
   def delete: DeleteBuilder[EmailaddressFields, EmailaddressRow]
 
   def deleteById(compositeId: EmailaddressId)(using c: Connection): Boolean
 
-  def deleteByIds(compositeIds: Array[EmailaddressId])(using c: Connection): Int
+  def deleteByIds(compositeIds: List[EmailaddressId])(using c: Connection): Int
 
   def insert(unsaved: EmailaddressRow)(using c: Connection): EmailaddressRow
 
@@ -34,13 +35,13 @@ trait EmailaddressRepo {
 
   def select: SelectBuilder[EmailaddressFields, EmailaddressRow]
 
-  def selectAll(using c: Connection): List[EmailaddressRow]
+  def selectAll(using c: ConnectionRead): List[EmailaddressRow]
 
-  def selectById(compositeId: EmailaddressId)(using c: Connection): Option[EmailaddressRow]
+  def selectById(compositeId: EmailaddressId)(using c: ConnectionRead): Option[EmailaddressRow]
 
-  def selectByIds(compositeIds: Array[EmailaddressId])(using c: Connection): List[EmailaddressRow]
+  def selectByIds(compositeIds: List[EmailaddressId])(using c: ConnectionRead): List[EmailaddressRow]
 
-  def selectByIdsTracked(compositeIds: Array[EmailaddressId])(using c: Connection): Map[EmailaddressId, EmailaddressRow]
+  def selectByIdsTracked(compositeIds: List[EmailaddressId])(using c: ConnectionRead): Map[EmailaddressId, EmailaddressRow]
 
   def update: UpdateBuilder[EmailaddressFields, EmailaddressRow]
 

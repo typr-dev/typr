@@ -5,11 +5,11 @@
  */
 package testdb.product_summary
 
-import java.sql.Connection
-import dev.typr.foundations.scala.Fragment.sql
+import dev.typr.foundationssc.ConnectionRead
+import dev.typr.foundationssc.Fragment.sql
 
 class ProductSummarySqlRepoImpl extends ProductSummarySqlRepo {
-  override def apply(using c: Connection): List[ProductSummarySqlRow] = {
+  override def apply(using c: ConnectionRead): List[ProductSummarySqlRow] = {
     sql"""-- Product Summary View
     -- Shows product details with aggregated information
     -- This tests DuckDB SQL file processing and view generation
@@ -25,6 +25,6 @@ class ProductSummarySqlRepoImpl extends ProductSummarySqlRepo {
     FROM products p
     LEFT JOIN order_items oi ON p.product_id = oi.product_id
     GROUP BY p.product_id, p.name, p.sku, p.price
-    """.query(ProductSummarySqlRow.`_rowParser`.all()).runUnchecked(c)
+    """.query(ProductSummarySqlRow.rowCodec.all()).run(using c)
   }
 }

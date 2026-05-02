@@ -5,10 +5,11 @@
  */
 package oracledb.all_types_test
 
-import dev.typr.foundations.dsl.DeleteBuilder
-import dev.typr.foundations.dsl.SelectBuilder
-import dev.typr.foundations.dsl.UpdateBuilder
-import java.sql.Connection
+import dev.typr.dsl.DeleteBuilder
+import dev.typr.dsl.SelectBuilder
+import dev.typr.dsl.UpdateBuilder
+import dev.typr.foundations.Connection
+import dev.typr.foundations.ConnectionRead
 import java.util.Optional
 
 trait AllTypesTestRepo {
@@ -16,7 +17,7 @@ trait AllTypesTestRepo {
 
   def deleteById(id: AllTypesTestId)(using c: Connection): java.lang.Boolean
 
-  def deleteByIds(ids: Array[AllTypesTestId])(using c: Connection): Integer
+  def deleteByIds(ids: java.util.List[AllTypesTestId])(using c: Connection): Integer
 
   def insert(unsaved: AllTypesTestRow)(using c: Connection): AllTypesTestId
 
@@ -24,13 +25,13 @@ trait AllTypesTestRepo {
 
   def select: SelectBuilder[AllTypesTestFields, AllTypesTestRow]
 
-  def selectAll(using c: Connection): java.util.List[AllTypesTestRow]
+  def selectAll(using c: ConnectionRead): java.util.List[AllTypesTestRow]
 
-  def selectById(id: AllTypesTestId)(using c: Connection): Optional[AllTypesTestRow]
+  def selectById(id: AllTypesTestId)(using c: ConnectionRead): Optional[AllTypesTestRow]
 
-  def selectByIds(ids: Array[AllTypesTestId])(using c: Connection): java.util.List[AllTypesTestRow]
+  def selectByIds(ids: java.util.List[AllTypesTestId])(using c: ConnectionRead): java.util.List[AllTypesTestRow]
 
-  def selectByIdsTracked(ids: Array[AllTypesTestId])(using c: Connection): java.util.Map[AllTypesTestId, AllTypesTestRow]
+  def selectByIdsTracked(ids: java.util.List[AllTypesTestId])(using c: ConnectionRead): java.util.Map[AllTypesTestId, AllTypesTestRow]
 
   def update: UpdateBuilder[AllTypesTestFields, AllTypesTestRow]
 

@@ -5,24 +5,25 @@
  */
 package adventureworks.public.title_domain
 
-import dev.typr.foundations.scala.DeleteBuilder
-import dev.typr.foundations.scala.DeleteBuilderMock
-import dev.typr.foundations.scala.DeleteParams
-import dev.typr.foundations.scala.SelectBuilder
-import dev.typr.foundations.scala.SelectBuilderMock
-import dev.typr.foundations.scala.SelectParams
-import dev.typr.foundations.scala.UpdateBuilder
-import dev.typr.foundations.scala.UpdateBuilderMock
-import dev.typr.foundations.scala.UpdateParams
+import dev.typr.dslsc.DeleteBuilder
+import dev.typr.dslsc.DeleteBuilderMock
+import dev.typr.dslsc.DeleteParams
+import dev.typr.dslsc.SelectBuilder
+import dev.typr.dslsc.SelectBuilderMock
+import dev.typr.dslsc.SelectParams
+import dev.typr.dslsc.UpdateBuilder
+import dev.typr.dslsc.UpdateBuilderMock
+import dev.typr.dslsc.UpdateParams
+import dev.typr.foundationssc.Connection
+import dev.typr.foundationssc.ConnectionRead
 import java.lang.RuntimeException
-import java.sql.Connection
 
 case class TitleDomainRepoMock(map: scala.collection.mutable.Map[TitleDomainId, TitleDomainRow] = scala.collection.mutable.Map.empty[TitleDomainId, TitleDomainRow]) extends TitleDomainRepo {
   override def delete: DeleteBuilder[TitleDomainFields, TitleDomainRow] = DeleteBuilderMock(TitleDomainFields.structure, () => map.values.toList, DeleteParams.empty(), row => row.code, id => map.remove(id): @scala.annotation.nowarn)
 
   override def deleteById(code: TitleDomainId)(using c: Connection): Boolean = map.remove(code).isDefined
 
-  override def deleteByIds(codes: Array[TitleDomainId])(using c: Connection): Int = {
+  override def deleteByIds(codes: List[TitleDomainId])(using c: Connection): Int = {
     var count = 0
     codes.foreach { id => if (map.remove(id).isDefined) {
       count = count + 1
@@ -50,13 +51,13 @@ case class TitleDomainRepoMock(map: scala.collection.mutable.Map[TitleDomainId, 
 
   override def select: SelectBuilder[TitleDomainFields, TitleDomainRow] = SelectBuilderMock(TitleDomainFields.structure, () => map.values.toList, SelectParams.empty())
 
-  override def selectAll(using c: Connection): List[TitleDomainRow] = map.values.toList
+  override def selectAll(using c: ConnectionRead): List[TitleDomainRow] = map.values.toList
 
-  override def selectById(code: TitleDomainId)(using c: Connection): Option[TitleDomainRow] = map.get(code)
+  override def selectById(code: TitleDomainId)(using c: ConnectionRead): Option[TitleDomainRow] = map.get(code)
 
-  override def selectByIds(codes: Array[TitleDomainId])(using c: Connection): List[TitleDomainRow] = codes.flatMap(map.get(_)).toList
+  override def selectByIds(codes: List[TitleDomainId])(using c: ConnectionRead): List[TitleDomainRow] = codes.flatMap(map.get(_)).toList
 
-  override def selectByIdsTracked(codes: Array[TitleDomainId])(using c: Connection): Map[TitleDomainId, TitleDomainRow] = selectByIds(codes)(using c).map(x => (((row: TitleDomainRow) => row.code).apply(x), x)).toMap
+  override def selectByIdsTracked(codes: List[TitleDomainId])(using c: ConnectionRead): Map[TitleDomainId, TitleDomainRow] = selectByIds(codes)(using c).map(x => (((row: TitleDomainRow) => row.code).apply(x), x)).toMap
 
   override def update: UpdateBuilder[TitleDomainFields, TitleDomainRow] = UpdateBuilderMock(TitleDomainFields.structure, () => map.values.toList, UpdateParams.empty(), row => row)
 

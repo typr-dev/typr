@@ -6,9 +6,9 @@
 package adventureworks.public
 
 import com.fasterxml.jackson.annotation.JsonValue
-import dev.typr.foundations.PgType
-import dev.typr.foundations.PgTypes
-import dev.typr.foundations.scala.Bijection
+import dev.typr.dslsc.Bijection
+import dev.typr.foundationssc.PgType
+import dev.typr.foundationssc.PgTypes
 
 /** Domain `public.Name`
  * No constraint
@@ -16,9 +16,9 @@ import dev.typr.foundations.scala.Bijection
 case class Name(@JsonValue value: String)
 
 object Name {
-  given bijection: Bijection[Name, String] = Bijection.apply[Name, String](_.value)(Name.apply)
+  given bijection: Bijection[Name, String] = Bijection.of[Name, String](_.value, Name.apply)
 
-  given pgType: PgType[Name] = PgTypes.text.bimap(Name.apply, _.value).renamed(""""public"."Name"""")
+  given pgType: PgType[Name] = PgType(PgTypes.text.to(Bijection.of(Name.apply, _.value)).underlying.renamed(""""public"."Name""""))
 
-  given pgTypeArray: PgType[Array[Name]] = PgTypes.textArray.bimap(xs => xs.map(Name.apply), xs => xs.map(_.value)).renamed(""""public"."Name"[]""")
+  given pgTypeArray: PgType[List[Name]] = pgType.array
 }

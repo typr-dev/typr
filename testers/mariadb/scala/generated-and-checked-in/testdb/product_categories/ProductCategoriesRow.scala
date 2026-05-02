@@ -6,10 +6,10 @@
 package testdb.product_categories
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import dev.typr.dslsc.RowCodecs
 import dev.typr.foundations.Tuple.Tuple4
-import dev.typr.foundations.scala.RowParser
-import dev.typr.foundations.scala.RowParsers
-import dev.typr.foundations.scala.ScalaDbTypes
+import dev.typr.foundationssc.MariaTypes
+import dev.typr.foundationssc.RowCodec
 import testdb.categories.CategoriesId
 import testdb.customtypes.Defaulted
 import testdb.products.ProductsId
@@ -62,8 +62,6 @@ case class ProductCategoriesRow(
 }
 
 object ProductCategoriesRow {
-  val `_rowParser`: RowParser[ProductCategoriesRow] = RowParsers.of(ProductsId.mariaType, CategoriesId.mariaType, IsPrimary.mariaType, ScalaDbTypes.MariaTypes.smallint)(ProductCategoriesRow.apply)(row => Array[Any](row.productId, row.categoryId, row.isPrimary, row.sortOrder))
-
   def apply(
     compositeId: ProductCategoriesId,
     isPrimary: /* user-picked */ IsPrimary,
@@ -76,4 +74,6 @@ object ProductCategoriesRow {
       sortOrder
     )
   }
+
+  val rowCodec: RowCodec[ProductCategoriesRow] = RowCodecs.of(ProductsId.mariaType, CategoriesId.mariaType, IsPrimary.mariaType, MariaTypes.smallint)(ProductCategoriesRow.apply)(row => Array[Any](row.productId, row.categoryId, row.isPrimary, row.sortOrder))
 }

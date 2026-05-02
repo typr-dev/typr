@@ -24,7 +24,7 @@ object OrderNumber {
 
   given arrayToStatement: ToStatement[Array[OrderNumber]] = ToStatement.arrayToParameter(using ParameterMetaData.StringParameterMetaData).contramap(_.map(_.value))
 
-  given bijection: Bijection[OrderNumber, String] = Bijection.apply[OrderNumber, String](_.value)(OrderNumber.apply)
+  given bijection: Bijection[OrderNumber, String] = Bijection[OrderNumber, String](_.value)(OrderNumber.apply)
 
   given column: Column[OrderNumber] = Column.columnToString.map(OrderNumber.apply)
 

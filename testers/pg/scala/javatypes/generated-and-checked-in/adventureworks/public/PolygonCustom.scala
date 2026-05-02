@@ -5,22 +5,19 @@
  */
 package adventureworks.public
 
-import dev.typr.foundations.PgRead
-import dev.typr.foundations.PgStruct
 import dev.typr.foundations.PgType
 import dev.typr.foundations.PgTypes
+import dev.typr.foundations.RowCodec
 import java.util.Optional
 
 /** PostgreSQL composite type: public.polygon_custom */
 case class PolygonCustom(
   name: Optional[String],
-  vertices: Optional[Array[Point2d]]
+  vertices: Optional[java.util.List[Point2d]]
 )
 
 object PolygonCustom {
-  given pgStruct: PgStruct[PolygonCustom] = PgStruct.builder[PolygonCustom]("public.polygon_custom").optField("name", PgTypes.text, (v: PolygonCustom) => v.name).optField("vertices", Point2d.pgTypeArray, (v: PolygonCustom) => v.vertices).build(arr => PolygonCustom(name = Optional.ofNullable(arr(0).asInstanceOf[String]), vertices = Optional.ofNullable(arr(1).asInstanceOf[Array[Point2d]])))
+  given pgType: PgType[PolygonCustom] = PgTypes.compositeOf("public.polygon_custom", RowCodec.namedBuilder[PolygonCustom]().field("name", PgTypes.text.opt(), (v: PolygonCustom) => v.name).field("vertices", Point2d.pgTypeArray.opt(), (v: PolygonCustom) => v.vertices).build((t0, t1) => PolygonCustom(name = t0, vertices = t1)))
 
-  given pgType: PgType[PolygonCustom] = pgStruct.asType()
-
-  given pgTypeArray: PgType[Array[PolygonCustom]] = pgType.array(PgRead.readCompositeArray(pgType.pgCompositeText(), n => new Array[PolygonCustom](n)), n => new Array[PolygonCustom](n))
+  given pgTypeArray: PgType[java.util.List[PolygonCustom]] = pgType.array()
 }

@@ -54,28 +54,6 @@ data class Inventory(
   }
 
   companion object {
-    val MARSHALLER: Marshaller<Inventory> =
-      object : Marshaller<Inventory> {
-        override fun stream(value: Inventory): InputStream {
-          val bytes = ByteArray(value.getSerializedSize())
-          val cos = CodedOutputStream.newInstance(bytes)
-          try {
-            value.writeTo(cos)
-            cos.flush()
-          } catch (e: IOException) {
-            throw RuntimeException(e)
-          } 
-          return ByteArrayInputStream(bytes)
-        }
-        override fun parse(stream: InputStream): Inventory {
-          try {
-            return Inventory.parseFrom(CodedInputStream.newInstance(stream))
-          } catch (e: IOException) {
-            throw RuntimeException(e)
-          } 
-        }
-      }
-
     @Throws(IOException::class)
     fun parseFrom(input: CodedInputStream): Inventory {
       var warehouseId: kotlin.String = ""
@@ -106,5 +84,27 @@ data class Inventory(
       }
       return Inventory(warehouseId, productIds, stockCounts.toMap(), recentOrders)
     }
+
+    val MARSHALLER: Marshaller<Inventory> =
+      object : Marshaller<Inventory> {
+        override fun stream(value: Inventory): InputStream {
+          val bytes = ByteArray(value.getSerializedSize())
+          val cos = CodedOutputStream.newInstance(bytes)
+          try {
+            value.writeTo(cos)
+            cos.flush()
+          } catch (e: IOException) {
+            throw RuntimeException(e)
+          } 
+          return ByteArrayInputStream(bytes)
+        }
+        override fun parse(stream: InputStream): Inventory {
+          try {
+            return Inventory.parseFrom(CodedInputStream.newInstance(stream))
+          } catch (e: IOException) {
+            throw RuntimeException(e)
+          } 
+        }
+      }
   }
 }

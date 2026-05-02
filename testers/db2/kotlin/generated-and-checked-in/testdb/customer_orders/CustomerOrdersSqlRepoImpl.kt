@@ -5,14 +5,14 @@
  */
 package testdb.customer_orders
 
-import dev.typr.foundations.kotlin.Fragment
-import dev.typr.foundations.kotlin.KotlinDbTypes
-import java.sql.Connection
+import dev.typr.foundationskt.ConnectionRead
+import dev.typr.foundationskt.Db2Types
+import dev.typr.foundationskt.Fragment
 import kotlin.collections.List
 
 class CustomerOrdersSqlRepoImpl() : CustomerOrdersSqlRepo {
   override fun apply(
     customerId: Int,
-    c: Connection
-  ): List<CustomerOrdersSqlRow> = Fragment.interpolate(Fragment.lit("-- Get customer order details\nSELECT\n    c.customer_id,\n    c.name as customer_name,\n    o.order_id,\n    o.order_date,\n    o.total_amount,\n    o.status\nFROM customers c\nINNER JOIN orders o ON c.customer_id = o.customer_id\nWHERE c.customer_id = "), Fragment.encode(KotlinDbTypes.Db2Types.integer, customerId), Fragment.lit("\nORDER BY o.order_date DESC\n")).query(CustomerOrdersSqlRow._rowParser.all()).runUnchecked(c)
+    c: ConnectionRead
+  ): List<CustomerOrdersSqlRow> = Fragment.concat(Fragment.of("-- Get customer order details\nSELECT\n    c.customer_id,\n    c.name as customer_name,\n    o.order_id,\n    o.order_date,\n    o.total_amount,\n    o.status\nFROM customers c\nINNER JOIN orders o ON c.customer_id = o.customer_id\nWHERE c.customer_id = "), Fragment.encode(Db2Types.integer, customerId), Fragment.of("\nORDER BY o.order_date DESC\n")).query(CustomerOrdersSqlRow.rowCodec.all()).run(c)
 }

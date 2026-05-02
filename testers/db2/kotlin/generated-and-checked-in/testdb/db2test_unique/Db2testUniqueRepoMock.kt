@@ -5,17 +5,18 @@
  */
 package testdb.db2test_unique
 
-import dev.typr.foundations.kotlin.DeleteBuilder
-import dev.typr.foundations.kotlin.DeleteBuilderMock
-import dev.typr.foundations.kotlin.DeleteParams
-import dev.typr.foundations.kotlin.SelectBuilder
-import dev.typr.foundations.kotlin.SelectBuilderMock
-import dev.typr.foundations.kotlin.SelectParams
-import dev.typr.foundations.kotlin.UpdateBuilder
-import dev.typr.foundations.kotlin.UpdateBuilderMock
-import dev.typr.foundations.kotlin.UpdateParams
+import dev.typr.dslkt.DeleteBuilder
+import dev.typr.dslkt.DeleteBuilderMock
+import dev.typr.dslkt.DeleteParams
+import dev.typr.dslkt.SelectBuilder
+import dev.typr.dslkt.SelectBuilderMock
+import dev.typr.dslkt.SelectParams
+import dev.typr.dslkt.UpdateBuilder
+import dev.typr.dslkt.UpdateBuilderMock
+import dev.typr.dslkt.UpdateParams
+import dev.typr.foundationskt.Connection
+import dev.typr.foundationskt.ConnectionRead
 import java.lang.RuntimeException
-import java.sql.Connection
 import java.util.ArrayList
 import kotlin.collections.Iterator
 import kotlin.collections.List
@@ -31,10 +32,10 @@ data class Db2testUniqueRepoMock(
   override fun deleteById(
     id: Db2testUniqueId,
     c: Connection
-  ): Boolean = map.remove(id) != null
+  ): kotlin.Boolean = map.remove(id) != null
 
   override fun deleteByIds(
-    ids: Array<Db2testUniqueId>,
+    ids: List<Db2testUniqueId>,
     c: Connection
   ): Int {
     var count = 0
@@ -64,16 +65,16 @@ data class Db2testUniqueRepoMock(
 
   override fun select(): SelectBuilder<Db2testUniqueFields, Db2testUniqueRow> = SelectBuilderMock(Db2testUniqueFields.structure, { map.values.toList() }, SelectParams.empty())
 
-  override fun selectAll(c: Connection): List<Db2testUniqueRow> = map.values.toList()
+  override fun selectAll(c: ConnectionRead): List<Db2testUniqueRow> = map.values.toList()
 
   override fun selectById(
     id: Db2testUniqueId,
-    c: Connection
+    c: ConnectionRead
   ): Db2testUniqueRow? = map[id]
 
   override fun selectByIds(
-    ids: Array<Db2testUniqueId>,
-    c: Connection
+    ids: List<Db2testUniqueId>,
+    c: ConnectionRead
   ): List<Db2testUniqueRow> {
     val result = ArrayList<Db2testUniqueRow>()
     for (id in ids) {
@@ -86,19 +87,19 @@ data class Db2testUniqueRepoMock(
   }
 
   override fun selectByIdsTracked(
-    ids: Array<Db2testUniqueId>,
-    c: Connection
+    ids: List<Db2testUniqueId>,
+    c: ConnectionRead
   ): Map<Db2testUniqueId, Db2testUniqueRow> = selectByIds(ids, c).associateBy({ row: Db2testUniqueRow -> row.id })
 
   override fun selectByUniqueCodeAndCategory(
-    code: String,
-    category: String,
-    c: Connection
+    code: kotlin.String,
+    category: kotlin.String,
+    c: ConnectionRead
   ): Db2testUniqueRow? = map.values.toList().find({ v -> (code == v.code) && (category == v.category) })
 
   override fun selectByUniqueEmail(
-    email: String,
-    c: Connection
+    email: kotlin.String,
+    c: ConnectionRead
   ): Db2testUniqueRow? = map.values.toList().find({ v -> (email == v.email) })
 
   override fun update(): UpdateBuilder<Db2testUniqueFields, Db2testUniqueRow> = UpdateBuilderMock(Db2testUniqueFields.structure, { map.values.toList() }, UpdateParams.empty(), { row -> row })
@@ -106,7 +107,7 @@ data class Db2testUniqueRepoMock(
   override fun update(
     row: Db2testUniqueRow,
     c: Connection
-  ): Boolean {
+  ): kotlin.Boolean {
     val shouldUpdate = map[row.id]?.takeIf({ oldRow -> (oldRow != row) }) != null
     if (shouldUpdate) {
       map[row.id] = row

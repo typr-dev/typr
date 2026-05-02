@@ -6,10 +6,10 @@
 package testdb.simple_customer_lookup
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import dev.typr.foundations.MariaTypes
+import dev.typr.dslkt.RowCodecs
 import dev.typr.foundations.Tuple.Tuple7
-import dev.typr.foundations.kotlin.RowParser
-import dev.typr.foundations.kotlin.RowParsers
+import dev.typr.foundationskt.MariaTypes
+import dev.typr.foundationskt.RowCodec
 import java.time.LocalDateTime
 import testdb.customer_status.CustomerStatusId
 import testdb.customers.CustomersId
@@ -28,12 +28,12 @@ data class SimpleCustomerLookupSqlRow(
   /** Points to [testdb.customers.CustomersRow.lastName] */
   @field:JsonProperty("last_name") val lastName: /* user-picked */ LastName,
   /** Points to [testdb.customers.CustomersRow.tier] */
-  val tier: String,
+  val tier: kotlin.String,
   /** Points to [testdb.customers.CustomersRow.status] */
   val status: CustomerStatusId,
   /** Points to [testdb.customers.CustomersRow.createdAt] */
   @field:JsonProperty("created_at") val createdAt: LocalDateTime
-) : Tuple7<CustomersId, /* user-picked */ Email, /* user-picked */ FirstName, /* user-picked */ LastName, String, CustomerStatusId, LocalDateTime> {
+) : Tuple7<CustomersId, /* user-picked */ Email, /* user-picked */ FirstName, /* user-picked */ LastName, kotlin.String, CustomerStatusId, LocalDateTime> {
   override fun _1(): CustomersId = customerId
 
   override fun _2(): /* user-picked */ Email = email
@@ -42,13 +42,13 @@ data class SimpleCustomerLookupSqlRow(
 
   override fun _4(): /* user-picked */ LastName = lastName
 
-  override fun _5(): String = tier
+  override fun _5(): kotlin.String = tier
 
   override fun _6(): CustomerStatusId = status
 
   override fun _7(): LocalDateTime = createdAt
 
   companion object {
-    val _rowParser: RowParser<SimpleCustomerLookupSqlRow> = RowParsers.of(CustomersId.mariaType, Email.mariaType, FirstName.mariaType, LastName.mariaType, MariaTypes.text, CustomerStatusId.mariaType, MariaTypes.datetime, { t0, t1, t2, t3, t4, t5, t6 -> SimpleCustomerLookupSqlRow(t0, t1, t2, t3, t4, t5, t6) }, { row -> arrayOf<Any?>(row.customerId, row.email, row.firstName, row.lastName, row.tier, row.status, row.createdAt) })
+    val rowCodec: RowCodec<SimpleCustomerLookupSqlRow> = RowCodecs.of(CustomersId.mariaType, Email.mariaType, FirstName.mariaType, LastName.mariaType, MariaTypes.text, CustomerStatusId.mariaType, MariaTypes.datetime, { t0: CustomersId, t1: /* user-picked */ Email, t2: /* user-picked */ FirstName, t3: /* user-picked */ LastName, t4: kotlin.String, t5: CustomerStatusId, t6: LocalDateTime -> SimpleCustomerLookupSqlRow(t0, t1, t2, t3, t4, t5, t6) }, { row: SimpleCustomerLookupSqlRow -> arrayOf<Any?>(row.customerId, row.email, row.firstName, row.lastName, row.tier, row.status, row.createdAt) })
   }
 }

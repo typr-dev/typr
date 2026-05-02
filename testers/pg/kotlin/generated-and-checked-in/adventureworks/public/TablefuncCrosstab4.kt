@@ -5,28 +5,24 @@
  */
 package adventureworks.public
 
-import dev.typr.foundations.PgRead
-import dev.typr.foundations.PgStruct
-import dev.typr.foundations.PgType
-import dev.typr.foundations.PgTypes
-import java.util.Optional
+import dev.typr.foundationskt.PgType
+import dev.typr.foundationskt.PgTypes
+import dev.typr.foundationskt.RowCodec
+import kotlin.collections.List
 
 /** PostgreSQL composite type: public.tablefunc_crosstab_4 */
 data class TablefuncCrosstab4(
-  val rowName: String?,
-  val category1: String?,
-  val category2: String?,
-  val category3: String?,
-  val category4: String?
+  val rowName: kotlin.String?,
+  val category1: kotlin.String?,
+  val category2: kotlin.String?,
+  val category3: kotlin.String?,
+  val category4: kotlin.String?
 ) {
   companion object {
-    val pgStruct: PgStruct<TablefuncCrosstab4> =
-      PgStruct.builder<TablefuncCrosstab4>("public.tablefunc_crosstab_4").optField("rowName", PgTypes.text, { v: TablefuncCrosstab4 -> Optional.ofNullable(v.rowName) }).optField("category1", PgTypes.text, { v: TablefuncCrosstab4 -> Optional.ofNullable(v.category1) }).optField("category2", PgTypes.text, { v: TablefuncCrosstab4 -> Optional.ofNullable(v.category2) }).optField("category3", PgTypes.text, { v: TablefuncCrosstab4 -> Optional.ofNullable(v.category3) }).optField("category4", PgTypes.text, { v: TablefuncCrosstab4 -> Optional.ofNullable(v.category4) }).build({ arr -> TablefuncCrosstab4(arr[0] as? String, arr[1] as? String, arr[2] as? String, arr[3] as? String, arr[4] as? String) })
-
     val pgType: PgType<TablefuncCrosstab4> =
-      pgStruct.asType()
+      PgTypes.compositeOf("public.tablefunc_crosstab_4", RowCodec.namedBuilder<TablefuncCrosstab4>().field("rowName", PgTypes.text.opt(), { v: TablefuncCrosstab4 -> v.rowName }).field("category1", PgTypes.text.opt(), { v: TablefuncCrosstab4 -> v.category1 }).field("category2", PgTypes.text.opt(), { v: TablefuncCrosstab4 -> v.category2 }).field("category3", PgTypes.text.opt(), { v: TablefuncCrosstab4 -> v.category3 }).field("category4", PgTypes.text.opt(), { v: TablefuncCrosstab4 -> v.category4 }).build({ t0, t1, t2, t3, t4 -> TablefuncCrosstab4(t0, t1, t2, t3, t4) }))
 
-    val pgTypeArray: PgType<Array<TablefuncCrosstab4>> =
-      pgType.array(PgRead.readCompositeArray(pgType.pgCompositeText(), { n -> arrayOfNulls<TablefuncCrosstab4>(n) }), { n -> arrayOfNulls<TablefuncCrosstab4>(n) })
+    val pgTypeArray: PgType<List<TablefuncCrosstab4>> =
+      pgType.array()
   }
 }

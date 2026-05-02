@@ -6,12 +6,12 @@
 package oracledb.precisetypes
 
 import com.fasterxml.jackson.annotation.JsonValue
+import dev.typr.dsl.RowCodecs
+import dev.typr.foundations.Bijection
 import dev.typr.foundations.OracleType
 import dev.typr.foundations.OracleTypes
-import dev.typr.foundations.RowParser
-import dev.typr.foundations.RowParsers
+import dev.typr.foundations.RowCodec
 import dev.typr.foundations.data.precise.NonEmptyStringN
-import dev.typr.foundations.dsl.Bijection
 import java.lang.IllegalArgumentException
 import java.util.Optional
 
@@ -20,7 +20,7 @@ case class NonEmptyString20 private(@JsonValue value: String) extends NonEmptySt
 
   override def maxLength: scala.Int = 20
 
-  override def semanticEquals(other: NonEmptyStringN): scala.Boolean = (if (other == null) false else value == other.rawValue())
+  override def semanticEquals(other: NonEmptyStringN): scala.Boolean = (if (other == null) false else (value == other.rawValue()))
 
   override def semanticHashCode: scala.Int = value.hashCode()
 
@@ -30,13 +30,13 @@ case class NonEmptyString20 private(@JsonValue value: String) extends NonEmptySt
 }
 
 object NonEmptyString20 {
-  given `_rowParser`: RowParser[NonEmptyString20] = RowParsers.of(OracleTypes.varchar2.bimap(NonEmptyString20.apply, _.value), x => x, id => Array[Any](id))
-
-  given bijection: Bijection[NonEmptyString20, String] = Bijection.apply[NonEmptyString20, String](_.value)(NonEmptyString20.apply)
+  given bijection: Bijection[NonEmptyString20, String] = Bijection.of[NonEmptyString20, String](_.value, NonEmptyString20.apply)
 
   def of(value: String): Optional[NonEmptyString20] = (if (!value.isEmpty && value.length <= 20) Optional.of(new NonEmptyString20(value)) else Optional.empty())
 
-  given oracleType: OracleType[NonEmptyString20] = OracleTypes.varchar2.bimap(NonEmptyString20.apply, _.value)
+  given oracleType: OracleType[NonEmptyString20] = OracleTypes.varchar2.to(Bijection.of(NonEmptyString20.apply, _.value))
+
+  given rowCodec: RowCodec[NonEmptyString20] = RowCodecs.of(OracleTypes.varchar2.to(Bijection.of(NonEmptyString20.apply, _.value)), x => x, id => Array[Any](id))
 
   def truncate(value: String): NonEmptyString20 = new NonEmptyString20((if (value.length <= 20) value else value.substring(0, 20)))
 

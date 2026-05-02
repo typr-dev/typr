@@ -6,12 +6,11 @@
 package testdb.order_history
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import dev.typr.foundations.MariaTypes
+import dev.typr.dslsc.RowCodecs
 import dev.typr.foundations.Tuple.Tuple8
 import dev.typr.foundations.data.Json
-import dev.typr.foundations.scala.DbTypeOps
-import dev.typr.foundations.scala.RowParser
-import dev.typr.foundations.scala.RowParsers
+import dev.typr.foundationssc.MariaTypes
+import dev.typr.foundationssc.RowCodec
 import java.time.LocalDateTime
 import testdb.customtypes.Defaulted
 import testdb.orders.OrdersId
@@ -89,5 +88,5 @@ case class OrderHistoryRow(
 }
 
 object OrderHistoryRow {
-  val `_rowParser`: RowParser[OrderHistoryRow] = RowParsers.of(OrderHistoryId.mariaType, OrdersId.mariaType, MariaTypes.text.nullable, MariaTypes.text, MariaTypes.varchar.nullable, MariaTypes.varchar.nullable, MariaTypes.json.nullable, MariaTypes.datetime)(OrderHistoryRow.apply)(row => Array[Any](row.historyId, row.orderId, row.previousStatus, row.newStatus, row.changedBy, row.changeReason, row.metadata, row.createdAt))
+  val rowCodec: RowCodec[OrderHistoryRow] = RowCodecs.of(OrderHistoryId.mariaType, OrdersId.mariaType, MariaTypes.text.opt, MariaTypes.text, MariaTypes.varchar.opt, MariaTypes.varchar.opt, MariaTypes.json.opt, MariaTypes.datetime)(OrderHistoryRow.apply)(row => Array[Any](row.historyId, row.orderId, row.previousStatus, row.newStatus, row.changedBy, row.changeReason, row.metadata, row.createdAt))
 }

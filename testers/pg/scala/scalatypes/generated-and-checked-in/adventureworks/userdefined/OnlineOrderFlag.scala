@@ -7,8 +7,8 @@ package adventureworks.userdefined
 
 import adventureworks.public.Flag
 import com.fasterxml.jackson.annotation.JsonValue
-import dev.typr.foundations.PgType
-import dev.typr.foundations.scala.Bijection
+import dev.typr.dslsc.Bijection
+import dev.typr.foundationssc.PgType
 
 /** Shared type `OnlineOrderFlag`
  * Generated from TypeDefinitions matching
@@ -16,9 +16,9 @@ import dev.typr.foundations.scala.Bijection
 case class OnlineOrderFlag(@JsonValue value: Flag) extends scala.AnyVal
 
 object OnlineOrderFlag {
-  given bijection: Bijection[OnlineOrderFlag, Flag] = Bijection.apply[OnlineOrderFlag, Flag](_.value)(OnlineOrderFlag.apply)
+  given bijection: Bijection[OnlineOrderFlag, Flag] = Bijection.of[OnlineOrderFlag, Flag](_.value, OnlineOrderFlag.apply)
 
-  given pgType: PgType[OnlineOrderFlag] = Flag.pgType.bimap(OnlineOrderFlag.apply, _.value)
+  given pgType: PgType[OnlineOrderFlag] = Flag.pgType.to(Bijection.of(OnlineOrderFlag.apply, _.value))
 
-  given pgTypeArray: PgType[Array[OnlineOrderFlag]] = Flag.pgTypeArray.bimap(xs => xs.map(OnlineOrderFlag.apply), xs => xs.map(_.value))
+  given pgTypeArray: PgType[List[OnlineOrderFlag]] = pgType.array
 }

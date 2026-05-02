@@ -10,8 +10,12 @@ import io.grpc.MethodDescriptor.Marshaller;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.RuntimeException;
 
-public record PaymentMethod(String id, PaymentMethodMethod method) {
+public record PaymentMethod(
+  String id,
+  PaymentMethodMethod method
+) {
   public PaymentMethod withId(String id) {
     return new PaymentMethod(id, method);
   }
@@ -20,90 +24,62 @@ public record PaymentMethod(String id, PaymentMethodMethod method) {
     return new PaymentMethod(id, method);
   }
 
-  public static Marshaller<PaymentMethod> MARSHALLER =
-      new Marshaller<PaymentMethod>() {
-        @Override
-        public InputStream stream(PaymentMethod value) {
-          var bytes = new byte[value.getSerializedSize()];
-          var cos = CodedOutputStream.newInstance(bytes);
-          try {
-            value.writeTo(cos);
-            cos.flush();
-          } catch (IOException e) {
-            throw new RuntimeException(e);
-          }
-          return new ByteArrayInputStream(bytes);
-        }
-
-        @Override
-        public PaymentMethod parse(InputStream stream) {
-          try {
-            return PaymentMethod.parseFrom(CodedInputStream.newInstance(stream));
-          } catch (IOException e) {
-            throw new RuntimeException(e);
-          }
-        }
-      };
-
-  public static PaymentMethod parseFrom(CodedInputStream input) throws IOException {
+  static public PaymentMethod parseFrom(CodedInputStream input) throws IOException {
     String id = "";
     PaymentMethodMethod method = null;
     while (!input.isAtEnd()) {
       var tag = input.readTag();
-      if (WireFormat.getTagFieldNumber(tag) == 1) {
-        id = input.readString();
-      } else if (WireFormat.getTagFieldNumber(tag) == 2) {
-        var _length = input.readRawVarint32();
-        var _oldLimit = input.pushLimit(_length);
-        method = new CreditCardValue(CreditCard.parseFrom(input));
-        input.popLimit(_oldLimit);
-        ;
-      } else if (WireFormat.getTagFieldNumber(tag) == 3) {
-        var _length = input.readRawVarint32();
-        var _oldLimit = input.pushLimit(_length);
-        method = new BankTransferValue(BankTransfer.parseFrom(input));
-        input.popLimit(_oldLimit);
-        ;
-      } else if (WireFormat.getTagFieldNumber(tag) == 4) {
-        var _length = input.readRawVarint32();
-        var _oldLimit = input.pushLimit(_length);
-        method = new WalletValue(Wallet.parseFrom(input));
-        input.popLimit(_oldLimit);
-        ;
-      } else {
-        input.skipField(tag);
-      }
-      ;
-    }
-    ;
+      if (WireFormat.getTagFieldNumber(tag) == 1) { id = input.readString(); }
+      else if (WireFormat.getTagFieldNumber(tag) == 2) { var _length = input.readRawVarint32();
+      var _oldLimit = input.pushLimit(_length);
+      method = new CreditCardValue(CreditCard.parseFrom(input));
+      input.popLimit(_oldLimit);; }
+      else if (WireFormat.getTagFieldNumber(tag) == 3) { var _length = input.readRawVarint32();
+      var _oldLimit = input.pushLimit(_length);
+      method = new BankTransferValue(BankTransfer.parseFrom(input));
+      input.popLimit(_oldLimit);; }
+      else if (WireFormat.getTagFieldNumber(tag) == 4) { var _length = input.readRawVarint32();
+      var _oldLimit = input.pushLimit(_length);
+      method = new WalletValue(Wallet.parseFrom(input));
+      input.popLimit(_oldLimit);; }
+      else { input.skipField(tag); };
+    };
     return new PaymentMethod(id, method);
   }
+
+  static public Marshaller<PaymentMethod> MARSHALLER =
+    new Marshaller<PaymentMethod>() {
+      @Override
+      public InputStream stream(PaymentMethod value) {
+        var bytes = new byte[value.getSerializedSize()];
+        var cos = CodedOutputStream.newInstance(bytes);
+        try {
+          value.writeTo(cos);
+          cos.flush();
+        } catch (IOException e) {
+          throw new RuntimeException(e);
+        } 
+        return new ByteArrayInputStream(bytes);
+      }
+      @Override
+      public PaymentMethod parse(InputStream stream) {
+        try {
+          return PaymentMethod.parseFrom(CodedInputStream.newInstance(stream));
+        } catch (IOException e) {
+          throw new RuntimeException(e);
+        } 
+      }
+    };
 
   public Integer getSerializedSize() {
     Integer size = 0;
     size = size + CodedOutputStream.computeStringSize(1, this.id());
     switch (this.method()) {
       case null -> {}
-      case CreditCardValue c ->
-          size =
-              size
-                  + CodedOutputStream.computeTagSize(2)
-                  + CodedOutputStream.computeUInt32SizeNoTag(c.creditCard().getSerializedSize())
-                  + c.creditCard().getSerializedSize();
-      case BankTransferValue c ->
-          size =
-              size
-                  + CodedOutputStream.computeTagSize(3)
-                  + CodedOutputStream.computeUInt32SizeNoTag(c.bankTransfer().getSerializedSize())
-                  + c.bankTransfer().getSerializedSize();
-      case WalletValue c ->
-          size =
-              size
-                  + CodedOutputStream.computeTagSize(4)
-                  + CodedOutputStream.computeUInt32SizeNoTag(c.wallet().getSerializedSize())
-                  + c.wallet().getSerializedSize();
-    }
-    ;
+      case CreditCardValue c -> size = size + CodedOutputStream.computeTagSize(2) + CodedOutputStream.computeUInt32SizeNoTag(c.creditCard().getSerializedSize()) + c.creditCard().getSerializedSize();
+      case BankTransferValue c -> size = size + CodedOutputStream.computeTagSize(3) + CodedOutputStream.computeUInt32SizeNoTag(c.bankTransfer().getSerializedSize()) + c.bankTransfer().getSerializedSize();
+      case WalletValue c -> size = size + CodedOutputStream.computeTagSize(4) + CodedOutputStream.computeUInt32SizeNoTag(c.wallet().getSerializedSize()) + c.wallet().getSerializedSize();
+    };
     return size;
   }
 
@@ -126,7 +102,6 @@ public record PaymentMethod(String id, PaymentMethodMethod method) {
         output.writeUInt32NoTag(c.wallet().getSerializedSize());
         c.wallet().writeTo(output);
       }
-    }
-    ;
+    };
   }
 }

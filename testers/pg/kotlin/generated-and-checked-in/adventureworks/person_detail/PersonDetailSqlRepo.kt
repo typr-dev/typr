@@ -6,7 +6,7 @@
 package adventureworks.person_detail
 
 import adventureworks.person.businessentity.BusinessentityId
-import java.sql.Connection
+import dev.typr.foundationskt.ConnectionRead
 import java.time.LocalDateTime
 import kotlin.collections.List
 
@@ -14,6 +14,6 @@ interface PersonDetailSqlRepo {
   abstract fun apply(
     businessentityid: /* user-picked */ BusinessentityId,
     modifiedAfter: LocalDateTime,
-    c: Connection
+    c: ConnectionRead
   ): List<PersonDetailSqlRow>
 }

@@ -24,7 +24,7 @@ object SqlIdentifier {
 
   implicit lazy val arrayToStatement: ToStatement[Array[SqlIdentifier]] = ToStatement.arrayToParameter(ParameterMetaData.StringParameterMetaData).contramap(_.map(_.value))
 
-  implicit lazy val bijection: Bijection[SqlIdentifier, String] = Bijection.apply[SqlIdentifier, String](_.value)(SqlIdentifier.apply)
+  implicit lazy val bijection: Bijection[SqlIdentifier, String] = Bijection[SqlIdentifier, String](_.value)(SqlIdentifier.apply)
 
   implicit lazy val column: Column[SqlIdentifier] = Column.columnToString.map(SqlIdentifier.apply)
 

@@ -5,17 +5,18 @@
  */
 package testdb.payments
 
-import dev.typr.foundations.scala.DeleteBuilder
-import dev.typr.foundations.scala.DeleteBuilderMock
-import dev.typr.foundations.scala.DeleteParams
-import dev.typr.foundations.scala.SelectBuilder
-import dev.typr.foundations.scala.SelectBuilderMock
-import dev.typr.foundations.scala.SelectParams
-import dev.typr.foundations.scala.UpdateBuilder
-import dev.typr.foundations.scala.UpdateBuilderMock
-import dev.typr.foundations.scala.UpdateParams
+import dev.typr.dslsc.DeleteBuilder
+import dev.typr.dslsc.DeleteBuilderMock
+import dev.typr.dslsc.DeleteParams
+import dev.typr.dslsc.SelectBuilder
+import dev.typr.dslsc.SelectBuilderMock
+import dev.typr.dslsc.SelectParams
+import dev.typr.dslsc.UpdateBuilder
+import dev.typr.dslsc.UpdateBuilderMock
+import dev.typr.dslsc.UpdateParams
+import dev.typr.foundationssc.Connection
+import dev.typr.foundationssc.ConnectionRead
 import java.lang.RuntimeException
-import java.sql.Connection
 
 case class PaymentsRepoMock(
   toRow: PaymentsRowUnsaved => PaymentsRow,
@@ -25,7 +26,7 @@ case class PaymentsRepoMock(
 
   override def deleteById(paymentId: PaymentsId)(using c: Connection): Boolean = map.remove(paymentId).isDefined
 
-  override def deleteByIds(paymentIds: Array[PaymentsId])(using c: Connection): Int = {
+  override def deleteByIds(paymentIds: List[PaymentsId])(using c: Connection): Int = {
     var count = 0
     paymentIds.foreach { id => if (map.remove(id).isDefined) {
       count = count + 1
@@ -45,13 +46,13 @@ case class PaymentsRepoMock(
 
   override def select: SelectBuilder[PaymentsFields, PaymentsRow] = SelectBuilderMock(PaymentsFields.structure, () => map.values.toList, SelectParams.empty())
 
-  override def selectAll(using c: Connection): List[PaymentsRow] = map.values.toList
+  override def selectAll(using c: ConnectionRead): List[PaymentsRow] = map.values.toList
 
-  override def selectById(paymentId: PaymentsId)(using c: Connection): Option[PaymentsRow] = map.get(paymentId)
+  override def selectById(paymentId: PaymentsId)(using c: ConnectionRead): Option[PaymentsRow] = map.get(paymentId)
 
-  override def selectByIds(paymentIds: Array[PaymentsId])(using c: Connection): List[PaymentsRow] = paymentIds.flatMap(map.get(_)).toList
+  override def selectByIds(paymentIds: List[PaymentsId])(using c: ConnectionRead): List[PaymentsRow] = paymentIds.flatMap(map.get(_)).toList
 
-  override def selectByIdsTracked(paymentIds: Array[PaymentsId])(using c: Connection): Map[PaymentsId, PaymentsRow] = selectByIds(paymentIds)(using c).map(x => (((row: PaymentsRow) => row.paymentId).apply(x), x)).toMap
+  override def selectByIdsTracked(paymentIds: List[PaymentsId])(using c: ConnectionRead): Map[PaymentsId, PaymentsRow] = selectByIds(paymentIds)(using c).map(x => (((row: PaymentsRow) => row.paymentId).apply(x), x)).toMap
 
   override def update: UpdateBuilder[PaymentsFields, PaymentsRow] = UpdateBuilderMock(PaymentsFields.structure, () => map.values.toList, UpdateParams.empty(), row => row)
 

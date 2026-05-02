@@ -5,10 +5,11 @@
  */
 package oracledb.contacts
 
-import dev.typr.foundations.kotlin.DeleteBuilder
-import dev.typr.foundations.kotlin.SelectBuilder
-import dev.typr.foundations.kotlin.UpdateBuilder
-import java.sql.Connection
+import dev.typr.dslkt.DeleteBuilder
+import dev.typr.dslkt.SelectBuilder
+import dev.typr.dslkt.UpdateBuilder
+import dev.typr.foundationskt.Connection
+import dev.typr.foundationskt.ConnectionRead
 import kotlin.collections.Iterator
 import kotlin.collections.List
 import kotlin.collections.Map
@@ -19,10 +20,10 @@ interface ContactsRepo {
   abstract fun deleteById(
     contactId: ContactsId,
     c: Connection
-  ): Boolean
+  ): kotlin.Boolean
 
   abstract fun deleteByIds(
-    contactIds: Array<ContactsId>,
+    contactIds: List<ContactsId>,
     c: Connection
   ): Int
 
@@ -38,21 +39,21 @@ interface ContactsRepo {
 
   abstract fun select(): SelectBuilder<ContactsFields, ContactsRow>
 
-  abstract fun selectAll(c: Connection): List<ContactsRow>
+  abstract fun selectAll(c: ConnectionRead): List<ContactsRow>
 
   abstract fun selectById(
     contactId: ContactsId,
-    c: Connection
+    c: ConnectionRead
   ): ContactsRow?
 
   abstract fun selectByIds(
-    contactIds: Array<ContactsId>,
-    c: Connection
+    contactIds: List<ContactsId>,
+    c: ConnectionRead
   ): List<ContactsRow>
 
   abstract fun selectByIdsTracked(
-    contactIds: Array<ContactsId>,
-    c: Connection
+    contactIds: List<ContactsId>,
+    c: ConnectionRead
   ): Map<ContactsId, ContactsRow>
 
   abstract fun update(): UpdateBuilder<ContactsFields, ContactsRow>
@@ -60,7 +61,7 @@ interface ContactsRepo {
   abstract fun update(
     row: ContactsRow,
     c: Connection
-  ): Boolean
+  ): kotlin.Boolean
 
   abstract fun upsert(
     unsaved: ContactsRow,

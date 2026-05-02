@@ -5,10 +5,11 @@
  */
 package adventureworks.person.address
 
-import dev.typr.foundations.kotlin.DeleteBuilder
-import dev.typr.foundations.kotlin.SelectBuilder
-import dev.typr.foundations.kotlin.UpdateBuilder
-import java.sql.Connection
+import dev.typr.dslkt.DeleteBuilder
+import dev.typr.dslkt.SelectBuilder
+import dev.typr.dslkt.UpdateBuilder
+import dev.typr.foundationskt.Connection
+import dev.typr.foundationskt.ConnectionRead
 import kotlin.collections.Iterator
 import kotlin.collections.List
 import kotlin.collections.Map
@@ -19,10 +20,10 @@ interface AddressRepo {
   abstract fun deleteById(
     addressid: AddressId,
     c: Connection
-  ): Boolean
+  ): kotlin.Boolean
 
   abstract fun deleteByIds(
-    addressids: Array<AddressId>,
+    addressids: List<AddressId>,
     c: Connection
   ): Int
 
@@ -40,32 +41,32 @@ interface AddressRepo {
     unsaved: Iterator<AddressRow>,
     batchSize: Int = 10000,
     c: Connection
-  ): Long
+  ): kotlin.Long
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
   abstract fun insertUnsavedStreaming(
     unsaved: Iterator<AddressRowUnsaved>,
     batchSize: Int = 10000,
     c: Connection
-  ): Long
+  ): kotlin.Long
 
   abstract fun select(): SelectBuilder<AddressFields, AddressRow>
 
-  abstract fun selectAll(c: Connection): List<AddressRow>
+  abstract fun selectAll(c: ConnectionRead): List<AddressRow>
 
   abstract fun selectById(
     addressid: AddressId,
-    c: Connection
+    c: ConnectionRead
   ): AddressRow?
 
   abstract fun selectByIds(
-    addressids: Array<AddressId>,
-    c: Connection
+    addressids: List<AddressId>,
+    c: ConnectionRead
   ): List<AddressRow>
 
   abstract fun selectByIdsTracked(
-    addressids: Array<AddressId>,
-    c: Connection
+    addressids: List<AddressId>,
+    c: ConnectionRead
   ): Map<AddressId, AddressRow>
 
   abstract fun update(): UpdateBuilder<AddressFields, AddressRow>
@@ -73,7 +74,7 @@ interface AddressRepo {
   abstract fun update(
     row: AddressRow,
     c: Connection
-  ): Boolean
+  ): kotlin.Boolean
 
   abstract fun upsert(
     unsaved: AddressRow,

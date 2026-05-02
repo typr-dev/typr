@@ -5,17 +5,18 @@
  */
 package testdb.shipping_carriers
 
-import dev.typr.foundations.kotlin.DeleteBuilder
-import dev.typr.foundations.kotlin.DeleteBuilderMock
-import dev.typr.foundations.kotlin.DeleteParams
-import dev.typr.foundations.kotlin.SelectBuilder
-import dev.typr.foundations.kotlin.SelectBuilderMock
-import dev.typr.foundations.kotlin.SelectParams
-import dev.typr.foundations.kotlin.UpdateBuilder
-import dev.typr.foundations.kotlin.UpdateBuilderMock
-import dev.typr.foundations.kotlin.UpdateParams
+import dev.typr.dslkt.DeleteBuilder
+import dev.typr.dslkt.DeleteBuilderMock
+import dev.typr.dslkt.DeleteParams
+import dev.typr.dslkt.SelectBuilder
+import dev.typr.dslkt.SelectBuilderMock
+import dev.typr.dslkt.SelectParams
+import dev.typr.dslkt.UpdateBuilder
+import dev.typr.dslkt.UpdateBuilderMock
+import dev.typr.dslkt.UpdateParams
+import dev.typr.foundationskt.Connection
+import dev.typr.foundationskt.ConnectionRead
 import java.lang.RuntimeException
-import java.sql.Connection
 import java.util.ArrayList
 import kotlin.collections.Iterator
 import kotlin.collections.List
@@ -31,10 +32,10 @@ data class ShippingCarriersRepoMock(
   override fun deleteById(
     carrierId: ShippingCarriersId,
     c: Connection
-  ): Boolean = map.remove(carrierId) != null
+  ): kotlin.Boolean = map.remove(carrierId) != null
 
   override fun deleteByIds(
-    carrierIds: Array<ShippingCarriersId>,
+    carrierIds: List<ShippingCarriersId>,
     c: Connection
   ): Int {
     var count = 0
@@ -64,16 +65,16 @@ data class ShippingCarriersRepoMock(
 
   override fun select(): SelectBuilder<ShippingCarriersFields, ShippingCarriersRow> = SelectBuilderMock(ShippingCarriersFields.structure, { map.values.toList() }, SelectParams.empty())
 
-  override fun selectAll(c: Connection): List<ShippingCarriersRow> = map.values.toList()
+  override fun selectAll(c: ConnectionRead): List<ShippingCarriersRow> = map.values.toList()
 
   override fun selectById(
     carrierId: ShippingCarriersId,
-    c: Connection
+    c: ConnectionRead
   ): ShippingCarriersRow? = map[carrierId]
 
   override fun selectByIds(
-    carrierIds: Array<ShippingCarriersId>,
-    c: Connection
+    carrierIds: List<ShippingCarriersId>,
+    c: ConnectionRead
   ): List<ShippingCarriersRow> {
     val result = ArrayList<ShippingCarriersRow>()
     for (id in carrierIds) {
@@ -86,13 +87,13 @@ data class ShippingCarriersRepoMock(
   }
 
   override fun selectByIdsTracked(
-    carrierIds: Array<ShippingCarriersId>,
-    c: Connection
+    carrierIds: List<ShippingCarriersId>,
+    c: ConnectionRead
   ): Map<ShippingCarriersId, ShippingCarriersRow> = selectByIds(carrierIds, c).associateBy({ row: ShippingCarriersRow -> row.carrierId })
 
   override fun selectByUniqueCode(
-    code: String,
-    c: Connection
+    code: kotlin.String,
+    c: ConnectionRead
   ): ShippingCarriersRow? = map.values.toList().find({ v -> (code == v.code) })
 
   override fun update(): UpdateBuilder<ShippingCarriersFields, ShippingCarriersRow> = UpdateBuilderMock(ShippingCarriersFields.structure, { map.values.toList() }, UpdateParams.empty(), { row -> row })
@@ -100,7 +101,7 @@ data class ShippingCarriersRepoMock(
   override fun update(
     row: ShippingCarriersRow,
     c: Connection
-  ): Boolean {
+  ): kotlin.Boolean {
     val shouldUpdate = map[row.carrierId]?.takeIf({ oldRow -> (oldRow != row) }) != null
     if (shouldUpdate) {
       map[row.carrierId] = row

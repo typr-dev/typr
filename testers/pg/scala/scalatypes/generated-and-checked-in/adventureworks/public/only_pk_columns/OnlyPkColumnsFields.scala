@@ -5,17 +5,16 @@
  */
 package adventureworks.public.only_pk_columns
 
-import dev.typr.foundations.PgTypes
-import dev.typr.foundations.RowParser
-import dev.typr.foundations.dsl.FieldsBase
-import dev.typr.foundations.dsl.Path
-import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.scala.RelationStructure
-import dev.typr.foundations.scala.ScalaDbTypes
-import dev.typr.foundations.scala.SqlExpr
-import dev.typr.foundations.scala.SqlExpr.IdField
-import dev.typr.foundations.scala.TupleExpr
-import dev.typr.foundations.scala.TupleExpr2
+import dev.typr.dsl.FieldsBase
+import dev.typr.dsl.Path
+import dev.typr.dsl.SqlExpr.FieldLike
+import dev.typr.dslsc.RelationStructure
+import dev.typr.dslsc.SqlExpr
+import dev.typr.dslsc.SqlExpr.IdField
+import dev.typr.dslsc.TupleExpr
+import dev.typr.dslsc.TupleExpr2
+import dev.typr.foundations.RowCodec
+import dev.typr.foundationssc.PgTypes
 
 class OnlyPkColumnsFields(val `_path`: java.util.List[Path]) extends TupleExpr2[String, Int] with RelationStructure[OnlyPkColumnsFields, OnlyPkColumnsRow]  with FieldsBase[OnlyPkColumnsRow] {
   def keyColumn1: IdField[String, OnlyPkColumnsRow] = {
@@ -26,7 +25,7 @@ class OnlyPkColumnsFields(val `_path`: java.util.List[Path]) extends TupleExpr2[
       None,
       None,
       (row, value) => row.copy(keyColumn1 = value),
-      PgTypes.text
+      PgTypes.text.underlying
     )
   }
 
@@ -38,7 +37,7 @@ class OnlyPkColumnsFields(val `_path`: java.util.List[Path]) extends TupleExpr2[
       None,
       Some("int4"),
       (row, value) => row.copy(keyColumn2 = value),
-      ScalaDbTypes.PgTypes.int4
+      PgTypes.int4.underlying
     )
   }
 
@@ -48,7 +47,7 @@ class OnlyPkColumnsFields(val `_path`: java.util.List[Path]) extends TupleExpr2[
 
   override def columns: java.util.List[FieldLike[?, OnlyPkColumnsRow]] = java.util.List.of(this.keyColumn1.underlying, this.keyColumn2.underlying)
 
-  override def rowParser: RowParser[OnlyPkColumnsRow] = OnlyPkColumnsRow._rowParser.underlying
+  override def rowCodec: RowCodec[OnlyPkColumnsRow] = OnlyPkColumnsRow.rowCodec.underlying
 
   override def withPaths(`_path`: java.util.List[Path]): RelationStructure[OnlyPkColumnsFields, OnlyPkColumnsRow] = new OnlyPkColumnsFields(`_path`)
 

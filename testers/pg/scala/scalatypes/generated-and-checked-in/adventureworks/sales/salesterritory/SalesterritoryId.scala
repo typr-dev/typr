@@ -6,18 +6,17 @@
 package adventureworks.sales.salesterritory
 
 import com.fasterxml.jackson.annotation.JsonValue
-import dev.typr.foundations.PgType
-import dev.typr.foundations.PgTypes
-import dev.typr.foundations.scala.Bijection
-import dev.typr.foundations.scala.ScalaDbTypes
+import dev.typr.dslsc.Bijection
+import dev.typr.foundationssc.PgType
+import dev.typr.foundationssc.PgTypes
 
 /** Type for the primary key of table `sales.salesterritory` */
 case class SalesterritoryId(@JsonValue value: Int) extends scala.AnyVal
 
 object SalesterritoryId {
-  given bijection: Bijection[SalesterritoryId, Int] = Bijection.apply[SalesterritoryId, Int](_.value)(SalesterritoryId.apply)
+  given bijection: Bijection[SalesterritoryId, Int] = Bijection.of[SalesterritoryId, Int](_.value, SalesterritoryId.apply)
 
-  given pgType: PgType[SalesterritoryId] = ScalaDbTypes.PgTypes.int4.bimap(SalesterritoryId.apply, _.value)
+  given pgType: PgType[SalesterritoryId] = PgTypes.int4.to(Bijection.of(SalesterritoryId.apply, _.value))
 
-  given pgTypeArray: PgType[Array[SalesterritoryId]] = PgTypes.int4ArrayUnboxed.bimap(xs => xs.map(SalesterritoryId.apply), xs => xs.map(_.value))
+  given pgTypeArray: PgType[List[SalesterritoryId]] = pgType.array
 }

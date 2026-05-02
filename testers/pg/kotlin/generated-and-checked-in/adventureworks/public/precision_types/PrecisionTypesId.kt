@@ -6,11 +6,10 @@
 package adventureworks.public.precision_types
 
 import com.fasterxml.jackson.annotation.JsonValue
-import dev.typr.foundations.PgType
-import dev.typr.foundations.PgTypes
-import dev.typr.foundations.internal.arrayMap
-import dev.typr.foundations.kotlin.Bijection
-import dev.typr.foundations.kotlin.KotlinDbTypes
+import dev.typr.foundationskt.Bijection
+import dev.typr.foundationskt.PgType
+import dev.typr.foundationskt.PgTypes
+import kotlin.collections.List
 
 /** Type for the primary key of table `public.precision_types` */
 data class PrecisionTypesId(@field:JsonValue val value: Int) {
@@ -23,9 +22,9 @@ data class PrecisionTypesId(@field:JsonValue val value: Int) {
       Bijection.of(PrecisionTypesId::value, ::PrecisionTypesId)
 
     val pgType: PgType<PrecisionTypesId> =
-      KotlinDbTypes.PgTypes.int4.bimap(::PrecisionTypesId, PrecisionTypesId::value)
+      PgTypes.int4.to(Bijection.of(::PrecisionTypesId, PrecisionTypesId::value))
 
-    val pgTypeArray: PgType<Array<PrecisionTypesId>> =
-      PgTypes.int4Array.bimap({ xs -> arrayMap.map(xs, ::PrecisionTypesId, PrecisionTypesId::class.java) }, { xs -> arrayMap.map(xs, PrecisionTypesId::value, Int::class.javaObjectType) })
+    val pgTypeArray: PgType<List<PrecisionTypesId>> =
+      pgType.array()
   }
 }

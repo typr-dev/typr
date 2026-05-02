@@ -5,10 +5,11 @@
  */
 package testdb.identity_params_test
 
-import dev.typr.foundations.kotlin.DeleteBuilder
-import dev.typr.foundations.kotlin.SelectBuilder
-import dev.typr.foundations.kotlin.UpdateBuilder
-import java.sql.Connection
+import dev.typr.dslkt.DeleteBuilder
+import dev.typr.dslkt.SelectBuilder
+import dev.typr.dslkt.UpdateBuilder
+import dev.typr.foundationskt.Connection
+import dev.typr.foundationskt.ConnectionRead
 import kotlin.collections.Iterator
 import kotlin.collections.List
 import kotlin.collections.Map
@@ -19,10 +20,10 @@ interface IdentityParamsTestRepo {
   abstract fun deleteById(
     id: IdentityParamsTestId,
     c: Connection
-  ): Boolean
+  ): kotlin.Boolean
 
   abstract fun deleteByIds(
-    ids: Array<IdentityParamsTestId>,
+    ids: List<IdentityParamsTestId>,
     c: Connection
   ): Int
 
@@ -38,21 +39,21 @@ interface IdentityParamsTestRepo {
 
   abstract fun select(): SelectBuilder<IdentityParamsTestFields, IdentityParamsTestRow>
 
-  abstract fun selectAll(c: Connection): List<IdentityParamsTestRow>
+  abstract fun selectAll(c: ConnectionRead): List<IdentityParamsTestRow>
 
   abstract fun selectById(
     id: IdentityParamsTestId,
-    c: Connection
+    c: ConnectionRead
   ): IdentityParamsTestRow?
 
   abstract fun selectByIds(
-    ids: Array<IdentityParamsTestId>,
-    c: Connection
+    ids: List<IdentityParamsTestId>,
+    c: ConnectionRead
   ): List<IdentityParamsTestRow>
 
   abstract fun selectByIdsTracked(
-    ids: Array<IdentityParamsTestId>,
-    c: Connection
+    ids: List<IdentityParamsTestId>,
+    c: ConnectionRead
   ): Map<IdentityParamsTestId, IdentityParamsTestRow>
 
   abstract fun update(): UpdateBuilder<IdentityParamsTestFields, IdentityParamsTestRow>
@@ -60,7 +61,7 @@ interface IdentityParamsTestRepo {
   abstract fun update(
     row: IdentityParamsTestRow,
     c: Connection
-  ): Boolean
+  ): kotlin.Boolean
 
   abstract fun upsert(
     unsaved: IdentityParamsTestRow,

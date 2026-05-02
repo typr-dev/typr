@@ -5,12 +5,12 @@
  */
 package testdb.v_inventory_status
 
-import dev.typr.foundations.kotlin.SelectBuilder
-import java.sql.Connection
+import dev.typr.dslkt.SelectBuilder
+import dev.typr.foundationskt.ConnectionRead
 import kotlin.collections.List
 
 interface VInventoryStatusViewRepo {
   abstract fun select(): SelectBuilder<VInventoryStatusViewFields, VInventoryStatusViewRow>
 
-  abstract fun selectAll(c: Connection): List<VInventoryStatusViewRow>
+  abstract fun selectAll(c: ConnectionRead): List<VInventoryStatusViewRow>
 }

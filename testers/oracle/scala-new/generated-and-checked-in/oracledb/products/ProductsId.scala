@@ -6,19 +6,19 @@
 package oracledb.products
 
 import com.fasterxml.jackson.annotation.JsonValue
-import dev.typr.foundations.OracleType
-import dev.typr.foundations.scala.Bijection
-import dev.typr.foundations.scala.RowParser
-import dev.typr.foundations.scala.RowParsers
-import dev.typr.foundations.scala.ScalaDbTypes
+import dev.typr.dslsc.Bijection
+import dev.typr.dslsc.RowCodecs
+import dev.typr.foundationssc.OracleType
+import dev.typr.foundationssc.OracleTypes
+import dev.typr.foundationssc.RowCodec
 
 /** Type for the primary key of table `PRODUCTS` */
 case class ProductsId(@JsonValue value: BigDecimal) extends scala.AnyVal
 
 object ProductsId {
-  given `_rowParser`: RowParser[ProductsId] = RowParsers.of(ScalaDbTypes.OracleTypes.number.bimap(ProductsId.apply, _.value))(x => x)(id => Array[Any](id))
+  given bijection: Bijection[ProductsId, BigDecimal] = Bijection.of[ProductsId, BigDecimal](_.value, ProductsId.apply)
 
-  given bijection: Bijection[ProductsId, BigDecimal] = Bijection.apply[ProductsId, BigDecimal](_.value)(ProductsId.apply)
+  given oracleType: OracleType[ProductsId] = OracleTypes.number.to(Bijection.of(ProductsId.apply, _.value))
 
-  given oracleType: OracleType[ProductsId] = ScalaDbTypes.OracleTypes.number.bimap(ProductsId.apply, _.value)
+  given rowCodec: RowCodec[ProductsId] = RowCodecs.of(OracleTypes.number.to(Bijection.of(ProductsId.apply, _.value)))(x => x)(id => Array[Any](id))
 }

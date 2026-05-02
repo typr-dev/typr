@@ -5,14 +5,14 @@
  */
 package testdb.customer_order_summary
 
-import dev.typr.foundations.kotlin.Dialect
-import dev.typr.foundations.kotlin.Fragment
-import dev.typr.foundations.kotlin.SelectBuilder
-import java.sql.Connection
+import dev.typr.dslkt.Dialect
+import dev.typr.dslkt.SelectBuilder
+import dev.typr.foundationskt.ConnectionRead
+import dev.typr.foundationskt.Fragment
 import kotlin.collections.List
 
 class CustomerOrderSummaryViewRepoImpl() : CustomerOrderSummaryViewRepo {
-  override fun select(): SelectBuilder<CustomerOrderSummaryViewFields, CustomerOrderSummaryViewRow> = SelectBuilder.of("\"CUSTOMER_ORDER_SUMMARY\"", CustomerOrderSummaryViewFields.structure, CustomerOrderSummaryViewRow._rowParser, Dialect.DB2)
+  override fun select(): SelectBuilder<CustomerOrderSummaryViewFields, CustomerOrderSummaryViewRow> = SelectBuilder.of("\"CUSTOMER_ORDER_SUMMARY\"", CustomerOrderSummaryViewFields.structure, CustomerOrderSummaryViewRow.rowCodec, Dialect.DB2)
 
-  override fun selectAll(c: Connection): List<CustomerOrderSummaryViewRow> = Fragment.interpolate(Fragment.lit("select \"CUSTOMER_ID\", \"NAME\", \"ORDER_COUNT\", \"TOTAL_SPENT\"\nfrom \"CUSTOMER_ORDER_SUMMARY\"\n")).query(CustomerOrderSummaryViewRow._rowParser.all()).runUnchecked(c)
+  override fun selectAll(c: ConnectionRead): List<CustomerOrderSummaryViewRow> = Fragment.concat(Fragment.of("select \"CUSTOMER_ID\", \"NAME\", \"ORDER_COUNT\", \"TOTAL_SPENT\"\nfrom \"CUSTOMER_ORDER_SUMMARY\"\n")).query(CustomerOrderSummaryViewRow.rowCodec.all()).run(c)
 }

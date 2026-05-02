@@ -5,13 +5,14 @@
  */
 package oracledb
 
-import dev.typr.foundations.OracleType
-import dev.typr.foundations.OracleTypes
+import dev.typr.foundations.Bijection
 import dev.typr.foundations.OracleVArray
+import dev.typr.foundationskt.OracleType
+import dev.typr.foundationskt.OracleTypes
 
 /** Oracle VARRAY Type: TAG_VARRAY_T (max size: 10) */
-data class TagVarrayT(val value: Array<String>) {
+data class TagVarrayT(val value: Array<kotlin.String>) {
   companion object {
-    val oracleType: OracleType<TagVarrayT> = OracleVArray.of("TAG_VARRAY_T", 10, OracleTypes.varchar2).bimap({ list -> TagVarrayT(list.toTypedArray()) }, { wrapper -> wrapper.value.asList() })
+    val oracleType: OracleType<TagVarrayT> = OracleType(OracleVArray.of("TAG_VARRAY_T", 10, OracleTypes.varchar2.underlying).to(Bijection.of({ list -> TagVarrayT(list.toTypedArray()) }, { wrapper -> wrapper.value.asList() })))
   }
 }

@@ -13,10 +13,8 @@ import adventureworks.userdefined.FirstName
 import adventureworks.userdefined.LastName
 import adventureworks.userdefined.MiddleName
 import dev.typr.foundations.PgText
-import dev.typr.foundations.PgTypes
 import dev.typr.foundations.data.Xml
-import dev.typr.foundations.kotlin.KotlinDbTypes
-import dev.typr.foundations.kotlin.nullable
+import dev.typr.foundationskt.PgTypes
 import java.time.LocalDateTime
 import java.util.UUID
 
@@ -29,9 +27,9 @@ data class PersonRowUnsaved(
   /** Primary type of person: SC = Store Contact, IN = Individual (retail) customer, SP = Sales person, EM = Employee (non-sales), VC = Vendor contact, GC = General contact
     * Constraint CK_Person_PersonType affecting columns persontype:  (((persontype IS NULL) OR (upper((persontype)::text) = ANY (ARRAY['SC'::text, 'VC'::text, 'IN'::text, 'EM'::text, 'SP'::text, 'GC'::text]))))
     */
-  val persontype: String,
+  val persontype: kotlin.String,
   /** A courtesy title. For example, Mr. or Ms. */
-  val title: /* max 8 chars */ String? = null,
+  val title: /* max 8 chars */ kotlin.String? = null,
   /** First name of the person. */
   val firstname: /* user-picked */ FirstName,
   /** Middle name or middle initial of the person. */
@@ -39,7 +37,7 @@ data class PersonRowUnsaved(
   /** Last name of the person. */
   val lastname: /* user-picked */ LastName,
   /** Surname suffix. For example, Sr. or Jr. */
-  val suffix: /* max 10 chars */ String? = null,
+  val suffix: /* max 10 chars */ kotlin.String? = null,
   /** Additional contact information about the person stored in xml format. */
   val additionalcontactinfo: Xml? = null,
   /** Personal information such as hobbies, and income collected from online shoppers. Used for sales analysis. */
@@ -67,30 +65,30 @@ data class PersonRowUnsaved(
 
   companion object {
     val pgText: PgText<PersonRowUnsaved> =
-      PgText.instance({ row, sb -> BusinessentityId.pgType.text().unsafeEncode(row.businessentityid, sb)
+      PgText.instance({ row, sb -> BusinessentityId.pgType.pgText().unsafeEncode(row.businessentityid, sb)
       sb.append(PgText.DELIMETER)
-      PgTypes.bpchar.text().unsafeEncode(row.persontype, sb)
+      PgTypes.bpchar.pgText().unsafeEncode(row.persontype, sb)
       sb.append(PgText.DELIMETER)
-      PgTypes.text.nullable().text().unsafeEncode(row.title, sb)
+      PgTypes.text.opt().pgText().unsafeEncode(row.title, sb)
       sb.append(PgText.DELIMETER)
-      FirstName.pgType.text().unsafeEncode(row.firstname, sb)
+      FirstName.pgType.pgText().unsafeEncode(row.firstname, sb)
       sb.append(PgText.DELIMETER)
-      MiddleName.pgType.nullable().text().unsafeEncode(row.middlename, sb)
+      MiddleName.pgType.opt().pgText().unsafeEncode(row.middlename, sb)
       sb.append(PgText.DELIMETER)
-      LastName.pgType.text().unsafeEncode(row.lastname, sb)
+      LastName.pgType.pgText().unsafeEncode(row.lastname, sb)
       sb.append(PgText.DELIMETER)
-      PgTypes.text.nullable().text().unsafeEncode(row.suffix, sb)
+      PgTypes.text.opt().pgText().unsafeEncode(row.suffix, sb)
       sb.append(PgText.DELIMETER)
-      PgTypes.xml.nullable().text().unsafeEncode(row.additionalcontactinfo, sb)
+      PgTypes.xml.opt().pgText().unsafeEncode(row.additionalcontactinfo, sb)
       sb.append(PgText.DELIMETER)
-      PgTypes.xml.nullable().text().unsafeEncode(row.demographics, sb)
+      PgTypes.xml.opt().pgText().unsafeEncode(row.demographics, sb)
       sb.append(PgText.DELIMETER)
-      Defaulted.pgText(NameStyle.pgType.text()).unsafeEncode(row.namestyle, sb)
+      Defaulted.pgText(NameStyle.pgType.pgText()).unsafeEncode(row.namestyle, sb)
       sb.append(PgText.DELIMETER)
-      Defaulted.pgText(KotlinDbTypes.PgTypes.int4.text()).unsafeEncode(row.emailpromotion, sb)
+      Defaulted.pgText(PgTypes.int4.pgText()).unsafeEncode(row.emailpromotion, sb)
       sb.append(PgText.DELIMETER)
-      Defaulted.pgText(PgTypes.uuid.text()).unsafeEncode(row.rowguid, sb)
+      Defaulted.pgText(PgTypes.uuid.pgText()).unsafeEncode(row.rowguid, sb)
       sb.append(PgText.DELIMETER)
-      Defaulted.pgText(PgTypes.timestamp.text()).unsafeEncode(row.modifieddate, sb) })
+      Defaulted.pgText(PgTypes.timestamp.pgText()).unsafeEncode(row.modifieddate, sb) })
   }
 }

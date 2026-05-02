@@ -6,10 +6,10 @@
 package testdb.precisetypes
 
 import com.fasterxml.jackson.annotation.JsonValue
-import dev.typr.foundations.SqlServerType
+import dev.typr.dslsc.Bijection
 import dev.typr.foundations.data.precise.DecimalN
-import dev.typr.foundations.scala.Bijection
-import dev.typr.foundations.scala.ScalaDbTypes
+import dev.typr.foundationssc.SqlServerType
+import dev.typr.foundationssc.SqlServerTypes
 import java.lang.IllegalArgumentException
 
 case class Decimal12_4 private(@JsonValue value: BigDecimal) extends DecimalN {
@@ -31,17 +31,17 @@ case class Decimal12_4 private(@JsonValue value: BigDecimal) extends DecimalN {
 object Decimal12_4 {
   given Zero: Decimal12_4 = new Decimal12_4(BigDecimal(0))
 
-  given bijection: Bijection[Decimal12_4, BigDecimal] = Bijection.apply[Decimal12_4, BigDecimal](_.value)(Decimal12_4.apply)
+  given bijection: Bijection[Decimal12_4, BigDecimal] = Bijection.of[Decimal12_4, BigDecimal](_.value, Decimal12_4.apply)
 
   def of(value: BigDecimal): Option[Decimal12_4] = { val scaled = value.setScale(4, BigDecimal.RoundingMode.HALF_UP); if (scaled.precision <= 12) Some(new Decimal12_4(scaled)) else None }
 
-  def of(value: Int): Decimal12_4 = new Decimal12_4(BigDecimal(value))
+  def of(value: Int): Decimal12_4 = new Decimal12_4(BigDecimal(value.toLong))
 
   def of(value: Long): Option[Decimal12_4] = Decimal12_4.of(BigDecimal(value))
 
   def of(value: Double): Option[Decimal12_4] = Decimal12_4.of(BigDecimal(value))
 
-  given sqlServerType: SqlServerType[Decimal12_4] = ScalaDbTypes.SqlServerTypes.numeric.bimap(Decimal12_4.apply, _.value)
+  given sqlServerType: SqlServerType[Decimal12_4] = SqlServerTypes.numeric.to(Bijection.of(Decimal12_4.apply, _.value))
 
   def unsafeForce(value: BigDecimal): Decimal12_4 = { val scaled = value.setScale(4, BigDecimal.RoundingMode.HALF_UP); if (scaled.precision > 12) throw new IllegalArgumentException("Value exceeds precision(12, 4)"); new Decimal12_4(scaled) }
 }

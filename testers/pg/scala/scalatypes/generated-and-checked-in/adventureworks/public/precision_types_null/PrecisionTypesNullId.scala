@@ -6,18 +6,17 @@
 package adventureworks.public.precision_types_null
 
 import com.fasterxml.jackson.annotation.JsonValue
-import dev.typr.foundations.PgType
-import dev.typr.foundations.PgTypes
-import dev.typr.foundations.scala.Bijection
-import dev.typr.foundations.scala.ScalaDbTypes
+import dev.typr.dslsc.Bijection
+import dev.typr.foundationssc.PgType
+import dev.typr.foundationssc.PgTypes
 
 /** Type for the primary key of table `public.precision_types_null` */
 case class PrecisionTypesNullId(@JsonValue value: Int) extends scala.AnyVal
 
 object PrecisionTypesNullId {
-  given bijection: Bijection[PrecisionTypesNullId, Int] = Bijection.apply[PrecisionTypesNullId, Int](_.value)(PrecisionTypesNullId.apply)
+  given bijection: Bijection[PrecisionTypesNullId, Int] = Bijection.of[PrecisionTypesNullId, Int](_.value, PrecisionTypesNullId.apply)
 
-  given pgType: PgType[PrecisionTypesNullId] = ScalaDbTypes.PgTypes.int4.bimap(PrecisionTypesNullId.apply, _.value)
+  given pgType: PgType[PrecisionTypesNullId] = PgTypes.int4.to(Bijection.of(PrecisionTypesNullId.apply, _.value))
 
-  given pgTypeArray: PgType[Array[PrecisionTypesNullId]] = PgTypes.int4ArrayUnboxed.bimap(xs => xs.map(PrecisionTypesNullId.apply), xs => xs.map(_.value))
+  given pgTypeArray: PgType[List[PrecisionTypesNullId]] = pgType.array
 }

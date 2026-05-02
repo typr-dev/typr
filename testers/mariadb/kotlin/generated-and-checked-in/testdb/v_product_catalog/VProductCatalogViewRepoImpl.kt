@@ -5,14 +5,14 @@
  */
 package testdb.v_product_catalog
 
-import dev.typr.foundations.kotlin.Dialect
-import dev.typr.foundations.kotlin.Fragment
-import dev.typr.foundations.kotlin.SelectBuilder
-import java.sql.Connection
+import dev.typr.dslkt.Dialect
+import dev.typr.dslkt.SelectBuilder
+import dev.typr.foundationskt.ConnectionRead
+import dev.typr.foundationskt.Fragment
 import kotlin.collections.List
 
 class VProductCatalogViewRepoImpl() : VProductCatalogViewRepo {
-  override fun select(): SelectBuilder<VProductCatalogViewFields, VProductCatalogViewRow> = SelectBuilder.of("`v_product_catalog`", VProductCatalogViewFields.structure, VProductCatalogViewRow._rowParser, Dialect.MARIADB)
+  override fun select(): SelectBuilder<VProductCatalogViewFields, VProductCatalogViewRow> = SelectBuilder.of("`v_product_catalog`", VProductCatalogViewFields.structure, VProductCatalogViewRow.rowCodec, Dialect.MARIADB)
 
-  override fun selectAll(c: Connection): List<VProductCatalogViewRow> = Fragment.interpolate(Fragment.lit("select `product_id`, `sku`, `name`, `short_description`, `base_price`, `status`, `tags`, `brand_name`, `available_quantity`, `avg_rating`, `review_count`\nfrom `v_product_catalog`\n")).query(VProductCatalogViewRow._rowParser.all()).runUnchecked(c)
+  override fun selectAll(c: ConnectionRead): List<VProductCatalogViewRow> = Fragment.concat(Fragment.of("select `product_id`, `sku`, `name`, `short_description`, `base_price`, `status`, `tags`, `brand_name`, `available_quantity`, `avg_rating`, `review_count`\nfrom `v_product_catalog`\n")).query(VProductCatalogViewRow.rowCodec.all()).run(c)
 }

@@ -23,7 +23,7 @@ object YesOrNo {
 
   given arrayPut: Put[Array[YesOrNo]] = adventureworks.StringArrayMeta.put.contramap(_.map(_.value))
 
-  given bijection: Bijection[YesOrNo, String] = Bijection.apply[YesOrNo, String](_.value)(YesOrNo.apply)
+  given bijection: Bijection[YesOrNo, String] = Bijection[YesOrNo, String](_.value)(YesOrNo.apply)
 
   given decoder: Decoder[YesOrNo] = Decoder.decodeString.map(YesOrNo.apply)
 

@@ -44,7 +44,7 @@ object TypoInt2Vector {
     }))))
   }
 
-  given bijection: Bijection[TypoInt2Vector, String] = Bijection.apply[TypoInt2Vector, String](_.value)(TypoInt2Vector.apply)
+  given bijection: Bijection[TypoInt2Vector, String] = Bijection[TypoInt2Vector, String](_.value)(TypoInt2Vector.apply)
 
   given column: Column[TypoInt2Vector] = {
     Column.nonNull[TypoInt2Vector]((v1: Any, _) =>

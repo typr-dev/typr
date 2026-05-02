@@ -11,10 +11,10 @@ import adventureworks.public.NameStyle
 import adventureworks.userdefined.FirstName
 import adventureworks.userdefined.LastName
 import adventureworks.userdefined.MiddleName
+import dev.typr.dsl.RowCodecs
 import dev.typr.foundations.PgText
 import dev.typr.foundations.PgTypes
-import dev.typr.foundations.RowParser
-import dev.typr.foundations.RowParsers
+import dev.typr.foundations.RowCodec
 import dev.typr.foundations.Tuple.Tuple13
 import dev.typr.foundations.data.Xml
 import java.time.LocalDateTime
@@ -115,7 +115,7 @@ case class PersonRow(
 }
 
 object PersonRow {
-  val `_rowParser`: RowParser[PersonRow] = RowParsers.of(BusinessentityId.pgType, PgTypes.bpchar, NameStyle.pgType, PgTypes.text.opt(), FirstName.pgType, MiddleName.pgType.opt(), LastName.pgType, PgTypes.text.opt(), PgTypes.int4, PgTypes.xml.opt(), PgTypes.xml.opt(), PgTypes.uuid, PgTypes.timestamp, PersonRow.apply, row => Array[Any](row.businessentityid, row.persontype, row.namestyle, row.title, row.firstname, row.middlename, row.lastname, row.suffix, row.emailpromotion, row.additionalcontactinfo, row.demographics, row.rowguid, row.modifieddate))
+  given pgText: PgText[PersonRow] = PgText.from(rowCodec)
 
-  given pgText: PgText[PersonRow] = PgText.from(`_rowParser`)
+  val rowCodec: RowCodec[PersonRow] = RowCodecs.of(BusinessentityId.pgType, PgTypes.bpchar, NameStyle.pgType, PgTypes.text.opt, FirstName.pgType, MiddleName.pgType.opt, LastName.pgType, PgTypes.text.opt, PgTypes.int4, PgTypes.xml.opt, PgTypes.xml.opt, PgTypes.uuid, PgTypes.timestamp, PersonRow.apply, row => Array[Any](row.businessentityid, row.persontype, row.namestyle, row.title, row.firstname, row.middlename, row.lastname, row.suffix, row.emailpromotion, row.additionalcontactinfo, row.demographics, row.rowguid, row.modifieddate))
 }

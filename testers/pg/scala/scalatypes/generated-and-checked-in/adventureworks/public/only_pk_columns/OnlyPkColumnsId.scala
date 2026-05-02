@@ -6,11 +6,10 @@
 package adventureworks.public.only_pk_columns
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import dev.typr.foundations.PgTypes
+import dev.typr.dslsc.RowCodecs
 import dev.typr.foundations.Tuple.Tuple2
-import dev.typr.foundations.scala.RowParser
-import dev.typr.foundations.scala.RowParsers
-import dev.typr.foundations.scala.ScalaDbTypes
+import dev.typr.foundationssc.PgTypes
+import dev.typr.foundationssc.RowCodec
 
 /** Type for the composite primary key of table `public.only_pk_columns` */
 case class OnlyPkColumnsId(
@@ -23,5 +22,5 @@ case class OnlyPkColumnsId(
 }
 
 object OnlyPkColumnsId {
-  val `_rowParser`: RowParser[OnlyPkColumnsId] = RowParsers.of(PgTypes.text, ScalaDbTypes.PgTypes.int4)(OnlyPkColumnsId.apply)(row => Array[Any](row.keyColumn1, row.keyColumn2))
+  val rowCodec: RowCodec[OnlyPkColumnsId] = RowCodecs.of(PgTypes.text, PgTypes.int4)(OnlyPkColumnsId.apply)(row => Array[Any](row.keyColumn1, row.keyColumn2))
 }

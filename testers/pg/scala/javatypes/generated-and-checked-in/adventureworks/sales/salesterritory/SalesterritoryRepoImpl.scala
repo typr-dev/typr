@@ -7,143 +7,144 @@ package adventureworks.sales.salesterritory
 
 import adventureworks.person.countryregion.CountryregionId
 import adventureworks.public.Name
+import dev.typr.dsl.DeleteBuilder
+import dev.typr.dsl.Dialect
+import dev.typr.dsl.SelectBuilder
+import dev.typr.dsl.UpdateBuilder
+import dev.typr.foundations.Connection
+import dev.typr.foundations.ConnectionRead
 import dev.typr.foundations.Fragment
 import dev.typr.foundations.PgTypes
-import dev.typr.foundations.dsl.DeleteBuilder
-import dev.typr.foundations.dsl.Dialect
-import dev.typr.foundations.dsl.SelectBuilder
-import dev.typr.foundations.dsl.UpdateBuilder
-import dev.typr.foundations.streamingInsert
-import java.sql.Connection
+import dev.typr.foundations.StreamingInsert
 import java.util.ArrayList
 import java.util.HashMap
 import java.util.Optional
-import dev.typr.foundations.Fragment.interpolate
+import dev.typr.foundations.Fragment.concat
 
 class SalesterritoryRepoImpl extends SalesterritoryRepo {
   override def delete: DeleteBuilder[SalesterritoryFields, SalesterritoryRow] = DeleteBuilder.of(""""sales"."salesterritory"""", SalesterritoryFields.structure, Dialect.POSTGRESQL)
 
-  override def deleteById(territoryid: SalesterritoryId)(using c: Connection): java.lang.Boolean = interpolate(Fragment.lit("""delete from "sales"."salesterritory" where "territoryid" = """), Fragment.encode(SalesterritoryId.pgType, territoryid), Fragment.lit("")).update().runUnchecked(c) > 0
+  override def deleteById(territoryid: SalesterritoryId)(using c: Connection): java.lang.Boolean = concat(Fragment.of("""delete from "sales"."salesterritory" where "territoryid" = """), Fragment.encode(SalesterritoryId.pgType, territoryid), Fragment.of("")).update().run(c) > 0
 
-  override def deleteByIds(territoryids: Array[SalesterritoryId])(using c: Connection): Integer = {
-    interpolate(Fragment.lit("""delete
+  override def deleteByIds(territoryids: java.util.List[SalesterritoryId])(using c: Connection): Integer = {
+    concat(Fragment.of("""delete
     from "sales"."salesterritory"
-    where "territoryid" = ANY("""), Fragment.encode(SalesterritoryId.pgTypeArray, territoryids), Fragment.lit(")"))
+    where "territoryid" = ANY("""), Fragment.encode(SalesterritoryId.pgType.array(), territoryids), Fragment.of(")"))
       .update()
-      .runUnchecked(c)
+      .run(c)
   }
 
   override def insert(unsaved: SalesterritoryRow)(using c: Connection): SalesterritoryRow = {
-  interpolate(Fragment.lit("""insert into "sales"."salesterritory"("territoryid", "name", "countryregioncode", "group", "salesytd", "saleslastyear", "costytd", "costlastyear", "rowguid", "modifieddate")
-    values ("""), Fragment.encode(SalesterritoryId.pgType, unsaved.territoryid), Fragment.lit("::int4, "), Fragment.encode(Name.pgType, unsaved.name), Fragment.lit("::varchar, "), Fragment.encode(CountryregionId.pgType, unsaved.countryregioncode), Fragment.lit(", "), Fragment.encode(PgTypes.text, unsaved.group), Fragment.lit(", "), Fragment.encode(PgTypes.numeric, unsaved.salesytd), Fragment.lit("::numeric, "), Fragment.encode(PgTypes.numeric, unsaved.saleslastyear), Fragment.lit("::numeric, "), Fragment.encode(PgTypes.numeric, unsaved.costytd), Fragment.lit("::numeric, "), Fragment.encode(PgTypes.numeric, unsaved.costlastyear), Fragment.lit("::numeric, "), Fragment.encode(PgTypes.uuid, unsaved.rowguid), Fragment.lit("::uuid, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("""::timestamp)
+  concat(Fragment.of("""insert into "sales"."salesterritory"("territoryid", "name", "countryregioncode", "group", "salesytd", "saleslastyear", "costytd", "costlastyear", "rowguid", "modifieddate")
+    values ("""), Fragment.encode(SalesterritoryId.pgType, unsaved.territoryid), Fragment.of("::int4, "), Fragment.encode(Name.pgType, unsaved.name), Fragment.of("::varchar, "), Fragment.encode(CountryregionId.pgType, unsaved.countryregioncode), Fragment.of(", "), Fragment.encode(PgTypes.text, unsaved.group), Fragment.of(", "), Fragment.encode(PgTypes.numeric, unsaved.salesytd), Fragment.of("::numeric, "), Fragment.encode(PgTypes.numeric, unsaved.saleslastyear), Fragment.of("::numeric, "), Fragment.encode(PgTypes.numeric, unsaved.costytd), Fragment.of("::numeric, "), Fragment.encode(PgTypes.numeric, unsaved.costlastyear), Fragment.of("::numeric, "), Fragment.encode(PgTypes.uuid, unsaved.rowguid), Fragment.of("::uuid, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.of("""::timestamp)
     RETURNING "territoryid", "name", "countryregioncode", "group", "salesytd", "saleslastyear", "costytd", "costlastyear", "rowguid", "modifieddate"
     """))
-    .updateReturning(SalesterritoryRow.`_rowParser`.exactlyOne()).runUnchecked(c)
+    .updateReturning(SalesterritoryRow.rowCodec.exactlyOne()).run(c)
   }
 
   override def insert(unsaved: SalesterritoryRowUnsaved)(using c: Connection): SalesterritoryRow = {
     val columns: ArrayList[Fragment] = new ArrayList()
     val values: ArrayList[Fragment] = new ArrayList()
-    columns.add(Fragment.lit(""""name"""")): @scala.annotation.nowarn
-    values.add(interpolate(Fragment.encode(Name.pgType, unsaved.name), Fragment.lit("::varchar"))): @scala.annotation.nowarn
-    columns.add(Fragment.lit(""""countryregioncode"""")): @scala.annotation.nowarn
-    values.add(interpolate(Fragment.encode(CountryregionId.pgType, unsaved.countryregioncode), Fragment.lit(""))): @scala.annotation.nowarn
-    columns.add(Fragment.lit(""""group"""")): @scala.annotation.nowarn
-    values.add(interpolate(Fragment.encode(PgTypes.text, unsaved.group), Fragment.lit(""))): @scala.annotation.nowarn
+    columns.add(Fragment.of(""""name"""")): @scala.annotation.nowarn
+    values.add(concat(Fragment.encode(Name.pgType, unsaved.name), Fragment.of("::varchar"))): @scala.annotation.nowarn
+    columns.add(Fragment.of(""""countryregioncode"""")): @scala.annotation.nowarn
+    values.add(concat(Fragment.encode(CountryregionId.pgType, unsaved.countryregioncode), Fragment.of(""))): @scala.annotation.nowarn
+    columns.add(Fragment.of(""""group"""")): @scala.annotation.nowarn
+    values.add(concat(Fragment.encode(PgTypes.text, unsaved.group), Fragment.of(""))): @scala.annotation.nowarn
     unsaved.territoryid.visit(
       {  },
-      value => { columns.add(Fragment.lit(""""territoryid"""")): @scala.annotation.nowarn; values.add(interpolate(Fragment.encode(SalesterritoryId.pgType, value), Fragment.lit("::int4"))): @scala.annotation.nowarn }
+      value => { columns.add(Fragment.of(""""territoryid"""")): @scala.annotation.nowarn; values.add(concat(Fragment.encode(SalesterritoryId.pgType, value), Fragment.of("::int4"))): @scala.annotation.nowarn }
     );
     unsaved.salesytd.visit(
       {  },
-      value => { columns.add(Fragment.lit(""""salesytd"""")): @scala.annotation.nowarn; values.add(interpolate(Fragment.encode(PgTypes.numeric, value), Fragment.lit("::numeric"))): @scala.annotation.nowarn }
+      value => { columns.add(Fragment.of(""""salesytd"""")): @scala.annotation.nowarn; values.add(concat(Fragment.encode(PgTypes.numeric, value), Fragment.of("::numeric"))): @scala.annotation.nowarn }
     );
     unsaved.saleslastyear.visit(
       {  },
-      value => { columns.add(Fragment.lit(""""saleslastyear"""")): @scala.annotation.nowarn; values.add(interpolate(Fragment.encode(PgTypes.numeric, value), Fragment.lit("::numeric"))): @scala.annotation.nowarn }
+      value => { columns.add(Fragment.of(""""saleslastyear"""")): @scala.annotation.nowarn; values.add(concat(Fragment.encode(PgTypes.numeric, value), Fragment.of("::numeric"))): @scala.annotation.nowarn }
     );
     unsaved.costytd.visit(
       {  },
-      value => { columns.add(Fragment.lit(""""costytd"""")): @scala.annotation.nowarn; values.add(interpolate(Fragment.encode(PgTypes.numeric, value), Fragment.lit("::numeric"))): @scala.annotation.nowarn }
+      value => { columns.add(Fragment.of(""""costytd"""")): @scala.annotation.nowarn; values.add(concat(Fragment.encode(PgTypes.numeric, value), Fragment.of("::numeric"))): @scala.annotation.nowarn }
     );
     unsaved.costlastyear.visit(
       {  },
-      value => { columns.add(Fragment.lit(""""costlastyear"""")): @scala.annotation.nowarn; values.add(interpolate(Fragment.encode(PgTypes.numeric, value), Fragment.lit("::numeric"))): @scala.annotation.nowarn }
+      value => { columns.add(Fragment.of(""""costlastyear"""")): @scala.annotation.nowarn; values.add(concat(Fragment.encode(PgTypes.numeric, value), Fragment.of("::numeric"))): @scala.annotation.nowarn }
     );
     unsaved.rowguid.visit(
       {  },
-      value => { columns.add(Fragment.lit(""""rowguid"""")): @scala.annotation.nowarn; values.add(interpolate(Fragment.encode(PgTypes.uuid, value), Fragment.lit("::uuid"))): @scala.annotation.nowarn }
+      value => { columns.add(Fragment.of(""""rowguid"""")): @scala.annotation.nowarn; values.add(concat(Fragment.encode(PgTypes.uuid, value), Fragment.of("::uuid"))): @scala.annotation.nowarn }
     );
     unsaved.modifieddate.visit(
       {  },
-      value => { columns.add(Fragment.lit(""""modifieddate"""")): @scala.annotation.nowarn; values.add(interpolate(Fragment.encode(PgTypes.timestamp, value), Fragment.lit("::timestamp"))): @scala.annotation.nowarn }
+      value => { columns.add(Fragment.of(""""modifieddate"""")): @scala.annotation.nowarn; values.add(concat(Fragment.encode(PgTypes.timestamp, value), Fragment.of("::timestamp"))): @scala.annotation.nowarn }
     );
     val q: Fragment = {
-      interpolate(Fragment.lit("""insert into "sales"."salesterritory"("""), Fragment.comma(columns), Fragment.lit(""")
-      values ("""), Fragment.comma(values), Fragment.lit(""")
+      concat(Fragment.of("""insert into "sales"."salesterritory"("""), Fragment.comma(columns), Fragment.of(""")
+      values ("""), Fragment.comma(values), Fragment.of(""")
       RETURNING "territoryid", "name", "countryregioncode", "group", "salesytd", "saleslastyear", "costytd", "costlastyear", "rowguid", "modifieddate"
       """))
     }
-    return q.updateReturning(SalesterritoryRow.`_rowParser`.exactlyOne()).runUnchecked(c)
+    return q.updateReturning(SalesterritoryRow.rowCodec.exactlyOne()).run(c)
   }
 
   override def insertStreaming(
     unsaved: java.util.Iterator[SalesterritoryRow],
     batchSize: Integer = 10000
-  )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "sales"."salesterritory"("territoryid", "name", "countryregioncode", "group", "salesytd", "saleslastyear", "costytd", "costlastyear", "rowguid", "modifieddate") FROM STDIN""", batchSize, unsaved, c, SalesterritoryRow.pgText)
+  )(using c: Connection): java.lang.Long = StreamingInsert.of(s"""COPY "sales"."salesterritory"("territoryid", "name", "countryregioncode", "group", "salesytd", "saleslastyear", "costytd", "costlastyear", "rowguid", "modifieddate") FROM STDIN""", batchSize, unsaved, SalesterritoryRow.pgText).run(c)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
   override def insertUnsavedStreaming(
     unsaved: java.util.Iterator[SalesterritoryRowUnsaved],
     batchSize: Integer = 10000
-  )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "sales"."salesterritory"("name", "countryregioncode", "group", "territoryid", "salesytd", "saleslastyear", "costytd", "costlastyear", "rowguid", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved, c, SalesterritoryRowUnsaved.pgText)
+  )(using c: Connection): java.lang.Long = StreamingInsert.of(s"""COPY "sales"."salesterritory"("name", "countryregioncode", "group", "territoryid", "salesytd", "saleslastyear", "costytd", "costlastyear", "rowguid", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved, SalesterritoryRowUnsaved.pgText).run(c)
 
-  override def select: SelectBuilder[SalesterritoryFields, SalesterritoryRow] = SelectBuilder.of(""""sales"."salesterritory"""", SalesterritoryFields.structure, SalesterritoryRow.`_rowParser`, Dialect.POSTGRESQL)
+  override def select: SelectBuilder[SalesterritoryFields, SalesterritoryRow] = SelectBuilder.of(""""sales"."salesterritory"""", SalesterritoryFields.structure, SalesterritoryRow.rowCodec, Dialect.POSTGRESQL)
 
-  override def selectAll(using c: Connection): java.util.List[SalesterritoryRow] = {
-    interpolate(Fragment.lit("""select "territoryid", "name", "countryregioncode", "group", "salesytd", "saleslastyear", "costytd", "costlastyear", "rowguid", "modifieddate"
+  override def selectAll(using c: ConnectionRead): java.util.List[SalesterritoryRow] = {
+    concat(Fragment.of("""select "territoryid", "name", "countryregioncode", "group", "salesytd", "saleslastyear", "costytd", "costlastyear", "rowguid", "modifieddate"
     from "sales"."salesterritory"
-    """)).query(SalesterritoryRow.`_rowParser`.all()).runUnchecked(c)
+    """)).query(SalesterritoryRow.rowCodec.all()).run(c)
   }
 
-  override def selectById(territoryid: SalesterritoryId)(using c: Connection): Optional[SalesterritoryRow] = {
-    interpolate(Fragment.lit("""select "territoryid", "name", "countryregioncode", "group", "salesytd", "saleslastyear", "costytd", "costlastyear", "rowguid", "modifieddate"
+  override def selectById(territoryid: SalesterritoryId)(using c: ConnectionRead): Optional[SalesterritoryRow] = {
+    concat(Fragment.of("""select "territoryid", "name", "countryregioncode", "group", "salesytd", "saleslastyear", "costytd", "costlastyear", "rowguid", "modifieddate"
     from "sales"."salesterritory"
-    where "territoryid" = """), Fragment.encode(SalesterritoryId.pgType, territoryid), Fragment.lit("")).query(SalesterritoryRow.`_rowParser`.first()).runUnchecked(c)
+    where "territoryid" = """), Fragment.encode(SalesterritoryId.pgType, territoryid), Fragment.of("")).query(SalesterritoryRow.rowCodec.first()).run(c)
   }
 
-  override def selectByIds(territoryids: Array[SalesterritoryId])(using c: Connection): java.util.List[SalesterritoryRow] = {
-    interpolate(Fragment.lit("""select "territoryid", "name", "countryregioncode", "group", "salesytd", "saleslastyear", "costytd", "costlastyear", "rowguid", "modifieddate"
+  override def selectByIds(territoryids: java.util.List[SalesterritoryId])(using c: ConnectionRead): java.util.List[SalesterritoryRow] = {
+    concat(Fragment.of("""select "territoryid", "name", "countryregioncode", "group", "salesytd", "saleslastyear", "costytd", "costlastyear", "rowguid", "modifieddate"
     from "sales"."salesterritory"
-    where "territoryid" = ANY("""), Fragment.encode(SalesterritoryId.pgTypeArray, territoryids), Fragment.lit(")")).query(SalesterritoryRow.`_rowParser`.all()).runUnchecked(c)
+    where "territoryid" = ANY("""), Fragment.encode(SalesterritoryId.pgType.array(), territoryids), Fragment.of(")")).query(SalesterritoryRow.rowCodec.all()).run(c)
   }
 
-  override def selectByIdsTracked(territoryids: Array[SalesterritoryId])(using c: Connection): java.util.Map[SalesterritoryId, SalesterritoryRow] = {
+  override def selectByIdsTracked(territoryids: java.util.List[SalesterritoryId])(using c: ConnectionRead): java.util.Map[SalesterritoryId, SalesterritoryRow] = {
     val ret: HashMap[SalesterritoryId, SalesterritoryRow] = new HashMap[SalesterritoryId, SalesterritoryRow]()
     selectByIds(territoryids)(using c).forEach(row => ret.put(row.territoryid, row): @scala.annotation.nowarn)
     return ret
   }
 
-  override def update: UpdateBuilder[SalesterritoryFields, SalesterritoryRow] = UpdateBuilder.of(""""sales"."salesterritory"""", SalesterritoryFields.structure, SalesterritoryRow.`_rowParser`, Dialect.POSTGRESQL)
+  override def update: UpdateBuilder[SalesterritoryFields, SalesterritoryRow] = UpdateBuilder.of(""""sales"."salesterritory"""", SalesterritoryFields.structure, SalesterritoryRow.rowCodec, Dialect.POSTGRESQL)
 
   override def update(row: SalesterritoryRow)(using c: Connection): java.lang.Boolean = {
     val territoryid: SalesterritoryId = row.territoryid
-    return interpolate(Fragment.lit("""update "sales"."salesterritory"
-    set "name" = """), Fragment.encode(Name.pgType, row.name), Fragment.lit("""::varchar,
-    "countryregioncode" = """), Fragment.encode(CountryregionId.pgType, row.countryregioncode), Fragment.lit(""",
-    "group" = """), Fragment.encode(PgTypes.text, row.group), Fragment.lit(""",
-    "salesytd" = """), Fragment.encode(PgTypes.numeric, row.salesytd), Fragment.lit("""::numeric,
-    "saleslastyear" = """), Fragment.encode(PgTypes.numeric, row.saleslastyear), Fragment.lit("""::numeric,
-    "costytd" = """), Fragment.encode(PgTypes.numeric, row.costytd), Fragment.lit("""::numeric,
-    "costlastyear" = """), Fragment.encode(PgTypes.numeric, row.costlastyear), Fragment.lit("""::numeric,
-    "rowguid" = """), Fragment.encode(PgTypes.uuid, row.rowguid), Fragment.lit("""::uuid,
-    "modifieddate" = """), Fragment.encode(PgTypes.timestamp, row.modifieddate), Fragment.lit("""::timestamp
-    where "territoryid" = """), Fragment.encode(SalesterritoryId.pgType, territoryid), Fragment.lit("")).update().runUnchecked(c) > 0
+    return concat(Fragment.of("""update "sales"."salesterritory"
+    set "name" = """), Fragment.encode(Name.pgType, row.name), Fragment.of("""::varchar,
+    "countryregioncode" = """), Fragment.encode(CountryregionId.pgType, row.countryregioncode), Fragment.of(""",
+    "group" = """), Fragment.encode(PgTypes.text, row.group), Fragment.of(""",
+    "salesytd" = """), Fragment.encode(PgTypes.numeric, row.salesytd), Fragment.of("""::numeric,
+    "saleslastyear" = """), Fragment.encode(PgTypes.numeric, row.saleslastyear), Fragment.of("""::numeric,
+    "costytd" = """), Fragment.encode(PgTypes.numeric, row.costytd), Fragment.of("""::numeric,
+    "costlastyear" = """), Fragment.encode(PgTypes.numeric, row.costlastyear), Fragment.of("""::numeric,
+    "rowguid" = """), Fragment.encode(PgTypes.uuid, row.rowguid), Fragment.of("""::uuid,
+    "modifieddate" = """), Fragment.encode(PgTypes.timestamp, row.modifieddate), Fragment.of("""::timestamp
+    where "territoryid" = """), Fragment.encode(SalesterritoryId.pgType, territoryid), Fragment.of("")).update().run(c) > 0
   }
 
   override def upsert(unsaved: SalesterritoryRow)(using c: Connection): SalesterritoryRow = {
-  interpolate(Fragment.lit("""insert into "sales"."salesterritory"("territoryid", "name", "countryregioncode", "group", "salesytd", "saleslastyear", "costytd", "costlastyear", "rowguid", "modifieddate")
-    values ("""), Fragment.encode(SalesterritoryId.pgType, unsaved.territoryid), Fragment.lit("::int4, "), Fragment.encode(Name.pgType, unsaved.name), Fragment.lit("::varchar, "), Fragment.encode(CountryregionId.pgType, unsaved.countryregioncode), Fragment.lit(", "), Fragment.encode(PgTypes.text, unsaved.group), Fragment.lit(", "), Fragment.encode(PgTypes.numeric, unsaved.salesytd), Fragment.lit("::numeric, "), Fragment.encode(PgTypes.numeric, unsaved.saleslastyear), Fragment.lit("::numeric, "), Fragment.encode(PgTypes.numeric, unsaved.costytd), Fragment.lit("::numeric, "), Fragment.encode(PgTypes.numeric, unsaved.costlastyear), Fragment.lit("::numeric, "), Fragment.encode(PgTypes.uuid, unsaved.rowguid), Fragment.lit("::uuid, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("""::timestamp)
+  concat(Fragment.of("""insert into "sales"."salesterritory"("territoryid", "name", "countryregioncode", "group", "salesytd", "saleslastyear", "costytd", "costlastyear", "rowguid", "modifieddate")
+    values ("""), Fragment.encode(SalesterritoryId.pgType, unsaved.territoryid), Fragment.of("::int4, "), Fragment.encode(Name.pgType, unsaved.name), Fragment.of("::varchar, "), Fragment.encode(CountryregionId.pgType, unsaved.countryregioncode), Fragment.of(", "), Fragment.encode(PgTypes.text, unsaved.group), Fragment.of(", "), Fragment.encode(PgTypes.numeric, unsaved.salesytd), Fragment.of("::numeric, "), Fragment.encode(PgTypes.numeric, unsaved.saleslastyear), Fragment.of("::numeric, "), Fragment.encode(PgTypes.numeric, unsaved.costytd), Fragment.of("::numeric, "), Fragment.encode(PgTypes.numeric, unsaved.costlastyear), Fragment.of("::numeric, "), Fragment.encode(PgTypes.uuid, unsaved.rowguid), Fragment.of("::uuid, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.of("""::timestamp)
     on conflict ("territoryid")
     do update set
       "name" = EXCLUDED."name",
@@ -156,12 +157,12 @@ class SalesterritoryRepoImpl extends SalesterritoryRepo {
     "rowguid" = EXCLUDED."rowguid",
     "modifieddate" = EXCLUDED."modifieddate"
     returning "territoryid", "name", "countryregioncode", "group", "salesytd", "saleslastyear", "costytd", "costlastyear", "rowguid", "modifieddate""""))
-    .updateReturning(SalesterritoryRow.`_rowParser`.exactlyOne())
-    .runUnchecked(c)
+    .updateReturning(SalesterritoryRow.rowCodec.exactlyOne())
+    .run(c)
   }
 
   override def upsertBatch(unsaved: java.util.Iterator[SalesterritoryRow])(using c: Connection): java.util.List[SalesterritoryRow] = {
-    interpolate(Fragment.lit("""insert into "sales"."salesterritory"("territoryid", "name", "countryregioncode", "group", "salesytd", "saleslastyear", "costytd", "costlastyear", "rowguid", "modifieddate")
+    concat(Fragment.of("""insert into "sales"."salesterritory"("territoryid", "name", "countryregioncode", "group", "salesytd", "saleslastyear", "costytd", "costlastyear", "rowguid", "modifieddate")
     values (?::int4, ?::varchar, ?, ?, ?::numeric, ?::numeric, ?::numeric, ?::numeric, ?::uuid, ?::timestamp)
     on conflict ("territoryid")
     do update set
@@ -175,8 +176,8 @@ class SalesterritoryRepoImpl extends SalesterritoryRepo {
     "rowguid" = EXCLUDED."rowguid",
     "modifieddate" = EXCLUDED."modifieddate"
     returning "territoryid", "name", "countryregioncode", "group", "salesytd", "saleslastyear", "costytd", "costlastyear", "rowguid", "modifieddate""""))
-      .updateManyReturning(SalesterritoryRow.`_rowParser`, unsaved)
-    .runUnchecked(c)
+      .updateManyReturning(SalesterritoryRow.rowCodec, unsaved)
+    .run(c)
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
@@ -184,9 +185,9 @@ class SalesterritoryRepoImpl extends SalesterritoryRepo {
     unsaved: java.util.Iterator[SalesterritoryRow],
     batchSize: Integer = 10000
   )(using c: Connection): Integer = {
-    interpolate(Fragment.lit("""create temporary table salesterritory_TEMP (like "sales"."salesterritory") on commit drop""")).update().runUnchecked(c): @scala.annotation.nowarn
-    streamingInsert.insertUnchecked(s"""copy salesterritory_TEMP("territoryid", "name", "countryregioncode", "group", "salesytd", "saleslastyear", "costytd", "costlastyear", "rowguid", "modifieddate") from stdin""", batchSize, unsaved, c, SalesterritoryRow.pgText): @scala.annotation.nowarn
-    return interpolate(Fragment.lit("""insert into "sales"."salesterritory"("territoryid", "name", "countryregioncode", "group", "salesytd", "saleslastyear", "costytd", "costlastyear", "rowguid", "modifieddate")
+    concat(Fragment.of("""create temporary table salesterritory_TEMP (like "sales"."salesterritory") on commit drop""")).update().run(c): @scala.annotation.nowarn
+    StreamingInsert.of(s"""copy salesterritory_TEMP("territoryid", "name", "countryregioncode", "group", "salesytd", "saleslastyear", "costytd", "costlastyear", "rowguid", "modifieddate") from stdin""", batchSize, unsaved, SalesterritoryRow.pgText).run(c): @scala.annotation.nowarn
+    return concat(Fragment.of("""insert into "sales"."salesterritory"("territoryid", "name", "countryregioncode", "group", "salesytd", "saleslastyear", "costytd", "costlastyear", "rowguid", "modifieddate")
     select * from salesterritory_TEMP
     on conflict ("territoryid")
     do update set
@@ -200,6 +201,6 @@ class SalesterritoryRepoImpl extends SalesterritoryRepo {
     "rowguid" = EXCLUDED."rowguid",
     "modifieddate" = EXCLUDED."modifieddate"
     ;
-    drop table salesterritory_TEMP;""")).update().runUnchecked(c)
+    drop table salesterritory_TEMP;""")).update().run(c)
   }
 }

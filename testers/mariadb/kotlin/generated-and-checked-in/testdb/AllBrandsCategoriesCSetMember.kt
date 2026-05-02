@@ -14,6 +14,8 @@ enum class AllBrandsCategoriesCSetMember(val value: kotlin.String) {
     customers("customers"),
     products("products");
 
+    
+
     companion object {
         val Names: kotlin.String = entries.joinToString(", ") { it.value }
         val ByName: kotlin.collections.Map<kotlin.String, AllBrandsCategoriesCSetMember> = entries.associateBy { it.value }

@@ -5,16 +5,16 @@
  */
 package testdb.precision_types
 
-import dev.typr.foundations.RowParser
-import dev.typr.foundations.SqlServerTypes
-import dev.typr.foundations.dsl.FieldsBase
-import dev.typr.foundations.dsl.Path
-import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.scala.RelationStructure
-import dev.typr.foundations.scala.SqlExpr
-import dev.typr.foundations.scala.SqlExpr.Field
-import dev.typr.foundations.scala.SqlExpr.IdField
-import dev.typr.foundations.scala.TupleExpr27
+import dev.typr.dsl.FieldsBase
+import dev.typr.dsl.Path
+import dev.typr.dsl.SqlExpr.FieldLike
+import dev.typr.dslsc.RelationStructure
+import dev.typr.dslsc.SqlExpr
+import dev.typr.dslsc.SqlExpr.Field
+import dev.typr.dslsc.SqlExpr.IdField
+import dev.typr.dslsc.TupleExpr27
+import dev.typr.foundations.RowCodec
+import dev.typr.foundationssc.SqlServerTypes
 import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.OffsetDateTime
@@ -47,7 +47,7 @@ class PrecisionTypesFields(val `_path`: java.util.List[Path]) extends TupleExpr2
       None,
       None,
       (row, value) => row.copy(id = value),
-      PrecisionTypesId.sqlServerType
+      PrecisionTypesId.sqlServerType.underlying
     )
   }
 
@@ -59,7 +59,7 @@ class PrecisionTypesFields(val `_path`: java.util.List[Path]) extends TupleExpr2
       None,
       None,
       (row, value) => row.copy(string10 = value),
-      String10.sqlServerType
+      String10.sqlServerType.underlying
     )
   }
 
@@ -71,7 +71,7 @@ class PrecisionTypesFields(val `_path`: java.util.List[Path]) extends TupleExpr2
       None,
       None,
       (row, value) => row.copy(string20 = value),
-      String20.sqlServerType
+      String20.sqlServerType.underlying
     )
   }
 
@@ -83,7 +83,7 @@ class PrecisionTypesFields(val `_path`: java.util.List[Path]) extends TupleExpr2
       None,
       None,
       (row, value) => row.copy(string50 = value),
-      String50.sqlServerType
+      String50.sqlServerType.underlying
     )
   }
 
@@ -95,7 +95,7 @@ class PrecisionTypesFields(val `_path`: java.util.List[Path]) extends TupleExpr2
       None,
       None,
       (row, value) => row.copy(string100 = value),
-      String100.sqlServerType
+      String100.sqlServerType.underlying
     )
   }
 
@@ -107,7 +107,7 @@ class PrecisionTypesFields(val `_path`: java.util.List[Path]) extends TupleExpr2
       None,
       None,
       (row, value) => row.copy(string255 = value),
-      String255.sqlServerType
+      String255.sqlServerType.underlying
     )
   }
 
@@ -119,7 +119,7 @@ class PrecisionTypesFields(val `_path`: java.util.List[Path]) extends TupleExpr2
       None,
       None,
       (row, value) => row.copy(nstring10 = value),
-      String10.sqlServerType
+      String10.sqlServerType.underlying
     )
   }
 
@@ -131,7 +131,7 @@ class PrecisionTypesFields(val `_path`: java.util.List[Path]) extends TupleExpr2
       None,
       None,
       (row, value) => row.copy(nstring50 = value),
-      String50.sqlServerType
+      String50.sqlServerType.underlying
     )
   }
 
@@ -143,7 +143,7 @@ class PrecisionTypesFields(val `_path`: java.util.List[Path]) extends TupleExpr2
       None,
       None,
       (row, value) => row.copy(nstring255 = value),
-      String255.sqlServerType
+      String255.sqlServerType.underlying
     )
   }
 
@@ -155,7 +155,7 @@ class PrecisionTypesFields(val `_path`: java.util.List[Path]) extends TupleExpr2
       None,
       None,
       (row, value) => row.copy(char10 = value),
-      PaddedString10.sqlServerType
+      PaddedString10.sqlServerType.underlying
     )
   }
 
@@ -167,7 +167,7 @@ class PrecisionTypesFields(val `_path`: java.util.List[Path]) extends TupleExpr2
       None,
       None,
       (row, value) => row.copy(nchar10 = value),
-      PaddedString10.sqlServerType
+      PaddedString10.sqlServerType.underlying
     )
   }
 
@@ -179,7 +179,7 @@ class PrecisionTypesFields(val `_path`: java.util.List[Path]) extends TupleExpr2
       None,
       None,
       (row, value) => row.copy(decimal52 = value),
-      Decimal5_2.sqlServerType
+      Decimal5_2.sqlServerType.underlying
     )
   }
 
@@ -191,7 +191,7 @@ class PrecisionTypesFields(val `_path`: java.util.List[Path]) extends TupleExpr2
       None,
       None,
       (row, value) => row.copy(decimal102 = value),
-      Decimal10_2.sqlServerType
+      Decimal10_2.sqlServerType.underlying
     )
   }
 
@@ -203,7 +203,7 @@ class PrecisionTypesFields(val `_path`: java.util.List[Path]) extends TupleExpr2
       None,
       None,
       (row, value) => row.copy(decimal184 = value),
-      Decimal18_4.sqlServerType
+      Decimal18_4.sqlServerType.underlying
     )
   }
 
@@ -215,7 +215,7 @@ class PrecisionTypesFields(val `_path`: java.util.List[Path]) extends TupleExpr2
       None,
       None,
       (row, value) => row.copy(numeric82 = value),
-      Decimal8_2.sqlServerType
+      Decimal8_2.sqlServerType.underlying
     )
   }
 
@@ -227,7 +227,7 @@ class PrecisionTypesFields(val `_path`: java.util.List[Path]) extends TupleExpr2
       None,
       None,
       (row, value) => row.copy(numeric124 = value),
-      Decimal12_4.sqlServerType
+      Decimal12_4.sqlServerType.underlying
     )
   }
 
@@ -239,7 +239,7 @@ class PrecisionTypesFields(val `_path`: java.util.List[Path]) extends TupleExpr2
       None,
       None,
       (row, value) => row.copy(binary10 = value),
-      Binary10.sqlServerType
+      Binary10.sqlServerType.underlying
     )
   }
 
@@ -251,7 +251,7 @@ class PrecisionTypesFields(val `_path`: java.util.List[Path]) extends TupleExpr2
       None,
       None,
       (row, value) => row.copy(binary32 = value),
-      Binary32.sqlServerType
+      Binary32.sqlServerType.underlying
     )
   }
 
@@ -263,7 +263,7 @@ class PrecisionTypesFields(val `_path`: java.util.List[Path]) extends TupleExpr2
       None,
       None,
       (row, value) => row.copy(time0 = value),
-      SqlServerTypes.time
+      SqlServerTypes.time.underlying
     )
   }
 
@@ -275,7 +275,7 @@ class PrecisionTypesFields(val `_path`: java.util.List[Path]) extends TupleExpr2
       None,
       None,
       (row, value) => row.copy(time3 = value),
-      LocalTime3.sqlServerType
+      LocalTime3.sqlServerType.underlying
     )
   }
 
@@ -287,7 +287,7 @@ class PrecisionTypesFields(val `_path`: java.util.List[Path]) extends TupleExpr2
       None,
       None,
       (row, value) => row.copy(time7 = value),
-      LocalTime7.sqlServerType
+      LocalTime7.sqlServerType.underlying
     )
   }
 
@@ -299,7 +299,7 @@ class PrecisionTypesFields(val `_path`: java.util.List[Path]) extends TupleExpr2
       None,
       None,
       (row, value) => row.copy(datetime20 = value),
-      SqlServerTypes.datetime2
+      SqlServerTypes.datetime2.underlying
     )
   }
 
@@ -311,7 +311,7 @@ class PrecisionTypesFields(val `_path`: java.util.List[Path]) extends TupleExpr2
       None,
       None,
       (row, value) => row.copy(datetime23 = value),
-      LocalDateTime3.sqlServerType
+      LocalDateTime3.sqlServerType.underlying
     )
   }
 
@@ -323,7 +323,7 @@ class PrecisionTypesFields(val `_path`: java.util.List[Path]) extends TupleExpr2
       None,
       None,
       (row, value) => row.copy(datetime27 = value),
-      LocalDateTime7.sqlServerType
+      LocalDateTime7.sqlServerType.underlying
     )
   }
 
@@ -335,7 +335,7 @@ class PrecisionTypesFields(val `_path`: java.util.List[Path]) extends TupleExpr2
       None,
       None,
       (row, value) => row.copy(dto0 = value),
-      SqlServerTypes.datetimeoffset
+      SqlServerTypes.datetimeoffset.underlying
     )
   }
 
@@ -347,7 +347,7 @@ class PrecisionTypesFields(val `_path`: java.util.List[Path]) extends TupleExpr2
       None,
       None,
       (row, value) => row.copy(dto3 = value),
-      OffsetDateTime3.sqlServerType
+      OffsetDateTime3.sqlServerType.underlying
     )
   }
 
@@ -359,13 +359,13 @@ class PrecisionTypesFields(val `_path`: java.util.List[Path]) extends TupleExpr2
       None,
       None,
       (row, value) => row.copy(dto7 = value),
-      OffsetDateTime7.sqlServerType
+      OffsetDateTime7.sqlServerType.underlying
     )
   }
 
   override def columns: java.util.List[FieldLike[?, PrecisionTypesRow]] = java.util.List.of(this.id.underlying, this.string10.underlying, this.string20.underlying, this.string50.underlying, this.string100.underlying, this.string255.underlying, this.nstring10.underlying, this.nstring50.underlying, this.nstring255.underlying, this.char10.underlying, this.nchar10.underlying, this.decimal52.underlying, this.decimal102.underlying, this.decimal184.underlying, this.numeric82.underlying, this.numeric124.underlying, this.binary10.underlying, this.binary32.underlying, this.time0.underlying, this.time3.underlying, this.time7.underlying, this.datetime20.underlying, this.datetime23.underlying, this.datetime27.underlying, this.dto0.underlying, this.dto3.underlying, this.dto7.underlying)
 
-  override def rowParser: RowParser[PrecisionTypesRow] = PrecisionTypesRow._rowParser.underlying
+  override def rowCodec: RowCodec[PrecisionTypesRow] = PrecisionTypesRow.rowCodec.underlying
 
   override def withPaths(`_path`: java.util.List[Path]): RelationStructure[PrecisionTypesFields, PrecisionTypesRow] = new PrecisionTypesFields(`_path`)
 

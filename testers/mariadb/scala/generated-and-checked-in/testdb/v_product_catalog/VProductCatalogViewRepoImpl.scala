@@ -5,17 +5,17 @@
  */
 package testdb.v_product_catalog
 
-import dev.typr.foundations.scala.Dialect
-import dev.typr.foundations.scala.SelectBuilder
-import java.sql.Connection
-import dev.typr.foundations.scala.Fragment.sql
+import dev.typr.dslsc.Dialect
+import dev.typr.dslsc.SelectBuilder
+import dev.typr.foundationssc.ConnectionRead
+import dev.typr.foundationssc.Fragment.sql
 
 class VProductCatalogViewRepoImpl extends VProductCatalogViewRepo {
-  override def select: SelectBuilder[VProductCatalogViewFields, VProductCatalogViewRow] = SelectBuilder.of("`v_product_catalog`", VProductCatalogViewFields.structure, VProductCatalogViewRow.`_rowParser`, Dialect.MARIADB)
+  override def select: SelectBuilder[VProductCatalogViewFields, VProductCatalogViewRow] = SelectBuilder.of("`v_product_catalog`", VProductCatalogViewFields.structure, VProductCatalogViewRow.rowCodec, Dialect.MARIADB)
 
-  override def selectAll(using c: Connection): List[VProductCatalogViewRow] = {
+  override def selectAll(using c: ConnectionRead): List[VProductCatalogViewRow] = {
     sql"""select `product_id`, `sku`, `name`, `short_description`, `base_price`, `status`, `tags`, `brand_name`, `available_quantity`, `avg_rating`, `review_count`
     from `v_product_catalog`
-    """.query(VProductCatalogViewRow.`_rowParser`.all()).runUnchecked(c)
+    """.query(VProductCatalogViewRow.rowCodec.all()).run(using c)
   }
 }

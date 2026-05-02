@@ -437,8 +437,24 @@ table thead {
 }
 
 /* Footer enhancements */
+:root {
+  --ifm-footer-background-color: #f3f0ff;
+  --ifm-footer-color: #4b5563;
+  --ifm-footer-title-color: #1f2937;
+  --ifm-footer-link-color: #6b7280;
+  --ifm-footer-link-hover-color: var(--ifm-color-primary);
+}
+
+[data-theme="dark"] {
+  --ifm-footer-background-color: #1a1a1a;
+  --ifm-footer-color: #9ca3af;
+  --ifm-footer-title-color: #f3f4f6;
+  --ifm-footer-link-color: #9ca3af;
+  --ifm-footer-link-hover-color: var(--ifm-color-primary);
+}
+
 .footer {
-  background: linear-gradient(to bottom, var(--ifm-background-surface-color), var(--ifm-background-color));
+  background: var(--ifm-footer-background-color);
 }
 
 .footer__links {

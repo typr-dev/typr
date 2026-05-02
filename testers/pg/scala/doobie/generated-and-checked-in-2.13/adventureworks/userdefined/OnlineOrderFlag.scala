@@ -23,7 +23,7 @@ object OnlineOrderFlag {
 
   implicit lazy val arrayPut: Put[Array[OnlineOrderFlag]] = Flag.arrayPut.contramap(_.map(_.value))
 
-  implicit lazy val bijection: Bijection[OnlineOrderFlag, Flag] = Bijection.apply[OnlineOrderFlag, Flag](_.value)(OnlineOrderFlag.apply)
+  implicit lazy val bijection: Bijection[OnlineOrderFlag, Flag] = Bijection[OnlineOrderFlag, Flag](_.value)(OnlineOrderFlag.apply)
 
   implicit lazy val decoder: Decoder[OnlineOrderFlag] = Flag.decoder.map(OnlineOrderFlag.apply)
 

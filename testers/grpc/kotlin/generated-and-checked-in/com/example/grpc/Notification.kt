@@ -43,6 +43,23 @@ data class Notification(
   }
 
   companion object {
+    @Throws(IOException::class)
+    fun parseFrom(input: CodedInputStream): Notification {
+      var message: kotlin.String = ""
+      var priority: Priority = Priority.fromValue(0)
+      var target: NotificationTarget? = null
+      while (!input.isAtEnd()) {
+        val tag = input.readTag()
+        if (WireFormat.getTagFieldNumber(tag) == 1) { message = input.readString() }
+        else if (WireFormat.getTagFieldNumber(tag) == 2) { priority = Priority.fromValue(input.readEnum()) }
+        else if (WireFormat.getTagFieldNumber(tag) == 3) { target = Email(input.readString()) }
+        else if (WireFormat.getTagFieldNumber(tag) == 4) { target = Phone(input.readString()) }
+        else if (WireFormat.getTagFieldNumber(tag) == 5) { target = WebhookUrl(input.readString()) }
+        else { input.skipField(tag) }
+      }
+      return Notification(message, priority, target)
+    }
+
     val MARSHALLER: Marshaller<Notification> =
       object : Marshaller<Notification> {
         override fun stream(value: Notification): InputStream {
@@ -64,22 +81,5 @@ data class Notification(
           } 
         }
       }
-
-    @Throws(IOException::class)
-    fun parseFrom(input: CodedInputStream): Notification {
-      var message: kotlin.String = ""
-      var priority: Priority = Priority.fromValue(0)
-      var target: NotificationTarget? = null
-      while (!input.isAtEnd()) {
-        val tag = input.readTag()
-        if (WireFormat.getTagFieldNumber(tag) == 1) { message = input.readString() }
-        else if (WireFormat.getTagFieldNumber(tag) == 2) { priority = Priority.fromValue(input.readEnum()) }
-        else if (WireFormat.getTagFieldNumber(tag) == 3) { target = Email(input.readString()) }
-        else if (WireFormat.getTagFieldNumber(tag) == 4) { target = Phone(input.readString()) }
-        else if (WireFormat.getTagFieldNumber(tag) == 5) { target = WebhookUrl(input.readString()) }
-        else { input.skipField(tag) }
-      }
-      return Notification(message, priority, target)
-    }
   }
 }

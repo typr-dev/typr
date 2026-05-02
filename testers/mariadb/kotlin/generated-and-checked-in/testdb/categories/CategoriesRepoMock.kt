@@ -5,17 +5,18 @@
  */
 package testdb.categories
 
-import dev.typr.foundations.kotlin.DeleteBuilder
-import dev.typr.foundations.kotlin.DeleteBuilderMock
-import dev.typr.foundations.kotlin.DeleteParams
-import dev.typr.foundations.kotlin.SelectBuilder
-import dev.typr.foundations.kotlin.SelectBuilderMock
-import dev.typr.foundations.kotlin.SelectParams
-import dev.typr.foundations.kotlin.UpdateBuilder
-import dev.typr.foundations.kotlin.UpdateBuilderMock
-import dev.typr.foundations.kotlin.UpdateParams
+import dev.typr.dslkt.DeleteBuilder
+import dev.typr.dslkt.DeleteBuilderMock
+import dev.typr.dslkt.DeleteParams
+import dev.typr.dslkt.SelectBuilder
+import dev.typr.dslkt.SelectBuilderMock
+import dev.typr.dslkt.SelectParams
+import dev.typr.dslkt.UpdateBuilder
+import dev.typr.dslkt.UpdateBuilderMock
+import dev.typr.dslkt.UpdateParams
+import dev.typr.foundationskt.Connection
+import dev.typr.foundationskt.ConnectionRead
 import java.lang.RuntimeException
-import java.sql.Connection
 import java.util.ArrayList
 import kotlin.collections.Iterator
 import kotlin.collections.List
@@ -31,10 +32,10 @@ data class CategoriesRepoMock(
   override fun deleteById(
     categoryId: CategoriesId,
     c: Connection
-  ): Boolean = map.remove(categoryId) != null
+  ): kotlin.Boolean = map.remove(categoryId) != null
 
   override fun deleteByIds(
-    categoryIds: Array<CategoriesId>,
+    categoryIds: List<CategoriesId>,
     c: Connection
   ): Int {
     var count = 0
@@ -64,16 +65,16 @@ data class CategoriesRepoMock(
 
   override fun select(): SelectBuilder<CategoriesFields, CategoriesRow> = SelectBuilderMock(CategoriesFields.structure, { map.values.toList() }, SelectParams.empty())
 
-  override fun selectAll(c: Connection): List<CategoriesRow> = map.values.toList()
+  override fun selectAll(c: ConnectionRead): List<CategoriesRow> = map.values.toList()
 
   override fun selectById(
     categoryId: CategoriesId,
-    c: Connection
+    c: ConnectionRead
   ): CategoriesRow? = map[categoryId]
 
   override fun selectByIds(
-    categoryIds: Array<CategoriesId>,
-    c: Connection
+    categoryIds: List<CategoriesId>,
+    c: ConnectionRead
   ): List<CategoriesRow> {
     val result = ArrayList<CategoriesRow>()
     for (id in categoryIds) {
@@ -86,13 +87,13 @@ data class CategoriesRepoMock(
   }
 
   override fun selectByIdsTracked(
-    categoryIds: Array<CategoriesId>,
-    c: Connection
+    categoryIds: List<CategoriesId>,
+    c: ConnectionRead
   ): Map<CategoriesId, CategoriesRow> = selectByIds(categoryIds, c).associateBy({ row: CategoriesRow -> row.categoryId })
 
   override fun selectByUniqueSlug(
-    slug: String,
-    c: Connection
+    slug: kotlin.String,
+    c: ConnectionRead
   ): CategoriesRow? = map.values.toList().find({ v -> (slug == v.slug) })
 
   override fun update(): UpdateBuilder<CategoriesFields, CategoriesRow> = UpdateBuilderMock(CategoriesFields.structure, { map.values.toList() }, UpdateParams.empty(), { row -> row })
@@ -100,7 +101,7 @@ data class CategoriesRepoMock(
   override fun update(
     row: CategoriesRow,
     c: Connection
-  ): Boolean {
+  ): kotlin.Boolean {
     val shouldUpdate = map[row.categoryId]?.takeIf({ oldRow -> (oldRow != row) }) != null
     if (shouldUpdate) {
       map[row.categoryId] = row

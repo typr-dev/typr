@@ -12,7 +12,7 @@ import adventureworks.{DomainInsertImpl, TestInsert, WithConnection}
 import org.junit.Assert.*
 import org.junit.Test
 
-import java.sql.Connection
+import dev.typr.foundations.Connection
 import java.util.{Optional, Random}
 import scala.jdk.CollectionConverters.*
 

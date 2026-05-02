@@ -7,10 +7,10 @@ package adventureworks.humanresources.shift
 
 import adventureworks.customtypes.Defaulted
 import adventureworks.public.Name
+import dev.typr.dsl.RowCodecs
 import dev.typr.foundations.PgText
 import dev.typr.foundations.PgTypes
-import dev.typr.foundations.RowParser
-import dev.typr.foundations.RowParsers
+import dev.typr.foundations.RowCodec
 import dev.typr.foundations.Tuple.Tuple5
 import java.time.LocalDateTime
 import java.time.LocalTime
@@ -60,7 +60,7 @@ case class ShiftRow(
 }
 
 object ShiftRow {
-  val `_rowParser`: RowParser[ShiftRow] = RowParsers.of(ShiftId.pgType, Name.pgType, PgTypes.time, PgTypes.time, PgTypes.timestamp, ShiftRow.apply, row => Array[Any](row.shiftid, row.name, row.starttime, row.endtime, row.modifieddate))
+  given pgText: PgText[ShiftRow] = PgText.from(rowCodec)
 
-  given pgText: PgText[ShiftRow] = PgText.from(`_rowParser`)
+  val rowCodec: RowCodec[ShiftRow] = RowCodecs.of(ShiftId.pgType, Name.pgType, PgTypes.time, PgTypes.time, PgTypes.timestamp, ShiftRow.apply, row => Array[Any](row.shiftid, row.name, row.starttime, row.endtime, row.modifieddate))
 }

@@ -6,12 +6,10 @@
 package testdb.orders_by_customer
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import dev.typr.foundations.Db2Types
+import dev.typr.dslkt.RowCodecs
 import dev.typr.foundations.Tuple.Tuple8
-import dev.typr.foundations.kotlin.KotlinDbTypes
-import dev.typr.foundations.kotlin.RowParser
-import dev.typr.foundations.kotlin.RowParsers
-import dev.typr.foundations.kotlin.nullable
+import dev.typr.foundationskt.Db2Types
+import dev.typr.foundationskt.RowCodec
 import java.math.BigDecimal
 import java.time.LocalDate
 
@@ -20,29 +18,29 @@ data class OrdersByCustomerSqlRow(
   @field:JsonProperty("order_id") val orderId: Int,
   @field:JsonProperty("order_date") val orderDate: LocalDate,
   @field:JsonProperty("total_amount") val totalAmount: BigDecimal?,
-  val status: String?,
+  val status: kotlin.String?,
   @field:JsonProperty("item_number") val itemNumber: Int,
-  @field:JsonProperty("product_name") val productName: String,
+  @field:JsonProperty("product_name") val productName: kotlin.String,
   val quantity: Int,
   @field:JsonProperty("unit_price") val unitPrice: BigDecimal
-) : Tuple8<Int, LocalDate, BigDecimal?, String?, Int, String, Int, BigDecimal> {
+) : Tuple8<Int, LocalDate, BigDecimal?, kotlin.String?, Int, kotlin.String, Int, BigDecimal> {
   override fun _1(): Int = orderId
 
   override fun _2(): LocalDate = orderDate
 
   override fun _3(): BigDecimal? = totalAmount
 
-  override fun _4(): String? = status
+  override fun _4(): kotlin.String? = status
 
   override fun _5(): Int = itemNumber
 
-  override fun _6(): String = productName
+  override fun _6(): kotlin.String = productName
 
   override fun _7(): Int = quantity
 
   override fun _8(): BigDecimal = unitPrice
 
   companion object {
-    val _rowParser: RowParser<OrdersByCustomerSqlRow> = RowParsers.of(KotlinDbTypes.Db2Types.integer, Db2Types.date, KotlinDbTypes.Db2Types.decimal.nullable(), Db2Types.varchar.nullable(), KotlinDbTypes.Db2Types.integer, Db2Types.varchar, KotlinDbTypes.Db2Types.integer, KotlinDbTypes.Db2Types.decimal, { t0, t1, t2, t3, t4, t5, t6, t7 -> OrdersByCustomerSqlRow(t0, t1, t2, t3, t4, t5, t6, t7) }, { row -> arrayOf<Any?>(row.orderId, row.orderDate, row.totalAmount, row.status, row.itemNumber, row.productName, row.quantity, row.unitPrice) })
+    val rowCodec: RowCodec<OrdersByCustomerSqlRow> = RowCodecs.of(Db2Types.integer, Db2Types.date, Db2Types.decimal.opt(), Db2Types.varchar.opt(), Db2Types.integer, Db2Types.varchar, Db2Types.integer, Db2Types.decimal, { t0: Int, t1: LocalDate, t2: BigDecimal?, t3: kotlin.String?, t4: Int, t5: kotlin.String, t6: Int, t7: BigDecimal -> OrdersByCustomerSqlRow(t0, t1, t2, t3, t4, t5, t6, t7) }, { row: OrdersByCustomerSqlRow -> arrayOf<Any?>(row.orderId, row.orderDate, row.totalAmount, row.status, row.itemNumber, row.productName, row.quantity, row.unitPrice) })
   }
 }

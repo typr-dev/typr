@@ -5,17 +5,18 @@
  */
 package adventureworks.person.countryregion
 
-import dev.typr.foundations.scala.DeleteBuilder
-import dev.typr.foundations.scala.SelectBuilder
-import dev.typr.foundations.scala.UpdateBuilder
-import java.sql.Connection
+import dev.typr.dslsc.DeleteBuilder
+import dev.typr.dslsc.SelectBuilder
+import dev.typr.dslsc.UpdateBuilder
+import dev.typr.foundationssc.Connection
+import dev.typr.foundationssc.ConnectionRead
 
 trait CountryregionRepo {
   def delete: DeleteBuilder[CountryregionFields, CountryregionRow]
 
   def deleteById(countryregioncode: CountryregionId)(using c: Connection): Boolean
 
-  def deleteByIds(countryregioncodes: Array[CountryregionId])(using c: Connection): Int
+  def deleteByIds(countryregioncodes: List[CountryregionId])(using c: Connection): Int
 
   def insert(unsaved: CountryregionRow)(using c: Connection): CountryregionRow
 
@@ -34,13 +35,13 @@ trait CountryregionRepo {
 
   def select: SelectBuilder[CountryregionFields, CountryregionRow]
 
-  def selectAll(using c: Connection): List[CountryregionRow]
+  def selectAll(using c: ConnectionRead): List[CountryregionRow]
 
-  def selectById(countryregioncode: CountryregionId)(using c: Connection): Option[CountryregionRow]
+  def selectById(countryregioncode: CountryregionId)(using c: ConnectionRead): Option[CountryregionRow]
 
-  def selectByIds(countryregioncodes: Array[CountryregionId])(using c: Connection): List[CountryregionRow]
+  def selectByIds(countryregioncodes: List[CountryregionId])(using c: ConnectionRead): List[CountryregionRow]
 
-  def selectByIdsTracked(countryregioncodes: Array[CountryregionId])(using c: Connection): Map[CountryregionId, CountryregionRow]
+  def selectByIdsTracked(countryregioncodes: List[CountryregionId])(using c: ConnectionRead): Map[CountryregionId, CountryregionRow]
 
   def update: UpdateBuilder[CountryregionFields, CountryregionRow]
 

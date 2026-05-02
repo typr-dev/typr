@@ -24,7 +24,7 @@ object FirstName {
 
   implicit lazy val arrayToStatement: ToStatement[Array[FirstName]] = Name.arrayToStatement.contramap(_.map(_.value))
 
-  implicit lazy val bijection: Bijection[FirstName, Name] = Bijection.apply[FirstName, Name](_.value)(FirstName.apply)
+  implicit lazy val bijection: Bijection[FirstName, Name] = Bijection[FirstName, Name](_.value)(FirstName.apply)
 
   implicit lazy val column: Column[FirstName] = Name.column.map(FirstName.apply)
 

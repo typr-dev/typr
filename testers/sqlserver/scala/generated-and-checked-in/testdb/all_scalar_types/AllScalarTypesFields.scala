@@ -7,22 +7,21 @@ package testdb.all_scalar_types
 
 import com.microsoft.sqlserver.jdbc.Geography
 import com.microsoft.sqlserver.jdbc.Geometry
-import dev.typr.foundations.RowParser
-import dev.typr.foundations.SqlServerTypes
+import dev.typr.dsl.FieldsBase
+import dev.typr.dsl.Path
+import dev.typr.dsl.SqlExpr.FieldLike
+import dev.typr.dslsc.RelationStructure
+import dev.typr.dslsc.SqlExpr
+import dev.typr.dslsc.SqlExpr.Field
+import dev.typr.dslsc.SqlExpr.IdField
+import dev.typr.dslsc.SqlExpr.OptField
+import dev.typr.dslsc.TupleExpr38
+import dev.typr.foundations.RowCodec
 import dev.typr.foundations.data.HierarchyId
 import dev.typr.foundations.data.Json
 import dev.typr.foundations.data.Uint1
 import dev.typr.foundations.data.Xml
-import dev.typr.foundations.dsl.FieldsBase
-import dev.typr.foundations.dsl.Path
-import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.scala.RelationStructure
-import dev.typr.foundations.scala.ScalaDbTypes
-import dev.typr.foundations.scala.SqlExpr
-import dev.typr.foundations.scala.SqlExpr.Field
-import dev.typr.foundations.scala.SqlExpr.IdField
-import dev.typr.foundations.scala.SqlExpr.OptField
-import dev.typr.foundations.scala.TupleExpr38
+import dev.typr.foundationssc.SqlServerTypes
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
@@ -38,7 +37,7 @@ class AllScalarTypesFields(val `_path`: java.util.List[Path]) extends TupleExpr3
       None,
       None,
       (row, value) => row.copy(id = value),
-      AllScalarTypesId.sqlServerType
+      AllScalarTypesId.sqlServerType.underlying
     )
   }
 
@@ -50,7 +49,7 @@ class AllScalarTypesFields(val `_path`: java.util.List[Path]) extends TupleExpr3
       None,
       None,
       (row, value) => row.copy(colTinyint = value),
-      SqlServerTypes.tinyint
+      SqlServerTypes.tinyint.underlying
     )
   }
 
@@ -62,7 +61,7 @@ class AllScalarTypesFields(val `_path`: java.util.List[Path]) extends TupleExpr3
       None,
       None,
       (row, value) => row.copy(colSmallint = value),
-      ScalaDbTypes.SqlServerTypes.smallint
+      SqlServerTypes.smallint.underlying
     )
   }
 
@@ -74,7 +73,7 @@ class AllScalarTypesFields(val `_path`: java.util.List[Path]) extends TupleExpr3
       None,
       None,
       (row, value) => row.copy(colInt = value),
-      ScalaDbTypes.SqlServerTypes.int_
+      SqlServerTypes.int_.underlying
     )
   }
 
@@ -86,7 +85,7 @@ class AllScalarTypesFields(val `_path`: java.util.List[Path]) extends TupleExpr3
       None,
       None,
       (row, value) => row.copy(colBigint = value),
-      ScalaDbTypes.SqlServerTypes.bigint
+      SqlServerTypes.bigint.underlying
     )
   }
 
@@ -98,7 +97,7 @@ class AllScalarTypesFields(val `_path`: java.util.List[Path]) extends TupleExpr3
       None,
       None,
       (row, value) => row.copy(colDecimal = value),
-      ScalaDbTypes.SqlServerTypes.decimal
+      SqlServerTypes.decimal.underlying
     )
   }
 
@@ -110,7 +109,7 @@ class AllScalarTypesFields(val `_path`: java.util.List[Path]) extends TupleExpr3
       None,
       None,
       (row, value) => row.copy(colNumeric = value),
-      ScalaDbTypes.SqlServerTypes.decimal
+      SqlServerTypes.decimal.underlying
     )
   }
 
@@ -122,7 +121,7 @@ class AllScalarTypesFields(val `_path`: java.util.List[Path]) extends TupleExpr3
       None,
       None,
       (row, value) => row.copy(colMoney = value),
-      ScalaDbTypes.SqlServerTypes.money
+      SqlServerTypes.money.underlying
     )
   }
 
@@ -134,7 +133,7 @@ class AllScalarTypesFields(val `_path`: java.util.List[Path]) extends TupleExpr3
       None,
       None,
       (row, value) => row.copy(colSmallmoney = value),
-      ScalaDbTypes.SqlServerTypes.smallmoney
+      SqlServerTypes.smallmoney.underlying
     )
   }
 
@@ -146,7 +145,7 @@ class AllScalarTypesFields(val `_path`: java.util.List[Path]) extends TupleExpr3
       None,
       None,
       (row, value) => row.copy(colReal = value),
-      ScalaDbTypes.SqlServerTypes.real
+      SqlServerTypes.real.underlying
     )
   }
 
@@ -158,7 +157,7 @@ class AllScalarTypesFields(val `_path`: java.util.List[Path]) extends TupleExpr3
       None,
       None,
       (row, value) => row.copy(colFloat = value),
-      ScalaDbTypes.SqlServerTypes.float_
+      SqlServerTypes.float_.underlying
     )
   }
 
@@ -170,7 +169,7 @@ class AllScalarTypesFields(val `_path`: java.util.List[Path]) extends TupleExpr3
       None,
       None,
       (row, value) => row.copy(colBit = value),
-      ScalaDbTypes.SqlServerTypes.bit
+      SqlServerTypes.bit.underlying
     )
   }
 
@@ -182,7 +181,7 @@ class AllScalarTypesFields(val `_path`: java.util.List[Path]) extends TupleExpr3
       None,
       None,
       (row, value) => row.copy(colChar = value),
-      SqlServerTypes.char_
+      SqlServerTypes.char_.underlying
     )
   }
 
@@ -194,7 +193,7 @@ class AllScalarTypesFields(val `_path`: java.util.List[Path]) extends TupleExpr3
       None,
       None,
       (row, value) => row.copy(colVarchar = value),
-      SqlServerTypes.varchar
+      SqlServerTypes.varchar.underlying
     )
   }
 
@@ -206,7 +205,7 @@ class AllScalarTypesFields(val `_path`: java.util.List[Path]) extends TupleExpr3
       None,
       None,
       (row, value) => row.copy(colVarcharMax = value),
-      SqlServerTypes.varchar
+      SqlServerTypes.varchar.underlying
     )
   }
 
@@ -218,7 +217,7 @@ class AllScalarTypesFields(val `_path`: java.util.List[Path]) extends TupleExpr3
       None,
       None,
       (row, value) => row.copy(colText = value),
-      SqlServerTypes.text
+      SqlServerTypes.text.underlying
     )
   }
 
@@ -230,7 +229,7 @@ class AllScalarTypesFields(val `_path`: java.util.List[Path]) extends TupleExpr3
       None,
       None,
       (row, value) => row.copy(colNchar = value),
-      SqlServerTypes.nchar
+      SqlServerTypes.nchar.underlying
     )
   }
 
@@ -242,7 +241,7 @@ class AllScalarTypesFields(val `_path`: java.util.List[Path]) extends TupleExpr3
       None,
       None,
       (row, value) => row.copy(colNvarchar = value),
-      SqlServerTypes.nvarchar
+      SqlServerTypes.nvarchar.underlying
     )
   }
 
@@ -254,7 +253,7 @@ class AllScalarTypesFields(val `_path`: java.util.List[Path]) extends TupleExpr3
       None,
       None,
       (row, value) => row.copy(colNvarcharMax = value),
-      SqlServerTypes.nvarchar
+      SqlServerTypes.nvarchar.underlying
     )
   }
 
@@ -266,7 +265,7 @@ class AllScalarTypesFields(val `_path`: java.util.List[Path]) extends TupleExpr3
       None,
       None,
       (row, value) => row.copy(colNtext = value),
-      SqlServerTypes.ntext
+      SqlServerTypes.ntext.underlying
     )
   }
 
@@ -278,7 +277,7 @@ class AllScalarTypesFields(val `_path`: java.util.List[Path]) extends TupleExpr3
       None,
       None,
       (row, value) => row.copy(colBinary = value),
-      SqlServerTypes.binary
+      SqlServerTypes.binary.underlying
     )
   }
 
@@ -290,7 +289,7 @@ class AllScalarTypesFields(val `_path`: java.util.List[Path]) extends TupleExpr3
       None,
       None,
       (row, value) => row.copy(colVarbinary = value),
-      SqlServerTypes.varbinary
+      SqlServerTypes.varbinary.underlying
     )
   }
 
@@ -302,7 +301,7 @@ class AllScalarTypesFields(val `_path`: java.util.List[Path]) extends TupleExpr3
       None,
       None,
       (row, value) => row.copy(colVarbinaryMax = value),
-      SqlServerTypes.varbinary
+      SqlServerTypes.varbinary.underlying
     )
   }
 
@@ -314,7 +313,7 @@ class AllScalarTypesFields(val `_path`: java.util.List[Path]) extends TupleExpr3
       None,
       None,
       (row, value) => row.copy(colImage = value),
-      SqlServerTypes.image
+      SqlServerTypes.image.underlying
     )
   }
 
@@ -326,7 +325,7 @@ class AllScalarTypesFields(val `_path`: java.util.List[Path]) extends TupleExpr3
       None,
       None,
       (row, value) => row.copy(colDate = value),
-      SqlServerTypes.date
+      SqlServerTypes.date.underlying
     )
   }
 
@@ -338,7 +337,7 @@ class AllScalarTypesFields(val `_path`: java.util.List[Path]) extends TupleExpr3
       None,
       None,
       (row, value) => row.copy(colTime = value),
-      SqlServerTypes.time
+      SqlServerTypes.time.underlying
     )
   }
 
@@ -350,7 +349,7 @@ class AllScalarTypesFields(val `_path`: java.util.List[Path]) extends TupleExpr3
       None,
       None,
       (row, value) => row.copy(colDatetime = value),
-      SqlServerTypes.datetime
+      SqlServerTypes.datetime.underlying
     )
   }
 
@@ -362,7 +361,7 @@ class AllScalarTypesFields(val `_path`: java.util.List[Path]) extends TupleExpr3
       None,
       None,
       (row, value) => row.copy(colSmalldatetime = value),
-      SqlServerTypes.smalldatetime
+      SqlServerTypes.smalldatetime.underlying
     )
   }
 
@@ -374,7 +373,7 @@ class AllScalarTypesFields(val `_path`: java.util.List[Path]) extends TupleExpr3
       None,
       None,
       (row, value) => row.copy(colDatetime2 = value),
-      SqlServerTypes.datetime2
+      SqlServerTypes.datetime2.underlying
     )
   }
 
@@ -386,7 +385,7 @@ class AllScalarTypesFields(val `_path`: java.util.List[Path]) extends TupleExpr3
       None,
       None,
       (row, value) => row.copy(colDatetimeoffset = value),
-      SqlServerTypes.datetimeoffset
+      SqlServerTypes.datetimeoffset.underlying
     )
   }
 
@@ -398,7 +397,7 @@ class AllScalarTypesFields(val `_path`: java.util.List[Path]) extends TupleExpr3
       None,
       None,
       (row, value) => row.copy(colUniqueidentifier = value),
-      SqlServerTypes.uniqueidentifier
+      SqlServerTypes.uniqueidentifier.underlying
     )
   }
 
@@ -410,7 +409,7 @@ class AllScalarTypesFields(val `_path`: java.util.List[Path]) extends TupleExpr3
       None,
       None,
       (row, value) => row.copy(colXml = value),
-      SqlServerTypes.xml
+      SqlServerTypes.xml.underlying
     )
   }
 
@@ -422,7 +421,7 @@ class AllScalarTypesFields(val `_path`: java.util.List[Path]) extends TupleExpr3
       None,
       None,
       (row, value) => row.copy(colJson = value),
-      SqlServerTypes.json
+      SqlServerTypes.json.underlying
     )
   }
 
@@ -434,7 +433,7 @@ class AllScalarTypesFields(val `_path`: java.util.List[Path]) extends TupleExpr3
       None,
       None,
       (row, value) => row.copy(colRowversion = value),
-      SqlServerTypes.rowversion
+      SqlServerTypes.rowversion.underlying
     )
   }
 
@@ -446,7 +445,7 @@ class AllScalarTypesFields(val `_path`: java.util.List[Path]) extends TupleExpr3
       None,
       None,
       (row, value) => row.copy(colHierarchyid = value),
-      SqlServerTypes.hierarchyid
+      SqlServerTypes.hierarchyid.underlying
     )
   }
 
@@ -458,7 +457,7 @@ class AllScalarTypesFields(val `_path`: java.util.List[Path]) extends TupleExpr3
       None,
       None,
       (row, value) => row.copy(colGeography = value),
-      SqlServerTypes.geography
+      SqlServerTypes.geography.underlying
     )
   }
 
@@ -470,7 +469,7 @@ class AllScalarTypesFields(val `_path`: java.util.List[Path]) extends TupleExpr3
       None,
       None,
       (row, value) => row.copy(colGeometry = value),
-      SqlServerTypes.geometry
+      SqlServerTypes.geometry.underlying
     )
   }
 
@@ -482,13 +481,13 @@ class AllScalarTypesFields(val `_path`: java.util.List[Path]) extends TupleExpr3
       None,
       None,
       (row, value) => row.copy(colNotNull = value),
-      SqlServerTypes.nvarchar
+      SqlServerTypes.nvarchar.underlying
     )
   }
 
   override def columns: java.util.List[FieldLike[?, AllScalarTypesRow]] = java.util.List.of(this.id.underlying, this.colTinyint.underlying, this.colSmallint.underlying, this.colInt.underlying, this.colBigint.underlying, this.colDecimal.underlying, this.colNumeric.underlying, this.colMoney.underlying, this.colSmallmoney.underlying, this.colReal.underlying, this.colFloat.underlying, this.colBit.underlying, this.colChar.underlying, this.colVarchar.underlying, this.colVarcharMax.underlying, this.colText.underlying, this.colNchar.underlying, this.colNvarchar.underlying, this.colNvarcharMax.underlying, this.colNtext.underlying, this.colBinary.underlying, this.colVarbinary.underlying, this.colVarbinaryMax.underlying, this.colImage.underlying, this.colDate.underlying, this.colTime.underlying, this.colDatetime.underlying, this.colSmalldatetime.underlying, this.colDatetime2.underlying, this.colDatetimeoffset.underlying, this.colUniqueidentifier.underlying, this.colXml.underlying, this.colJson.underlying, this.colRowversion.underlying, this.colHierarchyid.underlying, this.colGeography.underlying, this.colGeometry.underlying, this.colNotNull.underlying)
 
-  override def rowParser: RowParser[AllScalarTypesRow] = AllScalarTypesRow._rowParser.underlying
+  override def rowCodec: RowCodec[AllScalarTypesRow] = AllScalarTypesRow.rowCodec.underlying
 
   override def withPaths(`_path`: java.util.List[Path]): RelationStructure[AllScalarTypesFields, AllScalarTypesRow] = new AllScalarTypesFields(`_path`)
 

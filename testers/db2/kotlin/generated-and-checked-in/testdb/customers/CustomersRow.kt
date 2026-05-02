@@ -6,11 +6,10 @@
 package testdb.customers
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import dev.typr.foundations.Db2Types
+import dev.typr.dslkt.RowCodecs
 import dev.typr.foundations.Tuple.Tuple4
-import dev.typr.foundations.kotlin.RowParser
-import dev.typr.foundations.kotlin.RowParsers
-import dev.typr.foundations.kotlin.nullable
+import dev.typr.foundationskt.Db2Types
+import dev.typr.foundationskt.RowCodec
 import java.time.LocalDateTime
 import testdb.customtypes.Defaulted
 
@@ -24,17 +23,17 @@ data class CustomersRow(
     */
   @field:JsonProperty("CUSTOMER_ID") val customerId: CustomersId,
   /** Full name of the customer */
-  @field:JsonProperty("NAME") val name: String,
+  @field:JsonProperty("NAME") val name: kotlin.String,
   /** Email address used for contact and login */
-  @field:JsonProperty("EMAIL") val email: String,
+  @field:JsonProperty("EMAIL") val email: kotlin.String,
   /** Default: CURRENT TIMESTAMP */
   @field:JsonProperty("CREATED_AT") val createdAt: LocalDateTime?
-) : Tuple4<CustomersId, String, String, LocalDateTime?> {
+) : Tuple4<CustomersId, kotlin.String, kotlin.String, LocalDateTime?> {
   override fun _1(): CustomersId = customerId
 
-  override fun _2(): String = name
+  override fun _2(): kotlin.String = name
 
-  override fun _3(): String = email
+  override fun _3(): kotlin.String = email
 
   override fun _4(): LocalDateTime? = createdAt
 
@@ -46,6 +45,6 @@ data class CustomersRow(
   ): CustomersRowUnsaved = CustomersRowUnsaved(name, email, customerId, createdAt)
 
   companion object {
-    val _rowParser: RowParser<CustomersRow> = RowParsers.of(CustomersId.db2Type, Db2Types.varchar, Db2Types.varchar, Db2Types.timestamp.nullable(), { t0, t1, t2, t3 -> CustomersRow(t0, t1, t2, t3) }, { row -> arrayOf<Any?>(row.customerId, row.name, row.email, row.createdAt) })
+    val rowCodec: RowCodec<CustomersRow> = RowCodecs.of(CustomersId.db2Type, Db2Types.varchar, Db2Types.varchar, Db2Types.timestamp.opt(), { t0: CustomersId, t1: kotlin.String, t2: kotlin.String, t3: LocalDateTime? -> CustomersRow(t0, t1, t2, t3) }, { row: CustomersRow -> arrayOf<Any?>(row.customerId, row.name, row.email, row.createdAt) })
   }
 }

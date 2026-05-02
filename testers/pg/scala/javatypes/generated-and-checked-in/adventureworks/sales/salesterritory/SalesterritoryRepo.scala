@@ -5,10 +5,11 @@
  */
 package adventureworks.sales.salesterritory
 
-import dev.typr.foundations.dsl.DeleteBuilder
-import dev.typr.foundations.dsl.SelectBuilder
-import dev.typr.foundations.dsl.UpdateBuilder
-import java.sql.Connection
+import dev.typr.dsl.DeleteBuilder
+import dev.typr.dsl.SelectBuilder
+import dev.typr.dsl.UpdateBuilder
+import dev.typr.foundations.Connection
+import dev.typr.foundations.ConnectionRead
 import java.util.Optional
 
 trait SalesterritoryRepo {
@@ -16,7 +17,7 @@ trait SalesterritoryRepo {
 
   def deleteById(territoryid: SalesterritoryId)(using c: Connection): java.lang.Boolean
 
-  def deleteByIds(territoryids: Array[SalesterritoryId])(using c: Connection): Integer
+  def deleteByIds(territoryids: java.util.List[SalesterritoryId])(using c: Connection): Integer
 
   def insert(unsaved: SalesterritoryRow)(using c: Connection): SalesterritoryRow
 
@@ -35,13 +36,13 @@ trait SalesterritoryRepo {
 
   def select: SelectBuilder[SalesterritoryFields, SalesterritoryRow]
 
-  def selectAll(using c: Connection): java.util.List[SalesterritoryRow]
+  def selectAll(using c: ConnectionRead): java.util.List[SalesterritoryRow]
 
-  def selectById(territoryid: SalesterritoryId)(using c: Connection): Optional[SalesterritoryRow]
+  def selectById(territoryid: SalesterritoryId)(using c: ConnectionRead): Optional[SalesterritoryRow]
 
-  def selectByIds(territoryids: Array[SalesterritoryId])(using c: Connection): java.util.List[SalesterritoryRow]
+  def selectByIds(territoryids: java.util.List[SalesterritoryId])(using c: ConnectionRead): java.util.List[SalesterritoryRow]
 
-  def selectByIdsTracked(territoryids: Array[SalesterritoryId])(using c: Connection): java.util.Map[SalesterritoryId, SalesterritoryRow]
+  def selectByIdsTracked(territoryids: java.util.List[SalesterritoryId])(using c: ConnectionRead): java.util.Map[SalesterritoryId, SalesterritoryRow]
 
   def update: UpdateBuilder[SalesterritoryFields, SalesterritoryRow]
 

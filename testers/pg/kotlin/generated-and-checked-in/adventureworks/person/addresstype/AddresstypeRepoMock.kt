@@ -5,17 +5,18 @@
  */
 package adventureworks.person.addresstype
 
-import dev.typr.foundations.kotlin.DeleteBuilder
-import dev.typr.foundations.kotlin.DeleteBuilderMock
-import dev.typr.foundations.kotlin.DeleteParams
-import dev.typr.foundations.kotlin.SelectBuilder
-import dev.typr.foundations.kotlin.SelectBuilderMock
-import dev.typr.foundations.kotlin.SelectParams
-import dev.typr.foundations.kotlin.UpdateBuilder
-import dev.typr.foundations.kotlin.UpdateBuilderMock
-import dev.typr.foundations.kotlin.UpdateParams
+import dev.typr.dslkt.DeleteBuilder
+import dev.typr.dslkt.DeleteBuilderMock
+import dev.typr.dslkt.DeleteParams
+import dev.typr.dslkt.SelectBuilder
+import dev.typr.dslkt.SelectBuilderMock
+import dev.typr.dslkt.SelectParams
+import dev.typr.dslkt.UpdateBuilder
+import dev.typr.dslkt.UpdateBuilderMock
+import dev.typr.dslkt.UpdateParams
+import dev.typr.foundationskt.Connection
+import dev.typr.foundationskt.ConnectionRead
 import java.lang.RuntimeException
-import java.sql.Connection
 import java.util.ArrayList
 import kotlin.collections.Iterator
 import kotlin.collections.List
@@ -31,10 +32,10 @@ data class AddresstypeRepoMock(
   override fun deleteById(
     addresstypeid: AddresstypeId,
     c: Connection
-  ): Boolean = map.remove(addresstypeid) != null
+  ): kotlin.Boolean = map.remove(addresstypeid) != null
 
   override fun deleteByIds(
-    addresstypeids: Array<AddresstypeId>,
+    addresstypeids: List<AddresstypeId>,
     c: Connection
   ): Int {
     var count = 0
@@ -66,7 +67,7 @@ data class AddresstypeRepoMock(
     unsaved: Iterator<AddresstypeRow>,
     batchSize: Int,
     c: Connection
-  ): Long {
+  ): kotlin.Long {
     var count = 0L
     while (unsaved.hasNext()) {
       val row = unsaved.next()
@@ -81,7 +82,7 @@ data class AddresstypeRepoMock(
     unsaved: Iterator<AddresstypeRowUnsaved>,
     batchSize: Int,
     c: Connection
-  ): Long {
+  ): kotlin.Long {
     var count = 0L
     while (unsaved.hasNext()) {
       val unsavedRow = unsaved.next()
@@ -94,16 +95,16 @@ data class AddresstypeRepoMock(
 
   override fun select(): SelectBuilder<AddresstypeFields, AddresstypeRow> = SelectBuilderMock(AddresstypeFields.structure, { map.values.toList() }, SelectParams.empty())
 
-  override fun selectAll(c: Connection): List<AddresstypeRow> = map.values.toList()
+  override fun selectAll(c: ConnectionRead): List<AddresstypeRow> = map.values.toList()
 
   override fun selectById(
     addresstypeid: AddresstypeId,
-    c: Connection
+    c: ConnectionRead
   ): AddresstypeRow? = map[addresstypeid]
 
   override fun selectByIds(
-    addresstypeids: Array<AddresstypeId>,
-    c: Connection
+    addresstypeids: List<AddresstypeId>,
+    c: ConnectionRead
   ): List<AddresstypeRow> {
     val result = ArrayList<AddresstypeRow>()
     for (id in addresstypeids) {
@@ -116,8 +117,8 @@ data class AddresstypeRepoMock(
   }
 
   override fun selectByIdsTracked(
-    addresstypeids: Array<AddresstypeId>,
-    c: Connection
+    addresstypeids: List<AddresstypeId>,
+    c: ConnectionRead
   ): Map<AddresstypeId, AddresstypeRow> = selectByIds(addresstypeids, c).associateBy({ row: AddresstypeRow -> row.addresstypeid })
 
   override fun update(): UpdateBuilder<AddresstypeFields, AddresstypeRow> = UpdateBuilderMock(AddresstypeFields.structure, { map.values.toList() }, UpdateParams.empty(), { row -> row })
@@ -125,7 +126,7 @@ data class AddresstypeRepoMock(
   override fun update(
     row: AddresstypeRow,
     c: Connection
-  ): Boolean {
+  ): kotlin.Boolean {
     val shouldUpdate = map[row.addresstypeid]?.takeIf({ oldRow -> (oldRow != row) }) != null
     if (shouldUpdate) {
       map[row.addresstypeid] = row

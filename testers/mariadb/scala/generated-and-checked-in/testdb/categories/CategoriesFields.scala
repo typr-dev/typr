@@ -5,20 +5,19 @@
  */
 package testdb.categories
 
-import dev.typr.foundations.MariaTypes
-import dev.typr.foundations.RowParser
+import dev.typr.dsl.FieldsBase
+import dev.typr.dsl.Path
+import dev.typr.dsl.SqlExpr.FieldLike
+import dev.typr.dslsc.ForeignKey
+import dev.typr.dslsc.RelationStructure
+import dev.typr.dslsc.SqlExpr
+import dev.typr.dslsc.SqlExpr.Field
+import dev.typr.dslsc.SqlExpr.IdField
+import dev.typr.dslsc.SqlExpr.OptField
+import dev.typr.dslsc.TupleExpr9
+import dev.typr.foundations.RowCodec
 import dev.typr.foundations.data.Json
-import dev.typr.foundations.dsl.FieldsBase
-import dev.typr.foundations.dsl.Path
-import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.scala.ForeignKey
-import dev.typr.foundations.scala.RelationStructure
-import dev.typr.foundations.scala.ScalaDbTypes
-import dev.typr.foundations.scala.SqlExpr
-import dev.typr.foundations.scala.SqlExpr.Field
-import dev.typr.foundations.scala.SqlExpr.IdField
-import dev.typr.foundations.scala.SqlExpr.OptField
-import dev.typr.foundations.scala.TupleExpr9
+import dev.typr.foundationssc.MariaTypes
 
 class CategoriesFields(val `_path`: java.util.List[Path]) extends TupleExpr9[CategoriesId, CategoriesId, String, String, String, String, Short, Boolean, Json] with RelationStructure[CategoriesFields, CategoriesRow]  with FieldsBase[CategoriesRow] {
   def categoryId: IdField[CategoriesId, CategoriesRow] = {
@@ -29,7 +28,7 @@ class CategoriesFields(val `_path`: java.util.List[Path]) extends TupleExpr9[Cat
       None,
       None,
       (row, value) => row.copy(categoryId = value),
-      CategoriesId.mariaType
+      CategoriesId.mariaType.underlying
     )
   }
 
@@ -41,7 +40,7 @@ class CategoriesFields(val `_path`: java.util.List[Path]) extends TupleExpr9[Cat
       None,
       None,
       (row, value) => row.copy(parentId = value),
-      CategoriesId.mariaType
+      CategoriesId.mariaType.underlying
     )
   }
 
@@ -53,7 +52,7 @@ class CategoriesFields(val `_path`: java.util.List[Path]) extends TupleExpr9[Cat
       None,
       None,
       (row, value) => row.copy(name = value),
-      MariaTypes.varchar
+      MariaTypes.varchar.underlying
     )
   }
 
@@ -65,7 +64,7 @@ class CategoriesFields(val `_path`: java.util.List[Path]) extends TupleExpr9[Cat
       None,
       None,
       (row, value) => row.copy(slug = value),
-      MariaTypes.varchar
+      MariaTypes.varchar.underlying
     )
   }
 
@@ -77,7 +76,7 @@ class CategoriesFields(val `_path`: java.util.List[Path]) extends TupleExpr9[Cat
       None,
       None,
       (row, value) => row.copy(description = value),
-      MariaTypes.mediumtext
+      MariaTypes.mediumtext.underlying
     )
   }
 
@@ -89,7 +88,7 @@ class CategoriesFields(val `_path`: java.util.List[Path]) extends TupleExpr9[Cat
       None,
       None,
       (row, value) => row.copy(imageUrl = value),
-      MariaTypes.varchar
+      MariaTypes.varchar.underlying
     )
   }
 
@@ -101,7 +100,7 @@ class CategoriesFields(val `_path`: java.util.List[Path]) extends TupleExpr9[Cat
       None,
       None,
       (row, value) => row.copy(sortOrder = value),
-      ScalaDbTypes.MariaTypes.smallint
+      MariaTypes.smallint.underlying
     )
   }
 
@@ -113,7 +112,7 @@ class CategoriesFields(val `_path`: java.util.List[Path]) extends TupleExpr9[Cat
       None,
       None,
       (row, value) => row.copy(isVisible = value),
-      ScalaDbTypes.MariaTypes.bool
+      MariaTypes.bool.underlying
     )
   }
 
@@ -125,7 +124,7 @@ class CategoriesFields(val `_path`: java.util.List[Path]) extends TupleExpr9[Cat
       None,
       None,
       (row, value) => row.copy(metadata = value),
-      MariaTypes.json
+      MariaTypes.json.underlying
     )
   }
 
@@ -133,7 +132,7 @@ class CategoriesFields(val `_path`: java.util.List[Path]) extends TupleExpr9[Cat
 
   override def columns: java.util.List[FieldLike[?, CategoriesRow]] = java.util.List.of(this.categoryId.underlying, this.parentId.underlying, this.name.underlying, this.slug.underlying, this.description.underlying, this.imageUrl.underlying, this.sortOrder.underlying, this.isVisible.underlying, this.metadata.underlying)
 
-  override def rowParser: RowParser[CategoriesRow] = CategoriesRow._rowParser.underlying
+  override def rowCodec: RowCodec[CategoriesRow] = CategoriesRow.rowCodec.underlying
 
   override def withPaths(`_path`: java.util.List[Path]): RelationStructure[CategoriesFields, CategoriesRow] = new CategoriesFields(`_path`)
 

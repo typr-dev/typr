@@ -6,9 +6,9 @@
 package testdb.precision_types
 
 import com.fasterxml.jackson.annotation.JsonValue
-import dev.typr.foundations.SqlServerType
-import dev.typr.foundations.kotlin.Bijection
-import dev.typr.foundations.kotlin.KotlinDbTypes
+import dev.typr.foundationskt.Bijection
+import dev.typr.foundationskt.SqlServerType
+import dev.typr.foundationskt.SqlServerTypes
 
 /** Type for the primary key of table `precision_types` */
 data class PrecisionTypesId(@field:JsonValue val value: Int) {
@@ -21,6 +21,6 @@ data class PrecisionTypesId(@field:JsonValue val value: Int) {
       Bijection.of(PrecisionTypesId::value, ::PrecisionTypesId)
 
     val sqlServerType: SqlServerType<PrecisionTypesId> =
-      KotlinDbTypes.SqlServerTypes.int_.bimap(::PrecisionTypesId, PrecisionTypesId::value)
+      SqlServerTypes.int_.to(Bijection.of(::PrecisionTypesId, PrecisionTypesId::value))
   }
 }

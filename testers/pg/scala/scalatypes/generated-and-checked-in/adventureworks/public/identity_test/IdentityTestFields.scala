@@ -5,16 +5,16 @@
  */
 package adventureworks.public.identity_test
 
-import dev.typr.foundations.RowParser
-import dev.typr.foundations.dsl.FieldsBase
-import dev.typr.foundations.dsl.Path
-import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.scala.RelationStructure
-import dev.typr.foundations.scala.ScalaDbTypes
-import dev.typr.foundations.scala.SqlExpr
-import dev.typr.foundations.scala.SqlExpr.Field
-import dev.typr.foundations.scala.SqlExpr.IdField
-import dev.typr.foundations.scala.TupleExpr3
+import dev.typr.dsl.FieldsBase
+import dev.typr.dsl.Path
+import dev.typr.dsl.SqlExpr.FieldLike
+import dev.typr.dslsc.RelationStructure
+import dev.typr.dslsc.SqlExpr
+import dev.typr.dslsc.SqlExpr.Field
+import dev.typr.dslsc.SqlExpr.IdField
+import dev.typr.dslsc.TupleExpr3
+import dev.typr.foundations.RowCodec
+import dev.typr.foundationssc.PgTypes
 
 class IdentityTestFields(val `_path`: java.util.List[Path]) extends TupleExpr3[Int, Int, IdentityTestId] with RelationStructure[IdentityTestFields, IdentityTestRow]  with FieldsBase[IdentityTestRow] {
   def alwaysGenerated: Field[Int, IdentityTestRow] = {
@@ -25,7 +25,7 @@ class IdentityTestFields(val `_path`: java.util.List[Path]) extends TupleExpr3[I
       None,
       Some("int4"),
       (row, value) => row.copy(alwaysGenerated = value),
-      ScalaDbTypes.PgTypes.int4
+      PgTypes.int4.underlying
     )
   }
 
@@ -37,7 +37,7 @@ class IdentityTestFields(val `_path`: java.util.List[Path]) extends TupleExpr3[I
       None,
       Some("int4"),
       (row, value) => row.copy(defaultGenerated = value),
-      ScalaDbTypes.PgTypes.int4
+      PgTypes.int4.underlying
     )
   }
 
@@ -49,13 +49,13 @@ class IdentityTestFields(val `_path`: java.util.List[Path]) extends TupleExpr3[I
       None,
       None,
       (row, value) => row.copy(name = value),
-      IdentityTestId.pgType
+      IdentityTestId.pgType.underlying
     )
   }
 
   override def columns: java.util.List[FieldLike[?, IdentityTestRow]] = java.util.List.of(this.alwaysGenerated.underlying, this.defaultGenerated.underlying, this.name.underlying)
 
-  override def rowParser: RowParser[IdentityTestRow] = IdentityTestRow._rowParser.underlying
+  override def rowCodec: RowCodec[IdentityTestRow] = IdentityTestRow.rowCodec.underlying
 
   override def withPaths(`_path`: java.util.List[Path]): RelationStructure[IdentityTestFields, IdentityTestRow] = new IdentityTestFields(`_path`)
 

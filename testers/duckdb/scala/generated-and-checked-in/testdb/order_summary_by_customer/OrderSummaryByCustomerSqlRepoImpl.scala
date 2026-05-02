@@ -5,18 +5,17 @@
  */
 package testdb.order_summary_by_customer
 
-import dev.typr.foundations.scala.DbTypeOps
-import dev.typr.foundations.scala.Fragment
-import dev.typr.foundations.scala.ScalaDbTypes
-import java.sql.Connection
-import dev.typr.foundations.scala.Fragment.sql
+import dev.typr.foundationssc.ConnectionRead
+import dev.typr.foundationssc.DuckDbTypes
+import dev.typr.foundationssc.Fragment
+import dev.typr.foundationssc.Fragment.sql
 
 class OrderSummaryByCustomerSqlRepoImpl extends OrderSummaryByCustomerSqlRepo {
   override def apply(
-    customerIds: Option[Array[Int]],
+    customerIds: Option[List[Int]],
     minTotal: Option[BigDecimal],
     minOrderCount: Option[Int]
-  )(using c: Connection): List[OrderSummaryByCustomerSqlRow] = {
+  )(using c: ConnectionRead): List[OrderSummaryByCustomerSqlRow] = {
     sql"""-- Order summary with aggregations and complex joins
     -- Tests: aggregations, GROUP BY, HAVING, multiple joins, type-safe IDs in WHERE
   
@@ -33,16 +32,16 @@ class OrderSummaryByCustomerSqlRepoImpl extends OrderSummaryByCustomerSqlRepo {
     FROM customers c
     LEFT JOIN orders o ON c.customer_id = o.customer_id
     WHERE
-        (${Fragment.encode(ScalaDbTypes.DuckDbTypes.integerArrayUnboxed.nullable, customerIds)} IS NULL OR c.customer_id = ANY(CAST(${Fragment.encode(ScalaDbTypes.DuckDbTypes.integerArrayUnboxed.nullable, customerIds)} AS INTEGER[])))
-        AND (${Fragment.encode(ScalaDbTypes.DuckDbTypes.numeric.nullable, minTotal)} IS NULL OR c.customer_id IN (
+        (${Fragment.encode(DuckDbTypes.integer.list.opt, customerIds)} IS NULL OR c.customer_id = ANY(CAST(${Fragment.encode(DuckDbTypes.integer.list.opt, customerIds)} AS INTEGER[])))
+        AND (${Fragment.encode(DuckDbTypes.numeric.opt, minTotal)} IS NULL OR c.customer_id IN (
             SELECT customer_id
             FROM orders
             GROUP BY customer_id
-            HAVING SUM(total_amount) >= CAST(${Fragment.encode(ScalaDbTypes.DuckDbTypes.numeric.nullable, minTotal)} AS DECIMAL)
+            HAVING SUM(total_amount) >= CAST(${Fragment.encode(DuckDbTypes.numeric.opt, minTotal)} AS DECIMAL)
         ))
     GROUP BY c.customer_id, c.name, c.email, c.priority
     HAVING
-        (${Fragment.encode(ScalaDbTypes.DuckDbTypes.integer.nullable, minOrderCount)} IS NULL OR COUNT(DISTINCT o.order_id) >= CAST(${Fragment.encode(ScalaDbTypes.DuckDbTypes.integer.nullable, minOrderCount)} AS INTEGER))
-    ORDER BY total_spent DESC, customer_name""".query(OrderSummaryByCustomerSqlRow.`_rowParser`.all()).runUnchecked(c)
+        (${Fragment.encode(DuckDbTypes.integer.opt, minOrderCount)} IS NULL OR COUNT(DISTINCT o.order_id) >= CAST(${Fragment.encode(DuckDbTypes.integer.opt, minOrderCount)} AS INTEGER))
+    ORDER BY total_spent DESC, customer_name""".query(OrderSummaryByCustomerSqlRow.rowCodec.all()).run(using c)
   }
 }

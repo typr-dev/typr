@@ -5,68 +5,68 @@
  */
 package testdb.warehouses
 
-import dev.typr.foundations.MariaTypes
-import dev.typr.foundations.scala.DbTypeOps
-import dev.typr.foundations.scala.DeleteBuilder
-import dev.typr.foundations.scala.Dialect
-import dev.typr.foundations.scala.Fragment
-import dev.typr.foundations.scala.SelectBuilder
-import dev.typr.foundations.scala.UpdateBuilder
-import java.sql.Connection
+import dev.typr.dslsc.DeleteBuilder
+import dev.typr.dslsc.Dialect
+import dev.typr.dslsc.SelectBuilder
+import dev.typr.dslsc.UpdateBuilder
+import dev.typr.foundationssc.Connection
+import dev.typr.foundationssc.ConnectionRead
+import dev.typr.foundationssc.Fragment
+import dev.typr.foundationssc.MariaTypes
 import scala.collection.mutable.ListBuffer
 import testdb.userdefined.Email
 import testdb.userdefined.IsActive
-import dev.typr.foundations.scala.Fragment.sql
+import dev.typr.foundationssc.Fragment.sql
 
 class WarehousesRepoImpl extends WarehousesRepo {
   override def delete: DeleteBuilder[WarehousesFields, WarehousesRow] = DeleteBuilder.of("`warehouses`", WarehousesFields.structure, Dialect.MARIADB)
 
-  override def deleteById(warehouseId: WarehousesId)(using c: Connection): Boolean = sql"delete from `warehouses` where `warehouse_id` = ${Fragment.encode(WarehousesId.mariaType, warehouseId)}".update().runUnchecked(c) > 0
+  override def deleteById(warehouseId: WarehousesId)(using c: Connection): Boolean = sql"delete from `warehouses` where `warehouse_id` = ${Fragment.encode(WarehousesId.mariaType, warehouseId)}".update().run(using c) > 0
 
-  override def deleteByIds(warehouseIds: Array[WarehousesId])(using c: Connection): Int = {
+  override def deleteByIds(warehouseIds: List[WarehousesId])(using c: Connection): Int = {
     val fragments: ListBuffer[Fragment] = ListBuffer()
     warehouseIds.foreach { id => fragments.addOne(Fragment.encode(WarehousesId.mariaType, id)): @scala.annotation.nowarn }
-    return Fragment.interpolate(Fragment.lit("delete from `warehouses` where `warehouse_id` in ("), Fragment.comma(fragments), Fragment.lit(")")).update().runUnchecked(c)
+    return Fragment.concat(Fragment.of("delete from `warehouses` where `warehouse_id` in ("), Fragment.comma(fragments), Fragment.of(")")).update().run(using c)
   }
 
   override def insert(unsaved: WarehousesRow)(using c: Connection): WarehousesRow = {
   sql"""insert into `warehouses`(`code`, `name`, `address`, `location`, `service_area`, `timezone`, `is_active`, `contact_email`, `contact_phone`)
-    values (${Fragment.encode(MariaTypes.char_, unsaved.code)}, ${Fragment.encode(MariaTypes.varchar, unsaved.name)}, ${Fragment.encode(MariaTypes.varchar, unsaved.address)}, ${Fragment.encode(MariaTypes.point, unsaved.location)}, ${Fragment.encode(MariaTypes.polygon.nullable, unsaved.serviceArea)}, ${Fragment.encode(MariaTypes.varchar, unsaved.timezone)}, ${Fragment.encode(IsActive.mariaType, unsaved.isActive)}, ${Fragment.encode(Email.mariaType.nullable, unsaved.contactEmail)}, ${Fragment.encode(MariaTypes.varchar.nullable, unsaved.contactPhone)})
+    values (${Fragment.encode(MariaTypes.char_, unsaved.code)}, ${Fragment.encode(MariaTypes.varchar, unsaved.name)}, ${Fragment.encode(MariaTypes.varchar, unsaved.address)}, ${Fragment.encode(MariaTypes.point, unsaved.location)}, ${Fragment.encode(MariaTypes.polygon.opt, unsaved.serviceArea)}, ${Fragment.encode(MariaTypes.varchar, unsaved.timezone)}, ${Fragment.encode(IsActive.mariaType, unsaved.isActive)}, ${Fragment.encode(Email.mariaType.opt, unsaved.contactEmail)}, ${Fragment.encode(MariaTypes.varchar.opt, unsaved.contactPhone)})
     RETURNING `warehouse_id`, `code`, `name`, `address`, `location`, `service_area`, `timezone`, `is_active`, `contact_email`, `contact_phone`
     """
-    .updateReturning(WarehousesRow.`_rowParser`.exactlyOne()).runUnchecked(c)
+    .updateReturning(WarehousesRow.rowCodec.exactlyOne()).run(using c)
   }
 
   override def insert(unsaved: WarehousesRowUnsaved)(using c: Connection): WarehousesRow = {
     val columns: ListBuffer[Fragment] = ListBuffer()
     val values: ListBuffer[Fragment] = ListBuffer()
-    columns.addOne(Fragment.lit("`code`")): @scala.annotation.nowarn
+    columns.addOne(Fragment.of("`code`")): @scala.annotation.nowarn
     values.addOne(sql"${Fragment.encode(MariaTypes.char_, unsaved.code)}"): @scala.annotation.nowarn
-    columns.addOne(Fragment.lit("`name`")): @scala.annotation.nowarn
+    columns.addOne(Fragment.of("`name`")): @scala.annotation.nowarn
     values.addOne(sql"${Fragment.encode(MariaTypes.varchar, unsaved.name)}"): @scala.annotation.nowarn
-    columns.addOne(Fragment.lit("`address`")): @scala.annotation.nowarn
+    columns.addOne(Fragment.of("`address`")): @scala.annotation.nowarn
     values.addOne(sql"${Fragment.encode(MariaTypes.varchar, unsaved.address)}"): @scala.annotation.nowarn
-    columns.addOne(Fragment.lit("`location`")): @scala.annotation.nowarn
+    columns.addOne(Fragment.of("`location`")): @scala.annotation.nowarn
     values.addOne(sql"${Fragment.encode(MariaTypes.point, unsaved.location)}"): @scala.annotation.nowarn
     unsaved.serviceArea.visit(
       {  },
-      value => { columns.addOne(Fragment.lit("`service_area`")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(MariaTypes.polygon.nullable, value)}"): @scala.annotation.nowarn }
+      value => { columns.addOne(Fragment.of("`service_area`")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(MariaTypes.polygon.opt, value)}"): @scala.annotation.nowarn }
     );
     unsaved.timezone.visit(
       {  },
-      value => { columns.addOne(Fragment.lit("`timezone`")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(MariaTypes.varchar, value)}"): @scala.annotation.nowarn }
+      value => { columns.addOne(Fragment.of("`timezone`")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(MariaTypes.varchar, value)}"): @scala.annotation.nowarn }
     );
     unsaved.isActive.visit(
       {  },
-      value => { columns.addOne(Fragment.lit("`is_active`")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(IsActive.mariaType, value)}"): @scala.annotation.nowarn }
+      value => { columns.addOne(Fragment.of("`is_active`")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(IsActive.mariaType, value)}"): @scala.annotation.nowarn }
     );
     unsaved.contactEmail.visit(
       {  },
-      value => { columns.addOne(Fragment.lit("`contact_email`")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(Email.mariaType.nullable, value)}"): @scala.annotation.nowarn }
+      value => { columns.addOne(Fragment.of("`contact_email`")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(Email.mariaType.opt, value)}"): @scala.annotation.nowarn }
     );
     unsaved.contactPhone.visit(
       {  },
-      value => { columns.addOne(Fragment.lit("`contact_phone`")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(MariaTypes.varchar.nullable, value)}"): @scala.annotation.nowarn }
+      value => { columns.addOne(Fragment.of("`contact_phone`")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(MariaTypes.varchar.opt, value)}"): @scala.annotation.nowarn }
     );
     val q: Fragment = {
       sql"""insert into `warehouses`(${Fragment.comma(columns)})
@@ -74,43 +74,43 @@ class WarehousesRepoImpl extends WarehousesRepo {
       RETURNING `warehouse_id`, `code`, `name`, `address`, `location`, `service_area`, `timezone`, `is_active`, `contact_email`, `contact_phone`
       """
     }
-    return q.updateReturning(WarehousesRow.`_rowParser`.exactlyOne()).runUnchecked(c)
+    return q.updateReturning(WarehousesRow.rowCodec.exactlyOne()).run(using c)
   }
 
-  override def select: SelectBuilder[WarehousesFields, WarehousesRow] = SelectBuilder.of("`warehouses`", WarehousesFields.structure, WarehousesRow.`_rowParser`, Dialect.MARIADB)
+  override def select: SelectBuilder[WarehousesFields, WarehousesRow] = SelectBuilder.of("`warehouses`", WarehousesFields.structure, WarehousesRow.rowCodec, Dialect.MARIADB)
 
-  override def selectAll(using c: Connection): List[WarehousesRow] = {
+  override def selectAll(using c: ConnectionRead): List[WarehousesRow] = {
     sql"""select `warehouse_id`, `code`, `name`, `address`, `location`, `service_area`, `timezone`, `is_active`, `contact_email`, `contact_phone`
     from `warehouses`
-    """.query(WarehousesRow.`_rowParser`.all()).runUnchecked(c)
+    """.query(WarehousesRow.rowCodec.all()).run(using c)
   }
 
-  override def selectById(warehouseId: WarehousesId)(using c: Connection): Option[WarehousesRow] = {
+  override def selectById(warehouseId: WarehousesId)(using c: ConnectionRead): Option[WarehousesRow] = {
     sql"""select `warehouse_id`, `code`, `name`, `address`, `location`, `service_area`, `timezone`, `is_active`, `contact_email`, `contact_phone`
     from `warehouses`
-    where `warehouse_id` = ${Fragment.encode(WarehousesId.mariaType, warehouseId)}""".query(WarehousesRow.`_rowParser`.first()).runUnchecked(c)
+    where `warehouse_id` = ${Fragment.encode(WarehousesId.mariaType, warehouseId)}""".query(WarehousesRow.rowCodec.first()).run(using c)
   }
 
-  override def selectByIds(warehouseIds: Array[WarehousesId])(using c: Connection): List[WarehousesRow] = {
+  override def selectByIds(warehouseIds: List[WarehousesId])(using c: ConnectionRead): List[WarehousesRow] = {
     val fragments: ListBuffer[Fragment] = ListBuffer()
     warehouseIds.foreach { id => fragments.addOne(Fragment.encode(WarehousesId.mariaType, id)): @scala.annotation.nowarn }
-    return Fragment.interpolate(Fragment.lit("select `warehouse_id`, `code`, `name`, `address`, `location`, `service_area`, `timezone`, `is_active`, `contact_email`, `contact_phone` from `warehouses` where `warehouse_id` in ("), Fragment.comma(fragments), Fragment.lit(")")).query(WarehousesRow.`_rowParser`.all()).runUnchecked(c)
+    return Fragment.concat(Fragment.of("select `warehouse_id`, `code`, `name`, `address`, `location`, `service_area`, `timezone`, `is_active`, `contact_email`, `contact_phone` from `warehouses` where `warehouse_id` in ("), Fragment.comma(fragments), Fragment.of(")")).query(WarehousesRow.rowCodec.all()).run(using c)
   }
 
-  override def selectByIdsTracked(warehouseIds: Array[WarehousesId])(using c: Connection): Map[WarehousesId, WarehousesRow] = {
+  override def selectByIdsTracked(warehouseIds: List[WarehousesId])(using c: ConnectionRead): Map[WarehousesId, WarehousesRow] = {
     val ret: scala.collection.mutable.Map[WarehousesId, WarehousesRow] = scala.collection.mutable.Map.empty[WarehousesId, WarehousesRow]
     selectByIds(warehouseIds)(using c).foreach(row => ret.put(row.warehouseId, row): @scala.annotation.nowarn)
     return ret.toMap
   }
 
-  override def selectByUniqueCode(code: String)(using c: Connection): Option[WarehousesRow] = {
+  override def selectByUniqueCode(code: String)(using c: ConnectionRead): Option[WarehousesRow] = {
     sql"""select `warehouse_id`, `code`, `name`, `address`, `location`, `service_area`, `timezone`, `is_active`, `contact_email`, `contact_phone`
     from `warehouses`
     where `code` = ${Fragment.encode(MariaTypes.char_, code)}
-    """.query(WarehousesRow.`_rowParser`.first()).runUnchecked(c)
+    """.query(WarehousesRow.rowCodec.first()).run(using c)
   }
 
-  override def update: UpdateBuilder[WarehousesFields, WarehousesRow] = UpdateBuilder.of("`warehouses`", WarehousesFields.structure, WarehousesRow.`_rowParser`, Dialect.MARIADB)
+  override def update: UpdateBuilder[WarehousesFields, WarehousesRow] = UpdateBuilder.of("`warehouses`", WarehousesFields.structure, WarehousesRow.rowCodec, Dialect.MARIADB)
 
   override def update(row: WarehousesRow)(using c: Connection): Boolean = {
     val warehouseId: WarehousesId = row.warehouseId
@@ -119,17 +119,17 @@ class WarehousesRepoImpl extends WarehousesRepo {
     `name` = ${Fragment.encode(MariaTypes.varchar, row.name)},
     `address` = ${Fragment.encode(MariaTypes.varchar, row.address)},
     `location` = ${Fragment.encode(MariaTypes.point, row.location)},
-    `service_area` = ${Fragment.encode(MariaTypes.polygon.nullable, row.serviceArea)},
+    `service_area` = ${Fragment.encode(MariaTypes.polygon.opt, row.serviceArea)},
     `timezone` = ${Fragment.encode(MariaTypes.varchar, row.timezone)},
     `is_active` = ${Fragment.encode(IsActive.mariaType, row.isActive)},
-    `contact_email` = ${Fragment.encode(Email.mariaType.nullable, row.contactEmail)},
-    `contact_phone` = ${Fragment.encode(MariaTypes.varchar.nullable, row.contactPhone)}
-    where `warehouse_id` = ${Fragment.encode(WarehousesId.mariaType, warehouseId)}""".update().runUnchecked(c) > 0
+    `contact_email` = ${Fragment.encode(Email.mariaType.opt, row.contactEmail)},
+    `contact_phone` = ${Fragment.encode(MariaTypes.varchar.opt, row.contactPhone)}
+    where `warehouse_id` = ${Fragment.encode(WarehousesId.mariaType, warehouseId)}""".update().run(using c) > 0
   }
 
   override def upsert(unsaved: WarehousesRow)(using c: Connection): WarehousesRow = {
   sql"""INSERT INTO `warehouses`(`warehouse_id`, `code`, `name`, `address`, `location`, `service_area`, `timezone`, `is_active`, `contact_email`, `contact_phone`)
-    VALUES (${Fragment.encode(WarehousesId.mariaType, unsaved.warehouseId)}, ${Fragment.encode(MariaTypes.char_, unsaved.code)}, ${Fragment.encode(MariaTypes.varchar, unsaved.name)}, ${Fragment.encode(MariaTypes.varchar, unsaved.address)}, ${Fragment.encode(MariaTypes.point, unsaved.location)}, ${Fragment.encode(MariaTypes.polygon.nullable, unsaved.serviceArea)}, ${Fragment.encode(MariaTypes.varchar, unsaved.timezone)}, ${Fragment.encode(IsActive.mariaType, unsaved.isActive)}, ${Fragment.encode(Email.mariaType.nullable, unsaved.contactEmail)}, ${Fragment.encode(MariaTypes.varchar.nullable, unsaved.contactPhone)})
+    VALUES (${Fragment.encode(WarehousesId.mariaType, unsaved.warehouseId)}, ${Fragment.encode(MariaTypes.char_, unsaved.code)}, ${Fragment.encode(MariaTypes.varchar, unsaved.name)}, ${Fragment.encode(MariaTypes.varchar, unsaved.address)}, ${Fragment.encode(MariaTypes.point, unsaved.location)}, ${Fragment.encode(MariaTypes.polygon.opt, unsaved.serviceArea)}, ${Fragment.encode(MariaTypes.varchar, unsaved.timezone)}, ${Fragment.encode(IsActive.mariaType, unsaved.isActive)}, ${Fragment.encode(Email.mariaType.opt, unsaved.contactEmail)}, ${Fragment.encode(MariaTypes.varchar.opt, unsaved.contactPhone)})
     ON DUPLICATE KEY UPDATE `code` = VALUES(`code`),
     `name` = VALUES(`name`),
     `address` = VALUES(`address`),
@@ -140,8 +140,8 @@ class WarehousesRepoImpl extends WarehousesRepo {
     `contact_email` = VALUES(`contact_email`),
     `contact_phone` = VALUES(`contact_phone`)
     RETURNING `warehouse_id`, `code`, `name`, `address`, `location`, `service_area`, `timezone`, `is_active`, `contact_email`, `contact_phone`"""
-    .updateReturning(WarehousesRow.`_rowParser`.exactlyOne())
-    .runUnchecked(c)
+    .updateReturning(WarehousesRow.rowCodec.exactlyOne())
+    .run(using c)
   }
 
   override def upsertBatch(unsaved: Iterator[WarehousesRow])(using c: Connection): List[WarehousesRow] = {
@@ -157,7 +157,7 @@ class WarehousesRepoImpl extends WarehousesRepo {
     `contact_email` = VALUES(`contact_email`),
     `contact_phone` = VALUES(`contact_phone`)
     RETURNING `warehouse_id`, `code`, `name`, `address`, `location`, `service_area`, `timezone`, `is_active`, `contact_email`, `contact_phone`"""
-      .updateReturningEach(WarehousesRow.`_rowParser`, unsaved)
-    .runUnchecked(c)
+      .updateReturningEach(WarehousesRow.rowCodec, unsaved)
+    .run(using c)
   }
 }

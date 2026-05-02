@@ -5,17 +5,18 @@
  */
 package adventureworks.person.businessentity
 
-import dev.typr.foundations.scala.DeleteBuilder
-import dev.typr.foundations.scala.DeleteBuilderMock
-import dev.typr.foundations.scala.DeleteParams
-import dev.typr.foundations.scala.SelectBuilder
-import dev.typr.foundations.scala.SelectBuilderMock
-import dev.typr.foundations.scala.SelectParams
-import dev.typr.foundations.scala.UpdateBuilder
-import dev.typr.foundations.scala.UpdateBuilderMock
-import dev.typr.foundations.scala.UpdateParams
+import dev.typr.dslsc.DeleteBuilder
+import dev.typr.dslsc.DeleteBuilderMock
+import dev.typr.dslsc.DeleteParams
+import dev.typr.dslsc.SelectBuilder
+import dev.typr.dslsc.SelectBuilderMock
+import dev.typr.dslsc.SelectParams
+import dev.typr.dslsc.UpdateBuilder
+import dev.typr.dslsc.UpdateBuilderMock
+import dev.typr.dslsc.UpdateParams
+import dev.typr.foundationssc.Connection
+import dev.typr.foundationssc.ConnectionRead
 import java.lang.RuntimeException
-import java.sql.Connection
 
 case class BusinessentityRepoMock(
   toRow: BusinessentityRowUnsaved => BusinessentityRow,
@@ -25,7 +26,7 @@ case class BusinessentityRepoMock(
 
   override def deleteById(businessentityid: BusinessentityId)(using c: Connection): Boolean = map.remove(businessentityid).isDefined
 
-  override def deleteByIds(businessentityids: Array[BusinessentityId])(using c: Connection): Int = {
+  override def deleteByIds(businessentityids: List[BusinessentityId])(using c: Connection): Int = {
     var count = 0
     businessentityids.foreach { id => if (map.remove(id).isDefined) {
       count = count + 1
@@ -67,13 +68,13 @@ case class BusinessentityRepoMock(
 
   override def select: SelectBuilder[BusinessentityFields, BusinessentityRow] = SelectBuilderMock(BusinessentityFields.structure, () => map.values.toList, SelectParams.empty())
 
-  override def selectAll(using c: Connection): List[BusinessentityRow] = map.values.toList
+  override def selectAll(using c: ConnectionRead): List[BusinessentityRow] = map.values.toList
 
-  override def selectById(businessentityid: BusinessentityId)(using c: Connection): Option[BusinessentityRow] = map.get(businessentityid)
+  override def selectById(businessentityid: BusinessentityId)(using c: ConnectionRead): Option[BusinessentityRow] = map.get(businessentityid)
 
-  override def selectByIds(businessentityids: Array[BusinessentityId])(using c: Connection): List[BusinessentityRow] = businessentityids.flatMap(map.get(_)).toList
+  override def selectByIds(businessentityids: List[BusinessentityId])(using c: ConnectionRead): List[BusinessentityRow] = businessentityids.flatMap(map.get(_)).toList
 
-  override def selectByIdsTracked(businessentityids: Array[BusinessentityId])(using c: Connection): Map[BusinessentityId, BusinessentityRow] = selectByIds(businessentityids)(using c).map(x => (((row: BusinessentityRow) => row.businessentityid).apply(x), x)).toMap
+  override def selectByIdsTracked(businessentityids: List[BusinessentityId])(using c: ConnectionRead): Map[BusinessentityId, BusinessentityRow] = selectByIds(businessentityids)(using c).map(x => (((row: BusinessentityRow) => row.businessentityid).apply(x), x)).toMap
 
   override def update: UpdateBuilder[BusinessentityFields, BusinessentityRow] = UpdateBuilderMock(BusinessentityFields.structure, () => map.values.toList, UpdateParams.empty(), row => row)
 

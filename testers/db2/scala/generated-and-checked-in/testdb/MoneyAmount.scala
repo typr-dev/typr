@@ -6,9 +6,9 @@
 package testdb
 
 import com.fasterxml.jackson.annotation.JsonValue
-import dev.typr.foundations.Db2Type
-import dev.typr.foundations.scala.Bijection
-import dev.typr.foundations.scala.ScalaDbTypes
+import dev.typr.dslsc.Bijection
+import dev.typr.foundationssc.Db2Type
+import dev.typr.foundationssc.Db2Types
 
 /** Domain `MONEY_AMOUNT`
  * No constraint
@@ -16,7 +16,7 @@ import dev.typr.foundations.scala.ScalaDbTypes
 case class MoneyAmount(@JsonValue value: BigDecimal)
 
 object MoneyAmount {
-  given bijection: Bijection[MoneyAmount, BigDecimal] = Bijection.apply[MoneyAmount, BigDecimal](_.value)(MoneyAmount.apply)
+  given bijection: Bijection[MoneyAmount, BigDecimal] = Bijection.of[MoneyAmount, BigDecimal](_.value, MoneyAmount.apply)
 
-  given db2Type: Db2Type[MoneyAmount] = ScalaDbTypes.Db2Types.decimal.bimap(MoneyAmount.apply, _.value).renamed(""""MONEY_AMOUNT"""")
+  given db2Type: Db2Type[MoneyAmount] = Db2Type(Db2Types.decimal.to(Bijection.of(MoneyAmount.apply, _.value)).underlying.renamed(""""MONEY_AMOUNT""""))
 }

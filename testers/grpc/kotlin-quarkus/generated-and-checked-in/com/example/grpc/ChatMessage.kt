@@ -34,28 +34,6 @@ data class ChatMessage(
   }
 
   companion object {
-    val MARSHALLER: Marshaller<ChatMessage> =
-      object : Marshaller<ChatMessage> {
-        override fun stream(value: ChatMessage): InputStream {
-          val bytes = ByteArray(value.getSerializedSize())
-          val cos = CodedOutputStream.newInstance(bytes)
-          try {
-            value.writeTo(cos)
-            cos.flush()
-          } catch (e: IOException) {
-            throw RuntimeException(e)
-          } 
-          return ByteArrayInputStream(bytes)
-        }
-        override fun parse(stream: InputStream): ChatMessage {
-          try {
-            return ChatMessage.parseFrom(CodedInputStream.newInstance(stream))
-          } catch (e: IOException) {
-            throw RuntimeException(e)
-          } 
-        }
-      }
-
     @Throws(IOException::class)
     fun parseFrom(input: CodedInputStream): ChatMessage {
       var sender: kotlin.String = ""
@@ -81,5 +59,27 @@ data class ChatMessage(
       }
       return ChatMessage(sender, content, sentAt)
     }
+
+    val MARSHALLER: Marshaller<ChatMessage> =
+      object : Marshaller<ChatMessage> {
+        override fun stream(value: ChatMessage): InputStream {
+          val bytes = ByteArray(value.getSerializedSize())
+          val cos = CodedOutputStream.newInstance(bytes)
+          try {
+            value.writeTo(cos)
+            cos.flush()
+          } catch (e: IOException) {
+            throw RuntimeException(e)
+          } 
+          return ByteArrayInputStream(bytes)
+        }
+        override fun parse(stream: InputStream): ChatMessage {
+          try {
+            return ChatMessage.parseFrom(CodedInputStream.newInstance(stream))
+          } catch (e: IOException) {
+            throw RuntimeException(e)
+          } 
+        }
+      }
   }
 }

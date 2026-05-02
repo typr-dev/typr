@@ -5,101 +5,100 @@
  */
 package testdb.all_scalar_types
 
-import dev.typr.foundations.DuckDbTypes
-import dev.typr.foundations.scala.DbTypeOps
-import dev.typr.foundations.scala.DeleteBuilder
-import dev.typr.foundations.scala.Dialect
-import dev.typr.foundations.scala.Fragment
-import dev.typr.foundations.scala.ScalaDbTypes
-import dev.typr.foundations.scala.SelectBuilder
-import dev.typr.foundations.scala.UpdateBuilder
-import java.sql.Connection
+import dev.typr.dslsc.DeleteBuilder
+import dev.typr.dslsc.Dialect
+import dev.typr.dslsc.SelectBuilder
+import dev.typr.dslsc.UpdateBuilder
+import dev.typr.foundationssc.Connection
+import dev.typr.foundationssc.ConnectionRead
+import dev.typr.foundationssc.DuckDbTypes
+import dev.typr.foundationssc.Fragment
 import testdb.Mood
-import dev.typr.foundations.scala.Fragment.sql
+import dev.typr.foundationssc.Fragment.sql
 
 class AllScalarTypesRepoImpl extends AllScalarTypesRepo {
   override def delete: DeleteBuilder[AllScalarTypesFields, AllScalarTypesRow] = DeleteBuilder.of(""""all_scalar_types"""", AllScalarTypesFields.structure, Dialect.DUCKDB)
 
-  override def deleteById(id: AllScalarTypesId)(using c: Connection): Boolean = sql"""delete from "all_scalar_types" where "id" = ${Fragment.encode(AllScalarTypesId.duckDbType, id)}""".update().runUnchecked(c) > 0
+  override def deleteById(id: AllScalarTypesId)(using c: Connection): Boolean = sql"""delete from "all_scalar_types" where "id" = ${Fragment.encode(AllScalarTypesId.duckDbType, id)}""".update().run(using c) > 0
 
-  override def deleteByIds(ids: Array[AllScalarTypesId])(using c: Connection): Int = {
+  override def deleteByIds(ids: List[AllScalarTypesId])(using c: Connection): Int = {
     sql"""delete
     from "all_scalar_types"
     where "id" = ANY(${Fragment.encode(AllScalarTypesId.duckDbTypeArray, ids)})"""
       .update()
-      .runUnchecked(c)
+      .run(using c)
   }
 
   override def insert(unsaved: AllScalarTypesRow)(using c: Connection): AllScalarTypesRow = {
   sql"""insert into "all_scalar_types"("id", "col_tinyint", "col_smallint", "col_integer", "col_bigint", "col_hugeint", "col_utinyint", "col_usmallint", "col_uinteger", "col_ubigint", "col_float", "col_double", "col_decimal", "col_boolean", "col_varchar", "col_text", "col_blob", "col_date", "col_time", "col_timestamp", "col_timestamptz", "col_interval", "col_uuid", "col_json", "col_mood", "col_not_null")
-    values (${Fragment.encode(AllScalarTypesId.duckDbType, unsaved.id)}, ${Fragment.encode(ScalaDbTypes.DuckDbTypes.tinyint.nullable, unsaved.colTinyint)}, ${Fragment.encode(ScalaDbTypes.DuckDbTypes.smallint.nullable, unsaved.colSmallint)}, ${Fragment.encode(ScalaDbTypes.DuckDbTypes.integer.nullable, unsaved.colInteger)}, ${Fragment.encode(ScalaDbTypes.DuckDbTypes.bigint.nullable, unsaved.colBigint)}, ${Fragment.encode(DuckDbTypes.hugeint.nullable, unsaved.colHugeint)}, ${Fragment.encode(DuckDbTypes.utinyint.nullable, unsaved.colUtinyint)}, ${Fragment.encode(DuckDbTypes.usmallint.nullable, unsaved.colUsmallint)}, ${Fragment.encode(DuckDbTypes.uinteger.nullable, unsaved.colUinteger)}, ${Fragment.encode(DuckDbTypes.ubigint.nullable, unsaved.colUbigint)}, ${Fragment.encode(ScalaDbTypes.DuckDbTypes.float_.nullable, unsaved.colFloat)}, ${Fragment.encode(ScalaDbTypes.DuckDbTypes.double_.nullable, unsaved.colDouble)}, ${Fragment.encode(ScalaDbTypes.DuckDbTypes.numeric.nullable, unsaved.colDecimal)}, ${Fragment.encode(ScalaDbTypes.DuckDbTypes.boolean_.nullable, unsaved.colBoolean)}, ${Fragment.encode(DuckDbTypes.varchar.nullable, unsaved.colVarchar)}, ${Fragment.encode(DuckDbTypes.varchar.nullable, unsaved.colText)}, ${Fragment.encode(DuckDbTypes.blob.nullable, unsaved.colBlob)}, ${Fragment.encode(DuckDbTypes.date.nullable, unsaved.colDate)}, ${Fragment.encode(DuckDbTypes.time.nullable, unsaved.colTime)}, ${Fragment.encode(DuckDbTypes.timestamp.nullable, unsaved.colTimestamp)}, ${Fragment.encode(DuckDbTypes.timestamptz.nullable, unsaved.colTimestamptz)}, ${Fragment.encode(DuckDbTypes.interval.nullable, unsaved.colInterval)}, ${Fragment.encode(DuckDbTypes.uuid.nullable, unsaved.colUuid)}, ${Fragment.encode(DuckDbTypes.json.nullable, unsaved.colJson)}, ${Fragment.encode(Mood.duckDbType.nullable, unsaved.colMood)}, ${Fragment.encode(DuckDbTypes.varchar, unsaved.colNotNull)})
+    values (${Fragment.encode(AllScalarTypesId.duckDbType, unsaved.id)}, ${Fragment.encode(DuckDbTypes.tinyint.opt, unsaved.colTinyint)}, ${Fragment.encode(DuckDbTypes.smallint.opt, unsaved.colSmallint)}, ${Fragment.encode(DuckDbTypes.integer.opt, unsaved.colInteger)}, ${Fragment.encode(DuckDbTypes.bigint.opt, unsaved.colBigint)}, ${Fragment.encode(DuckDbTypes.hugeint.opt, unsaved.colHugeint)}, ${Fragment.encode(DuckDbTypes.utinyint.opt, unsaved.colUtinyint)}, ${Fragment.encode(DuckDbTypes.usmallint.opt, unsaved.colUsmallint)}, ${Fragment.encode(DuckDbTypes.uinteger.opt, unsaved.colUinteger)}, ${Fragment.encode(DuckDbTypes.ubigint.opt, unsaved.colUbigint)}, ${Fragment.encode(DuckDbTypes.float_.opt, unsaved.colFloat)}, ${Fragment.encode(DuckDbTypes.double_.opt, unsaved.colDouble)}, ${Fragment.encode(DuckDbTypes.numeric.opt, unsaved.colDecimal)}, ${Fragment.encode(DuckDbTypes.boolean_.opt, unsaved.colBoolean)}, ${Fragment.encode(DuckDbTypes.varchar.opt, unsaved.colVarchar)}, ${Fragment.encode(DuckDbTypes.varchar.opt, unsaved.colText)}, ${Fragment.encode(DuckDbTypes.blob.opt, unsaved.colBlob)}, ${Fragment.encode(DuckDbTypes.date.opt, unsaved.colDate)}, ${Fragment.encode(DuckDbTypes.time.opt, unsaved.colTime)}, ${Fragment.encode(DuckDbTypes.timestamp.opt, unsaved.colTimestamp)}, ${Fragment.encode(DuckDbTypes.timestamptz.opt, unsaved.colTimestamptz)}, ${Fragment.encode(DuckDbTypes.interval.opt, unsaved.colInterval)}, ${Fragment.encode(DuckDbTypes.uuid.opt, unsaved.colUuid)}, ${Fragment.encode(DuckDbTypes.json.opt, unsaved.colJson)}, ${Fragment.encode(Mood.duckDbType.opt, unsaved.colMood)}, ${Fragment.encode(DuckDbTypes.varchar, unsaved.colNotNull)})
     RETURNING "id", "col_tinyint", "col_smallint", "col_integer", "col_bigint", "col_hugeint", "col_utinyint", "col_usmallint", "col_uinteger", "col_ubigint", "col_float", "col_double", "col_decimal", "col_boolean", "col_varchar", "col_text", "col_blob", "col_date", "col_time", "col_timestamp", "col_timestamptz", "col_interval", "col_uuid", "col_json", "col_mood", "col_not_null"
     """
-    .updateReturning(AllScalarTypesRow.`_rowParser`.exactlyOne()).runUnchecked(c)
+    .updateReturning(AllScalarTypesRow.rowCodec.exactlyOne()).run(using c)
   }
 
-  override def select: SelectBuilder[AllScalarTypesFields, AllScalarTypesRow] = SelectBuilder.of(""""all_scalar_types"""", AllScalarTypesFields.structure, AllScalarTypesRow.`_rowParser`, Dialect.DUCKDB)
+  override def select: SelectBuilder[AllScalarTypesFields, AllScalarTypesRow] = SelectBuilder.of(""""all_scalar_types"""", AllScalarTypesFields.structure, AllScalarTypesRow.rowCodec, Dialect.DUCKDB)
 
-  override def selectAll(using c: Connection): List[AllScalarTypesRow] = {
+  override def selectAll(using c: ConnectionRead): List[AllScalarTypesRow] = {
     sql"""select "id", "col_tinyint", "col_smallint", "col_integer", "col_bigint", "col_hugeint", "col_utinyint", "col_usmallint", "col_uinteger", "col_ubigint", "col_float", "col_double", "col_decimal", "col_boolean", "col_varchar", "col_text", "col_blob", "col_date", "col_time", "col_timestamp", "col_timestamptz", "col_interval", "col_uuid", "col_json", "col_mood", "col_not_null"
     from "all_scalar_types"
-    """.query(AllScalarTypesRow.`_rowParser`.all()).runUnchecked(c)
+    """.query(AllScalarTypesRow.rowCodec.all()).run(using c)
   }
 
-  override def selectById(id: AllScalarTypesId)(using c: Connection): Option[AllScalarTypesRow] = {
+  override def selectById(id: AllScalarTypesId)(using c: ConnectionRead): Option[AllScalarTypesRow] = {
     sql"""select "id", "col_tinyint", "col_smallint", "col_integer", "col_bigint", "col_hugeint", "col_utinyint", "col_usmallint", "col_uinteger", "col_ubigint", "col_float", "col_double", "col_decimal", "col_boolean", "col_varchar", "col_text", "col_blob", "col_date", "col_time", "col_timestamp", "col_timestamptz", "col_interval", "col_uuid", "col_json", "col_mood", "col_not_null"
     from "all_scalar_types"
-    where "id" = ${Fragment.encode(AllScalarTypesId.duckDbType, id)}""".query(AllScalarTypesRow.`_rowParser`.first()).runUnchecked(c)
+    where "id" = ${Fragment.encode(AllScalarTypesId.duckDbType, id)}""".query(AllScalarTypesRow.rowCodec.first()).run(using c)
   }
 
-  override def selectByIds(ids: Array[AllScalarTypesId])(using c: Connection): List[AllScalarTypesRow] = {
+  override def selectByIds(ids: List[AllScalarTypesId])(using c: ConnectionRead): List[AllScalarTypesRow] = {
     sql"""select "id", "col_tinyint", "col_smallint", "col_integer", "col_bigint", "col_hugeint", "col_utinyint", "col_usmallint", "col_uinteger", "col_ubigint", "col_float", "col_double", "col_decimal", "col_boolean", "col_varchar", "col_text", "col_blob", "col_date", "col_time", "col_timestamp", "col_timestamptz", "col_interval", "col_uuid", "col_json", "col_mood", "col_not_null"
     from "all_scalar_types"
-    where "id" = ANY(${Fragment.encode(AllScalarTypesId.duckDbTypeArray, ids)})""".query(AllScalarTypesRow.`_rowParser`.all()).runUnchecked(c)
+    where "id" = ANY(${Fragment.encode(AllScalarTypesId.duckDbTypeArray, ids)})""".query(AllScalarTypesRow.rowCodec.all()).run(using c)
   }
 
-  override def selectByIdsTracked(ids: Array[AllScalarTypesId])(using c: Connection): Map[AllScalarTypesId, AllScalarTypesRow] = {
+  override def selectByIdsTracked(ids: List[AllScalarTypesId])(using c: ConnectionRead): Map[AllScalarTypesId, AllScalarTypesRow] = {
     val ret: scala.collection.mutable.Map[AllScalarTypesId, AllScalarTypesRow] = scala.collection.mutable.Map.empty[AllScalarTypesId, AllScalarTypesRow]
     selectByIds(ids)(using c).foreach(row => ret.put(row.id, row): @scala.annotation.nowarn)
     return ret.toMap
   }
 
-  override def update: UpdateBuilder[AllScalarTypesFields, AllScalarTypesRow] = UpdateBuilder.of(""""all_scalar_types"""", AllScalarTypesFields.structure, AllScalarTypesRow.`_rowParser`, Dialect.DUCKDB)
+  override def update: UpdateBuilder[AllScalarTypesFields, AllScalarTypesRow] = UpdateBuilder.of(""""all_scalar_types"""", AllScalarTypesFields.structure, AllScalarTypesRow.rowCodec, Dialect.DUCKDB)
 
   override def update(row: AllScalarTypesRow)(using c: Connection): Boolean = {
     val id: AllScalarTypesId = row.id
     return sql"""update "all_scalar_types"
-    set "col_tinyint" = ${Fragment.encode(ScalaDbTypes.DuckDbTypes.tinyint.nullable, row.colTinyint)},
-    "col_smallint" = ${Fragment.encode(ScalaDbTypes.DuckDbTypes.smallint.nullable, row.colSmallint)},
-    "col_integer" = ${Fragment.encode(ScalaDbTypes.DuckDbTypes.integer.nullable, row.colInteger)},
-    "col_bigint" = ${Fragment.encode(ScalaDbTypes.DuckDbTypes.bigint.nullable, row.colBigint)},
-    "col_hugeint" = ${Fragment.encode(DuckDbTypes.hugeint.nullable, row.colHugeint)},
-    "col_utinyint" = ${Fragment.encode(DuckDbTypes.utinyint.nullable, row.colUtinyint)},
-    "col_usmallint" = ${Fragment.encode(DuckDbTypes.usmallint.nullable, row.colUsmallint)},
-    "col_uinteger" = ${Fragment.encode(DuckDbTypes.uinteger.nullable, row.colUinteger)},
-    "col_ubigint" = ${Fragment.encode(DuckDbTypes.ubigint.nullable, row.colUbigint)},
-    "col_float" = ${Fragment.encode(ScalaDbTypes.DuckDbTypes.float_.nullable, row.colFloat)},
-    "col_double" = ${Fragment.encode(ScalaDbTypes.DuckDbTypes.double_.nullable, row.colDouble)},
-    "col_decimal" = ${Fragment.encode(ScalaDbTypes.DuckDbTypes.numeric.nullable, row.colDecimal)},
-    "col_boolean" = ${Fragment.encode(ScalaDbTypes.DuckDbTypes.boolean_.nullable, row.colBoolean)},
-    "col_varchar" = ${Fragment.encode(DuckDbTypes.varchar.nullable, row.colVarchar)},
-    "col_text" = ${Fragment.encode(DuckDbTypes.varchar.nullable, row.colText)},
-    "col_blob" = ${Fragment.encode(DuckDbTypes.blob.nullable, row.colBlob)},
-    "col_date" = ${Fragment.encode(DuckDbTypes.date.nullable, row.colDate)},
-    "col_time" = ${Fragment.encode(DuckDbTypes.time.nullable, row.colTime)},
-    "col_timestamp" = ${Fragment.encode(DuckDbTypes.timestamp.nullable, row.colTimestamp)},
-    "col_timestamptz" = ${Fragment.encode(DuckDbTypes.timestamptz.nullable, row.colTimestamptz)},
-    "col_interval" = ${Fragment.encode(DuckDbTypes.interval.nullable, row.colInterval)},
-    "col_uuid" = ${Fragment.encode(DuckDbTypes.uuid.nullable, row.colUuid)},
-    "col_json" = ${Fragment.encode(DuckDbTypes.json.nullable, row.colJson)},
-    "col_mood" = ${Fragment.encode(Mood.duckDbType.nullable, row.colMood)},
+    set "col_tinyint" = ${Fragment.encode(DuckDbTypes.tinyint.opt, row.colTinyint)},
+    "col_smallint" = ${Fragment.encode(DuckDbTypes.smallint.opt, row.colSmallint)},
+    "col_integer" = ${Fragment.encode(DuckDbTypes.integer.opt, row.colInteger)},
+    "col_bigint" = ${Fragment.encode(DuckDbTypes.bigint.opt, row.colBigint)},
+    "col_hugeint" = ${Fragment.encode(DuckDbTypes.hugeint.opt, row.colHugeint)},
+    "col_utinyint" = ${Fragment.encode(DuckDbTypes.utinyint.opt, row.colUtinyint)},
+    "col_usmallint" = ${Fragment.encode(DuckDbTypes.usmallint.opt, row.colUsmallint)},
+    "col_uinteger" = ${Fragment.encode(DuckDbTypes.uinteger.opt, row.colUinteger)},
+    "col_ubigint" = ${Fragment.encode(DuckDbTypes.ubigint.opt, row.colUbigint)},
+    "col_float" = ${Fragment.encode(DuckDbTypes.float_.opt, row.colFloat)},
+    "col_double" = ${Fragment.encode(DuckDbTypes.double_.opt, row.colDouble)},
+    "col_decimal" = ${Fragment.encode(DuckDbTypes.numeric.opt, row.colDecimal)},
+    "col_boolean" = ${Fragment.encode(DuckDbTypes.boolean_.opt, row.colBoolean)},
+    "col_varchar" = ${Fragment.encode(DuckDbTypes.varchar.opt, row.colVarchar)},
+    "col_text" = ${Fragment.encode(DuckDbTypes.varchar.opt, row.colText)},
+    "col_blob" = ${Fragment.encode(DuckDbTypes.blob.opt, row.colBlob)},
+    "col_date" = ${Fragment.encode(DuckDbTypes.date.opt, row.colDate)},
+    "col_time" = ${Fragment.encode(DuckDbTypes.time.opt, row.colTime)},
+    "col_timestamp" = ${Fragment.encode(DuckDbTypes.timestamp.opt, row.colTimestamp)},
+    "col_timestamptz" = ${Fragment.encode(DuckDbTypes.timestamptz.opt, row.colTimestamptz)},
+    "col_interval" = ${Fragment.encode(DuckDbTypes.interval.opt, row.colInterval)},
+    "col_uuid" = ${Fragment.encode(DuckDbTypes.uuid.opt, row.colUuid)},
+    "col_json" = ${Fragment.encode(DuckDbTypes.json.opt, row.colJson)},
+    "col_mood" = ${Fragment.encode(Mood.duckDbType.opt, row.colMood)},
     "col_not_null" = ${Fragment.encode(DuckDbTypes.varchar, row.colNotNull)}
-    where "id" = ${Fragment.encode(AllScalarTypesId.duckDbType, id)}""".update().runUnchecked(c) > 0
+    where "id" = ${Fragment.encode(AllScalarTypesId.duckDbType, id)}""".update().run(using c) > 0
   }
 
   override def upsert(unsaved: AllScalarTypesRow)(using c: Connection): AllScalarTypesRow = {
   sql"""INSERT INTO "all_scalar_types"("id", "col_tinyint", "col_smallint", "col_integer", "col_bigint", "col_hugeint", "col_utinyint", "col_usmallint", "col_uinteger", "col_ubigint", "col_float", "col_double", "col_decimal", "col_boolean", "col_varchar", "col_text", "col_blob", "col_date", "col_time", "col_timestamp", "col_timestamptz", "col_interval", "col_uuid", "col_json", "col_mood", "col_not_null")
-    VALUES (${Fragment.encode(AllScalarTypesId.duckDbType, unsaved.id)}, ${Fragment.encode(ScalaDbTypes.DuckDbTypes.tinyint.nullable, unsaved.colTinyint)}, ${Fragment.encode(ScalaDbTypes.DuckDbTypes.smallint.nullable, unsaved.colSmallint)}, ${Fragment.encode(ScalaDbTypes.DuckDbTypes.integer.nullable, unsaved.colInteger)}, ${Fragment.encode(ScalaDbTypes.DuckDbTypes.bigint.nullable, unsaved.colBigint)}, ${Fragment.encode(DuckDbTypes.hugeint.nullable, unsaved.colHugeint)}, ${Fragment.encode(DuckDbTypes.utinyint.nullable, unsaved.colUtinyint)}, ${Fragment.encode(DuckDbTypes.usmallint.nullable, unsaved.colUsmallint)}, ${Fragment.encode(DuckDbTypes.uinteger.nullable, unsaved.colUinteger)}, ${Fragment.encode(DuckDbTypes.ubigint.nullable, unsaved.colUbigint)}, ${Fragment.encode(ScalaDbTypes.DuckDbTypes.float_.nullable, unsaved.colFloat)}, ${Fragment.encode(ScalaDbTypes.DuckDbTypes.double_.nullable, unsaved.colDouble)}, ${Fragment.encode(ScalaDbTypes.DuckDbTypes.numeric.nullable, unsaved.colDecimal)}, ${Fragment.encode(ScalaDbTypes.DuckDbTypes.boolean_.nullable, unsaved.colBoolean)}, ${Fragment.encode(DuckDbTypes.varchar.nullable, unsaved.colVarchar)}, ${Fragment.encode(DuckDbTypes.varchar.nullable, unsaved.colText)}, ${Fragment.encode(DuckDbTypes.blob.nullable, unsaved.colBlob)}, ${Fragment.encode(DuckDbTypes.date.nullable, unsaved.colDate)}, ${Fragment.encode(DuckDbTypes.time.nullable, unsaved.colTime)}, ${Fragment.encode(DuckDbTypes.timestamp.nullable, unsaved.colTimestamp)}, ${Fragment.encode(DuckDbTypes.timestamptz.nullable, unsaved.colTimestamptz)}, ${Fragment.encode(DuckDbTypes.interval.nullable, unsaved.colInterval)}, ${Fragment.encode(DuckDbTypes.uuid.nullable, unsaved.colUuid)}, ${Fragment.encode(DuckDbTypes.json.nullable, unsaved.colJson)}, ${Fragment.encode(Mood.duckDbType.nullable, unsaved.colMood)}, ${Fragment.encode(DuckDbTypes.varchar, unsaved.colNotNull)})
+    VALUES (${Fragment.encode(AllScalarTypesId.duckDbType, unsaved.id)}, ${Fragment.encode(DuckDbTypes.tinyint.opt, unsaved.colTinyint)}, ${Fragment.encode(DuckDbTypes.smallint.opt, unsaved.colSmallint)}, ${Fragment.encode(DuckDbTypes.integer.opt, unsaved.colInteger)}, ${Fragment.encode(DuckDbTypes.bigint.opt, unsaved.colBigint)}, ${Fragment.encode(DuckDbTypes.hugeint.opt, unsaved.colHugeint)}, ${Fragment.encode(DuckDbTypes.utinyint.opt, unsaved.colUtinyint)}, ${Fragment.encode(DuckDbTypes.usmallint.opt, unsaved.colUsmallint)}, ${Fragment.encode(DuckDbTypes.uinteger.opt, unsaved.colUinteger)}, ${Fragment.encode(DuckDbTypes.ubigint.opt, unsaved.colUbigint)}, ${Fragment.encode(DuckDbTypes.float_.opt, unsaved.colFloat)}, ${Fragment.encode(DuckDbTypes.double_.opt, unsaved.colDouble)}, ${Fragment.encode(DuckDbTypes.numeric.opt, unsaved.colDecimal)}, ${Fragment.encode(DuckDbTypes.boolean_.opt, unsaved.colBoolean)}, ${Fragment.encode(DuckDbTypes.varchar.opt, unsaved.colVarchar)}, ${Fragment.encode(DuckDbTypes.varchar.opt, unsaved.colText)}, ${Fragment.encode(DuckDbTypes.blob.opt, unsaved.colBlob)}, ${Fragment.encode(DuckDbTypes.date.opt, unsaved.colDate)}, ${Fragment.encode(DuckDbTypes.time.opt, unsaved.colTime)}, ${Fragment.encode(DuckDbTypes.timestamp.opt, unsaved.colTimestamp)}, ${Fragment.encode(DuckDbTypes.timestamptz.opt, unsaved.colTimestamptz)}, ${Fragment.encode(DuckDbTypes.interval.opt, unsaved.colInterval)}, ${Fragment.encode(DuckDbTypes.uuid.opt, unsaved.colUuid)}, ${Fragment.encode(DuckDbTypes.json.opt, unsaved.colJson)}, ${Fragment.encode(Mood.duckDbType.opt, unsaved.colMood)}, ${Fragment.encode(DuckDbTypes.varchar, unsaved.colNotNull)})
     ON CONFLICT ("id")
     DO UPDATE SET
       "col_tinyint" = EXCLUDED."col_tinyint",
@@ -128,8 +127,8 @@ class AllScalarTypesRepoImpl extends AllScalarTypesRepo {
     "col_mood" = EXCLUDED."col_mood",
     "col_not_null" = EXCLUDED."col_not_null"
     RETURNING "id", "col_tinyint", "col_smallint", "col_integer", "col_bigint", "col_hugeint", "col_utinyint", "col_usmallint", "col_uinteger", "col_ubigint", "col_float", "col_double", "col_decimal", "col_boolean", "col_varchar", "col_text", "col_blob", "col_date", "col_time", "col_timestamp", "col_timestamptz", "col_interval", "col_uuid", "col_json", "col_mood", "col_not_null""""
-    .updateReturning(AllScalarTypesRow.`_rowParser`.exactlyOne())
-    .runUnchecked(c)
+    .updateReturning(AllScalarTypesRow.rowCodec.exactlyOne())
+    .run(using c)
   }
 
   override def upsertBatch(unsaved: Iterator[AllScalarTypesRow])(using c: Connection): List[AllScalarTypesRow] = {
@@ -163,7 +162,7 @@ class AllScalarTypesRepoImpl extends AllScalarTypesRepo {
     "col_mood" = EXCLUDED."col_mood",
     "col_not_null" = EXCLUDED."col_not_null"
     RETURNING "id", "col_tinyint", "col_smallint", "col_integer", "col_bigint", "col_hugeint", "col_utinyint", "col_usmallint", "col_uinteger", "col_ubigint", "col_float", "col_double", "col_decimal", "col_boolean", "col_varchar", "col_text", "col_blob", "col_date", "col_time", "col_timestamp", "col_timestamptz", "col_interval", "col_uuid", "col_json", "col_mood", "col_not_null""""
-      .updateReturningEach(AllScalarTypesRow.`_rowParser`, unsaved)
-    .runUnchecked(c)
+      .updateReturningEach(AllScalarTypesRow.rowCodec, unsaved)
+    .run(using c)
   }
 }

@@ -5,18 +5,18 @@
  */
 package adventureworks.humanresources.vemployee
 
+import dev.typr.dsl.Dialect
+import dev.typr.dsl.SelectBuilder
+import dev.typr.foundations.ConnectionRead
 import dev.typr.foundations.Fragment
-import dev.typr.foundations.dsl.Dialect
-import dev.typr.foundations.dsl.SelectBuilder
-import java.sql.Connection
-import dev.typr.foundations.Fragment.interpolate
+import dev.typr.foundations.Fragment.concat
 
 class VemployeeViewRepoImpl extends VemployeeViewRepo {
-  override def select: SelectBuilder[VemployeeViewFields, VemployeeViewRow] = SelectBuilder.of(""""humanresources"."vemployee"""", VemployeeViewFields.structure, VemployeeViewRow.`_rowParser`, Dialect.POSTGRESQL)
+  override def select: SelectBuilder[VemployeeViewFields, VemployeeViewRow] = SelectBuilder.of(""""humanresources"."vemployee"""", VemployeeViewFields.structure, VemployeeViewRow.rowCodec, Dialect.POSTGRESQL)
 
-  override def selectAll(using c: Connection): java.util.List[VemployeeViewRow] = {
-    interpolate(Fragment.lit("""select "businessentityid", "title", "firstname", "middlename", "lastname", "suffix", "jobtitle", "phonenumber", "phonenumbertype", "emailaddress", "emailpromotion", "addressline1", "addressline2", "city", "stateprovincename", "postalcode", "countryregionname", "additionalcontactinfo"
+  override def selectAll(using c: ConnectionRead): java.util.List[VemployeeViewRow] = {
+    concat(Fragment.of("""select "businessentityid", "title", "firstname", "middlename", "lastname", "suffix", "jobtitle", "phonenumber", "phonenumbertype", "emailaddress", "emailpromotion", "addressline1", "addressline2", "city", "stateprovincename", "postalcode", "countryregionname", "additionalcontactinfo"
     from "humanresources"."vemployee"
-    """)).query(VemployeeViewRow.`_rowParser`.all()).runUnchecked(c)
+    """)).query(VemployeeViewRow.rowCodec.all()).run(c)
   }
 }

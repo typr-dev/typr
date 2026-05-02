@@ -6,16 +6,16 @@
 package adventureworks.production.unitmeasure
 
 import adventureworks.public.Name
+import dev.typr.dsl.FieldsBase
+import dev.typr.dsl.Path
+import dev.typr.dsl.RelationStructure
+import dev.typr.dsl.SqlExpr
+import dev.typr.dsl.SqlExpr.Field
+import dev.typr.dsl.SqlExpr.FieldLike
+import dev.typr.dsl.SqlExpr.IdField
+import dev.typr.dsl.TupleExpr.TupleExpr3
 import dev.typr.foundations.PgTypes
-import dev.typr.foundations.RowParser
-import dev.typr.foundations.dsl.FieldsBase
-import dev.typr.foundations.dsl.Path
-import dev.typr.foundations.dsl.RelationStructure
-import dev.typr.foundations.dsl.SqlExpr
-import dev.typr.foundations.dsl.SqlExpr.Field
-import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.dsl.SqlExpr.IdField
-import dev.typr.foundations.dsl.TupleExpr.TupleExpr3
+import dev.typr.foundations.RowCodec
 import java.time.LocalDateTime
 import java.util.Optional
 
@@ -58,7 +58,7 @@ class UnitmeasureFields(val `_path`: java.util.List[Path]) extends TupleExpr3[Un
 
   override def columns: java.util.List[FieldLike[?, UnitmeasureRow]] = java.util.List.of(this.unitmeasurecode, this.name, this.modifieddate)
 
-  override def rowParser: RowParser[UnitmeasureRow] = UnitmeasureRow._rowParser
+  override def rowCodec: RowCodec[UnitmeasureRow] = UnitmeasureRow.rowCodec
 
   override def withPaths(`_path`: java.util.List[Path]): RelationStructure[UnitmeasureFields, UnitmeasureRow] = new UnitmeasureFields(`_path`)
 

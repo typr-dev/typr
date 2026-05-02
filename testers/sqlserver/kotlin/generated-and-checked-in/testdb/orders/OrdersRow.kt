@@ -6,12 +6,10 @@
 package testdb.orders
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import dev.typr.foundations.SqlServerTypes
+import dev.typr.dslkt.RowCodecs
 import dev.typr.foundations.Tuple.Tuple4
-import dev.typr.foundations.kotlin.KotlinDbTypes
-import dev.typr.foundations.kotlin.RowParser
-import dev.typr.foundations.kotlin.RowParsers
-import dev.typr.foundations.kotlin.nullable
+import dev.typr.foundationskt.RowCodec
+import dev.typr.foundationskt.SqlServerTypes
 import java.math.BigDecimal
 import java.time.LocalDateTime
 import testdb.customers.CustomersId
@@ -42,6 +40,6 @@ data class OrdersRow(
   fun toUnsavedRow(orderDate: Defaulted<LocalDateTime?> = Defaulted.Provided(this.orderDate)): OrdersRowUnsaved = OrdersRowUnsaved(customerId, totalAmount, orderDate)
 
   companion object {
-    val _rowParser: RowParser<OrdersRow> = RowParsers.of(OrdersId.sqlServerType, CustomersId.sqlServerType, SqlServerTypes.datetime2.nullable(), KotlinDbTypes.SqlServerTypes.money, { t0, t1, t2, t3 -> OrdersRow(t0, t1, t2, t3) }, { row -> arrayOf<Any?>(row.orderId, row.customerId, row.orderDate, row.totalAmount) })
+    val rowCodec: RowCodec<OrdersRow> = RowCodecs.of(OrdersId.sqlServerType, CustomersId.sqlServerType, SqlServerTypes.datetime2.opt(), SqlServerTypes.money, { t0: OrdersId, t1: CustomersId, t2: LocalDateTime?, t3: BigDecimal -> OrdersRow(t0, t1, t2, t3) }, { row: OrdersRow -> arrayOf<Any?>(row.orderId, row.customerId, row.orderDate, row.totalAmount) })
   }
 }

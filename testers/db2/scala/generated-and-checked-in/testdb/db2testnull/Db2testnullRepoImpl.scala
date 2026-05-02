@@ -5,34 +5,33 @@
  */
 package testdb.db2testnull
 
-import dev.typr.foundations.Db2Types
-import dev.typr.foundations.scala.DbTypeOps
-import dev.typr.foundations.scala.DeleteBuilder
-import dev.typr.foundations.scala.Dialect
-import dev.typr.foundations.scala.Fragment
-import dev.typr.foundations.scala.ScalaDbTypes
-import dev.typr.foundations.scala.SelectBuilder
-import dev.typr.foundations.scala.UpdateBuilder
-import java.sql.Connection
-import dev.typr.foundations.scala.Fragment.sql
+import dev.typr.dslsc.DeleteBuilder
+import dev.typr.dslsc.Dialect
+import dev.typr.dslsc.SelectBuilder
+import dev.typr.dslsc.UpdateBuilder
+import dev.typr.foundationssc.Connection
+import dev.typr.foundationssc.ConnectionRead
+import dev.typr.foundationssc.Db2Types
+import dev.typr.foundationssc.Fragment
+import dev.typr.foundationssc.Fragment.sql
 
 class Db2testnullRepoImpl extends Db2testnullRepo {
   override def delete: DeleteBuilder[Db2testnullFields, Db2testnullRow] = DeleteBuilder.of(""""DB2TESTNULL"""", Db2testnullFields.structure, Dialect.DB2)
 
   override def insert(unsaved: Db2testnullRow)(using c: Connection): Db2testnullRow = {
   sql"""SELECT "SMALLINT_COL", "INT_COL", "BIGINT_COL", "DECIMAL_COL", "NUMERIC_COL", "DECFLOAT16_COL", "DECFLOAT34_COL", "REAL_COL", "DOUBLE_COL", "BOOL_COL", "CHAR_COL", "VARCHAR_COL", "CLOB_COL", "GRAPHIC_COL", "VARGRAPHIC_COL", "BINARY_COL", "VARBINARY_COL", "BLOB_COL", "DATE_COL", "TIME_COL", "TIMESTAMP_COL", "TIMESTAMP6_COL", "TIMESTAMP12_COL", "XML_COL" FROM FINAL TABLE (INSERT INTO "DB2TESTNULL"("SMALLINT_COL", "INT_COL", "BIGINT_COL", "DECIMAL_COL", "NUMERIC_COL", "DECFLOAT16_COL", "DECFLOAT34_COL", "REAL_COL", "DOUBLE_COL", "BOOL_COL", "CHAR_COL", "VARCHAR_COL", "CLOB_COL", "GRAPHIC_COL", "VARGRAPHIC_COL", "BINARY_COL", "VARBINARY_COL", "BLOB_COL", "DATE_COL", "TIME_COL", "TIMESTAMP_COL", "TIMESTAMP6_COL", "TIMESTAMP12_COL", "XML_COL")
-    VALUES (${Fragment.encode(ScalaDbTypes.Db2Types.smallint.nullable, unsaved.smallintCol)}, ${Fragment.encode(ScalaDbTypes.Db2Types.integer.nullable, unsaved.intCol)}, ${Fragment.encode(ScalaDbTypes.Db2Types.bigint.nullable, unsaved.bigintCol)}, ${Fragment.encode(ScalaDbTypes.Db2Types.decimal.nullable, unsaved.decimalCol)}, ${Fragment.encode(ScalaDbTypes.Db2Types.decimal.nullable, unsaved.numericCol)}, ${Fragment.encode(ScalaDbTypes.Db2Types.decfloat.nullable, unsaved.decfloat16Col)}, ${Fragment.encode(ScalaDbTypes.Db2Types.decfloat.nullable, unsaved.decfloat34Col)}, ${Fragment.encode(ScalaDbTypes.Db2Types.real.nullable, unsaved.realCol)}, ${Fragment.encode(ScalaDbTypes.Db2Types.double_.nullable, unsaved.doubleCol)}, ${Fragment.encode(ScalaDbTypes.Db2Types.boolean_.nullable, unsaved.boolCol)}, ${Fragment.encode(Db2Types.char_.nullable, unsaved.charCol)}, ${Fragment.encode(Db2Types.varchar.nullable, unsaved.varcharCol)}, ${Fragment.encode(Db2Types.clob.nullable, unsaved.clobCol)}, ${Fragment.encode(Db2Types.graphic.nullable, unsaved.graphicCol)}, ${Fragment.encode(Db2Types.vargraphic.nullable, unsaved.vargraphicCol)}, ${Fragment.encode(Db2Types.binary.nullable, unsaved.binaryCol)}, ${Fragment.encode(Db2Types.varbinary.nullable, unsaved.varbinaryCol)}, ${Fragment.encode(Db2Types.blob.nullable, unsaved.blobCol)}, ${Fragment.encode(Db2Types.date.nullable, unsaved.dateCol)}, ${Fragment.encode(Db2Types.time.nullable, unsaved.timeCol)}, ${Fragment.encode(Db2Types.timestamp.nullable, unsaved.timestampCol)}, ${Fragment.encode(Db2Types.timestamp.nullable, unsaved.timestamp6Col)}, ${Fragment.encode(Db2Types.timestamp.nullable, unsaved.timestamp12Col)}, ${Fragment.encode(Db2Types.xml.nullable, unsaved.xmlCol)}))
+    VALUES (${Fragment.encode(Db2Types.smallint.opt, unsaved.smallintCol)}, ${Fragment.encode(Db2Types.integer.opt, unsaved.intCol)}, ${Fragment.encode(Db2Types.bigint.opt, unsaved.bigintCol)}, ${Fragment.encode(Db2Types.decimal.opt, unsaved.decimalCol)}, ${Fragment.encode(Db2Types.decimal.opt, unsaved.numericCol)}, ${Fragment.encode(Db2Types.decfloat.opt, unsaved.decfloat16Col)}, ${Fragment.encode(Db2Types.decfloat.opt, unsaved.decfloat34Col)}, ${Fragment.encode(Db2Types.real.opt, unsaved.realCol)}, ${Fragment.encode(Db2Types.double_.opt, unsaved.doubleCol)}, ${Fragment.encode(Db2Types.boolean_.opt, unsaved.boolCol)}, ${Fragment.encode(Db2Types.char_.opt, unsaved.charCol)}, ${Fragment.encode(Db2Types.varchar.opt, unsaved.varcharCol)}, ${Fragment.encode(Db2Types.clob.opt, unsaved.clobCol)}, ${Fragment.encode(Db2Types.graphic.opt, unsaved.graphicCol)}, ${Fragment.encode(Db2Types.vargraphic.opt, unsaved.vargraphicCol)}, ${Fragment.encode(Db2Types.binary.opt, unsaved.binaryCol)}, ${Fragment.encode(Db2Types.varbinary.opt, unsaved.varbinaryCol)}, ${Fragment.encode(Db2Types.blob.opt, unsaved.blobCol)}, ${Fragment.encode(Db2Types.date.opt, unsaved.dateCol)}, ${Fragment.encode(Db2Types.time.opt, unsaved.timeCol)}, ${Fragment.encode(Db2Types.timestamp.opt, unsaved.timestampCol)}, ${Fragment.encode(Db2Types.timestamp.opt, unsaved.timestamp6Col)}, ${Fragment.encode(Db2Types.timestamp.opt, unsaved.timestamp12Col)}, ${Fragment.encode(Db2Types.xml.opt, unsaved.xmlCol)}))
     """
-    .updateReturning(Db2testnullRow.`_rowParser`.exactlyOne()).runUnchecked(c)
+    .updateReturning(Db2testnullRow.rowCodec.exactlyOne()).run(using c)
   }
 
-  override def select: SelectBuilder[Db2testnullFields, Db2testnullRow] = SelectBuilder.of(""""DB2TESTNULL"""", Db2testnullFields.structure, Db2testnullRow.`_rowParser`, Dialect.DB2)
+  override def select: SelectBuilder[Db2testnullFields, Db2testnullRow] = SelectBuilder.of(""""DB2TESTNULL"""", Db2testnullFields.structure, Db2testnullRow.rowCodec, Dialect.DB2)
 
-  override def selectAll(using c: Connection): List[Db2testnullRow] = {
+  override def selectAll(using c: ConnectionRead): List[Db2testnullRow] = {
     sql"""select "SMALLINT_COL", "INT_COL", "BIGINT_COL", "DECIMAL_COL", "NUMERIC_COL", "DECFLOAT16_COL", "DECFLOAT34_COL", "REAL_COL", "DOUBLE_COL", "BOOL_COL", "CHAR_COL", "VARCHAR_COL", "CLOB_COL", "GRAPHIC_COL", "VARGRAPHIC_COL", "BINARY_COL", "VARBINARY_COL", "BLOB_COL", "DATE_COL", "TIME_COL", "TIMESTAMP_COL", "TIMESTAMP6_COL", "TIMESTAMP12_COL", "XML_COL"
     from "DB2TESTNULL"
-    """.query(Db2testnullRow.`_rowParser`.all()).runUnchecked(c)
+    """.query(Db2testnullRow.rowCodec.all()).run(using c)
   }
 
-  override def update: UpdateBuilder[Db2testnullFields, Db2testnullRow] = UpdateBuilder.of(""""DB2TESTNULL"""", Db2testnullFields.structure, Db2testnullRow.`_rowParser`, Dialect.DB2)
+  override def update: UpdateBuilder[Db2testnullFields, Db2testnullRow] = UpdateBuilder.of(""""DB2TESTNULL"""", Db2testnullFields.structure, Db2testnullRow.rowCodec, Dialect.DB2)
 }

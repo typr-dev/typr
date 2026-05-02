@@ -6,12 +6,10 @@
 package testdb.v_product_catalog
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import dev.typr.foundations.MariaTypes
+import dev.typr.dslsc.RowCodecs
 import dev.typr.foundations.Tuple.Tuple11
-import dev.typr.foundations.scala.DbTypeOps
-import dev.typr.foundations.scala.RowParser
-import dev.typr.foundations.scala.RowParsers
-import dev.typr.foundations.scala.ScalaDbTypes
+import dev.typr.foundationssc.MariaTypes
+import dev.typr.foundationssc.RowCodec
 import testdb.BestsellerClearanceFSet
 import testdb.products.ProductsId
 
@@ -92,5 +90,5 @@ case class VProductCatalogViewRow(
 }
 
 object VProductCatalogViewRow {
-  val `_rowParser`: RowParser[VProductCatalogViewRow] = RowParsers.of(ProductsId.mariaType, MariaTypes.varchar, MariaTypes.varchar, MariaTypes.varchar.nullable, ScalaDbTypes.MariaTypes.numeric, MariaTypes.text, BestsellerClearanceFSet.mariaType.nullable, MariaTypes.varchar.nullable, ScalaDbTypes.MariaTypes.numeric, ScalaDbTypes.MariaTypes.numeric, ScalaDbTypes.MariaTypes.bigint)(VProductCatalogViewRow.apply)(row => Array[Any](row.productId, row.sku, row.name, row.shortDescription, row.basePrice, row.status, row.tags, row.brandName, row.availableQuantity, row.avgRating, row.reviewCount))
+  val rowCodec: RowCodec[VProductCatalogViewRow] = RowCodecs.of(ProductsId.mariaType, MariaTypes.varchar, MariaTypes.varchar, MariaTypes.varchar.opt, MariaTypes.numeric, MariaTypes.text, BestsellerClearanceFSet.mariaType.opt, MariaTypes.varchar.opt, MariaTypes.numeric, MariaTypes.numeric, MariaTypes.bigint)(VProductCatalogViewRow.apply)(row => Array[Any](row.productId, row.sku, row.name, row.shortDescription, row.basePrice, row.status, row.tags, row.brandName, row.availableQuantity, row.avgRating, row.reviewCount))
 }

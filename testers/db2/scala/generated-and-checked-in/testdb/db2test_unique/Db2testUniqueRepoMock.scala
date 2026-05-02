@@ -5,17 +5,18 @@
  */
 package testdb.db2test_unique
 
-import dev.typr.foundations.scala.DeleteBuilder
-import dev.typr.foundations.scala.DeleteBuilderMock
-import dev.typr.foundations.scala.DeleteParams
-import dev.typr.foundations.scala.SelectBuilder
-import dev.typr.foundations.scala.SelectBuilderMock
-import dev.typr.foundations.scala.SelectParams
-import dev.typr.foundations.scala.UpdateBuilder
-import dev.typr.foundations.scala.UpdateBuilderMock
-import dev.typr.foundations.scala.UpdateParams
+import dev.typr.dslsc.DeleteBuilder
+import dev.typr.dslsc.DeleteBuilderMock
+import dev.typr.dslsc.DeleteParams
+import dev.typr.dslsc.SelectBuilder
+import dev.typr.dslsc.SelectBuilderMock
+import dev.typr.dslsc.SelectParams
+import dev.typr.dslsc.UpdateBuilder
+import dev.typr.dslsc.UpdateBuilderMock
+import dev.typr.dslsc.UpdateParams
+import dev.typr.foundationssc.Connection
+import dev.typr.foundationssc.ConnectionRead
 import java.lang.RuntimeException
-import java.sql.Connection
 
 case class Db2testUniqueRepoMock(
   toRow: Db2testUniqueRowUnsaved => Db2testUniqueRow,
@@ -25,7 +26,7 @@ case class Db2testUniqueRepoMock(
 
   override def deleteById(id: Db2testUniqueId)(using c: Connection): Boolean = map.remove(id).isDefined
 
-  override def deleteByIds(ids: Array[Db2testUniqueId])(using c: Connection): Int = {
+  override def deleteByIds(ids: List[Db2testUniqueId])(using c: Connection): Int = {
     var count = 0
     ids.foreach { id => if (map.remove(id).isDefined) {
       count = count + 1
@@ -45,20 +46,20 @@ case class Db2testUniqueRepoMock(
 
   override def select: SelectBuilder[Db2testUniqueFields, Db2testUniqueRow] = SelectBuilderMock(Db2testUniqueFields.structure, () => map.values.toList, SelectParams.empty())
 
-  override def selectAll(using c: Connection): List[Db2testUniqueRow] = map.values.toList
+  override def selectAll(using c: ConnectionRead): List[Db2testUniqueRow] = map.values.toList
 
-  override def selectById(id: Db2testUniqueId)(using c: Connection): Option[Db2testUniqueRow] = map.get(id)
+  override def selectById(id: Db2testUniqueId)(using c: ConnectionRead): Option[Db2testUniqueRow] = map.get(id)
 
-  override def selectByIds(ids: Array[Db2testUniqueId])(using c: Connection): List[Db2testUniqueRow] = ids.flatMap(map.get(_)).toList
+  override def selectByIds(ids: List[Db2testUniqueId])(using c: ConnectionRead): List[Db2testUniqueRow] = ids.flatMap(map.get(_)).toList
 
-  override def selectByIdsTracked(ids: Array[Db2testUniqueId])(using c: Connection): Map[Db2testUniqueId, Db2testUniqueRow] = selectByIds(ids)(using c).map(x => (((row: Db2testUniqueRow) => row.id).apply(x), x)).toMap
+  override def selectByIdsTracked(ids: List[Db2testUniqueId])(using c: ConnectionRead): Map[Db2testUniqueId, Db2testUniqueRow] = selectByIds(ids)(using c).map(x => (((row: Db2testUniqueRow) => row.id).apply(x), x)).toMap
 
   override def selectByUniqueCodeAndCategory(
     code: String,
     category: String
-  )(using c: Connection): Option[Db2testUniqueRow] = map.values.toList.find(v => (code == v.code) && (category == v.category))
+  )(using c: ConnectionRead): Option[Db2testUniqueRow] = map.values.toList.find(v => (code == v.code) && (category == v.category))
 
-  override def selectByUniqueEmail(email: String)(using c: Connection): Option[Db2testUniqueRow] = map.values.toList.find(v => (email == v.email))
+  override def selectByUniqueEmail(email: String)(using c: ConnectionRead): Option[Db2testUniqueRow] = map.values.toList.find(v => (email == v.email))
 
   override def update: UpdateBuilder[Db2testUniqueFields, Db2testUniqueRow] = UpdateBuilderMock(Db2testUniqueFields.structure, () => map.values.toList, UpdateParams.empty(), row => row)
 

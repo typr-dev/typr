@@ -23,7 +23,7 @@ object TimeStamp {
 
   implicit lazy val arrayPut: Put[Array[TimeStamp]] = TypoInstant.arrayPut.contramap(_.map(_.value))
 
-  implicit lazy val bijection: Bijection[TimeStamp, TypoInstant] = Bijection.apply[TimeStamp, TypoInstant](_.value)(TimeStamp.apply)
+  implicit lazy val bijection: Bijection[TimeStamp, TypoInstant] = Bijection[TimeStamp, TypoInstant](_.value)(TimeStamp.apply)
 
   implicit lazy val decoder: Decoder[TimeStamp] = TypoInstant.decoder.map(TimeStamp.apply)
 

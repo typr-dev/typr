@@ -7,13 +7,11 @@ package adventureworks.public.flaff
 
 import adventureworks.public.ShortText
 import com.fasterxml.jackson.annotation.JsonProperty
+import dev.typr.dslkt.RowCodecs
 import dev.typr.foundations.PgText
-import dev.typr.foundations.PgTypes
 import dev.typr.foundations.Tuple.Tuple5
-import dev.typr.foundations.kotlin.KotlinDbTypes
-import dev.typr.foundations.kotlin.RowParser
-import dev.typr.foundations.kotlin.RowParsers
-import dev.typr.foundations.kotlin.nullable
+import dev.typr.foundationskt.PgTypes
+import dev.typr.foundationskt.RowCodec
 
 /** Table: public.flaff
   * Composite primary key: code, another_code, some_number, specifier
@@ -22,16 +20,16 @@ data class FlaffRow(
   /** Points to [adventureworks.public.flaff.FlaffRow.code] */
   val code: ShortText,
   /** Points to [adventureworks.public.flaff.FlaffRow.anotherCode] */
-  @field:JsonProperty("another_code") val anotherCode: String,
+  @field:JsonProperty("another_code") val anotherCode: kotlin.String,
   /** Points to [adventureworks.public.flaff.FlaffRow.someNumber] */
   @field:JsonProperty("some_number") val someNumber: Int,
   val specifier: ShortText,
   /** Points to [adventureworks.public.flaff.FlaffRow.specifier] */
   val parentspecifier: ShortText?
-) : Tuple5<ShortText, String, Int, ShortText, ShortText?> {
+) : Tuple5<ShortText, kotlin.String, Int, ShortText, ShortText?> {
   override fun _1(): ShortText = code
 
-  override fun _2(): String = anotherCode
+  override fun _2(): kotlin.String = anotherCode
 
   override fun _3(): Int = someNumber
 
@@ -44,14 +42,14 @@ data class FlaffRow(
   fun id(): FlaffId = this.compositeId()
 
   companion object {
-    val _rowParser: RowParser<FlaffRow> = RowParsers.of(ShortText.pgType, PgTypes.text, KotlinDbTypes.PgTypes.int4, ShortText.pgType, ShortText.pgType.nullable(), { t0, t1, t2, t3, t4 -> FlaffRow(t0, t1, t2, t3, t4) }, { row -> arrayOf<Any?>(row.code, row.anotherCode, row.someNumber, row.specifier, row.parentspecifier) })
+    val rowCodec: RowCodec<FlaffRow> = RowCodecs.of(ShortText.pgType, PgTypes.text, PgTypes.int4, ShortText.pgType, ShortText.pgType.opt(), { t0: ShortText, t1: kotlin.String, t2: Int, t3: ShortText, t4: ShortText? -> FlaffRow(t0, t1, t2, t3, t4) }, { row: FlaffRow -> arrayOf<Any?>(row.code, row.anotherCode, row.someNumber, row.specifier, row.parentspecifier) })
+
+    val pgText: PgText<FlaffRow> =
+      PgText.from(rowCodec.underlying)
 
     fun apply(
       compositeId: FlaffId,
       parentspecifier: ShortText?
     ): FlaffRow = FlaffRow(compositeId.code, compositeId.anotherCode, compositeId.someNumber, compositeId.specifier, parentspecifier)
-
-    val pgText: PgText<FlaffRow> =
-      PgText.from(_rowParser.underlying)
   }
 }

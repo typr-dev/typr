@@ -6,12 +6,11 @@
 package testdb.customers
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import dev.typr.foundations.MariaTypes
+import dev.typr.dslkt.RowCodecs
 import dev.typr.foundations.Tuple.Tuple14
 import dev.typr.foundations.data.Json
-import dev.typr.foundations.kotlin.RowParser
-import dev.typr.foundations.kotlin.RowParsers
-import dev.typr.foundations.kotlin.nullable
+import dev.typr.foundationskt.MariaTypes
+import dev.typr.foundationskt.RowCodec
 import java.time.LocalDateTime
 import testdb.EmailMailPushSmsSet
 import testdb.customer_status.CustomerStatusId
@@ -39,7 +38,7 @@ data class CustomersRow(
   /** 
     * Default: NULL
     */
-  val phone: String?,
+  val phone: kotlin.String?,
   /** 
     * Default: 'pending'
     * Points to [testdb.customer_status.CustomerStatusRow.statusCode]
@@ -48,7 +47,7 @@ data class CustomersRow(
   /** 
     * Default: 'bronze'
     */
-  val tier: String,
+  val tier: kotlin.String,
   /** 
     * Default: NULL
     */
@@ -60,7 +59,7 @@ data class CustomersRow(
   /** 
     * Default: NULL
     */
-  val notes: String?,
+  val notes: kotlin.String?,
   /** 
     * Default: current_timestamp(6)
     */
@@ -73,12 +72,12 @@ data class CustomersRow(
     * Default: NULL
     */
   @field:JsonProperty("last_login_at") val lastLoginAt: LocalDateTime?
-) : Tuple14<CustomersId, /* user-picked */ Email, ByteArray, /* user-picked */ FirstName, /* user-picked */ LastName, String?, CustomerStatusId, String, Json?, EmailMailPushSmsSet?, String?, LocalDateTime, LocalDateTime, LocalDateTime?> {
+) : Tuple14<CustomersId, /* user-picked */ Email, ByteArray, /* user-picked */ FirstName, /* user-picked */ LastName, kotlin.String?, CustomerStatusId, kotlin.String, Json?, EmailMailPushSmsSet?, kotlin.String?, LocalDateTime, LocalDateTime, LocalDateTime?> {
   override fun _1(): CustomersId = customerId
 
   override fun _10(): EmailMailPushSmsSet? = marketingFlags
 
-  override fun _11(): String? = notes
+  override fun _11(): kotlin.String? = notes
 
   override fun _12(): LocalDateTime = createdAt
 
@@ -94,29 +93,29 @@ data class CustomersRow(
 
   override fun _5(): /* user-picked */ LastName = lastName
 
-  override fun _6(): String? = phone
+  override fun _6(): kotlin.String? = phone
 
   override fun _7(): CustomerStatusId = status
 
-  override fun _8(): String = tier
+  override fun _8(): kotlin.String = tier
 
   override fun _9(): Json? = preferences
 
   fun id(): CustomersId = customerId
 
   fun toUnsavedRow(
-    phone: Defaulted<String?> = Defaulted.Provided(this.phone),
+    phone: Defaulted<kotlin.String?> = Defaulted.Provided(this.phone),
     status: Defaulted<CustomerStatusId> = Defaulted.Provided(this.status),
-    tier: Defaulted<String> = Defaulted.Provided(this.tier),
+    tier: Defaulted<kotlin.String> = Defaulted.Provided(this.tier),
     preferences: Defaulted<Json?> = Defaulted.Provided(this.preferences),
     marketingFlags: Defaulted<EmailMailPushSmsSet?> = Defaulted.Provided(this.marketingFlags),
-    notes: Defaulted<String?> = Defaulted.Provided(this.notes),
+    notes: Defaulted<kotlin.String?> = Defaulted.Provided(this.notes),
     createdAt: Defaulted<LocalDateTime> = Defaulted.Provided(this.createdAt),
     updatedAt: Defaulted<LocalDateTime> = Defaulted.Provided(this.updatedAt),
     lastLoginAt: Defaulted<LocalDateTime?> = Defaulted.Provided(this.lastLoginAt)
   ): CustomersRowUnsaved = CustomersRowUnsaved(email, passwordHash, firstName, lastName, phone, status, tier, preferences, marketingFlags, notes, createdAt, updatedAt, lastLoginAt)
 
   companion object {
-    val _rowParser: RowParser<CustomersRow> = RowParsers.of(CustomersId.mariaType, Email.mariaType, MariaTypes.binary, FirstName.mariaType, LastName.mariaType, MariaTypes.varchar.nullable(), CustomerStatusId.mariaType, MariaTypes.text, MariaTypes.json.nullable(), EmailMailPushSmsSet.mariaType.nullable(), MariaTypes.text.nullable(), MariaTypes.datetime, MariaTypes.datetime, MariaTypes.datetime.nullable(), { t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13 -> CustomersRow(t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13) }, { row -> arrayOf<Any?>(row.customerId, row.email, row.passwordHash, row.firstName, row.lastName, row.phone, row.status, row.tier, row.preferences, row.marketingFlags, row.notes, row.createdAt, row.updatedAt, row.lastLoginAt) })
+    val rowCodec: RowCodec<CustomersRow> = RowCodecs.of(CustomersId.mariaType, Email.mariaType, MariaTypes.binary, FirstName.mariaType, LastName.mariaType, MariaTypes.varchar.opt(), CustomerStatusId.mariaType, MariaTypes.text, MariaTypes.json.opt(), EmailMailPushSmsSet.mariaType.opt(), MariaTypes.text.opt(), MariaTypes.datetime, MariaTypes.datetime, MariaTypes.datetime.opt(), { t0: CustomersId, t1: /* user-picked */ Email, t2: ByteArray, t3: /* user-picked */ FirstName, t4: /* user-picked */ LastName, t5: kotlin.String?, t6: CustomerStatusId, t7: kotlin.String, t8: Json?, t9: EmailMailPushSmsSet?, t10: kotlin.String?, t11: LocalDateTime, t12: LocalDateTime, t13: LocalDateTime? -> CustomersRow(t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13) }, { row: CustomersRow -> arrayOf<Any?>(row.customerId, row.email, row.passwordHash, row.firstName, row.lastName, row.phone, row.status, row.tier, row.preferences, row.marketingFlags, row.notes, row.createdAt, row.updatedAt, row.lastLoginAt) })
   }
 }

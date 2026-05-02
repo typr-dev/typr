@@ -6,12 +6,10 @@
 package oracledb.employees
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import dev.typr.foundations.OracleTypes
+import dev.typr.dslsc.RowCodecs
 import dev.typr.foundations.Tuple.Tuple7
-import dev.typr.foundations.scala.DbTypeOps
-import dev.typr.foundations.scala.RowParser
-import dev.typr.foundations.scala.RowParsers
-import dev.typr.foundations.scala.ScalaDbTypes
+import dev.typr.foundationssc.OracleTypes
+import dev.typr.foundationssc.RowCodec
 import java.time.LocalDateTime
 import oracledb.MoneyT
 import oracledb.customtypes.Defaulted
@@ -66,8 +64,6 @@ case class EmployeesRow(
 }
 
 object EmployeesRow {
-  val `_rowParser`: RowParser[EmployeesRow] = RowParsers.of(ScalaDbTypes.OracleTypes.number, OracleTypes.varchar2, OracleTypes.varchar2, OracleTypes.varchar2, OracleTypes.varchar2, MoneyT.oracleType.nullable, OracleTypes.date)(EmployeesRow.apply)(row => Array[Any](row.empNumber, row.empSuffix, row.deptCode, row.deptRegion, row.empName, row.salary, row.hireDate))
-
   def apply(
     compositeId: EmployeesId,
     deptCode: String,
@@ -86,4 +82,6 @@ object EmployeesRow {
       hireDate
     )
   }
+
+  val rowCodec: RowCodec[EmployeesRow] = RowCodecs.of(OracleTypes.number, OracleTypes.varchar2, OracleTypes.varchar2, OracleTypes.varchar2, OracleTypes.varchar2, MoneyT.oracleType.opt, OracleTypes.date)(EmployeesRow.apply)(row => Array[Any](row.empNumber, row.empSuffix, row.deptCode, row.deptRegion, row.empName, row.salary, row.hireDate))
 }

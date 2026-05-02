@@ -10,8 +10,7 @@ class AllScalarTypesTest extends AnyFunSuite {
   val repo: AllScalarTypesRepoImpl = new AllScalarTypesRepoImpl
 
   test("insert and select all scalar types") {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       val unsaved = new AllScalarTypesRowUnsaved(
         Some("test varchar2"),
         Some(BigDecimal("123.45")),
@@ -38,8 +37,7 @@ class AllScalarTypesTest extends AnyFunSuite {
   }
 
   test("insert with null values") {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       val unsaved = new AllScalarTypesRowUnsaved(
         None,
         None,
@@ -62,8 +60,7 @@ class AllScalarTypesTest extends AnyFunSuite {
   }
 
   test("update all scalar types") {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       val unsaved = new AllScalarTypesRowUnsaved(
         Some("original"),
         Some(BigDecimal("100.00")),
@@ -91,8 +88,7 @@ class AllScalarTypesTest extends AnyFunSuite {
   }
 
   test("delete all scalar types") {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       val unsaved = new AllScalarTypesRowUnsaved(
         Some("to delete"),
         None,
@@ -114,8 +110,7 @@ class AllScalarTypesTest extends AnyFunSuite {
   }
 
   test("select all") {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       val unsaved1 = new AllScalarTypesRowUnsaved(
         Some("row 1"),
         None,
@@ -145,8 +140,7 @@ class AllScalarTypesTest extends AnyFunSuite {
   }
 
   test("scalar type varchar2") {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       val longString = "A" * 100
       val unsaved = new AllScalarTypesRowUnsaved(
         Some(longString),
@@ -164,8 +158,7 @@ class AllScalarTypesTest extends AnyFunSuite {
   }
 
   test("scalar type number") {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       val unsaved = new AllScalarTypesRowUnsaved(
         None,
         Some(BigDecimal("999999.99")),
@@ -182,8 +175,7 @@ class AllScalarTypesTest extends AnyFunSuite {
   }
 
   test("scalar type date") {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       val testDate = LocalDateTime.of(2025, 12, 31, 23, 59, 59)
       val unsaved = new AllScalarTypesRowUnsaved(
         None,
@@ -204,8 +196,7 @@ class AllScalarTypesTest extends AnyFunSuite {
   }
 
   test("scalar type timestamp") {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       val testTimestamp = LocalDateTime.of(2025, 6, 15, 14, 30, 45)
       val unsaved = new AllScalarTypesRowUnsaved(
         None,
@@ -226,8 +217,7 @@ class AllScalarTypesTest extends AnyFunSuite {
   }
 
   test("scalar type clob") {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       val largeClobContent = "Clob content " * 1000
       val unsaved = new AllScalarTypesRowUnsaved(
         None,

@@ -6,13 +6,11 @@
 package testdb.payment_methods
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import dev.typr.foundations.MariaTypes
+import dev.typr.dslkt.RowCodecs
 import dev.typr.foundations.Tuple.Tuple7
 import dev.typr.foundations.data.Json
-import dev.typr.foundations.kotlin.KotlinDbTypes
-import dev.typr.foundations.kotlin.RowParser
-import dev.typr.foundations.kotlin.RowParsers
-import dev.typr.foundations.kotlin.nullable
+import dev.typr.foundationskt.MariaTypes
+import dev.typr.foundationskt.RowCodec
 import testdb.customtypes.Defaulted
 import testdb.userdefined.IsActive
 
@@ -25,11 +23,11 @@ data class PaymentMethodsRow(
     */
   @field:JsonProperty("method_id") val methodId: PaymentMethodsId,
   /**  */
-  val code: String,
+  val code: kotlin.String,
   /**  */
-  val name: String,
+  val name: kotlin.String,
   /**  */
-  @field:JsonProperty("method_type") val methodType: String,
+  @field:JsonProperty("method_type") val methodType: kotlin.String,
   /** 
     * Default: NULL
     */
@@ -41,31 +39,31 @@ data class PaymentMethodsRow(
   /** 
     * Default: 0
     */
-  @field:JsonProperty("sort_order") val sortOrder: Byte
-) : Tuple7<PaymentMethodsId, String, String, String, Json?, /* user-picked */ IsActive, Byte> {
+  @field:JsonProperty("sort_order") val sortOrder: kotlin.Byte
+) : Tuple7<PaymentMethodsId, kotlin.String, kotlin.String, kotlin.String, Json?, /* user-picked */ IsActive, kotlin.Byte> {
   override fun _1(): PaymentMethodsId = methodId
 
-  override fun _2(): String = code
+  override fun _2(): kotlin.String = code
 
-  override fun _3(): String = name
+  override fun _3(): kotlin.String = name
 
-  override fun _4(): String = methodType
+  override fun _4(): kotlin.String = methodType
 
   override fun _5(): Json? = processorConfig
 
   override fun _6(): /* user-picked */ IsActive = isActive
 
-  override fun _7(): Byte = sortOrder
+  override fun _7(): kotlin.Byte = sortOrder
 
   fun id(): PaymentMethodsId = methodId
 
   fun toUnsavedRow(
     processorConfig: Defaulted<Json?> = Defaulted.Provided(this.processorConfig),
     isActive: Defaulted</* user-picked */ IsActive> = Defaulted.Provided(this.isActive),
-    sortOrder: Defaulted<Byte> = Defaulted.Provided(this.sortOrder)
+    sortOrder: Defaulted<kotlin.Byte> = Defaulted.Provided(this.sortOrder)
   ): PaymentMethodsRowUnsaved = PaymentMethodsRowUnsaved(code, name, methodType, processorConfig, isActive, sortOrder)
 
   companion object {
-    val _rowParser: RowParser<PaymentMethodsRow> = RowParsers.of(PaymentMethodsId.mariaType, MariaTypes.varchar, MariaTypes.varchar, MariaTypes.text, MariaTypes.json.nullable(), IsActive.mariaType, KotlinDbTypes.MariaTypes.tinyint, { t0, t1, t2, t3, t4, t5, t6 -> PaymentMethodsRow(t0, t1, t2, t3, t4, t5, t6) }, { row -> arrayOf<Any?>(row.methodId, row.code, row.name, row.methodType, row.processorConfig, row.isActive, row.sortOrder) })
+    val rowCodec: RowCodec<PaymentMethodsRow> = RowCodecs.of(PaymentMethodsId.mariaType, MariaTypes.varchar, MariaTypes.varchar, MariaTypes.text, MariaTypes.json.opt(), IsActive.mariaType, MariaTypes.tinyint, { t0: PaymentMethodsId, t1: kotlin.String, t2: kotlin.String, t3: kotlin.String, t4: Json?, t5: /* user-picked */ IsActive, t6: kotlin.Byte -> PaymentMethodsRow(t0, t1, t2, t3, t4, t5, t6) }, { row: PaymentMethodsRow -> arrayOf<Any?>(row.methodId, row.code, row.name, row.methodType, row.processorConfig, row.isActive, row.sortOrder) })
   }
 }

@@ -9,11 +9,11 @@ import adventureworks.customtypes.Defaulted
 import adventureworks.person.address.AddressId
 import adventureworks.person.addresstype.AddresstypeId
 import adventureworks.person.businessentity.BusinessentityId
+import dev.typr.dslkt.RowCodecs
 import dev.typr.foundations.PgText
-import dev.typr.foundations.PgTypes
 import dev.typr.foundations.Tuple.Tuple5
-import dev.typr.foundations.kotlin.RowParser
-import dev.typr.foundations.kotlin.RowParsers
+import dev.typr.foundationskt.PgTypes
+import dev.typr.foundationskt.RowCodec
 import java.time.LocalDateTime
 import java.util.UUID
 
@@ -59,15 +59,15 @@ data class BusinessentityaddressRow(
   ): BusinessentityaddressRowUnsaved = BusinessentityaddressRowUnsaved(businessentityid, addressid, addresstypeid, rowguid, modifieddate)
 
   companion object {
-    val _rowParser: RowParser<BusinessentityaddressRow> = RowParsers.of(BusinessentityId.pgType, AddressId.pgType, AddresstypeId.pgType, PgTypes.uuid, PgTypes.timestamp, { t0, t1, t2, t3, t4 -> BusinessentityaddressRow(t0, t1, t2, t3, t4) }, { row -> arrayOf<Any?>(row.businessentityid, row.addressid, row.addresstypeid, row.rowguid, row.modifieddate) })
+    val rowCodec: RowCodec<BusinessentityaddressRow> = RowCodecs.of(BusinessentityId.pgType, AddressId.pgType, AddresstypeId.pgType, PgTypes.uuid, PgTypes.timestamp, { t0: BusinessentityId, t1: AddressId, t2: AddresstypeId, t3: UUID, t4: LocalDateTime -> BusinessentityaddressRow(t0, t1, t2, t3, t4) }, { row: BusinessentityaddressRow -> arrayOf<Any?>(row.businessentityid, row.addressid, row.addresstypeid, row.rowguid, row.modifieddate) })
+
+    val pgText: PgText<BusinessentityaddressRow> =
+      PgText.from(rowCodec.underlying)
 
     fun apply(
       compositeId: BusinessentityaddressId,
       rowguid: UUID,
       modifieddate: LocalDateTime
     ): BusinessentityaddressRow = BusinessentityaddressRow(compositeId.businessentityid, compositeId.addressid, compositeId.addresstypeid, rowguid, modifieddate)
-
-    val pgText: PgText<BusinessentityaddressRow> =
-      PgText.from(_rowParser.underlying)
   }
 }

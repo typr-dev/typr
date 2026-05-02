@@ -5,10 +5,9 @@
  */
 package adventureworks.public
 
-import dev.typr.foundations.PgRead
-import dev.typr.foundations.PgStruct
 import dev.typr.foundations.PgType
 import dev.typr.foundations.PgTypes
+import dev.typr.foundations.RowCodec
 import java.util.Optional
 
 /** PostgreSQL composite type: public.tree_node */
@@ -19,9 +18,7 @@ case class TreeNode(
 )
 
 object TreeNode {
-  given pgStruct: PgStruct[TreeNode] = PgStruct.builder[TreeNode]("public.tree_node").optField("id", PgTypes.int4, (v: TreeNode) => v.id).optField("label", PgTypes.text, (v: TreeNode) => v.label).optField("parentId", PgTypes.int4, (v: TreeNode) => v.parentId).build(arr => TreeNode(id = Optional.ofNullable(arr(0).asInstanceOf[Integer]), label = Optional.ofNullable(arr(1).asInstanceOf[String]), parentId = Optional.ofNullable(arr(2).asInstanceOf[Integer])))
+  given pgType: PgType[TreeNode] = PgTypes.compositeOf("public.tree_node", RowCodec.namedBuilder[TreeNode]().field("id", PgTypes.int4.opt(), (v: TreeNode) => v.id).field("label", PgTypes.text.opt(), (v: TreeNode) => v.label).field("parentId", PgTypes.int4.opt(), (v: TreeNode) => v.parentId).build((t0, t1, t2) => TreeNode(id = t0, label = t1, parentId = t2)))
 
-  given pgType: PgType[TreeNode] = pgStruct.asType()
-
-  given pgTypeArray: PgType[Array[TreeNode]] = pgType.array(PgRead.readCompositeArray(pgType.pgCompositeText(), n => new Array[TreeNode](n)), n => new Array[TreeNode](n))
+  given pgTypeArray: PgType[java.util.List[TreeNode]] = pgType.array()
 }

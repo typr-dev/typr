@@ -5,17 +5,17 @@
  */
 package testdb.order_details
 
-import dev.typr.foundations.scala.Dialect
-import dev.typr.foundations.scala.SelectBuilder
-import java.sql.Connection
-import dev.typr.foundations.scala.Fragment.sql
+import dev.typr.dslsc.Dialect
+import dev.typr.dslsc.SelectBuilder
+import dev.typr.foundationssc.ConnectionRead
+import dev.typr.foundationssc.Fragment.sql
 
 class OrderDetailsViewRepoImpl extends OrderDetailsViewRepo {
-  override def select: SelectBuilder[OrderDetailsViewFields, OrderDetailsViewRow] = SelectBuilder.of(""""order_details"""", OrderDetailsViewFields.structure, OrderDetailsViewRow.`_rowParser`, Dialect.DUCKDB)
+  override def select: SelectBuilder[OrderDetailsViewFields, OrderDetailsViewRow] = SelectBuilder.of(""""order_details"""", OrderDetailsViewFields.structure, OrderDetailsViewRow.rowCodec, Dialect.DUCKDB)
 
-  override def selectAll(using c: Connection): List[OrderDetailsViewRow] = {
+  override def selectAll(using c: ConnectionRead): List[OrderDetailsViewRow] = {
     sql"""select "order_id", "order_date", "customer_name", "product_name", "quantity", "unit_price", "line_total"
     from "order_details"
-    """.query(OrderDetailsViewRow.`_rowParser`.all()).runUnchecked(c)
+    """.query(OrderDetailsViewRow.rowCodec.all()).run(using c)
   }
 }

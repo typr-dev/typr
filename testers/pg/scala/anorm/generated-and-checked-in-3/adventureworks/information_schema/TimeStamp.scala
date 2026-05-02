@@ -25,7 +25,7 @@ object TimeStamp {
 
   given arrayToStatement: ToStatement[Array[TimeStamp]] = TypoInstant.arrayToStatement.contramap(_.map(_.value))
 
-  given bijection: Bijection[TimeStamp, TypoInstant] = Bijection.apply[TimeStamp, TypoInstant](_.value)(TimeStamp.apply)
+  given bijection: Bijection[TimeStamp, TypoInstant] = Bijection[TimeStamp, TypoInstant](_.value)(TimeStamp.apply)
 
   given column: Column[TimeStamp] = TypoInstant.column.map(TimeStamp.apply)
 

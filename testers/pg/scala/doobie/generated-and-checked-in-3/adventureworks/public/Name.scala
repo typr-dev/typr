@@ -23,7 +23,7 @@ object Name {
 
   given arrayPut: Put[Array[Name]] = adventureworks.StringArrayMeta.put.contramap(_.map(_.value))
 
-  given bijection: Bijection[Name, String] = Bijection.apply[Name, String](_.value)(Name.apply)
+  given bijection: Bijection[Name, String] = Bijection[Name, String](_.value)(Name.apply)
 
   given decoder: Decoder[Name] = Decoder.decodeString.map(Name.apply)
 

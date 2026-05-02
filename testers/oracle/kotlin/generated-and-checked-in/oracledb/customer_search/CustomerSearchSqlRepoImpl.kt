@@ -5,14 +5,14 @@
  */
 package oracledb.customer_search
 
-import dev.typr.foundations.OracleTypes
-import dev.typr.foundations.kotlin.Fragment
-import java.sql.Connection
+import dev.typr.foundationskt.ConnectionRead
+import dev.typr.foundationskt.Fragment
+import dev.typr.foundationskt.OracleTypes
 import kotlin.collections.List
 
 class CustomerSearchSqlRepoImpl() : CustomerSearchSqlRepo {
   override fun apply(
-    namePattern: String,
-    c: Connection
-  ): List<CustomerSearchSqlRow> = Fragment.interpolate(Fragment.lit("-- Search customers by name pattern\nSELECT\n    c.customer_id,\n    c.name,\n    c.billing_address,\n    c.credit_limit,\n    c.created_at\nFROM customers c\nWHERE c.name LIKE "), Fragment.encode(OracleTypes.varchar2, namePattern), Fragment.lit("\nORDER BY c.name\n")).query(CustomerSearchSqlRow._rowParser.all()).runUnchecked(c)
+    namePattern: kotlin.String,
+    c: ConnectionRead
+  ): List<CustomerSearchSqlRow> = Fragment.concat(Fragment.of("-- Search customers by name pattern\nSELECT\n    c.customer_id,\n    c.name,\n    c.billing_address,\n    c.credit_limit,\n    c.created_at\nFROM customers c\nWHERE c.name LIKE "), Fragment.encode(OracleTypes.varchar2, namePattern), Fragment.of("\nORDER BY c.name\n")).query(CustomerSearchSqlRow.rowCodec.all()).run(c)
 }

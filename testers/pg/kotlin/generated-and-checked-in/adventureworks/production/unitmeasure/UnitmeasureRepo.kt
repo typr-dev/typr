@@ -5,10 +5,11 @@
  */
 package adventureworks.production.unitmeasure
 
-import dev.typr.foundations.kotlin.DeleteBuilder
-import dev.typr.foundations.kotlin.SelectBuilder
-import dev.typr.foundations.kotlin.UpdateBuilder
-import java.sql.Connection
+import dev.typr.dslkt.DeleteBuilder
+import dev.typr.dslkt.SelectBuilder
+import dev.typr.dslkt.UpdateBuilder
+import dev.typr.foundationskt.Connection
+import dev.typr.foundationskt.ConnectionRead
 import kotlin.collections.Iterator
 import kotlin.collections.List
 import kotlin.collections.Map
@@ -19,10 +20,10 @@ interface UnitmeasureRepo {
   abstract fun deleteById(
     unitmeasurecode: UnitmeasureId,
     c: Connection
-  ): Boolean
+  ): kotlin.Boolean
 
   abstract fun deleteByIds(
-    unitmeasurecodes: Array<UnitmeasureId>,
+    unitmeasurecodes: List<UnitmeasureId>,
     c: Connection
   ): Int
 
@@ -40,32 +41,32 @@ interface UnitmeasureRepo {
     unsaved: Iterator<UnitmeasureRow>,
     batchSize: Int = 10000,
     c: Connection
-  ): Long
+  ): kotlin.Long
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
   abstract fun insertUnsavedStreaming(
     unsaved: Iterator<UnitmeasureRowUnsaved>,
     batchSize: Int = 10000,
     c: Connection
-  ): Long
+  ): kotlin.Long
 
   abstract fun select(): SelectBuilder<UnitmeasureFields, UnitmeasureRow>
 
-  abstract fun selectAll(c: Connection): List<UnitmeasureRow>
+  abstract fun selectAll(c: ConnectionRead): List<UnitmeasureRow>
 
   abstract fun selectById(
     unitmeasurecode: UnitmeasureId,
-    c: Connection
+    c: ConnectionRead
   ): UnitmeasureRow?
 
   abstract fun selectByIds(
-    unitmeasurecodes: Array<UnitmeasureId>,
-    c: Connection
+    unitmeasurecodes: List<UnitmeasureId>,
+    c: ConnectionRead
   ): List<UnitmeasureRow>
 
   abstract fun selectByIdsTracked(
-    unitmeasurecodes: Array<UnitmeasureId>,
-    c: Connection
+    unitmeasurecodes: List<UnitmeasureId>,
+    c: ConnectionRead
   ): Map<UnitmeasureId, UnitmeasureRow>
 
   abstract fun update(): UpdateBuilder<UnitmeasureFields, UnitmeasureRow>
@@ -73,7 +74,7 @@ interface UnitmeasureRepo {
   abstract fun update(
     row: UnitmeasureRow,
     c: Connection
-  ): Boolean
+  ): kotlin.Boolean
 
   abstract fun upsert(
     unsaved: UnitmeasureRow,

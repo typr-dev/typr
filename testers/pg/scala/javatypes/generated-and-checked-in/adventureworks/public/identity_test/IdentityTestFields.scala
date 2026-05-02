@@ -5,16 +5,16 @@
  */
 package adventureworks.public.identity_test
 
+import dev.typr.dsl.FieldsBase
+import dev.typr.dsl.Path
+import dev.typr.dsl.RelationStructure
+import dev.typr.dsl.SqlExpr
+import dev.typr.dsl.SqlExpr.Field
+import dev.typr.dsl.SqlExpr.FieldLike
+import dev.typr.dsl.SqlExpr.IdField
+import dev.typr.dsl.TupleExpr.TupleExpr3
 import dev.typr.foundations.PgTypes
-import dev.typr.foundations.RowParser
-import dev.typr.foundations.dsl.FieldsBase
-import dev.typr.foundations.dsl.Path
-import dev.typr.foundations.dsl.RelationStructure
-import dev.typr.foundations.dsl.SqlExpr
-import dev.typr.foundations.dsl.SqlExpr.Field
-import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.dsl.SqlExpr.IdField
-import dev.typr.foundations.dsl.TupleExpr.TupleExpr3
+import dev.typr.foundations.RowCodec
 import java.util.Optional
 
 class IdentityTestFields(val `_path`: java.util.List[Path]) extends TupleExpr3[Integer, Integer, IdentityTestId] with RelationStructure[IdentityTestFields, IdentityTestRow]  with FieldsBase[IdentityTestRow] {
@@ -56,7 +56,7 @@ class IdentityTestFields(val `_path`: java.util.List[Path]) extends TupleExpr3[I
 
   override def columns: java.util.List[FieldLike[?, IdentityTestRow]] = java.util.List.of(this.alwaysGenerated, this.defaultGenerated, this.name)
 
-  override def rowParser: RowParser[IdentityTestRow] = IdentityTestRow._rowParser
+  override def rowCodec: RowCodec[IdentityTestRow] = IdentityTestRow.rowCodec
 
   override def withPaths(`_path`: java.util.List[Path]): RelationStructure[IdentityTestFields, IdentityTestRow] = new IdentityTestFields(`_path`)
 

@@ -36,9 +36,7 @@ class ViewTest extends AnyFunSuite {
   val inventoryRepo: InventoryRepoImpl = new InventoryRepoImpl
 
   test("customerSummaryViewSelectAll") {
-    withConnection { c =>
-      given java.sql.Connection = c
-
+    withConnection {
       customersRepo.insert(
         CustomersRowUnsaved(
           email = Email("view1@example.com"),
@@ -62,9 +60,7 @@ class ViewTest extends AnyFunSuite {
   }
 
   test("customerSummaryViewFields") {
-    withConnection { c =>
-      given java.sql.Connection = c
-
+    withConnection {
       customersRepo.insert(
         CustomersRowUnsaved(
           email = Email("summary@example.com"),
@@ -90,9 +86,7 @@ class ViewTest extends AnyFunSuite {
   }
 
   test("customerSummaryViewWithOrders") {
-    withConnection { c =>
-      given java.sql.Connection = c
-
+    withConnection {
       val customer = customersRepo.insert(
         CustomersRowUnsaved(
           email = Email("orders@example.com"),
@@ -139,9 +133,7 @@ class ViewTest extends AnyFunSuite {
   }
 
   test("productCatalogViewSelectAll") {
-    withConnection { c =>
-      given java.sql.Connection = c
-
+    withConnection {
       val brand = brandsRepo.insert(BrandsRowUnsaved(name = "CatalogBrand", slug = "catalog-brand"))
 
       productsRepo.insert(
@@ -168,9 +160,7 @@ class ViewTest extends AnyFunSuite {
   }
 
   test("productCatalogViewFields") {
-    withConnection { c =>
-      given java.sql.Connection = c
-
+    withConnection {
       val brand = brandsRepo.insert(BrandsRowUnsaved(name = "FieldsBrand", slug = "fields-brand"))
 
       productsRepo.insert(
@@ -199,9 +189,7 @@ class ViewTest extends AnyFunSuite {
   }
 
   test("productCatalogViewWithInventory") {
-    withConnection { c =>
-      given java.sql.Connection = c
-
+    withConnection {
       val warehouse = warehousesRepo.insert(
         WarehousesRowUnsaved(
           code = "WH001",
@@ -236,9 +224,7 @@ class ViewTest extends AnyFunSuite {
   }
 
   test("productCatalogViewWithReviews") {
-    withConnection { c =>
-      given java.sql.Connection = c
-
+    withConnection {
       val customer = customersRepo.insert(
         CustomersRowUnsaved(
           email = Email("reviewer@example.com"),
@@ -282,9 +268,7 @@ class ViewTest extends AnyFunSuite {
   }
 
   test("viewDSLSelect") {
-    withConnection { c =>
-      given java.sql.Connection = c
-
+    withConnection {
       customersRepo.insert(
         CustomersRowUnsaved(
           email = Email("dsl1@example.com"),
@@ -327,9 +311,7 @@ class ViewTest extends AnyFunSuite {
   }
 
   test("productCatalogViewDSLSelect") {
-    withConnection { c =>
-      given java.sql.Connection = c
-
+    withConnection {
       productsRepo.insert(
         ProductsRowUnsaved(
           sku = "DSL-PROD-1",

@@ -27,7 +27,7 @@ object CurrentFlag {
 
   implicit lazy val arraySetter: Setter[Array[CurrentFlag]] = Flag.arraySetter.contramap(_.map(_.value))
 
-  implicit lazy val bijection: Bijection[CurrentFlag, Flag] = Bijection.apply[CurrentFlag, Flag](_.value)(CurrentFlag.apply)
+  implicit lazy val bijection: Bijection[CurrentFlag, Flag] = Bijection[CurrentFlag, Flag](_.value)(CurrentFlag.apply)
 
   implicit lazy val jdbcDecoder: JdbcDecoder[CurrentFlag] = Flag.jdbcDecoder.map(CurrentFlag.apply)
 

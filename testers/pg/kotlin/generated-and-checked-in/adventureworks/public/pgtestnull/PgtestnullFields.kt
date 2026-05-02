@@ -7,8 +7,14 @@ package adventureworks.public.pgtestnull
 
 import adventureworks.public.Mydomain
 import adventureworks.public.Myenum
-import dev.typr.foundations.PgTypes
-import dev.typr.foundations.RowParser
+import dev.typr.dsl.FieldsBase
+import dev.typr.dsl.Path
+import dev.typr.dsl.SqlExpr.FieldLike
+import dev.typr.dslkt.RelationStructure
+import dev.typr.dslkt.SqlExpr
+import dev.typr.dslkt.SqlExpr.OptField
+import dev.typr.dslkt.TupleExpr70
+import dev.typr.foundations.RowCodec
 import dev.typr.foundations.data.Inet
 import dev.typr.foundations.data.Int2Vector
 import dev.typr.foundations.data.Json
@@ -16,14 +22,7 @@ import dev.typr.foundations.data.Jsonb
 import dev.typr.foundations.data.Money
 import dev.typr.foundations.data.Vector
 import dev.typr.foundations.data.Xml
-import dev.typr.foundations.dsl.FieldsBase
-import dev.typr.foundations.dsl.Path
-import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.kotlin.KotlinDbTypes
-import dev.typr.foundations.kotlin.RelationStructure
-import dev.typr.foundations.kotlin.SqlExpr
-import dev.typr.foundations.kotlin.SqlExpr.OptField
-import dev.typr.foundations.kotlin.TupleExpr70
+import dev.typr.foundationskt.PgTypes
 import java.math.BigDecimal
 import java.time.Instant
 import java.time.LocalDate
@@ -42,20 +41,20 @@ import org.postgresql.geometric.PGpoint
 import org.postgresql.geometric.PGpolygon
 import org.postgresql.util.PGInterval
 
-data class PgtestnullFields(val _path: List<Path>) : TupleExpr70<Boolean, PGbox, /* bpchar, max 3 chars */ String, ByteArray, /* bpchar, max 1 chars */ String, PGcircle, LocalDate, Float, Double, Map<String, String>, Inet, Short, Int2Vector, Int, Long, PGInterval, Json, Jsonb, PGline, PGlseg, Money, Mydomain, Myenum, String, BigDecimal, PGpath, PGpoint, PGpolygon, String, LocalTime, LocalDateTime, Instant, OffsetTime, UUID, String, Vector, Xml, Array<PGbox>, Array</* bpchar */ String>, Array</* bpchar */ String>, Array<PGcircle>, Array<LocalDate>, Array<Float>, Array<Double>, Array<Inet>, Array<Short>, Array<Int2Vector>, Array<Int>, Array<Long>, Array<PGInterval>, Array<Json>, Array<Jsonb>, Array<PGline>, Array<PGlseg>, Array<Money>, Array<Mydomain>, Array<Myenum>, Array<String>, Array<BigDecimal>, Array<PGpath>, Array<PGpoint>, Array<PGpolygon>, Array<String>, Array<LocalTime>, Array<LocalDateTime>, Array<Instant>, Array<OffsetTime>, Array<UUID>, Array<String>, Array<Xml>>, RelationStructure<PgtestnullFields, PgtestnullRow>, FieldsBase<PgtestnullRow> {
-  override fun _1(): SqlExpr<Boolean> = bool()
+data class PgtestnullFields(val _path: List<Path>) : TupleExpr70<kotlin.Boolean, PGbox, /* bpchar, max 3 chars */ kotlin.String, ByteArray, /* bpchar, max 1 chars */ kotlin.String, PGcircle, LocalDate, kotlin.Float, kotlin.Double, Map<kotlin.String, kotlin.String>, Inet, kotlin.Short, Int2Vector, Int, kotlin.Long, PGInterval, Json, Jsonb, PGline, PGlseg, Money, Mydomain, Myenum, kotlin.String, BigDecimal, PGpath, PGpoint, PGpolygon, kotlin.String, LocalTime, LocalDateTime, Instant, OffsetTime, UUID, kotlin.String, Vector, Xml, List<PGbox>, List</* bpchar */ kotlin.String>, List</* bpchar */ kotlin.String>, List<PGcircle>, List<LocalDate>, List<kotlin.Float>, List<kotlin.Double>, List<Inet>, List<kotlin.Short>, List<Int2Vector>, List<Int>, List<kotlin.Long>, List<PGInterval>, List<Json>, List<Jsonb>, List<PGline>, List<PGlseg>, List<Money>, List<Mydomain>, List<Myenum>, List<kotlin.String>, List<BigDecimal>, List<PGpath>, List<PGpoint>, List<PGpolygon>, List<kotlin.String>, List<LocalTime>, List<LocalDateTime>, List<Instant>, List<OffsetTime>, List<UUID>, List<kotlin.String>, List<Xml>>, RelationStructure<PgtestnullFields, PgtestnullRow>, FieldsBase<PgtestnullRow> {
+  override fun _1(): SqlExpr<kotlin.Boolean> = bool()
 
-  override fun _10(): SqlExpr<Map<String, String>> = hstore()
+  override fun _10(): SqlExpr<Map<kotlin.String, kotlin.String>> = hstore()
 
   override fun _11(): SqlExpr<Inet> = inet()
 
-  override fun _12(): SqlExpr<Short> = int2()
+  override fun _12(): SqlExpr<kotlin.Short> = int2()
 
   override fun _13(): SqlExpr<Int2Vector> = int2vector()
 
   override fun _14(): SqlExpr<Int> = int4()
 
-  override fun _15(): SqlExpr<Long> = int8()
+  override fun _15(): SqlExpr<kotlin.Long> = int8()
 
   override fun _16(): SqlExpr<PGInterval> = interval()
 
@@ -75,7 +74,7 @@ data class PgtestnullFields(val _path: List<Path>) : TupleExpr70<Boolean, PGbox,
 
   override fun _23(): SqlExpr<Myenum> = myenum()
 
-  override fun _24(): SqlExpr<String> = name()
+  override fun _24(): SqlExpr<kotlin.String> = name()
 
   override fun _25(): SqlExpr<BigDecimal> = numeric()
 
@@ -85,9 +84,9 @@ data class PgtestnullFields(val _path: List<Path>) : TupleExpr70<Boolean, PGbox,
 
   override fun _28(): SqlExpr<PGpolygon> = polygon()
 
-  override fun _29(): SqlExpr<String> = text()
+  override fun _29(): SqlExpr<kotlin.String> = text()
 
-  override fun _3(): SqlExpr</* bpchar, max 3 chars */ String> = bpchar()
+  override fun _3(): SqlExpr</* bpchar, max 3 chars */ kotlin.String> = bpchar()
 
   override fun _30(): SqlExpr<LocalTime> = time()
 
@@ -99,237 +98,237 @@ data class PgtestnullFields(val _path: List<Path>) : TupleExpr70<Boolean, PGbox,
 
   override fun _34(): SqlExpr<UUID> = uuid()
 
-  override fun _35(): SqlExpr<String> = varchar()
+  override fun _35(): SqlExpr<kotlin.String> = varchar()
 
   override fun _36(): SqlExpr<Vector> = vector()
 
   override fun _37(): SqlExpr<Xml> = xml()
 
-  override fun _38(): SqlExpr<Array<PGbox>> = boxes()
+  override fun _38(): SqlExpr<List<PGbox>> = boxes()
 
-  override fun _39(): SqlExpr<Array</* bpchar */ String>> = bpchares()
+  override fun _39(): SqlExpr<List</* bpchar */ kotlin.String>> = bpchares()
 
   override fun _4(): SqlExpr<ByteArray> = bytea()
 
-  override fun _40(): SqlExpr<Array</* bpchar */ String>> = chares()
+  override fun _40(): SqlExpr<List</* bpchar */ kotlin.String>> = chares()
 
-  override fun _41(): SqlExpr<Array<PGcircle>> = circlees()
+  override fun _41(): SqlExpr<List<PGcircle>> = circlees()
 
-  override fun _42(): SqlExpr<Array<LocalDate>> = datees()
+  override fun _42(): SqlExpr<List<LocalDate>> = datees()
 
-  override fun _43(): SqlExpr<Array<Float>> = float4es()
+  override fun _43(): SqlExpr<List<kotlin.Float>> = float4es()
 
-  override fun _44(): SqlExpr<Array<Double>> = float8es()
+  override fun _44(): SqlExpr<List<kotlin.Double>> = float8es()
 
-  override fun _45(): SqlExpr<Array<Inet>> = inetes()
+  override fun _45(): SqlExpr<List<Inet>> = inetes()
 
-  override fun _46(): SqlExpr<Array<Short>> = int2es()
+  override fun _46(): SqlExpr<List<kotlin.Short>> = int2es()
 
-  override fun _47(): SqlExpr<Array<Int2Vector>> = int2vectores()
+  override fun _47(): SqlExpr<List<Int2Vector>> = int2vectores()
 
-  override fun _48(): SqlExpr<Array<Int>> = int4es()
+  override fun _48(): SqlExpr<List<Int>> = int4es()
 
-  override fun _49(): SqlExpr<Array<Long>> = int8es()
+  override fun _49(): SqlExpr<List<kotlin.Long>> = int8es()
 
-  override fun _5(): SqlExpr</* bpchar, max 1 chars */ String> = char()
+  override fun _5(): SqlExpr</* bpchar, max 1 chars */ kotlin.String> = char()
 
-  override fun _50(): SqlExpr<Array<PGInterval>> = intervales()
+  override fun _50(): SqlExpr<List<PGInterval>> = intervales()
 
-  override fun _51(): SqlExpr<Array<Json>> = jsones()
+  override fun _51(): SqlExpr<List<Json>> = jsones()
 
-  override fun _52(): SqlExpr<Array<Jsonb>> = jsonbes()
+  override fun _52(): SqlExpr<List<Jsonb>> = jsonbes()
 
-  override fun _53(): SqlExpr<Array<PGline>> = linees()
+  override fun _53(): SqlExpr<List<PGline>> = linees()
 
-  override fun _54(): SqlExpr<Array<PGlseg>> = lseges()
+  override fun _54(): SqlExpr<List<PGlseg>> = lseges()
 
-  override fun _55(): SqlExpr<Array<Money>> = moneyes()
+  override fun _55(): SqlExpr<List<Money>> = moneyes()
 
-  override fun _56(): SqlExpr<Array<Mydomain>> = mydomaines()
+  override fun _56(): SqlExpr<List<Mydomain>> = mydomaines()
 
-  override fun _57(): SqlExpr<Array<Myenum>> = myenumes()
+  override fun _57(): SqlExpr<List<Myenum>> = myenumes()
 
-  override fun _58(): SqlExpr<Array<String>> = namees()
+  override fun _58(): SqlExpr<List<kotlin.String>> = namees()
 
-  override fun _59(): SqlExpr<Array<BigDecimal>> = numerices()
+  override fun _59(): SqlExpr<List<BigDecimal>> = numerices()
 
   override fun _6(): SqlExpr<PGcircle> = circle()
 
-  override fun _60(): SqlExpr<Array<PGpath>> = pathes()
+  override fun _60(): SqlExpr<List<PGpath>> = pathes()
 
-  override fun _61(): SqlExpr<Array<PGpoint>> = pointes()
+  override fun _61(): SqlExpr<List<PGpoint>> = pointes()
 
-  override fun _62(): SqlExpr<Array<PGpolygon>> = polygones()
+  override fun _62(): SqlExpr<List<PGpolygon>> = polygones()
 
-  override fun _63(): SqlExpr<Array<String>> = textes()
+  override fun _63(): SqlExpr<List<kotlin.String>> = textes()
 
-  override fun _64(): SqlExpr<Array<LocalTime>> = timees()
+  override fun _64(): SqlExpr<List<LocalTime>> = timees()
 
-  override fun _65(): SqlExpr<Array<LocalDateTime>> = timestampes()
+  override fun _65(): SqlExpr<List<LocalDateTime>> = timestampes()
 
-  override fun _66(): SqlExpr<Array<Instant>> = timestampzes()
+  override fun _66(): SqlExpr<List<Instant>> = timestampzes()
 
-  override fun _67(): SqlExpr<Array<OffsetTime>> = timezes()
+  override fun _67(): SqlExpr<List<OffsetTime>> = timezes()
 
-  override fun _68(): SqlExpr<Array<UUID>> = uuides()
+  override fun _68(): SqlExpr<List<UUID>> = uuides()
 
-  override fun _69(): SqlExpr<Array<String>> = varchares()
+  override fun _69(): SqlExpr<List<kotlin.String>> = varchares()
 
   override fun _7(): SqlExpr<LocalDate> = date()
 
-  override fun _70(): SqlExpr<Array<Xml>> = xmles()
+  override fun _70(): SqlExpr<List<Xml>> = xmles()
 
-  override fun _8(): SqlExpr<Float> = float4()
+  override fun _8(): SqlExpr<kotlin.Float> = float4()
 
-  override fun _9(): SqlExpr<Double> = float8()
+  override fun _9(): SqlExpr<kotlin.Double> = float8()
 
   override fun _path(): List<Path> = _path
 
-  fun bool(): OptField<Boolean, PgtestnullRow> = OptField<Boolean, PgtestnullRow>(_path, "bool", PgtestnullRow::bool, null, null, { row, value -> row.copy(bool = value) }, KotlinDbTypes.PgTypes.bool)
+  fun bool(): OptField<kotlin.Boolean, PgtestnullRow> = OptField<kotlin.Boolean, PgtestnullRow>(_path, "bool", PgtestnullRow::bool, null, null, { row, value -> row.copy(bool = value) }, PgTypes.bool.underlying)
 
-  fun box(): OptField<PGbox, PgtestnullRow> = OptField<PGbox, PgtestnullRow>(_path, "box", PgtestnullRow::box, null, "box", { row, value -> row.copy(box = value) }, PgTypes.box)
+  fun box(): OptField<PGbox, PgtestnullRow> = OptField<PGbox, PgtestnullRow>(_path, "box", PgtestnullRow::box, null, "box", { row, value -> row.copy(box = value) }, PgTypes.box.underlying)
 
-  fun boxes(): OptField<Array<PGbox>, PgtestnullRow> = OptField<Array<PGbox>, PgtestnullRow>(_path, "boxes", PgtestnullRow::boxes, null, "box[]", { row, value -> row.copy(boxes = value) }, PgTypes.boxArray)
+  fun boxes(): OptField<List<PGbox>, PgtestnullRow> = OptField<List<PGbox>, PgtestnullRow>(_path, "boxes", PgtestnullRow::boxes, null, "box[]", { row, value -> row.copy(boxes = value) }, PgTypes.box.array().underlying)
 
-  fun bpchar(): OptField<String, PgtestnullRow> = OptField<String, PgtestnullRow>(_path, "bpchar", PgtestnullRow::bpchar, null, "bpchar", { row, value -> row.copy(bpchar = value) }, PgTypes.bpchar)
+  fun bpchar(): OptField<kotlin.String, PgtestnullRow> = OptField<kotlin.String, PgtestnullRow>(_path, "bpchar", PgtestnullRow::bpchar, null, "bpchar", { row, value -> row.copy(bpchar = value) }, PgTypes.bpchar.underlying)
 
-  fun bpchares(): OptField<Array</* bpchar */ String>, PgtestnullRow> = OptField<Array</* bpchar */ String>, PgtestnullRow>(_path, "bpchares", PgtestnullRow::bpchares, null, "bpchar[]", { row, value -> row.copy(bpchares = value) }, PgTypes.bpcharArray)
+  fun bpchares(): OptField<List</* bpchar */ kotlin.String>, PgtestnullRow> = OptField<List</* bpchar */ kotlin.String>, PgtestnullRow>(_path, "bpchares", PgtestnullRow::bpchares, null, "bpchar[]", { row, value -> row.copy(bpchares = value) }, PgTypes.bpchar.array().underlying)
 
-  fun bytea(): OptField<ByteArray, PgtestnullRow> = OptField<ByteArray, PgtestnullRow>(_path, "bytea", PgtestnullRow::bytea, null, "bytea", { row, value -> row.copy(bytea = value) }, PgTypes.bytea)
+  fun bytea(): OptField<ByteArray, PgtestnullRow> = OptField<ByteArray, PgtestnullRow>(_path, "bytea", PgtestnullRow::bytea, null, "bytea", { row, value -> row.copy(bytea = value) }, PgTypes.bytea.underlying)
 
-  fun char(): OptField<String, PgtestnullRow> = OptField<String, PgtestnullRow>(_path, "char", PgtestnullRow::char, null, "bpchar", { row, value -> row.copy(char = value) }, PgTypes.bpchar)
+  fun char(): OptField<kotlin.String, PgtestnullRow> = OptField<kotlin.String, PgtestnullRow>(_path, "char", PgtestnullRow::char, null, "bpchar", { row, value -> row.copy(char = value) }, PgTypes.bpchar.underlying)
 
-  fun chares(): OptField<Array</* bpchar */ String>, PgtestnullRow> = OptField<Array</* bpchar */ String>, PgtestnullRow>(_path, "chares", PgtestnullRow::chares, null, "bpchar[]", { row, value -> row.copy(chares = value) }, PgTypes.bpcharArray)
+  fun chares(): OptField<List</* bpchar */ kotlin.String>, PgtestnullRow> = OptField<List</* bpchar */ kotlin.String>, PgtestnullRow>(_path, "chares", PgtestnullRow::chares, null, "bpchar[]", { row, value -> row.copy(chares = value) }, PgTypes.bpchar.array().underlying)
 
-  fun circle(): OptField<PGcircle, PgtestnullRow> = OptField<PGcircle, PgtestnullRow>(_path, "circle", PgtestnullRow::circle, null, "circle", { row, value -> row.copy(circle = value) }, PgTypes.circle)
+  fun circle(): OptField<PGcircle, PgtestnullRow> = OptField<PGcircle, PgtestnullRow>(_path, "circle", PgtestnullRow::circle, null, "circle", { row, value -> row.copy(circle = value) }, PgTypes.circle.underlying)
 
-  fun circlees(): OptField<Array<PGcircle>, PgtestnullRow> = OptField<Array<PGcircle>, PgtestnullRow>(_path, "circlees", PgtestnullRow::circlees, null, "circle[]", { row, value -> row.copy(circlees = value) }, PgTypes.circleArray)
+  fun circlees(): OptField<List<PGcircle>, PgtestnullRow> = OptField<List<PGcircle>, PgtestnullRow>(_path, "circlees", PgtestnullRow::circlees, null, "circle[]", { row, value -> row.copy(circlees = value) }, PgTypes.circle.array().underlying)
 
   override fun columns(): List<FieldLike<*, PgtestnullRow>> = listOf(this.bool().underlying, this.box().underlying, this.bpchar().underlying, this.bytea().underlying, this.char().underlying, this.circle().underlying, this.date().underlying, this.float4().underlying, this.float8().underlying, this.hstore().underlying, this.inet().underlying, this.int2().underlying, this.int2vector().underlying, this.int4().underlying, this.int8().underlying, this.interval().underlying, this.json().underlying, this.jsonb().underlying, this.line().underlying, this.lseg().underlying, this.money().underlying, this.mydomain().underlying, this.myenum().underlying, this.name().underlying, this.numeric().underlying, this.path().underlying, this.point().underlying, this.polygon().underlying, this.text().underlying, this.time().underlying, this.timestamp().underlying, this.timestampz().underlying, this.timez().underlying, this.uuid().underlying, this.varchar().underlying, this.vector().underlying, this.xml().underlying, this.boxes().underlying, this.bpchares().underlying, this.chares().underlying, this.circlees().underlying, this.datees().underlying, this.float4es().underlying, this.float8es().underlying, this.inetes().underlying, this.int2es().underlying, this.int2vectores().underlying, this.int4es().underlying, this.int8es().underlying, this.intervales().underlying, this.jsones().underlying, this.jsonbes().underlying, this.linees().underlying, this.lseges().underlying, this.moneyes().underlying, this.mydomaines().underlying, this.myenumes().underlying, this.namees().underlying, this.numerices().underlying, this.pathes().underlying, this.pointes().underlying, this.polygones().underlying, this.textes().underlying, this.timees().underlying, this.timestampes().underlying, this.timestampzes().underlying, this.timezes().underlying, this.uuides().underlying, this.varchares().underlying, this.xmles().underlying)
 
-  fun date(): OptField<LocalDate, PgtestnullRow> = OptField<LocalDate, PgtestnullRow>(_path, "date", PgtestnullRow::date, null, "date", { row, value -> row.copy(date = value) }, PgTypes.date)
+  fun date(): OptField<LocalDate, PgtestnullRow> = OptField<LocalDate, PgtestnullRow>(_path, "date", PgtestnullRow::date, null, "date", { row, value -> row.copy(date = value) }, PgTypes.date.underlying)
 
-  fun datees(): OptField<Array<LocalDate>, PgtestnullRow> = OptField<Array<LocalDate>, PgtestnullRow>(_path, "datees", PgtestnullRow::datees, null, "date[]", { row, value -> row.copy(datees = value) }, PgTypes.dateArray)
+  fun datees(): OptField<List<LocalDate>, PgtestnullRow> = OptField<List<LocalDate>, PgtestnullRow>(_path, "datees", PgtestnullRow::datees, null, "date[]", { row, value -> row.copy(datees = value) }, PgTypes.date.array().underlying)
 
-  fun float4(): OptField<Float, PgtestnullRow> = OptField<Float, PgtestnullRow>(_path, "float4", PgtestnullRow::float4, null, "float4", { row, value -> row.copy(float4 = value) }, KotlinDbTypes.PgTypes.float4)
+  fun float4(): OptField<kotlin.Float, PgtestnullRow> = OptField<kotlin.Float, PgtestnullRow>(_path, "float4", PgtestnullRow::float4, null, "float4", { row, value -> row.copy(float4 = value) }, PgTypes.float4.underlying)
 
-  fun float4es(): OptField<Array<Float>, PgtestnullRow> = OptField<Array<Float>, PgtestnullRow>(_path, "float4es", PgtestnullRow::float4es, null, "float4[]", { row, value -> row.copy(float4es = value) }, PgTypes.float4Array)
+  fun float4es(): OptField<List<kotlin.Float>, PgtestnullRow> = OptField<List<kotlin.Float>, PgtestnullRow>(_path, "float4es", PgtestnullRow::float4es, null, "float4[]", { row, value -> row.copy(float4es = value) }, PgTypes.float4.array().underlying)
 
-  fun float8(): OptField<Double, PgtestnullRow> = OptField<Double, PgtestnullRow>(_path, "float8", PgtestnullRow::float8, null, "float8", { row, value -> row.copy(float8 = value) }, KotlinDbTypes.PgTypes.float8)
+  fun float8(): OptField<kotlin.Double, PgtestnullRow> = OptField<kotlin.Double, PgtestnullRow>(_path, "float8", PgtestnullRow::float8, null, "float8", { row, value -> row.copy(float8 = value) }, PgTypes.float8.underlying)
 
-  fun float8es(): OptField<Array<Double>, PgtestnullRow> = OptField<Array<Double>, PgtestnullRow>(_path, "float8es", PgtestnullRow::float8es, null, "float8[]", { row, value -> row.copy(float8es = value) }, PgTypes.float8Array)
+  fun float8es(): OptField<List<kotlin.Double>, PgtestnullRow> = OptField<List<kotlin.Double>, PgtestnullRow>(_path, "float8es", PgtestnullRow::float8es, null, "float8[]", { row, value -> row.copy(float8es = value) }, PgTypes.float8.array().underlying)
 
-  fun hstore(): OptField<Map<String, String>, PgtestnullRow> = OptField<Map<String, String>, PgtestnullRow>(_path, "hstore", PgtestnullRow::hstore, null, "hstore", { row, value -> row.copy(hstore = value) }, KotlinDbTypes.PgTypes.hstore)
+  fun hstore(): OptField<Map<kotlin.String, kotlin.String>, PgtestnullRow> = OptField<Map<kotlin.String, kotlin.String>, PgtestnullRow>(_path, "hstore", PgtestnullRow::hstore, null, "hstore", { row, value -> row.copy(hstore = value) }, PgTypes.hstore.underlying)
 
-  fun inet(): OptField<Inet, PgtestnullRow> = OptField<Inet, PgtestnullRow>(_path, "inet", PgtestnullRow::inet, null, "inet", { row, value -> row.copy(inet = value) }, PgTypes.inet)
+  fun inet(): OptField<Inet, PgtestnullRow> = OptField<Inet, PgtestnullRow>(_path, "inet", PgtestnullRow::inet, null, "inet", { row, value -> row.copy(inet = value) }, PgTypes.inet.underlying)
 
-  fun inetes(): OptField<Array<Inet>, PgtestnullRow> = OptField<Array<Inet>, PgtestnullRow>(_path, "inetes", PgtestnullRow::inetes, null, "inet[]", { row, value -> row.copy(inetes = value) }, PgTypes.inetArray)
+  fun inetes(): OptField<List<Inet>, PgtestnullRow> = OptField<List<Inet>, PgtestnullRow>(_path, "inetes", PgtestnullRow::inetes, null, "inet[]", { row, value -> row.copy(inetes = value) }, PgTypes.inet.array().underlying)
 
-  fun int2(): OptField<Short, PgtestnullRow> = OptField<Short, PgtestnullRow>(_path, "int2", PgtestnullRow::int2, null, "int2", { row, value -> row.copy(int2 = value) }, KotlinDbTypes.PgTypes.int2)
+  fun int2(): OptField<kotlin.Short, PgtestnullRow> = OptField<kotlin.Short, PgtestnullRow>(_path, "int2", PgtestnullRow::int2, null, "int2", { row, value -> row.copy(int2 = value) }, PgTypes.int2.underlying)
 
-  fun int2es(): OptField<Array<Short>, PgtestnullRow> = OptField<Array<Short>, PgtestnullRow>(_path, "int2es", PgtestnullRow::int2es, null, "int2[]", { row, value -> row.copy(int2es = value) }, PgTypes.int2Array)
+  fun int2es(): OptField<List<kotlin.Short>, PgtestnullRow> = OptField<List<kotlin.Short>, PgtestnullRow>(_path, "int2es", PgtestnullRow::int2es, null, "int2[]", { row, value -> row.copy(int2es = value) }, PgTypes.int2.array().underlying)
 
-  fun int2vector(): OptField<Int2Vector, PgtestnullRow> = OptField<Int2Vector, PgtestnullRow>(_path, "int2vector", PgtestnullRow::int2vector, null, "int2vector", { row, value -> row.copy(int2vector = value) }, PgTypes.int2vector)
+  fun int2vector(): OptField<Int2Vector, PgtestnullRow> = OptField<Int2Vector, PgtestnullRow>(_path, "int2vector", PgtestnullRow::int2vector, null, "int2vector", { row, value -> row.copy(int2vector = value) }, PgTypes.int2vector.underlying)
 
-  fun int2vectores(): OptField<Array<Int2Vector>, PgtestnullRow> = OptField<Array<Int2Vector>, PgtestnullRow>(_path, "int2vectores", PgtestnullRow::int2vectores, null, "int2vector[]", { row, value -> row.copy(int2vectores = value) }, PgTypes.int2vectorArray)
+  fun int2vectores(): OptField<List<Int2Vector>, PgtestnullRow> = OptField<List<Int2Vector>, PgtestnullRow>(_path, "int2vectores", PgtestnullRow::int2vectores, null, "int2vector[]", { row, value -> row.copy(int2vectores = value) }, PgTypes.int2vector.array().underlying)
 
-  fun int4(): OptField<Int, PgtestnullRow> = OptField<Int, PgtestnullRow>(_path, "int4", PgtestnullRow::int4, null, "int4", { row, value -> row.copy(int4 = value) }, KotlinDbTypes.PgTypes.int4)
+  fun int4(): OptField<Int, PgtestnullRow> = OptField<Int, PgtestnullRow>(_path, "int4", PgtestnullRow::int4, null, "int4", { row, value -> row.copy(int4 = value) }, PgTypes.int4.underlying)
 
-  fun int4es(): OptField<Array<Int>, PgtestnullRow> = OptField<Array<Int>, PgtestnullRow>(_path, "int4es", PgtestnullRow::int4es, null, "int4[]", { row, value -> row.copy(int4es = value) }, PgTypes.int4Array)
+  fun int4es(): OptField<List<Int>, PgtestnullRow> = OptField<List<Int>, PgtestnullRow>(_path, "int4es", PgtestnullRow::int4es, null, "int4[]", { row, value -> row.copy(int4es = value) }, PgTypes.int4.array().underlying)
 
-  fun int8(): OptField<Long, PgtestnullRow> = OptField<Long, PgtestnullRow>(_path, "int8", PgtestnullRow::int8, null, "int8", { row, value -> row.copy(int8 = value) }, KotlinDbTypes.PgTypes.int8)
+  fun int8(): OptField<kotlin.Long, PgtestnullRow> = OptField<kotlin.Long, PgtestnullRow>(_path, "int8", PgtestnullRow::int8, null, "int8", { row, value -> row.copy(int8 = value) }, PgTypes.int8.underlying)
 
-  fun int8es(): OptField<Array<Long>, PgtestnullRow> = OptField<Array<Long>, PgtestnullRow>(_path, "int8es", PgtestnullRow::int8es, null, "int8[]", { row, value -> row.copy(int8es = value) }, PgTypes.int8Array)
+  fun int8es(): OptField<List<kotlin.Long>, PgtestnullRow> = OptField<List<kotlin.Long>, PgtestnullRow>(_path, "int8es", PgtestnullRow::int8es, null, "int8[]", { row, value -> row.copy(int8es = value) }, PgTypes.int8.array().underlying)
 
-  fun interval(): OptField<PGInterval, PgtestnullRow> = OptField<PGInterval, PgtestnullRow>(_path, "interval", PgtestnullRow::interval, null, "interval", { row, value -> row.copy(interval = value) }, PgTypes.interval)
+  fun interval(): OptField<PGInterval, PgtestnullRow> = OptField<PGInterval, PgtestnullRow>(_path, "interval", PgtestnullRow::interval, null, "interval", { row, value -> row.copy(interval = value) }, PgTypes.interval.underlying)
 
-  fun intervales(): OptField<Array<PGInterval>, PgtestnullRow> = OptField<Array<PGInterval>, PgtestnullRow>(_path, "intervales", PgtestnullRow::intervales, null, "interval[]", { row, value -> row.copy(intervales = value) }, PgTypes.intervalArray)
+  fun intervales(): OptField<List<PGInterval>, PgtestnullRow> = OptField<List<PGInterval>, PgtestnullRow>(_path, "intervales", PgtestnullRow::intervales, null, "interval[]", { row, value -> row.copy(intervales = value) }, PgTypes.interval.array().underlying)
 
-  fun json(): OptField<Json, PgtestnullRow> = OptField<Json, PgtestnullRow>(_path, "json", PgtestnullRow::json, null, "json", { row, value -> row.copy(json = value) }, PgTypes.json)
+  fun json(): OptField<Json, PgtestnullRow> = OptField<Json, PgtestnullRow>(_path, "json", PgtestnullRow::json, null, "json", { row, value -> row.copy(json = value) }, PgTypes.json.underlying)
 
-  fun jsonb(): OptField<Jsonb, PgtestnullRow> = OptField<Jsonb, PgtestnullRow>(_path, "jsonb", PgtestnullRow::jsonb, null, "jsonb", { row, value -> row.copy(jsonb = value) }, PgTypes.jsonb)
+  fun jsonb(): OptField<Jsonb, PgtestnullRow> = OptField<Jsonb, PgtestnullRow>(_path, "jsonb", PgtestnullRow::jsonb, null, "jsonb", { row, value -> row.copy(jsonb = value) }, PgTypes.jsonb.underlying)
 
-  fun jsonbes(): OptField<Array<Jsonb>, PgtestnullRow> = OptField<Array<Jsonb>, PgtestnullRow>(_path, "jsonbes", PgtestnullRow::jsonbes, null, "jsonb[]", { row, value -> row.copy(jsonbes = value) }, PgTypes.jsonbArray)
+  fun jsonbes(): OptField<List<Jsonb>, PgtestnullRow> = OptField<List<Jsonb>, PgtestnullRow>(_path, "jsonbes", PgtestnullRow::jsonbes, null, "jsonb[]", { row, value -> row.copy(jsonbes = value) }, PgTypes.jsonb.array().underlying)
 
-  fun jsones(): OptField<Array<Json>, PgtestnullRow> = OptField<Array<Json>, PgtestnullRow>(_path, "jsones", PgtestnullRow::jsones, null, "json[]", { row, value -> row.copy(jsones = value) }, PgTypes.jsonArray)
+  fun jsones(): OptField<List<Json>, PgtestnullRow> = OptField<List<Json>, PgtestnullRow>(_path, "jsones", PgtestnullRow::jsones, null, "json[]", { row, value -> row.copy(jsones = value) }, PgTypes.json.array().underlying)
 
-  fun line(): OptField<PGline, PgtestnullRow> = OptField<PGline, PgtestnullRow>(_path, "line", PgtestnullRow::line, null, "line", { row, value -> row.copy(line = value) }, PgTypes.line)
+  fun line(): OptField<PGline, PgtestnullRow> = OptField<PGline, PgtestnullRow>(_path, "line", PgtestnullRow::line, null, "line", { row, value -> row.copy(line = value) }, PgTypes.line.underlying)
 
-  fun linees(): OptField<Array<PGline>, PgtestnullRow> = OptField<Array<PGline>, PgtestnullRow>(_path, "linees", PgtestnullRow::linees, null, "line[]", { row, value -> row.copy(linees = value) }, PgTypes.lineArray)
+  fun linees(): OptField<List<PGline>, PgtestnullRow> = OptField<List<PGline>, PgtestnullRow>(_path, "linees", PgtestnullRow::linees, null, "line[]", { row, value -> row.copy(linees = value) }, PgTypes.line.array().underlying)
 
-  fun lseg(): OptField<PGlseg, PgtestnullRow> = OptField<PGlseg, PgtestnullRow>(_path, "lseg", PgtestnullRow::lseg, null, "lseg", { row, value -> row.copy(lseg = value) }, PgTypes.lseg)
+  fun lseg(): OptField<PGlseg, PgtestnullRow> = OptField<PGlseg, PgtestnullRow>(_path, "lseg", PgtestnullRow::lseg, null, "lseg", { row, value -> row.copy(lseg = value) }, PgTypes.lseg.underlying)
 
-  fun lseges(): OptField<Array<PGlseg>, PgtestnullRow> = OptField<Array<PGlseg>, PgtestnullRow>(_path, "lseges", PgtestnullRow::lseges, null, "lseg[]", { row, value -> row.copy(lseges = value) }, PgTypes.lsegArray)
+  fun lseges(): OptField<List<PGlseg>, PgtestnullRow> = OptField<List<PGlseg>, PgtestnullRow>(_path, "lseges", PgtestnullRow::lseges, null, "lseg[]", { row, value -> row.copy(lseges = value) }, PgTypes.lseg.array().underlying)
 
-  fun money(): OptField<Money, PgtestnullRow> = OptField<Money, PgtestnullRow>(_path, "money", PgtestnullRow::money, "numeric", "money", { row, value -> row.copy(money = value) }, PgTypes.money)
+  fun money(): OptField<Money, PgtestnullRow> = OptField<Money, PgtestnullRow>(_path, "money", PgtestnullRow::money, "numeric", "money", { row, value -> row.copy(money = value) }, PgTypes.money.underlying)
 
-  fun moneyes(): OptField<Array<Money>, PgtestnullRow> = OptField<Array<Money>, PgtestnullRow>(_path, "moneyes", PgtestnullRow::moneyes, "numeric[]", "money[]", { row, value -> row.copy(moneyes = value) }, PgTypes.moneyArray)
+  fun moneyes(): OptField<List<Money>, PgtestnullRow> = OptField<List<Money>, PgtestnullRow>(_path, "moneyes", PgtestnullRow::moneyes, "numeric[]", "money[]", { row, value -> row.copy(moneyes = value) }, PgTypes.money.array().underlying)
 
-  fun mydomain(): OptField<Mydomain, PgtestnullRow> = OptField<Mydomain, PgtestnullRow>(_path, "mydomain", PgtestnullRow::mydomain, null, "text", { row, value -> row.copy(mydomain = value) }, Mydomain.pgType)
+  fun mydomain(): OptField<Mydomain, PgtestnullRow> = OptField<Mydomain, PgtestnullRow>(_path, "mydomain", PgtestnullRow::mydomain, null, "text", { row, value -> row.copy(mydomain = value) }, Mydomain.pgType.underlying)
 
-  fun mydomaines(): OptField<Array<Mydomain>, PgtestnullRow> = OptField<Array<Mydomain>, PgtestnullRow>(_path, "mydomaines", PgtestnullRow::mydomaines, "text[]", "mydomain[]", { row, value -> row.copy(mydomaines = value) }, Mydomain.pgTypeArray)
+  fun mydomaines(): OptField<List<Mydomain>, PgtestnullRow> = OptField<List<Mydomain>, PgtestnullRow>(_path, "mydomaines", PgtestnullRow::mydomaines, "text[]", "mydomain[]", { row, value -> row.copy(mydomaines = value) }, Mydomain.pgType.array().underlying)
 
-  fun myenum(): OptField<Myenum, PgtestnullRow> = OptField<Myenum, PgtestnullRow>(_path, "myenum", PgtestnullRow::myenum, null, "public.myenum", { row, value -> row.copy(myenum = value) }, Myenum.pgType)
+  fun myenum(): OptField<Myenum, PgtestnullRow> = OptField<Myenum, PgtestnullRow>(_path, "myenum", PgtestnullRow::myenum, null, "public.myenum", { row, value -> row.copy(myenum = value) }, Myenum.pgType.underlying)
 
-  fun myenumes(): OptField<Array<Myenum>, PgtestnullRow> = OptField<Array<Myenum>, PgtestnullRow>(_path, "myenumes", PgtestnullRow::myenumes, null, "myenum[]", { row, value -> row.copy(myenumes = value) }, Myenum.pgTypeArray)
+  fun myenumes(): OptField<List<Myenum>, PgtestnullRow> = OptField<List<Myenum>, PgtestnullRow>(_path, "myenumes", PgtestnullRow::myenumes, null, "myenum[]", { row, value -> row.copy(myenumes = value) }, Myenum.pgType.array().underlying)
 
-  fun name(): OptField<String, PgtestnullRow> = OptField<String, PgtestnullRow>(_path, "name", PgtestnullRow::name, null, "name", { row, value -> row.copy(name = value) }, PgTypes.name)
+  fun name(): OptField<kotlin.String, PgtestnullRow> = OptField<kotlin.String, PgtestnullRow>(_path, "name", PgtestnullRow::name, null, "name", { row, value -> row.copy(name = value) }, PgTypes.name.underlying)
 
-  fun namees(): OptField<Array<String>, PgtestnullRow> = OptField<Array<String>, PgtestnullRow>(_path, "namees", PgtestnullRow::namees, null, "name[]", { row, value -> row.copy(namees = value) }, PgTypes.nameArray)
+  fun namees(): OptField<List<kotlin.String>, PgtestnullRow> = OptField<List<kotlin.String>, PgtestnullRow>(_path, "namees", PgtestnullRow::namees, null, "name[]", { row, value -> row.copy(namees = value) }, PgTypes.name.array().underlying)
 
-  fun numeric(): OptField<BigDecimal, PgtestnullRow> = OptField<BigDecimal, PgtestnullRow>(_path, "numeric", PgtestnullRow::numeric, null, "numeric", { row, value -> row.copy(numeric = value) }, PgTypes.numeric)
+  fun numeric(): OptField<BigDecimal, PgtestnullRow> = OptField<BigDecimal, PgtestnullRow>(_path, "numeric", PgtestnullRow::numeric, null, "numeric", { row, value -> row.copy(numeric = value) }, PgTypes.numeric.underlying)
 
-  fun numerices(): OptField<Array<BigDecimal>, PgtestnullRow> = OptField<Array<BigDecimal>, PgtestnullRow>(_path, "numerices", PgtestnullRow::numerices, null, "numeric[]", { row, value -> row.copy(numerices = value) }, PgTypes.numericArray)
+  fun numerices(): OptField<List<BigDecimal>, PgtestnullRow> = OptField<List<BigDecimal>, PgtestnullRow>(_path, "numerices", PgtestnullRow::numerices, null, "numeric[]", { row, value -> row.copy(numerices = value) }, PgTypes.numeric.array().underlying)
 
-  fun path(): OptField<PGpath, PgtestnullRow> = OptField<PGpath, PgtestnullRow>(_path, "path", PgtestnullRow::path, null, "path", { row, value -> row.copy(path = value) }, PgTypes.path)
+  fun path(): OptField<PGpath, PgtestnullRow> = OptField<PGpath, PgtestnullRow>(_path, "path", PgtestnullRow::path, null, "path", { row, value -> row.copy(path = value) }, PgTypes.path.underlying)
 
-  fun pathes(): OptField<Array<PGpath>, PgtestnullRow> = OptField<Array<PGpath>, PgtestnullRow>(_path, "pathes", PgtestnullRow::pathes, null, "path[]", { row, value -> row.copy(pathes = value) }, PgTypes.pathArray)
+  fun pathes(): OptField<List<PGpath>, PgtestnullRow> = OptField<List<PGpath>, PgtestnullRow>(_path, "pathes", PgtestnullRow::pathes, null, "path[]", { row, value -> row.copy(pathes = value) }, PgTypes.path.array().underlying)
 
-  fun point(): OptField<PGpoint, PgtestnullRow> = OptField<PGpoint, PgtestnullRow>(_path, "point", PgtestnullRow::point, null, "point", { row, value -> row.copy(point = value) }, PgTypes.point)
+  fun point(): OptField<PGpoint, PgtestnullRow> = OptField<PGpoint, PgtestnullRow>(_path, "point", PgtestnullRow::point, null, "point", { row, value -> row.copy(point = value) }, PgTypes.point.underlying)
 
-  fun pointes(): OptField<Array<PGpoint>, PgtestnullRow> = OptField<Array<PGpoint>, PgtestnullRow>(_path, "pointes", PgtestnullRow::pointes, null, "point[]", { row, value -> row.copy(pointes = value) }, PgTypes.pointArray)
+  fun pointes(): OptField<List<PGpoint>, PgtestnullRow> = OptField<List<PGpoint>, PgtestnullRow>(_path, "pointes", PgtestnullRow::pointes, null, "point[]", { row, value -> row.copy(pointes = value) }, PgTypes.point.array().underlying)
 
-  fun polygon(): OptField<PGpolygon, PgtestnullRow> = OptField<PGpolygon, PgtestnullRow>(_path, "polygon", PgtestnullRow::polygon, null, "polygon", { row, value -> row.copy(polygon = value) }, PgTypes.polygon)
+  fun polygon(): OptField<PGpolygon, PgtestnullRow> = OptField<PGpolygon, PgtestnullRow>(_path, "polygon", PgtestnullRow::polygon, null, "polygon", { row, value -> row.copy(polygon = value) }, PgTypes.polygon.underlying)
 
-  fun polygones(): OptField<Array<PGpolygon>, PgtestnullRow> = OptField<Array<PGpolygon>, PgtestnullRow>(_path, "polygones", PgtestnullRow::polygones, null, "polygon[]", { row, value -> row.copy(polygones = value) }, PgTypes.polygonArray)
+  fun polygones(): OptField<List<PGpolygon>, PgtestnullRow> = OptField<List<PGpolygon>, PgtestnullRow>(_path, "polygones", PgtestnullRow::polygones, null, "polygon[]", { row, value -> row.copy(polygones = value) }, PgTypes.polygon.array().underlying)
 
-  override fun rowParser(): RowParser<PgtestnullRow> = PgtestnullRow._rowParser.underlying
+  override fun rowCodec(): RowCodec<PgtestnullRow> = PgtestnullRow.rowCodec.underlying
 
-  fun text(): OptField<String, PgtestnullRow> = OptField<String, PgtestnullRow>(_path, "text", PgtestnullRow::text, null, null, { row, value -> row.copy(text = value) }, PgTypes.text)
+  fun text(): OptField<kotlin.String, PgtestnullRow> = OptField<kotlin.String, PgtestnullRow>(_path, "text", PgtestnullRow::text, null, null, { row, value -> row.copy(text = value) }, PgTypes.text.underlying)
 
-  fun textes(): OptField<Array<String>, PgtestnullRow> = OptField<Array<String>, PgtestnullRow>(_path, "textes", PgtestnullRow::textes, null, "text[]", { row, value -> row.copy(textes = value) }, PgTypes.textArray)
+  fun textes(): OptField<List<kotlin.String>, PgtestnullRow> = OptField<List<kotlin.String>, PgtestnullRow>(_path, "textes", PgtestnullRow::textes, null, "text[]", { row, value -> row.copy(textes = value) }, PgTypes.text.array().underlying)
 
-  fun time(): OptField<LocalTime, PgtestnullRow> = OptField<LocalTime, PgtestnullRow>(_path, "time", PgtestnullRow::time, null, "time", { row, value -> row.copy(time = value) }, PgTypes.time)
+  fun time(): OptField<LocalTime, PgtestnullRow> = OptField<LocalTime, PgtestnullRow>(_path, "time", PgtestnullRow::time, null, "time", { row, value -> row.copy(time = value) }, PgTypes.time.underlying)
 
-  fun timees(): OptField<Array<LocalTime>, PgtestnullRow> = OptField<Array<LocalTime>, PgtestnullRow>(_path, "timees", PgtestnullRow::timees, null, "time[]", { row, value -> row.copy(timees = value) }, PgTypes.timeArray)
+  fun timees(): OptField<List<LocalTime>, PgtestnullRow> = OptField<List<LocalTime>, PgtestnullRow>(_path, "timees", PgtestnullRow::timees, null, "time[]", { row, value -> row.copy(timees = value) }, PgTypes.time.array().underlying)
 
-  fun timestamp(): OptField<LocalDateTime, PgtestnullRow> = OptField<LocalDateTime, PgtestnullRow>(_path, "timestamp", PgtestnullRow::timestamp, null, "timestamp", { row, value -> row.copy(timestamp = value) }, PgTypes.timestamp)
+  fun timestamp(): OptField<LocalDateTime, PgtestnullRow> = OptField<LocalDateTime, PgtestnullRow>(_path, "timestamp", PgtestnullRow::timestamp, null, "timestamp", { row, value -> row.copy(timestamp = value) }, PgTypes.timestamp.underlying)
 
-  fun timestampes(): OptField<Array<LocalDateTime>, PgtestnullRow> = OptField<Array<LocalDateTime>, PgtestnullRow>(_path, "timestampes", PgtestnullRow::timestampes, null, "timestamp[]", { row, value -> row.copy(timestampes = value) }, PgTypes.timestampArray)
+  fun timestampes(): OptField<List<LocalDateTime>, PgtestnullRow> = OptField<List<LocalDateTime>, PgtestnullRow>(_path, "timestampes", PgtestnullRow::timestampes, null, "timestamp[]", { row, value -> row.copy(timestampes = value) }, PgTypes.timestamp.array().underlying)
 
-  fun timestampz(): OptField<Instant, PgtestnullRow> = OptField<Instant, PgtestnullRow>(_path, "timestampz", PgtestnullRow::timestampz, null, "timestamptz", { row, value -> row.copy(timestampz = value) }, PgTypes.timestamptz)
+  fun timestampz(): OptField<Instant, PgtestnullRow> = OptField<Instant, PgtestnullRow>(_path, "timestampz", PgtestnullRow::timestampz, null, "timestamptz", { row, value -> row.copy(timestampz = value) }, PgTypes.timestamptz.underlying)
 
-  fun timestampzes(): OptField<Array<Instant>, PgtestnullRow> = OptField<Array<Instant>, PgtestnullRow>(_path, "timestampzes", PgtestnullRow::timestampzes, null, "timestamptz[]", { row, value -> row.copy(timestampzes = value) }, PgTypes.timestamptzArray)
+  fun timestampzes(): OptField<List<Instant>, PgtestnullRow> = OptField<List<Instant>, PgtestnullRow>(_path, "timestampzes", PgtestnullRow::timestampzes, null, "timestamptz[]", { row, value -> row.copy(timestampzes = value) }, PgTypes.timestamptz.array().underlying)
 
-  fun timez(): OptField<OffsetTime, PgtestnullRow> = OptField<OffsetTime, PgtestnullRow>(_path, "timez", PgtestnullRow::timez, null, "timetz", { row, value -> row.copy(timez = value) }, PgTypes.timetz)
+  fun timez(): OptField<OffsetTime, PgtestnullRow> = OptField<OffsetTime, PgtestnullRow>(_path, "timez", PgtestnullRow::timez, null, "timetz", { row, value -> row.copy(timez = value) }, PgTypes.timetz.underlying)
 
-  fun timezes(): OptField<Array<OffsetTime>, PgtestnullRow> = OptField<Array<OffsetTime>, PgtestnullRow>(_path, "timezes", PgtestnullRow::timezes, null, "timetz[]", { row, value -> row.copy(timezes = value) }, PgTypes.timetzArray)
+  fun timezes(): OptField<List<OffsetTime>, PgtestnullRow> = OptField<List<OffsetTime>, PgtestnullRow>(_path, "timezes", PgtestnullRow::timezes, null, "timetz[]", { row, value -> row.copy(timezes = value) }, PgTypes.timetz.array().underlying)
 
-  fun uuid(): OptField<UUID, PgtestnullRow> = OptField<UUID, PgtestnullRow>(_path, "uuid", PgtestnullRow::uuid, null, "uuid", { row, value -> row.copy(uuid = value) }, PgTypes.uuid)
+  fun uuid(): OptField<UUID, PgtestnullRow> = OptField<UUID, PgtestnullRow>(_path, "uuid", PgtestnullRow::uuid, null, "uuid", { row, value -> row.copy(uuid = value) }, PgTypes.uuid.underlying)
 
-  fun uuides(): OptField<Array<UUID>, PgtestnullRow> = OptField<Array<UUID>, PgtestnullRow>(_path, "uuides", PgtestnullRow::uuides, null, "uuid[]", { row, value -> row.copy(uuides = value) }, PgTypes.uuidArray)
+  fun uuides(): OptField<List<UUID>, PgtestnullRow> = OptField<List<UUID>, PgtestnullRow>(_path, "uuides", PgtestnullRow::uuides, null, "uuid[]", { row, value -> row.copy(uuides = value) }, PgTypes.uuid.array().underlying)
 
-  fun varchar(): OptField<String, PgtestnullRow> = OptField<String, PgtestnullRow>(_path, "varchar", PgtestnullRow::varchar, null, null, { row, value -> row.copy(varchar = value) }, PgTypes.text)
+  fun varchar(): OptField<kotlin.String, PgtestnullRow> = OptField<kotlin.String, PgtestnullRow>(_path, "varchar", PgtestnullRow::varchar, null, null, { row, value -> row.copy(varchar = value) }, PgTypes.text.underlying)
 
-  fun varchares(): OptField<Array<String>, PgtestnullRow> = OptField<Array<String>, PgtestnullRow>(_path, "varchares", PgtestnullRow::varchares, null, "varchar[]", { row, value -> row.copy(varchares = value) }, PgTypes.textArray)
+  fun varchares(): OptField<List<kotlin.String>, PgtestnullRow> = OptField<List<kotlin.String>, PgtestnullRow>(_path, "varchares", PgtestnullRow::varchares, null, "varchar[]", { row, value -> row.copy(varchares = value) }, PgTypes.text.array().underlying)
 
-  fun vector(): OptField<Vector, PgtestnullRow> = OptField<Vector, PgtestnullRow>(_path, "vector", PgtestnullRow::vector, null, "vector", { row, value -> row.copy(vector = value) }, PgTypes.vector)
+  fun vector(): OptField<Vector, PgtestnullRow> = OptField<Vector, PgtestnullRow>(_path, "vector", PgtestnullRow::vector, null, "vector", { row, value -> row.copy(vector = value) }, PgTypes.vector.underlying)
 
   override fun withPaths(_path: List<Path>): RelationStructure<PgtestnullFields, PgtestnullRow> = PgtestnullFields(_path)
 
-  fun xml(): OptField<Xml, PgtestnullRow> = OptField<Xml, PgtestnullRow>(_path, "xml", PgtestnullRow::xml, null, "xml", { row, value -> row.copy(xml = value) }, PgTypes.xml)
+  fun xml(): OptField<Xml, PgtestnullRow> = OptField<Xml, PgtestnullRow>(_path, "xml", PgtestnullRow::xml, null, "xml", { row, value -> row.copy(xml = value) }, PgTypes.xml.underlying)
 
-  fun xmles(): OptField<Array<Xml>, PgtestnullRow> = OptField<Array<Xml>, PgtestnullRow>(_path, "xmles", PgtestnullRow::xmles, null, "xml[]", { row, value -> row.copy(xmles = value) }, PgTypes.xmlArray)
+  fun xmles(): OptField<List<Xml>, PgtestnullRow> = OptField<List<Xml>, PgtestnullRow>(_path, "xmles", PgtestnullRow::xmles, null, "xml[]", { row, value -> row.copy(xmles = value) }, PgTypes.xml.array().underlying)
 
   companion object {
     val structure: PgtestnullFields = PgtestnullFields(emptyList<Path>())

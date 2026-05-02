@@ -11,9 +11,9 @@ import adventureworks.sales.salesperson.SalespersonRepoImpl;
 import adventureworks.userdefined.FirstName;
 import adventureworks.userdefined.LastName;
 import adventureworks.userdefined.MiddleName;
-import dev.typr.foundations.dsl.Bijection;
-import dev.typr.foundations.dsl.SqlExpr;
-import dev.typr.foundations.dsl.TupleExpr;
+import dev.typr.dsl.SqlExpr;
+import dev.typr.dsl.TupleExpr;
+import dev.typr.foundations.Bijection;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -432,7 +432,7 @@ public class DSLTest extends SnapshotTest {
                               .isEqual(person1.businessentityid())
                               .or(
                                   p.businessentityid().isEqual(person2.businessentityid()),
-                                  dev.typr.foundations.dsl.Bijection.asBool()))
+                                  dev.typr.foundations.Bijection.asBool()))
                   .where(p -> p.businessentityid().tupleWith().in(subquery));
 
           // Verify SQL generation

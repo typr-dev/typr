@@ -5,16 +5,16 @@
  */
 package testdb.distinct_type_test
 
-import dev.typr.foundations.RowParser
-import dev.typr.foundations.dsl.FieldsBase
-import dev.typr.foundations.dsl.Path
-import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.scala.RelationStructure
-import dev.typr.foundations.scala.SqlExpr
-import dev.typr.foundations.scala.SqlExpr.Field
-import dev.typr.foundations.scala.SqlExpr.IdField
-import dev.typr.foundations.scala.SqlExpr.OptField
-import dev.typr.foundations.scala.TupleExpr3
+import dev.typr.dsl.FieldsBase
+import dev.typr.dsl.Path
+import dev.typr.dsl.SqlExpr.FieldLike
+import dev.typr.dslsc.RelationStructure
+import dev.typr.dslsc.SqlExpr
+import dev.typr.dslsc.SqlExpr.Field
+import dev.typr.dslsc.SqlExpr.IdField
+import dev.typr.dslsc.SqlExpr.OptField
+import dev.typr.dslsc.TupleExpr3
+import dev.typr.foundations.RowCodec
 import testdb.EmailAddress
 import testdb.MoneyAmount
 
@@ -27,7 +27,7 @@ class DistinctTypeTestFields(val `_path`: java.util.List[Path]) extends TupleExp
       None,
       None,
       (row, value) => row.copy(id = value),
-      DistinctTypeTestId.db2Type
+      DistinctTypeTestId.db2Type.underlying
     )
   }
 
@@ -39,7 +39,7 @@ class DistinctTypeTestFields(val `_path`: java.util.List[Path]) extends TupleExp
       None,
       None,
       (row, value) => row.copy(email = value),
-      EmailAddress.db2Type
+      EmailAddress.db2Type.underlying
     )
   }
 
@@ -51,13 +51,13 @@ class DistinctTypeTestFields(val `_path`: java.util.List[Path]) extends TupleExp
       None,
       None,
       (row, value) => row.copy(balance = value),
-      MoneyAmount.db2Type
+      MoneyAmount.db2Type.underlying
     )
   }
 
   override def columns: java.util.List[FieldLike[?, DistinctTypeTestRow]] = java.util.List.of(this.id.underlying, this.email.underlying, this.balance.underlying)
 
-  override def rowParser: RowParser[DistinctTypeTestRow] = DistinctTypeTestRow._rowParser.underlying
+  override def rowCodec: RowCodec[DistinctTypeTestRow] = DistinctTypeTestRow.rowCodec.underlying
 
   override def withPaths(`_path`: java.util.List[Path]): RelationStructure[DistinctTypeTestFields, DistinctTypeTestRow] = new DistinctTypeTestFields(`_path`)
 

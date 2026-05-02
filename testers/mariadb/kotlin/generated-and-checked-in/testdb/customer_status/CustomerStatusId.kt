@@ -6,21 +6,21 @@
 package testdb.customer_status
 
 import com.fasterxml.jackson.annotation.JsonValue
-import dev.typr.foundations.MariaType
-import dev.typr.foundations.MariaTypes
-import dev.typr.foundations.kotlin.Bijection
+import dev.typr.foundationskt.Bijection
+import dev.typr.foundationskt.MariaType
+import dev.typr.foundationskt.MariaTypes
 
 /** Type for the primary key of table `customer_status` */
-data class CustomerStatusId(@field:JsonValue val value: String) {
+data class CustomerStatusId(@field:JsonValue val value: kotlin.String) {
   override fun toString(): kotlin.String {
-    return value.toString()
+    return value
   }
 
   companion object {
-    val bijection: Bijection<CustomerStatusId, String> =
+    val bijection: Bijection<CustomerStatusId, kotlin.String> =
       Bijection.of(CustomerStatusId::value, ::CustomerStatusId)
 
     val mariaType: MariaType<CustomerStatusId> =
-      MariaTypes.varchar.bimap(::CustomerStatusId, CustomerStatusId::value)
+      MariaTypes.varchar.to(Bijection.of(::CustomerStatusId, CustomerStatusId::value))
   }
 }

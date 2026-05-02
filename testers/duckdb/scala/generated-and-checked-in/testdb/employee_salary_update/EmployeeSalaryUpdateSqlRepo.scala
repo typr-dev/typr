@@ -5,7 +5,7 @@
  */
 package testdb.employee_salary_update
 
-import java.sql.Connection
+import dev.typr.foundationssc.ConnectionRead
 
 trait EmployeeSalaryUpdateSqlRepo {
   def apply(
@@ -13,5 +13,5 @@ trait EmployeeSalaryUpdateSqlRepo {
     newSalary: BigDecimal,
     empNumber: Int,
     empSuffix: String
-  )(using c: Connection): List[EmployeeSalaryUpdateSqlRow]
+  )(using c: ConnectionRead): List[EmployeeSalaryUpdateSqlRow]
 }

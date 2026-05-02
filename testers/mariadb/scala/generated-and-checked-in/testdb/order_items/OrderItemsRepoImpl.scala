@@ -5,76 +5,75 @@
  */
 package testdb.order_items
 
-import dev.typr.foundations.MariaTypes
-import dev.typr.foundations.scala.DbTypeOps
-import dev.typr.foundations.scala.DeleteBuilder
-import dev.typr.foundations.scala.Dialect
-import dev.typr.foundations.scala.Fragment
-import dev.typr.foundations.scala.ScalaDbTypes
-import dev.typr.foundations.scala.SelectBuilder
-import dev.typr.foundations.scala.UpdateBuilder
-import java.sql.Connection
+import dev.typr.dslsc.DeleteBuilder
+import dev.typr.dslsc.Dialect
+import dev.typr.dslsc.SelectBuilder
+import dev.typr.dslsc.UpdateBuilder
+import dev.typr.foundationssc.Connection
+import dev.typr.foundationssc.ConnectionRead
+import dev.typr.foundationssc.Fragment
+import dev.typr.foundationssc.MariaTypes
 import scala.collection.mutable.ListBuffer
 import testdb.orders.OrdersId
 import testdb.products.ProductsId
 import testdb.warehouses.WarehousesId
-import dev.typr.foundations.scala.Fragment.sql
+import dev.typr.foundationssc.Fragment.sql
 
 class OrderItemsRepoImpl extends OrderItemsRepo {
   override def delete: DeleteBuilder[OrderItemsFields, OrderItemsRow] = DeleteBuilder.of("`order_items`", OrderItemsFields.structure, Dialect.MARIADB)
 
-  override def deleteById(itemId: OrderItemsId)(using c: Connection): Boolean = sql"delete from `order_items` where `item_id` = ${Fragment.encode(OrderItemsId.mariaType, itemId)}".update().runUnchecked(c) > 0
+  override def deleteById(itemId: OrderItemsId)(using c: Connection): Boolean = sql"delete from `order_items` where `item_id` = ${Fragment.encode(OrderItemsId.mariaType, itemId)}".update().run(using c) > 0
 
-  override def deleteByIds(itemIds: Array[OrderItemsId])(using c: Connection): Int = {
+  override def deleteByIds(itemIds: List[OrderItemsId])(using c: Connection): Int = {
     val fragments: ListBuffer[Fragment] = ListBuffer()
     itemIds.foreach { id => fragments.addOne(Fragment.encode(OrderItemsId.mariaType, id)): @scala.annotation.nowarn }
-    return Fragment.interpolate(Fragment.lit("delete from `order_items` where `item_id` in ("), Fragment.comma(fragments), Fragment.lit(")")).update().runUnchecked(c)
+    return Fragment.concat(Fragment.of("delete from `order_items` where `item_id` in ("), Fragment.comma(fragments), Fragment.of(")")).update().run(using c)
   }
 
   override def insert(unsaved: OrderItemsRow)(using c: Connection): OrderItemsRow = {
   sql"""insert into `order_items`(`order_id`, `product_id`, `sku`, `product_name`, `quantity`, `unit_price`, `discount_amount`, `tax_amount`, `line_total`, `fulfillment_status`, `warehouse_id`, `notes`)
-    values (${Fragment.encode(OrdersId.mariaType, unsaved.orderId)}, ${Fragment.encode(ProductsId.mariaType, unsaved.productId)}, ${Fragment.encode(MariaTypes.varchar, unsaved.sku)}, ${Fragment.encode(MariaTypes.varchar, unsaved.productName)}, ${Fragment.encode(MariaTypes.smallintUnsigned, unsaved.quantity)}, ${Fragment.encode(ScalaDbTypes.MariaTypes.numeric, unsaved.unitPrice)}, ${Fragment.encode(ScalaDbTypes.MariaTypes.numeric, unsaved.discountAmount)}, ${Fragment.encode(ScalaDbTypes.MariaTypes.numeric, unsaved.taxAmount)}, ${Fragment.encode(ScalaDbTypes.MariaTypes.numeric, unsaved.lineTotal)}, ${Fragment.encode(MariaTypes.text, unsaved.fulfillmentStatus)}, ${Fragment.encode(WarehousesId.mariaType.nullable, unsaved.warehouseId)}, ${Fragment.encode(MariaTypes.tinytext.nullable, unsaved.notes)})
+    values (${Fragment.encode(OrdersId.mariaType, unsaved.orderId)}, ${Fragment.encode(ProductsId.mariaType, unsaved.productId)}, ${Fragment.encode(MariaTypes.varchar, unsaved.sku)}, ${Fragment.encode(MariaTypes.varchar, unsaved.productName)}, ${Fragment.encode(MariaTypes.smallintUnsigned, unsaved.quantity)}, ${Fragment.encode(MariaTypes.numeric, unsaved.unitPrice)}, ${Fragment.encode(MariaTypes.numeric, unsaved.discountAmount)}, ${Fragment.encode(MariaTypes.numeric, unsaved.taxAmount)}, ${Fragment.encode(MariaTypes.numeric, unsaved.lineTotal)}, ${Fragment.encode(MariaTypes.text, unsaved.fulfillmentStatus)}, ${Fragment.encode(WarehousesId.mariaType.opt, unsaved.warehouseId)}, ${Fragment.encode(MariaTypes.tinytext.opt, unsaved.notes)})
     RETURNING `item_id`, `order_id`, `product_id`, `sku`, `product_name`, `quantity`, `unit_price`, `discount_amount`, `tax_amount`, `line_total`, `fulfillment_status`, `warehouse_id`, `notes`
     """
-    .updateReturning(OrderItemsRow.`_rowParser`.exactlyOne()).runUnchecked(c)
+    .updateReturning(OrderItemsRow.rowCodec.exactlyOne()).run(using c)
   }
 
   override def insert(unsaved: OrderItemsRowUnsaved)(using c: Connection): OrderItemsRow = {
     val columns: ListBuffer[Fragment] = ListBuffer()
     val values: ListBuffer[Fragment] = ListBuffer()
-    columns.addOne(Fragment.lit("`order_id`")): @scala.annotation.nowarn
+    columns.addOne(Fragment.of("`order_id`")): @scala.annotation.nowarn
     values.addOne(sql"${Fragment.encode(OrdersId.mariaType, unsaved.orderId)}"): @scala.annotation.nowarn
-    columns.addOne(Fragment.lit("`product_id`")): @scala.annotation.nowarn
+    columns.addOne(Fragment.of("`product_id`")): @scala.annotation.nowarn
     values.addOne(sql"${Fragment.encode(ProductsId.mariaType, unsaved.productId)}"): @scala.annotation.nowarn
-    columns.addOne(Fragment.lit("`sku`")): @scala.annotation.nowarn
+    columns.addOne(Fragment.of("`sku`")): @scala.annotation.nowarn
     values.addOne(sql"${Fragment.encode(MariaTypes.varchar, unsaved.sku)}"): @scala.annotation.nowarn
-    columns.addOne(Fragment.lit("`product_name`")): @scala.annotation.nowarn
+    columns.addOne(Fragment.of("`product_name`")): @scala.annotation.nowarn
     values.addOne(sql"${Fragment.encode(MariaTypes.varchar, unsaved.productName)}"): @scala.annotation.nowarn
-    columns.addOne(Fragment.lit("`quantity`")): @scala.annotation.nowarn
+    columns.addOne(Fragment.of("`quantity`")): @scala.annotation.nowarn
     values.addOne(sql"${Fragment.encode(MariaTypes.smallintUnsigned, unsaved.quantity)}"): @scala.annotation.nowarn
-    columns.addOne(Fragment.lit("`unit_price`")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(ScalaDbTypes.MariaTypes.numeric, unsaved.unitPrice)}"): @scala.annotation.nowarn
-    columns.addOne(Fragment.lit("`line_total`")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(ScalaDbTypes.MariaTypes.numeric, unsaved.lineTotal)}"): @scala.annotation.nowarn
+    columns.addOne(Fragment.of("`unit_price`")): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(MariaTypes.numeric, unsaved.unitPrice)}"): @scala.annotation.nowarn
+    columns.addOne(Fragment.of("`line_total`")): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(MariaTypes.numeric, unsaved.lineTotal)}"): @scala.annotation.nowarn
     unsaved.discountAmount.visit(
       {  },
-      value => { columns.addOne(Fragment.lit("`discount_amount`")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(ScalaDbTypes.MariaTypes.numeric, value)}"): @scala.annotation.nowarn }
+      value => { columns.addOne(Fragment.of("`discount_amount`")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(MariaTypes.numeric, value)}"): @scala.annotation.nowarn }
     );
     unsaved.taxAmount.visit(
       {  },
-      value => { columns.addOne(Fragment.lit("`tax_amount`")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(ScalaDbTypes.MariaTypes.numeric, value)}"): @scala.annotation.nowarn }
+      value => { columns.addOne(Fragment.of("`tax_amount`")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(MariaTypes.numeric, value)}"): @scala.annotation.nowarn }
     );
     unsaved.fulfillmentStatus.visit(
       {  },
-      value => { columns.addOne(Fragment.lit("`fulfillment_status`")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(MariaTypes.text, value)}"): @scala.annotation.nowarn }
+      value => { columns.addOne(Fragment.of("`fulfillment_status`")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(MariaTypes.text, value)}"): @scala.annotation.nowarn }
     );
     unsaved.warehouseId.visit(
       {  },
-      value => { columns.addOne(Fragment.lit("`warehouse_id`")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(WarehousesId.mariaType.nullable, value)}"): @scala.annotation.nowarn }
+      value => { columns.addOne(Fragment.of("`warehouse_id`")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(WarehousesId.mariaType.opt, value)}"): @scala.annotation.nowarn }
     );
     unsaved.notes.visit(
       {  },
-      value => { columns.addOne(Fragment.lit("`notes`")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(MariaTypes.tinytext.nullable, value)}"): @scala.annotation.nowarn }
+      value => { columns.addOne(Fragment.of("`notes`")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(MariaTypes.tinytext.opt, value)}"): @scala.annotation.nowarn }
     );
     val q: Fragment = {
       sql"""insert into `order_items`(${Fragment.comma(columns)})
@@ -82,36 +81,36 @@ class OrderItemsRepoImpl extends OrderItemsRepo {
       RETURNING `item_id`, `order_id`, `product_id`, `sku`, `product_name`, `quantity`, `unit_price`, `discount_amount`, `tax_amount`, `line_total`, `fulfillment_status`, `warehouse_id`, `notes`
       """
     }
-    return q.updateReturning(OrderItemsRow.`_rowParser`.exactlyOne()).runUnchecked(c)
+    return q.updateReturning(OrderItemsRow.rowCodec.exactlyOne()).run(using c)
   }
 
-  override def select: SelectBuilder[OrderItemsFields, OrderItemsRow] = SelectBuilder.of("`order_items`", OrderItemsFields.structure, OrderItemsRow.`_rowParser`, Dialect.MARIADB)
+  override def select: SelectBuilder[OrderItemsFields, OrderItemsRow] = SelectBuilder.of("`order_items`", OrderItemsFields.structure, OrderItemsRow.rowCodec, Dialect.MARIADB)
 
-  override def selectAll(using c: Connection): List[OrderItemsRow] = {
+  override def selectAll(using c: ConnectionRead): List[OrderItemsRow] = {
     sql"""select `item_id`, `order_id`, `product_id`, `sku`, `product_name`, `quantity`, `unit_price`, `discount_amount`, `tax_amount`, `line_total`, `fulfillment_status`, `warehouse_id`, `notes`
     from `order_items`
-    """.query(OrderItemsRow.`_rowParser`.all()).runUnchecked(c)
+    """.query(OrderItemsRow.rowCodec.all()).run(using c)
   }
 
-  override def selectById(itemId: OrderItemsId)(using c: Connection): Option[OrderItemsRow] = {
+  override def selectById(itemId: OrderItemsId)(using c: ConnectionRead): Option[OrderItemsRow] = {
     sql"""select `item_id`, `order_id`, `product_id`, `sku`, `product_name`, `quantity`, `unit_price`, `discount_amount`, `tax_amount`, `line_total`, `fulfillment_status`, `warehouse_id`, `notes`
     from `order_items`
-    where `item_id` = ${Fragment.encode(OrderItemsId.mariaType, itemId)}""".query(OrderItemsRow.`_rowParser`.first()).runUnchecked(c)
+    where `item_id` = ${Fragment.encode(OrderItemsId.mariaType, itemId)}""".query(OrderItemsRow.rowCodec.first()).run(using c)
   }
 
-  override def selectByIds(itemIds: Array[OrderItemsId])(using c: Connection): List[OrderItemsRow] = {
+  override def selectByIds(itemIds: List[OrderItemsId])(using c: ConnectionRead): List[OrderItemsRow] = {
     val fragments: ListBuffer[Fragment] = ListBuffer()
     itemIds.foreach { id => fragments.addOne(Fragment.encode(OrderItemsId.mariaType, id)): @scala.annotation.nowarn }
-    return Fragment.interpolate(Fragment.lit("select `item_id`, `order_id`, `product_id`, `sku`, `product_name`, `quantity`, `unit_price`, `discount_amount`, `tax_amount`, `line_total`, `fulfillment_status`, `warehouse_id`, `notes` from `order_items` where `item_id` in ("), Fragment.comma(fragments), Fragment.lit(")")).query(OrderItemsRow.`_rowParser`.all()).runUnchecked(c)
+    return Fragment.concat(Fragment.of("select `item_id`, `order_id`, `product_id`, `sku`, `product_name`, `quantity`, `unit_price`, `discount_amount`, `tax_amount`, `line_total`, `fulfillment_status`, `warehouse_id`, `notes` from `order_items` where `item_id` in ("), Fragment.comma(fragments), Fragment.of(")")).query(OrderItemsRow.rowCodec.all()).run(using c)
   }
 
-  override def selectByIdsTracked(itemIds: Array[OrderItemsId])(using c: Connection): Map[OrderItemsId, OrderItemsRow] = {
+  override def selectByIdsTracked(itemIds: List[OrderItemsId])(using c: ConnectionRead): Map[OrderItemsId, OrderItemsRow] = {
     val ret: scala.collection.mutable.Map[OrderItemsId, OrderItemsRow] = scala.collection.mutable.Map.empty[OrderItemsId, OrderItemsRow]
     selectByIds(itemIds)(using c).foreach(row => ret.put(row.itemId, row): @scala.annotation.nowarn)
     return ret.toMap
   }
 
-  override def update: UpdateBuilder[OrderItemsFields, OrderItemsRow] = UpdateBuilder.of("`order_items`", OrderItemsFields.structure, OrderItemsRow.`_rowParser`, Dialect.MARIADB)
+  override def update: UpdateBuilder[OrderItemsFields, OrderItemsRow] = UpdateBuilder.of("`order_items`", OrderItemsFields.structure, OrderItemsRow.rowCodec, Dialect.MARIADB)
 
   override def update(row: OrderItemsRow)(using c: Connection): Boolean = {
     val itemId: OrderItemsId = row.itemId
@@ -121,19 +120,19 @@ class OrderItemsRepoImpl extends OrderItemsRepo {
     `sku` = ${Fragment.encode(MariaTypes.varchar, row.sku)},
     `product_name` = ${Fragment.encode(MariaTypes.varchar, row.productName)},
     `quantity` = ${Fragment.encode(MariaTypes.smallintUnsigned, row.quantity)},
-    `unit_price` = ${Fragment.encode(ScalaDbTypes.MariaTypes.numeric, row.unitPrice)},
-    `discount_amount` = ${Fragment.encode(ScalaDbTypes.MariaTypes.numeric, row.discountAmount)},
-    `tax_amount` = ${Fragment.encode(ScalaDbTypes.MariaTypes.numeric, row.taxAmount)},
-    `line_total` = ${Fragment.encode(ScalaDbTypes.MariaTypes.numeric, row.lineTotal)},
+    `unit_price` = ${Fragment.encode(MariaTypes.numeric, row.unitPrice)},
+    `discount_amount` = ${Fragment.encode(MariaTypes.numeric, row.discountAmount)},
+    `tax_amount` = ${Fragment.encode(MariaTypes.numeric, row.taxAmount)},
+    `line_total` = ${Fragment.encode(MariaTypes.numeric, row.lineTotal)},
     `fulfillment_status` = ${Fragment.encode(MariaTypes.text, row.fulfillmentStatus)},
-    `warehouse_id` = ${Fragment.encode(WarehousesId.mariaType.nullable, row.warehouseId)},
-    `notes` = ${Fragment.encode(MariaTypes.tinytext.nullable, row.notes)}
-    where `item_id` = ${Fragment.encode(OrderItemsId.mariaType, itemId)}""".update().runUnchecked(c) > 0
+    `warehouse_id` = ${Fragment.encode(WarehousesId.mariaType.opt, row.warehouseId)},
+    `notes` = ${Fragment.encode(MariaTypes.tinytext.opt, row.notes)}
+    where `item_id` = ${Fragment.encode(OrderItemsId.mariaType, itemId)}""".update().run(using c) > 0
   }
 
   override def upsert(unsaved: OrderItemsRow)(using c: Connection): OrderItemsRow = {
   sql"""INSERT INTO `order_items`(`item_id`, `order_id`, `product_id`, `sku`, `product_name`, `quantity`, `unit_price`, `discount_amount`, `tax_amount`, `line_total`, `fulfillment_status`, `warehouse_id`, `notes`)
-    VALUES (${Fragment.encode(OrderItemsId.mariaType, unsaved.itemId)}, ${Fragment.encode(OrdersId.mariaType, unsaved.orderId)}, ${Fragment.encode(ProductsId.mariaType, unsaved.productId)}, ${Fragment.encode(MariaTypes.varchar, unsaved.sku)}, ${Fragment.encode(MariaTypes.varchar, unsaved.productName)}, ${Fragment.encode(MariaTypes.smallintUnsigned, unsaved.quantity)}, ${Fragment.encode(ScalaDbTypes.MariaTypes.numeric, unsaved.unitPrice)}, ${Fragment.encode(ScalaDbTypes.MariaTypes.numeric, unsaved.discountAmount)}, ${Fragment.encode(ScalaDbTypes.MariaTypes.numeric, unsaved.taxAmount)}, ${Fragment.encode(ScalaDbTypes.MariaTypes.numeric, unsaved.lineTotal)}, ${Fragment.encode(MariaTypes.text, unsaved.fulfillmentStatus)}, ${Fragment.encode(WarehousesId.mariaType.nullable, unsaved.warehouseId)}, ${Fragment.encode(MariaTypes.tinytext.nullable, unsaved.notes)})
+    VALUES (${Fragment.encode(OrderItemsId.mariaType, unsaved.itemId)}, ${Fragment.encode(OrdersId.mariaType, unsaved.orderId)}, ${Fragment.encode(ProductsId.mariaType, unsaved.productId)}, ${Fragment.encode(MariaTypes.varchar, unsaved.sku)}, ${Fragment.encode(MariaTypes.varchar, unsaved.productName)}, ${Fragment.encode(MariaTypes.smallintUnsigned, unsaved.quantity)}, ${Fragment.encode(MariaTypes.numeric, unsaved.unitPrice)}, ${Fragment.encode(MariaTypes.numeric, unsaved.discountAmount)}, ${Fragment.encode(MariaTypes.numeric, unsaved.taxAmount)}, ${Fragment.encode(MariaTypes.numeric, unsaved.lineTotal)}, ${Fragment.encode(MariaTypes.text, unsaved.fulfillmentStatus)}, ${Fragment.encode(WarehousesId.mariaType.opt, unsaved.warehouseId)}, ${Fragment.encode(MariaTypes.tinytext.opt, unsaved.notes)})
     ON DUPLICATE KEY UPDATE `order_id` = VALUES(`order_id`),
     `product_id` = VALUES(`product_id`),
     `sku` = VALUES(`sku`),
@@ -147,8 +146,8 @@ class OrderItemsRepoImpl extends OrderItemsRepo {
     `warehouse_id` = VALUES(`warehouse_id`),
     `notes` = VALUES(`notes`)
     RETURNING `item_id`, `order_id`, `product_id`, `sku`, `product_name`, `quantity`, `unit_price`, `discount_amount`, `tax_amount`, `line_total`, `fulfillment_status`, `warehouse_id`, `notes`"""
-    .updateReturning(OrderItemsRow.`_rowParser`.exactlyOne())
-    .runUnchecked(c)
+    .updateReturning(OrderItemsRow.rowCodec.exactlyOne())
+    .run(using c)
   }
 
   override def upsertBatch(unsaved: Iterator[OrderItemsRow])(using c: Connection): List[OrderItemsRow] = {
@@ -167,7 +166,7 @@ class OrderItemsRepoImpl extends OrderItemsRepo {
     `warehouse_id` = VALUES(`warehouse_id`),
     `notes` = VALUES(`notes`)
     RETURNING `item_id`, `order_id`, `product_id`, `sku`, `product_name`, `quantity`, `unit_price`, `discount_amount`, `tax_amount`, `line_total`, `fulfillment_status`, `warehouse_id`, `notes`"""
-      .updateReturningEach(OrderItemsRow.`_rowParser`, unsaved)
-    .runUnchecked(c)
+      .updateReturningEach(OrderItemsRow.rowCodec, unsaved)
+    .run(using c)
   }
 }

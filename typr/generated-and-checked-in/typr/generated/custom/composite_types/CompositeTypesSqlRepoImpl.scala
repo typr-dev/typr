@@ -11,7 +11,7 @@ import java.sql.Connection
 import anorm.SqlStringInterpolation
 
 class CompositeTypesSqlRepoImpl extends CompositeTypesSqlRepo {
-  override def apply(implicit c: Connection): List[CompositeTypesSqlRow] = {
+  override def apply(using c: Connection): List[CompositeTypesSqlRow] = {
     val sql =
       SQL"""-- Query PostgreSQL composite types (CREATE TYPE name AS (...))
       -- Returns one row per attribute (field) of each composite type

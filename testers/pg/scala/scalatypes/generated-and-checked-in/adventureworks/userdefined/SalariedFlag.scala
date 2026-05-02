@@ -7,8 +7,8 @@ package adventureworks.userdefined
 
 import adventureworks.public.Flag
 import com.fasterxml.jackson.annotation.JsonValue
-import dev.typr.foundations.PgType
-import dev.typr.foundations.scala.Bijection
+import dev.typr.dslsc.Bijection
+import dev.typr.foundationssc.PgType
 
 /** Shared type `SalariedFlag`
  * Generated from TypeDefinitions matching
@@ -16,9 +16,9 @@ import dev.typr.foundations.scala.Bijection
 case class SalariedFlag(@JsonValue value: Flag) extends scala.AnyVal
 
 object SalariedFlag {
-  given bijection: Bijection[SalariedFlag, Flag] = Bijection.apply[SalariedFlag, Flag](_.value)(SalariedFlag.apply)
+  given bijection: Bijection[SalariedFlag, Flag] = Bijection.of[SalariedFlag, Flag](_.value, SalariedFlag.apply)
 
-  given pgType: PgType[SalariedFlag] = Flag.pgType.bimap(SalariedFlag.apply, _.value)
+  given pgType: PgType[SalariedFlag] = Flag.pgType.to(Bijection.of(SalariedFlag.apply, _.value))
 
-  given pgTypeArray: PgType[Array[SalariedFlag]] = Flag.pgTypeArray.bimap(xs => xs.map(SalariedFlag.apply), xs => xs.map(_.value))
+  given pgTypeArray: PgType[List[SalariedFlag]] = pgType.array
 }

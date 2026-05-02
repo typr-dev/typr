@@ -5,14 +5,14 @@
  */
 package oracledb.precision_types_null
 
-import dev.typr.foundations.OracleTypes
-import dev.typr.foundations.kotlin.DeleteBuilder
-import dev.typr.foundations.kotlin.Dialect
-import dev.typr.foundations.kotlin.Fragment
-import dev.typr.foundations.kotlin.SelectBuilder
-import dev.typr.foundations.kotlin.UpdateBuilder
-import dev.typr.foundations.kotlin.nullable
-import java.sql.Connection
+import dev.typr.dslkt.DeleteBuilder
+import dev.typr.dslkt.Dialect
+import dev.typr.dslkt.SelectBuilder
+import dev.typr.dslkt.UpdateBuilder
+import dev.typr.foundationskt.Connection
+import dev.typr.foundationskt.ConnectionRead
+import dev.typr.foundationskt.Fragment
+import dev.typr.foundationskt.OracleTypes
 import java.util.ArrayList
 import kotlin.collections.Iterator
 import kotlin.collections.List
@@ -40,22 +40,22 @@ class PrecisionTypesNullRepoImpl() : PrecisionTypesNullRepo {
   override fun deleteById(
     id: PrecisionTypesNullId,
     c: Connection
-  ): Boolean = Fragment.interpolate(Fragment.lit("delete from \"PRECISION_TYPES_NULL\" where \"ID\" = "), Fragment.encode(PrecisionTypesNullId.oracleType, id), Fragment.lit("")).update().runUnchecked(c) > 0
+  ): kotlin.Boolean = Fragment.concat(Fragment.of("delete from \"PRECISION_TYPES_NULL\" where \"ID\" = "), Fragment.encode(PrecisionTypesNullId.oracleType, id), Fragment.of("")).update().run(c) > 0
 
   override fun deleteByIds(
-    ids: Array<PrecisionTypesNullId>,
+    ids: List<PrecisionTypesNullId>,
     c: Connection
   ): Int {
     val fragments: ArrayList<Fragment> = ArrayList()
     for (id in ids) { fragments.add(Fragment.encode(PrecisionTypesNullId.oracleType, id)) }
-    return Fragment.interpolate(Fragment.lit("delete from \"PRECISION_TYPES_NULL\" where \"ID\" in ("), Fragment.comma(fragments.toMutableList()), Fragment.lit(")")).update().runUnchecked(c)
+    return Fragment.concat(Fragment.of("delete from \"PRECISION_TYPES_NULL\" where \"ID\" in ("), Fragment.comma(fragments.toMutableList()), Fragment.of(")")).update().run(c)
   }
 
   override fun insert(
     unsaved: PrecisionTypesNullRow,
     c: Connection
-  ): PrecisionTypesNullRow = Fragment.interpolate(Fragment.lit("insert into \"PRECISION_TYPES_NULL\"(\"ID\", \"STRING10\", \"STRING20\", \"STRING50\", \"STRING100\", \"STRING255\", \"CHAR10\", \"NUMBER5_2\", \"NUMBER10_2\", \"NUMBER18_4\", \"NUMBER5_0\", \"NUMBER10_0\", \"NUMBER18_0\", \"TS0\", \"TS3\", \"TS6\", \"TS9\")\nvalues ("), Fragment.encode(PrecisionTypesNullId.oracleType, unsaved.id), Fragment.lit(", "), Fragment.encode(NonEmptyString10.oracleType.nullable(), unsaved.string10), Fragment.lit(", "), Fragment.encode(NonEmptyString20.oracleType.nullable(), unsaved.string20), Fragment.lit(", "), Fragment.encode(NonEmptyString50.oracleType.nullable(), unsaved.string50), Fragment.lit(", "), Fragment.encode(NonEmptyString100.oracleType.nullable(), unsaved.string100), Fragment.lit(", "), Fragment.encode(NonEmptyString255.oracleType.nullable(), unsaved.string255), Fragment.lit(", "), Fragment.encode(NonEmptyPaddedString10.oracleType.nullable(), unsaved.char10), Fragment.lit(", "), Fragment.encode(Decimal5_2.oracleType.nullable(), unsaved.number52), Fragment.lit(", "), Fragment.encode(Decimal10_2.oracleType.nullable(), unsaved.number102), Fragment.lit(", "), Fragment.encode(Decimal18_4.oracleType.nullable(), unsaved.number184), Fragment.lit(", "), Fragment.encode(Int5.oracleType.nullable(), unsaved.number50), Fragment.lit(", "), Fragment.encode(Int10.oracleType.nullable(), unsaved.number100), Fragment.lit(", "), Fragment.encode(Int18.oracleType.nullable(), unsaved.number180), Fragment.lit(", "), Fragment.encode(OracleTypes.timestamp.nullable(), unsaved.ts0), Fragment.lit(", "), Fragment.encode(LocalDateTime3.oracleType.nullable(), unsaved.ts3), Fragment.lit(", "), Fragment.encode(LocalDateTime6.oracleType.nullable(), unsaved.ts6), Fragment.lit(", "), Fragment.encode(LocalDateTime9.oracleType.nullable(), unsaved.ts9), Fragment.lit(")\n"))
-    .updateReturningGeneratedKeys(arrayOf<String>("ID", "STRING10", "STRING20", "STRING50", "STRING100", "STRING255", "CHAR10", "NUMBER5_2", "NUMBER10_2", "NUMBER18_4", "NUMBER5_0", "NUMBER10_0", "NUMBER18_0", "TS0", "TS3", "TS6", "TS9"), PrecisionTypesNullRow._rowParser.exactlyOne()).runUnchecked(c)
+  ): PrecisionTypesNullRow = Fragment.concat(Fragment.of("insert into \"PRECISION_TYPES_NULL\"(\"ID\", \"STRING10\", \"STRING20\", \"STRING50\", \"STRING100\", \"STRING255\", \"CHAR10\", \"NUMBER5_2\", \"NUMBER10_2\", \"NUMBER18_4\", \"NUMBER5_0\", \"NUMBER10_0\", \"NUMBER18_0\", \"TS0\", \"TS3\", \"TS6\", \"TS9\")\nvalues ("), Fragment.encode(PrecisionTypesNullId.oracleType, unsaved.id), Fragment.of(", "), Fragment.encode(NonEmptyString10.oracleType.opt(), unsaved.string10), Fragment.of(", "), Fragment.encode(NonEmptyString20.oracleType.opt(), unsaved.string20), Fragment.of(", "), Fragment.encode(NonEmptyString50.oracleType.opt(), unsaved.string50), Fragment.of(", "), Fragment.encode(NonEmptyString100.oracleType.opt(), unsaved.string100), Fragment.of(", "), Fragment.encode(NonEmptyString255.oracleType.opt(), unsaved.string255), Fragment.of(", "), Fragment.encode(NonEmptyPaddedString10.oracleType.opt(), unsaved.char10), Fragment.of(", "), Fragment.encode(Decimal5_2.oracleType.opt(), unsaved.number52), Fragment.of(", "), Fragment.encode(Decimal10_2.oracleType.opt(), unsaved.number102), Fragment.of(", "), Fragment.encode(Decimal18_4.oracleType.opt(), unsaved.number184), Fragment.of(", "), Fragment.encode(Int5.oracleType.opt(), unsaved.number50), Fragment.of(", "), Fragment.encode(Int10.oracleType.opt(), unsaved.number100), Fragment.of(", "), Fragment.encode(Int18.oracleType.opt(), unsaved.number180), Fragment.of(", "), Fragment.encode(OracleTypes.timestamp.opt(), unsaved.ts0), Fragment.of(", "), Fragment.encode(LocalDateTime3.oracleType.opt(), unsaved.ts3), Fragment.of(", "), Fragment.encode(LocalDateTime6.oracleType.opt(), unsaved.ts6), Fragment.of(", "), Fragment.encode(LocalDateTime9.oracleType.opt(), unsaved.ts9), Fragment.of(")\n"))
+    .updateReturningGeneratedKeys(arrayOf<kotlin.String>("ID", "STRING10", "STRING20", "STRING50", "STRING100", "STRING255", "CHAR10", "NUMBER5_2", "NUMBER10_2", "NUMBER18_4", "NUMBER5_0", "NUMBER10_0", "NUMBER18_0", "TS0", "TS3", "TS6", "TS9"), PrecisionTypesNullRow.rowCodec.exactlyOne()).run(c)
 
   override fun insert(
     unsaved: PrecisionTypesNullRowUnsaved,
@@ -63,99 +63,99 @@ class PrecisionTypesNullRepoImpl() : PrecisionTypesNullRepo {
   ): PrecisionTypesNullRow {
     val columns: ArrayList<Fragment> = ArrayList()
     val values: ArrayList<Fragment> = ArrayList()
-    columns.add(Fragment.lit("\"STRING10\""))
-    values.add(Fragment.interpolate(Fragment.encode(NonEmptyString10.oracleType.nullable(), unsaved.string10), Fragment.lit("")))
-    columns.add(Fragment.lit("\"STRING20\""))
-    values.add(Fragment.interpolate(Fragment.encode(NonEmptyString20.oracleType.nullable(), unsaved.string20), Fragment.lit("")))
-    columns.add(Fragment.lit("\"STRING50\""))
-    values.add(Fragment.interpolate(Fragment.encode(NonEmptyString50.oracleType.nullable(), unsaved.string50), Fragment.lit("")))
-    columns.add(Fragment.lit("\"STRING100\""))
-    values.add(Fragment.interpolate(Fragment.encode(NonEmptyString100.oracleType.nullable(), unsaved.string100), Fragment.lit("")))
-    columns.add(Fragment.lit("\"STRING255\""))
-    values.add(Fragment.interpolate(Fragment.encode(NonEmptyString255.oracleType.nullable(), unsaved.string255), Fragment.lit("")))
-    columns.add(Fragment.lit("\"CHAR10\""))
-    values.add(Fragment.interpolate(Fragment.encode(NonEmptyPaddedString10.oracleType.nullable(), unsaved.char10), Fragment.lit("")))
-    columns.add(Fragment.lit("\"NUMBER5_2\""))
-    values.add(Fragment.interpolate(Fragment.encode(Decimal5_2.oracleType.nullable(), unsaved.number52), Fragment.lit("")))
-    columns.add(Fragment.lit("\"NUMBER10_2\""))
-    values.add(Fragment.interpolate(Fragment.encode(Decimal10_2.oracleType.nullable(), unsaved.number102), Fragment.lit("")))
-    columns.add(Fragment.lit("\"NUMBER18_4\""))
-    values.add(Fragment.interpolate(Fragment.encode(Decimal18_4.oracleType.nullable(), unsaved.number184), Fragment.lit("")))
-    columns.add(Fragment.lit("\"NUMBER5_0\""))
-    values.add(Fragment.interpolate(Fragment.encode(Int5.oracleType.nullable(), unsaved.number50), Fragment.lit("")))
-    columns.add(Fragment.lit("\"NUMBER10_0\""))
-    values.add(Fragment.interpolate(Fragment.encode(Int10.oracleType.nullable(), unsaved.number100), Fragment.lit("")))
-    columns.add(Fragment.lit("\"NUMBER18_0\""))
-    values.add(Fragment.interpolate(Fragment.encode(Int18.oracleType.nullable(), unsaved.number180), Fragment.lit("")))
-    columns.add(Fragment.lit("\"TS0\""))
-    values.add(Fragment.interpolate(Fragment.encode(OracleTypes.timestamp.nullable(), unsaved.ts0), Fragment.lit("")))
-    columns.add(Fragment.lit("\"TS3\""))
-    values.add(Fragment.interpolate(Fragment.encode(LocalDateTime3.oracleType.nullable(), unsaved.ts3), Fragment.lit("")))
-    columns.add(Fragment.lit("\"TS6\""))
-    values.add(Fragment.interpolate(Fragment.encode(LocalDateTime6.oracleType.nullable(), unsaved.ts6), Fragment.lit("")))
-    columns.add(Fragment.lit("\"TS9\""))
-    values.add(Fragment.interpolate(Fragment.encode(LocalDateTime9.oracleType.nullable(), unsaved.ts9), Fragment.lit("")))
+    columns.add(Fragment.of("\"STRING10\""))
+    values.add(Fragment.concat(Fragment.encode(NonEmptyString10.oracleType.opt(), unsaved.string10), Fragment.of("")))
+    columns.add(Fragment.of("\"STRING20\""))
+    values.add(Fragment.concat(Fragment.encode(NonEmptyString20.oracleType.opt(), unsaved.string20), Fragment.of("")))
+    columns.add(Fragment.of("\"STRING50\""))
+    values.add(Fragment.concat(Fragment.encode(NonEmptyString50.oracleType.opt(), unsaved.string50), Fragment.of("")))
+    columns.add(Fragment.of("\"STRING100\""))
+    values.add(Fragment.concat(Fragment.encode(NonEmptyString100.oracleType.opt(), unsaved.string100), Fragment.of("")))
+    columns.add(Fragment.of("\"STRING255\""))
+    values.add(Fragment.concat(Fragment.encode(NonEmptyString255.oracleType.opt(), unsaved.string255), Fragment.of("")))
+    columns.add(Fragment.of("\"CHAR10\""))
+    values.add(Fragment.concat(Fragment.encode(NonEmptyPaddedString10.oracleType.opt(), unsaved.char10), Fragment.of("")))
+    columns.add(Fragment.of("\"NUMBER5_2\""))
+    values.add(Fragment.concat(Fragment.encode(Decimal5_2.oracleType.opt(), unsaved.number52), Fragment.of("")))
+    columns.add(Fragment.of("\"NUMBER10_2\""))
+    values.add(Fragment.concat(Fragment.encode(Decimal10_2.oracleType.opt(), unsaved.number102), Fragment.of("")))
+    columns.add(Fragment.of("\"NUMBER18_4\""))
+    values.add(Fragment.concat(Fragment.encode(Decimal18_4.oracleType.opt(), unsaved.number184), Fragment.of("")))
+    columns.add(Fragment.of("\"NUMBER5_0\""))
+    values.add(Fragment.concat(Fragment.encode(Int5.oracleType.opt(), unsaved.number50), Fragment.of("")))
+    columns.add(Fragment.of("\"NUMBER10_0\""))
+    values.add(Fragment.concat(Fragment.encode(Int10.oracleType.opt(), unsaved.number100), Fragment.of("")))
+    columns.add(Fragment.of("\"NUMBER18_0\""))
+    values.add(Fragment.concat(Fragment.encode(Int18.oracleType.opt(), unsaved.number180), Fragment.of("")))
+    columns.add(Fragment.of("\"TS0\""))
+    values.add(Fragment.concat(Fragment.encode(OracleTypes.timestamp.opt(), unsaved.ts0), Fragment.of("")))
+    columns.add(Fragment.of("\"TS3\""))
+    values.add(Fragment.concat(Fragment.encode(LocalDateTime3.oracleType.opt(), unsaved.ts3), Fragment.of("")))
+    columns.add(Fragment.of("\"TS6\""))
+    values.add(Fragment.concat(Fragment.encode(LocalDateTime6.oracleType.opt(), unsaved.ts6), Fragment.of("")))
+    columns.add(Fragment.of("\"TS9\""))
+    values.add(Fragment.concat(Fragment.encode(LocalDateTime9.oracleType.opt(), unsaved.ts9), Fragment.of("")))
     unsaved.id.visit(
       {  },
-      { value -> columns.add(Fragment.lit("\"ID\""))
-      values.add(Fragment.interpolate(Fragment.encode(PrecisionTypesNullId.oracleType, value), Fragment.lit(""))) }
+      { value -> columns.add(Fragment.of("\"ID\""))
+      values.add(Fragment.concat(Fragment.encode(PrecisionTypesNullId.oracleType, value), Fragment.of(""))) }
     );
-    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into \"PRECISION_TYPES_NULL\"("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\n"))
-    return q.updateReturningGeneratedKeys(arrayOf<String>("ID", "STRING10", "STRING20", "STRING50", "STRING100", "STRING255", "CHAR10", "NUMBER5_2", "NUMBER10_2", "NUMBER18_4", "NUMBER5_0", "NUMBER10_0", "NUMBER18_0", "TS0", "TS3", "TS6", "TS9"), PrecisionTypesNullRow._rowParser.exactlyOne()).runUnchecked(c)
+    val q: Fragment = Fragment.concat(Fragment.of("insert into \"PRECISION_TYPES_NULL\"("), Fragment.comma(columns.toMutableList()), Fragment.of(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.of(")\n"))
+    return q.updateReturningGeneratedKeys(arrayOf<kotlin.String>("ID", "STRING10", "STRING20", "STRING50", "STRING100", "STRING255", "CHAR10", "NUMBER5_2", "NUMBER10_2", "NUMBER18_4", "NUMBER5_0", "NUMBER10_0", "NUMBER18_0", "TS0", "TS3", "TS6", "TS9"), PrecisionTypesNullRow.rowCodec.exactlyOne()).run(c)
   }
 
-  override fun select(): SelectBuilder<PrecisionTypesNullFields, PrecisionTypesNullRow> = SelectBuilder.of("\"PRECISION_TYPES_NULL\"", PrecisionTypesNullFields.structure, PrecisionTypesNullRow._rowParser, Dialect.ORACLE)
+  override fun select(): SelectBuilder<PrecisionTypesNullFields, PrecisionTypesNullRow> = SelectBuilder.of("\"PRECISION_TYPES_NULL\"", PrecisionTypesNullFields.structure, PrecisionTypesNullRow.rowCodec, Dialect.ORACLE)
 
-  override fun selectAll(c: Connection): List<PrecisionTypesNullRow> = Fragment.interpolate(Fragment.lit("select \"ID\", \"STRING10\", \"STRING20\", \"STRING50\", \"STRING100\", \"STRING255\", \"CHAR10\", \"NUMBER5_2\", \"NUMBER10_2\", \"NUMBER18_4\", \"NUMBER5_0\", \"NUMBER10_0\", \"NUMBER18_0\", \"TS0\", \"TS3\", \"TS6\", \"TS9\"\nfrom \"PRECISION_TYPES_NULL\"\n")).query(PrecisionTypesNullRow._rowParser.all()).runUnchecked(c)
+  override fun selectAll(c: ConnectionRead): List<PrecisionTypesNullRow> = Fragment.concat(Fragment.of("select \"ID\", \"STRING10\", \"STRING20\", \"STRING50\", \"STRING100\", \"STRING255\", \"CHAR10\", \"NUMBER5_2\", \"NUMBER10_2\", \"NUMBER18_4\", \"NUMBER5_0\", \"NUMBER10_0\", \"NUMBER18_0\", \"TS0\", \"TS3\", \"TS6\", \"TS9\"\nfrom \"PRECISION_TYPES_NULL\"\n")).query(PrecisionTypesNullRow.rowCodec.all()).run(c)
 
   override fun selectById(
     id: PrecisionTypesNullId,
-    c: Connection
-  ): PrecisionTypesNullRow? = Fragment.interpolate(Fragment.lit("select \"ID\", \"STRING10\", \"STRING20\", \"STRING50\", \"STRING100\", \"STRING255\", \"CHAR10\", \"NUMBER5_2\", \"NUMBER10_2\", \"NUMBER18_4\", \"NUMBER5_0\", \"NUMBER10_0\", \"NUMBER18_0\", \"TS0\", \"TS3\", \"TS6\", \"TS9\"\nfrom \"PRECISION_TYPES_NULL\"\nwhere \"ID\" = "), Fragment.encode(PrecisionTypesNullId.oracleType, id), Fragment.lit("")).query(PrecisionTypesNullRow._rowParser.first()).runUnchecked(c)
+    c: ConnectionRead
+  ): PrecisionTypesNullRow? = Fragment.concat(Fragment.of("select \"ID\", \"STRING10\", \"STRING20\", \"STRING50\", \"STRING100\", \"STRING255\", \"CHAR10\", \"NUMBER5_2\", \"NUMBER10_2\", \"NUMBER18_4\", \"NUMBER5_0\", \"NUMBER10_0\", \"NUMBER18_0\", \"TS0\", \"TS3\", \"TS6\", \"TS9\"\nfrom \"PRECISION_TYPES_NULL\"\nwhere \"ID\" = "), Fragment.encode(PrecisionTypesNullId.oracleType, id), Fragment.of("")).query(PrecisionTypesNullRow.rowCodec.first()).run(c)
 
   override fun selectByIds(
-    ids: Array<PrecisionTypesNullId>,
-    c: Connection
+    ids: List<PrecisionTypesNullId>,
+    c: ConnectionRead
   ): List<PrecisionTypesNullRow> {
     val fragments: ArrayList<Fragment> = ArrayList()
     for (id in ids) { fragments.add(Fragment.encode(PrecisionTypesNullId.oracleType, id)) }
-    return Fragment.interpolate(Fragment.lit("select \"ID\", \"STRING10\", \"STRING20\", \"STRING50\", \"STRING100\", \"STRING255\", \"CHAR10\", \"NUMBER5_2\", \"NUMBER10_2\", \"NUMBER18_4\", \"NUMBER5_0\", \"NUMBER10_0\", \"NUMBER18_0\", \"TS0\", \"TS3\", \"TS6\", \"TS9\" from \"PRECISION_TYPES_NULL\" where \"ID\" in ("), Fragment.comma(fragments.toMutableList()), Fragment.lit(")")).query(PrecisionTypesNullRow._rowParser.all()).runUnchecked(c)
+    return Fragment.concat(Fragment.of("select \"ID\", \"STRING10\", \"STRING20\", \"STRING50\", \"STRING100\", \"STRING255\", \"CHAR10\", \"NUMBER5_2\", \"NUMBER10_2\", \"NUMBER18_4\", \"NUMBER5_0\", \"NUMBER10_0\", \"NUMBER18_0\", \"TS0\", \"TS3\", \"TS6\", \"TS9\" from \"PRECISION_TYPES_NULL\" where \"ID\" in ("), Fragment.comma(fragments.toMutableList()), Fragment.of(")")).query(PrecisionTypesNullRow.rowCodec.all()).run(c)
   }
 
   override fun selectByIdsTracked(
-    ids: Array<PrecisionTypesNullId>,
-    c: Connection
+    ids: List<PrecisionTypesNullId>,
+    c: ConnectionRead
   ): Map<PrecisionTypesNullId, PrecisionTypesNullRow> {
     val ret: MutableMap<PrecisionTypesNullId, PrecisionTypesNullRow> = mutableMapOf<PrecisionTypesNullId, PrecisionTypesNullRow>()
     selectByIds(ids, c).forEach({ row -> ret.put(row.id, row) })
     return ret.toMap()
   }
 
-  override fun update(): UpdateBuilder<PrecisionTypesNullFields, PrecisionTypesNullRow> = UpdateBuilder.of("\"PRECISION_TYPES_NULL\"", PrecisionTypesNullFields.structure, PrecisionTypesNullRow._rowParser, Dialect.ORACLE)
+  override fun update(): UpdateBuilder<PrecisionTypesNullFields, PrecisionTypesNullRow> = UpdateBuilder.of("\"PRECISION_TYPES_NULL\"", PrecisionTypesNullFields.structure, PrecisionTypesNullRow.rowCodec, Dialect.ORACLE)
 
   override fun update(
     row: PrecisionTypesNullRow,
     c: Connection
-  ): Boolean {
+  ): kotlin.Boolean {
     val id: PrecisionTypesNullId = row.id
-    return Fragment.interpolate(Fragment.lit("update \"PRECISION_TYPES_NULL\"\nset \"STRING10\" = "), Fragment.encode(NonEmptyString10.oracleType.nullable(), row.string10), Fragment.lit(",\n\"STRING20\" = "), Fragment.encode(NonEmptyString20.oracleType.nullable(), row.string20), Fragment.lit(",\n\"STRING50\" = "), Fragment.encode(NonEmptyString50.oracleType.nullable(), row.string50), Fragment.lit(",\n\"STRING100\" = "), Fragment.encode(NonEmptyString100.oracleType.nullable(), row.string100), Fragment.lit(",\n\"STRING255\" = "), Fragment.encode(NonEmptyString255.oracleType.nullable(), row.string255), Fragment.lit(",\n\"CHAR10\" = "), Fragment.encode(NonEmptyPaddedString10.oracleType.nullable(), row.char10), Fragment.lit(",\n\"NUMBER5_2\" = "), Fragment.encode(Decimal5_2.oracleType.nullable(), row.number52), Fragment.lit(",\n\"NUMBER10_2\" = "), Fragment.encode(Decimal10_2.oracleType.nullable(), row.number102), Fragment.lit(",\n\"NUMBER18_4\" = "), Fragment.encode(Decimal18_4.oracleType.nullable(), row.number184), Fragment.lit(",\n\"NUMBER5_0\" = "), Fragment.encode(Int5.oracleType.nullable(), row.number50), Fragment.lit(",\n\"NUMBER10_0\" = "), Fragment.encode(Int10.oracleType.nullable(), row.number100), Fragment.lit(",\n\"NUMBER18_0\" = "), Fragment.encode(Int18.oracleType.nullable(), row.number180), Fragment.lit(",\n\"TS0\" = "), Fragment.encode(OracleTypes.timestamp.nullable(), row.ts0), Fragment.lit(",\n\"TS3\" = "), Fragment.encode(LocalDateTime3.oracleType.nullable(), row.ts3), Fragment.lit(",\n\"TS6\" = "), Fragment.encode(LocalDateTime6.oracleType.nullable(), row.ts6), Fragment.lit(",\n\"TS9\" = "), Fragment.encode(LocalDateTime9.oracleType.nullable(), row.ts9), Fragment.lit("\nwhere \"ID\" = "), Fragment.encode(PrecisionTypesNullId.oracleType, id), Fragment.lit("")).update().runUnchecked(c) > 0
+    return Fragment.concat(Fragment.of("update \"PRECISION_TYPES_NULL\"\nset \"STRING10\" = "), Fragment.encode(NonEmptyString10.oracleType.opt(), row.string10), Fragment.of(",\n\"STRING20\" = "), Fragment.encode(NonEmptyString20.oracleType.opt(), row.string20), Fragment.of(",\n\"STRING50\" = "), Fragment.encode(NonEmptyString50.oracleType.opt(), row.string50), Fragment.of(",\n\"STRING100\" = "), Fragment.encode(NonEmptyString100.oracleType.opt(), row.string100), Fragment.of(",\n\"STRING255\" = "), Fragment.encode(NonEmptyString255.oracleType.opt(), row.string255), Fragment.of(",\n\"CHAR10\" = "), Fragment.encode(NonEmptyPaddedString10.oracleType.opt(), row.char10), Fragment.of(",\n\"NUMBER5_2\" = "), Fragment.encode(Decimal5_2.oracleType.opt(), row.number52), Fragment.of(",\n\"NUMBER10_2\" = "), Fragment.encode(Decimal10_2.oracleType.opt(), row.number102), Fragment.of(",\n\"NUMBER18_4\" = "), Fragment.encode(Decimal18_4.oracleType.opt(), row.number184), Fragment.of(",\n\"NUMBER5_0\" = "), Fragment.encode(Int5.oracleType.opt(), row.number50), Fragment.of(",\n\"NUMBER10_0\" = "), Fragment.encode(Int10.oracleType.opt(), row.number100), Fragment.of(",\n\"NUMBER18_0\" = "), Fragment.encode(Int18.oracleType.opt(), row.number180), Fragment.of(",\n\"TS0\" = "), Fragment.encode(OracleTypes.timestamp.opt(), row.ts0), Fragment.of(",\n\"TS3\" = "), Fragment.encode(LocalDateTime3.oracleType.opt(), row.ts3), Fragment.of(",\n\"TS6\" = "), Fragment.encode(LocalDateTime6.oracleType.opt(), row.ts6), Fragment.of(",\n\"TS9\" = "), Fragment.encode(LocalDateTime9.oracleType.opt(), row.ts9), Fragment.of("\nwhere \"ID\" = "), Fragment.encode(PrecisionTypesNullId.oracleType, id), Fragment.of("")).update().run(c) > 0
   }
 
   override fun upsert(
     unsaved: PrecisionTypesNullRow,
     c: Connection
   ) {
-    Fragment.interpolate(Fragment.lit("MERGE INTO \"PRECISION_TYPES_NULL\" t\nUSING (SELECT "), Fragment.encode(PrecisionTypesNullId.oracleType, unsaved.id), Fragment.lit(", "), Fragment.encode(NonEmptyString10.oracleType.nullable(), unsaved.string10), Fragment.lit(", "), Fragment.encode(NonEmptyString20.oracleType.nullable(), unsaved.string20), Fragment.lit(", "), Fragment.encode(NonEmptyString50.oracleType.nullable(), unsaved.string50), Fragment.lit(", "), Fragment.encode(NonEmptyString100.oracleType.nullable(), unsaved.string100), Fragment.lit(", "), Fragment.encode(NonEmptyString255.oracleType.nullable(), unsaved.string255), Fragment.lit(", "), Fragment.encode(NonEmptyPaddedString10.oracleType.nullable(), unsaved.char10), Fragment.lit(", "), Fragment.encode(Decimal5_2.oracleType.nullable(), unsaved.number52), Fragment.lit(", "), Fragment.encode(Decimal10_2.oracleType.nullable(), unsaved.number102), Fragment.lit(", "), Fragment.encode(Decimal18_4.oracleType.nullable(), unsaved.number184), Fragment.lit(", "), Fragment.encode(Int5.oracleType.nullable(), unsaved.number50), Fragment.lit(", "), Fragment.encode(Int10.oracleType.nullable(), unsaved.number100), Fragment.lit(", "), Fragment.encode(Int18.oracleType.nullable(), unsaved.number180), Fragment.lit(", "), Fragment.encode(OracleTypes.timestamp.nullable(), unsaved.ts0), Fragment.lit(", "), Fragment.encode(LocalDateTime3.oracleType.nullable(), unsaved.ts3), Fragment.lit(", "), Fragment.encode(LocalDateTime6.oracleType.nullable(), unsaved.ts6), Fragment.lit(", "), Fragment.encode(LocalDateTime9.oracleType.nullable(), unsaved.ts9), Fragment.lit(" FROM DUAL) s\nON (t.\"ID\" = s.\"ID\")\nWHEN MATCHED THEN UPDATE SET t.\"STRING10\" = s.\"STRING10\",\nt.\"STRING20\" = s.\"STRING20\",\nt.\"STRING50\" = s.\"STRING50\",\nt.\"STRING100\" = s.\"STRING100\",\nt.\"STRING255\" = s.\"STRING255\",\nt.\"CHAR10\" = s.\"CHAR10\",\nt.\"NUMBER5_2\" = s.\"NUMBER5_2\",\nt.\"NUMBER10_2\" = s.\"NUMBER10_2\",\nt.\"NUMBER18_4\" = s.\"NUMBER18_4\",\nt.\"NUMBER5_0\" = s.\"NUMBER5_0\",\nt.\"NUMBER10_0\" = s.\"NUMBER10_0\",\nt.\"NUMBER18_0\" = s.\"NUMBER18_0\",\nt.\"TS0\" = s.\"TS0\",\nt.\"TS3\" = s.\"TS3\",\nt.\"TS6\" = s.\"TS6\",\nt.\"TS9\" = s.\"TS9\"\nWHEN NOT MATCHED THEN INSERT (\"ID\", \"STRING10\", \"STRING20\", \"STRING50\", \"STRING100\", \"STRING255\", \"CHAR10\", \"NUMBER5_2\", \"NUMBER10_2\", \"NUMBER18_4\", \"NUMBER5_0\", \"NUMBER10_0\", \"NUMBER18_0\", \"TS0\", \"TS3\", \"TS6\", \"TS9\") VALUES ("), Fragment.encode(PrecisionTypesNullId.oracleType, unsaved.id), Fragment.lit(", "), Fragment.encode(NonEmptyString10.oracleType.nullable(), unsaved.string10), Fragment.lit(", "), Fragment.encode(NonEmptyString20.oracleType.nullable(), unsaved.string20), Fragment.lit(", "), Fragment.encode(NonEmptyString50.oracleType.nullable(), unsaved.string50), Fragment.lit(", "), Fragment.encode(NonEmptyString100.oracleType.nullable(), unsaved.string100), Fragment.lit(", "), Fragment.encode(NonEmptyString255.oracleType.nullable(), unsaved.string255), Fragment.lit(", "), Fragment.encode(NonEmptyPaddedString10.oracleType.nullable(), unsaved.char10), Fragment.lit(", "), Fragment.encode(Decimal5_2.oracleType.nullable(), unsaved.number52), Fragment.lit(", "), Fragment.encode(Decimal10_2.oracleType.nullable(), unsaved.number102), Fragment.lit(", "), Fragment.encode(Decimal18_4.oracleType.nullable(), unsaved.number184), Fragment.lit(", "), Fragment.encode(Int5.oracleType.nullable(), unsaved.number50), Fragment.lit(", "), Fragment.encode(Int10.oracleType.nullable(), unsaved.number100), Fragment.lit(", "), Fragment.encode(Int18.oracleType.nullable(), unsaved.number180), Fragment.lit(", "), Fragment.encode(OracleTypes.timestamp.nullable(), unsaved.ts0), Fragment.lit(", "), Fragment.encode(LocalDateTime3.oracleType.nullable(), unsaved.ts3), Fragment.lit(", "), Fragment.encode(LocalDateTime6.oracleType.nullable(), unsaved.ts6), Fragment.lit(", "), Fragment.encode(LocalDateTime9.oracleType.nullable(), unsaved.ts9), Fragment.lit(")"))
+    Fragment.concat(Fragment.of("MERGE INTO \"PRECISION_TYPES_NULL\" t\nUSING (SELECT "), Fragment.encode(PrecisionTypesNullId.oracleType, unsaved.id), Fragment.of(", "), Fragment.encode(NonEmptyString10.oracleType.opt(), unsaved.string10), Fragment.of(", "), Fragment.encode(NonEmptyString20.oracleType.opt(), unsaved.string20), Fragment.of(", "), Fragment.encode(NonEmptyString50.oracleType.opt(), unsaved.string50), Fragment.of(", "), Fragment.encode(NonEmptyString100.oracleType.opt(), unsaved.string100), Fragment.of(", "), Fragment.encode(NonEmptyString255.oracleType.opt(), unsaved.string255), Fragment.of(", "), Fragment.encode(NonEmptyPaddedString10.oracleType.opt(), unsaved.char10), Fragment.of(", "), Fragment.encode(Decimal5_2.oracleType.opt(), unsaved.number52), Fragment.of(", "), Fragment.encode(Decimal10_2.oracleType.opt(), unsaved.number102), Fragment.of(", "), Fragment.encode(Decimal18_4.oracleType.opt(), unsaved.number184), Fragment.of(", "), Fragment.encode(Int5.oracleType.opt(), unsaved.number50), Fragment.of(", "), Fragment.encode(Int10.oracleType.opt(), unsaved.number100), Fragment.of(", "), Fragment.encode(Int18.oracleType.opt(), unsaved.number180), Fragment.of(", "), Fragment.encode(OracleTypes.timestamp.opt(), unsaved.ts0), Fragment.of(", "), Fragment.encode(LocalDateTime3.oracleType.opt(), unsaved.ts3), Fragment.of(", "), Fragment.encode(LocalDateTime6.oracleType.opt(), unsaved.ts6), Fragment.of(", "), Fragment.encode(LocalDateTime9.oracleType.opt(), unsaved.ts9), Fragment.of(" FROM DUAL) s\nON (t.\"ID\" = s.\"ID\")\nWHEN MATCHED THEN UPDATE SET t.\"STRING10\" = s.\"STRING10\",\nt.\"STRING20\" = s.\"STRING20\",\nt.\"STRING50\" = s.\"STRING50\",\nt.\"STRING100\" = s.\"STRING100\",\nt.\"STRING255\" = s.\"STRING255\",\nt.\"CHAR10\" = s.\"CHAR10\",\nt.\"NUMBER5_2\" = s.\"NUMBER5_2\",\nt.\"NUMBER10_2\" = s.\"NUMBER10_2\",\nt.\"NUMBER18_4\" = s.\"NUMBER18_4\",\nt.\"NUMBER5_0\" = s.\"NUMBER5_0\",\nt.\"NUMBER10_0\" = s.\"NUMBER10_0\",\nt.\"NUMBER18_0\" = s.\"NUMBER18_0\",\nt.\"TS0\" = s.\"TS0\",\nt.\"TS3\" = s.\"TS3\",\nt.\"TS6\" = s.\"TS6\",\nt.\"TS9\" = s.\"TS9\"\nWHEN NOT MATCHED THEN INSERT (\"ID\", \"STRING10\", \"STRING20\", \"STRING50\", \"STRING100\", \"STRING255\", \"CHAR10\", \"NUMBER5_2\", \"NUMBER10_2\", \"NUMBER18_4\", \"NUMBER5_0\", \"NUMBER10_0\", \"NUMBER18_0\", \"TS0\", \"TS3\", \"TS6\", \"TS9\") VALUES ("), Fragment.encode(PrecisionTypesNullId.oracleType, unsaved.id), Fragment.of(", "), Fragment.encode(NonEmptyString10.oracleType.opt(), unsaved.string10), Fragment.of(", "), Fragment.encode(NonEmptyString20.oracleType.opt(), unsaved.string20), Fragment.of(", "), Fragment.encode(NonEmptyString50.oracleType.opt(), unsaved.string50), Fragment.of(", "), Fragment.encode(NonEmptyString100.oracleType.opt(), unsaved.string100), Fragment.of(", "), Fragment.encode(NonEmptyString255.oracleType.opt(), unsaved.string255), Fragment.of(", "), Fragment.encode(NonEmptyPaddedString10.oracleType.opt(), unsaved.char10), Fragment.of(", "), Fragment.encode(Decimal5_2.oracleType.opt(), unsaved.number52), Fragment.of(", "), Fragment.encode(Decimal10_2.oracleType.opt(), unsaved.number102), Fragment.of(", "), Fragment.encode(Decimal18_4.oracleType.opt(), unsaved.number184), Fragment.of(", "), Fragment.encode(Int5.oracleType.opt(), unsaved.number50), Fragment.of(", "), Fragment.encode(Int10.oracleType.opt(), unsaved.number100), Fragment.of(", "), Fragment.encode(Int18.oracleType.opt(), unsaved.number180), Fragment.of(", "), Fragment.encode(OracleTypes.timestamp.opt(), unsaved.ts0), Fragment.of(", "), Fragment.encode(LocalDateTime3.oracleType.opt(), unsaved.ts3), Fragment.of(", "), Fragment.encode(LocalDateTime6.oracleType.opt(), unsaved.ts6), Fragment.of(", "), Fragment.encode(LocalDateTime9.oracleType.opt(), unsaved.ts9), Fragment.of(")"))
       .update()
-      .runUnchecked(c)
+      .run(c)
   }
 
   override fun upsertBatch(
     unsaved: Iterator<PrecisionTypesNullRow>,
     c: Connection
   ) {
-    Fragment.interpolate(Fragment.lit("MERGE INTO \"PRECISION_TYPES_NULL\" t\nUSING (SELECT ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? FROM DUAL) s\nON (t.\"ID\" = s.\"ID\")\nWHEN MATCHED THEN UPDATE SET t.\"STRING10\" = s.\"STRING10\",\nt.\"STRING20\" = s.\"STRING20\",\nt.\"STRING50\" = s.\"STRING50\",\nt.\"STRING100\" = s.\"STRING100\",\nt.\"STRING255\" = s.\"STRING255\",\nt.\"CHAR10\" = s.\"CHAR10\",\nt.\"NUMBER5_2\" = s.\"NUMBER5_2\",\nt.\"NUMBER10_2\" = s.\"NUMBER10_2\",\nt.\"NUMBER18_4\" = s.\"NUMBER18_4\",\nt.\"NUMBER5_0\" = s.\"NUMBER5_0\",\nt.\"NUMBER10_0\" = s.\"NUMBER10_0\",\nt.\"NUMBER18_0\" = s.\"NUMBER18_0\",\nt.\"TS0\" = s.\"TS0\",\nt.\"TS3\" = s.\"TS3\",\nt.\"TS6\" = s.\"TS6\",\nt.\"TS9\" = s.\"TS9\"\nWHEN NOT MATCHED THEN INSERT (\"ID\", \"STRING10\", \"STRING20\", \"STRING50\", \"STRING100\", \"STRING255\", \"CHAR10\", \"NUMBER5_2\", \"NUMBER10_2\", \"NUMBER18_4\", \"NUMBER5_0\", \"NUMBER10_0\", \"NUMBER18_0\", \"TS0\", \"TS3\", \"TS6\", \"TS9\") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"))
-      .updateMany(PrecisionTypesNullRow._rowParser, unsaved)
-      .runUnchecked(c)
+    Fragment.concat(Fragment.of("MERGE INTO \"PRECISION_TYPES_NULL\" t\nUSING (SELECT ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? FROM DUAL) s\nON (t.\"ID\" = s.\"ID\")\nWHEN MATCHED THEN UPDATE SET t.\"STRING10\" = s.\"STRING10\",\nt.\"STRING20\" = s.\"STRING20\",\nt.\"STRING50\" = s.\"STRING50\",\nt.\"STRING100\" = s.\"STRING100\",\nt.\"STRING255\" = s.\"STRING255\",\nt.\"CHAR10\" = s.\"CHAR10\",\nt.\"NUMBER5_2\" = s.\"NUMBER5_2\",\nt.\"NUMBER10_2\" = s.\"NUMBER10_2\",\nt.\"NUMBER18_4\" = s.\"NUMBER18_4\",\nt.\"NUMBER5_0\" = s.\"NUMBER5_0\",\nt.\"NUMBER10_0\" = s.\"NUMBER10_0\",\nt.\"NUMBER18_0\" = s.\"NUMBER18_0\",\nt.\"TS0\" = s.\"TS0\",\nt.\"TS3\" = s.\"TS3\",\nt.\"TS6\" = s.\"TS6\",\nt.\"TS9\" = s.\"TS9\"\nWHEN NOT MATCHED THEN INSERT (\"ID\", \"STRING10\", \"STRING20\", \"STRING50\", \"STRING100\", \"STRING255\", \"CHAR10\", \"NUMBER5_2\", \"NUMBER10_2\", \"NUMBER18_4\", \"NUMBER5_0\", \"NUMBER10_0\", \"NUMBER18_0\", \"TS0\", \"TS3\", \"TS6\", \"TS9\") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"))
+      .updateMany(PrecisionTypesNullRow.rowCodec, unsaved)
+      .run(c)
   }
 }

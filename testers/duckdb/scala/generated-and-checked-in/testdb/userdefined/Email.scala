@@ -6,9 +6,9 @@
 package testdb.userdefined
 
 import com.fasterxml.jackson.annotation.JsonValue
-import dev.typr.foundations.DuckDbType
-import dev.typr.foundations.DuckDbTypes
-import dev.typr.foundations.scala.Bijection
+import dev.typr.dslsc.Bijection
+import dev.typr.foundationssc.DuckDbType
+import dev.typr.foundationssc.DuckDbTypes
 
 /** Shared type `Email`
  * Generated from TypeDefinitions matching
@@ -16,9 +16,9 @@ import dev.typr.foundations.scala.Bijection
 case class Email(@JsonValue value: String) extends scala.AnyVal
 
 object Email {
-  given bijection: Bijection[Email, String] = Bijection.apply[Email, String](_.value)(Email.apply)
+  given bijection: Bijection[Email, String] = Bijection.of[Email, String](_.value, Email.apply)
 
-  given duckDbType: DuckDbType[Email] = DuckDbTypes.varchar.bimap(Email.apply, _.value)
+  given duckDbType: DuckDbType[Email] = DuckDbTypes.varchar.to(Bijection.of(Email.apply, _.value))
 
-  given duckDbTypeArray: DuckDbType[Array[Email]] = DuckDbTypes.varcharArray.bimap(xs => xs.map(Email.apply), xs => xs.map(_.value))
+  given duckDbTypeArray: DuckDbType[List[Email]] = duckDbType.list
 }

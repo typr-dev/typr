@@ -6,25 +6,24 @@
 package adventureworks.public.flaff
 
 import adventureworks.public.ShortText
-import dev.typr.foundations.PgTypes
-import dev.typr.foundations.RowParser
-import dev.typr.foundations.dsl.FieldsBase
-import dev.typr.foundations.dsl.Path
-import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.kotlin.ForeignKey
-import dev.typr.foundations.kotlin.KotlinDbTypes
-import dev.typr.foundations.kotlin.RelationStructure
-import dev.typr.foundations.kotlin.SqlExpr
-import dev.typr.foundations.kotlin.SqlExpr.IdField
-import dev.typr.foundations.kotlin.SqlExpr.OptField
-import dev.typr.foundations.kotlin.TupleExpr
-import dev.typr.foundations.kotlin.TupleExpr5
+import dev.typr.dsl.FieldsBase
+import dev.typr.dsl.Path
+import dev.typr.dsl.SqlExpr.FieldLike
+import dev.typr.dslkt.ForeignKey
+import dev.typr.dslkt.RelationStructure
+import dev.typr.dslkt.SqlExpr
+import dev.typr.dslkt.SqlExpr.IdField
+import dev.typr.dslkt.SqlExpr.OptField
+import dev.typr.dslkt.TupleExpr
+import dev.typr.dslkt.TupleExpr5
+import dev.typr.foundations.RowCodec
+import dev.typr.foundationskt.PgTypes
 import kotlin.collections.List
 
-data class FlaffFields(val _path: List<Path>) : TupleExpr5<ShortText, String, Int, ShortText, ShortText>, RelationStructure<FlaffFields, FlaffRow>, FieldsBase<FlaffRow> {
+data class FlaffFields(val _path: List<Path>) : TupleExpr5<ShortText, kotlin.String, Int, ShortText, ShortText>, RelationStructure<FlaffFields, FlaffRow>, FieldsBase<FlaffRow> {
   override fun _1(): SqlExpr<ShortText> = code()
 
-  override fun _2(): SqlExpr<String> = anotherCode()
+  override fun _2(): SqlExpr<kotlin.String> = anotherCode()
 
   override fun _3(): SqlExpr<Int> = someNumber()
 
@@ -34,25 +33,25 @@ data class FlaffFields(val _path: List<Path>) : TupleExpr5<ShortText, String, In
 
   override fun _path(): List<Path> = _path
 
-  fun anotherCode(): IdField<String, FlaffRow> = IdField<String, FlaffRow>(_path, "another_code", FlaffRow::anotherCode, null, null, { row, value -> row.copy(anotherCode = value) }, PgTypes.text)
+  fun anotherCode(): IdField<kotlin.String, FlaffRow> = IdField<kotlin.String, FlaffRow>(_path, "another_code", FlaffRow::anotherCode, null, null, { row, value -> row.copy(anotherCode = value) }, PgTypes.text.underlying)
 
-  fun code(): IdField<ShortText, FlaffRow> = IdField<ShortText, FlaffRow>(_path, "code", FlaffRow::code, null, "text", { row, value -> row.copy(code = value) }, ShortText.pgType)
+  fun code(): IdField<ShortText, FlaffRow> = IdField<ShortText, FlaffRow>(_path, "code", FlaffRow::code, null, "text", { row, value -> row.copy(code = value) }, ShortText.pgType.underlying)
 
   override fun columns(): List<FieldLike<*, FlaffRow>> = listOf(this.code().underlying, this.anotherCode().underlying, this.someNumber().underlying, this.specifier().underlying, this.parentspecifier().underlying)
 
-  fun compositeIdIn(compositeIds: List<FlaffId>): SqlExpr<Boolean> = TupleExpr.of(code(), anotherCode(), someNumber(), specifier()).among(compositeIds)
+  fun compositeIdIn(compositeIds: List<FlaffId>): SqlExpr<kotlin.Boolean> = TupleExpr.of(code(), anotherCode(), someNumber(), specifier()).among(compositeIds)
 
-  fun compositeIdIs(compositeId: FlaffId): SqlExpr<Boolean> = SqlExpr.all(code().isEqual(compositeId.code), anotherCode().isEqual(compositeId.anotherCode), someNumber().isEqual(compositeId.someNumber), specifier().isEqual(compositeId.specifier))
+  fun compositeIdIs(compositeId: FlaffId): SqlExpr<kotlin.Boolean> = SqlExpr.all(code().isEqual(compositeId.code), anotherCode().isEqual(compositeId.anotherCode), someNumber().isEqual(compositeId.someNumber), specifier().isEqual(compositeId.specifier))
 
-  fun fkFlaff(): ForeignKey<FlaffFields, FlaffRow> = ForeignKey.of<FlaffFields, FlaffRow>("public.flaff_parent_fk").withColumnPair<ShortText>(code(), FlaffFields::code).withColumnPair<String>(anotherCode(), FlaffFields::anotherCode).withColumnPair<Int>(someNumber(), FlaffFields::someNumber).withColumnPair<ShortText>(parentspecifier(), FlaffFields::specifier)
+  fun fkFlaff(): ForeignKey<FlaffFields, FlaffRow> = ForeignKey.of<FlaffFields, FlaffRow>("public.flaff_parent_fk").withColumnPair<ShortText>(code(), FlaffFields::code).withColumnPair<kotlin.String>(anotherCode(), FlaffFields::anotherCode).withColumnPair<Int>(someNumber(), FlaffFields::someNumber).withColumnPair<ShortText>(parentspecifier(), FlaffFields::specifier)
 
-  fun parentspecifier(): OptField<ShortText, FlaffRow> = OptField<ShortText, FlaffRow>(_path, "parentspecifier", FlaffRow::parentspecifier, null, "text", { row, value -> row.copy(parentspecifier = value) }, ShortText.pgType)
+  fun parentspecifier(): OptField<ShortText, FlaffRow> = OptField<ShortText, FlaffRow>(_path, "parentspecifier", FlaffRow::parentspecifier, null, "text", { row, value -> row.copy(parentspecifier = value) }, ShortText.pgType.underlying)
 
-  override fun rowParser(): RowParser<FlaffRow> = FlaffRow._rowParser.underlying
+  override fun rowCodec(): RowCodec<FlaffRow> = FlaffRow.rowCodec.underlying
 
-  fun someNumber(): IdField<Int, FlaffRow> = IdField<Int, FlaffRow>(_path, "some_number", FlaffRow::someNumber, null, "int4", { row, value -> row.copy(someNumber = value) }, KotlinDbTypes.PgTypes.int4)
+  fun someNumber(): IdField<Int, FlaffRow> = IdField<Int, FlaffRow>(_path, "some_number", FlaffRow::someNumber, null, "int4", { row, value -> row.copy(someNumber = value) }, PgTypes.int4.underlying)
 
-  fun specifier(): IdField<ShortText, FlaffRow> = IdField<ShortText, FlaffRow>(_path, "specifier", FlaffRow::specifier, null, "text", { row, value -> row.copy(specifier = value) }, ShortText.pgType)
+  fun specifier(): IdField<ShortText, FlaffRow> = IdField<ShortText, FlaffRow>(_path, "specifier", FlaffRow::specifier, null, "text", { row, value -> row.copy(specifier = value) }, ShortText.pgType.underlying)
 
   override fun withPaths(_path: List<Path>): RelationStructure<FlaffFields, FlaffRow> = FlaffFields(_path)
 

@@ -5,26 +5,27 @@
  */
 package testdb.customer_status
 
-import dev.typr.foundations.MariaTypes
-import dev.typr.foundations.scala.DeleteBuilder
-import dev.typr.foundations.scala.Dialect
-import dev.typr.foundations.scala.Fragment
-import dev.typr.foundations.scala.SelectBuilder
-import dev.typr.foundations.scala.UpdateBuilder
-import java.sql.Connection
+import dev.typr.dslsc.DeleteBuilder
+import dev.typr.dslsc.Dialect
+import dev.typr.dslsc.SelectBuilder
+import dev.typr.dslsc.UpdateBuilder
+import dev.typr.foundationssc.Connection
+import dev.typr.foundationssc.ConnectionRead
+import dev.typr.foundationssc.Fragment
+import dev.typr.foundationssc.MariaTypes
 import scala.collection.mutable.ListBuffer
 import testdb.userdefined.IsActive
-import dev.typr.foundations.scala.Fragment.sql
+import dev.typr.foundationssc.Fragment.sql
 
 class CustomerStatusRepoImpl extends CustomerStatusRepo {
   override def delete: DeleteBuilder[CustomerStatusFields, CustomerStatusRow] = DeleteBuilder.of("`customer_status`", CustomerStatusFields.structure, Dialect.MARIADB)
 
-  override def deleteById(statusCode: CustomerStatusId)(using c: Connection): Boolean = sql"delete from `customer_status` where `status_code` = ${Fragment.encode(CustomerStatusId.mariaType, statusCode)}".update().runUnchecked(c) > 0
+  override def deleteById(statusCode: CustomerStatusId)(using c: Connection): Boolean = sql"delete from `customer_status` where `status_code` = ${Fragment.encode(CustomerStatusId.mariaType, statusCode)}".update().run(using c) > 0
 
-  override def deleteByIds(statusCodes: Array[CustomerStatusId])(using c: Connection): Int = {
+  override def deleteByIds(statusCodes: List[CustomerStatusId])(using c: Connection): Int = {
     val fragments: ListBuffer[Fragment] = ListBuffer()
     statusCodes.foreach { id => fragments.addOne(Fragment.encode(CustomerStatusId.mariaType, id)): @scala.annotation.nowarn }
-    return Fragment.interpolate(Fragment.lit("delete from `customer_status` where `status_code` in ("), Fragment.comma(fragments), Fragment.lit(")")).update().runUnchecked(c)
+    return Fragment.concat(Fragment.of("delete from `customer_status` where `status_code` in ("), Fragment.comma(fragments), Fragment.of(")")).update().run(using c)
   }
 
   override def insert(unsaved: CustomerStatusRow)(using c: Connection): CustomerStatusRow = {
@@ -32,19 +33,19 @@ class CustomerStatusRepoImpl extends CustomerStatusRepo {
     values (${Fragment.encode(CustomerStatusId.mariaType, unsaved.statusCode)}, ${Fragment.encode(MariaTypes.varchar, unsaved.description)}, ${Fragment.encode(IsActive.mariaType, unsaved.isActive)})
     RETURNING `status_code`, `description`, `is_active`
     """
-    .updateReturning(CustomerStatusRow.`_rowParser`.exactlyOne()).runUnchecked(c)
+    .updateReturning(CustomerStatusRow.rowCodec.exactlyOne()).run(using c)
   }
 
   override def insert(unsaved: CustomerStatusRowUnsaved)(using c: Connection): CustomerStatusRow = {
     val columns: ListBuffer[Fragment] = ListBuffer()
     val values: ListBuffer[Fragment] = ListBuffer()
-    columns.addOne(Fragment.lit("`status_code`")): @scala.annotation.nowarn
+    columns.addOne(Fragment.of("`status_code`")): @scala.annotation.nowarn
     values.addOne(sql"${Fragment.encode(CustomerStatusId.mariaType, unsaved.statusCode)}"): @scala.annotation.nowarn
-    columns.addOne(Fragment.lit("`description`")): @scala.annotation.nowarn
+    columns.addOne(Fragment.of("`description`")): @scala.annotation.nowarn
     values.addOne(sql"${Fragment.encode(MariaTypes.varchar, unsaved.description)}"): @scala.annotation.nowarn
     unsaved.isActive.visit(
       {  },
-      value => { columns.addOne(Fragment.lit("`is_active`")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(IsActive.mariaType, value)}"): @scala.annotation.nowarn }
+      value => { columns.addOne(Fragment.of("`is_active`")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(IsActive.mariaType, value)}"): @scala.annotation.nowarn }
     );
     val q: Fragment = {
       sql"""insert into `customer_status`(${Fragment.comma(columns)})
@@ -52,43 +53,43 @@ class CustomerStatusRepoImpl extends CustomerStatusRepo {
       RETURNING `status_code`, `description`, `is_active`
       """
     }
-    return q.updateReturning(CustomerStatusRow.`_rowParser`.exactlyOne()).runUnchecked(c)
+    return q.updateReturning(CustomerStatusRow.rowCodec.exactlyOne()).run(using c)
   }
 
-  override def select: SelectBuilder[CustomerStatusFields, CustomerStatusRow] = SelectBuilder.of("`customer_status`", CustomerStatusFields.structure, CustomerStatusRow.`_rowParser`, Dialect.MARIADB)
+  override def select: SelectBuilder[CustomerStatusFields, CustomerStatusRow] = SelectBuilder.of("`customer_status`", CustomerStatusFields.structure, CustomerStatusRow.rowCodec, Dialect.MARIADB)
 
-  override def selectAll(using c: Connection): List[CustomerStatusRow] = {
+  override def selectAll(using c: ConnectionRead): List[CustomerStatusRow] = {
     sql"""select `status_code`, `description`, `is_active`
     from `customer_status`
-    """.query(CustomerStatusRow.`_rowParser`.all()).runUnchecked(c)
+    """.query(CustomerStatusRow.rowCodec.all()).run(using c)
   }
 
-  override def selectById(statusCode: CustomerStatusId)(using c: Connection): Option[CustomerStatusRow] = {
+  override def selectById(statusCode: CustomerStatusId)(using c: ConnectionRead): Option[CustomerStatusRow] = {
     sql"""select `status_code`, `description`, `is_active`
     from `customer_status`
-    where `status_code` = ${Fragment.encode(CustomerStatusId.mariaType, statusCode)}""".query(CustomerStatusRow.`_rowParser`.first()).runUnchecked(c)
+    where `status_code` = ${Fragment.encode(CustomerStatusId.mariaType, statusCode)}""".query(CustomerStatusRow.rowCodec.first()).run(using c)
   }
 
-  override def selectByIds(statusCodes: Array[CustomerStatusId])(using c: Connection): List[CustomerStatusRow] = {
+  override def selectByIds(statusCodes: List[CustomerStatusId])(using c: ConnectionRead): List[CustomerStatusRow] = {
     val fragments: ListBuffer[Fragment] = ListBuffer()
     statusCodes.foreach { id => fragments.addOne(Fragment.encode(CustomerStatusId.mariaType, id)): @scala.annotation.nowarn }
-    return Fragment.interpolate(Fragment.lit("select `status_code`, `description`, `is_active` from `customer_status` where `status_code` in ("), Fragment.comma(fragments), Fragment.lit(")")).query(CustomerStatusRow.`_rowParser`.all()).runUnchecked(c)
+    return Fragment.concat(Fragment.of("select `status_code`, `description`, `is_active` from `customer_status` where `status_code` in ("), Fragment.comma(fragments), Fragment.of(")")).query(CustomerStatusRow.rowCodec.all()).run(using c)
   }
 
-  override def selectByIdsTracked(statusCodes: Array[CustomerStatusId])(using c: Connection): Map[CustomerStatusId, CustomerStatusRow] = {
+  override def selectByIdsTracked(statusCodes: List[CustomerStatusId])(using c: ConnectionRead): Map[CustomerStatusId, CustomerStatusRow] = {
     val ret: scala.collection.mutable.Map[CustomerStatusId, CustomerStatusRow] = scala.collection.mutable.Map.empty[CustomerStatusId, CustomerStatusRow]
     selectByIds(statusCodes)(using c).foreach(row => ret.put(row.statusCode, row): @scala.annotation.nowarn)
     return ret.toMap
   }
 
-  override def update: UpdateBuilder[CustomerStatusFields, CustomerStatusRow] = UpdateBuilder.of("`customer_status`", CustomerStatusFields.structure, CustomerStatusRow.`_rowParser`, Dialect.MARIADB)
+  override def update: UpdateBuilder[CustomerStatusFields, CustomerStatusRow] = UpdateBuilder.of("`customer_status`", CustomerStatusFields.structure, CustomerStatusRow.rowCodec, Dialect.MARIADB)
 
   override def update(row: CustomerStatusRow)(using c: Connection): Boolean = {
     val statusCode: CustomerStatusId = row.statusCode
     return sql"""update `customer_status`
     set `description` = ${Fragment.encode(MariaTypes.varchar, row.description)},
     `is_active` = ${Fragment.encode(IsActive.mariaType, row.isActive)}
-    where `status_code` = ${Fragment.encode(CustomerStatusId.mariaType, statusCode)}""".update().runUnchecked(c) > 0
+    where `status_code` = ${Fragment.encode(CustomerStatusId.mariaType, statusCode)}""".update().run(using c) > 0
   }
 
   override def upsert(unsaved: CustomerStatusRow)(using c: Connection): CustomerStatusRow = {
@@ -97,8 +98,8 @@ class CustomerStatusRepoImpl extends CustomerStatusRepo {
     ON DUPLICATE KEY UPDATE `description` = VALUES(`description`),
     `is_active` = VALUES(`is_active`)
     RETURNING `status_code`, `description`, `is_active`"""
-    .updateReturning(CustomerStatusRow.`_rowParser`.exactlyOne())
-    .runUnchecked(c)
+    .updateReturning(CustomerStatusRow.rowCodec.exactlyOne())
+    .run(using c)
   }
 
   override def upsertBatch(unsaved: Iterator[CustomerStatusRow])(using c: Connection): List[CustomerStatusRow] = {
@@ -107,7 +108,7 @@ class CustomerStatusRepoImpl extends CustomerStatusRepo {
     ON DUPLICATE KEY UPDATE `description` = VALUES(`description`),
     `is_active` = VALUES(`is_active`)
     RETURNING `status_code`, `description`, `is_active`"""
-      .updateReturningEach(CustomerStatusRow.`_rowParser`, unsaved)
-    .runUnchecked(c)
+      .updateReturningEach(CustomerStatusRow.rowCodec, unsaved)
+    .run(using c)
   }
 }

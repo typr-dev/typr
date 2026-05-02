@@ -6,11 +6,10 @@
 package testdb.order_items
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import dev.typr.foundations.Db2Types
+import dev.typr.dslkt.RowCodecs
 import dev.typr.foundations.Tuple.Tuple5
-import dev.typr.foundations.kotlin.KotlinDbTypes
-import dev.typr.foundations.kotlin.RowParser
-import dev.typr.foundations.kotlin.RowParsers
+import dev.typr.foundationskt.Db2Types
+import dev.typr.foundationskt.RowCodec
 import java.math.BigDecimal
 import testdb.orders.OrdersId
 
@@ -21,15 +20,15 @@ data class OrderItemsRow(
   /** Points to [testdb.orders.OrdersRow.orderId] */
   @field:JsonProperty("ORDER_ID") val orderId: OrdersId,
   @field:JsonProperty("ITEM_NUMBER") val itemNumber: Int,
-  @field:JsonProperty("PRODUCT_NAME") val productName: String,
+  @field:JsonProperty("PRODUCT_NAME") val productName: kotlin.String,
   @field:JsonProperty("QUANTITY") val quantity: Int,
   @field:JsonProperty("UNIT_PRICE") val unitPrice: BigDecimal
-) : Tuple5<OrdersId, Int, String, Int, BigDecimal> {
+) : Tuple5<OrdersId, Int, kotlin.String, Int, BigDecimal> {
   override fun _1(): OrdersId = orderId
 
   override fun _2(): Int = itemNumber
 
-  override fun _3(): String = productName
+  override fun _3(): kotlin.String = productName
 
   override fun _4(): Int = quantity
 
@@ -40,11 +39,11 @@ data class OrderItemsRow(
   fun id(): OrderItemsId = this.compositeId()
 
   companion object {
-    val _rowParser: RowParser<OrderItemsRow> = RowParsers.of(OrdersId.db2Type, KotlinDbTypes.Db2Types.integer, Db2Types.varchar, KotlinDbTypes.Db2Types.integer, KotlinDbTypes.Db2Types.decimal, { t0, t1, t2, t3, t4 -> OrderItemsRow(t0, t1, t2, t3, t4) }, { row -> arrayOf<Any?>(row.orderId, row.itemNumber, row.productName, row.quantity, row.unitPrice) })
+    val rowCodec: RowCodec<OrderItemsRow> = RowCodecs.of(OrdersId.db2Type, Db2Types.integer, Db2Types.varchar, Db2Types.integer, Db2Types.decimal, { t0: OrdersId, t1: Int, t2: kotlin.String, t3: Int, t4: BigDecimal -> OrderItemsRow(t0, t1, t2, t3, t4) }, { row: OrderItemsRow -> arrayOf<Any?>(row.orderId, row.itemNumber, row.productName, row.quantity, row.unitPrice) })
 
     fun apply(
       compositeId: OrderItemsId,
-      productName: String,
+      productName: kotlin.String,
       quantity: Int,
       unitPrice: BigDecimal
     ): OrderItemsRow = OrderItemsRow(compositeId.orderId, compositeId.itemNumber, productName, quantity, unitPrice)

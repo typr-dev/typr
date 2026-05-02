@@ -5,17 +5,18 @@
  */
 package adventureworks.public.flaff
 
-import dev.typr.foundations.kotlin.DeleteBuilder
-import dev.typr.foundations.kotlin.DeleteBuilderMock
-import dev.typr.foundations.kotlin.DeleteParams
-import dev.typr.foundations.kotlin.SelectBuilder
-import dev.typr.foundations.kotlin.SelectBuilderMock
-import dev.typr.foundations.kotlin.SelectParams
-import dev.typr.foundations.kotlin.UpdateBuilder
-import dev.typr.foundations.kotlin.UpdateBuilderMock
-import dev.typr.foundations.kotlin.UpdateParams
+import dev.typr.dslkt.DeleteBuilder
+import dev.typr.dslkt.DeleteBuilderMock
+import dev.typr.dslkt.DeleteParams
+import dev.typr.dslkt.SelectBuilder
+import dev.typr.dslkt.SelectBuilderMock
+import dev.typr.dslkt.SelectParams
+import dev.typr.dslkt.UpdateBuilder
+import dev.typr.dslkt.UpdateBuilderMock
+import dev.typr.dslkt.UpdateParams
+import dev.typr.foundationskt.Connection
+import dev.typr.foundationskt.ConnectionRead
 import java.lang.RuntimeException
-import java.sql.Connection
 import java.util.ArrayList
 import kotlin.collections.Iterator
 import kotlin.collections.List
@@ -28,10 +29,10 @@ data class FlaffRepoMock(val map: MutableMap<FlaffId, FlaffRow> = mutableMapOf<F
   override fun deleteById(
     compositeId: FlaffId,
     c: Connection
-  ): Boolean = map.remove(compositeId) != null
+  ): kotlin.Boolean = map.remove(compositeId) != null
 
   override fun deleteByIds(
-    compositeIds: Array<FlaffId>,
+    compositeIds: List<FlaffId>,
     c: Connection
   ): Int {
     var count = 0
@@ -58,7 +59,7 @@ data class FlaffRepoMock(val map: MutableMap<FlaffId, FlaffRow> = mutableMapOf<F
     unsaved: Iterator<FlaffRow>,
     batchSize: Int,
     c: Connection
-  ): Long {
+  ): kotlin.Long {
     var count = 0L
     while (unsaved.hasNext()) {
       val row = unsaved.next()
@@ -70,16 +71,16 @@ data class FlaffRepoMock(val map: MutableMap<FlaffId, FlaffRow> = mutableMapOf<F
 
   override fun select(): SelectBuilder<FlaffFields, FlaffRow> = SelectBuilderMock(FlaffFields.structure, { map.values.toList() }, SelectParams.empty())
 
-  override fun selectAll(c: Connection): List<FlaffRow> = map.values.toList()
+  override fun selectAll(c: ConnectionRead): List<FlaffRow> = map.values.toList()
 
   override fun selectById(
     compositeId: FlaffId,
-    c: Connection
+    c: ConnectionRead
   ): FlaffRow? = map[compositeId]
 
   override fun selectByIds(
-    compositeIds: Array<FlaffId>,
-    c: Connection
+    compositeIds: List<FlaffId>,
+    c: ConnectionRead
   ): List<FlaffRow> {
     val result = ArrayList<FlaffRow>()
     for (id in compositeIds) {
@@ -92,8 +93,8 @@ data class FlaffRepoMock(val map: MutableMap<FlaffId, FlaffRow> = mutableMapOf<F
   }
 
   override fun selectByIdsTracked(
-    compositeIds: Array<FlaffId>,
-    c: Connection
+    compositeIds: List<FlaffId>,
+    c: ConnectionRead
   ): Map<FlaffId, FlaffRow> = selectByIds(compositeIds, c).associateBy({ row: FlaffRow -> row.compositeId() })
 
   override fun update(): UpdateBuilder<FlaffFields, FlaffRow> = UpdateBuilderMock(FlaffFields.structure, { map.values.toList() }, UpdateParams.empty(), { row -> row })
@@ -101,7 +102,7 @@ data class FlaffRepoMock(val map: MutableMap<FlaffId, FlaffRow> = mutableMapOf<F
   override fun update(
     row: FlaffRow,
     c: Connection
-  ): Boolean {
+  ): kotlin.Boolean {
     val shouldUpdate = map[row.compositeId()]?.takeIf({ oldRow -> (oldRow != row) }) != null
     if (shouldUpdate) {
       map[row.compositeId()] = row

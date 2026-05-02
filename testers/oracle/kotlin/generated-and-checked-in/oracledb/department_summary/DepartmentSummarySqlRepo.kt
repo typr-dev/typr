@@ -5,9 +5,9 @@
  */
 package oracledb.department_summary
 
-import java.sql.Connection
+import dev.typr.foundationskt.ConnectionRead
 import kotlin.collections.List
 
 interface DepartmentSummarySqlRepo {
-  abstract fun apply(c: Connection): List<DepartmentSummarySqlRow>
+  abstract fun apply(c: ConnectionRead): List<DepartmentSummarySqlRow>
 }

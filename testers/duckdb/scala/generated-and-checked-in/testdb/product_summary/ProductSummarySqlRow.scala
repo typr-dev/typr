@@ -6,12 +6,10 @@
 package testdb.product_summary
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import dev.typr.foundations.DuckDbTypes
+import dev.typr.dslsc.RowCodecs
 import dev.typr.foundations.Tuple.Tuple7
-import dev.typr.foundations.scala.DbTypeOps
-import dev.typr.foundations.scala.RowParser
-import dev.typr.foundations.scala.RowParsers
-import dev.typr.foundations.scala.ScalaDbTypes
+import dev.typr.foundationssc.DuckDbTypes
+import dev.typr.foundationssc.RowCodec
 import testdb.products.ProductsId
 
 /** SQL file: product_summary.sql */
@@ -27,7 +25,7 @@ case class ProductSummarySqlRow(
   @JsonProperty("order_count") orderCount: Long,
   /** Points to [[testdb.order_items.OrderItemsRow.quantity]] */
   @JsonProperty("total_quantity") totalQuantity: Option[Long],
-  /** Points to [[testdb.order_items.OrderItemsRow.unitPrice]] */
+  /** Points to [[testdb.order_items.OrderItemsRow.quantity]] */
   @JsonProperty("total_revenue") totalRevenue: Option[BigDecimal]
 ) extends Tuple7[ProductsId, String, String, BigDecimal, Long, Option[Long], Option[BigDecimal]] {
   override def `_1`: ProductsId = productId
@@ -46,5 +44,5 @@ case class ProductSummarySqlRow(
 }
 
 object ProductSummarySqlRow {
-  val `_rowParser`: RowParser[ProductSummarySqlRow] = RowParsers.of(ProductsId.duckDbType, DuckDbTypes.varchar, DuckDbTypes.varchar, ScalaDbTypes.DuckDbTypes.numeric, ScalaDbTypes.DuckDbTypes.bigint, ScalaDbTypes.DuckDbTypes.bigint.nullable, ScalaDbTypes.DuckDbTypes.numeric.nullable)(ProductSummarySqlRow.apply)(row => Array[Any](row.productId, row.productName, row.sku, row.price, row.orderCount, row.totalQuantity, row.totalRevenue))
+  val rowCodec: RowCodec[ProductSummarySqlRow] = RowCodecs.of(ProductsId.duckDbType, DuckDbTypes.varchar, DuckDbTypes.varchar, DuckDbTypes.numeric, DuckDbTypes.bigint, DuckDbTypes.bigint.opt, DuckDbTypes.numeric.opt)(ProductSummarySqlRow.apply)(row => Array[Any](row.productId, row.productName, row.sku, row.price, row.orderCount, row.totalQuantity, row.totalRevenue))
 }

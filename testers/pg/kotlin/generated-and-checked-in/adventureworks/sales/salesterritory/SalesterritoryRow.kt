@@ -8,11 +8,11 @@ package adventureworks.sales.salesterritory
 import adventureworks.customtypes.Defaulted
 import adventureworks.person.countryregion.CountryregionId
 import adventureworks.public.Name
+import dev.typr.dslkt.RowCodecs
 import dev.typr.foundations.PgText
-import dev.typr.foundations.PgTypes
 import dev.typr.foundations.Tuple.Tuple10
-import dev.typr.foundations.kotlin.RowParser
-import dev.typr.foundations.kotlin.RowParsers
+import dev.typr.foundationskt.PgTypes
+import dev.typr.foundationskt.RowCodec
 import java.math.BigDecimal
 import java.time.LocalDateTime
 import java.util.UUID
@@ -33,7 +33,7 @@ data class SalesterritoryRow(
     */
   val countryregioncode: CountryregionId,
   /** Geographic area to which the sales territory belong. */
-  val group: String,
+  val group: kotlin.String,
   /** Sales in the territory year to date.
     * Default: 0.00
     * Constraint CK_SalesTerritory_SalesYTD affecting columns salesytd: ((salesytd >= 0.00))
@@ -58,7 +58,7 @@ data class SalesterritoryRow(
   val rowguid: UUID,
   /** Default: now() */
   val modifieddate: LocalDateTime
-) : Tuple10<SalesterritoryId, Name, CountryregionId, String, BigDecimal, BigDecimal, BigDecimal, BigDecimal, UUID, LocalDateTime> {
+) : Tuple10<SalesterritoryId, Name, CountryregionId, kotlin.String, BigDecimal, BigDecimal, BigDecimal, BigDecimal, UUID, LocalDateTime> {
   override fun _1(): SalesterritoryId = territoryid
 
   override fun _10(): LocalDateTime = modifieddate
@@ -67,7 +67,7 @@ data class SalesterritoryRow(
 
   override fun _3(): CountryregionId = countryregioncode
 
-  override fun _4(): String = group
+  override fun _4(): kotlin.String = group
 
   override fun _5(): BigDecimal = salesytd
 
@@ -92,9 +92,9 @@ data class SalesterritoryRow(
   ): SalesterritoryRowUnsaved = SalesterritoryRowUnsaved(name, countryregioncode, group, territoryid, salesytd, saleslastyear, costytd, costlastyear, rowguid, modifieddate)
 
   companion object {
-    val _rowParser: RowParser<SalesterritoryRow> = RowParsers.of(SalesterritoryId.pgType, Name.pgType, CountryregionId.pgType, PgTypes.text, PgTypes.numeric, PgTypes.numeric, PgTypes.numeric, PgTypes.numeric, PgTypes.uuid, PgTypes.timestamp, { t0, t1, t2, t3, t4, t5, t6, t7, t8, t9 -> SalesterritoryRow(t0, t1, t2, t3, t4, t5, t6, t7, t8, t9) }, { row -> arrayOf<Any?>(row.territoryid, row.name, row.countryregioncode, row.group, row.salesytd, row.saleslastyear, row.costytd, row.costlastyear, row.rowguid, row.modifieddate) })
+    val rowCodec: RowCodec<SalesterritoryRow> = RowCodecs.of(SalesterritoryId.pgType, Name.pgType, CountryregionId.pgType, PgTypes.text, PgTypes.numeric, PgTypes.numeric, PgTypes.numeric, PgTypes.numeric, PgTypes.uuid, PgTypes.timestamp, { t0: SalesterritoryId, t1: Name, t2: CountryregionId, t3: kotlin.String, t4: BigDecimal, t5: BigDecimal, t6: BigDecimal, t7: BigDecimal, t8: UUID, t9: LocalDateTime -> SalesterritoryRow(t0, t1, t2, t3, t4, t5, t6, t7, t8, t9) }, { row: SalesterritoryRow -> arrayOf<Any?>(row.territoryid, row.name, row.countryregioncode, row.group, row.salesytd, row.saleslastyear, row.costytd, row.costlastyear, row.rowguid, row.modifieddate) })
 
     val pgText: PgText<SalesterritoryRow> =
-      PgText.from(_rowParser.underlying)
+      PgText.from(rowCodec.underlying)
   }
 }

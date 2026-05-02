@@ -5,10 +5,10 @@
  */
 package adventureworks.public.title
 
+import dev.typr.dslkt.RowCodecs
 import dev.typr.foundations.PgText
 import dev.typr.foundations.Tuple.Tuple1
-import dev.typr.foundations.kotlin.RowParser
-import dev.typr.foundations.kotlin.RowParsers
+import dev.typr.foundationskt.RowCodec
 
 /** Table: public.title
   * Primary key: code
@@ -19,9 +19,9 @@ data class TitleRow(val code: TitleId) : Tuple1<TitleId> {
   fun id(): TitleId = code
 
   companion object {
-    val _rowParser: RowParser<TitleRow> = RowParsers.of(TitleId.pgType, { t0 -> TitleRow(t0) }, { row -> arrayOf<Any?>(row.code) })
+    val rowCodec: RowCodec<TitleRow> = RowCodecs.of(TitleId.pgType, { t0: TitleId -> TitleRow(t0) }, { row: TitleRow -> arrayOf<Any?>(row.code) })
 
     val pgText: PgText<TitleRow> =
-      PgText.from(_rowParser.underlying)
+      PgText.from(rowCodec.underlying)
   }
 }

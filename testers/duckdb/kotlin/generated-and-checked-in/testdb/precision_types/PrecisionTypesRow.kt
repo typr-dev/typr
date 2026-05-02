@@ -6,10 +6,10 @@
 package testdb.precision_types
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import dev.typr.foundations.DuckDbTypes
+import dev.typr.dslkt.RowCodecs
 import dev.typr.foundations.Tuple.Tuple12
-import dev.typr.foundations.kotlin.RowParser
-import dev.typr.foundations.kotlin.RowParsers
+import dev.typr.foundationskt.DuckDbTypes
+import dev.typr.foundationskt.RowCodec
 import testdb.precisetypes.Decimal10_2
 import testdb.precisetypes.Decimal18_4
 import testdb.precisetypes.Decimal5_2
@@ -22,18 +22,18 @@ import testdb.precisetypes.Int5
   */
 data class PrecisionTypesRow(
   val id: PrecisionTypesId,
-  val string10: String,
-  val string20: String,
-  val string50: String,
-  val string100: String,
-  val string255: String,
+  val string10: kotlin.String,
+  val string20: kotlin.String,
+  val string50: kotlin.String,
+  val string100: kotlin.String,
+  val string255: kotlin.String,
   @field:JsonProperty("decimal5_2") val decimal52: Decimal5_2,
   @field:JsonProperty("decimal10_2") val decimal102: Decimal10_2,
   @field:JsonProperty("decimal18_4") val decimal184: Decimal18_4,
   @field:JsonProperty("decimal5_0") val decimal50: Int5,
   @field:JsonProperty("decimal10_0") val decimal100: Int10,
   @field:JsonProperty("decimal18_0") val decimal180: Int18
-) : Tuple12<PrecisionTypesId, String, String, String, String, String, Decimal5_2, Decimal10_2, Decimal18_4, Int5, Int10, Int18> {
+) : Tuple12<PrecisionTypesId, kotlin.String, kotlin.String, kotlin.String, kotlin.String, kotlin.String, Decimal5_2, Decimal10_2, Decimal18_4, Int5, Int10, Int18> {
   override fun _1(): PrecisionTypesId = id
 
   override fun _10(): Int5 = decimal50
@@ -42,15 +42,15 @@ data class PrecisionTypesRow(
 
   override fun _12(): Int18 = decimal180
 
-  override fun _2(): String = string10
+  override fun _2(): kotlin.String = string10
 
-  override fun _3(): String = string20
+  override fun _3(): kotlin.String = string20
 
-  override fun _4(): String = string50
+  override fun _4(): kotlin.String = string50
 
-  override fun _5(): String = string100
+  override fun _5(): kotlin.String = string100
 
-  override fun _6(): String = string255
+  override fun _6(): kotlin.String = string255
 
   override fun _7(): Decimal5_2 = decimal52
 
@@ -59,6 +59,6 @@ data class PrecisionTypesRow(
   override fun _9(): Decimal18_4 = decimal184
 
   companion object {
-    val _rowParser: RowParser<PrecisionTypesRow> = RowParsers.of(PrecisionTypesId.duckDbType, DuckDbTypes.varchar, DuckDbTypes.varchar, DuckDbTypes.varchar, DuckDbTypes.varchar, DuckDbTypes.varchar, Decimal5_2.duckDbType, Decimal10_2.duckDbType, Decimal18_4.duckDbType, Int5.duckDbType, Int10.duckDbType, Int18.duckDbType, { t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11 -> PrecisionTypesRow(t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11) }, { row -> arrayOf<Any?>(row.id, row.string10, row.string20, row.string50, row.string100, row.string255, row.decimal52, row.decimal102, row.decimal184, row.decimal50, row.decimal100, row.decimal180) })
+    val rowCodec: RowCodec<PrecisionTypesRow> = RowCodecs.of(PrecisionTypesId.duckDbType, DuckDbTypes.varchar, DuckDbTypes.varchar, DuckDbTypes.varchar, DuckDbTypes.varchar, DuckDbTypes.varchar, Decimal5_2.duckDbType, Decimal10_2.duckDbType, Decimal18_4.duckDbType, Int5.duckDbType, Int10.duckDbType, Int18.duckDbType, { t0: PrecisionTypesId, t1: kotlin.String, t2: kotlin.String, t3: kotlin.String, t4: kotlin.String, t5: kotlin.String, t6: Decimal5_2, t7: Decimal10_2, t8: Decimal18_4, t9: Int5, t10: Int10, t11: Int18 -> PrecisionTypesRow(t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11) }, { row: PrecisionTypesRow -> arrayOf<Any?>(row.id, row.string10, row.string20, row.string50, row.string100, row.string255, row.decimal52, row.decimal102, row.decimal184, row.decimal50, row.decimal100, row.decimal180) })
   }
 }

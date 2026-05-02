@@ -6,12 +6,10 @@
 package testdb.insert_order_with_items
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import dev.typr.foundations.DuckDbTypes
+import dev.typr.dslkt.RowCodecs
 import dev.typr.foundations.Tuple.Tuple5
-import dev.typr.foundations.kotlin.KotlinDbTypes
-import dev.typr.foundations.kotlin.RowParser
-import dev.typr.foundations.kotlin.RowParsers
-import dev.typr.foundations.kotlin.nullable
+import dev.typr.foundationskt.DuckDbTypes
+import dev.typr.foundationskt.RowCodec
 import java.math.BigDecimal
 import java.time.LocalDate
 import testdb.orders.OrdersId
@@ -27,8 +25,8 @@ data class InsertOrderWithItemsSqlRow(
   /** Points to [testdb.orders.OrdersRow.totalAmount] */
   @field:JsonProperty("total_amount") val totalAmount: BigDecimal?,
   /** Points to [testdb.orders.OrdersRow.status] */
-  val status: String?
-) : Tuple5<OrdersId, Int, LocalDate, BigDecimal?, String?> {
+  val status: kotlin.String?
+) : Tuple5<OrdersId, Int, LocalDate, BigDecimal?, kotlin.String?> {
   override fun _1(): OrdersId = orderId
 
   override fun _2(): Int = customerId
@@ -37,9 +35,9 @@ data class InsertOrderWithItemsSqlRow(
 
   override fun _4(): BigDecimal? = totalAmount
 
-  override fun _5(): String? = status
+  override fun _5(): kotlin.String? = status
 
   companion object {
-    val _rowParser: RowParser<InsertOrderWithItemsSqlRow> = RowParsers.of(OrdersId.duckDbType, KotlinDbTypes.DuckDbTypes.integer, DuckDbTypes.date, DuckDbTypes.numeric.nullable(), DuckDbTypes.varchar.nullable(), { t0, t1, t2, t3, t4 -> InsertOrderWithItemsSqlRow(t0, t1, t2, t3, t4) }, { row -> arrayOf<Any?>(row.orderId, row.customerId, row.orderDate, row.totalAmount, row.status) })
+    val rowCodec: RowCodec<InsertOrderWithItemsSqlRow> = RowCodecs.of(OrdersId.duckDbType, DuckDbTypes.integer, DuckDbTypes.date, DuckDbTypes.numeric.opt(), DuckDbTypes.varchar.opt(), { t0: OrdersId, t1: Int, t2: LocalDate, t3: BigDecimal?, t4: kotlin.String? -> InsertOrderWithItemsSqlRow(t0, t1, t2, t3, t4) }, { row: InsertOrderWithItemsSqlRow -> arrayOf<Any?>(row.orderId, row.customerId, row.orderDate, row.totalAmount, row.status) })
   }
 }

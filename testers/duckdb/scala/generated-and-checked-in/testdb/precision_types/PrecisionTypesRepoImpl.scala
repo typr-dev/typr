@@ -5,32 +5,33 @@
  */
 package testdb.precision_types
 
-import dev.typr.foundations.DuckDbTypes
-import dev.typr.foundations.scala.DeleteBuilder
-import dev.typr.foundations.scala.Dialect
-import dev.typr.foundations.scala.Fragment
-import dev.typr.foundations.scala.SelectBuilder
-import dev.typr.foundations.scala.UpdateBuilder
-import java.sql.Connection
+import dev.typr.dslsc.DeleteBuilder
+import dev.typr.dslsc.Dialect
+import dev.typr.dslsc.SelectBuilder
+import dev.typr.dslsc.UpdateBuilder
+import dev.typr.foundationssc.Connection
+import dev.typr.foundationssc.ConnectionRead
+import dev.typr.foundationssc.DuckDbTypes
+import dev.typr.foundationssc.Fragment
 import testdb.precisetypes.Decimal10_2
 import testdb.precisetypes.Decimal18_4
 import testdb.precisetypes.Decimal5_2
 import testdb.precisetypes.Int10
 import testdb.precisetypes.Int18
 import testdb.precisetypes.Int5
-import dev.typr.foundations.scala.Fragment.sql
+import dev.typr.foundationssc.Fragment.sql
 
 class PrecisionTypesRepoImpl extends PrecisionTypesRepo {
   override def delete: DeleteBuilder[PrecisionTypesFields, PrecisionTypesRow] = DeleteBuilder.of(""""precision_types"""", PrecisionTypesFields.structure, Dialect.DUCKDB)
 
-  override def deleteById(id: PrecisionTypesId)(using c: Connection): Boolean = sql"""delete from "precision_types" where "id" = ${Fragment.encode(PrecisionTypesId.duckDbType, id)}""".update().runUnchecked(c) > 0
+  override def deleteById(id: PrecisionTypesId)(using c: Connection): Boolean = sql"""delete from "precision_types" where "id" = ${Fragment.encode(PrecisionTypesId.duckDbType, id)}""".update().run(using c) > 0
 
-  override def deleteByIds(ids: Array[PrecisionTypesId])(using c: Connection): Int = {
+  override def deleteByIds(ids: List[PrecisionTypesId])(using c: Connection): Int = {
     sql"""delete
     from "precision_types"
     where "id" = ANY(${Fragment.encode(PrecisionTypesId.duckDbTypeArray, ids)})"""
       .update()
-      .runUnchecked(c)
+      .run(using c)
   }
 
   override def insert(unsaved: PrecisionTypesRow)(using c: Connection): PrecisionTypesRow = {
@@ -38,36 +39,36 @@ class PrecisionTypesRepoImpl extends PrecisionTypesRepo {
     values (${Fragment.encode(PrecisionTypesId.duckDbType, unsaved.id)}, ${Fragment.encode(DuckDbTypes.varchar, unsaved.string10)}, ${Fragment.encode(DuckDbTypes.varchar, unsaved.string20)}, ${Fragment.encode(DuckDbTypes.varchar, unsaved.string50)}, ${Fragment.encode(DuckDbTypes.varchar, unsaved.string100)}, ${Fragment.encode(DuckDbTypes.varchar, unsaved.string255)}, ${Fragment.encode(Decimal5_2.duckDbType, unsaved.decimal52)}, ${Fragment.encode(Decimal10_2.duckDbType, unsaved.decimal102)}, ${Fragment.encode(Decimal18_4.duckDbType, unsaved.decimal184)}, ${Fragment.encode(Int5.duckDbType, unsaved.decimal50)}, ${Fragment.encode(Int10.duckDbType, unsaved.decimal100)}, ${Fragment.encode(Int18.duckDbType, unsaved.decimal180)})
     RETURNING "id", "string10", "string20", "string50", "string100", "string255", "decimal5_2", "decimal10_2", "decimal18_4", "decimal5_0", "decimal10_0", "decimal18_0"
     """
-    .updateReturning(PrecisionTypesRow.`_rowParser`.exactlyOne()).runUnchecked(c)
+    .updateReturning(PrecisionTypesRow.rowCodec.exactlyOne()).run(using c)
   }
 
-  override def select: SelectBuilder[PrecisionTypesFields, PrecisionTypesRow] = SelectBuilder.of(""""precision_types"""", PrecisionTypesFields.structure, PrecisionTypesRow.`_rowParser`, Dialect.DUCKDB)
+  override def select: SelectBuilder[PrecisionTypesFields, PrecisionTypesRow] = SelectBuilder.of(""""precision_types"""", PrecisionTypesFields.structure, PrecisionTypesRow.rowCodec, Dialect.DUCKDB)
 
-  override def selectAll(using c: Connection): List[PrecisionTypesRow] = {
+  override def selectAll(using c: ConnectionRead): List[PrecisionTypesRow] = {
     sql"""select "id", "string10", "string20", "string50", "string100", "string255", "decimal5_2", "decimal10_2", "decimal18_4", "decimal5_0", "decimal10_0", "decimal18_0"
     from "precision_types"
-    """.query(PrecisionTypesRow.`_rowParser`.all()).runUnchecked(c)
+    """.query(PrecisionTypesRow.rowCodec.all()).run(using c)
   }
 
-  override def selectById(id: PrecisionTypesId)(using c: Connection): Option[PrecisionTypesRow] = {
+  override def selectById(id: PrecisionTypesId)(using c: ConnectionRead): Option[PrecisionTypesRow] = {
     sql"""select "id", "string10", "string20", "string50", "string100", "string255", "decimal5_2", "decimal10_2", "decimal18_4", "decimal5_0", "decimal10_0", "decimal18_0"
     from "precision_types"
-    where "id" = ${Fragment.encode(PrecisionTypesId.duckDbType, id)}""".query(PrecisionTypesRow.`_rowParser`.first()).runUnchecked(c)
+    where "id" = ${Fragment.encode(PrecisionTypesId.duckDbType, id)}""".query(PrecisionTypesRow.rowCodec.first()).run(using c)
   }
 
-  override def selectByIds(ids: Array[PrecisionTypesId])(using c: Connection): List[PrecisionTypesRow] = {
+  override def selectByIds(ids: List[PrecisionTypesId])(using c: ConnectionRead): List[PrecisionTypesRow] = {
     sql"""select "id", "string10", "string20", "string50", "string100", "string255", "decimal5_2", "decimal10_2", "decimal18_4", "decimal5_0", "decimal10_0", "decimal18_0"
     from "precision_types"
-    where "id" = ANY(${Fragment.encode(PrecisionTypesId.duckDbTypeArray, ids)})""".query(PrecisionTypesRow.`_rowParser`.all()).runUnchecked(c)
+    where "id" = ANY(${Fragment.encode(PrecisionTypesId.duckDbTypeArray, ids)})""".query(PrecisionTypesRow.rowCodec.all()).run(using c)
   }
 
-  override def selectByIdsTracked(ids: Array[PrecisionTypesId])(using c: Connection): Map[PrecisionTypesId, PrecisionTypesRow] = {
+  override def selectByIdsTracked(ids: List[PrecisionTypesId])(using c: ConnectionRead): Map[PrecisionTypesId, PrecisionTypesRow] = {
     val ret: scala.collection.mutable.Map[PrecisionTypesId, PrecisionTypesRow] = scala.collection.mutable.Map.empty[PrecisionTypesId, PrecisionTypesRow]
     selectByIds(ids)(using c).foreach(row => ret.put(row.id, row): @scala.annotation.nowarn)
     return ret.toMap
   }
 
-  override def update: UpdateBuilder[PrecisionTypesFields, PrecisionTypesRow] = UpdateBuilder.of(""""precision_types"""", PrecisionTypesFields.structure, PrecisionTypesRow.`_rowParser`, Dialect.DUCKDB)
+  override def update: UpdateBuilder[PrecisionTypesFields, PrecisionTypesRow] = UpdateBuilder.of(""""precision_types"""", PrecisionTypesFields.structure, PrecisionTypesRow.rowCodec, Dialect.DUCKDB)
 
   override def update(row: PrecisionTypesRow)(using c: Connection): Boolean = {
     val id: PrecisionTypesId = row.id
@@ -83,7 +84,7 @@ class PrecisionTypesRepoImpl extends PrecisionTypesRepo {
     "decimal5_0" = ${Fragment.encode(Int5.duckDbType, row.decimal50)},
     "decimal10_0" = ${Fragment.encode(Int10.duckDbType, row.decimal100)},
     "decimal18_0" = ${Fragment.encode(Int18.duckDbType, row.decimal180)}
-    where "id" = ${Fragment.encode(PrecisionTypesId.duckDbType, id)}""".update().runUnchecked(c) > 0
+    where "id" = ${Fragment.encode(PrecisionTypesId.duckDbType, id)}""".update().run(using c) > 0
   }
 
   override def upsert(unsaved: PrecisionTypesRow)(using c: Connection): PrecisionTypesRow = {
@@ -103,8 +104,8 @@ class PrecisionTypesRepoImpl extends PrecisionTypesRepo {
     "decimal10_0" = EXCLUDED."decimal10_0",
     "decimal18_0" = EXCLUDED."decimal18_0"
     RETURNING "id", "string10", "string20", "string50", "string100", "string255", "decimal5_2", "decimal10_2", "decimal18_4", "decimal5_0", "decimal10_0", "decimal18_0""""
-    .updateReturning(PrecisionTypesRow.`_rowParser`.exactlyOne())
-    .runUnchecked(c)
+    .updateReturning(PrecisionTypesRow.rowCodec.exactlyOne())
+    .run(using c)
   }
 
   override def upsertBatch(unsaved: Iterator[PrecisionTypesRow])(using c: Connection): List[PrecisionTypesRow] = {
@@ -124,7 +125,7 @@ class PrecisionTypesRepoImpl extends PrecisionTypesRepo {
     "decimal10_0" = EXCLUDED."decimal10_0",
     "decimal18_0" = EXCLUDED."decimal18_0"
     RETURNING "id", "string10", "string20", "string50", "string100", "string255", "decimal5_2", "decimal10_2", "decimal18_4", "decimal5_0", "decimal10_0", "decimal18_0""""
-      .updateReturningEach(PrecisionTypesRow.`_rowParser`, unsaved)
-    .runUnchecked(c)
+      .updateReturningEach(PrecisionTypesRow.rowCodec, unsaved)
+    .run(using c)
   }
 }

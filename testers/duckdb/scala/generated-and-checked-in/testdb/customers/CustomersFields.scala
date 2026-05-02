@@ -5,17 +5,17 @@
  */
 package testdb.customers
 
-import dev.typr.foundations.DuckDbTypes
-import dev.typr.foundations.RowParser
-import dev.typr.foundations.dsl.FieldsBase
-import dev.typr.foundations.dsl.Path
-import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.scala.RelationStructure
-import dev.typr.foundations.scala.SqlExpr
-import dev.typr.foundations.scala.SqlExpr.Field
-import dev.typr.foundations.scala.SqlExpr.IdField
-import dev.typr.foundations.scala.SqlExpr.OptField
-import dev.typr.foundations.scala.TupleExpr5
+import dev.typr.dsl.FieldsBase
+import dev.typr.dsl.Path
+import dev.typr.dsl.SqlExpr.FieldLike
+import dev.typr.dslsc.RelationStructure
+import dev.typr.dslsc.SqlExpr
+import dev.typr.dslsc.SqlExpr.Field
+import dev.typr.dslsc.SqlExpr.IdField
+import dev.typr.dslsc.SqlExpr.OptField
+import dev.typr.dslsc.TupleExpr5
+import dev.typr.foundations.RowCodec
+import dev.typr.foundationssc.DuckDbTypes
 import java.time.LocalDateTime
 import testdb.Priority
 import testdb.userdefined.Email
@@ -29,7 +29,7 @@ class CustomersFields(val `_path`: java.util.List[Path]) extends TupleExpr5[Cust
       None,
       Some("INTEGER"),
       (row, value) => row.copy(customerId = value),
-      CustomersId.duckDbType
+      CustomersId.duckDbType.underlying
     )
   }
 
@@ -41,7 +41,7 @@ class CustomersFields(val `_path`: java.util.List[Path]) extends TupleExpr5[Cust
       None,
       None,
       (row, value) => row.copy(name = value),
-      DuckDbTypes.varchar
+      DuckDbTypes.varchar.underlying
     )
   }
 
@@ -53,7 +53,7 @@ class CustomersFields(val `_path`: java.util.List[Path]) extends TupleExpr5[Cust
       None,
       None,
       (row, value) => row.copy(email = value),
-      Email.duckDbType
+      Email.duckDbType.underlying
     )
   }
 
@@ -65,7 +65,7 @@ class CustomersFields(val `_path`: java.util.List[Path]) extends TupleExpr5[Cust
       None,
       Some("TIMESTAMP"),
       (row, value) => row.copy(createdAt = value),
-      DuckDbTypes.timestamp
+      DuckDbTypes.timestamp.underlying
     )
   }
 
@@ -77,13 +77,13 @@ class CustomersFields(val `_path`: java.util.List[Path]) extends TupleExpr5[Cust
       None,
       Some("priority"),
       (row, value) => row.copy(priority = value),
-      Priority.duckDbType
+      Priority.duckDbType.underlying
     )
   }
 
   override def columns: java.util.List[FieldLike[?, CustomersRow]] = java.util.List.of(this.customerId.underlying, this.name.underlying, this.email.underlying, this.createdAt.underlying, this.priority.underlying)
 
-  override def rowParser: RowParser[CustomersRow] = CustomersRow._rowParser.underlying
+  override def rowCodec: RowCodec[CustomersRow] = CustomersRow.rowCodec.underlying
 
   override def withPaths(`_path`: java.util.List[Path]): RelationStructure[CustomersFields, CustomersRow] = new CustomersFields(`_path`)
 

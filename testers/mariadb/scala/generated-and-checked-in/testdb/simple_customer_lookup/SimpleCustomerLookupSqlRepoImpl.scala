@@ -5,13 +5,13 @@
  */
 package testdb.simple_customer_lookup
 
-import dev.typr.foundations.MariaTypes
-import dev.typr.foundations.scala.Fragment
-import java.sql.Connection
-import dev.typr.foundations.scala.Fragment.sql
+import dev.typr.foundationssc.ConnectionRead
+import dev.typr.foundationssc.Fragment
+import dev.typr.foundationssc.MariaTypes
+import dev.typr.foundationssc.Fragment.sql
 
 class SimpleCustomerLookupSqlRepoImpl extends SimpleCustomerLookupSqlRepo {
-  override def apply(email: String)(using c: Connection): List[SimpleCustomerLookupSqlRow] = {
+  override def apply(email: String)(using c: ConnectionRead): List[SimpleCustomerLookupSqlRow] = {
     sql"""-- Simple customer lookup by email
     SELECT customer_id,
            email,
@@ -22,6 +22,6 @@ class SimpleCustomerLookupSqlRepoImpl extends SimpleCustomerLookupSqlRepo {
            created_at
     FROM customers
     WHERE email = ${Fragment.encode(MariaTypes.varchar, email)}
-    """.query(SimpleCustomerLookupSqlRow.`_rowParser`.all()).runUnchecked(c)
+    """.query(SimpleCustomerLookupSqlRow.rowCodec.all()).run(using c)
   }
 }

@@ -6,12 +6,10 @@
 package testdb.delete_old_orders
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import dev.typr.foundations.DuckDbTypes
+import dev.typr.dslsc.RowCodecs
 import dev.typr.foundations.Tuple.Tuple5
-import dev.typr.foundations.scala.DbTypeOps
-import dev.typr.foundations.scala.RowParser
-import dev.typr.foundations.scala.RowParsers
-import dev.typr.foundations.scala.ScalaDbTypes
+import dev.typr.foundationssc.DuckDbTypes
+import dev.typr.foundationssc.RowCodec
 import java.time.LocalDate
 import testdb.orders.OrdersId
 
@@ -40,5 +38,5 @@ case class DeleteOldOrdersSqlRow(
 }
 
 object DeleteOldOrdersSqlRow {
-  val `_rowParser`: RowParser[DeleteOldOrdersSqlRow] = RowParsers.of(OrdersId.duckDbType, ScalaDbTypes.DuckDbTypes.integer, DuckDbTypes.date, ScalaDbTypes.DuckDbTypes.numeric.nullable, DuckDbTypes.varchar.nullable)(DeleteOldOrdersSqlRow.apply)(row => Array[Any](row.orderId, row.customerId, row.orderDate, row.totalAmount, row.status))
+  val rowCodec: RowCodec[DeleteOldOrdersSqlRow] = RowCodecs.of(OrdersId.duckDbType, DuckDbTypes.integer, DuckDbTypes.date, DuckDbTypes.numeric.opt, DuckDbTypes.varchar.opt)(DeleteOldOrdersSqlRow.apply)(row => Array[Any](row.orderId, row.customerId, row.orderDate, row.totalAmount, row.status))
 }

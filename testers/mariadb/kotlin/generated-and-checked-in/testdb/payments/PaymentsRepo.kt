@@ -5,10 +5,11 @@
  */
 package testdb.payments
 
-import dev.typr.foundations.kotlin.DeleteBuilder
-import dev.typr.foundations.kotlin.SelectBuilder
-import dev.typr.foundations.kotlin.UpdateBuilder
-import java.sql.Connection
+import dev.typr.dslkt.DeleteBuilder
+import dev.typr.dslkt.SelectBuilder
+import dev.typr.dslkt.UpdateBuilder
+import dev.typr.foundationskt.Connection
+import dev.typr.foundationskt.ConnectionRead
 import kotlin.collections.Iterator
 import kotlin.collections.List
 import kotlin.collections.Map
@@ -19,10 +20,10 @@ interface PaymentsRepo {
   abstract fun deleteById(
     paymentId: PaymentsId,
     c: Connection
-  ): Boolean
+  ): kotlin.Boolean
 
   abstract fun deleteByIds(
-    paymentIds: Array<PaymentsId>,
+    paymentIds: List<PaymentsId>,
     c: Connection
   ): Int
 
@@ -38,21 +39,21 @@ interface PaymentsRepo {
 
   abstract fun select(): SelectBuilder<PaymentsFields, PaymentsRow>
 
-  abstract fun selectAll(c: Connection): List<PaymentsRow>
+  abstract fun selectAll(c: ConnectionRead): List<PaymentsRow>
 
   abstract fun selectById(
     paymentId: PaymentsId,
-    c: Connection
+    c: ConnectionRead
   ): PaymentsRow?
 
   abstract fun selectByIds(
-    paymentIds: Array<PaymentsId>,
-    c: Connection
+    paymentIds: List<PaymentsId>,
+    c: ConnectionRead
   ): List<PaymentsRow>
 
   abstract fun selectByIdsTracked(
-    paymentIds: Array<PaymentsId>,
-    c: Connection
+    paymentIds: List<PaymentsId>,
+    c: ConnectionRead
   ): Map<PaymentsId, PaymentsRow>
 
   abstract fun update(): UpdateBuilder<PaymentsFields, PaymentsRow>
@@ -60,7 +61,7 @@ interface PaymentsRepo {
   abstract fun update(
     row: PaymentsRow,
     c: Connection
-  ): Boolean
+  ): kotlin.Boolean
 
   abstract fun upsert(
     unsaved: PaymentsRow,

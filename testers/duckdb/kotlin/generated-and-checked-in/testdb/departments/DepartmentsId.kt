@@ -6,21 +6,21 @@
 package testdb.departments
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import dev.typr.foundations.DuckDbTypes
+import dev.typr.dslkt.RowCodecs
 import dev.typr.foundations.Tuple.Tuple2
-import dev.typr.foundations.kotlin.RowParser
-import dev.typr.foundations.kotlin.RowParsers
+import dev.typr.foundationskt.DuckDbTypes
+import dev.typr.foundationskt.RowCodec
 
 /** Type for the composite primary key of table `departments` */
 data class DepartmentsId(
-  @field:JsonProperty("dept_code") val deptCode: String,
-  @field:JsonProperty("dept_region") val deptRegion: String
-) : Tuple2<String, String> {
-  override fun _1(): String = deptCode
+  @field:JsonProperty("dept_code") val deptCode: kotlin.String,
+  @field:JsonProperty("dept_region") val deptRegion: kotlin.String
+) : Tuple2<kotlin.String, kotlin.String> {
+  override fun _1(): kotlin.String = deptCode
 
-  override fun _2(): String = deptRegion
+  override fun _2(): kotlin.String = deptRegion
 
   companion object {
-    val _rowParser: RowParser<DepartmentsId> = RowParsers.of(DuckDbTypes.varchar, DuckDbTypes.varchar, { t0, t1 -> DepartmentsId(t0, t1) }, { row -> arrayOf<Any?>(row.deptCode, row.deptRegion) })
+    val rowCodec: RowCodec<DepartmentsId> = RowCodecs.of(DuckDbTypes.varchar, DuckDbTypes.varchar, { t0: kotlin.String, t1: kotlin.String -> DepartmentsId(t0, t1) }, { row: DepartmentsId -> arrayOf<Any?>(row.deptCode, row.deptRegion) })
   }
 }

@@ -1,6 +1,8 @@
 package com.example.grpc;
 
-/** Wrapper type for typr.grpc.GrpcCodegen$$$Lambda/0x00007fc001118400@2f953efd */
+
+
+/** Wrapper type for java.lang.String */
 public record OrderId(String value) {
   public OrderId withValue(String value) {
     return new OrderId(value);
@@ -12,7 +14,7 @@ public record OrderId(String value) {
   }
 
   /** Create a OrderId from a raw value */
-  public static OrderId valueOf(String v) {
+  static public OrderId valueOf(String v) {
     return new OrderId(v);
   }
 

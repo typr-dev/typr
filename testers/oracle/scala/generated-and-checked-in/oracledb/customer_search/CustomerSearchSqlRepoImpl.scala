@@ -5,14 +5,14 @@
  */
 package oracledb.customer_search
 
+import dev.typr.foundations.ConnectionRead
 import dev.typr.foundations.Fragment
 import dev.typr.foundations.OracleTypes
-import java.sql.Connection
-import dev.typr.foundations.Fragment.interpolate
+import dev.typr.foundations.Fragment.concat
 
 class CustomerSearchSqlRepoImpl extends CustomerSearchSqlRepo {
-  override def apply(namePattern: String)(using c: Connection): java.util.List[CustomerSearchSqlRow] = {
-    interpolate(Fragment.lit("""-- Search customers by name pattern
+  override def apply(namePattern: String)(using c: ConnectionRead): java.util.List[CustomerSearchSqlRow] = {
+    concat(Fragment.of("""-- Search customers by name pattern
     SELECT
         c.customer_id,
         c.name,
@@ -20,8 +20,8 @@ class CustomerSearchSqlRepoImpl extends CustomerSearchSqlRepo {
         c.credit_limit,
         c.created_at
     FROM customers c
-    WHERE c.name LIKE """), Fragment.encode(OracleTypes.varchar2, namePattern), Fragment.lit("""
+    WHERE c.name LIKE """), Fragment.encode(OracleTypes.varchar2, namePattern), Fragment.of("""
     ORDER BY c.name
-    """)).query(CustomerSearchSqlRow.`_rowParser`.all()).runUnchecked(c)
+    """)).query(CustomerSearchSqlRow.rowCodec.all()).run(c)
   }
 }

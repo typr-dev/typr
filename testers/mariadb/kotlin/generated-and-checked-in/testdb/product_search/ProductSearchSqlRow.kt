@@ -6,12 +6,10 @@
 package testdb.product_search
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import dev.typr.foundations.MariaTypes
+import dev.typr.dslkt.RowCodecs
 import dev.typr.foundations.Tuple.Tuple7
-import dev.typr.foundations.kotlin.KotlinDbTypes
-import dev.typr.foundations.kotlin.RowParser
-import dev.typr.foundations.kotlin.RowParsers
-import dev.typr.foundations.kotlin.nullable
+import dev.typr.foundationskt.MariaTypes
+import dev.typr.foundationskt.RowCodec
 import java.math.BigDecimal
 import testdb.products.ProductsId
 
@@ -20,33 +18,33 @@ data class ProductSearchSqlRow(
   /** Points to [testdb.products.ProductsRow.productId] */
   @field:JsonProperty("product_id") val productId: ProductsId,
   /** Points to [testdb.products.ProductsRow.sku] */
-  val sku: String,
+  val sku: kotlin.String,
   /** Points to [testdb.products.ProductsRow.name] */
-  val name: String,
+  val name: kotlin.String,
   /** Points to [testdb.products.ProductsRow.shortDescription] */
-  @field:JsonProperty("short_description") val shortDescription: String?,
+  @field:JsonProperty("short_description") val shortDescription: kotlin.String?,
   /** Points to [testdb.products.ProductsRow.basePrice] */
   @field:JsonProperty("base_price") val basePrice: BigDecimal,
   /** Points to [testdb.products.ProductsRow.status] */
-  val status: String,
+  val status: kotlin.String,
   /** Points to [testdb.brands.BrandsRow.name] */
-  @field:JsonProperty("brand_name") val brandName: String?
-) : Tuple7<ProductsId, String, String, String?, BigDecimal, String, String?> {
+  @field:JsonProperty("brand_name") val brandName: kotlin.String?
+) : Tuple7<ProductsId, kotlin.String, kotlin.String, kotlin.String?, BigDecimal, kotlin.String, kotlin.String?> {
   override fun _1(): ProductsId = productId
 
-  override fun _2(): String = sku
+  override fun _2(): kotlin.String = sku
 
-  override fun _3(): String = name
+  override fun _3(): kotlin.String = name
 
-  override fun _4(): String? = shortDescription
+  override fun _4(): kotlin.String? = shortDescription
 
   override fun _5(): BigDecimal = basePrice
 
-  override fun _6(): String = status
+  override fun _6(): kotlin.String = status
 
-  override fun _7(): String? = brandName
+  override fun _7(): kotlin.String? = brandName
 
   companion object {
-    val _rowParser: RowParser<ProductSearchSqlRow> = RowParsers.of(ProductsId.mariaType, MariaTypes.varchar, MariaTypes.varchar, MariaTypes.varchar.nullable(), KotlinDbTypes.MariaTypes.numeric, MariaTypes.text, MariaTypes.varchar.nullable(), { t0, t1, t2, t3, t4, t5, t6 -> ProductSearchSqlRow(t0, t1, t2, t3, t4, t5, t6) }, { row -> arrayOf<Any?>(row.productId, row.sku, row.name, row.shortDescription, row.basePrice, row.status, row.brandName) })
+    val rowCodec: RowCodec<ProductSearchSqlRow> = RowCodecs.of(ProductsId.mariaType, MariaTypes.varchar, MariaTypes.varchar, MariaTypes.varchar.opt(), MariaTypes.numeric, MariaTypes.text, MariaTypes.varchar.opt(), { t0: ProductsId, t1: kotlin.String, t2: kotlin.String, t3: kotlin.String?, t4: BigDecimal, t5: kotlin.String, t6: kotlin.String? -> ProductSearchSqlRow(t0, t1, t2, t3, t4, t5, t6) }, { row: ProductSearchSqlRow -> arrayOf<Any?>(row.productId, row.sku, row.name, row.shortDescription, row.basePrice, row.status, row.brandName) })
   }
 }

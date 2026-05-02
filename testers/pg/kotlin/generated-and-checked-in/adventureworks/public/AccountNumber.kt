@@ -6,23 +6,23 @@
 package adventureworks.public
 
 import com.fasterxml.jackson.annotation.JsonValue
-import dev.typr.foundations.PgType
-import dev.typr.foundations.PgTypes
-import dev.typr.foundations.internal.arrayMap
-import dev.typr.foundations.kotlin.Bijection
+import dev.typr.foundationskt.Bijection
+import dev.typr.foundationskt.PgType
+import dev.typr.foundationskt.PgTypes
+import kotlin.collections.List
 
 /** Domain `public.AccountNumber`
   * No constraint
   */
-data class AccountNumber(@field:JsonValue val value: String) {
+data class AccountNumber(@field:JsonValue val value: kotlin.String) {
   companion object {
-    val bijection: Bijection<AccountNumber, String> =
+    val bijection: Bijection<AccountNumber, kotlin.String> =
       Bijection.of(AccountNumber::value, ::AccountNumber)
 
     val pgType: PgType<AccountNumber> =
-      PgTypes.text.bimap(::AccountNumber, AccountNumber::value).renamed("\"public\".\"AccountNumber\"")
+      PgType(PgTypes.text.to(Bijection.of(::AccountNumber, AccountNumber::value)).underlying.renamed("\"public\".\"AccountNumber\""))
 
-    val pgTypeArray: PgType<Array<AccountNumber>> =
-      PgTypes.textArray.bimap({ xs -> arrayMap.map(xs, ::AccountNumber, AccountNumber::class.java) }, { xs -> arrayMap.map(xs, AccountNumber::value, String::class.java) }).renamed("\"public\".\"AccountNumber\"[]")
+    val pgTypeArray: PgType<List<AccountNumber>> =
+      pgType.array()
   }
 }

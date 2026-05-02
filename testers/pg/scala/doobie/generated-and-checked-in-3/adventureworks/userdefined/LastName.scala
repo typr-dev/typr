@@ -23,7 +23,7 @@ object LastName {
 
   given arrayPut: Put[Array[LastName]] = Name.arrayPut.contramap(_.map(_.value))
 
-  given bijection: Bijection[LastName, Name] = Bijection.apply[LastName, Name](_.value)(LastName.apply)
+  given bijection: Bijection[LastName, Name] = Bijection[LastName, Name](_.value)(LastName.apply)
 
   given decoder: Decoder[LastName] = Name.decoder.map(LastName.apply)
 

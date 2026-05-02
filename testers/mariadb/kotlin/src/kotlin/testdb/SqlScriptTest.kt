@@ -21,7 +21,7 @@ class SqlScriptTest {
     private val productSearchRepo = ProductSearchSqlRepoImpl()
     private val customerOrdersRepo = CustomerOrdersSqlRepoImpl()
     private val simpleCustomerLookupRepo = SimpleCustomerLookupSqlRepoImpl()
-    private val testInsert = TestInsert(Random(42))
+    private val testInsert = TestInsert(Random(1520549119))
 
     @Test
     fun testProductSearchWithNoFilters() {

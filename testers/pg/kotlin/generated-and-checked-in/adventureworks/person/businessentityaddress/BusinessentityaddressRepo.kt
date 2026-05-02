@@ -5,10 +5,11 @@
  */
 package adventureworks.person.businessentityaddress
 
-import dev.typr.foundations.kotlin.DeleteBuilder
-import dev.typr.foundations.kotlin.SelectBuilder
-import dev.typr.foundations.kotlin.UpdateBuilder
-import java.sql.Connection
+import dev.typr.dslkt.DeleteBuilder
+import dev.typr.dslkt.SelectBuilder
+import dev.typr.dslkt.UpdateBuilder
+import dev.typr.foundationskt.Connection
+import dev.typr.foundationskt.ConnectionRead
 import kotlin.collections.Iterator
 import kotlin.collections.List
 import kotlin.collections.Map
@@ -19,10 +20,10 @@ interface BusinessentityaddressRepo {
   abstract fun deleteById(
     compositeId: BusinessentityaddressId,
     c: Connection
-  ): Boolean
+  ): kotlin.Boolean
 
   abstract fun deleteByIds(
-    compositeIds: Array<BusinessentityaddressId>,
+    compositeIds: List<BusinessentityaddressId>,
     c: Connection
   ): Int
 
@@ -40,32 +41,32 @@ interface BusinessentityaddressRepo {
     unsaved: Iterator<BusinessentityaddressRow>,
     batchSize: Int = 10000,
     c: Connection
-  ): Long
+  ): kotlin.Long
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
   abstract fun insertUnsavedStreaming(
     unsaved: Iterator<BusinessentityaddressRowUnsaved>,
     batchSize: Int = 10000,
     c: Connection
-  ): Long
+  ): kotlin.Long
 
   abstract fun select(): SelectBuilder<BusinessentityaddressFields, BusinessentityaddressRow>
 
-  abstract fun selectAll(c: Connection): List<BusinessentityaddressRow>
+  abstract fun selectAll(c: ConnectionRead): List<BusinessentityaddressRow>
 
   abstract fun selectById(
     compositeId: BusinessentityaddressId,
-    c: Connection
+    c: ConnectionRead
   ): BusinessentityaddressRow?
 
   abstract fun selectByIds(
-    compositeIds: Array<BusinessentityaddressId>,
-    c: Connection
+    compositeIds: List<BusinessentityaddressId>,
+    c: ConnectionRead
   ): List<BusinessentityaddressRow>
 
   abstract fun selectByIdsTracked(
-    compositeIds: Array<BusinessentityaddressId>,
-    c: Connection
+    compositeIds: List<BusinessentityaddressId>,
+    c: ConnectionRead
   ): Map<BusinessentityaddressId, BusinessentityaddressRow>
 
   abstract fun update(): UpdateBuilder<BusinessentityaddressFields, BusinessentityaddressRow>
@@ -73,7 +74,7 @@ interface BusinessentityaddressRepo {
   abstract fun update(
     row: BusinessentityaddressRow,
     c: Connection
-  ): Boolean
+  ): kotlin.Boolean
 
   abstract fun upsert(
     unsaved: BusinessentityaddressRow,

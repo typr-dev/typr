@@ -6,9 +6,9 @@
 package testdb.precision_types_null
 
 import com.fasterxml.jackson.annotation.JsonValue
-import dev.typr.foundations.MariaType
-import dev.typr.foundations.kotlin.Bijection
-import dev.typr.foundations.kotlin.KotlinDbTypes
+import dev.typr.foundationskt.Bijection
+import dev.typr.foundationskt.MariaType
+import dev.typr.foundationskt.MariaTypes
 
 /** Type for the primary key of table `precision_types_null` */
 data class PrecisionTypesNullId(@field:JsonValue val value: Int) {
@@ -21,6 +21,6 @@ data class PrecisionTypesNullId(@field:JsonValue val value: Int) {
       Bijection.of(PrecisionTypesNullId::value, ::PrecisionTypesNullId)
 
     val mariaType: MariaType<PrecisionTypesNullId> =
-      KotlinDbTypes.MariaTypes.int_.bimap(::PrecisionTypesNullId, PrecisionTypesNullId::value)
+      MariaTypes.int_.to(Bijection.of(::PrecisionTypesNullId, PrecisionTypesNullId::value))
   }
 }

@@ -27,7 +27,7 @@ object Mydomain {
 
   given arraySetter: Setter[Array[Mydomain]] = adventureworks.StringArraySetter.contramap(_.map(_.value))
 
-  given bijection: Bijection[Mydomain, String] = Bijection.apply[Mydomain, String](_.value)(Mydomain.apply)
+  given bijection: Bijection[Mydomain, String] = Bijection[Mydomain, String](_.value)(Mydomain.apply)
 
   given jdbcDecoder: JdbcDecoder[Mydomain] = JdbcDecoder.stringDecoder.map(Mydomain.apply)
 

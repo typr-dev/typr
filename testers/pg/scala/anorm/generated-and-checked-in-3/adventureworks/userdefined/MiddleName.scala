@@ -24,7 +24,7 @@ object MiddleName {
 
   given arrayToStatement: ToStatement[Array[MiddleName]] = Name.arrayToStatement.contramap(_.map(_.value))
 
-  given bijection: Bijection[MiddleName, Name] = Bijection.apply[MiddleName, Name](_.value)(MiddleName.apply)
+  given bijection: Bijection[MiddleName, Name] = Bijection[MiddleName, Name](_.value)(MiddleName.apply)
 
   given column: Column[MiddleName] = Name.column.map(MiddleName.apply)
 

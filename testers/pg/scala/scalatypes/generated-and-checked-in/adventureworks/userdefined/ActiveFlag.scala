@@ -7,8 +7,8 @@ package adventureworks.userdefined
 
 import adventureworks.public.Flag
 import com.fasterxml.jackson.annotation.JsonValue
-import dev.typr.foundations.PgType
-import dev.typr.foundations.scala.Bijection
+import dev.typr.dslsc.Bijection
+import dev.typr.foundationssc.PgType
 
 /** Shared type `ActiveFlag`
  * Generated from TypeDefinitions matching
@@ -16,9 +16,9 @@ import dev.typr.foundations.scala.Bijection
 case class ActiveFlag(@JsonValue value: Flag) extends scala.AnyVal
 
 object ActiveFlag {
-  given bijection: Bijection[ActiveFlag, Flag] = Bijection.apply[ActiveFlag, Flag](_.value)(ActiveFlag.apply)
+  given bijection: Bijection[ActiveFlag, Flag] = Bijection.of[ActiveFlag, Flag](_.value, ActiveFlag.apply)
 
-  given pgType: PgType[ActiveFlag] = Flag.pgType.bimap(ActiveFlag.apply, _.value)
+  given pgType: PgType[ActiveFlag] = Flag.pgType.to(Bijection.of(ActiveFlag.apply, _.value))
 
-  given pgTypeArray: PgType[Array[ActiveFlag]] = Flag.pgTypeArray.bimap(xs => xs.map(ActiveFlag.apply), xs => xs.map(_.value))
+  given pgTypeArray: PgType[List[ActiveFlag]] = pgType.array
 }

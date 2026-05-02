@@ -5,17 +5,18 @@
  */
 package testdb.audit_log
 
-import dev.typr.foundations.scala.DeleteBuilder
-import dev.typr.foundations.scala.SelectBuilder
-import dev.typr.foundations.scala.UpdateBuilder
-import java.sql.Connection
+import dev.typr.dslsc.DeleteBuilder
+import dev.typr.dslsc.SelectBuilder
+import dev.typr.dslsc.UpdateBuilder
+import dev.typr.foundationssc.Connection
+import dev.typr.foundationssc.ConnectionRead
 
 trait AuditLogRepo {
   def delete: DeleteBuilder[AuditLogFields, AuditLogRow]
 
   def deleteById(logId: AuditLogId)(using c: Connection): Boolean
 
-  def deleteByIds(logIds: Array[AuditLogId])(using c: Connection): Int
+  def deleteByIds(logIds: List[AuditLogId])(using c: Connection): Int
 
   def insert(unsaved: AuditLogRow)(using c: Connection): AuditLogRow
 
@@ -23,13 +24,13 @@ trait AuditLogRepo {
 
   def select: SelectBuilder[AuditLogFields, AuditLogRow]
 
-  def selectAll(using c: Connection): List[AuditLogRow]
+  def selectAll(using c: ConnectionRead): List[AuditLogRow]
 
-  def selectById(logId: AuditLogId)(using c: Connection): Option[AuditLogRow]
+  def selectById(logId: AuditLogId)(using c: ConnectionRead): Option[AuditLogRow]
 
-  def selectByIds(logIds: Array[AuditLogId])(using c: Connection): List[AuditLogRow]
+  def selectByIds(logIds: List[AuditLogId])(using c: ConnectionRead): List[AuditLogRow]
 
-  def selectByIdsTracked(logIds: Array[AuditLogId])(using c: Connection): Map[AuditLogId, AuditLogRow]
+  def selectByIdsTracked(logIds: List[AuditLogId])(using c: ConnectionRead): Map[AuditLogId, AuditLogRow]
 
   def update: UpdateBuilder[AuditLogFields, AuditLogRow]
 

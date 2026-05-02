@@ -6,11 +6,10 @@
 package testdb.customer_search
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import dev.typr.foundations.DuckDbTypes
+import dev.typr.dslsc.RowCodecs
 import dev.typr.foundations.Tuple.Tuple5
-import dev.typr.foundations.scala.DbTypeOps
-import dev.typr.foundations.scala.RowParser
-import dev.typr.foundations.scala.RowParsers
+import dev.typr.foundationssc.DuckDbTypes
+import dev.typr.foundationssc.RowCodec
 import java.time.LocalDateTime
 import testdb.Priority
 import testdb.customers.CustomersId
@@ -41,5 +40,5 @@ case class CustomerSearchSqlRow(
 }
 
 object CustomerSearchSqlRow {
-  val `_rowParser`: RowParser[CustomerSearchSqlRow] = RowParsers.of(CustomersId.duckDbType, DuckDbTypes.varchar, Email.duckDbType.nullable, DuckDbTypes.timestamp, Priority.duckDbType.nullable)(CustomerSearchSqlRow.apply)(row => Array[Any](row.customerId, row.name, row.email, row.createdAt, row.priority))
+  val rowCodec: RowCodec[CustomerSearchSqlRow] = RowCodecs.of(CustomersId.duckDbType, DuckDbTypes.varchar, Email.duckDbType.opt, DuckDbTypes.timestamp, Priority.duckDbType.opt)(CustomerSearchSqlRow.apply)(row => Array[Any](row.customerId, row.name, row.email, row.createdAt, row.priority))
 }

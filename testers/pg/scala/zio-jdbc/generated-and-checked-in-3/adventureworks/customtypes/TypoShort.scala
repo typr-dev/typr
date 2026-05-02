@@ -47,7 +47,7 @@ object TypoShort {
     )
   }
 
-  given bijection: Bijection[TypoShort, Short] = Bijection.apply[TypoShort, Short](_.value)(TypoShort.apply)
+  given bijection: Bijection[TypoShort, Short] = Bijection[TypoShort, Short](_.value)(TypoShort.apply)
 
   given jdbcDecoder: JdbcDecoder[TypoShort] = {
     JdbcDecoder[TypoShort](

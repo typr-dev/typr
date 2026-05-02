@@ -5,17 +5,18 @@
  */
 package adventureworks.production.productcosthistory
 
-import dev.typr.foundations.scala.DeleteBuilder
-import dev.typr.foundations.scala.SelectBuilder
-import dev.typr.foundations.scala.UpdateBuilder
-import java.sql.Connection
+import dev.typr.dslsc.DeleteBuilder
+import dev.typr.dslsc.SelectBuilder
+import dev.typr.dslsc.UpdateBuilder
+import dev.typr.foundationssc.Connection
+import dev.typr.foundationssc.ConnectionRead
 
 trait ProductcosthistoryRepo {
   def delete: DeleteBuilder[ProductcosthistoryFields, ProductcosthistoryRow]
 
   def deleteById(compositeId: ProductcosthistoryId)(using c: Connection): Boolean
 
-  def deleteByIds(compositeIds: Array[ProductcosthistoryId])(using c: Connection): Int
+  def deleteByIds(compositeIds: List[ProductcosthistoryId])(using c: Connection): Int
 
   def insert(unsaved: ProductcosthistoryRow)(using c: Connection): ProductcosthistoryRow
 
@@ -34,13 +35,13 @@ trait ProductcosthistoryRepo {
 
   def select: SelectBuilder[ProductcosthistoryFields, ProductcosthistoryRow]
 
-  def selectAll(using c: Connection): List[ProductcosthistoryRow]
+  def selectAll(using c: ConnectionRead): List[ProductcosthistoryRow]
 
-  def selectById(compositeId: ProductcosthistoryId)(using c: Connection): Option[ProductcosthistoryRow]
+  def selectById(compositeId: ProductcosthistoryId)(using c: ConnectionRead): Option[ProductcosthistoryRow]
 
-  def selectByIds(compositeIds: Array[ProductcosthistoryId])(using c: Connection): List[ProductcosthistoryRow]
+  def selectByIds(compositeIds: List[ProductcosthistoryId])(using c: ConnectionRead): List[ProductcosthistoryRow]
 
-  def selectByIdsTracked(compositeIds: Array[ProductcosthistoryId])(using c: Connection): Map[ProductcosthistoryId, ProductcosthistoryRow]
+  def selectByIdsTracked(compositeIds: List[ProductcosthistoryId])(using c: ConnectionRead): Map[ProductcosthistoryId, ProductcosthistoryRow]
 
   def update: UpdateBuilder[ProductcosthistoryFields, ProductcosthistoryRow]
 

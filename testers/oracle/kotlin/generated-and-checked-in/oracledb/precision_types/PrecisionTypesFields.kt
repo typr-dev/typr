@@ -5,16 +5,16 @@
  */
 package oracledb.precision_types
 
-import dev.typr.foundations.OracleTypes
-import dev.typr.foundations.RowParser
-import dev.typr.foundations.dsl.FieldsBase
-import dev.typr.foundations.dsl.Path
-import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.kotlin.RelationStructure
-import dev.typr.foundations.kotlin.SqlExpr
-import dev.typr.foundations.kotlin.SqlExpr.Field
-import dev.typr.foundations.kotlin.SqlExpr.IdField
-import dev.typr.foundations.kotlin.TupleExpr17
+import dev.typr.dsl.FieldsBase
+import dev.typr.dsl.Path
+import dev.typr.dsl.SqlExpr.FieldLike
+import dev.typr.dslkt.RelationStructure
+import dev.typr.dslkt.SqlExpr
+import dev.typr.dslkt.SqlExpr.Field
+import dev.typr.dslkt.SqlExpr.IdField
+import dev.typr.dslkt.TupleExpr17
+import dev.typr.foundations.RowCodec
+import dev.typr.foundationskt.OracleTypes
 import java.time.LocalDateTime
 import kotlin.collections.List
 import oracledb.precisetypes.Decimal10_2
@@ -70,43 +70,43 @@ data class PrecisionTypesFields(val _path: List<Path>) : TupleExpr17<PrecisionTy
 
   override fun _path(): List<Path> = _path
 
-  fun char10(): Field<NonEmptyPaddedString10, PrecisionTypesRow> = Field<NonEmptyPaddedString10, PrecisionTypesRow>(_path, "CHAR10", PrecisionTypesRow::char10, null, null, { row, value -> row.copy(char10 = value) }, NonEmptyPaddedString10.oracleType)
+  fun char10(): Field<NonEmptyPaddedString10, PrecisionTypesRow> = Field<NonEmptyPaddedString10, PrecisionTypesRow>(_path, "CHAR10", PrecisionTypesRow::char10, null, null, { row, value -> row.copy(char10 = value) }, NonEmptyPaddedString10.oracleType.underlying)
 
   override fun columns(): List<FieldLike<*, PrecisionTypesRow>> = listOf(this.id().underlying, this.string10().underlying, this.string20().underlying, this.string50().underlying, this.string100().underlying, this.string255().underlying, this.char10().underlying, this.number52().underlying, this.number102().underlying, this.number184().underlying, this.number50().underlying, this.number100().underlying, this.number180().underlying, this.ts0().underlying, this.ts3().underlying, this.ts6().underlying, this.ts9().underlying)
 
-  fun id(): IdField<PrecisionTypesId, PrecisionTypesRow> = IdField<PrecisionTypesId, PrecisionTypesRow>(_path, "ID", PrecisionTypesRow::id, null, null, { row, value -> row.copy(id = value) }, PrecisionTypesId.oracleType)
+  fun id(): IdField<PrecisionTypesId, PrecisionTypesRow> = IdField<PrecisionTypesId, PrecisionTypesRow>(_path, "ID", PrecisionTypesRow::id, null, null, { row, value -> row.copy(id = value) }, PrecisionTypesId.oracleType.underlying)
 
-  fun number100(): Field<Int10, PrecisionTypesRow> = Field<Int10, PrecisionTypesRow>(_path, "NUMBER10_0", PrecisionTypesRow::number100, null, null, { row, value -> row.copy(number100 = value) }, Int10.oracleType)
+  fun number100(): Field<Int10, PrecisionTypesRow> = Field<Int10, PrecisionTypesRow>(_path, "NUMBER10_0", PrecisionTypesRow::number100, null, null, { row, value -> row.copy(number100 = value) }, Int10.oracleType.underlying)
 
-  fun number102(): Field<Decimal10_2, PrecisionTypesRow> = Field<Decimal10_2, PrecisionTypesRow>(_path, "NUMBER10_2", PrecisionTypesRow::number102, null, null, { row, value -> row.copy(number102 = value) }, Decimal10_2.oracleType)
+  fun number102(): Field<Decimal10_2, PrecisionTypesRow> = Field<Decimal10_2, PrecisionTypesRow>(_path, "NUMBER10_2", PrecisionTypesRow::number102, null, null, { row, value -> row.copy(number102 = value) }, Decimal10_2.oracleType.underlying)
 
-  fun number180(): Field<Int18, PrecisionTypesRow> = Field<Int18, PrecisionTypesRow>(_path, "NUMBER18_0", PrecisionTypesRow::number180, null, null, { row, value -> row.copy(number180 = value) }, Int18.oracleType)
+  fun number180(): Field<Int18, PrecisionTypesRow> = Field<Int18, PrecisionTypesRow>(_path, "NUMBER18_0", PrecisionTypesRow::number180, null, null, { row, value -> row.copy(number180 = value) }, Int18.oracleType.underlying)
 
-  fun number184(): Field<Decimal18_4, PrecisionTypesRow> = Field<Decimal18_4, PrecisionTypesRow>(_path, "NUMBER18_4", PrecisionTypesRow::number184, null, null, { row, value -> row.copy(number184 = value) }, Decimal18_4.oracleType)
+  fun number184(): Field<Decimal18_4, PrecisionTypesRow> = Field<Decimal18_4, PrecisionTypesRow>(_path, "NUMBER18_4", PrecisionTypesRow::number184, null, null, { row, value -> row.copy(number184 = value) }, Decimal18_4.oracleType.underlying)
 
-  fun number50(): Field<Int5, PrecisionTypesRow> = Field<Int5, PrecisionTypesRow>(_path, "NUMBER5_0", PrecisionTypesRow::number50, null, null, { row, value -> row.copy(number50 = value) }, Int5.oracleType)
+  fun number50(): Field<Int5, PrecisionTypesRow> = Field<Int5, PrecisionTypesRow>(_path, "NUMBER5_0", PrecisionTypesRow::number50, null, null, { row, value -> row.copy(number50 = value) }, Int5.oracleType.underlying)
 
-  fun number52(): Field<Decimal5_2, PrecisionTypesRow> = Field<Decimal5_2, PrecisionTypesRow>(_path, "NUMBER5_2", PrecisionTypesRow::number52, null, null, { row, value -> row.copy(number52 = value) }, Decimal5_2.oracleType)
+  fun number52(): Field<Decimal5_2, PrecisionTypesRow> = Field<Decimal5_2, PrecisionTypesRow>(_path, "NUMBER5_2", PrecisionTypesRow::number52, null, null, { row, value -> row.copy(number52 = value) }, Decimal5_2.oracleType.underlying)
 
-  override fun rowParser(): RowParser<PrecisionTypesRow> = PrecisionTypesRow._rowParser.underlying
+  override fun rowCodec(): RowCodec<PrecisionTypesRow> = PrecisionTypesRow.rowCodec.underlying
 
-  fun string10(): Field<NonEmptyString10, PrecisionTypesRow> = Field<NonEmptyString10, PrecisionTypesRow>(_path, "STRING10", PrecisionTypesRow::string10, null, null, { row, value -> row.copy(string10 = value) }, NonEmptyString10.oracleType)
+  fun string10(): Field<NonEmptyString10, PrecisionTypesRow> = Field<NonEmptyString10, PrecisionTypesRow>(_path, "STRING10", PrecisionTypesRow::string10, null, null, { row, value -> row.copy(string10 = value) }, NonEmptyString10.oracleType.underlying)
 
-  fun string100(): Field<NonEmptyString100, PrecisionTypesRow> = Field<NonEmptyString100, PrecisionTypesRow>(_path, "STRING100", PrecisionTypesRow::string100, null, null, { row, value -> row.copy(string100 = value) }, NonEmptyString100.oracleType)
+  fun string100(): Field<NonEmptyString100, PrecisionTypesRow> = Field<NonEmptyString100, PrecisionTypesRow>(_path, "STRING100", PrecisionTypesRow::string100, null, null, { row, value -> row.copy(string100 = value) }, NonEmptyString100.oracleType.underlying)
 
-  fun string20(): Field<NonEmptyString20, PrecisionTypesRow> = Field<NonEmptyString20, PrecisionTypesRow>(_path, "STRING20", PrecisionTypesRow::string20, null, null, { row, value -> row.copy(string20 = value) }, NonEmptyString20.oracleType)
+  fun string20(): Field<NonEmptyString20, PrecisionTypesRow> = Field<NonEmptyString20, PrecisionTypesRow>(_path, "STRING20", PrecisionTypesRow::string20, null, null, { row, value -> row.copy(string20 = value) }, NonEmptyString20.oracleType.underlying)
 
-  fun string255(): Field<NonEmptyString255, PrecisionTypesRow> = Field<NonEmptyString255, PrecisionTypesRow>(_path, "STRING255", PrecisionTypesRow::string255, null, null, { row, value -> row.copy(string255 = value) }, NonEmptyString255.oracleType)
+  fun string255(): Field<NonEmptyString255, PrecisionTypesRow> = Field<NonEmptyString255, PrecisionTypesRow>(_path, "STRING255", PrecisionTypesRow::string255, null, null, { row, value -> row.copy(string255 = value) }, NonEmptyString255.oracleType.underlying)
 
-  fun string50(): Field<NonEmptyString50, PrecisionTypesRow> = Field<NonEmptyString50, PrecisionTypesRow>(_path, "STRING50", PrecisionTypesRow::string50, null, null, { row, value -> row.copy(string50 = value) }, NonEmptyString50.oracleType)
+  fun string50(): Field<NonEmptyString50, PrecisionTypesRow> = Field<NonEmptyString50, PrecisionTypesRow>(_path, "STRING50", PrecisionTypesRow::string50, null, null, { row, value -> row.copy(string50 = value) }, NonEmptyString50.oracleType.underlying)
 
-  fun ts0(): Field<LocalDateTime, PrecisionTypesRow> = Field<LocalDateTime, PrecisionTypesRow>(_path, "TS0", PrecisionTypesRow::ts0, null, null, { row, value -> row.copy(ts0 = value) }, OracleTypes.timestamp)
+  fun ts0(): Field<LocalDateTime, PrecisionTypesRow> = Field<LocalDateTime, PrecisionTypesRow>(_path, "TS0", PrecisionTypesRow::ts0, null, null, { row, value -> row.copy(ts0 = value) }, OracleTypes.timestamp.underlying)
 
-  fun ts3(): Field<LocalDateTime3, PrecisionTypesRow> = Field<LocalDateTime3, PrecisionTypesRow>(_path, "TS3", PrecisionTypesRow::ts3, null, null, { row, value -> row.copy(ts3 = value) }, LocalDateTime3.oracleType)
+  fun ts3(): Field<LocalDateTime3, PrecisionTypesRow> = Field<LocalDateTime3, PrecisionTypesRow>(_path, "TS3", PrecisionTypesRow::ts3, null, null, { row, value -> row.copy(ts3 = value) }, LocalDateTime3.oracleType.underlying)
 
-  fun ts6(): Field<LocalDateTime6, PrecisionTypesRow> = Field<LocalDateTime6, PrecisionTypesRow>(_path, "TS6", PrecisionTypesRow::ts6, null, null, { row, value -> row.copy(ts6 = value) }, LocalDateTime6.oracleType)
+  fun ts6(): Field<LocalDateTime6, PrecisionTypesRow> = Field<LocalDateTime6, PrecisionTypesRow>(_path, "TS6", PrecisionTypesRow::ts6, null, null, { row, value -> row.copy(ts6 = value) }, LocalDateTime6.oracleType.underlying)
 
-  fun ts9(): Field<LocalDateTime9, PrecisionTypesRow> = Field<LocalDateTime9, PrecisionTypesRow>(_path, "TS9", PrecisionTypesRow::ts9, null, null, { row, value -> row.copy(ts9 = value) }, LocalDateTime9.oracleType)
+  fun ts9(): Field<LocalDateTime9, PrecisionTypesRow> = Field<LocalDateTime9, PrecisionTypesRow>(_path, "TS9", PrecisionTypesRow::ts9, null, null, { row, value -> row.copy(ts9 = value) }, LocalDateTime9.oracleType.underlying)
 
   override fun withPaths(_path: List<Path>): RelationStructure<PrecisionTypesFields, PrecisionTypesRow> = PrecisionTypesFields(_path)
 

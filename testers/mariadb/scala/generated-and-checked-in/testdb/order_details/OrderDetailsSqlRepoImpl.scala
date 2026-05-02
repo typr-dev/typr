@@ -5,13 +5,13 @@
  */
 package testdb.order_details
 
-import dev.typr.foundations.scala.Fragment
-import java.sql.Connection
+import dev.typr.foundationssc.ConnectionRead
+import dev.typr.foundationssc.Fragment
 import testdb.orders.OrdersId
-import dev.typr.foundations.scala.Fragment.sql
+import dev.typr.foundationssc.Fragment.sql
 
 class OrderDetailsSqlRepoImpl extends OrderDetailsSqlRepo {
-  override def apply(orderId: /* user-picked */ OrdersId)(using c: Connection): List[OrderDetailsSqlRow] = {
+  override def apply(orderId: /* user-picked */ OrdersId)(using c: ConnectionRead): List[OrderDetailsSqlRow] = {
     sql"""-- Get order with all items
     SELECT o.order_id,
            o.order_number,
@@ -33,6 +33,6 @@ class OrderDetailsSqlRepoImpl extends OrderDetailsSqlRepo {
     FROM orders o
     JOIN order_items oi ON o.order_id = oi.order_id
     WHERE o.order_id = ${Fragment.encode(OrdersId.mariaType, orderId)}
-    """.query(OrderDetailsSqlRow.`_rowParser`.all()).runUnchecked(c)
+    """.query(OrderDetailsSqlRow.rowCodec.all()).run(using c)
   }
 }

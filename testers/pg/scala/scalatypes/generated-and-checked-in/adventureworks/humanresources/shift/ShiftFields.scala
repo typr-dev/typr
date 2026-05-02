@@ -6,16 +6,16 @@
 package adventureworks.humanresources.shift
 
 import adventureworks.public.Name
-import dev.typr.foundations.PgTypes
-import dev.typr.foundations.RowParser
-import dev.typr.foundations.dsl.FieldsBase
-import dev.typr.foundations.dsl.Path
-import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.scala.RelationStructure
-import dev.typr.foundations.scala.SqlExpr
-import dev.typr.foundations.scala.SqlExpr.Field
-import dev.typr.foundations.scala.SqlExpr.IdField
-import dev.typr.foundations.scala.TupleExpr5
+import dev.typr.dsl.FieldsBase
+import dev.typr.dsl.Path
+import dev.typr.dsl.SqlExpr.FieldLike
+import dev.typr.dslsc.RelationStructure
+import dev.typr.dslsc.SqlExpr
+import dev.typr.dslsc.SqlExpr.Field
+import dev.typr.dslsc.SqlExpr.IdField
+import dev.typr.dslsc.TupleExpr5
+import dev.typr.foundations.RowCodec
+import dev.typr.foundationssc.PgTypes
 import java.time.LocalDateTime
 import java.time.LocalTime
 
@@ -28,7 +28,7 @@ class ShiftFields(val `_path`: java.util.List[Path]) extends TupleExpr5[ShiftId,
       None,
       Some("int4"),
       (row, value) => row.copy(shiftid = value),
-      ShiftId.pgType
+      ShiftId.pgType.underlying
     )
   }
 
@@ -40,7 +40,7 @@ class ShiftFields(val `_path`: java.util.List[Path]) extends TupleExpr5[ShiftId,
       None,
       Some("varchar"),
       (row, value) => row.copy(name = value),
-      Name.pgType
+      Name.pgType.underlying
     )
   }
 
@@ -52,7 +52,7 @@ class ShiftFields(val `_path`: java.util.List[Path]) extends TupleExpr5[ShiftId,
       None,
       Some("time"),
       (row, value) => row.copy(starttime = value),
-      PgTypes.time
+      PgTypes.time.underlying
     )
   }
 
@@ -64,7 +64,7 @@ class ShiftFields(val `_path`: java.util.List[Path]) extends TupleExpr5[ShiftId,
       None,
       Some("time"),
       (row, value) => row.copy(endtime = value),
-      PgTypes.time
+      PgTypes.time.underlying
     )
   }
 
@@ -76,13 +76,13 @@ class ShiftFields(val `_path`: java.util.List[Path]) extends TupleExpr5[ShiftId,
       None,
       Some("timestamp"),
       (row, value) => row.copy(modifieddate = value),
-      PgTypes.timestamp
+      PgTypes.timestamp.underlying
     )
   }
 
   override def columns: java.util.List[FieldLike[?, ShiftRow]] = java.util.List.of(this.shiftid.underlying, this.name.underlying, this.starttime.underlying, this.endtime.underlying, this.modifieddate.underlying)
 
-  override def rowParser: RowParser[ShiftRow] = ShiftRow._rowParser.underlying
+  override def rowCodec: RowCodec[ShiftRow] = ShiftRow.rowCodec.underlying
 
   override def withPaths(`_path`: java.util.List[Path]): RelationStructure[ShiftFields, ShiftRow] = new ShiftFields(`_path`)
 

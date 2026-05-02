@@ -5,17 +5,18 @@
  */
 package testdb.inventory
 
-import dev.typr.foundations.scala.DeleteBuilder
-import dev.typr.foundations.scala.DeleteBuilderMock
-import dev.typr.foundations.scala.DeleteParams
-import dev.typr.foundations.scala.SelectBuilder
-import dev.typr.foundations.scala.SelectBuilderMock
-import dev.typr.foundations.scala.SelectParams
-import dev.typr.foundations.scala.UpdateBuilder
-import dev.typr.foundations.scala.UpdateBuilderMock
-import dev.typr.foundations.scala.UpdateParams
+import dev.typr.dslsc.DeleteBuilder
+import dev.typr.dslsc.DeleteBuilderMock
+import dev.typr.dslsc.DeleteParams
+import dev.typr.dslsc.SelectBuilder
+import dev.typr.dslsc.SelectBuilderMock
+import dev.typr.dslsc.SelectParams
+import dev.typr.dslsc.UpdateBuilder
+import dev.typr.dslsc.UpdateBuilderMock
+import dev.typr.dslsc.UpdateParams
+import dev.typr.foundationssc.Connection
+import dev.typr.foundationssc.ConnectionRead
 import java.lang.RuntimeException
-import java.sql.Connection
 import testdb.products.ProductsId
 import testdb.warehouses.WarehousesId
 
@@ -27,7 +28,7 @@ case class InventoryRepoMock(
 
   override def deleteById(inventoryId: InventoryId)(using c: Connection): Boolean = map.remove(inventoryId).isDefined
 
-  override def deleteByIds(inventoryIds: Array[InventoryId])(using c: Connection): Int = {
+  override def deleteByIds(inventoryIds: List[InventoryId])(using c: Connection): Int = {
     var count = 0
     inventoryIds.foreach { id => if (map.remove(id).isDefined) {
       count = count + 1
@@ -47,18 +48,18 @@ case class InventoryRepoMock(
 
   override def select: SelectBuilder[InventoryFields, InventoryRow] = SelectBuilderMock(InventoryFields.structure, () => map.values.toList, SelectParams.empty())
 
-  override def selectAll(using c: Connection): List[InventoryRow] = map.values.toList
+  override def selectAll(using c: ConnectionRead): List[InventoryRow] = map.values.toList
 
-  override def selectById(inventoryId: InventoryId)(using c: Connection): Option[InventoryRow] = map.get(inventoryId)
+  override def selectById(inventoryId: InventoryId)(using c: ConnectionRead): Option[InventoryRow] = map.get(inventoryId)
 
-  override def selectByIds(inventoryIds: Array[InventoryId])(using c: Connection): List[InventoryRow] = inventoryIds.flatMap(map.get(_)).toList
+  override def selectByIds(inventoryIds: List[InventoryId])(using c: ConnectionRead): List[InventoryRow] = inventoryIds.flatMap(map.get(_)).toList
 
-  override def selectByIdsTracked(inventoryIds: Array[InventoryId])(using c: Connection): Map[InventoryId, InventoryRow] = selectByIds(inventoryIds)(using c).map(x => (((row: InventoryRow) => row.inventoryId).apply(x), x)).toMap
+  override def selectByIdsTracked(inventoryIds: List[InventoryId])(using c: ConnectionRead): Map[InventoryId, InventoryRow] = selectByIds(inventoryIds)(using c).map(x => (((row: InventoryRow) => row.inventoryId).apply(x), x)).toMap
 
   override def selectByUniqueProductIdAndWarehouseId(
     productId: ProductsId,
     warehouseId: WarehousesId
-  )(using c: Connection): Option[InventoryRow] = map.values.toList.find(v => (productId == v.productId) && (warehouseId == v.warehouseId))
+  )(using c: ConnectionRead): Option[InventoryRow] = map.values.toList.find(v => (productId == v.productId) && (warehouseId == v.warehouseId))
 
   override def update: UpdateBuilder[InventoryFields, InventoryRow] = UpdateBuilderMock(InventoryFields.structure, () => map.values.toList, UpdateParams.empty(), row => row)
 

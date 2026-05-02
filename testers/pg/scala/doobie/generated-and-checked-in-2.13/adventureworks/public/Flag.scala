@@ -23,7 +23,7 @@ object Flag {
 
   implicit lazy val arrayPut: Put[Array[Flag]] = adventureworks.BooleanArrayMeta.put.contramap(_.map(_.value))
 
-  implicit lazy val bijection: Bijection[Flag, Boolean] = Bijection.apply[Flag, Boolean](_.value)(Flag.apply)
+  implicit lazy val bijection: Bijection[Flag, Boolean] = Bijection[Flag, Boolean](_.value)(Flag.apply)
 
   implicit lazy val decoder: Decoder[Flag] = Decoder.decodeBoolean.map(Flag.apply)
 

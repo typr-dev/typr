@@ -6,17 +6,17 @@
 package oracledb
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import dev.typr.foundations.OracleObject
-import dev.typr.foundations.OracleType
-import dev.typr.foundations.OracleTypes
+import dev.typr.foundationskt.OracleType
+import dev.typr.foundationskt.OracleTypes
+import dev.typr.foundationskt.RowCodec
 
 /** Oracle Object Type: ADDRESS_T */
 data class AddressT(
-  @field:JsonProperty("STREET") val street: String,
-  @field:JsonProperty("CITY") val city: String,
+  @field:JsonProperty("STREET") val street: kotlin.String,
+  @field:JsonProperty("CITY") val city: kotlin.String,
   @field:JsonProperty("LOCATION") val location: CoordinatesT
 ) {
   companion object {
-    val oracleType: OracleType<AddressT> = OracleObject.builder<AddressT>("ADDRESS_T").addAttribute("STREET", OracleTypes.varchar2, AddressT::street).addAttribute("CITY", OracleTypes.varchar2, AddressT::city).addAttribute("LOCATION", oracledb.CoordinatesT.oracleType, AddressT::location).build({ attrs -> AddressT((attrs[0] as String), (attrs[1] as String), (attrs[2] as CoordinatesT)) }).asType()
+    val oracleType: OracleType<AddressT> = OracleTypes.compositeOf("ADDRESS_T", RowCodec.namedBuilder<AddressT>().field("STREET", OracleTypes.varchar2, AddressT::street).field("CITY", OracleTypes.varchar2, AddressT::city).field("LOCATION", oracledb.CoordinatesT.oracleType, AddressT::location).build({ t0, t1, t2 -> AddressT(t0, t1, t2) }))
   }
 }

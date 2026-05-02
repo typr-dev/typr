@@ -5,8 +5,8 @@
  */
 package testdb.order_items_bulk_insert
 
+import dev.typr.foundationskt.ConnectionRead
 import java.math.BigDecimal
-import java.sql.Connection
 import kotlin.collections.List
 import testdb.orders.OrdersId
 import testdb.products.ProductsId
@@ -17,6 +17,6 @@ interface OrderItemsBulkInsertSqlRepo {
     productId: /* user-picked */ ProductsId,
     quantity: Int,
     unitPrice: BigDecimal,
-    c: Connection
+    c: ConnectionRead
   ): List<OrderItemsBulkInsertSqlRow>
 }

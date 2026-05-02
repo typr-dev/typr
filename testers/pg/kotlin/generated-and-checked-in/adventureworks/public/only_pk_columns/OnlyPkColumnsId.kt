@@ -6,22 +6,21 @@
 package adventureworks.public.only_pk_columns
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import dev.typr.foundations.PgTypes
+import dev.typr.dslkt.RowCodecs
 import dev.typr.foundations.Tuple.Tuple2
-import dev.typr.foundations.kotlin.KotlinDbTypes
-import dev.typr.foundations.kotlin.RowParser
-import dev.typr.foundations.kotlin.RowParsers
+import dev.typr.foundationskt.PgTypes
+import dev.typr.foundationskt.RowCodec
 
 /** Type for the composite primary key of table `public.only_pk_columns` */
 data class OnlyPkColumnsId(
-  @field:JsonProperty("key_column_1") val keyColumn1: String,
+  @field:JsonProperty("key_column_1") val keyColumn1: kotlin.String,
   @field:JsonProperty("key_column_2") val keyColumn2: Int
-) : Tuple2<String, Int> {
-  override fun _1(): String = keyColumn1
+) : Tuple2<kotlin.String, Int> {
+  override fun _1(): kotlin.String = keyColumn1
 
   override fun _2(): Int = keyColumn2
 
   companion object {
-    val _rowParser: RowParser<OnlyPkColumnsId> = RowParsers.of(PgTypes.text, KotlinDbTypes.PgTypes.int4, { t0, t1 -> OnlyPkColumnsId(t0, t1) }, { row -> arrayOf<Any?>(row.keyColumn1, row.keyColumn2) })
+    val rowCodec: RowCodec<OnlyPkColumnsId> = RowCodecs.of(PgTypes.text, PgTypes.int4, { t0: kotlin.String, t1: Int -> OnlyPkColumnsId(t0, t1) }, { row: OnlyPkColumnsId -> arrayOf<Any?>(row.keyColumn1, row.keyColumn2) })
   }
 }

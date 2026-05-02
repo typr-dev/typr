@@ -9,11 +9,11 @@ import adventureworks.customtypes.Defaulted
 import adventureworks.person.address.AddressId
 import adventureworks.person.addresstype.AddresstypeId
 import adventureworks.person.businessentity.BusinessentityId
+import dev.typr.dslsc.RowCodecs
 import dev.typr.foundations.PgText
-import dev.typr.foundations.PgTypes
 import dev.typr.foundations.Tuple.Tuple5
-import dev.typr.foundations.scala.RowParser
-import dev.typr.foundations.scala.RowParsers
+import dev.typr.foundationssc.PgTypes
+import dev.typr.foundationssc.RowCodec
 import java.time.LocalDateTime
 import java.util.UUID
 
@@ -68,8 +68,6 @@ case class BusinessentityaddressRow(
 }
 
 object BusinessentityaddressRow {
-  val `_rowParser`: RowParser[BusinessentityaddressRow] = RowParsers.of(BusinessentityId.pgType, AddressId.pgType, AddresstypeId.pgType, PgTypes.uuid, PgTypes.timestamp)(BusinessentityaddressRow.apply)(row => Array[Any](row.businessentityid, row.addressid, row.addresstypeid, row.rowguid, row.modifieddate))
-
   def apply(
     compositeId: BusinessentityaddressId,
     rowguid: UUID,
@@ -84,5 +82,7 @@ object BusinessentityaddressRow {
     )
   }
 
-  given pgText: PgText[BusinessentityaddressRow] = PgText.from(`_rowParser`.underlying)
+  given pgText: PgText[BusinessentityaddressRow] = PgText.from(rowCodec.underlying)
+
+  val rowCodec: RowCodec[BusinessentityaddressRow] = RowCodecs.of(BusinessentityId.pgType, AddressId.pgType, AddresstypeId.pgType, PgTypes.uuid, PgTypes.timestamp)(BusinessentityaddressRow.apply)(row => Array[Any](row.businessentityid, row.addressid, row.addresstypeid, row.rowguid, row.modifieddate))
 }

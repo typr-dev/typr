@@ -5,17 +5,18 @@
  */
 package testdb.mariatest
 
-import dev.typr.foundations.scala.DeleteBuilder
-import dev.typr.foundations.scala.SelectBuilder
-import dev.typr.foundations.scala.UpdateBuilder
-import java.sql.Connection
+import dev.typr.dslsc.DeleteBuilder
+import dev.typr.dslsc.SelectBuilder
+import dev.typr.dslsc.UpdateBuilder
+import dev.typr.foundationssc.Connection
+import dev.typr.foundationssc.ConnectionRead
 
 trait MariatestRepo {
   def delete: DeleteBuilder[MariatestFields, MariatestRow]
 
   def deleteById(intCol: MariatestId)(using c: Connection): Boolean
 
-  def deleteByIds(intCols: Array[MariatestId])(using c: Connection): Int
+  def deleteByIds(intCols: List[MariatestId])(using c: Connection): Int
 
   def insert(unsaved: MariatestRow)(using c: Connection): MariatestRow
 
@@ -23,13 +24,13 @@ trait MariatestRepo {
 
   def select: SelectBuilder[MariatestFields, MariatestRow]
 
-  def selectAll(using c: Connection): List[MariatestRow]
+  def selectAll(using c: ConnectionRead): List[MariatestRow]
 
-  def selectById(intCol: MariatestId)(using c: Connection): Option[MariatestRow]
+  def selectById(intCol: MariatestId)(using c: ConnectionRead): Option[MariatestRow]
 
-  def selectByIds(intCols: Array[MariatestId])(using c: Connection): List[MariatestRow]
+  def selectByIds(intCols: List[MariatestId])(using c: ConnectionRead): List[MariatestRow]
 
-  def selectByIdsTracked(intCols: Array[MariatestId])(using c: Connection): Map[MariatestId, MariatestRow]
+  def selectByIdsTracked(intCols: List[MariatestId])(using c: ConnectionRead): Map[MariatestId, MariatestRow]
 
   def update: UpdateBuilder[MariatestFields, MariatestRow]
 

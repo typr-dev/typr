@@ -6,10 +6,10 @@
 package testdb.order_items
 
 import com.fasterxml.jackson.annotation.JsonValue
-import dev.typr.foundations.MariaType
-import dev.typr.foundations.MariaTypes
 import dev.typr.foundations.data.Uint8
-import dev.typr.foundations.kotlin.Bijection
+import dev.typr.foundationskt.Bijection
+import dev.typr.foundationskt.MariaType
+import dev.typr.foundationskt.MariaTypes
 
 /** Type for the primary key of table `order_items` */
 data class OrderItemsId(@field:JsonValue val value: Uint8) {
@@ -22,6 +22,6 @@ data class OrderItemsId(@field:JsonValue val value: Uint8) {
       Bijection.of(OrderItemsId::value, ::OrderItemsId)
 
     val mariaType: MariaType<OrderItemsId> =
-      MariaTypes.bigintUnsigned.bimap(::OrderItemsId, OrderItemsId::value)
+      MariaTypes.bigintUnsigned.to(Bijection.of(::OrderItemsId, OrderItemsId::value))
   }
 }

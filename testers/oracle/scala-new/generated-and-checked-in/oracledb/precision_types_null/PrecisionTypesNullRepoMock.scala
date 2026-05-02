@@ -5,17 +5,18 @@
  */
 package oracledb.precision_types_null
 
-import dev.typr.foundations.scala.DeleteBuilder
-import dev.typr.foundations.scala.DeleteBuilderMock
-import dev.typr.foundations.scala.DeleteParams
-import dev.typr.foundations.scala.SelectBuilder
-import dev.typr.foundations.scala.SelectBuilderMock
-import dev.typr.foundations.scala.SelectParams
-import dev.typr.foundations.scala.UpdateBuilder
-import dev.typr.foundations.scala.UpdateBuilderMock
-import dev.typr.foundations.scala.UpdateParams
+import dev.typr.dslsc.DeleteBuilder
+import dev.typr.dslsc.DeleteBuilderMock
+import dev.typr.dslsc.DeleteParams
+import dev.typr.dslsc.SelectBuilder
+import dev.typr.dslsc.SelectBuilderMock
+import dev.typr.dslsc.SelectParams
+import dev.typr.dslsc.UpdateBuilder
+import dev.typr.dslsc.UpdateBuilderMock
+import dev.typr.dslsc.UpdateParams
+import dev.typr.foundationssc.Connection
+import dev.typr.foundationssc.ConnectionRead
 import java.lang.RuntimeException
-import java.sql.Connection
 
 case class PrecisionTypesNullRepoMock(
   toRow: PrecisionTypesNullRowUnsaved => PrecisionTypesNullRow,
@@ -25,7 +26,7 @@ case class PrecisionTypesNullRepoMock(
 
   override def deleteById(id: PrecisionTypesNullId)(using c: Connection): Boolean = map.remove(id).isDefined
 
-  override def deleteByIds(ids: Array[PrecisionTypesNullId])(using c: Connection): Int = {
+  override def deleteByIds(ids: List[PrecisionTypesNullId])(using c: Connection): Int = {
     var count = 0
     ids.foreach { id => if (map.remove(id).isDefined) {
       count = count + 1
@@ -45,13 +46,13 @@ case class PrecisionTypesNullRepoMock(
 
   override def select: SelectBuilder[PrecisionTypesNullFields, PrecisionTypesNullRow] = SelectBuilderMock(PrecisionTypesNullFields.structure, () => map.values.toList, SelectParams.empty())
 
-  override def selectAll(using c: Connection): List[PrecisionTypesNullRow] = map.values.toList
+  override def selectAll(using c: ConnectionRead): List[PrecisionTypesNullRow] = map.values.toList
 
-  override def selectById(id: PrecisionTypesNullId)(using c: Connection): Option[PrecisionTypesNullRow] = map.get(id)
+  override def selectById(id: PrecisionTypesNullId)(using c: ConnectionRead): Option[PrecisionTypesNullRow] = map.get(id)
 
-  override def selectByIds(ids: Array[PrecisionTypesNullId])(using c: Connection): List[PrecisionTypesNullRow] = ids.flatMap(map.get(_)).toList
+  override def selectByIds(ids: List[PrecisionTypesNullId])(using c: ConnectionRead): List[PrecisionTypesNullRow] = ids.flatMap(map.get(_)).toList
 
-  override def selectByIdsTracked(ids: Array[PrecisionTypesNullId])(using c: Connection): Map[PrecisionTypesNullId, PrecisionTypesNullRow] = selectByIds(ids)(using c).map(x => (((row: PrecisionTypesNullRow) => row.id).apply(x), x)).toMap
+  override def selectByIdsTracked(ids: List[PrecisionTypesNullId])(using c: ConnectionRead): Map[PrecisionTypesNullId, PrecisionTypesNullRow] = selectByIds(ids)(using c).map(x => (((row: PrecisionTypesNullRow) => row.id).apply(x), x)).toMap
 
   override def update: UpdateBuilder[PrecisionTypesNullFields, PrecisionTypesNullRow] = UpdateBuilderMock(PrecisionTypesNullFields.structure, () => map.values.toList, UpdateParams.empty(), row => row)
 

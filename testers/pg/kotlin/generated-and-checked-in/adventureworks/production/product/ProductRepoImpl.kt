@@ -10,16 +10,15 @@ import adventureworks.production.productsubcategory.ProductsubcategoryId
 import adventureworks.production.unitmeasure.UnitmeasureId
 import adventureworks.public.Flag
 import adventureworks.public.Name
-import dev.typr.foundations.PgTypes
-import dev.typr.foundations.kotlin.DeleteBuilder
-import dev.typr.foundations.kotlin.Dialect
-import dev.typr.foundations.kotlin.Fragment
-import dev.typr.foundations.kotlin.KotlinDbTypes
-import dev.typr.foundations.kotlin.SelectBuilder
-import dev.typr.foundations.kotlin.UpdateBuilder
-import dev.typr.foundations.kotlin.nullable
-import dev.typr.foundations.streamingInsert
-import java.sql.Connection
+import dev.typr.dslkt.DeleteBuilder
+import dev.typr.dslkt.Dialect
+import dev.typr.dslkt.SelectBuilder
+import dev.typr.dslkt.UpdateBuilder
+import dev.typr.foundationskt.Connection
+import dev.typr.foundationskt.ConnectionRead
+import dev.typr.foundationskt.Fragment
+import dev.typr.foundationskt.PgTypes
+import dev.typr.foundationskt.StreamingInsert
 import java.util.ArrayList
 import kotlin.collections.Iterator
 import kotlin.collections.List
@@ -32,20 +31,20 @@ class ProductRepoImpl() : ProductRepo {
   override fun deleteById(
     productid: ProductId,
     c: Connection
-  ): Boolean = Fragment.interpolate(Fragment.lit("delete from \"production\".\"product\" where \"productid\" = "), Fragment.encode(ProductId.pgType, productid), Fragment.lit("")).update().runUnchecked(c) > 0
+  ): kotlin.Boolean = Fragment.concat(Fragment.of("delete from \"production\".\"product\" where \"productid\" = "), Fragment.encode(ProductId.pgType, productid), Fragment.of("")).update().run(c) > 0
 
   override fun deleteByIds(
-    productids: Array<ProductId>,
+    productids: List<ProductId>,
     c: Connection
-  ): Int = Fragment.interpolate(Fragment.lit("delete\nfrom \"production\".\"product\"\nwhere \"productid\" = ANY("), Fragment.encode(ProductId.pgTypeArray, productids), Fragment.lit(")"))
+  ): Int = Fragment.concat(Fragment.of("delete\nfrom \"production\".\"product\"\nwhere \"productid\" = ANY("), Fragment.encode(ProductId.pgType.array(), productids), Fragment.of(")"))
     .update()
-    .runUnchecked(c)
+    .run(c)
 
   override fun insert(
     unsaved: ProductRow,
     c: Connection
-  ): ProductRow = Fragment.interpolate(Fragment.lit("insert into \"production\".\"product\"(\"productid\", \"name\", \"productnumber\", \"makeflag\", \"finishedgoodsflag\", \"color\", \"safetystocklevel\", \"reorderpoint\", \"standardcost\", \"listprice\", \"size\", \"sizeunitmeasurecode\", \"weightunitmeasurecode\", \"weight\", \"daystomanufacture\", \"productline\", \"class\", \"style\", \"productsubcategoryid\", \"productmodelid\", \"sellstartdate\", \"sellenddate\", \"discontinueddate\", \"rowguid\", \"modifieddate\")\nvalues ("), Fragment.encode(ProductId.pgType, unsaved.productid), Fragment.lit("::int4, "), Fragment.encode(Name.pgType, unsaved.name), Fragment.lit("::varchar, "), Fragment.encode(PgTypes.text, unsaved.productnumber), Fragment.lit(", "), Fragment.encode(Flag.pgType, unsaved.makeflag), Fragment.lit("::bool, "), Fragment.encode(Flag.pgType, unsaved.finishedgoodsflag), Fragment.lit("::bool, "), Fragment.encode(PgTypes.text.nullable(), unsaved.color), Fragment.lit(", "), Fragment.encode(KotlinDbTypes.PgTypes.int2, unsaved.safetystocklevel), Fragment.lit("::int2, "), Fragment.encode(KotlinDbTypes.PgTypes.int2, unsaved.reorderpoint), Fragment.lit("::int2, "), Fragment.encode(PgTypes.numeric, unsaved.standardcost), Fragment.lit("::numeric, "), Fragment.encode(PgTypes.numeric, unsaved.listprice), Fragment.lit("::numeric, "), Fragment.encode(PgTypes.text.nullable(), unsaved.size), Fragment.lit(", "), Fragment.encode(UnitmeasureId.pgType.nullable(), unsaved.sizeunitmeasurecode), Fragment.lit("::bpchar, "), Fragment.encode(UnitmeasureId.pgType.nullable(), unsaved.weightunitmeasurecode), Fragment.lit("::bpchar, "), Fragment.encode(PgTypes.numeric.nullable(), unsaved.weight), Fragment.lit("::numeric, "), Fragment.encode(KotlinDbTypes.PgTypes.int4, unsaved.daystomanufacture), Fragment.lit("::int4, "), Fragment.encode(PgTypes.bpchar.nullable(), unsaved.productline), Fragment.lit("::bpchar, "), Fragment.encode(PgTypes.bpchar.nullable(), unsaved.`class`), Fragment.lit("::bpchar, "), Fragment.encode(PgTypes.bpchar.nullable(), unsaved.style), Fragment.lit("::bpchar, "), Fragment.encode(ProductsubcategoryId.pgType.nullable(), unsaved.productsubcategoryid), Fragment.lit("::int4, "), Fragment.encode(ProductmodelId.pgType.nullable(), unsaved.productmodelid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.timestamp, unsaved.sellstartdate), Fragment.lit("::timestamp, "), Fragment.encode(PgTypes.timestamp.nullable(), unsaved.sellenddate), Fragment.lit("::timestamp, "), Fragment.encode(PgTypes.timestamp.nullable(), unsaved.discontinueddate), Fragment.lit("::timestamp, "), Fragment.encode(PgTypes.uuid, unsaved.rowguid), Fragment.lit("::uuid, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\nRETURNING \"productid\", \"name\", \"productnumber\", \"makeflag\", \"finishedgoodsflag\", \"color\", \"safetystocklevel\", \"reorderpoint\", \"standardcost\", \"listprice\", \"size\", \"sizeunitmeasurecode\", \"weightunitmeasurecode\", \"weight\", \"daystomanufacture\", \"productline\", \"class\", \"style\", \"productsubcategoryid\", \"productmodelid\", \"sellstartdate\", \"sellenddate\", \"discontinueddate\", \"rowguid\", \"modifieddate\"\n"))
-    .updateReturning(ProductRow._rowParser.exactlyOne()).runUnchecked(c)
+  ): ProductRow = Fragment.concat(Fragment.of("insert into \"production\".\"product\"(\"productid\", \"name\", \"productnumber\", \"makeflag\", \"finishedgoodsflag\", \"color\", \"safetystocklevel\", \"reorderpoint\", \"standardcost\", \"listprice\", \"size\", \"sizeunitmeasurecode\", \"weightunitmeasurecode\", \"weight\", \"daystomanufacture\", \"productline\", \"class\", \"style\", \"productsubcategoryid\", \"productmodelid\", \"sellstartdate\", \"sellenddate\", \"discontinueddate\", \"rowguid\", \"modifieddate\")\nvalues ("), Fragment.encode(ProductId.pgType, unsaved.productid), Fragment.of("::int4, "), Fragment.encode(Name.pgType, unsaved.name), Fragment.of("::varchar, "), Fragment.encode(PgTypes.text, unsaved.productnumber), Fragment.of(", "), Fragment.encode(Flag.pgType, unsaved.makeflag), Fragment.of("::bool, "), Fragment.encode(Flag.pgType, unsaved.finishedgoodsflag), Fragment.of("::bool, "), Fragment.encode(PgTypes.text.opt(), unsaved.color), Fragment.of(", "), Fragment.encode(PgTypes.int2, unsaved.safetystocklevel), Fragment.of("::int2, "), Fragment.encode(PgTypes.int2, unsaved.reorderpoint), Fragment.of("::int2, "), Fragment.encode(PgTypes.numeric, unsaved.standardcost), Fragment.of("::numeric, "), Fragment.encode(PgTypes.numeric, unsaved.listprice), Fragment.of("::numeric, "), Fragment.encode(PgTypes.text.opt(), unsaved.size), Fragment.of(", "), Fragment.encode(UnitmeasureId.pgType.opt(), unsaved.sizeunitmeasurecode), Fragment.of("::bpchar, "), Fragment.encode(UnitmeasureId.pgType.opt(), unsaved.weightunitmeasurecode), Fragment.of("::bpchar, "), Fragment.encode(PgTypes.numeric.opt(), unsaved.weight), Fragment.of("::numeric, "), Fragment.encode(PgTypes.int4, unsaved.daystomanufacture), Fragment.of("::int4, "), Fragment.encode(PgTypes.bpchar.opt(), unsaved.productline), Fragment.of("::bpchar, "), Fragment.encode(PgTypes.bpchar.opt(), unsaved.`class`), Fragment.of("::bpchar, "), Fragment.encode(PgTypes.bpchar.opt(), unsaved.style), Fragment.of("::bpchar, "), Fragment.encode(ProductsubcategoryId.pgType.opt(), unsaved.productsubcategoryid), Fragment.of("::int4, "), Fragment.encode(ProductmodelId.pgType.opt(), unsaved.productmodelid), Fragment.of("::int4, "), Fragment.encode(PgTypes.timestamp, unsaved.sellstartdate), Fragment.of("::timestamp, "), Fragment.encode(PgTypes.timestamp.opt(), unsaved.sellenddate), Fragment.of("::timestamp, "), Fragment.encode(PgTypes.timestamp.opt(), unsaved.discontinueddate), Fragment.of("::timestamp, "), Fragment.encode(PgTypes.uuid, unsaved.rowguid), Fragment.of("::uuid, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.of("::timestamp)\nRETURNING \"productid\", \"name\", \"productnumber\", \"makeflag\", \"finishedgoodsflag\", \"color\", \"safetystocklevel\", \"reorderpoint\", \"standardcost\", \"listprice\", \"size\", \"sizeunitmeasurecode\", \"weightunitmeasurecode\", \"weight\", \"daystomanufacture\", \"productline\", \"class\", \"style\", \"productsubcategoryid\", \"productmodelid\", \"sellstartdate\", \"sellenddate\", \"discontinueddate\", \"rowguid\", \"modifieddate\"\n"))
+    .updateReturning(ProductRow.rowCodec.exactlyOne()).run(c)
 
   override fun insert(
     unsaved: ProductRowUnsaved,
@@ -53,134 +52,134 @@ class ProductRepoImpl() : ProductRepo {
   ): ProductRow {
     val columns: ArrayList<Fragment> = ArrayList()
     val values: ArrayList<Fragment> = ArrayList()
-    columns.add(Fragment.lit("\"name\""))
-    values.add(Fragment.interpolate(Fragment.encode(Name.pgType, unsaved.name), Fragment.lit("::varchar")))
-    columns.add(Fragment.lit("\"productnumber\""))
-    values.add(Fragment.interpolate(Fragment.encode(PgTypes.text, unsaved.productnumber), Fragment.lit("")))
-    columns.add(Fragment.lit("\"color\""))
-    values.add(Fragment.interpolate(Fragment.encode(PgTypes.text.nullable(), unsaved.color), Fragment.lit("")))
-    columns.add(Fragment.lit("\"safetystocklevel\""))
-    values.add(Fragment.interpolate(Fragment.encode(KotlinDbTypes.PgTypes.int2, unsaved.safetystocklevel), Fragment.lit("::int2")))
-    columns.add(Fragment.lit("\"reorderpoint\""))
-    values.add(Fragment.interpolate(Fragment.encode(KotlinDbTypes.PgTypes.int2, unsaved.reorderpoint), Fragment.lit("::int2")))
-    columns.add(Fragment.lit("\"standardcost\""))
-    values.add(Fragment.interpolate(Fragment.encode(PgTypes.numeric, unsaved.standardcost), Fragment.lit("::numeric")))
-    columns.add(Fragment.lit("\"listprice\""))
-    values.add(Fragment.interpolate(Fragment.encode(PgTypes.numeric, unsaved.listprice), Fragment.lit("::numeric")))
-    columns.add(Fragment.lit("\"size\""))
-    values.add(Fragment.interpolate(Fragment.encode(PgTypes.text.nullable(), unsaved.size), Fragment.lit("")))
-    columns.add(Fragment.lit("\"sizeunitmeasurecode\""))
-    values.add(Fragment.interpolate(Fragment.encode(UnitmeasureId.pgType.nullable(), unsaved.sizeunitmeasurecode), Fragment.lit("::bpchar")))
-    columns.add(Fragment.lit("\"weightunitmeasurecode\""))
-    values.add(Fragment.interpolate(Fragment.encode(UnitmeasureId.pgType.nullable(), unsaved.weightunitmeasurecode), Fragment.lit("::bpchar")))
-    columns.add(Fragment.lit("\"weight\""))
-    values.add(Fragment.interpolate(Fragment.encode(PgTypes.numeric.nullable(), unsaved.weight), Fragment.lit("::numeric")))
-    columns.add(Fragment.lit("\"daystomanufacture\""))
-    values.add(Fragment.interpolate(Fragment.encode(KotlinDbTypes.PgTypes.int4, unsaved.daystomanufacture), Fragment.lit("::int4")))
-    columns.add(Fragment.lit("\"productline\""))
-    values.add(Fragment.interpolate(Fragment.encode(PgTypes.bpchar.nullable(), unsaved.productline), Fragment.lit("::bpchar")))
-    columns.add(Fragment.lit("\"class\""))
-    values.add(Fragment.interpolate(Fragment.encode(PgTypes.bpchar.nullable(), unsaved.`class`), Fragment.lit("::bpchar")))
-    columns.add(Fragment.lit("\"style\""))
-    values.add(Fragment.interpolate(Fragment.encode(PgTypes.bpchar.nullable(), unsaved.style), Fragment.lit("::bpchar")))
-    columns.add(Fragment.lit("\"productsubcategoryid\""))
-    values.add(Fragment.interpolate(Fragment.encode(ProductsubcategoryId.pgType.nullable(), unsaved.productsubcategoryid), Fragment.lit("::int4")))
-    columns.add(Fragment.lit("\"productmodelid\""))
-    values.add(Fragment.interpolate(Fragment.encode(ProductmodelId.pgType.nullable(), unsaved.productmodelid), Fragment.lit("::int4")))
-    columns.add(Fragment.lit("\"sellstartdate\""))
-    values.add(Fragment.interpolate(Fragment.encode(PgTypes.timestamp, unsaved.sellstartdate), Fragment.lit("::timestamp")))
-    columns.add(Fragment.lit("\"sellenddate\""))
-    values.add(Fragment.interpolate(Fragment.encode(PgTypes.timestamp.nullable(), unsaved.sellenddate), Fragment.lit("::timestamp")))
-    columns.add(Fragment.lit("\"discontinueddate\""))
-    values.add(Fragment.interpolate(Fragment.encode(PgTypes.timestamp.nullable(), unsaved.discontinueddate), Fragment.lit("::timestamp")))
+    columns.add(Fragment.of("\"name\""))
+    values.add(Fragment.concat(Fragment.encode(Name.pgType, unsaved.name), Fragment.of("::varchar")))
+    columns.add(Fragment.of("\"productnumber\""))
+    values.add(Fragment.concat(Fragment.encode(PgTypes.text, unsaved.productnumber), Fragment.of("")))
+    columns.add(Fragment.of("\"color\""))
+    values.add(Fragment.concat(Fragment.encode(PgTypes.text.opt(), unsaved.color), Fragment.of("")))
+    columns.add(Fragment.of("\"safetystocklevel\""))
+    values.add(Fragment.concat(Fragment.encode(PgTypes.int2, unsaved.safetystocklevel), Fragment.of("::int2")))
+    columns.add(Fragment.of("\"reorderpoint\""))
+    values.add(Fragment.concat(Fragment.encode(PgTypes.int2, unsaved.reorderpoint), Fragment.of("::int2")))
+    columns.add(Fragment.of("\"standardcost\""))
+    values.add(Fragment.concat(Fragment.encode(PgTypes.numeric, unsaved.standardcost), Fragment.of("::numeric")))
+    columns.add(Fragment.of("\"listprice\""))
+    values.add(Fragment.concat(Fragment.encode(PgTypes.numeric, unsaved.listprice), Fragment.of("::numeric")))
+    columns.add(Fragment.of("\"size\""))
+    values.add(Fragment.concat(Fragment.encode(PgTypes.text.opt(), unsaved.size), Fragment.of("")))
+    columns.add(Fragment.of("\"sizeunitmeasurecode\""))
+    values.add(Fragment.concat(Fragment.encode(UnitmeasureId.pgType.opt(), unsaved.sizeunitmeasurecode), Fragment.of("::bpchar")))
+    columns.add(Fragment.of("\"weightunitmeasurecode\""))
+    values.add(Fragment.concat(Fragment.encode(UnitmeasureId.pgType.opt(), unsaved.weightunitmeasurecode), Fragment.of("::bpchar")))
+    columns.add(Fragment.of("\"weight\""))
+    values.add(Fragment.concat(Fragment.encode(PgTypes.numeric.opt(), unsaved.weight), Fragment.of("::numeric")))
+    columns.add(Fragment.of("\"daystomanufacture\""))
+    values.add(Fragment.concat(Fragment.encode(PgTypes.int4, unsaved.daystomanufacture), Fragment.of("::int4")))
+    columns.add(Fragment.of("\"productline\""))
+    values.add(Fragment.concat(Fragment.encode(PgTypes.bpchar.opt(), unsaved.productline), Fragment.of("::bpchar")))
+    columns.add(Fragment.of("\"class\""))
+    values.add(Fragment.concat(Fragment.encode(PgTypes.bpchar.opt(), unsaved.`class`), Fragment.of("::bpchar")))
+    columns.add(Fragment.of("\"style\""))
+    values.add(Fragment.concat(Fragment.encode(PgTypes.bpchar.opt(), unsaved.style), Fragment.of("::bpchar")))
+    columns.add(Fragment.of("\"productsubcategoryid\""))
+    values.add(Fragment.concat(Fragment.encode(ProductsubcategoryId.pgType.opt(), unsaved.productsubcategoryid), Fragment.of("::int4")))
+    columns.add(Fragment.of("\"productmodelid\""))
+    values.add(Fragment.concat(Fragment.encode(ProductmodelId.pgType.opt(), unsaved.productmodelid), Fragment.of("::int4")))
+    columns.add(Fragment.of("\"sellstartdate\""))
+    values.add(Fragment.concat(Fragment.encode(PgTypes.timestamp, unsaved.sellstartdate), Fragment.of("::timestamp")))
+    columns.add(Fragment.of("\"sellenddate\""))
+    values.add(Fragment.concat(Fragment.encode(PgTypes.timestamp.opt(), unsaved.sellenddate), Fragment.of("::timestamp")))
+    columns.add(Fragment.of("\"discontinueddate\""))
+    values.add(Fragment.concat(Fragment.encode(PgTypes.timestamp.opt(), unsaved.discontinueddate), Fragment.of("::timestamp")))
     unsaved.productid.visit(
       {  },
-      { value -> columns.add(Fragment.lit("\"productid\""))
-      values.add(Fragment.interpolate(Fragment.encode(ProductId.pgType, value), Fragment.lit("::int4"))) }
+      { value -> columns.add(Fragment.of("\"productid\""))
+      values.add(Fragment.concat(Fragment.encode(ProductId.pgType, value), Fragment.of("::int4"))) }
     );
     unsaved.makeflag.visit(
       {  },
-      { value -> columns.add(Fragment.lit("\"makeflag\""))
-      values.add(Fragment.interpolate(Fragment.encode(Flag.pgType, value), Fragment.lit("::bool"))) }
+      { value -> columns.add(Fragment.of("\"makeflag\""))
+      values.add(Fragment.concat(Fragment.encode(Flag.pgType, value), Fragment.of("::bool"))) }
     );
     unsaved.finishedgoodsflag.visit(
       {  },
-      { value -> columns.add(Fragment.lit("\"finishedgoodsflag\""))
-      values.add(Fragment.interpolate(Fragment.encode(Flag.pgType, value), Fragment.lit("::bool"))) }
+      { value -> columns.add(Fragment.of("\"finishedgoodsflag\""))
+      values.add(Fragment.concat(Fragment.encode(Flag.pgType, value), Fragment.of("::bool"))) }
     );
     unsaved.rowguid.visit(
       {  },
-      { value -> columns.add(Fragment.lit("\"rowguid\""))
-      values.add(Fragment.interpolate(Fragment.encode(PgTypes.uuid, value), Fragment.lit("::uuid"))) }
+      { value -> columns.add(Fragment.of("\"rowguid\""))
+      values.add(Fragment.concat(Fragment.encode(PgTypes.uuid, value), Fragment.of("::uuid"))) }
     );
     unsaved.modifieddate.visit(
       {  },
-      { value -> columns.add(Fragment.lit("\"modifieddate\""))
-      values.add(Fragment.interpolate(Fragment.encode(PgTypes.timestamp, value), Fragment.lit("::timestamp"))) }
+      { value -> columns.add(Fragment.of("\"modifieddate\""))
+      values.add(Fragment.concat(Fragment.encode(PgTypes.timestamp, value), Fragment.of("::timestamp"))) }
     );
-    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into \"production\".\"product\"("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nRETURNING \"productid\", \"name\", \"productnumber\", \"makeflag\", \"finishedgoodsflag\", \"color\", \"safetystocklevel\", \"reorderpoint\", \"standardcost\", \"listprice\", \"size\", \"sizeunitmeasurecode\", \"weightunitmeasurecode\", \"weight\", \"daystomanufacture\", \"productline\", \"class\", \"style\", \"productsubcategoryid\", \"productmodelid\", \"sellstartdate\", \"sellenddate\", \"discontinueddate\", \"rowguid\", \"modifieddate\"\n"))
-    return q.updateReturning(ProductRow._rowParser.exactlyOne()).runUnchecked(c)
+    val q: Fragment = Fragment.concat(Fragment.of("insert into \"production\".\"product\"("), Fragment.comma(columns.toMutableList()), Fragment.of(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.of(")\nRETURNING \"productid\", \"name\", \"productnumber\", \"makeflag\", \"finishedgoodsflag\", \"color\", \"safetystocklevel\", \"reorderpoint\", \"standardcost\", \"listprice\", \"size\", \"sizeunitmeasurecode\", \"weightunitmeasurecode\", \"weight\", \"daystomanufacture\", \"productline\", \"class\", \"style\", \"productsubcategoryid\", \"productmodelid\", \"sellstartdate\", \"sellenddate\", \"discontinueddate\", \"rowguid\", \"modifieddate\"\n"))
+    return q.updateReturning(ProductRow.rowCodec.exactlyOne()).run(c)
   }
 
   override fun insertStreaming(
     unsaved: Iterator<ProductRow>,
     batchSize: Int,
     c: Connection
-  ): Long = streamingInsert.insertUnchecked("COPY \"production\".\"product\"(\"productid\", \"name\", \"productnumber\", \"makeflag\", \"finishedgoodsflag\", \"color\", \"safetystocklevel\", \"reorderpoint\", \"standardcost\", \"listprice\", \"size\", \"sizeunitmeasurecode\", \"weightunitmeasurecode\", \"weight\", \"daystomanufacture\", \"productline\", \"class\", \"style\", \"productsubcategoryid\", \"productmodelid\", \"sellstartdate\", \"sellenddate\", \"discontinueddate\", \"rowguid\", \"modifieddate\") FROM STDIN", batchSize, unsaved, c, ProductRow.pgText)
+  ): kotlin.Long = StreamingInsert.of("COPY \"production\".\"product\"(\"productid\", \"name\", \"productnumber\", \"makeflag\", \"finishedgoodsflag\", \"color\", \"safetystocklevel\", \"reorderpoint\", \"standardcost\", \"listprice\", \"size\", \"sizeunitmeasurecode\", \"weightunitmeasurecode\", \"weight\", \"daystomanufacture\", \"productline\", \"class\", \"style\", \"productsubcategoryid\", \"productmodelid\", \"sellstartdate\", \"sellenddate\", \"discontinueddate\", \"rowguid\", \"modifieddate\") FROM STDIN", batchSize, unsaved, ProductRow.pgText).run(c)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
   override fun insertUnsavedStreaming(
     unsaved: Iterator<ProductRowUnsaved>,
     batchSize: Int,
     c: Connection
-  ): Long = streamingInsert.insertUnchecked("COPY \"production\".\"product\"(\"name\", \"productnumber\", \"color\", \"safetystocklevel\", \"reorderpoint\", \"standardcost\", \"listprice\", \"size\", \"sizeunitmeasurecode\", \"weightunitmeasurecode\", \"weight\", \"daystomanufacture\", \"productline\", \"class\", \"style\", \"productsubcategoryid\", \"productmodelid\", \"sellstartdate\", \"sellenddate\", \"discontinueddate\", \"productid\", \"makeflag\", \"finishedgoodsflag\", \"rowguid\", \"modifieddate\") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')", batchSize, unsaved, c, ProductRowUnsaved.pgText)
+  ): kotlin.Long = StreamingInsert.of("COPY \"production\".\"product\"(\"name\", \"productnumber\", \"color\", \"safetystocklevel\", \"reorderpoint\", \"standardcost\", \"listprice\", \"size\", \"sizeunitmeasurecode\", \"weightunitmeasurecode\", \"weight\", \"daystomanufacture\", \"productline\", \"class\", \"style\", \"productsubcategoryid\", \"productmodelid\", \"sellstartdate\", \"sellenddate\", \"discontinueddate\", \"productid\", \"makeflag\", \"finishedgoodsflag\", \"rowguid\", \"modifieddate\") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')", batchSize, unsaved, ProductRowUnsaved.pgText).run(c)
 
-  override fun select(): SelectBuilder<ProductFields, ProductRow> = SelectBuilder.of("\"production\".\"product\"", ProductFields.structure, ProductRow._rowParser, Dialect.POSTGRESQL)
+  override fun select(): SelectBuilder<ProductFields, ProductRow> = SelectBuilder.of("\"production\".\"product\"", ProductFields.structure, ProductRow.rowCodec, Dialect.POSTGRESQL)
 
-  override fun selectAll(c: Connection): List<ProductRow> = Fragment.interpolate(Fragment.lit("select \"productid\", \"name\", \"productnumber\", \"makeflag\", \"finishedgoodsflag\", \"color\", \"safetystocklevel\", \"reorderpoint\", \"standardcost\", \"listprice\", \"size\", \"sizeunitmeasurecode\", \"weightunitmeasurecode\", \"weight\", \"daystomanufacture\", \"productline\", \"class\", \"style\", \"productsubcategoryid\", \"productmodelid\", \"sellstartdate\", \"sellenddate\", \"discontinueddate\", \"rowguid\", \"modifieddate\"\nfrom \"production\".\"product\"\n")).query(ProductRow._rowParser.all()).runUnchecked(c)
+  override fun selectAll(c: ConnectionRead): List<ProductRow> = Fragment.concat(Fragment.of("select \"productid\", \"name\", \"productnumber\", \"makeflag\", \"finishedgoodsflag\", \"color\", \"safetystocklevel\", \"reorderpoint\", \"standardcost\", \"listprice\", \"size\", \"sizeunitmeasurecode\", \"weightunitmeasurecode\", \"weight\", \"daystomanufacture\", \"productline\", \"class\", \"style\", \"productsubcategoryid\", \"productmodelid\", \"sellstartdate\", \"sellenddate\", \"discontinueddate\", \"rowguid\", \"modifieddate\"\nfrom \"production\".\"product\"\n")).query(ProductRow.rowCodec.all()).run(c)
 
   override fun selectById(
     productid: ProductId,
-    c: Connection
-  ): ProductRow? = Fragment.interpolate(Fragment.lit("select \"productid\", \"name\", \"productnumber\", \"makeflag\", \"finishedgoodsflag\", \"color\", \"safetystocklevel\", \"reorderpoint\", \"standardcost\", \"listprice\", \"size\", \"sizeunitmeasurecode\", \"weightunitmeasurecode\", \"weight\", \"daystomanufacture\", \"productline\", \"class\", \"style\", \"productsubcategoryid\", \"productmodelid\", \"sellstartdate\", \"sellenddate\", \"discontinueddate\", \"rowguid\", \"modifieddate\"\nfrom \"production\".\"product\"\nwhere \"productid\" = "), Fragment.encode(ProductId.pgType, productid), Fragment.lit("")).query(ProductRow._rowParser.first()).runUnchecked(c)
+    c: ConnectionRead
+  ): ProductRow? = Fragment.concat(Fragment.of("select \"productid\", \"name\", \"productnumber\", \"makeflag\", \"finishedgoodsflag\", \"color\", \"safetystocklevel\", \"reorderpoint\", \"standardcost\", \"listprice\", \"size\", \"sizeunitmeasurecode\", \"weightunitmeasurecode\", \"weight\", \"daystomanufacture\", \"productline\", \"class\", \"style\", \"productsubcategoryid\", \"productmodelid\", \"sellstartdate\", \"sellenddate\", \"discontinueddate\", \"rowguid\", \"modifieddate\"\nfrom \"production\".\"product\"\nwhere \"productid\" = "), Fragment.encode(ProductId.pgType, productid), Fragment.of("")).query(ProductRow.rowCodec.first()).run(c)
 
   override fun selectByIds(
-    productids: Array<ProductId>,
-    c: Connection
-  ): List<ProductRow> = Fragment.interpolate(Fragment.lit("select \"productid\", \"name\", \"productnumber\", \"makeflag\", \"finishedgoodsflag\", \"color\", \"safetystocklevel\", \"reorderpoint\", \"standardcost\", \"listprice\", \"size\", \"sizeunitmeasurecode\", \"weightunitmeasurecode\", \"weight\", \"daystomanufacture\", \"productline\", \"class\", \"style\", \"productsubcategoryid\", \"productmodelid\", \"sellstartdate\", \"sellenddate\", \"discontinueddate\", \"rowguid\", \"modifieddate\"\nfrom \"production\".\"product\"\nwhere \"productid\" = ANY("), Fragment.encode(ProductId.pgTypeArray, productids), Fragment.lit(")")).query(ProductRow._rowParser.all()).runUnchecked(c)
+    productids: List<ProductId>,
+    c: ConnectionRead
+  ): List<ProductRow> = Fragment.concat(Fragment.of("select \"productid\", \"name\", \"productnumber\", \"makeflag\", \"finishedgoodsflag\", \"color\", \"safetystocklevel\", \"reorderpoint\", \"standardcost\", \"listprice\", \"size\", \"sizeunitmeasurecode\", \"weightunitmeasurecode\", \"weight\", \"daystomanufacture\", \"productline\", \"class\", \"style\", \"productsubcategoryid\", \"productmodelid\", \"sellstartdate\", \"sellenddate\", \"discontinueddate\", \"rowguid\", \"modifieddate\"\nfrom \"production\".\"product\"\nwhere \"productid\" = ANY("), Fragment.encode(ProductId.pgType.array(), productids), Fragment.of(")")).query(ProductRow.rowCodec.all()).run(c)
 
   override fun selectByIdsTracked(
-    productids: Array<ProductId>,
-    c: Connection
+    productids: List<ProductId>,
+    c: ConnectionRead
   ): Map<ProductId, ProductRow> {
     val ret: MutableMap<ProductId, ProductRow> = mutableMapOf<ProductId, ProductRow>()
     selectByIds(productids, c).forEach({ row -> ret.put(row.productid, row) })
     return ret.toMap()
   }
 
-  override fun update(): UpdateBuilder<ProductFields, ProductRow> = UpdateBuilder.of("\"production\".\"product\"", ProductFields.structure, ProductRow._rowParser, Dialect.POSTGRESQL)
+  override fun update(): UpdateBuilder<ProductFields, ProductRow> = UpdateBuilder.of("\"production\".\"product\"", ProductFields.structure, ProductRow.rowCodec, Dialect.POSTGRESQL)
 
   override fun update(
     row: ProductRow,
     c: Connection
-  ): Boolean {
+  ): kotlin.Boolean {
     val productid: ProductId = row.productid
-    return Fragment.interpolate(Fragment.lit("update \"production\".\"product\"\nset \"name\" = "), Fragment.encode(Name.pgType, row.name), Fragment.lit("::varchar,\n\"productnumber\" = "), Fragment.encode(PgTypes.text, row.productnumber), Fragment.lit(",\n\"makeflag\" = "), Fragment.encode(Flag.pgType, row.makeflag), Fragment.lit("::bool,\n\"finishedgoodsflag\" = "), Fragment.encode(Flag.pgType, row.finishedgoodsflag), Fragment.lit("::bool,\n\"color\" = "), Fragment.encode(PgTypes.text.nullable(), row.color), Fragment.lit(",\n\"safetystocklevel\" = "), Fragment.encode(KotlinDbTypes.PgTypes.int2, row.safetystocklevel), Fragment.lit("::int2,\n\"reorderpoint\" = "), Fragment.encode(KotlinDbTypes.PgTypes.int2, row.reorderpoint), Fragment.lit("::int2,\n\"standardcost\" = "), Fragment.encode(PgTypes.numeric, row.standardcost), Fragment.lit("::numeric,\n\"listprice\" = "), Fragment.encode(PgTypes.numeric, row.listprice), Fragment.lit("::numeric,\n\"size\" = "), Fragment.encode(PgTypes.text.nullable(), row.size), Fragment.lit(",\n\"sizeunitmeasurecode\" = "), Fragment.encode(UnitmeasureId.pgType.nullable(), row.sizeunitmeasurecode), Fragment.lit("::bpchar,\n\"weightunitmeasurecode\" = "), Fragment.encode(UnitmeasureId.pgType.nullable(), row.weightunitmeasurecode), Fragment.lit("::bpchar,\n\"weight\" = "), Fragment.encode(PgTypes.numeric.nullable(), row.weight), Fragment.lit("::numeric,\n\"daystomanufacture\" = "), Fragment.encode(KotlinDbTypes.PgTypes.int4, row.daystomanufacture), Fragment.lit("::int4,\n\"productline\" = "), Fragment.encode(PgTypes.bpchar.nullable(), row.productline), Fragment.lit("::bpchar,\n\"class\" = "), Fragment.encode(PgTypes.bpchar.nullable(), row.`class`), Fragment.lit("::bpchar,\n\"style\" = "), Fragment.encode(PgTypes.bpchar.nullable(), row.style), Fragment.lit("::bpchar,\n\"productsubcategoryid\" = "), Fragment.encode(ProductsubcategoryId.pgType.nullable(), row.productsubcategoryid), Fragment.lit("::int4,\n\"productmodelid\" = "), Fragment.encode(ProductmodelId.pgType.nullable(), row.productmodelid), Fragment.lit("::int4,\n\"sellstartdate\" = "), Fragment.encode(PgTypes.timestamp, row.sellstartdate), Fragment.lit("::timestamp,\n\"sellenddate\" = "), Fragment.encode(PgTypes.timestamp.nullable(), row.sellenddate), Fragment.lit("::timestamp,\n\"discontinueddate\" = "), Fragment.encode(PgTypes.timestamp.nullable(), row.discontinueddate), Fragment.lit("::timestamp,\n\"rowguid\" = "), Fragment.encode(PgTypes.uuid, row.rowguid), Fragment.lit("::uuid,\n\"modifieddate\" = "), Fragment.encode(PgTypes.timestamp, row.modifieddate), Fragment.lit("::timestamp\nwhere \"productid\" = "), Fragment.encode(ProductId.pgType, productid), Fragment.lit("")).update().runUnchecked(c) > 0
+    return Fragment.concat(Fragment.of("update \"production\".\"product\"\nset \"name\" = "), Fragment.encode(Name.pgType, row.name), Fragment.of("::varchar,\n\"productnumber\" = "), Fragment.encode(PgTypes.text, row.productnumber), Fragment.of(",\n\"makeflag\" = "), Fragment.encode(Flag.pgType, row.makeflag), Fragment.of("::bool,\n\"finishedgoodsflag\" = "), Fragment.encode(Flag.pgType, row.finishedgoodsflag), Fragment.of("::bool,\n\"color\" = "), Fragment.encode(PgTypes.text.opt(), row.color), Fragment.of(",\n\"safetystocklevel\" = "), Fragment.encode(PgTypes.int2, row.safetystocklevel), Fragment.of("::int2,\n\"reorderpoint\" = "), Fragment.encode(PgTypes.int2, row.reorderpoint), Fragment.of("::int2,\n\"standardcost\" = "), Fragment.encode(PgTypes.numeric, row.standardcost), Fragment.of("::numeric,\n\"listprice\" = "), Fragment.encode(PgTypes.numeric, row.listprice), Fragment.of("::numeric,\n\"size\" = "), Fragment.encode(PgTypes.text.opt(), row.size), Fragment.of(",\n\"sizeunitmeasurecode\" = "), Fragment.encode(UnitmeasureId.pgType.opt(), row.sizeunitmeasurecode), Fragment.of("::bpchar,\n\"weightunitmeasurecode\" = "), Fragment.encode(UnitmeasureId.pgType.opt(), row.weightunitmeasurecode), Fragment.of("::bpchar,\n\"weight\" = "), Fragment.encode(PgTypes.numeric.opt(), row.weight), Fragment.of("::numeric,\n\"daystomanufacture\" = "), Fragment.encode(PgTypes.int4, row.daystomanufacture), Fragment.of("::int4,\n\"productline\" = "), Fragment.encode(PgTypes.bpchar.opt(), row.productline), Fragment.of("::bpchar,\n\"class\" = "), Fragment.encode(PgTypes.bpchar.opt(), row.`class`), Fragment.of("::bpchar,\n\"style\" = "), Fragment.encode(PgTypes.bpchar.opt(), row.style), Fragment.of("::bpchar,\n\"productsubcategoryid\" = "), Fragment.encode(ProductsubcategoryId.pgType.opt(), row.productsubcategoryid), Fragment.of("::int4,\n\"productmodelid\" = "), Fragment.encode(ProductmodelId.pgType.opt(), row.productmodelid), Fragment.of("::int4,\n\"sellstartdate\" = "), Fragment.encode(PgTypes.timestamp, row.sellstartdate), Fragment.of("::timestamp,\n\"sellenddate\" = "), Fragment.encode(PgTypes.timestamp.opt(), row.sellenddate), Fragment.of("::timestamp,\n\"discontinueddate\" = "), Fragment.encode(PgTypes.timestamp.opt(), row.discontinueddate), Fragment.of("::timestamp,\n\"rowguid\" = "), Fragment.encode(PgTypes.uuid, row.rowguid), Fragment.of("::uuid,\n\"modifieddate\" = "), Fragment.encode(PgTypes.timestamp, row.modifieddate), Fragment.of("::timestamp\nwhere \"productid\" = "), Fragment.encode(ProductId.pgType, productid), Fragment.of("")).update().run(c) > 0
   }
 
   override fun upsert(
     unsaved: ProductRow,
     c: Connection
-  ): ProductRow = Fragment.interpolate(Fragment.lit("insert into \"production\".\"product\"(\"productid\", \"name\", \"productnumber\", \"makeflag\", \"finishedgoodsflag\", \"color\", \"safetystocklevel\", \"reorderpoint\", \"standardcost\", \"listprice\", \"size\", \"sizeunitmeasurecode\", \"weightunitmeasurecode\", \"weight\", \"daystomanufacture\", \"productline\", \"class\", \"style\", \"productsubcategoryid\", \"productmodelid\", \"sellstartdate\", \"sellenddate\", \"discontinueddate\", \"rowguid\", \"modifieddate\")\nvalues ("), Fragment.encode(ProductId.pgType, unsaved.productid), Fragment.lit("::int4, "), Fragment.encode(Name.pgType, unsaved.name), Fragment.lit("::varchar, "), Fragment.encode(PgTypes.text, unsaved.productnumber), Fragment.lit(", "), Fragment.encode(Flag.pgType, unsaved.makeflag), Fragment.lit("::bool, "), Fragment.encode(Flag.pgType, unsaved.finishedgoodsflag), Fragment.lit("::bool, "), Fragment.encode(PgTypes.text.nullable(), unsaved.color), Fragment.lit(", "), Fragment.encode(KotlinDbTypes.PgTypes.int2, unsaved.safetystocklevel), Fragment.lit("::int2, "), Fragment.encode(KotlinDbTypes.PgTypes.int2, unsaved.reorderpoint), Fragment.lit("::int2, "), Fragment.encode(PgTypes.numeric, unsaved.standardcost), Fragment.lit("::numeric, "), Fragment.encode(PgTypes.numeric, unsaved.listprice), Fragment.lit("::numeric, "), Fragment.encode(PgTypes.text.nullable(), unsaved.size), Fragment.lit(", "), Fragment.encode(UnitmeasureId.pgType.nullable(), unsaved.sizeunitmeasurecode), Fragment.lit("::bpchar, "), Fragment.encode(UnitmeasureId.pgType.nullable(), unsaved.weightunitmeasurecode), Fragment.lit("::bpchar, "), Fragment.encode(PgTypes.numeric.nullable(), unsaved.weight), Fragment.lit("::numeric, "), Fragment.encode(KotlinDbTypes.PgTypes.int4, unsaved.daystomanufacture), Fragment.lit("::int4, "), Fragment.encode(PgTypes.bpchar.nullable(), unsaved.productline), Fragment.lit("::bpchar, "), Fragment.encode(PgTypes.bpchar.nullable(), unsaved.`class`), Fragment.lit("::bpchar, "), Fragment.encode(PgTypes.bpchar.nullable(), unsaved.style), Fragment.lit("::bpchar, "), Fragment.encode(ProductsubcategoryId.pgType.nullable(), unsaved.productsubcategoryid), Fragment.lit("::int4, "), Fragment.encode(ProductmodelId.pgType.nullable(), unsaved.productmodelid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.timestamp, unsaved.sellstartdate), Fragment.lit("::timestamp, "), Fragment.encode(PgTypes.timestamp.nullable(), unsaved.sellenddate), Fragment.lit("::timestamp, "), Fragment.encode(PgTypes.timestamp.nullable(), unsaved.discontinueddate), Fragment.lit("::timestamp, "), Fragment.encode(PgTypes.uuid, unsaved.rowguid), Fragment.lit("::uuid, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\non conflict (\"productid\")\ndo update set\n  \"name\" = EXCLUDED.\"name\",\n\"productnumber\" = EXCLUDED.\"productnumber\",\n\"makeflag\" = EXCLUDED.\"makeflag\",\n\"finishedgoodsflag\" = EXCLUDED.\"finishedgoodsflag\",\n\"color\" = EXCLUDED.\"color\",\n\"safetystocklevel\" = EXCLUDED.\"safetystocklevel\",\n\"reorderpoint\" = EXCLUDED.\"reorderpoint\",\n\"standardcost\" = EXCLUDED.\"standardcost\",\n\"listprice\" = EXCLUDED.\"listprice\",\n\"size\" = EXCLUDED.\"size\",\n\"sizeunitmeasurecode\" = EXCLUDED.\"sizeunitmeasurecode\",\n\"weightunitmeasurecode\" = EXCLUDED.\"weightunitmeasurecode\",\n\"weight\" = EXCLUDED.\"weight\",\n\"daystomanufacture\" = EXCLUDED.\"daystomanufacture\",\n\"productline\" = EXCLUDED.\"productline\",\n\"class\" = EXCLUDED.\"class\",\n\"style\" = EXCLUDED.\"style\",\n\"productsubcategoryid\" = EXCLUDED.\"productsubcategoryid\",\n\"productmodelid\" = EXCLUDED.\"productmodelid\",\n\"sellstartdate\" = EXCLUDED.\"sellstartdate\",\n\"sellenddate\" = EXCLUDED.\"sellenddate\",\n\"discontinueddate\" = EXCLUDED.\"discontinueddate\",\n\"rowguid\" = EXCLUDED.\"rowguid\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\nreturning \"productid\", \"name\", \"productnumber\", \"makeflag\", \"finishedgoodsflag\", \"color\", \"safetystocklevel\", \"reorderpoint\", \"standardcost\", \"listprice\", \"size\", \"sizeunitmeasurecode\", \"weightunitmeasurecode\", \"weight\", \"daystomanufacture\", \"productline\", \"class\", \"style\", \"productsubcategoryid\", \"productmodelid\", \"sellstartdate\", \"sellenddate\", \"discontinueddate\", \"rowguid\", \"modifieddate\""))
-    .updateReturning(ProductRow._rowParser.exactlyOne())
-    .runUnchecked(c)
+  ): ProductRow = Fragment.concat(Fragment.of("insert into \"production\".\"product\"(\"productid\", \"name\", \"productnumber\", \"makeflag\", \"finishedgoodsflag\", \"color\", \"safetystocklevel\", \"reorderpoint\", \"standardcost\", \"listprice\", \"size\", \"sizeunitmeasurecode\", \"weightunitmeasurecode\", \"weight\", \"daystomanufacture\", \"productline\", \"class\", \"style\", \"productsubcategoryid\", \"productmodelid\", \"sellstartdate\", \"sellenddate\", \"discontinueddate\", \"rowguid\", \"modifieddate\")\nvalues ("), Fragment.encode(ProductId.pgType, unsaved.productid), Fragment.of("::int4, "), Fragment.encode(Name.pgType, unsaved.name), Fragment.of("::varchar, "), Fragment.encode(PgTypes.text, unsaved.productnumber), Fragment.of(", "), Fragment.encode(Flag.pgType, unsaved.makeflag), Fragment.of("::bool, "), Fragment.encode(Flag.pgType, unsaved.finishedgoodsflag), Fragment.of("::bool, "), Fragment.encode(PgTypes.text.opt(), unsaved.color), Fragment.of(", "), Fragment.encode(PgTypes.int2, unsaved.safetystocklevel), Fragment.of("::int2, "), Fragment.encode(PgTypes.int2, unsaved.reorderpoint), Fragment.of("::int2, "), Fragment.encode(PgTypes.numeric, unsaved.standardcost), Fragment.of("::numeric, "), Fragment.encode(PgTypes.numeric, unsaved.listprice), Fragment.of("::numeric, "), Fragment.encode(PgTypes.text.opt(), unsaved.size), Fragment.of(", "), Fragment.encode(UnitmeasureId.pgType.opt(), unsaved.sizeunitmeasurecode), Fragment.of("::bpchar, "), Fragment.encode(UnitmeasureId.pgType.opt(), unsaved.weightunitmeasurecode), Fragment.of("::bpchar, "), Fragment.encode(PgTypes.numeric.opt(), unsaved.weight), Fragment.of("::numeric, "), Fragment.encode(PgTypes.int4, unsaved.daystomanufacture), Fragment.of("::int4, "), Fragment.encode(PgTypes.bpchar.opt(), unsaved.productline), Fragment.of("::bpchar, "), Fragment.encode(PgTypes.bpchar.opt(), unsaved.`class`), Fragment.of("::bpchar, "), Fragment.encode(PgTypes.bpchar.opt(), unsaved.style), Fragment.of("::bpchar, "), Fragment.encode(ProductsubcategoryId.pgType.opt(), unsaved.productsubcategoryid), Fragment.of("::int4, "), Fragment.encode(ProductmodelId.pgType.opt(), unsaved.productmodelid), Fragment.of("::int4, "), Fragment.encode(PgTypes.timestamp, unsaved.sellstartdate), Fragment.of("::timestamp, "), Fragment.encode(PgTypes.timestamp.opt(), unsaved.sellenddate), Fragment.of("::timestamp, "), Fragment.encode(PgTypes.timestamp.opt(), unsaved.discontinueddate), Fragment.of("::timestamp, "), Fragment.encode(PgTypes.uuid, unsaved.rowguid), Fragment.of("::uuid, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.of("::timestamp)\non conflict (\"productid\")\ndo update set\n  \"name\" = EXCLUDED.\"name\",\n\"productnumber\" = EXCLUDED.\"productnumber\",\n\"makeflag\" = EXCLUDED.\"makeflag\",\n\"finishedgoodsflag\" = EXCLUDED.\"finishedgoodsflag\",\n\"color\" = EXCLUDED.\"color\",\n\"safetystocklevel\" = EXCLUDED.\"safetystocklevel\",\n\"reorderpoint\" = EXCLUDED.\"reorderpoint\",\n\"standardcost\" = EXCLUDED.\"standardcost\",\n\"listprice\" = EXCLUDED.\"listprice\",\n\"size\" = EXCLUDED.\"size\",\n\"sizeunitmeasurecode\" = EXCLUDED.\"sizeunitmeasurecode\",\n\"weightunitmeasurecode\" = EXCLUDED.\"weightunitmeasurecode\",\n\"weight\" = EXCLUDED.\"weight\",\n\"daystomanufacture\" = EXCLUDED.\"daystomanufacture\",\n\"productline\" = EXCLUDED.\"productline\",\n\"class\" = EXCLUDED.\"class\",\n\"style\" = EXCLUDED.\"style\",\n\"productsubcategoryid\" = EXCLUDED.\"productsubcategoryid\",\n\"productmodelid\" = EXCLUDED.\"productmodelid\",\n\"sellstartdate\" = EXCLUDED.\"sellstartdate\",\n\"sellenddate\" = EXCLUDED.\"sellenddate\",\n\"discontinueddate\" = EXCLUDED.\"discontinueddate\",\n\"rowguid\" = EXCLUDED.\"rowguid\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\nreturning \"productid\", \"name\", \"productnumber\", \"makeflag\", \"finishedgoodsflag\", \"color\", \"safetystocklevel\", \"reorderpoint\", \"standardcost\", \"listprice\", \"size\", \"sizeunitmeasurecode\", \"weightunitmeasurecode\", \"weight\", \"daystomanufacture\", \"productline\", \"class\", \"style\", \"productsubcategoryid\", \"productmodelid\", \"sellstartdate\", \"sellenddate\", \"discontinueddate\", \"rowguid\", \"modifieddate\""))
+    .updateReturning(ProductRow.rowCodec.exactlyOne())
+    .run(c)
 
   override fun upsertBatch(
     unsaved: Iterator<ProductRow>,
     c: Connection
-  ): List<ProductRow> = Fragment.interpolate(Fragment.lit("insert into \"production\".\"product\"(\"productid\", \"name\", \"productnumber\", \"makeflag\", \"finishedgoodsflag\", \"color\", \"safetystocklevel\", \"reorderpoint\", \"standardcost\", \"listprice\", \"size\", \"sizeunitmeasurecode\", \"weightunitmeasurecode\", \"weight\", \"daystomanufacture\", \"productline\", \"class\", \"style\", \"productsubcategoryid\", \"productmodelid\", \"sellstartdate\", \"sellenddate\", \"discontinueddate\", \"rowguid\", \"modifieddate\")\nvalues (?::int4, ?::varchar, ?, ?::bool, ?::bool, ?, ?::int2, ?::int2, ?::numeric, ?::numeric, ?, ?::bpchar, ?::bpchar, ?::numeric, ?::int4, ?::bpchar, ?::bpchar, ?::bpchar, ?::int4, ?::int4, ?::timestamp, ?::timestamp, ?::timestamp, ?::uuid, ?::timestamp)\non conflict (\"productid\")\ndo update set\n  \"name\" = EXCLUDED.\"name\",\n\"productnumber\" = EXCLUDED.\"productnumber\",\n\"makeflag\" = EXCLUDED.\"makeflag\",\n\"finishedgoodsflag\" = EXCLUDED.\"finishedgoodsflag\",\n\"color\" = EXCLUDED.\"color\",\n\"safetystocklevel\" = EXCLUDED.\"safetystocklevel\",\n\"reorderpoint\" = EXCLUDED.\"reorderpoint\",\n\"standardcost\" = EXCLUDED.\"standardcost\",\n\"listprice\" = EXCLUDED.\"listprice\",\n\"size\" = EXCLUDED.\"size\",\n\"sizeunitmeasurecode\" = EXCLUDED.\"sizeunitmeasurecode\",\n\"weightunitmeasurecode\" = EXCLUDED.\"weightunitmeasurecode\",\n\"weight\" = EXCLUDED.\"weight\",\n\"daystomanufacture\" = EXCLUDED.\"daystomanufacture\",\n\"productline\" = EXCLUDED.\"productline\",\n\"class\" = EXCLUDED.\"class\",\n\"style\" = EXCLUDED.\"style\",\n\"productsubcategoryid\" = EXCLUDED.\"productsubcategoryid\",\n\"productmodelid\" = EXCLUDED.\"productmodelid\",\n\"sellstartdate\" = EXCLUDED.\"sellstartdate\",\n\"sellenddate\" = EXCLUDED.\"sellenddate\",\n\"discontinueddate\" = EXCLUDED.\"discontinueddate\",\n\"rowguid\" = EXCLUDED.\"rowguid\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\nreturning \"productid\", \"name\", \"productnumber\", \"makeflag\", \"finishedgoodsflag\", \"color\", \"safetystocklevel\", \"reorderpoint\", \"standardcost\", \"listprice\", \"size\", \"sizeunitmeasurecode\", \"weightunitmeasurecode\", \"weight\", \"daystomanufacture\", \"productline\", \"class\", \"style\", \"productsubcategoryid\", \"productmodelid\", \"sellstartdate\", \"sellenddate\", \"discontinueddate\", \"rowguid\", \"modifieddate\""))
-    .updateManyReturning(ProductRow._rowParser, unsaved)
-  .runUnchecked(c)
+  ): List<ProductRow> = Fragment.concat(Fragment.of("insert into \"production\".\"product\"(\"productid\", \"name\", \"productnumber\", \"makeflag\", \"finishedgoodsflag\", \"color\", \"safetystocklevel\", \"reorderpoint\", \"standardcost\", \"listprice\", \"size\", \"sizeunitmeasurecode\", \"weightunitmeasurecode\", \"weight\", \"daystomanufacture\", \"productline\", \"class\", \"style\", \"productsubcategoryid\", \"productmodelid\", \"sellstartdate\", \"sellenddate\", \"discontinueddate\", \"rowguid\", \"modifieddate\")\nvalues (?::int4, ?::varchar, ?, ?::bool, ?::bool, ?, ?::int2, ?::int2, ?::numeric, ?::numeric, ?, ?::bpchar, ?::bpchar, ?::numeric, ?::int4, ?::bpchar, ?::bpchar, ?::bpchar, ?::int4, ?::int4, ?::timestamp, ?::timestamp, ?::timestamp, ?::uuid, ?::timestamp)\non conflict (\"productid\")\ndo update set\n  \"name\" = EXCLUDED.\"name\",\n\"productnumber\" = EXCLUDED.\"productnumber\",\n\"makeflag\" = EXCLUDED.\"makeflag\",\n\"finishedgoodsflag\" = EXCLUDED.\"finishedgoodsflag\",\n\"color\" = EXCLUDED.\"color\",\n\"safetystocklevel\" = EXCLUDED.\"safetystocklevel\",\n\"reorderpoint\" = EXCLUDED.\"reorderpoint\",\n\"standardcost\" = EXCLUDED.\"standardcost\",\n\"listprice\" = EXCLUDED.\"listprice\",\n\"size\" = EXCLUDED.\"size\",\n\"sizeunitmeasurecode\" = EXCLUDED.\"sizeunitmeasurecode\",\n\"weightunitmeasurecode\" = EXCLUDED.\"weightunitmeasurecode\",\n\"weight\" = EXCLUDED.\"weight\",\n\"daystomanufacture\" = EXCLUDED.\"daystomanufacture\",\n\"productline\" = EXCLUDED.\"productline\",\n\"class\" = EXCLUDED.\"class\",\n\"style\" = EXCLUDED.\"style\",\n\"productsubcategoryid\" = EXCLUDED.\"productsubcategoryid\",\n\"productmodelid\" = EXCLUDED.\"productmodelid\",\n\"sellstartdate\" = EXCLUDED.\"sellstartdate\",\n\"sellenddate\" = EXCLUDED.\"sellenddate\",\n\"discontinueddate\" = EXCLUDED.\"discontinueddate\",\n\"rowguid\" = EXCLUDED.\"rowguid\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\nreturning \"productid\", \"name\", \"productnumber\", \"makeflag\", \"finishedgoodsflag\", \"color\", \"safetystocklevel\", \"reorderpoint\", \"standardcost\", \"listprice\", \"size\", \"sizeunitmeasurecode\", \"weightunitmeasurecode\", \"weight\", \"daystomanufacture\", \"productline\", \"class\", \"style\", \"productsubcategoryid\", \"productmodelid\", \"sellstartdate\", \"sellenddate\", \"discontinueddate\", \"rowguid\", \"modifieddate\""))
+    .updateManyReturning(ProductRow.rowCodec, unsaved)
+  .run(c)
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
   override fun upsertStreaming(
@@ -188,8 +187,8 @@ class ProductRepoImpl() : ProductRepo {
     batchSize: Int,
     c: Connection
   ): Int {
-    Fragment.interpolate(Fragment.lit("create temporary table product_TEMP (like \"production\".\"product\") on commit drop")).update().runUnchecked(c)
-    streamingInsert.insertUnchecked("copy product_TEMP(\"productid\", \"name\", \"productnumber\", \"makeflag\", \"finishedgoodsflag\", \"color\", \"safetystocklevel\", \"reorderpoint\", \"standardcost\", \"listprice\", \"size\", \"sizeunitmeasurecode\", \"weightunitmeasurecode\", \"weight\", \"daystomanufacture\", \"productline\", \"class\", \"style\", \"productsubcategoryid\", \"productmodelid\", \"sellstartdate\", \"sellenddate\", \"discontinueddate\", \"rowguid\", \"modifieddate\") from stdin", batchSize, unsaved, c, ProductRow.pgText)
-    return Fragment.interpolate(Fragment.lit("insert into \"production\".\"product\"(\"productid\", \"name\", \"productnumber\", \"makeflag\", \"finishedgoodsflag\", \"color\", \"safetystocklevel\", \"reorderpoint\", \"standardcost\", \"listprice\", \"size\", \"sizeunitmeasurecode\", \"weightunitmeasurecode\", \"weight\", \"daystomanufacture\", \"productline\", \"class\", \"style\", \"productsubcategoryid\", \"productmodelid\", \"sellstartdate\", \"sellenddate\", \"discontinueddate\", \"rowguid\", \"modifieddate\")\nselect * from product_TEMP\non conflict (\"productid\")\ndo update set\n  \"name\" = EXCLUDED.\"name\",\n\"productnumber\" = EXCLUDED.\"productnumber\",\n\"makeflag\" = EXCLUDED.\"makeflag\",\n\"finishedgoodsflag\" = EXCLUDED.\"finishedgoodsflag\",\n\"color\" = EXCLUDED.\"color\",\n\"safetystocklevel\" = EXCLUDED.\"safetystocklevel\",\n\"reorderpoint\" = EXCLUDED.\"reorderpoint\",\n\"standardcost\" = EXCLUDED.\"standardcost\",\n\"listprice\" = EXCLUDED.\"listprice\",\n\"size\" = EXCLUDED.\"size\",\n\"sizeunitmeasurecode\" = EXCLUDED.\"sizeunitmeasurecode\",\n\"weightunitmeasurecode\" = EXCLUDED.\"weightunitmeasurecode\",\n\"weight\" = EXCLUDED.\"weight\",\n\"daystomanufacture\" = EXCLUDED.\"daystomanufacture\",\n\"productline\" = EXCLUDED.\"productline\",\n\"class\" = EXCLUDED.\"class\",\n\"style\" = EXCLUDED.\"style\",\n\"productsubcategoryid\" = EXCLUDED.\"productsubcategoryid\",\n\"productmodelid\" = EXCLUDED.\"productmodelid\",\n\"sellstartdate\" = EXCLUDED.\"sellstartdate\",\n\"sellenddate\" = EXCLUDED.\"sellenddate\",\n\"discontinueddate\" = EXCLUDED.\"discontinueddate\",\n\"rowguid\" = EXCLUDED.\"rowguid\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\n;\ndrop table product_TEMP;")).update().runUnchecked(c)
+    Fragment.concat(Fragment.of("create temporary table product_TEMP (like \"production\".\"product\") on commit drop")).update().run(c)
+    StreamingInsert.of("copy product_TEMP(\"productid\", \"name\", \"productnumber\", \"makeflag\", \"finishedgoodsflag\", \"color\", \"safetystocklevel\", \"reorderpoint\", \"standardcost\", \"listprice\", \"size\", \"sizeunitmeasurecode\", \"weightunitmeasurecode\", \"weight\", \"daystomanufacture\", \"productline\", \"class\", \"style\", \"productsubcategoryid\", \"productmodelid\", \"sellstartdate\", \"sellenddate\", \"discontinueddate\", \"rowguid\", \"modifieddate\") from stdin", batchSize, unsaved, ProductRow.pgText).run(c)
+    return Fragment.concat(Fragment.of("insert into \"production\".\"product\"(\"productid\", \"name\", \"productnumber\", \"makeflag\", \"finishedgoodsflag\", \"color\", \"safetystocklevel\", \"reorderpoint\", \"standardcost\", \"listprice\", \"size\", \"sizeunitmeasurecode\", \"weightunitmeasurecode\", \"weight\", \"daystomanufacture\", \"productline\", \"class\", \"style\", \"productsubcategoryid\", \"productmodelid\", \"sellstartdate\", \"sellenddate\", \"discontinueddate\", \"rowguid\", \"modifieddate\")\nselect * from product_TEMP\non conflict (\"productid\")\ndo update set\n  \"name\" = EXCLUDED.\"name\",\n\"productnumber\" = EXCLUDED.\"productnumber\",\n\"makeflag\" = EXCLUDED.\"makeflag\",\n\"finishedgoodsflag\" = EXCLUDED.\"finishedgoodsflag\",\n\"color\" = EXCLUDED.\"color\",\n\"safetystocklevel\" = EXCLUDED.\"safetystocklevel\",\n\"reorderpoint\" = EXCLUDED.\"reorderpoint\",\n\"standardcost\" = EXCLUDED.\"standardcost\",\n\"listprice\" = EXCLUDED.\"listprice\",\n\"size\" = EXCLUDED.\"size\",\n\"sizeunitmeasurecode\" = EXCLUDED.\"sizeunitmeasurecode\",\n\"weightunitmeasurecode\" = EXCLUDED.\"weightunitmeasurecode\",\n\"weight\" = EXCLUDED.\"weight\",\n\"daystomanufacture\" = EXCLUDED.\"daystomanufacture\",\n\"productline\" = EXCLUDED.\"productline\",\n\"class\" = EXCLUDED.\"class\",\n\"style\" = EXCLUDED.\"style\",\n\"productsubcategoryid\" = EXCLUDED.\"productsubcategoryid\",\n\"productmodelid\" = EXCLUDED.\"productmodelid\",\n\"sellstartdate\" = EXCLUDED.\"sellstartdate\",\n\"sellenddate\" = EXCLUDED.\"sellenddate\",\n\"discontinueddate\" = EXCLUDED.\"discontinueddate\",\n\"rowguid\" = EXCLUDED.\"rowguid\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\n;\ndrop table product_TEMP;")).update().run(c)
   }
 }

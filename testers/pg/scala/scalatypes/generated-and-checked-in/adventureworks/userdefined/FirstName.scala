@@ -7,8 +7,8 @@ package adventureworks.userdefined
 
 import adventureworks.public.Name
 import com.fasterxml.jackson.annotation.JsonValue
-import dev.typr.foundations.PgType
-import dev.typr.foundations.scala.Bijection
+import dev.typr.dslsc.Bijection
+import dev.typr.foundationssc.PgType
 
 /** Shared type `FirstName`
  * Generated from TypeDefinitions matching
@@ -16,9 +16,9 @@ import dev.typr.foundations.scala.Bijection
 case class FirstName(@JsonValue value: Name) extends scala.AnyVal
 
 object FirstName {
-  given bijection: Bijection[FirstName, Name] = Bijection.apply[FirstName, Name](_.value)(FirstName.apply)
+  given bijection: Bijection[FirstName, Name] = Bijection.of[FirstName, Name](_.value, FirstName.apply)
 
-  given pgType: PgType[FirstName] = Name.pgType.bimap(FirstName.apply, _.value)
+  given pgType: PgType[FirstName] = Name.pgType.to(Bijection.of(FirstName.apply, _.value))
 
-  given pgTypeArray: PgType[Array[FirstName]] = Name.pgTypeArray.bimap(xs => xs.map(FirstName.apply), xs => xs.map(_.value))
+  given pgTypeArray: PgType[List[FirstName]] = pgType.array
 }

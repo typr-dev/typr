@@ -5,75 +5,75 @@
  */
 package testdb.db2test
 
-import dev.typr.foundations.Db2Types
-import dev.typr.foundations.scala.DeleteBuilder
-import dev.typr.foundations.scala.Dialect
-import dev.typr.foundations.scala.Fragment
-import dev.typr.foundations.scala.ScalaDbTypes
-import dev.typr.foundations.scala.SelectBuilder
-import dev.typr.foundations.scala.UpdateBuilder
-import java.sql.Connection
+import dev.typr.dslsc.DeleteBuilder
+import dev.typr.dslsc.Dialect
+import dev.typr.dslsc.SelectBuilder
+import dev.typr.dslsc.UpdateBuilder
+import dev.typr.foundationssc.Connection
+import dev.typr.foundationssc.ConnectionRead
+import dev.typr.foundationssc.Db2Types
+import dev.typr.foundationssc.Fragment
 import scala.collection.mutable.ListBuffer
-import dev.typr.foundations.scala.Fragment.sql
+import dev.typr.foundationssc.Fragment.sql
 
 class Db2testRepoImpl extends Db2testRepo {
   override def delete: DeleteBuilder[Db2testFields, Db2testRow] = DeleteBuilder.of(""""DB2TEST"""", Db2testFields.structure, Dialect.DB2)
 
-  override def deleteById(intCol: Db2testId)(using c: Connection): Boolean = sql"""delete from "DB2TEST" where "INT_COL" = ${Fragment.encode(Db2testId.db2Type, intCol)}""".update().runUnchecked(c) > 0
+  override def deleteById(intCol: Db2testId)(using c: Connection): Boolean = sql"""delete from "DB2TEST" where "INT_COL" = ${Fragment.encode(Db2testId.db2Type, intCol)}""".update().run(using c) > 0
 
-  override def deleteByIds(intCols: Array[Db2testId])(using c: Connection): Int = {
+  override def deleteByIds(intCols: List[Db2testId])(using c: Connection): Int = {
     val fragments: ListBuffer[Fragment] = ListBuffer()
     intCols.foreach { id => fragments.addOne(Fragment.encode(Db2testId.db2Type, id)): @scala.annotation.nowarn }
-    return Fragment.interpolate(Fragment.lit("""delete from "DB2TEST" where "INT_COL" in ("""), Fragment.comma(fragments), Fragment.lit(")")).update().runUnchecked(c)
+    return Fragment.concat(Fragment.of("""delete from "DB2TEST" where "INT_COL" in ("""), Fragment.comma(fragments), Fragment.of(")")).update().run(using c)
   }
 
   override def insert(unsaved: Db2testRow)(using c: Connection): Db2testRow = {
   sql"""SELECT "SMALLINT_COL", "INT_COL", "BIGINT_COL", "DECIMAL_COL", "NUMERIC_COL", "DECFLOAT16_COL", "DECFLOAT34_COL", "REAL_COL", "DOUBLE_COL", "BOOL_COL", "CHAR_COL", "VARCHAR_COL", "CLOB_COL", "GRAPHIC_COL", "VARGRAPHIC_COL", "BINARY_COL", "VARBINARY_COL", "BLOB_COL", "DATE_COL", "TIME_COL", "TIMESTAMP_COL", "TIMESTAMP6_COL", "TIMESTAMP12_COL", "XML_COL" FROM FINAL TABLE (INSERT INTO "DB2TEST"("SMALLINT_COL", "INT_COL", "BIGINT_COL", "DECIMAL_COL", "NUMERIC_COL", "DECFLOAT16_COL", "DECFLOAT34_COL", "REAL_COL", "DOUBLE_COL", "BOOL_COL", "CHAR_COL", "VARCHAR_COL", "CLOB_COL", "GRAPHIC_COL", "VARGRAPHIC_COL", "BINARY_COL", "VARBINARY_COL", "BLOB_COL", "DATE_COL", "TIME_COL", "TIMESTAMP_COL", "TIMESTAMP6_COL", "TIMESTAMP12_COL", "XML_COL")
-    VALUES (${Fragment.encode(ScalaDbTypes.Db2Types.smallint, unsaved.smallintCol)}, ${Fragment.encode(Db2testId.db2Type, unsaved.intCol)}, ${Fragment.encode(ScalaDbTypes.Db2Types.bigint, unsaved.bigintCol)}, ${Fragment.encode(ScalaDbTypes.Db2Types.decimal, unsaved.decimalCol)}, ${Fragment.encode(ScalaDbTypes.Db2Types.decimal, unsaved.numericCol)}, ${Fragment.encode(ScalaDbTypes.Db2Types.decfloat, unsaved.decfloat16Col)}, ${Fragment.encode(ScalaDbTypes.Db2Types.decfloat, unsaved.decfloat34Col)}, ${Fragment.encode(ScalaDbTypes.Db2Types.real, unsaved.realCol)}, ${Fragment.encode(ScalaDbTypes.Db2Types.double_, unsaved.doubleCol)}, ${Fragment.encode(ScalaDbTypes.Db2Types.boolean_, unsaved.boolCol)}, ${Fragment.encode(Db2Types.char_, unsaved.charCol)}, ${Fragment.encode(Db2Types.varchar, unsaved.varcharCol)}, ${Fragment.encode(Db2Types.clob, unsaved.clobCol)}, ${Fragment.encode(Db2Types.graphic, unsaved.graphicCol)}, ${Fragment.encode(Db2Types.vargraphic, unsaved.vargraphicCol)}, ${Fragment.encode(Db2Types.binary, unsaved.binaryCol)}, ${Fragment.encode(Db2Types.varbinary, unsaved.varbinaryCol)}, ${Fragment.encode(Db2Types.blob, unsaved.blobCol)}, ${Fragment.encode(Db2Types.date, unsaved.dateCol)}, ${Fragment.encode(Db2Types.time, unsaved.timeCol)}, ${Fragment.encode(Db2Types.timestamp, unsaved.timestampCol)}, ${Fragment.encode(Db2Types.timestamp, unsaved.timestamp6Col)}, ${Fragment.encode(Db2Types.timestamp, unsaved.timestamp12Col)}, ${Fragment.encode(Db2Types.xml, unsaved.xmlCol)}))
+    VALUES (${Fragment.encode(Db2Types.smallint, unsaved.smallintCol)}, ${Fragment.encode(Db2testId.db2Type, unsaved.intCol)}, ${Fragment.encode(Db2Types.bigint, unsaved.bigintCol)}, ${Fragment.encode(Db2Types.decimal, unsaved.decimalCol)}, ${Fragment.encode(Db2Types.decimal, unsaved.numericCol)}, ${Fragment.encode(Db2Types.decfloat, unsaved.decfloat16Col)}, ${Fragment.encode(Db2Types.decfloat, unsaved.decfloat34Col)}, ${Fragment.encode(Db2Types.real, unsaved.realCol)}, ${Fragment.encode(Db2Types.double_, unsaved.doubleCol)}, ${Fragment.encode(Db2Types.boolean_, unsaved.boolCol)}, ${Fragment.encode(Db2Types.char_, unsaved.charCol)}, ${Fragment.encode(Db2Types.varchar, unsaved.varcharCol)}, ${Fragment.encode(Db2Types.clob, unsaved.clobCol)}, ${Fragment.encode(Db2Types.graphic, unsaved.graphicCol)}, ${Fragment.encode(Db2Types.vargraphic, unsaved.vargraphicCol)}, ${Fragment.encode(Db2Types.binary, unsaved.binaryCol)}, ${Fragment.encode(Db2Types.varbinary, unsaved.varbinaryCol)}, ${Fragment.encode(Db2Types.blob, unsaved.blobCol)}, ${Fragment.encode(Db2Types.date, unsaved.dateCol)}, ${Fragment.encode(Db2Types.time, unsaved.timeCol)}, ${Fragment.encode(Db2Types.timestamp, unsaved.timestampCol)}, ${Fragment.encode(Db2Types.timestamp, unsaved.timestamp6Col)}, ${Fragment.encode(Db2Types.timestamp, unsaved.timestamp12Col)}, ${Fragment.encode(Db2Types.xml, unsaved.xmlCol)}))
     """
-    .updateReturning(Db2testRow.`_rowParser`.exactlyOne()).runUnchecked(c)
+    .updateReturning(Db2testRow.rowCodec.exactlyOne()).run(using c)
   }
 
-  override def select: SelectBuilder[Db2testFields, Db2testRow] = SelectBuilder.of(""""DB2TEST"""", Db2testFields.structure, Db2testRow.`_rowParser`, Dialect.DB2)
+  override def select: SelectBuilder[Db2testFields, Db2testRow] = SelectBuilder.of(""""DB2TEST"""", Db2testFields.structure, Db2testRow.rowCodec, Dialect.DB2)
 
-  override def selectAll(using c: Connection): List[Db2testRow] = {
+  override def selectAll(using c: ConnectionRead): List[Db2testRow] = {
     sql"""select "SMALLINT_COL", "INT_COL", "BIGINT_COL", "DECIMAL_COL", "NUMERIC_COL", "DECFLOAT16_COL", "DECFLOAT34_COL", "REAL_COL", "DOUBLE_COL", "BOOL_COL", "CHAR_COL", "VARCHAR_COL", "CLOB_COL", "GRAPHIC_COL", "VARGRAPHIC_COL", "BINARY_COL", "VARBINARY_COL", "BLOB_COL", "DATE_COL", "TIME_COL", "TIMESTAMP_COL", "TIMESTAMP6_COL", "TIMESTAMP12_COL", "XML_COL"
     from "DB2TEST"
-    """.query(Db2testRow.`_rowParser`.all()).runUnchecked(c)
+    """.query(Db2testRow.rowCodec.all()).run(using c)
   }
 
-  override def selectById(intCol: Db2testId)(using c: Connection): Option[Db2testRow] = {
+  override def selectById(intCol: Db2testId)(using c: ConnectionRead): Option[Db2testRow] = {
     sql"""select "SMALLINT_COL", "INT_COL", "BIGINT_COL", "DECIMAL_COL", "NUMERIC_COL", "DECFLOAT16_COL", "DECFLOAT34_COL", "REAL_COL", "DOUBLE_COL", "BOOL_COL", "CHAR_COL", "VARCHAR_COL", "CLOB_COL", "GRAPHIC_COL", "VARGRAPHIC_COL", "BINARY_COL", "VARBINARY_COL", "BLOB_COL", "DATE_COL", "TIME_COL", "TIMESTAMP_COL", "TIMESTAMP6_COL", "TIMESTAMP12_COL", "XML_COL"
     from "DB2TEST"
-    where "INT_COL" = ${Fragment.encode(Db2testId.db2Type, intCol)}""".query(Db2testRow.`_rowParser`.first()).runUnchecked(c)
+    where "INT_COL" = ${Fragment.encode(Db2testId.db2Type, intCol)}""".query(Db2testRow.rowCodec.first()).run(using c)
   }
 
-  override def selectByIds(intCols: Array[Db2testId])(using c: Connection): List[Db2testRow] = {
+  override def selectByIds(intCols: List[Db2testId])(using c: ConnectionRead): List[Db2testRow] = {
     val fragments: ListBuffer[Fragment] = ListBuffer()
     intCols.foreach { id => fragments.addOne(Fragment.encode(Db2testId.db2Type, id)): @scala.annotation.nowarn }
-    return Fragment.interpolate(Fragment.lit("""select "SMALLINT_COL", "INT_COL", "BIGINT_COL", "DECIMAL_COL", "NUMERIC_COL", "DECFLOAT16_COL", "DECFLOAT34_COL", "REAL_COL", "DOUBLE_COL", "BOOL_COL", "CHAR_COL", "VARCHAR_COL", "CLOB_COL", "GRAPHIC_COL", "VARGRAPHIC_COL", "BINARY_COL", "VARBINARY_COL", "BLOB_COL", "DATE_COL", "TIME_COL", "TIMESTAMP_COL", "TIMESTAMP6_COL", "TIMESTAMP12_COL", "XML_COL" from "DB2TEST" where "INT_COL" in ("""), Fragment.comma(fragments), Fragment.lit(")")).query(Db2testRow.`_rowParser`.all()).runUnchecked(c)
+    return Fragment.concat(Fragment.of("""select "SMALLINT_COL", "INT_COL", "BIGINT_COL", "DECIMAL_COL", "NUMERIC_COL", "DECFLOAT16_COL", "DECFLOAT34_COL", "REAL_COL", "DOUBLE_COL", "BOOL_COL", "CHAR_COL", "VARCHAR_COL", "CLOB_COL", "GRAPHIC_COL", "VARGRAPHIC_COL", "BINARY_COL", "VARBINARY_COL", "BLOB_COL", "DATE_COL", "TIME_COL", "TIMESTAMP_COL", "TIMESTAMP6_COL", "TIMESTAMP12_COL", "XML_COL" from "DB2TEST" where "INT_COL" in ("""), Fragment.comma(fragments), Fragment.of(")")).query(Db2testRow.rowCodec.all()).run(using c)
   }
 
-  override def selectByIdsTracked(intCols: Array[Db2testId])(using c: Connection): Map[Db2testId, Db2testRow] = {
+  override def selectByIdsTracked(intCols: List[Db2testId])(using c: ConnectionRead): Map[Db2testId, Db2testRow] = {
     val ret: scala.collection.mutable.Map[Db2testId, Db2testRow] = scala.collection.mutable.Map.empty[Db2testId, Db2testRow]
     selectByIds(intCols)(using c).foreach(row => ret.put(row.intCol, row): @scala.annotation.nowarn)
     return ret.toMap
   }
 
-  override def update: UpdateBuilder[Db2testFields, Db2testRow] = UpdateBuilder.of(""""DB2TEST"""", Db2testFields.structure, Db2testRow.`_rowParser`, Dialect.DB2)
+  override def update: UpdateBuilder[Db2testFields, Db2testRow] = UpdateBuilder.of(""""DB2TEST"""", Db2testFields.structure, Db2testRow.rowCodec, Dialect.DB2)
 
   override def update(row: Db2testRow)(using c: Connection): Boolean = {
     val intCol: Db2testId = row.intCol
     return sql"""update "DB2TEST"
-    set "SMALLINT_COL" = ${Fragment.encode(ScalaDbTypes.Db2Types.smallint, row.smallintCol)},
-    "BIGINT_COL" = ${Fragment.encode(ScalaDbTypes.Db2Types.bigint, row.bigintCol)},
-    "DECIMAL_COL" = ${Fragment.encode(ScalaDbTypes.Db2Types.decimal, row.decimalCol)},
-    "NUMERIC_COL" = ${Fragment.encode(ScalaDbTypes.Db2Types.decimal, row.numericCol)},
-    "DECFLOAT16_COL" = ${Fragment.encode(ScalaDbTypes.Db2Types.decfloat, row.decfloat16Col)},
-    "DECFLOAT34_COL" = ${Fragment.encode(ScalaDbTypes.Db2Types.decfloat, row.decfloat34Col)},
-    "REAL_COL" = ${Fragment.encode(ScalaDbTypes.Db2Types.real, row.realCol)},
-    "DOUBLE_COL" = ${Fragment.encode(ScalaDbTypes.Db2Types.double_, row.doubleCol)},
-    "BOOL_COL" = ${Fragment.encode(ScalaDbTypes.Db2Types.boolean_, row.boolCol)},
+    set "SMALLINT_COL" = ${Fragment.encode(Db2Types.smallint, row.smallintCol)},
+    "BIGINT_COL" = ${Fragment.encode(Db2Types.bigint, row.bigintCol)},
+    "DECIMAL_COL" = ${Fragment.encode(Db2Types.decimal, row.decimalCol)},
+    "NUMERIC_COL" = ${Fragment.encode(Db2Types.decimal, row.numericCol)},
+    "DECFLOAT16_COL" = ${Fragment.encode(Db2Types.decfloat, row.decfloat16Col)},
+    "DECFLOAT34_COL" = ${Fragment.encode(Db2Types.decfloat, row.decfloat34Col)},
+    "REAL_COL" = ${Fragment.encode(Db2Types.real, row.realCol)},
+    "DOUBLE_COL" = ${Fragment.encode(Db2Types.double_, row.doubleCol)},
+    "BOOL_COL" = ${Fragment.encode(Db2Types.boolean_, row.boolCol)},
     "CHAR_COL" = ${Fragment.encode(Db2Types.char_, row.charCol)},
     "VARCHAR_COL" = ${Fragment.encode(Db2Types.varchar, row.varcharCol)},
     "CLOB_COL" = ${Fragment.encode(Db2Types.clob, row.clobCol)},
@@ -88,12 +88,12 @@ class Db2testRepoImpl extends Db2testRepo {
     "TIMESTAMP6_COL" = ${Fragment.encode(Db2Types.timestamp, row.timestamp6Col)},
     "TIMESTAMP12_COL" = ${Fragment.encode(Db2Types.timestamp, row.timestamp12Col)},
     "XML_COL" = ${Fragment.encode(Db2Types.xml, row.xmlCol)}
-    where "INT_COL" = ${Fragment.encode(Db2testId.db2Type, intCol)}""".update().runUnchecked(c) > 0
+    where "INT_COL" = ${Fragment.encode(Db2testId.db2Type, intCol)}""".update().run(using c) > 0
   }
 
   override def upsert(unsaved: Db2testRow)(using c: Connection): Unit = {
     sql"""MERGE INTO "DB2TEST" AS t
-    USING (VALUES (${Fragment.encode(ScalaDbTypes.Db2Types.smallint, unsaved.smallintCol)}, ${Fragment.encode(Db2testId.db2Type, unsaved.intCol)}, ${Fragment.encode(ScalaDbTypes.Db2Types.bigint, unsaved.bigintCol)}, ${Fragment.encode(ScalaDbTypes.Db2Types.decimal, unsaved.decimalCol)}, ${Fragment.encode(ScalaDbTypes.Db2Types.decimal, unsaved.numericCol)}, ${Fragment.encode(ScalaDbTypes.Db2Types.decfloat, unsaved.decfloat16Col)}, ${Fragment.encode(ScalaDbTypes.Db2Types.decfloat, unsaved.decfloat34Col)}, ${Fragment.encode(ScalaDbTypes.Db2Types.real, unsaved.realCol)}, ${Fragment.encode(ScalaDbTypes.Db2Types.double_, unsaved.doubleCol)}, ${Fragment.encode(ScalaDbTypes.Db2Types.boolean_, unsaved.boolCol)}, ${Fragment.encode(Db2Types.char_, unsaved.charCol)}, ${Fragment.encode(Db2Types.varchar, unsaved.varcharCol)}, ${Fragment.encode(Db2Types.clob, unsaved.clobCol)}, ${Fragment.encode(Db2Types.graphic, unsaved.graphicCol)}, ${Fragment.encode(Db2Types.vargraphic, unsaved.vargraphicCol)}, ${Fragment.encode(Db2Types.binary, unsaved.binaryCol)}, ${Fragment.encode(Db2Types.varbinary, unsaved.varbinaryCol)}, ${Fragment.encode(Db2Types.blob, unsaved.blobCol)}, ${Fragment.encode(Db2Types.date, unsaved.dateCol)}, ${Fragment.encode(Db2Types.time, unsaved.timeCol)}, ${Fragment.encode(Db2Types.timestamp, unsaved.timestampCol)}, ${Fragment.encode(Db2Types.timestamp, unsaved.timestamp6Col)}, ${Fragment.encode(Db2Types.timestamp, unsaved.timestamp12Col)}, ${Fragment.encode(Db2Types.xml, unsaved.xmlCol)})) AS s("SMALLINT_COL", "INT_COL", "BIGINT_COL", "DECIMAL_COL", "NUMERIC_COL", "DECFLOAT16_COL", "DECFLOAT34_COL", "REAL_COL", "DOUBLE_COL", "BOOL_COL", "CHAR_COL", "VARCHAR_COL", "CLOB_COL", "GRAPHIC_COL", "VARGRAPHIC_COL", "BINARY_COL", "VARBINARY_COL", "BLOB_COL", "DATE_COL", "TIME_COL", "TIMESTAMP_COL", "TIMESTAMP6_COL", "TIMESTAMP12_COL", "XML_COL")
+    USING (VALUES (${Fragment.encode(Db2Types.smallint, unsaved.smallintCol)}, ${Fragment.encode(Db2testId.db2Type, unsaved.intCol)}, ${Fragment.encode(Db2Types.bigint, unsaved.bigintCol)}, ${Fragment.encode(Db2Types.decimal, unsaved.decimalCol)}, ${Fragment.encode(Db2Types.decimal, unsaved.numericCol)}, ${Fragment.encode(Db2Types.decfloat, unsaved.decfloat16Col)}, ${Fragment.encode(Db2Types.decfloat, unsaved.decfloat34Col)}, ${Fragment.encode(Db2Types.real, unsaved.realCol)}, ${Fragment.encode(Db2Types.double_, unsaved.doubleCol)}, ${Fragment.encode(Db2Types.boolean_, unsaved.boolCol)}, ${Fragment.encode(Db2Types.char_, unsaved.charCol)}, ${Fragment.encode(Db2Types.varchar, unsaved.varcharCol)}, ${Fragment.encode(Db2Types.clob, unsaved.clobCol)}, ${Fragment.encode(Db2Types.graphic, unsaved.graphicCol)}, ${Fragment.encode(Db2Types.vargraphic, unsaved.vargraphicCol)}, ${Fragment.encode(Db2Types.binary, unsaved.binaryCol)}, ${Fragment.encode(Db2Types.varbinary, unsaved.varbinaryCol)}, ${Fragment.encode(Db2Types.blob, unsaved.blobCol)}, ${Fragment.encode(Db2Types.date, unsaved.dateCol)}, ${Fragment.encode(Db2Types.time, unsaved.timeCol)}, ${Fragment.encode(Db2Types.timestamp, unsaved.timestampCol)}, ${Fragment.encode(Db2Types.timestamp, unsaved.timestamp6Col)}, ${Fragment.encode(Db2Types.timestamp, unsaved.timestamp12Col)}, ${Fragment.encode(Db2Types.xml, unsaved.xmlCol)})) AS s("SMALLINT_COL", "INT_COL", "BIGINT_COL", "DECIMAL_COL", "NUMERIC_COL", "DECFLOAT16_COL", "DECFLOAT34_COL", "REAL_COL", "DOUBLE_COL", "BOOL_COL", "CHAR_COL", "VARCHAR_COL", "CLOB_COL", "GRAPHIC_COL", "VARGRAPHIC_COL", "BINARY_COL", "VARBINARY_COL", "BLOB_COL", "DATE_COL", "TIME_COL", "TIMESTAMP_COL", "TIMESTAMP6_COL", "TIMESTAMP12_COL", "XML_COL")
     ON t."INT_COL" = s."INT_COL"
     WHEN MATCHED THEN UPDATE SET "SMALLINT_COL" = s."SMALLINT_COL",
     "BIGINT_COL" = s."BIGINT_COL",
@@ -118,9 +118,9 @@ class Db2testRepoImpl extends Db2testRepo {
     "TIMESTAMP6_COL" = s."TIMESTAMP6_COL",
     "TIMESTAMP12_COL" = s."TIMESTAMP12_COL",
     "XML_COL" = s."XML_COL"
-    WHEN NOT MATCHED THEN INSERT ("SMALLINT_COL", "INT_COL", "BIGINT_COL", "DECIMAL_COL", "NUMERIC_COL", "DECFLOAT16_COL", "DECFLOAT34_COL", "REAL_COL", "DOUBLE_COL", "BOOL_COL", "CHAR_COL", "VARCHAR_COL", "CLOB_COL", "GRAPHIC_COL", "VARGRAPHIC_COL", "BINARY_COL", "VARBINARY_COL", "BLOB_COL", "DATE_COL", "TIME_COL", "TIMESTAMP_COL", "TIMESTAMP6_COL", "TIMESTAMP12_COL", "XML_COL") VALUES (${Fragment.encode(ScalaDbTypes.Db2Types.smallint, unsaved.smallintCol)}, ${Fragment.encode(Db2testId.db2Type, unsaved.intCol)}, ${Fragment.encode(ScalaDbTypes.Db2Types.bigint, unsaved.bigintCol)}, ${Fragment.encode(ScalaDbTypes.Db2Types.decimal, unsaved.decimalCol)}, ${Fragment.encode(ScalaDbTypes.Db2Types.decimal, unsaved.numericCol)}, ${Fragment.encode(ScalaDbTypes.Db2Types.decfloat, unsaved.decfloat16Col)}, ${Fragment.encode(ScalaDbTypes.Db2Types.decfloat, unsaved.decfloat34Col)}, ${Fragment.encode(ScalaDbTypes.Db2Types.real, unsaved.realCol)}, ${Fragment.encode(ScalaDbTypes.Db2Types.double_, unsaved.doubleCol)}, ${Fragment.encode(ScalaDbTypes.Db2Types.boolean_, unsaved.boolCol)}, ${Fragment.encode(Db2Types.char_, unsaved.charCol)}, ${Fragment.encode(Db2Types.varchar, unsaved.varcharCol)}, ${Fragment.encode(Db2Types.clob, unsaved.clobCol)}, ${Fragment.encode(Db2Types.graphic, unsaved.graphicCol)}, ${Fragment.encode(Db2Types.vargraphic, unsaved.vargraphicCol)}, ${Fragment.encode(Db2Types.binary, unsaved.binaryCol)}, ${Fragment.encode(Db2Types.varbinary, unsaved.varbinaryCol)}, ${Fragment.encode(Db2Types.blob, unsaved.blobCol)}, ${Fragment.encode(Db2Types.date, unsaved.dateCol)}, ${Fragment.encode(Db2Types.time, unsaved.timeCol)}, ${Fragment.encode(Db2Types.timestamp, unsaved.timestampCol)}, ${Fragment.encode(Db2Types.timestamp, unsaved.timestamp6Col)}, ${Fragment.encode(Db2Types.timestamp, unsaved.timestamp12Col)}, ${Fragment.encode(Db2Types.xml, unsaved.xmlCol)})"""
+    WHEN NOT MATCHED THEN INSERT ("SMALLINT_COL", "INT_COL", "BIGINT_COL", "DECIMAL_COL", "NUMERIC_COL", "DECFLOAT16_COL", "DECFLOAT34_COL", "REAL_COL", "DOUBLE_COL", "BOOL_COL", "CHAR_COL", "VARCHAR_COL", "CLOB_COL", "GRAPHIC_COL", "VARGRAPHIC_COL", "BINARY_COL", "VARBINARY_COL", "BLOB_COL", "DATE_COL", "TIME_COL", "TIMESTAMP_COL", "TIMESTAMP6_COL", "TIMESTAMP12_COL", "XML_COL") VALUES (${Fragment.encode(Db2Types.smallint, unsaved.smallintCol)}, ${Fragment.encode(Db2testId.db2Type, unsaved.intCol)}, ${Fragment.encode(Db2Types.bigint, unsaved.bigintCol)}, ${Fragment.encode(Db2Types.decimal, unsaved.decimalCol)}, ${Fragment.encode(Db2Types.decimal, unsaved.numericCol)}, ${Fragment.encode(Db2Types.decfloat, unsaved.decfloat16Col)}, ${Fragment.encode(Db2Types.decfloat, unsaved.decfloat34Col)}, ${Fragment.encode(Db2Types.real, unsaved.realCol)}, ${Fragment.encode(Db2Types.double_, unsaved.doubleCol)}, ${Fragment.encode(Db2Types.boolean_, unsaved.boolCol)}, ${Fragment.encode(Db2Types.char_, unsaved.charCol)}, ${Fragment.encode(Db2Types.varchar, unsaved.varcharCol)}, ${Fragment.encode(Db2Types.clob, unsaved.clobCol)}, ${Fragment.encode(Db2Types.graphic, unsaved.graphicCol)}, ${Fragment.encode(Db2Types.vargraphic, unsaved.vargraphicCol)}, ${Fragment.encode(Db2Types.binary, unsaved.binaryCol)}, ${Fragment.encode(Db2Types.varbinary, unsaved.varbinaryCol)}, ${Fragment.encode(Db2Types.blob, unsaved.blobCol)}, ${Fragment.encode(Db2Types.date, unsaved.dateCol)}, ${Fragment.encode(Db2Types.time, unsaved.timeCol)}, ${Fragment.encode(Db2Types.timestamp, unsaved.timestampCol)}, ${Fragment.encode(Db2Types.timestamp, unsaved.timestamp6Col)}, ${Fragment.encode(Db2Types.timestamp, unsaved.timestamp12Col)}, ${Fragment.encode(Db2Types.xml, unsaved.xmlCol)})"""
       .update()
-      .runUnchecked(c): @scala.annotation.nowarn
+      .run(using c): @scala.annotation.nowarn
   }
 
   override def upsertBatch(unsaved: Iterator[Db2testRow])(using c: Connection): Unit = {
@@ -151,7 +151,7 @@ class Db2testRepoImpl extends Db2testRepo {
     "TIMESTAMP12_COL" = s."TIMESTAMP12_COL",
     "XML_COL" = s."XML_COL"
     WHEN NOT MATCHED THEN INSERT ("SMALLINT_COL", "INT_COL", "BIGINT_COL", "DECIMAL_COL", "NUMERIC_COL", "DECFLOAT16_COL", "DECFLOAT34_COL", "REAL_COL", "DOUBLE_COL", "BOOL_COL", "CHAR_COL", "VARCHAR_COL", "CLOB_COL", "GRAPHIC_COL", "VARGRAPHIC_COL", "BINARY_COL", "VARBINARY_COL", "BLOB_COL", "DATE_COL", "TIME_COL", "TIMESTAMP_COL", "TIMESTAMP6_COL", "TIMESTAMP12_COL", "XML_COL") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"""
-      .updateMany(Db2testRow.`_rowParser`, unsaved)
-      .runUnchecked(c): @scala.annotation.nowarn
+      .updateMany(Db2testRow.rowCodec, unsaved)
+      .run(using c): @scala.annotation.nowarn
   }
 }

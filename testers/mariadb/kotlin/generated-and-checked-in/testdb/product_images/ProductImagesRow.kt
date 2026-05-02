@@ -6,12 +6,11 @@
 package testdb.product_images
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import dev.typr.foundations.MariaTypes
+import dev.typr.dslkt.RowCodecs
 import dev.typr.foundations.Tuple.Tuple8
 import dev.typr.foundations.data.Uint1
-import dev.typr.foundations.kotlin.RowParser
-import dev.typr.foundations.kotlin.RowParsers
-import dev.typr.foundations.kotlin.nullable
+import dev.typr.foundationskt.MariaTypes
+import dev.typr.foundationskt.RowCodec
 import testdb.customtypes.Defaulted
 import testdb.products.ProductsId
 import testdb.userdefined.IsPrimary
@@ -29,15 +28,15 @@ data class ProductImagesRow(
     */
   @field:JsonProperty("product_id") val productId: ProductsId,
   /**  */
-  @field:JsonProperty("image_url") val imageUrl: String,
+  @field:JsonProperty("image_url") val imageUrl: kotlin.String,
   /** 
     * Default: NULL
     */
-  @field:JsonProperty("thumbnail_url") val thumbnailUrl: String?,
+  @field:JsonProperty("thumbnail_url") val thumbnailUrl: kotlin.String?,
   /** 
     * Default: NULL
     */
-  @field:JsonProperty("alt_text") val altText: String?,
+  @field:JsonProperty("alt_text") val altText: kotlin.String?,
   /** 
     * Default: 0
     */
@@ -50,16 +49,16 @@ data class ProductImagesRow(
     * Default: NULL
     */
   @field:JsonProperty("image_data") val imageData: ByteArray?
-) : Tuple8<ProductImagesId, ProductsId, String, String?, String?, Uint1, /* user-picked */ IsPrimary, ByteArray?> {
+) : Tuple8<ProductImagesId, ProductsId, kotlin.String, kotlin.String?, kotlin.String?, Uint1, /* user-picked */ IsPrimary, ByteArray?> {
   override fun _1(): ProductImagesId = imageId
 
   override fun _2(): ProductsId = productId
 
-  override fun _3(): String = imageUrl
+  override fun _3(): kotlin.String = imageUrl
 
-  override fun _4(): String? = thumbnailUrl
+  override fun _4(): kotlin.String? = thumbnailUrl
 
-  override fun _5(): String? = altText
+  override fun _5(): kotlin.String? = altText
 
   override fun _6(): Uint1 = sortOrder
 
@@ -70,14 +69,14 @@ data class ProductImagesRow(
   fun id(): ProductImagesId = imageId
 
   fun toUnsavedRow(
-    thumbnailUrl: Defaulted<String?> = Defaulted.Provided(this.thumbnailUrl),
-    altText: Defaulted<String?> = Defaulted.Provided(this.altText),
+    thumbnailUrl: Defaulted<kotlin.String?> = Defaulted.Provided(this.thumbnailUrl),
+    altText: Defaulted<kotlin.String?> = Defaulted.Provided(this.altText),
     sortOrder: Defaulted<Uint1> = Defaulted.Provided(this.sortOrder),
     isPrimary: Defaulted</* user-picked */ IsPrimary> = Defaulted.Provided(this.isPrimary),
     imageData: Defaulted<ByteArray?> = Defaulted.Provided(this.imageData)
   ): ProductImagesRowUnsaved = ProductImagesRowUnsaved(productId, imageUrl, thumbnailUrl, altText, sortOrder, isPrimary, imageData)
 
   companion object {
-    val _rowParser: RowParser<ProductImagesRow> = RowParsers.of(ProductImagesId.mariaType, ProductsId.mariaType, MariaTypes.varchar, MariaTypes.varchar.nullable(), MariaTypes.varchar.nullable(), MariaTypes.tinyintUnsigned, IsPrimary.mariaType, MariaTypes.longblob.nullable(), { t0, t1, t2, t3, t4, t5, t6, t7 -> ProductImagesRow(t0, t1, t2, t3, t4, t5, t6, t7) }, { row -> arrayOf<Any?>(row.imageId, row.productId, row.imageUrl, row.thumbnailUrl, row.altText, row.sortOrder, row.isPrimary, row.imageData) })
+    val rowCodec: RowCodec<ProductImagesRow> = RowCodecs.of(ProductImagesId.mariaType, ProductsId.mariaType, MariaTypes.varchar, MariaTypes.varchar.opt(), MariaTypes.varchar.opt(), MariaTypes.tinyintUnsigned, IsPrimary.mariaType, MariaTypes.longblob.opt(), { t0: ProductImagesId, t1: ProductsId, t2: kotlin.String, t3: kotlin.String?, t4: kotlin.String?, t5: Uint1, t6: /* user-picked */ IsPrimary, t7: ByteArray? -> ProductImagesRow(t0, t1, t2, t3, t4, t5, t6, t7) }, { row: ProductImagesRow -> arrayOf<Any?>(row.imageId, row.productId, row.imageUrl, row.thumbnailUrl, row.altText, row.sortOrder, row.isPrimary, row.imageData) })
   }
 }

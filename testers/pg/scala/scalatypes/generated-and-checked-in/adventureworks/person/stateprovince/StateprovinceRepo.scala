@@ -5,17 +5,18 @@
  */
 package adventureworks.person.stateprovince
 
-import dev.typr.foundations.scala.DeleteBuilder
-import dev.typr.foundations.scala.SelectBuilder
-import dev.typr.foundations.scala.UpdateBuilder
-import java.sql.Connection
+import dev.typr.dslsc.DeleteBuilder
+import dev.typr.dslsc.SelectBuilder
+import dev.typr.dslsc.UpdateBuilder
+import dev.typr.foundationssc.Connection
+import dev.typr.foundationssc.ConnectionRead
 
 trait StateprovinceRepo {
   def delete: DeleteBuilder[StateprovinceFields, StateprovinceRow]
 
   def deleteById(stateprovinceid: StateprovinceId)(using c: Connection): Boolean
 
-  def deleteByIds(stateprovinceids: Array[StateprovinceId])(using c: Connection): Int
+  def deleteByIds(stateprovinceids: List[StateprovinceId])(using c: Connection): Int
 
   def insert(unsaved: StateprovinceRow)(using c: Connection): StateprovinceRow
 
@@ -34,13 +35,13 @@ trait StateprovinceRepo {
 
   def select: SelectBuilder[StateprovinceFields, StateprovinceRow]
 
-  def selectAll(using c: Connection): List[StateprovinceRow]
+  def selectAll(using c: ConnectionRead): List[StateprovinceRow]
 
-  def selectById(stateprovinceid: StateprovinceId)(using c: Connection): Option[StateprovinceRow]
+  def selectById(stateprovinceid: StateprovinceId)(using c: ConnectionRead): Option[StateprovinceRow]
 
-  def selectByIds(stateprovinceids: Array[StateprovinceId])(using c: Connection): List[StateprovinceRow]
+  def selectByIds(stateprovinceids: List[StateprovinceId])(using c: ConnectionRead): List[StateprovinceRow]
 
-  def selectByIdsTracked(stateprovinceids: Array[StateprovinceId])(using c: Connection): Map[StateprovinceId, StateprovinceRow]
+  def selectByIdsTracked(stateprovinceids: List[StateprovinceId])(using c: ConnectionRead): Map[StateprovinceId, StateprovinceRow]
 
   def update: UpdateBuilder[StateprovinceFields, StateprovinceRow]
 

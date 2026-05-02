@@ -6,17 +6,18 @@
 package adventureworks.public.issue142_2
 
 import adventureworks.public.issue142.Issue142Id
-import dev.typr.foundations.scala.DeleteBuilder
-import dev.typr.foundations.scala.SelectBuilder
-import dev.typr.foundations.scala.UpdateBuilder
-import java.sql.Connection
+import dev.typr.dslsc.DeleteBuilder
+import dev.typr.dslsc.SelectBuilder
+import dev.typr.dslsc.UpdateBuilder
+import dev.typr.foundationssc.Connection
+import dev.typr.foundationssc.ConnectionRead
 
 trait Issue1422Repo {
   def delete: DeleteBuilder[Issue1422Fields, Issue1422Row]
 
   def deleteById(tabellkode: Issue142Id)(using c: Connection): Boolean
 
-  def deleteByIds(tabellkodes: Array[Issue142Id])(using c: Connection): Int
+  def deleteByIds(tabellkodes: List[Issue142Id])(using c: Connection): Int
 
   def insert(unsaved: Issue1422Row)(using c: Connection): Issue1422Row
 
@@ -27,13 +28,13 @@ trait Issue1422Repo {
 
   def select: SelectBuilder[Issue1422Fields, Issue1422Row]
 
-  def selectAll(using c: Connection): List[Issue1422Row]
+  def selectAll(using c: ConnectionRead): List[Issue1422Row]
 
-  def selectById(tabellkode: Issue142Id)(using c: Connection): Option[Issue1422Row]
+  def selectById(tabellkode: Issue142Id)(using c: ConnectionRead): Option[Issue1422Row]
 
-  def selectByIds(tabellkodes: Array[Issue142Id])(using c: Connection): List[Issue1422Row]
+  def selectByIds(tabellkodes: List[Issue142Id])(using c: ConnectionRead): List[Issue1422Row]
 
-  def selectByIdsTracked(tabellkodes: Array[Issue142Id])(using c: Connection): Map[Issue142Id, Issue1422Row]
+  def selectByIdsTracked(tabellkodes: List[Issue142Id])(using c: ConnectionRead): Map[Issue142Id, Issue1422Row]
 
   def update: UpdateBuilder[Issue1422Fields, Issue1422Row]
 

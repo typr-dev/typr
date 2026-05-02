@@ -5,17 +5,18 @@
  */
 package adventureworks.humanresources.department
 
-import dev.typr.foundations.kotlin.DeleteBuilder
-import dev.typr.foundations.kotlin.DeleteBuilderMock
-import dev.typr.foundations.kotlin.DeleteParams
-import dev.typr.foundations.kotlin.SelectBuilder
-import dev.typr.foundations.kotlin.SelectBuilderMock
-import dev.typr.foundations.kotlin.SelectParams
-import dev.typr.foundations.kotlin.UpdateBuilder
-import dev.typr.foundations.kotlin.UpdateBuilderMock
-import dev.typr.foundations.kotlin.UpdateParams
+import dev.typr.dslkt.DeleteBuilder
+import dev.typr.dslkt.DeleteBuilderMock
+import dev.typr.dslkt.DeleteParams
+import dev.typr.dslkt.SelectBuilder
+import dev.typr.dslkt.SelectBuilderMock
+import dev.typr.dslkt.SelectParams
+import dev.typr.dslkt.UpdateBuilder
+import dev.typr.dslkt.UpdateBuilderMock
+import dev.typr.dslkt.UpdateParams
+import dev.typr.foundationskt.Connection
+import dev.typr.foundationskt.ConnectionRead
 import java.lang.RuntimeException
-import java.sql.Connection
 import java.util.ArrayList
 import kotlin.collections.Iterator
 import kotlin.collections.List
@@ -31,10 +32,10 @@ data class DepartmentRepoMock(
   override fun deleteById(
     departmentid: DepartmentId,
     c: Connection
-  ): Boolean = map.remove(departmentid) != null
+  ): kotlin.Boolean = map.remove(departmentid) != null
 
   override fun deleteByIds(
-    departmentids: Array<DepartmentId>,
+    departmentids: List<DepartmentId>,
     c: Connection
   ): Int {
     var count = 0
@@ -66,7 +67,7 @@ data class DepartmentRepoMock(
     unsaved: Iterator<DepartmentRow>,
     batchSize: Int,
     c: Connection
-  ): Long {
+  ): kotlin.Long {
     var count = 0L
     while (unsaved.hasNext()) {
       val row = unsaved.next()
@@ -81,7 +82,7 @@ data class DepartmentRepoMock(
     unsaved: Iterator<DepartmentRowUnsaved>,
     batchSize: Int,
     c: Connection
-  ): Long {
+  ): kotlin.Long {
     var count = 0L
     while (unsaved.hasNext()) {
       val unsavedRow = unsaved.next()
@@ -94,16 +95,16 @@ data class DepartmentRepoMock(
 
   override fun select(): SelectBuilder<DepartmentFields, DepartmentRow> = SelectBuilderMock(DepartmentFields.structure, { map.values.toList() }, SelectParams.empty())
 
-  override fun selectAll(c: Connection): List<DepartmentRow> = map.values.toList()
+  override fun selectAll(c: ConnectionRead): List<DepartmentRow> = map.values.toList()
 
   override fun selectById(
     departmentid: DepartmentId,
-    c: Connection
+    c: ConnectionRead
   ): DepartmentRow? = map[departmentid]
 
   override fun selectByIds(
-    departmentids: Array<DepartmentId>,
-    c: Connection
+    departmentids: List<DepartmentId>,
+    c: ConnectionRead
   ): List<DepartmentRow> {
     val result = ArrayList<DepartmentRow>()
     for (id in departmentids) {
@@ -116,8 +117,8 @@ data class DepartmentRepoMock(
   }
 
   override fun selectByIdsTracked(
-    departmentids: Array<DepartmentId>,
-    c: Connection
+    departmentids: List<DepartmentId>,
+    c: ConnectionRead
   ): Map<DepartmentId, DepartmentRow> = selectByIds(departmentids, c).associateBy({ row: DepartmentRow -> row.departmentid })
 
   override fun update(): UpdateBuilder<DepartmentFields, DepartmentRow> = UpdateBuilderMock(DepartmentFields.structure, { map.values.toList() }, UpdateParams.empty(), { row -> row })
@@ -125,7 +126,7 @@ data class DepartmentRepoMock(
   override fun update(
     row: DepartmentRow,
     c: Connection
-  ): Boolean {
+  ): kotlin.Boolean {
     val shouldUpdate = map[row.departmentid]?.takeIf({ oldRow -> (oldRow != row) }) != null
     if (shouldUpdate) {
       map[row.departmentid] = row

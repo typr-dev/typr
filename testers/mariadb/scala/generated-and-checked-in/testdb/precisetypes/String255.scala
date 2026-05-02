@@ -6,10 +6,10 @@
 package testdb.precisetypes
 
 import com.fasterxml.jackson.annotation.JsonValue
-import dev.typr.foundations.MariaType
-import dev.typr.foundations.MariaTypes
+import dev.typr.dslsc.Bijection
 import dev.typr.foundations.data.precise.StringN
-import dev.typr.foundations.scala.Bijection
+import dev.typr.foundationssc.MariaType
+import dev.typr.foundationssc.MariaTypes
 import java.lang.IllegalArgumentException
 
 case class String255 private(@JsonValue value: String) extends StringN {
@@ -17,7 +17,7 @@ case class String255 private(@JsonValue value: String) extends StringN {
 
   override def maxLength: Int = 255
 
-  override def semanticEquals(other: StringN): Boolean = (if (other == null) false else value == other.rawValue())
+  override def semanticEquals(other: StringN): Boolean = (if (other == null) false else (value == other.rawValue()))
 
   override def semanticHashCode: Int = value.hashCode()
 
@@ -27,9 +27,9 @@ case class String255 private(@JsonValue value: String) extends StringN {
 }
 
 object String255 {
-  given bijection: Bijection[String255, String] = Bijection.apply[String255, String](_.value)(String255.apply)
+  given bijection: Bijection[String255, String] = Bijection.of[String255, String](_.value, String255.apply)
 
-  given mariaType: MariaType[String255] = MariaTypes.varchar.bimap(String255.apply, _.value)
+  given mariaType: MariaType[String255] = MariaTypes.varchar.to(Bijection.of(String255.apply, _.value))
 
   def of(value: String): Option[String255] = (if (value.length <= 255) Some(new String255(value)) else None)
 

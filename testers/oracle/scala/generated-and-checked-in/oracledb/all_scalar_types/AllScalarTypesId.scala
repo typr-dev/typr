@@ -6,19 +6,19 @@
 package oracledb.all_scalar_types
 
 import com.fasterxml.jackson.annotation.JsonValue
+import dev.typr.dsl.RowCodecs
+import dev.typr.foundations.Bijection
 import dev.typr.foundations.OracleType
 import dev.typr.foundations.OracleTypes
-import dev.typr.foundations.RowParser
-import dev.typr.foundations.RowParsers
-import dev.typr.foundations.dsl.Bijection
+import dev.typr.foundations.RowCodec
 
 /** Type for the primary key of table `ALL_SCALAR_TYPES` */
 case class AllScalarTypesId(@JsonValue value: java.math.BigDecimal) extends scala.AnyVal
 
 object AllScalarTypesId {
-  given `_rowParser`: RowParser[AllScalarTypesId] = RowParsers.of(OracleTypes.number.bimap(AllScalarTypesId.apply, _.value), x => x, id => Array[Any](id))
+  given bijection: Bijection[AllScalarTypesId, java.math.BigDecimal] = Bijection.of[AllScalarTypesId, java.math.BigDecimal](_.value, AllScalarTypesId.apply)
 
-  given bijection: Bijection[AllScalarTypesId, java.math.BigDecimal] = Bijection.apply[AllScalarTypesId, java.math.BigDecimal](_.value)(AllScalarTypesId.apply)
+  given oracleType: OracleType[AllScalarTypesId] = OracleTypes.number.to(Bijection.of(AllScalarTypesId.apply, _.value))
 
-  given oracleType: OracleType[AllScalarTypesId] = OracleTypes.number.bimap(AllScalarTypesId.apply, _.value)
+  given rowCodec: RowCodec[AllScalarTypesId] = RowCodecs.of(OracleTypes.number.to(Bijection.of(AllScalarTypesId.apply, _.value)), x => x, id => Array[Any](id))
 }

@@ -5,40 +5,40 @@
  */
 package testdb.db2test_unique
 
-import dev.typr.foundations.Db2Types
-import dev.typr.foundations.RowParser
-import dev.typr.foundations.dsl.FieldsBase
-import dev.typr.foundations.dsl.Path
-import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.kotlin.RelationStructure
-import dev.typr.foundations.kotlin.SqlExpr
-import dev.typr.foundations.kotlin.SqlExpr.Field
-import dev.typr.foundations.kotlin.SqlExpr.IdField
-import dev.typr.foundations.kotlin.TupleExpr4
+import dev.typr.dsl.FieldsBase
+import dev.typr.dsl.Path
+import dev.typr.dsl.SqlExpr.FieldLike
+import dev.typr.dslkt.RelationStructure
+import dev.typr.dslkt.SqlExpr
+import dev.typr.dslkt.SqlExpr.Field
+import dev.typr.dslkt.SqlExpr.IdField
+import dev.typr.dslkt.TupleExpr4
+import dev.typr.foundations.RowCodec
+import dev.typr.foundationskt.Db2Types
 import kotlin.collections.List
 
-data class Db2testUniqueFields(val _path: List<Path>) : TupleExpr4<Db2testUniqueId, String, String, String>, RelationStructure<Db2testUniqueFields, Db2testUniqueRow>, FieldsBase<Db2testUniqueRow> {
+data class Db2testUniqueFields(val _path: List<Path>) : TupleExpr4<Db2testUniqueId, kotlin.String, kotlin.String, kotlin.String>, RelationStructure<Db2testUniqueFields, Db2testUniqueRow>, FieldsBase<Db2testUniqueRow> {
   override fun _1(): SqlExpr<Db2testUniqueId> = id()
 
-  override fun _2(): SqlExpr<String> = email()
+  override fun _2(): SqlExpr<kotlin.String> = email()
 
-  override fun _3(): SqlExpr<String> = code()
+  override fun _3(): SqlExpr<kotlin.String> = code()
 
-  override fun _4(): SqlExpr<String> = category()
+  override fun _4(): SqlExpr<kotlin.String> = category()
 
   override fun _path(): List<Path> = _path
 
-  fun category(): Field<String, Db2testUniqueRow> = Field<String, Db2testUniqueRow>(_path, "CATEGORY", Db2testUniqueRow::category, null, null, { row, value -> row.copy(category = value) }, Db2Types.varchar)
+  fun category(): Field<kotlin.String, Db2testUniqueRow> = Field<kotlin.String, Db2testUniqueRow>(_path, "CATEGORY", Db2testUniqueRow::category, null, null, { row, value -> row.copy(category = value) }, Db2Types.varchar.underlying)
 
-  fun code(): Field<String, Db2testUniqueRow> = Field<String, Db2testUniqueRow>(_path, "CODE", Db2testUniqueRow::code, null, null, { row, value -> row.copy(code = value) }, Db2Types.varchar)
+  fun code(): Field<kotlin.String, Db2testUniqueRow> = Field<kotlin.String, Db2testUniqueRow>(_path, "CODE", Db2testUniqueRow::code, null, null, { row, value -> row.copy(code = value) }, Db2Types.varchar.underlying)
 
   override fun columns(): List<FieldLike<*, Db2testUniqueRow>> = listOf(this.id().underlying, this.email().underlying, this.code().underlying, this.category().underlying)
 
-  fun email(): Field<String, Db2testUniqueRow> = Field<String, Db2testUniqueRow>(_path, "EMAIL", Db2testUniqueRow::email, null, null, { row, value -> row.copy(email = value) }, Db2Types.varchar)
+  fun email(): Field<kotlin.String, Db2testUniqueRow> = Field<kotlin.String, Db2testUniqueRow>(_path, "EMAIL", Db2testUniqueRow::email, null, null, { row, value -> row.copy(email = value) }, Db2Types.varchar.underlying)
 
-  fun id(): IdField<Db2testUniqueId, Db2testUniqueRow> = IdField<Db2testUniqueId, Db2testUniqueRow>(_path, "ID", Db2testUniqueRow::id, null, null, { row, value -> row.copy(id = value) }, Db2testUniqueId.db2Type)
+  fun id(): IdField<Db2testUniqueId, Db2testUniqueRow> = IdField<Db2testUniqueId, Db2testUniqueRow>(_path, "ID", Db2testUniqueRow::id, null, null, { row, value -> row.copy(id = value) }, Db2testUniqueId.db2Type.underlying)
 
-  override fun rowParser(): RowParser<Db2testUniqueRow> = Db2testUniqueRow._rowParser.underlying
+  override fun rowCodec(): RowCodec<Db2testUniqueRow> = Db2testUniqueRow.rowCodec.underlying
 
   override fun withPaths(_path: List<Path>): RelationStructure<Db2testUniqueFields, Db2testUniqueRow> = Db2testUniqueFields(_path)
 

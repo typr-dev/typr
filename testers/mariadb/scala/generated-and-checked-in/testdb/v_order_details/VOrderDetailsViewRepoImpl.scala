@@ -5,17 +5,17 @@
  */
 package testdb.v_order_details
 
-import dev.typr.foundations.scala.Dialect
-import dev.typr.foundations.scala.SelectBuilder
-import java.sql.Connection
-import dev.typr.foundations.scala.Fragment.sql
+import dev.typr.dslsc.Dialect
+import dev.typr.dslsc.SelectBuilder
+import dev.typr.foundationssc.ConnectionRead
+import dev.typr.foundationssc.Fragment.sql
 
 class VOrderDetailsViewRepoImpl extends VOrderDetailsViewRepo {
-  override def select: SelectBuilder[VOrderDetailsViewFields, VOrderDetailsViewRow] = SelectBuilder.of("`v_order_details`", VOrderDetailsViewFields.structure, VOrderDetailsViewRow.`_rowParser`, Dialect.MARIADB)
+  override def select: SelectBuilder[VOrderDetailsViewFields, VOrderDetailsViewRow] = SelectBuilder.of("`v_order_details`", VOrderDetailsViewFields.structure, VOrderDetailsViewRow.rowCodec, Dialect.MARIADB)
 
-  override def selectAll(using c: Connection): List[VOrderDetailsViewRow] = {
+  override def selectAll(using c: ConnectionRead): List[VOrderDetailsViewRow] = {
     sql"""select `order_id`, `order_number`, `order_status`, `payment_status`, `total_amount`, `currency_code`, `ordered_at`, `customer_email`, `customer_name`, `item_count`, `total_quantity`, `tracking_number`, `shipping_status`, `carrier_name`
     from `v_order_details`
-    """.query(VOrderDetailsViewRow.`_rowParser`.all()).runUnchecked(c)
+    """.query(VOrderDetailsViewRow.rowCodec.all()).run(using c)
   }
 }

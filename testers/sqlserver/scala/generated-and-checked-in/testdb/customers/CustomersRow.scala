@@ -6,11 +6,10 @@
 package testdb.customers
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import dev.typr.foundations.SqlServerTypes
+import dev.typr.dslsc.RowCodecs
 import dev.typr.foundations.Tuple.Tuple4
-import dev.typr.foundations.scala.DbTypeOps
-import dev.typr.foundations.scala.RowParser
-import dev.typr.foundations.scala.RowParsers
+import dev.typr.foundationssc.RowCodec
+import dev.typr.foundationssc.SqlServerTypes
 import java.time.LocalDateTime
 import testdb.customtypes.Defaulted
 import testdb.userdefined.Email
@@ -40,5 +39,5 @@ case class CustomersRow(
 }
 
 object CustomersRow {
-  val `_rowParser`: RowParser[CustomersRow] = RowParsers.of(CustomersId.sqlServerType, SqlServerTypes.nvarchar, Email.sqlServerType, SqlServerTypes.datetime2.nullable)(CustomersRow.apply)(row => Array[Any](row.customerId, row.name, row.email, row.createdAt))
+  val rowCodec: RowCodec[CustomersRow] = RowCodecs.of(CustomersId.sqlServerType, SqlServerTypes.nvarchar, Email.sqlServerType, SqlServerTypes.datetime2.opt)(CustomersRow.apply)(row => Array[Any](row.customerId, row.name, row.email, row.createdAt))
 }

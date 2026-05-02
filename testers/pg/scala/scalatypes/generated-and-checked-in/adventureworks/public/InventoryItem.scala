@@ -5,25 +5,20 @@
  */
 package adventureworks.public
 
-import dev.typr.foundations.PgRead
-import dev.typr.foundations.PgStruct
-import dev.typr.foundations.PgType
-import dev.typr.foundations.PgTypes
-import dev.typr.foundations.scala.ScalaDbTypes
-import scala.jdk.OptionConverters.RichOption
+import dev.typr.foundationssc.PgType
+import dev.typr.foundationssc.PgTypes
+import dev.typr.foundationssc.RowCodec
 
 /** PostgreSQL composite type: public.inventory_item */
 case class InventoryItem(
   name: Option[String],
-  tags: Option[Array[String]],
-  prices: Option[Array[BigDecimal]],
+  tags: Option[List[String]],
+  prices: Option[List[BigDecimal]],
   available: Option[Boolean]
 )
 
 object InventoryItem {
-  given pgStruct: PgStruct[InventoryItem] = PgStruct.builder[InventoryItem]("public.inventory_item").optField("name", PgTypes.text, (v: InventoryItem) => v.name.asJava).optField("tags", PgTypes.textArray, (v: InventoryItem) => v.tags.asJava).optField("prices", ScalaDbTypes.PgTypes.numericArray, (v: InventoryItem) => v.prices.asJava).optField("available", ScalaDbTypes.PgTypes.bool, (v: InventoryItem) => v.available.asJava).build(arr => InventoryItem(name = Option(arr(0).asInstanceOf[String]), tags = Option(arr(1).asInstanceOf[Array[String]]), prices = Option(arr(2).asInstanceOf[Array[BigDecimal]]), available = Option(arr(3).asInstanceOf[Boolean])))
+  given pgType: PgType[InventoryItem] = PgTypes.compositeOf("public.inventory_item", RowCodec.namedBuilder[InventoryItem]().field("name", PgTypes.text.opt)((v: InventoryItem) => v.name).field("tags", PgTypes.text.array.opt)((v: InventoryItem) => v.tags).field("prices", PgTypes.numeric.array.opt)((v: InventoryItem) => v.prices).field("available", PgTypes.bool.opt)((v: InventoryItem) => v.available).build((t0, t1, t2, t3) => InventoryItem(name = t0, tags = t1, prices = t2, available = t3)))
 
-  given pgType: PgType[InventoryItem] = pgStruct.asType()
-
-  given pgTypeArray: PgType[Array[InventoryItem]] = pgType.array(PgRead.readCompositeArray(pgType.pgCompositeText(), n => new Array[InventoryItem](n)), n => new Array[InventoryItem](n))
+  given pgTypeArray: PgType[scala.collection.immutable.List[InventoryItem]] = pgType.array
 }

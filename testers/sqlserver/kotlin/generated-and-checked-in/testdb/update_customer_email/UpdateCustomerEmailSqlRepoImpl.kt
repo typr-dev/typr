@@ -5,15 +5,14 @@
  */
 package testdb.update_customer_email
 
-import dev.typr.foundations.SqlServerTypes
-import dev.typr.foundations.kotlin.Fragment
-import dev.typr.foundations.kotlin.KotlinDbTypes
-import java.sql.Connection
+import dev.typr.foundationskt.Connection
+import dev.typr.foundationskt.Fragment
+import dev.typr.foundationskt.SqlServerTypes
 
 class UpdateCustomerEmailSqlRepoImpl() : UpdateCustomerEmailSqlRepo {
   override fun apply(
-    newEmail: String,
+    newEmail: kotlin.String,
     customerId: Int,
     c: Connection
-  ): Int = Fragment.interpolate(Fragment.lit("-- Update customer email\nUPDATE customers\nSET email = "), Fragment.encode(SqlServerTypes.nvarchar, newEmail), Fragment.lit("\nWHERE customer_id = "), Fragment.encode(KotlinDbTypes.SqlServerTypes.int_, customerId), Fragment.lit("\n")).update().runUnchecked(c)
+  ): Int = Fragment.concat(Fragment.of("-- Update customer email\nUPDATE customers\nSET email = "), Fragment.encode(SqlServerTypes.nvarchar, newEmail), Fragment.of("\nWHERE customer_id = "), Fragment.encode(SqlServerTypes.int_, customerId), Fragment.of("\n")).update().run(c)
 }

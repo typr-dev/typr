@@ -5,12 +5,12 @@
  */
 package testdb.customer_orders_view
 
-import dev.typr.foundations.kotlin.SelectBuilder
-import java.sql.Connection
+import dev.typr.dslkt.SelectBuilder
+import dev.typr.foundationskt.ConnectionRead
 import kotlin.collections.List
 
 interface CustomerOrdersViewViewRepo {
   abstract fun select(): SelectBuilder<CustomerOrdersViewViewFields, CustomerOrdersViewViewRow>
 
-  abstract fun selectAll(c: Connection): List<CustomerOrdersViewViewRow>
+  abstract fun selectAll(c: ConnectionRead): List<CustomerOrdersViewViewRow>
 }

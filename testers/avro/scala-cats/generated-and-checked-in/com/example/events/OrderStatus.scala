@@ -6,6 +6,7 @@ package com.example.events
 
 enum OrderStatus {
   case PENDING, CONFIRMED, SHIPPED, DELIVERED, CANCELLED
+  
 }
 
 object OrderStatus {

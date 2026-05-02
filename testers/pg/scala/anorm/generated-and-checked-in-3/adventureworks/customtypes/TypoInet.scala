@@ -44,7 +44,7 @@ object TypoInet {
     }))))
   }
 
-  given bijection: Bijection[TypoInet, String] = Bijection.apply[TypoInet, String](_.value)(TypoInet.apply)
+  given bijection: Bijection[TypoInet, String] = Bijection[TypoInet, String](_.value)(TypoInet.apply)
 
   given column: Column[TypoInet] = {
     Column.nonNull[TypoInet]((v1: Any, _) =>

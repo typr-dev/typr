@@ -5,17 +5,18 @@
  */
 package adventureworks.person.businessentityaddress
 
-import dev.typr.foundations.scala.DeleteBuilder
-import dev.typr.foundations.scala.DeleteBuilderMock
-import dev.typr.foundations.scala.DeleteParams
-import dev.typr.foundations.scala.SelectBuilder
-import dev.typr.foundations.scala.SelectBuilderMock
-import dev.typr.foundations.scala.SelectParams
-import dev.typr.foundations.scala.UpdateBuilder
-import dev.typr.foundations.scala.UpdateBuilderMock
-import dev.typr.foundations.scala.UpdateParams
+import dev.typr.dslsc.DeleteBuilder
+import dev.typr.dslsc.DeleteBuilderMock
+import dev.typr.dslsc.DeleteParams
+import dev.typr.dslsc.SelectBuilder
+import dev.typr.dslsc.SelectBuilderMock
+import dev.typr.dslsc.SelectParams
+import dev.typr.dslsc.UpdateBuilder
+import dev.typr.dslsc.UpdateBuilderMock
+import dev.typr.dslsc.UpdateParams
+import dev.typr.foundationssc.Connection
+import dev.typr.foundationssc.ConnectionRead
 import java.lang.RuntimeException
-import java.sql.Connection
 
 case class BusinessentityaddressRepoMock(
   toRow: BusinessentityaddressRowUnsaved => BusinessentityaddressRow,
@@ -25,7 +26,7 @@ case class BusinessentityaddressRepoMock(
 
   override def deleteById(compositeId: BusinessentityaddressId)(using c: Connection): Boolean = map.remove(compositeId).isDefined
 
-  override def deleteByIds(compositeIds: Array[BusinessentityaddressId])(using c: Connection): Int = {
+  override def deleteByIds(compositeIds: List[BusinessentityaddressId])(using c: Connection): Int = {
     var count = 0
     compositeIds.foreach { id => if (map.remove(id).isDefined) {
       count = count + 1
@@ -67,13 +68,13 @@ case class BusinessentityaddressRepoMock(
 
   override def select: SelectBuilder[BusinessentityaddressFields, BusinessentityaddressRow] = SelectBuilderMock(BusinessentityaddressFields.structure, () => map.values.toList, SelectParams.empty())
 
-  override def selectAll(using c: Connection): List[BusinessentityaddressRow] = map.values.toList
+  override def selectAll(using c: ConnectionRead): List[BusinessentityaddressRow] = map.values.toList
 
-  override def selectById(compositeId: BusinessentityaddressId)(using c: Connection): Option[BusinessentityaddressRow] = map.get(compositeId)
+  override def selectById(compositeId: BusinessentityaddressId)(using c: ConnectionRead): Option[BusinessentityaddressRow] = map.get(compositeId)
 
-  override def selectByIds(compositeIds: Array[BusinessentityaddressId])(using c: Connection): List[BusinessentityaddressRow] = compositeIds.flatMap(map.get(_)).toList
+  override def selectByIds(compositeIds: List[BusinessentityaddressId])(using c: ConnectionRead): List[BusinessentityaddressRow] = compositeIds.flatMap(map.get(_)).toList
 
-  override def selectByIdsTracked(compositeIds: Array[BusinessentityaddressId])(using c: Connection): Map[BusinessentityaddressId, BusinessentityaddressRow] = selectByIds(compositeIds)(using c).map(x => (((row: BusinessentityaddressRow) => row.compositeId).apply(x), x)).toMap
+  override def selectByIdsTracked(compositeIds: List[BusinessentityaddressId])(using c: ConnectionRead): Map[BusinessentityaddressId, BusinessentityaddressRow] = selectByIds(compositeIds)(using c).map(x => (((row: BusinessentityaddressRow) => row.compositeId).apply(x), x)).toMap
 
   override def update: UpdateBuilder[BusinessentityaddressFields, BusinessentityaddressRow] = UpdateBuilderMock(BusinessentityaddressFields.structure, () => map.values.toList, UpdateParams.empty(), row => row)
 

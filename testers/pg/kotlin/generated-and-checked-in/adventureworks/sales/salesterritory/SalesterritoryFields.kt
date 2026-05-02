@@ -9,23 +9,23 @@ import adventureworks.person.countryregion.CountryregionFields
 import adventureworks.person.countryregion.CountryregionId
 import adventureworks.person.countryregion.CountryregionRow
 import adventureworks.public.Name
-import dev.typr.foundations.PgTypes
-import dev.typr.foundations.RowParser
-import dev.typr.foundations.dsl.FieldsBase
-import dev.typr.foundations.dsl.Path
-import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.kotlin.ForeignKey
-import dev.typr.foundations.kotlin.RelationStructure
-import dev.typr.foundations.kotlin.SqlExpr
-import dev.typr.foundations.kotlin.SqlExpr.Field
-import dev.typr.foundations.kotlin.SqlExpr.IdField
-import dev.typr.foundations.kotlin.TupleExpr10
+import dev.typr.dsl.FieldsBase
+import dev.typr.dsl.Path
+import dev.typr.dsl.SqlExpr.FieldLike
+import dev.typr.dslkt.ForeignKey
+import dev.typr.dslkt.RelationStructure
+import dev.typr.dslkt.SqlExpr
+import dev.typr.dslkt.SqlExpr.Field
+import dev.typr.dslkt.SqlExpr.IdField
+import dev.typr.dslkt.TupleExpr10
+import dev.typr.foundations.RowCodec
+import dev.typr.foundationskt.PgTypes
 import java.math.BigDecimal
 import java.time.LocalDateTime
 import java.util.UUID
 import kotlin.collections.List
 
-data class SalesterritoryFields(val _path: List<Path>) : TupleExpr10<SalesterritoryId, Name, CountryregionId, String, BigDecimal, BigDecimal, BigDecimal, BigDecimal, UUID, LocalDateTime>, RelationStructure<SalesterritoryFields, SalesterritoryRow>, FieldsBase<SalesterritoryRow> {
+data class SalesterritoryFields(val _path: List<Path>) : TupleExpr10<SalesterritoryId, Name, CountryregionId, kotlin.String, BigDecimal, BigDecimal, BigDecimal, BigDecimal, UUID, LocalDateTime>, RelationStructure<SalesterritoryFields, SalesterritoryRow>, FieldsBase<SalesterritoryRow> {
   override fun _1(): SqlExpr<SalesterritoryId> = territoryid()
 
   override fun _10(): SqlExpr<LocalDateTime> = modifieddate()
@@ -34,7 +34,7 @@ data class SalesterritoryFields(val _path: List<Path>) : TupleExpr10<Salesterrit
 
   override fun _3(): SqlExpr<CountryregionId> = countryregioncode()
 
-  override fun _4(): SqlExpr<String> = group()
+  override fun _4(): SqlExpr<kotlin.String> = group()
 
   override fun _5(): SqlExpr<BigDecimal> = salesytd()
 
@@ -50,29 +50,29 @@ data class SalesterritoryFields(val _path: List<Path>) : TupleExpr10<Salesterrit
 
   override fun columns(): List<FieldLike<*, SalesterritoryRow>> = listOf(this.territoryid().underlying, this.name().underlying, this.countryregioncode().underlying, this.group().underlying, this.salesytd().underlying, this.saleslastyear().underlying, this.costytd().underlying, this.costlastyear().underlying, this.rowguid().underlying, this.modifieddate().underlying)
 
-  fun costlastyear(): Field<BigDecimal, SalesterritoryRow> = Field<BigDecimal, SalesterritoryRow>(_path, "costlastyear", SalesterritoryRow::costlastyear, null, "numeric", { row, value -> row.copy(costlastyear = value) }, PgTypes.numeric)
+  fun costlastyear(): Field<BigDecimal, SalesterritoryRow> = Field<BigDecimal, SalesterritoryRow>(_path, "costlastyear", SalesterritoryRow::costlastyear, null, "numeric", { row, value -> row.copy(costlastyear = value) }, PgTypes.numeric.underlying)
 
-  fun costytd(): Field<BigDecimal, SalesterritoryRow> = Field<BigDecimal, SalesterritoryRow>(_path, "costytd", SalesterritoryRow::costytd, null, "numeric", { row, value -> row.copy(costytd = value) }, PgTypes.numeric)
+  fun costytd(): Field<BigDecimal, SalesterritoryRow> = Field<BigDecimal, SalesterritoryRow>(_path, "costytd", SalesterritoryRow::costytd, null, "numeric", { row, value -> row.copy(costytd = value) }, PgTypes.numeric.underlying)
 
-  fun countryregioncode(): Field<CountryregionId, SalesterritoryRow> = Field<CountryregionId, SalesterritoryRow>(_path, "countryregioncode", SalesterritoryRow::countryregioncode, null, null, { row, value -> row.copy(countryregioncode = value) }, CountryregionId.pgType)
+  fun countryregioncode(): Field<CountryregionId, SalesterritoryRow> = Field<CountryregionId, SalesterritoryRow>(_path, "countryregioncode", SalesterritoryRow::countryregioncode, null, null, { row, value -> row.copy(countryregioncode = value) }, CountryregionId.pgType.underlying)
 
   fun fkPersonCountryregion(): ForeignKey<CountryregionFields, CountryregionRow> = ForeignKey.of<CountryregionFields, CountryregionRow>("sales.FK_SalesTerritory_CountryRegion_CountryRegionCode").withColumnPair<CountryregionId>(countryregioncode(), CountryregionFields::countryregioncode)
 
-  fun group(): Field<String, SalesterritoryRow> = Field<String, SalesterritoryRow>(_path, "group", SalesterritoryRow::group, null, null, { row, value -> row.copy(group = value) }, PgTypes.text)
+  fun group(): Field<kotlin.String, SalesterritoryRow> = Field<kotlin.String, SalesterritoryRow>(_path, "group", SalesterritoryRow::group, null, null, { row, value -> row.copy(group = value) }, PgTypes.text.underlying)
 
-  fun modifieddate(): Field<LocalDateTime, SalesterritoryRow> = Field<LocalDateTime, SalesterritoryRow>(_path, "modifieddate", SalesterritoryRow::modifieddate, null, "timestamp", { row, value -> row.copy(modifieddate = value) }, PgTypes.timestamp)
+  fun modifieddate(): Field<LocalDateTime, SalesterritoryRow> = Field<LocalDateTime, SalesterritoryRow>(_path, "modifieddate", SalesterritoryRow::modifieddate, null, "timestamp", { row, value -> row.copy(modifieddate = value) }, PgTypes.timestamp.underlying)
 
-  fun name(): Field<Name, SalesterritoryRow> = Field<Name, SalesterritoryRow>(_path, "name", SalesterritoryRow::name, null, "varchar", { row, value -> row.copy(name = value) }, Name.pgType)
+  fun name(): Field<Name, SalesterritoryRow> = Field<Name, SalesterritoryRow>(_path, "name", SalesterritoryRow::name, null, "varchar", { row, value -> row.copy(name = value) }, Name.pgType.underlying)
 
-  override fun rowParser(): RowParser<SalesterritoryRow> = SalesterritoryRow._rowParser.underlying
+  override fun rowCodec(): RowCodec<SalesterritoryRow> = SalesterritoryRow.rowCodec.underlying
 
-  fun rowguid(): Field<UUID, SalesterritoryRow> = Field<UUID, SalesterritoryRow>(_path, "rowguid", SalesterritoryRow::rowguid, null, "uuid", { row, value -> row.copy(rowguid = value) }, PgTypes.uuid)
+  fun rowguid(): Field<UUID, SalesterritoryRow> = Field<UUID, SalesterritoryRow>(_path, "rowguid", SalesterritoryRow::rowguid, null, "uuid", { row, value -> row.copy(rowguid = value) }, PgTypes.uuid.underlying)
 
-  fun saleslastyear(): Field<BigDecimal, SalesterritoryRow> = Field<BigDecimal, SalesterritoryRow>(_path, "saleslastyear", SalesterritoryRow::saleslastyear, null, "numeric", { row, value -> row.copy(saleslastyear = value) }, PgTypes.numeric)
+  fun saleslastyear(): Field<BigDecimal, SalesterritoryRow> = Field<BigDecimal, SalesterritoryRow>(_path, "saleslastyear", SalesterritoryRow::saleslastyear, null, "numeric", { row, value -> row.copy(saleslastyear = value) }, PgTypes.numeric.underlying)
 
-  fun salesytd(): Field<BigDecimal, SalesterritoryRow> = Field<BigDecimal, SalesterritoryRow>(_path, "salesytd", SalesterritoryRow::salesytd, null, "numeric", { row, value -> row.copy(salesytd = value) }, PgTypes.numeric)
+  fun salesytd(): Field<BigDecimal, SalesterritoryRow> = Field<BigDecimal, SalesterritoryRow>(_path, "salesytd", SalesterritoryRow::salesytd, null, "numeric", { row, value -> row.copy(salesytd = value) }, PgTypes.numeric.underlying)
 
-  fun territoryid(): IdField<SalesterritoryId, SalesterritoryRow> = IdField<SalesterritoryId, SalesterritoryRow>(_path, "territoryid", SalesterritoryRow::territoryid, null, "int4", { row, value -> row.copy(territoryid = value) }, SalesterritoryId.pgType)
+  fun territoryid(): IdField<SalesterritoryId, SalesterritoryRow> = IdField<SalesterritoryId, SalesterritoryRow>(_path, "territoryid", SalesterritoryRow::territoryid, null, "int4", { row, value -> row.copy(territoryid = value) }, SalesterritoryId.pgType.underlying)
 
   override fun withPaths(_path: List<Path>): RelationStructure<SalesterritoryFields, SalesterritoryRow> = SalesterritoryFields(_path)
 

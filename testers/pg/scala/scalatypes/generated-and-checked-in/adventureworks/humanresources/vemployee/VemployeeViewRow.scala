@@ -11,12 +11,11 @@ import adventureworks.public.Phone
 import adventureworks.userdefined.FirstName
 import adventureworks.userdefined.LastName
 import adventureworks.userdefined.MiddleName
-import dev.typr.foundations.PgTypes
+import dev.typr.dslsc.RowCodecs
 import dev.typr.foundations.Tuple.Tuple18
 import dev.typr.foundations.data.Xml
-import dev.typr.foundations.scala.RowParser
-import dev.typr.foundations.scala.RowParsers
-import dev.typr.foundations.scala.ScalaDbTypes
+import dev.typr.foundationssc.PgTypes
+import dev.typr.foundationssc.RowCodec
 
 /** View: humanresources.vemployee */
 case class VemployeeViewRow(
@@ -95,5 +94,5 @@ case class VemployeeViewRow(
 }
 
 object VemployeeViewRow {
-  val `_rowParser`: RowParser[VemployeeViewRow] = RowParsers.of(BusinessentityId.pgType, PgTypes.text, FirstName.pgType, MiddleName.pgType, LastName.pgType, PgTypes.text, PgTypes.text, Phone.pgType, Name.pgType, PgTypes.text, ScalaDbTypes.PgTypes.int4, PgTypes.text, PgTypes.text, PgTypes.text, Name.pgType, PgTypes.text, Name.pgType, PgTypes.xml)(VemployeeViewRow.apply)(row => Array[Any](row.businessentityid, row.title, row.firstname, row.middlename, row.lastname, row.suffix, row.jobtitle, row.phonenumber, row.phonenumbertype, row.emailaddress, row.emailpromotion, row.addressline1, row.addressline2, row.city, row.stateprovincename, row.postalcode, row.countryregionname, row.additionalcontactinfo))
+  val rowCodec: RowCodec[VemployeeViewRow] = RowCodecs.of(BusinessentityId.pgType, PgTypes.text, FirstName.pgType, MiddleName.pgType, LastName.pgType, PgTypes.text, PgTypes.text, Phone.pgType, Name.pgType, PgTypes.text, PgTypes.int4, PgTypes.text, PgTypes.text, PgTypes.text, Name.pgType, PgTypes.text, Name.pgType, PgTypes.xml)(VemployeeViewRow.apply)(row => Array[Any](row.businessentityid, row.title, row.firstname, row.middlename, row.lastname, row.suffix, row.jobtitle, row.phonenumber, row.phonenumbertype, row.emailaddress, row.emailpromotion, row.addressline1, row.addressline2, row.city, row.stateprovincename, row.postalcode, row.countryregionname, row.additionalcontactinfo))
 }

@@ -7,12 +7,11 @@ package adventureworks.person.address
 
 import adventureworks.customtypes.Defaulted
 import adventureworks.person.stateprovince.StateprovinceId
+import dev.typr.dslsc.RowCodecs
 import dev.typr.foundations.PgText
-import dev.typr.foundations.PgTypes
 import dev.typr.foundations.Tuple.Tuple9
-import dev.typr.foundations.scala.DbTypeOps
-import dev.typr.foundations.scala.RowParser
-import dev.typr.foundations.scala.RowParsers
+import dev.typr.foundationssc.PgTypes
+import dev.typr.foundationssc.RowCodec
 import java.time.LocalDateTime
 import java.util.UUID
 
@@ -84,7 +83,7 @@ case class AddressRow(
 }
 
 object AddressRow {
-  val `_rowParser`: RowParser[AddressRow] = RowParsers.of(AddressId.pgType, PgTypes.text, PgTypes.text.nullable, PgTypes.text, StateprovinceId.pgType, PgTypes.text, PgTypes.bytea.nullable, PgTypes.uuid, PgTypes.timestamp)(AddressRow.apply)(row => Array[Any](row.addressid, row.addressline1, row.addressline2, row.city, row.stateprovinceid, row.postalcode, row.spatiallocation, row.rowguid, row.modifieddate))
+  given pgText: PgText[AddressRow] = PgText.from(rowCodec.underlying)
 
-  given pgText: PgText[AddressRow] = PgText.from(`_rowParser`.underlying)
+  val rowCodec: RowCodec[AddressRow] = RowCodecs.of(AddressId.pgType, PgTypes.text, PgTypes.text.opt, PgTypes.text, StateprovinceId.pgType, PgTypes.text, PgTypes.bytea.opt, PgTypes.uuid, PgTypes.timestamp)(AddressRow.apply)(row => Array[Any](row.addressid, row.addressline1, row.addressline2, row.city, row.stateprovinceid, row.postalcode, row.spatiallocation, row.rowguid, row.modifieddate))
 }

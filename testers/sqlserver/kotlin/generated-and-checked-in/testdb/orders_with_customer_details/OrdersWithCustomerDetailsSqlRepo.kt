@@ -5,8 +5,8 @@
  */
 package testdb.orders_with_customer_details
 
+import dev.typr.foundationskt.ConnectionRead
 import java.math.BigDecimal
-import java.sql.Connection
 import java.time.LocalDateTime
 import kotlin.collections.List
 
@@ -14,6 +14,6 @@ interface OrdersWithCustomerDetailsSqlRepo {
   abstract fun apply(
     minAmount: BigDecimal?,
     startDate: LocalDateTime?,
-    c: Connection
+    c: ConnectionRead
   ): List<OrdersWithCustomerDetailsSqlRow>
 }

@@ -9,11 +9,10 @@ import adventureworks.person.businessentity.BusinessentityId
 import adventureworks.userdefined.FirstName
 import adventureworks.userdefined.LastName
 import adventureworks.userdefined.MiddleName
-import dev.typr.foundations.PgTypes
+import dev.typr.dslkt.RowCodecs
 import dev.typr.foundations.Tuple.Tuple10
-import dev.typr.foundations.kotlin.RowParser
-import dev.typr.foundations.kotlin.RowParsers
-import dev.typr.foundations.kotlin.nullable
+import dev.typr.foundationskt.PgTypes
+import dev.typr.foundationskt.RowCodec
 import java.util.UUID
 
 /** SQL file: person_detail.sql */
@@ -21,7 +20,7 @@ data class PersonDetailSqlRow(
   /** Points to [adventureworks.sales.salesperson.SalespersonRow.businessentityid] */
   val businessentityid: BusinessentityId,
   /** Points to [adventureworks.person.person.PersonRow.title] */
-  val title: /* max 8 chars */ String?,
+  val title: /* max 8 chars */ kotlin.String?,
   /** Points to [adventureworks.person.person.PersonRow.firstname] */
   val firstname: /* user-picked */ FirstName,
   /** Points to [adventureworks.person.person.PersonRow.middlename] */
@@ -29,21 +28,21 @@ data class PersonDetailSqlRow(
   /** Points to [adventureworks.person.person.PersonRow.lastname] */
   val lastname: /* user-picked */ LastName,
   /** Points to [adventureworks.humanresources.employee.EmployeeRow.jobtitle] */
-  val jobtitle: String,
+  val jobtitle: kotlin.String,
   /** Points to [adventureworks.person.address.AddressRow.addressline1] */
-  val addressline1: String?,
+  val addressline1: kotlin.String?,
   /** Points to [adventureworks.person.address.AddressRow.city] */
-  val city: String?,
+  val city: kotlin.String?,
   /** Points to [adventureworks.person.address.AddressRow.postalcode] */
-  val postalcode: String?,
+  val postalcode: kotlin.String?,
   /** Points to [adventureworks.person.address.AddressRow.rowguid] */
   val rowguid: UUID?
-) : Tuple10<BusinessentityId, /* max 8 chars */ String?, /* user-picked */ FirstName, /* user-picked */ MiddleName?, /* user-picked */ LastName, String, String?, String?, String?, UUID?> {
+) : Tuple10<BusinessentityId, /* max 8 chars */ kotlin.String?, /* user-picked */ FirstName, /* user-picked */ MiddleName?, /* user-picked */ LastName, kotlin.String, kotlin.String?, kotlin.String?, kotlin.String?, UUID?> {
   override fun _1(): BusinessentityId = businessentityid
 
   override fun _10(): UUID? = rowguid
 
-  override fun _2(): /* max 8 chars */ String? = title
+  override fun _2(): /* max 8 chars */ kotlin.String? = title
 
   override fun _3(): /* user-picked */ FirstName = firstname
 
@@ -51,15 +50,15 @@ data class PersonDetailSqlRow(
 
   override fun _5(): /* user-picked */ LastName = lastname
 
-  override fun _6(): String = jobtitle
+  override fun _6(): kotlin.String = jobtitle
 
-  override fun _7(): String? = addressline1
+  override fun _7(): kotlin.String? = addressline1
 
-  override fun _8(): String? = city
+  override fun _8(): kotlin.String? = city
 
-  override fun _9(): String? = postalcode
+  override fun _9(): kotlin.String? = postalcode
 
   companion object {
-    val _rowParser: RowParser<PersonDetailSqlRow> = RowParsers.of(BusinessentityId.pgType, PgTypes.text.nullable(), FirstName.pgType, MiddleName.pgType.nullable(), LastName.pgType, PgTypes.text, PgTypes.text.nullable(), PgTypes.text.nullable(), PgTypes.text.nullable(), PgTypes.uuid.nullable(), { t0, t1, t2, t3, t4, t5, t6, t7, t8, t9 -> PersonDetailSqlRow(t0, t1, t2, t3, t4, t5, t6, t7, t8, t9) }, { row -> arrayOf<Any?>(row.businessentityid, row.title, row.firstname, row.middlename, row.lastname, row.jobtitle, row.addressline1, row.city, row.postalcode, row.rowguid) })
+    val rowCodec: RowCodec<PersonDetailSqlRow> = RowCodecs.of(BusinessentityId.pgType, PgTypes.text.opt(), FirstName.pgType, MiddleName.pgType.opt(), LastName.pgType, PgTypes.text, PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.uuid.opt(), { t0: BusinessentityId, t1: /* max 8 chars */ kotlin.String?, t2: /* user-picked */ FirstName, t3: /* user-picked */ MiddleName?, t4: /* user-picked */ LastName, t5: kotlin.String, t6: kotlin.String?, t7: kotlin.String?, t8: kotlin.String?, t9: UUID? -> PersonDetailSqlRow(t0, t1, t2, t3, t4, t5, t6, t7, t8, t9) }, { row: PersonDetailSqlRow -> arrayOf<Any?>(row.businessentityid, row.title, row.firstname, row.middlename, row.lastname, row.jobtitle, row.addressline1, row.city, row.postalcode, row.rowguid) })
   }
 }

@@ -18,7 +18,7 @@ import java.util.Random
  * materialized views.
  */
 class DatabaseFeaturesTest {
-    private val testInsert = TestInsert(Random(42))
+    private val testInsert = TestInsert(Random(2061197791))
     private val distinctTypeRepo = DistinctTypeTestRepoImpl()
     private val checkConstraintRepo = CheckConstraintTestRepoImpl()
     private val identityParamsRepo = IdentityParamsTestRepoImpl()

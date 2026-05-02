@@ -5,12 +5,10 @@
  */
 package testdb.employee_salary_update
 
-import dev.typr.foundations.DuckDbTypes
-import dev.typr.foundations.kotlin.Fragment
-import dev.typr.foundations.kotlin.KotlinDbTypes
-import dev.typr.foundations.kotlin.nullable
+import dev.typr.foundationskt.ConnectionRead
+import dev.typr.foundationskt.DuckDbTypes
+import dev.typr.foundationskt.Fragment
 import java.math.BigDecimal
-import java.sql.Connection
 import kotlin.collections.List
 
 class EmployeeSalaryUpdateSqlRepoImpl() : EmployeeSalaryUpdateSqlRepo {
@@ -18,7 +16,7 @@ class EmployeeSalaryUpdateSqlRepoImpl() : EmployeeSalaryUpdateSqlRepo {
     raisePercentage: BigDecimal?,
     newSalary: BigDecimal,
     empNumber: Int,
-    empSuffix: String,
-    c: Connection
-  ): List<EmployeeSalaryUpdateSqlRow> = Fragment.interpolate(Fragment.lit("-- Update employee salary using composite primary key\n-- Tests: UPDATE with composite primary key, RETURNING, decimal arithmetic\n\nUPDATE employees\nSET salary = CASE\n    WHEN "), Fragment.encode(DuckDbTypes.numeric.nullable(), raisePercentage), Fragment.lit(" IS NOT NULL THEN salary * (1 + CAST("), Fragment.encode(DuckDbTypes.numeric.nullable(), raisePercentage), Fragment.lit(" AS DECIMAL) / 100.0)\n    ELSE CAST("), Fragment.encode(DuckDbTypes.numeric, newSalary), Fragment.lit(" AS DECIMAL)\nEND\nWHERE emp_number = CAST("), Fragment.encode(KotlinDbTypes.DuckDbTypes.integer, empNumber), Fragment.lit(" AS INTEGER)\n  AND emp_suffix = CAST("), Fragment.encode(DuckDbTypes.text, empSuffix), Fragment.lit(" AS VARCHAR)\nRETURNING\n    emp_number,\n    emp_suffix,\n    dept_code,\n    dept_region,\n    emp_name,\n    salary,\n    hire_date")).query(EmployeeSalaryUpdateSqlRow._rowParser.all()).runUnchecked(c)
+    empSuffix: kotlin.String,
+    c: ConnectionRead
+  ): List<EmployeeSalaryUpdateSqlRow> = Fragment.concat(Fragment.of("-- Update employee salary using composite primary key\n-- Tests: UPDATE with composite primary key, RETURNING, decimal arithmetic\n\nUPDATE employees\nSET salary = CASE\n    WHEN "), Fragment.encode(DuckDbTypes.numeric.opt(), raisePercentage), Fragment.of(" IS NOT NULL THEN salary * (1 + CAST("), Fragment.encode(DuckDbTypes.numeric.opt(), raisePercentage), Fragment.of(" AS DECIMAL) / 100.0)\n    ELSE CAST("), Fragment.encode(DuckDbTypes.numeric, newSalary), Fragment.of(" AS DECIMAL)\nEND\nWHERE emp_number = CAST("), Fragment.encode(DuckDbTypes.integer, empNumber), Fragment.of(" AS INTEGER)\n  AND emp_suffix = CAST("), Fragment.encode(DuckDbTypes.text, empSuffix), Fragment.of(" AS VARCHAR)\nRETURNING\n    emp_number,\n    emp_suffix,\n    dept_code,\n    dept_region,\n    emp_name,\n    salary,\n    hire_date")).query(EmployeeSalaryUpdateSqlRow.rowCodec.all()).run(c)
 }

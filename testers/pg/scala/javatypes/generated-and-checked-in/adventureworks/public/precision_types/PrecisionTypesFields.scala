@@ -12,16 +12,16 @@ import adventureworks.precisetypes.String100
 import adventureworks.precisetypes.String20
 import adventureworks.precisetypes.String255
 import adventureworks.precisetypes.String50
+import dev.typr.dsl.FieldsBase
+import dev.typr.dsl.Path
+import dev.typr.dsl.RelationStructure
+import dev.typr.dsl.SqlExpr
+import dev.typr.dsl.SqlExpr.Field
+import dev.typr.dsl.SqlExpr.FieldLike
+import dev.typr.dsl.SqlExpr.IdField
+import dev.typr.dsl.TupleExpr.TupleExpr25
 import dev.typr.foundations.PgTypes
-import dev.typr.foundations.RowParser
-import dev.typr.foundations.dsl.FieldsBase
-import dev.typr.foundations.dsl.Path
-import dev.typr.foundations.dsl.RelationStructure
-import dev.typr.foundations.dsl.SqlExpr
-import dev.typr.foundations.dsl.SqlExpr.Field
-import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.dsl.SqlExpr.IdField
-import dev.typr.foundations.dsl.TupleExpr.TupleExpr25
+import dev.typr.foundations.RowCodec
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.LocalTime
@@ -331,7 +331,7 @@ class PrecisionTypesFields(val `_path`: java.util.List[Path]) extends TupleExpr2
 
   override def columns: java.util.List[FieldLike[?, PrecisionTypesRow]] = java.util.List.of(this.id, this.string10, this.string20, this.string50, this.string100, this.string255, this.bpchar3, this.bpchar10, this.decimal52, this.decimal102, this.decimal184, this.numeric82, this.numeric124, this.timestamp0, this.timestamp3, this.timestamp6, this.timestamptz0, this.timestamptz3, this.timestamptz6, this.time0, this.time3, this.time6, this.timetz0, this.timetz3, this.timetz6)
 
-  override def rowParser: RowParser[PrecisionTypesRow] = PrecisionTypesRow._rowParser
+  override def rowCodec: RowCodec[PrecisionTypesRow] = PrecisionTypesRow.rowCodec
 
   override def withPaths(`_path`: java.util.List[Path]): RelationStructure[PrecisionTypesFields, PrecisionTypesRow] = new PrecisionTypesFields(`_path`)
 

@@ -5,16 +5,16 @@
  */
 package testdb.mariatest_identity
 
-import dev.typr.foundations.MariaTypes
-import dev.typr.foundations.RowParser
-import dev.typr.foundations.dsl.FieldsBase
-import dev.typr.foundations.dsl.Path
-import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.scala.RelationStructure
-import dev.typr.foundations.scala.SqlExpr
-import dev.typr.foundations.scala.SqlExpr.Field
-import dev.typr.foundations.scala.SqlExpr.IdField
-import dev.typr.foundations.scala.TupleExpr2
+import dev.typr.dsl.FieldsBase
+import dev.typr.dsl.Path
+import dev.typr.dsl.SqlExpr.FieldLike
+import dev.typr.dslsc.RelationStructure
+import dev.typr.dslsc.SqlExpr
+import dev.typr.dslsc.SqlExpr.Field
+import dev.typr.dslsc.SqlExpr.IdField
+import dev.typr.dslsc.TupleExpr2
+import dev.typr.foundations.RowCodec
+import dev.typr.foundationssc.MariaTypes
 
 class MariatestIdentityFields(val `_path`: java.util.List[Path]) extends TupleExpr2[MariatestIdentityId, String] with RelationStructure[MariatestIdentityFields, MariatestIdentityRow]  with FieldsBase[MariatestIdentityRow] {
   def id: IdField[MariatestIdentityId, MariatestIdentityRow] = {
@@ -25,7 +25,7 @@ class MariatestIdentityFields(val `_path`: java.util.List[Path]) extends TupleEx
       None,
       None,
       (row, value) => row.copy(id = value),
-      MariatestIdentityId.mariaType
+      MariatestIdentityId.mariaType.underlying
     )
   }
 
@@ -37,13 +37,13 @@ class MariatestIdentityFields(val `_path`: java.util.List[Path]) extends TupleEx
       None,
       None,
       (row, value) => row.copy(name = value),
-      MariaTypes.varchar
+      MariaTypes.varchar.underlying
     )
   }
 
   override def columns: java.util.List[FieldLike[?, MariatestIdentityRow]] = java.util.List.of(this.id.underlying, this.name.underlying)
 
-  override def rowParser: RowParser[MariatestIdentityRow] = MariatestIdentityRow._rowParser.underlying
+  override def rowCodec: RowCodec[MariatestIdentityRow] = MariatestIdentityRow.rowCodec.underlying
 
   override def withPaths(`_path`: java.util.List[Path]): RelationStructure[MariatestIdentityFields, MariatestIdentityRow] = new MariatestIdentityFields(`_path`)
 

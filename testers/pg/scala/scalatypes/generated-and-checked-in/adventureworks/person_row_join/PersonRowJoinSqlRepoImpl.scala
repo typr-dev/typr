@@ -5,15 +5,15 @@
  */
 package adventureworks.person_row_join
 
-import java.sql.Connection
-import dev.typr.foundations.scala.Fragment.sql
+import dev.typr.foundationssc.ConnectionRead
+import dev.typr.foundationssc.Fragment.sql
 
 class PersonRowJoinSqlRepoImpl extends PersonRowJoinSqlRepo {
-  override def apply(using c: Connection): List[PersonRowJoinSqlRow] = {
+  override def apply(using c: ConnectionRead): List[PersonRowJoinSqlRow] = {
     sql"""SELECT s.businessentityid,
            (select array_agg(ROW(a.emailaddress, a.rowguid)) from person.emailaddress a where a.businessentityid = s.businessentityid) as email,
            (select ARRAY[ROW(a.emailaddress, a.rowguid)] from person.emailaddress a where a.businessentityid = s.businessentityid) as emails
     FROM sales.salesperson s
-    """.query(PersonRowJoinSqlRow.`_rowParser`.all()).runUnchecked(c)
+    """.query(PersonRowJoinSqlRow.rowCodec.all()).run(using c)
   }
 }

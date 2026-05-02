@@ -37,7 +37,7 @@ object TypoInstant {
       .contramap(_.map(v => v.value.toString()))
   }
 
-  implicit lazy val bijection: Bijection[TypoInstant, Instant] = Bijection.apply[TypoInstant, Instant](_.value)(TypoInstant.apply)
+  implicit lazy val bijection: Bijection[TypoInstant, Instant] = Bijection[TypoInstant, Instant](_.value)(TypoInstant.apply)
 
   implicit lazy val decoder: Decoder[TypoInstant] = Decoder.decodeInstant.map(TypoInstant.apply)
 

@@ -9,23 +9,18 @@ package testdb
 
 /** Members of MariaDB SET type with values: x, y, z */
 
-sealed abstract class XYZSetMember(val value: java.lang.String)
+enum XYZSetMember {
+  case x, y, z
+  
+}
 
 object XYZSetMember {
   
+  extension (e: XYZSetMember) def value: java.lang.String = e.toString
   def apply(str: java.lang.String): scala.Either[java.lang.String, XYZSetMember] =
-    ByName.get(str).toRight(s"'$str' does not match any of the following legal values: $Names")
-  def force(str: java.lang.String): XYZSetMember =
-    apply(str) match {
-      case scala.Left(msg) => sys.error(msg)
-      case scala.Right(value) => value
-    }
-  case object x extends XYZSetMember("x")
-
-  case object y extends XYZSetMember("y")
-
-  case object z extends XYZSetMember("z")
-  val All: scala.List[XYZSetMember] = scala.List(x, y, z)
-  val Names: java.lang.String = All.map(_.value).mkString(", ")
-  val ByName: scala.collection.immutable.Map[java.lang.String, XYZSetMember] = All.map(x => (x.value, x)).toMap
+    scala.util.Try(XYZSetMember.valueOf(str)).toEither.left.map(_ => s"'$str' does not match any of the following legal values: $Names")
+  def force(str: java.lang.String): XYZSetMember = XYZSetMember.valueOf(str)
+  val All: scala.List[XYZSetMember] = values.toList
+  val Names: java.lang.String = All.map(_.toString).mkString(", ")
+  val ByName: scala.collection.immutable.Map[java.lang.String, XYZSetMember] = All.map(x => (x.toString, x)).toMap
 }

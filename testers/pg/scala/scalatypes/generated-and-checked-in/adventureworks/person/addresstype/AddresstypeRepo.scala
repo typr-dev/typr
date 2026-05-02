@@ -5,17 +5,18 @@
  */
 package adventureworks.person.addresstype
 
-import dev.typr.foundations.scala.DeleteBuilder
-import dev.typr.foundations.scala.SelectBuilder
-import dev.typr.foundations.scala.UpdateBuilder
-import java.sql.Connection
+import dev.typr.dslsc.DeleteBuilder
+import dev.typr.dslsc.SelectBuilder
+import dev.typr.dslsc.UpdateBuilder
+import dev.typr.foundationssc.Connection
+import dev.typr.foundationssc.ConnectionRead
 
 trait AddresstypeRepo {
   def delete: DeleteBuilder[AddresstypeFields, AddresstypeRow]
 
   def deleteById(addresstypeid: AddresstypeId)(using c: Connection): Boolean
 
-  def deleteByIds(addresstypeids: Array[AddresstypeId])(using c: Connection): Int
+  def deleteByIds(addresstypeids: List[AddresstypeId])(using c: Connection): Int
 
   def insert(unsaved: AddresstypeRow)(using c: Connection): AddresstypeRow
 
@@ -34,13 +35,13 @@ trait AddresstypeRepo {
 
   def select: SelectBuilder[AddresstypeFields, AddresstypeRow]
 
-  def selectAll(using c: Connection): List[AddresstypeRow]
+  def selectAll(using c: ConnectionRead): List[AddresstypeRow]
 
-  def selectById(addresstypeid: AddresstypeId)(using c: Connection): Option[AddresstypeRow]
+  def selectById(addresstypeid: AddresstypeId)(using c: ConnectionRead): Option[AddresstypeRow]
 
-  def selectByIds(addresstypeids: Array[AddresstypeId])(using c: Connection): List[AddresstypeRow]
+  def selectByIds(addresstypeids: List[AddresstypeId])(using c: ConnectionRead): List[AddresstypeRow]
 
-  def selectByIdsTracked(addresstypeids: Array[AddresstypeId])(using c: Connection): Map[AddresstypeId, AddresstypeRow]
+  def selectByIdsTracked(addresstypeids: List[AddresstypeId])(using c: ConnectionRead): Map[AddresstypeId, AddresstypeRow]
 
   def update: UpdateBuilder[AddresstypeFields, AddresstypeRow]
 

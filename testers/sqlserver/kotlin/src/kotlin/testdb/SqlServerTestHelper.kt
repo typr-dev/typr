@@ -1,12 +1,12 @@
 package testdb
 
-import dev.typr.foundations.SqlFunction
-import dev.typr.foundations.Transactor
-import dev.typr.foundations.connect.ConnectionSettings
-import dev.typr.foundations.connect.TransactionIsolation
-import dev.typr.foundations.connect.sqlserver.SqlServerConfig
-import dev.typr.foundations.connect.sqlserver.SqlServerEncrypt
-import java.sql.Connection
+import dev.typr.foundationskt.Connection
+import dev.typr.foundationskt.ConnectionRead
+import dev.typr.foundationskt.Transactor
+import dev.typr.foundationskt.connect.ConnectionSettings
+import dev.typr.foundationskt.connect.SqlServerConfig
+import dev.typr.foundationskt.connect.SqlServerEncrypt
+import dev.typr.foundationskt.connect.TransactionIsolation
 
 object SqlServerTestHelper {
     private val CONFIG: SqlServerConfig =
@@ -14,19 +14,16 @@ object SqlServerTestHelper {
             .encrypt(SqlServerEncrypt.FALSE)
             .build()
 
-    // SQL Server uses pessimistic locking by default, which causes deadlocks when
-    // multiple tests run in parallel and access the same tables. READ_UNCOMMITTED
-    // prevents lock contention. Since tests rollback anyway, dirty reads are fine.
-    private val TRANSACTOR: Transactor = CONFIG.transactor(
-        ConnectionSettings.builder().transactionIsolation(TransactionIsolation.READ_UNCOMMITTED).build(),
-        Transactor.testStrategy()
-    )
+    private val SETTINGS: ConnectionSettings =
+        ConnectionSettings.builder()
+            .transactionIsolation(TransactionIsolation.READ_UNCOMMITTED)
+            .build()
 
-    fun <T> apply(f: (Connection) -> T): T {
-        return TRANSACTOR.execute(SqlFunction { conn -> f(conn) })
-    }
+    private val TRANSACTOR: Transactor = Transactor.create(CONFIG, SETTINGS).rollbackOnly()
 
-    fun run(f: (Connection) -> Unit) {
-        TRANSACTOR.executeVoid { conn -> f(conn) }
-    }
+    fun <T> apply(f: (Connection) -> T): T = TRANSACTOR.transact(f)
+
+    fun run(f: (Connection) -> Unit) = TRANSACTOR.transact { conn -> f(conn) }
+
+    fun <T> applyRead(f: (ConnectionRead) -> T): T = TRANSACTOR.transactRead(f)
 }

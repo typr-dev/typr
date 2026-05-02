@@ -23,7 +23,7 @@ object ShortText {
 
   implicit lazy val arrayPut: Put[Array[ShortText]] = adventureworks.StringArrayMeta.put.contramap(_.map(_.value))
 
-  implicit lazy val bijection: Bijection[ShortText, String] = Bijection.apply[ShortText, String](_.value)(ShortText.apply)
+  implicit lazy val bijection: Bijection[ShortText, String] = Bijection[ShortText, String](_.value)(ShortText.apply)
 
   implicit lazy val decoder: Decoder[ShortText] = Decoder.decodeString.map(ShortText.apply)
 

@@ -6,15 +6,13 @@
 package testdb.promotions
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import dev.typr.foundations.MariaTypes
+import dev.typr.dslkt.RowCodecs
 import dev.typr.foundations.Tuple.Tuple16
 import dev.typr.foundations.data.Json
 import dev.typr.foundations.data.Uint1
 import dev.typr.foundations.data.Uint4
-import dev.typr.foundations.kotlin.KotlinDbTypes
-import dev.typr.foundations.kotlin.RowParser
-import dev.typr.foundations.kotlin.RowParsers
-import dev.typr.foundations.kotlin.nullable
+import dev.typr.foundationskt.MariaTypes
+import dev.typr.foundationskt.RowCodec
 import java.math.BigDecimal
 import java.time.LocalDateTime
 import testdb.AllBrandsCategoriesCSet
@@ -30,15 +28,15 @@ data class PromotionsRow(
     */
   @field:JsonProperty("promotion_id") val promotionId: PromotionsId,
   /**  */
-  val code: String,
+  val code: kotlin.String,
   /**  */
-  val name: String,
+  val name: kotlin.String,
   /** 
     * Default: NULL
     */
-  val description: String?,
+  val description: kotlin.String?,
   /**  */
-  @field:JsonProperty("discount_type") val discountType: String,
+  @field:JsonProperty("discount_type") val discountType: kotlin.String,
   /**  */
   @field:JsonProperty("discount_value") val discountValue: BigDecimal,
   /** 
@@ -77,7 +75,7 @@ data class PromotionsRow(
     * Default: current_timestamp()
     */
   @field:JsonProperty("created_at") val createdAt: LocalDateTime
-) : Tuple16<PromotionsId, String, String, String?, String, BigDecimal, BigDecimal?, Uint4?, Uint4, Uint1?, AllBrandsCategoriesCSet?, Json?, LocalDateTime, LocalDateTime, /* user-picked */ IsActive, LocalDateTime> {
+) : Tuple16<PromotionsId, kotlin.String, kotlin.String, kotlin.String?, kotlin.String, BigDecimal, BigDecimal?, Uint4?, Uint4, Uint1?, AllBrandsCategoriesCSet?, Json?, LocalDateTime, LocalDateTime, /* user-picked */ IsActive, LocalDateTime> {
   override fun _1(): PromotionsId = promotionId
 
   override fun _10(): Uint1? = maxUsesPerCustomer
@@ -94,13 +92,13 @@ data class PromotionsRow(
 
   override fun _16(): LocalDateTime = createdAt
 
-  override fun _2(): String = code
+  override fun _2(): kotlin.String = code
 
-  override fun _3(): String = name
+  override fun _3(): kotlin.String = name
 
-  override fun _4(): String? = description
+  override fun _4(): kotlin.String? = description
 
-  override fun _5(): String = discountType
+  override fun _5(): kotlin.String = discountType
 
   override fun _6(): BigDecimal = discountValue
 
@@ -113,7 +111,7 @@ data class PromotionsRow(
   fun id(): PromotionsId = promotionId
 
   fun toUnsavedRow(
-    description: Defaulted<String?> = Defaulted.Provided(this.description),
+    description: Defaulted<kotlin.String?> = Defaulted.Provided(this.description),
     minOrderAmount: Defaulted<BigDecimal?> = Defaulted.Provided(this.minOrderAmount),
     maxUses: Defaulted<Uint4?> = Defaulted.Provided(this.maxUses),
     usesCount: Defaulted<Uint4> = Defaulted.Provided(this.usesCount),
@@ -125,6 +123,6 @@ data class PromotionsRow(
   ): PromotionsRowUnsaved = PromotionsRowUnsaved(code, name, discountType, discountValue, validFrom, validTo, description, minOrderAmount, maxUses, usesCount, maxUsesPerCustomer, applicableTo, rulesJson, isActive, createdAt)
 
   companion object {
-    val _rowParser: RowParser<PromotionsRow> = RowParsers.of(PromotionsId.mariaType, MariaTypes.varchar, MariaTypes.varchar, MariaTypes.text.nullable(), MariaTypes.text, KotlinDbTypes.MariaTypes.numeric, KotlinDbTypes.MariaTypes.numeric.nullable(), MariaTypes.intUnsigned.nullable(), MariaTypes.intUnsigned, MariaTypes.tinyintUnsigned.nullable(), AllBrandsCategoriesCSet.mariaType.nullable(), MariaTypes.json.nullable(), MariaTypes.datetime, MariaTypes.datetime, IsActive.mariaType, MariaTypes.datetime, { t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15 -> PromotionsRow(t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15) }, { row -> arrayOf<Any?>(row.promotionId, row.code, row.name, row.description, row.discountType, row.discountValue, row.minOrderAmount, row.maxUses, row.usesCount, row.maxUsesPerCustomer, row.applicableTo, row.rulesJson, row.validFrom, row.validTo, row.isActive, row.createdAt) })
+    val rowCodec: RowCodec<PromotionsRow> = RowCodecs.of(PromotionsId.mariaType, MariaTypes.varchar, MariaTypes.varchar, MariaTypes.text.opt(), MariaTypes.text, MariaTypes.numeric, MariaTypes.numeric.opt(), MariaTypes.intUnsigned.opt(), MariaTypes.intUnsigned, MariaTypes.tinyintUnsigned.opt(), AllBrandsCategoriesCSet.mariaType.opt(), MariaTypes.json.opt(), MariaTypes.datetime, MariaTypes.datetime, IsActive.mariaType, MariaTypes.datetime, { t0: PromotionsId, t1: kotlin.String, t2: kotlin.String, t3: kotlin.String?, t4: kotlin.String, t5: BigDecimal, t6: BigDecimal?, t7: Uint4?, t8: Uint4, t9: Uint1?, t10: AllBrandsCategoriesCSet?, t11: Json?, t12: LocalDateTime, t13: LocalDateTime, t14: /* user-picked */ IsActive, t15: LocalDateTime -> PromotionsRow(t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15) }, { row: PromotionsRow -> arrayOf<Any?>(row.promotionId, row.code, row.name, row.description, row.discountType, row.discountValue, row.minOrderAmount, row.maxUses, row.usesCount, row.maxUsesPerCustomer, row.applicableTo, row.rulesJson, row.validFrom, row.validTo, row.isActive, row.createdAt) })
   }
 }

@@ -6,7 +6,7 @@ import java.math.BigDecimal
 import java.util.Random
 
 class TestInsertTest {
-    private val testInsert = TestInsert(Random(42))
+    private val testInsert = TestInsert(Random(1794141443))
 
     @Test
     fun testCustomersInsert() {

@@ -5,56 +5,55 @@
  */
 package testdb.payment_methods
 
-import dev.typr.foundations.MariaTypes
-import dev.typr.foundations.RowParser
+import dev.typr.dsl.FieldsBase
+import dev.typr.dsl.Path
+import dev.typr.dsl.SqlExpr.FieldLike
+import dev.typr.dslkt.RelationStructure
+import dev.typr.dslkt.SqlExpr
+import dev.typr.dslkt.SqlExpr.Field
+import dev.typr.dslkt.SqlExpr.IdField
+import dev.typr.dslkt.SqlExpr.OptField
+import dev.typr.dslkt.TupleExpr7
+import dev.typr.foundations.RowCodec
 import dev.typr.foundations.data.Json
-import dev.typr.foundations.dsl.FieldsBase
-import dev.typr.foundations.dsl.Path
-import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.kotlin.KotlinDbTypes
-import dev.typr.foundations.kotlin.RelationStructure
-import dev.typr.foundations.kotlin.SqlExpr
-import dev.typr.foundations.kotlin.SqlExpr.Field
-import dev.typr.foundations.kotlin.SqlExpr.IdField
-import dev.typr.foundations.kotlin.SqlExpr.OptField
-import dev.typr.foundations.kotlin.TupleExpr7
+import dev.typr.foundationskt.MariaTypes
 import kotlin.collections.List
 import testdb.userdefined.IsActive
 
-data class PaymentMethodsFields(val _path: List<Path>) : TupleExpr7<PaymentMethodsId, String, String, String, Json, /* user-picked */ IsActive, Byte>, RelationStructure<PaymentMethodsFields, PaymentMethodsRow>, FieldsBase<PaymentMethodsRow> {
+data class PaymentMethodsFields(val _path: List<Path>) : TupleExpr7<PaymentMethodsId, kotlin.String, kotlin.String, kotlin.String, Json, /* user-picked */ IsActive, kotlin.Byte>, RelationStructure<PaymentMethodsFields, PaymentMethodsRow>, FieldsBase<PaymentMethodsRow> {
   override fun _1(): SqlExpr<PaymentMethodsId> = methodId()
 
-  override fun _2(): SqlExpr<String> = code()
+  override fun _2(): SqlExpr<kotlin.String> = code()
 
-  override fun _3(): SqlExpr<String> = name()
+  override fun _3(): SqlExpr<kotlin.String> = name()
 
-  override fun _4(): SqlExpr<String> = methodType()
+  override fun _4(): SqlExpr<kotlin.String> = methodType()
 
   override fun _5(): SqlExpr<Json> = processorConfig()
 
   override fun _6(): SqlExpr</* user-picked */ IsActive> = isActive()
 
-  override fun _7(): SqlExpr<Byte> = sortOrder()
+  override fun _7(): SqlExpr<kotlin.Byte> = sortOrder()
 
   override fun _path(): List<Path> = _path
 
-  fun code(): Field<String, PaymentMethodsRow> = Field<String, PaymentMethodsRow>(_path, "code", PaymentMethodsRow::code, null, null, { row, value -> row.copy(code = value) }, MariaTypes.varchar)
+  fun code(): Field<kotlin.String, PaymentMethodsRow> = Field<kotlin.String, PaymentMethodsRow>(_path, "code", PaymentMethodsRow::code, null, null, { row, value -> row.copy(code = value) }, MariaTypes.varchar.underlying)
 
   override fun columns(): List<FieldLike<*, PaymentMethodsRow>> = listOf(this.methodId().underlying, this.code().underlying, this.name().underlying, this.methodType().underlying, this.processorConfig().underlying, this.isActive().underlying, this.sortOrder().underlying)
 
-  fun isActive(): Field</* user-picked */ IsActive, PaymentMethodsRow> = Field</* user-picked */ IsActive, PaymentMethodsRow>(_path, "is_active", PaymentMethodsRow::isActive, null, null, { row, value -> row.copy(isActive = value) }, IsActive.mariaType)
+  fun isActive(): Field</* user-picked */ IsActive, PaymentMethodsRow> = Field</* user-picked */ IsActive, PaymentMethodsRow>(_path, "is_active", PaymentMethodsRow::isActive, null, null, { row, value -> row.copy(isActive = value) }, IsActive.mariaType.underlying)
 
-  fun methodId(): IdField<PaymentMethodsId, PaymentMethodsRow> = IdField<PaymentMethodsId, PaymentMethodsRow>(_path, "method_id", PaymentMethodsRow::methodId, null, null, { row, value -> row.copy(methodId = value) }, PaymentMethodsId.mariaType)
+  fun methodId(): IdField<PaymentMethodsId, PaymentMethodsRow> = IdField<PaymentMethodsId, PaymentMethodsRow>(_path, "method_id", PaymentMethodsRow::methodId, null, null, { row, value -> row.copy(methodId = value) }, PaymentMethodsId.mariaType.underlying)
 
-  fun methodType(): Field<String, PaymentMethodsRow> = Field<String, PaymentMethodsRow>(_path, "method_type", PaymentMethodsRow::methodType, null, null, { row, value -> row.copy(methodType = value) }, MariaTypes.text)
+  fun methodType(): Field<kotlin.String, PaymentMethodsRow> = Field<kotlin.String, PaymentMethodsRow>(_path, "method_type", PaymentMethodsRow::methodType, null, null, { row, value -> row.copy(methodType = value) }, MariaTypes.text.underlying)
 
-  fun name(): Field<String, PaymentMethodsRow> = Field<String, PaymentMethodsRow>(_path, "name", PaymentMethodsRow::name, null, null, { row, value -> row.copy(name = value) }, MariaTypes.varchar)
+  fun name(): Field<kotlin.String, PaymentMethodsRow> = Field<kotlin.String, PaymentMethodsRow>(_path, "name", PaymentMethodsRow::name, null, null, { row, value -> row.copy(name = value) }, MariaTypes.varchar.underlying)
 
-  fun processorConfig(): OptField<Json, PaymentMethodsRow> = OptField<Json, PaymentMethodsRow>(_path, "processor_config", PaymentMethodsRow::processorConfig, null, null, { row, value -> row.copy(processorConfig = value) }, MariaTypes.json)
+  fun processorConfig(): OptField<Json, PaymentMethodsRow> = OptField<Json, PaymentMethodsRow>(_path, "processor_config", PaymentMethodsRow::processorConfig, null, null, { row, value -> row.copy(processorConfig = value) }, MariaTypes.json.underlying)
 
-  override fun rowParser(): RowParser<PaymentMethodsRow> = PaymentMethodsRow._rowParser.underlying
+  override fun rowCodec(): RowCodec<PaymentMethodsRow> = PaymentMethodsRow.rowCodec.underlying
 
-  fun sortOrder(): Field<Byte, PaymentMethodsRow> = Field<Byte, PaymentMethodsRow>(_path, "sort_order", PaymentMethodsRow::sortOrder, null, null, { row, value -> row.copy(sortOrder = value) }, KotlinDbTypes.MariaTypes.tinyint)
+  fun sortOrder(): Field<kotlin.Byte, PaymentMethodsRow> = Field<kotlin.Byte, PaymentMethodsRow>(_path, "sort_order", PaymentMethodsRow::sortOrder, null, null, { row, value -> row.copy(sortOrder = value) }, MariaTypes.tinyint.underlying)
 
   override fun withPaths(_path: List<Path>): RelationStructure<PaymentMethodsFields, PaymentMethodsRow> = PaymentMethodsFields(_path)
 

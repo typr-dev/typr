@@ -5,29 +5,28 @@
  */
 package testdb
 
-import dev.typr.foundations.MariaType
-import dev.typr.foundations.MariaTypes
 import dev.typr.foundations.data.maria.MariaSet
+import dev.typr.foundationskt.Bijection
+import dev.typr.foundationskt.MariaType
+import dev.typr.foundationskt.MariaTypes
 import java.util.EnumSet
 import kotlin.collections.List
 import kotlin.collections.Set
 
 /** MariaDB SET type with values: all, brands, categories, customers, products */
 data class AllBrandsCategoriesCSet(val members: Set<AllBrandsCategoriesCSetMember>) {
-  fun contains(member: AllBrandsCategoriesCSetMember): Boolean = members.contains(member)
+  fun contains(member: AllBrandsCategoriesCSetMember): kotlin.Boolean = members.contains(member)
 
-  fun isEmpty(): Boolean = members.isEmpty()
+  fun isEmpty(): kotlin.Boolean = members.isEmpty()
 
   fun size(): Int = members.size
 
-  fun toCommaSeparated(): String = members.joinToString(",") { it.value }
+  fun toCommaSeparated(): kotlin.String = members.joinToString(",") { it.value }
 
-  override fun toString(): String = toCommaSeparated()
+  override fun toString(): kotlin.String = toCommaSeparated()
 
   companion object {
-    fun empty(): AllBrandsCategoriesCSet = AllBrandsCategoriesCSet(EnumSet.noneOf(AllBrandsCategoriesCSetMember::class.java).toSet())
-
-    fun fromString(str: String): AllBrandsCategoriesCSet = run {
+    fun fromString(str: kotlin.String): AllBrandsCategoriesCSet = run {
       if (str.isNullOrEmpty()) AllBrandsCategoriesCSet(EnumSet.noneOf(AllBrandsCategoriesCSetMember::class.java).toSet())
       else {
         val set = EnumSet.noneOf(AllBrandsCategoriesCSetMember::class.java)
@@ -38,12 +37,14 @@ data class AllBrandsCategoriesCSet(val members: Set<AllBrandsCategoriesCSetMembe
       }
     }
 
-    val mariaType: MariaType<AllBrandsCategoriesCSet> =
-      MariaTypes.set.bimap({ ms: MariaSet -> AllBrandsCategoriesCSet.fromString(ms.toCommaSeparated()) }, { s: AllBrandsCategoriesCSet -> MariaSet.fromString(s.toCommaSeparated()) })
-
     fun of(members: List<AllBrandsCategoriesCSetMember>): AllBrandsCategoriesCSet = run {
       if (members.isEmpty()) AllBrandsCategoriesCSet(EnumSet.noneOf(AllBrandsCategoriesCSetMember::class.java).toSet())
       else AllBrandsCategoriesCSet(EnumSet.copyOf(members).toSet())
     }
+
+    fun empty(): AllBrandsCategoriesCSet = AllBrandsCategoriesCSet(EnumSet.noneOf(AllBrandsCategoriesCSetMember::class.java).toSet())
+
+    val mariaType: MariaType<AllBrandsCategoriesCSet> =
+      MariaTypes.set.to(Bijection.of({ ms: MariaSet -> AllBrandsCategoriesCSet.fromString(ms.toCommaSeparated()) }, { s: AllBrandsCategoriesCSet -> MariaSet.fromString(s.toCommaSeparated()) }))
   }
 }

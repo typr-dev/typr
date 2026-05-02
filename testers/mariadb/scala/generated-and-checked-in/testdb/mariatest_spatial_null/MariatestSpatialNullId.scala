@@ -6,15 +6,15 @@
 package testdb.mariatest_spatial_null
 
 import com.fasterxml.jackson.annotation.JsonValue
-import dev.typr.foundations.MariaType
-import dev.typr.foundations.scala.Bijection
-import dev.typr.foundations.scala.ScalaDbTypes
+import dev.typr.dslsc.Bijection
+import dev.typr.foundationssc.MariaType
+import dev.typr.foundationssc.MariaTypes
 
 /** Type for the primary key of table `mariatest_spatial_null` */
 case class MariatestSpatialNullId(@JsonValue value: Int) extends scala.AnyVal
 
 object MariatestSpatialNullId {
-  given bijection: Bijection[MariatestSpatialNullId, Int] = Bijection.apply[MariatestSpatialNullId, Int](_.value)(MariatestSpatialNullId.apply)
+  given bijection: Bijection[MariatestSpatialNullId, Int] = Bijection.of[MariatestSpatialNullId, Int](_.value, MariatestSpatialNullId.apply)
 
-  given mariaType: MariaType[MariatestSpatialNullId] = ScalaDbTypes.MariaTypes.int_.bimap(MariatestSpatialNullId.apply, _.value)
+  given mariaType: MariaType[MariatestSpatialNullId] = MariaTypes.int_.to(Bijection.of(MariatestSpatialNullId.apply, _.value))
 }

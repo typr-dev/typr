@@ -27,7 +27,7 @@ object TypoMoney {
       .contramap(_.map(v => v.value.bigDecimal))
   }
 
-  given bijection: Bijection[TypoMoney, BigDecimal] = Bijection.apply[TypoMoney, BigDecimal](_.value)(TypoMoney.apply)
+  given bijection: Bijection[TypoMoney, BigDecimal] = Bijection[TypoMoney, BigDecimal](_.value)(TypoMoney.apply)
 
   given decoder: Decoder[TypoMoney] = Decoder.decodeBigDecimal.map(TypoMoney.apply)
 

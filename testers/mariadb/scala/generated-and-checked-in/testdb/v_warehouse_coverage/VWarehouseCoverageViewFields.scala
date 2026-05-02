@@ -5,17 +5,16 @@
  */
 package testdb.v_warehouse_coverage
 
-import dev.typr.foundations.MariaTypes
-import dev.typr.foundations.RowParser
-import dev.typr.foundations.dsl.FieldsBase
-import dev.typr.foundations.dsl.Path
-import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.scala.RelationStructure
-import dev.typr.foundations.scala.ScalaDbTypes
-import dev.typr.foundations.scala.SqlExpr
-import dev.typr.foundations.scala.SqlExpr.Field
-import dev.typr.foundations.scala.SqlExpr.OptField
-import dev.typr.foundations.scala.TupleExpr10
+import dev.typr.dsl.FieldsBase
+import dev.typr.dsl.Path
+import dev.typr.dsl.SqlExpr.FieldLike
+import dev.typr.dslsc.RelationStructure
+import dev.typr.dslsc.SqlExpr
+import dev.typr.dslsc.SqlExpr.Field
+import dev.typr.dslsc.SqlExpr.OptField
+import dev.typr.dslsc.TupleExpr10
+import dev.typr.foundations.RowCodec
+import dev.typr.foundationssc.MariaTypes
 import testdb.userdefined.IsActive
 import testdb.warehouses.WarehousesId
 
@@ -28,7 +27,7 @@ class VWarehouseCoverageViewFields(val `_path`: java.util.List[Path]) extends Tu
       None,
       None,
       (row, value) => row.copy(warehouseId = value),
-      WarehousesId.mariaType
+      WarehousesId.mariaType.underlying
     )
   }
 
@@ -40,7 +39,7 @@ class VWarehouseCoverageViewFields(val `_path`: java.util.List[Path]) extends Tu
       None,
       None,
       (row, value) => row.copy(code = value),
-      MariaTypes.char_
+      MariaTypes.char_.underlying
     )
   }
 
@@ -52,7 +51,7 @@ class VWarehouseCoverageViewFields(val `_path`: java.util.List[Path]) extends Tu
       None,
       None,
       (row, value) => row.copy(name = value),
-      MariaTypes.varchar
+      MariaTypes.varchar.underlying
     )
   }
 
@@ -64,7 +63,7 @@ class VWarehouseCoverageViewFields(val `_path`: java.util.List[Path]) extends Tu
       None,
       None,
       (row, value) => row.copy(address = value),
-      MariaTypes.varchar
+      MariaTypes.varchar.underlying
     )
   }
 
@@ -76,7 +75,7 @@ class VWarehouseCoverageViewFields(val `_path`: java.util.List[Path]) extends Tu
       None,
       None,
       (row, value) => row.copy(locationWkt = value),
-      MariaTypes.longtext
+      MariaTypes.longtext.underlying
     )
   }
 
@@ -88,7 +87,7 @@ class VWarehouseCoverageViewFields(val `_path`: java.util.List[Path]) extends Tu
       None,
       None,
       (row, value) => row.copy(serviceAreaWkt = value),
-      MariaTypes.longtext
+      MariaTypes.longtext.underlying
     )
   }
 
@@ -100,7 +99,7 @@ class VWarehouseCoverageViewFields(val `_path`: java.util.List[Path]) extends Tu
       None,
       None,
       (row, value) => row.copy(timezone = value),
-      MariaTypes.varchar
+      MariaTypes.varchar.underlying
     )
   }
 
@@ -112,7 +111,7 @@ class VWarehouseCoverageViewFields(val `_path`: java.util.List[Path]) extends Tu
       None,
       None,
       (row, value) => row.copy(isActive = value),
-      IsActive.mariaType
+      IsActive.mariaType.underlying
     )
   }
 
@@ -124,7 +123,7 @@ class VWarehouseCoverageViewFields(val `_path`: java.util.List[Path]) extends Tu
       None,
       None,
       (row, value) => row.copy(productsStocked = value),
-      ScalaDbTypes.MariaTypes.bigint
+      MariaTypes.bigint.underlying
     )
   }
 
@@ -136,13 +135,13 @@ class VWarehouseCoverageViewFields(val `_path`: java.util.List[Path]) extends Tu
       None,
       None,
       (row, value) => row.copy(totalInventory = value),
-      ScalaDbTypes.MariaTypes.numeric
+      MariaTypes.numeric.underlying
     )
   }
 
   override def columns: java.util.List[FieldLike[?, VWarehouseCoverageViewRow]] = java.util.List.of(this.warehouseId.underlying, this.code.underlying, this.name.underlying, this.address.underlying, this.locationWkt.underlying, this.serviceAreaWkt.underlying, this.timezone.underlying, this.isActive.underlying, this.productsStocked.underlying, this.totalInventory.underlying)
 
-  override def rowParser: RowParser[VWarehouseCoverageViewRow] = VWarehouseCoverageViewRow._rowParser.underlying
+  override def rowCodec: RowCodec[VWarehouseCoverageViewRow] = VWarehouseCoverageViewRow.rowCodec.underlying
 
   override def withPaths(`_path`: java.util.List[Path]): RelationStructure[VWarehouseCoverageViewFields, VWarehouseCoverageViewRow] = new VWarehouseCoverageViewFields(`_path`)
 

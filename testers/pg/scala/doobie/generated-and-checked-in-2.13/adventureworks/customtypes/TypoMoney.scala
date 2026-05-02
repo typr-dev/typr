@@ -27,7 +27,7 @@ object TypoMoney {
       .contramap(_.map(v => v.value.bigDecimal))
   }
 
-  implicit lazy val bijection: Bijection[TypoMoney, BigDecimal] = Bijection.apply[TypoMoney, BigDecimal](_.value)(TypoMoney.apply)
+  implicit lazy val bijection: Bijection[TypoMoney, BigDecimal] = Bijection[TypoMoney, BigDecimal](_.value)(TypoMoney.apply)
 
   implicit lazy val decoder: Decoder[TypoMoney] = Decoder.decodeBigDecimal.map(TypoMoney.apply)
 

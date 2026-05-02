@@ -5,10 +5,10 @@
  */
 package adventureworks.public.title_domain
 
+import dev.typr.dslsc.RowCodecs
 import dev.typr.foundations.PgText
 import dev.typr.foundations.Tuple.Tuple1
-import dev.typr.foundations.scala.RowParser
-import dev.typr.foundations.scala.RowParsers
+import dev.typr.foundationssc.RowCodec
 
 /** Table: public.title_domain
  * Primary key: code
@@ -20,7 +20,7 @@ case class TitleDomainRow(code: TitleDomainId) extends Tuple1[TitleDomainId] {
 }
 
 object TitleDomainRow {
-  val `_rowParser`: RowParser[TitleDomainRow] = RowParsers.of(TitleDomainId.pgType)(TitleDomainRow.apply)(row => Array[Any](row.code))
+  given pgText: PgText[TitleDomainRow] = PgText.from(rowCodec.underlying)
 
-  given pgText: PgText[TitleDomainRow] = PgText.from(`_rowParser`.underlying)
+  val rowCodec: RowCodec[TitleDomainRow] = RowCodecs.of(TitleDomainId.pgType)(TitleDomainRow.apply)(row => Array[Any](row.code))
 }

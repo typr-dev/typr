@@ -5,13 +5,13 @@
  */
 package oracledb.employees_by_department
 
-import java.sql.Connection
+import dev.typr.foundationskt.ConnectionRead
 import kotlin.collections.List
 
 interface EmployeesByDepartmentSqlRepo {
   abstract fun apply(
-    deptCode: String,
-    deptRegion: String,
-    c: Connection
+    deptCode: kotlin.String,
+    deptRegion: kotlin.String,
+    c: ConnectionRead
   ): List<EmployeesByDepartmentSqlRow>
 }

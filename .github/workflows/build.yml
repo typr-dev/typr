@@ -70,12 +70,6 @@ jobs:
         with:
           extraFiles: bleep.yaml
 
-      - name: Set up JDK
-        uses: actions/setup-java@v4
-        with:
-          java-version: '21'
-          distribution: 'temurin'
-
       - name: Start Postgres
         env:
           PG_MAJOR: ${{ matrix.postgres-version }}
@@ -123,13 +117,10 @@ jobs:
           CI: true
         run: bleep compile foundations-jdbc-test && bleep test foundations-jdbc-test --only PgTypeTest
 
-      - name: Sourcegen
-        run: bleep sourcegen
-
       - name: Run Kotlin Postgres tests
         env:
           CI: true
-        run: ./gradlew :testers:pg:kotlin:test
+        run: bleep test testers/pg/kotlin
 
   build-mariadb:
     runs-on: ubuntu-latest
@@ -141,12 +132,6 @@ jobs:
       - uses: coursier/cache-action@v6
         with:
           extraFiles: bleep.yaml
-
-      - name: Set up JDK
-        uses: actions/setup-java@v4
-        with:
-          java-version: '21'
-          distribution: 'temurin'
 
       - name: Start MariaDB
         run: docker compose up -d mariadb
@@ -177,13 +162,10 @@ jobs:
           CI: true
         run: bleep compile foundations-jdbc-test && bleep test foundations-jdbc-test --only MariaTypeTest
 
-      - name: Sourcegen
-        run: bleep sourcegen
-
       - name: Run MariaDB Kotlin tests
         env:
           CI: true
-        run: ./gradlew :testers:mariadb:kotlin:test
+        run: bleep test testers/mariadb/kotlin
 
   build-oracle:
     runs-on: ubuntu-latest
@@ -195,12 +177,6 @@ jobs:
       - uses: coursier/cache-action@v6
         with:
           extraFiles: bleep.yaml
-
-      - name: Set up JDK
-        uses: actions/setup-java@v4
-        with:
-          java-version: '21'
-          distribution: 'temurin'
 
       - name: Start Oracle and wait for healthy
         run: |
@@ -225,13 +201,10 @@ jobs:
           CI: true
         run: bleep compile foundations-jdbc-test && bleep test foundations-jdbc-test --only OracleTypeTest
 
-      - name: Sourcegen
-        run: bleep sourcegen
-
       - name: Run Oracle Kotlin tests
         env:
           CI: true
-        run: ./gradlew :testers:oracle:kotlin:test
+        run: bleep test testers/oracle/kotlin
 
   build-duckdb:
     runs-on: ubuntu-latest
@@ -243,12 +216,6 @@ jobs:
       - uses: coursier/cache-action@v6
         with:
           extraFiles: bleep.yaml
-
-      - name: Set up JDK
-        uses: actions/setup-java@v4
-        with:
-          java-version: '21'
-          distribution: 'temurin'
 
       - name: Run DuckDB Scala tests
         env:
@@ -265,13 +232,10 @@ jobs:
           CI: true
         run: bleep compile foundations-jdbc-test && bleep test foundations-jdbc-test --only DuckDbTypeTest
 
-      - name: Sourcegen
-        run: bleep sourcegen
-
       - name: Run DuckDB Kotlin tests
         env:
           CI: true
-        run: ./gradlew :testers:duckdb:kotlin:test
+        run: bleep test testers/duckdb/kotlin
 
   build-sqlserver:
     runs-on: ubuntu-latest
@@ -283,12 +247,6 @@ jobs:
       - uses: coursier/cache-action@v6
         with:
           extraFiles: bleep.yaml
-
-      - name: Set up JDK
-        uses: actions/setup-java@v4
-        with:
-          java-version: '21'
-          distribution: 'temurin'
 
       - name: Start SQL Server and wait for healthy
         run: |
@@ -315,13 +273,10 @@ jobs:
           CI: true
         run: bleep compile foundations-jdbc-test && bleep test foundations-jdbc-test --only SqlServerTypeTest
 
-      - name: Sourcegen
-        run: bleep sourcegen
-
       - name: Run SQL Server Kotlin tests
         env:
           CI: true
-        run: ./gradlew :testers:sqlserver:kotlin:test
+        run: bleep test testers/sqlserver/kotlin
 
   build-db2:
     runs-on: ubuntu-latest
@@ -333,12 +288,6 @@ jobs:
       - uses: coursier/cache-action@v6
         with:
           extraFiles: bleep.yaml
-
-      - name: Set up JDK
-        uses: actions/setup-java@v4
-        with:
-          java-version: '21'
-          distribution: 'temurin'
 
       - name: Start DB2 and wait for healthy
         run: |
@@ -365,13 +314,10 @@ jobs:
           CI: true
         run: bleep compile foundations-jdbc-test && bleep test foundations-jdbc-test --only Db2TypeTest
 
-      - name: Sourcegen
-        run: bleep sourcegen
-
       - name: Run DB2 Kotlin tests
         env:
           CI: true
-        run: ./gradlew :testers:db2:kotlin:test
+        run: bleep test testers/db2/kotlin
 
   build-openapi:
     runs-on: ubuntu-latest
@@ -384,12 +330,6 @@ jobs:
         with:
           extraFiles: bleep.yaml
 
-      - name: Set up JDK
-        uses: actions/setup-java@v4
-        with:
-          java-version: '21'
-          distribution: 'temurin'
-
       - name: Compile Scala OpenAPI testers
         run: |
           bleep compile testers/openapi/scala/http4s
@@ -401,14 +341,8 @@ jobs:
           bleep compile testers/openapi/java/quarkus
           bleep compile testers/openapi/java/spring
 
-      - name: Sourcegen
-        run: bleep sourcegen
-
-      - name: Compile Kotlin OpenAPI testers (via gradle)
-        run: |
-          ./gradlew :testers:openapi:kotlin:jaxrs:compileKotlin
-          ./gradlew :testers:openapi:kotlin:spring:compileKotlin
-          ./gradlew :testers:openapi:kotlin:quarkus:compileKotlin
+      - name: Compile Kotlin OpenAPI testers
+        run: bleep compile testers/openapi/kotlin/jaxrs testers/openapi/kotlin/spring testers/openapi/kotlin/quarkus
 
   build-docs:
     timeout-minutes: 20

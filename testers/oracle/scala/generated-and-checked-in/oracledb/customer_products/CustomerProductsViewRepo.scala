@@ -5,11 +5,11 @@
  */
 package oracledb.customer_products
 
-import dev.typr.foundations.dsl.SelectBuilder
-import java.sql.Connection
+import dev.typr.dsl.SelectBuilder
+import dev.typr.foundations.ConnectionRead
 
 trait CustomerProductsViewRepo {
   def select: SelectBuilder[CustomerProductsViewFields, CustomerProductsViewRow]
 
-  def selectAll(using c: Connection): java.util.List[CustomerProductsViewRow]
+  def selectAll(using c: ConnectionRead): java.util.List[CustomerProductsViewRow]
 }

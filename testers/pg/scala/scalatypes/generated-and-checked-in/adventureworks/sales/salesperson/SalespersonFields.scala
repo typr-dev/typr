@@ -11,19 +11,18 @@ import adventureworks.person.businessentity.BusinessentityId
 import adventureworks.sales.salesterritory.SalesterritoryFields
 import adventureworks.sales.salesterritory.SalesterritoryId
 import adventureworks.sales.salesterritory.SalesterritoryRow
-import dev.typr.foundations.PgTypes
-import dev.typr.foundations.RowParser
-import dev.typr.foundations.dsl.FieldsBase
-import dev.typr.foundations.dsl.Path
-import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.scala.ForeignKey
-import dev.typr.foundations.scala.RelationStructure
-import dev.typr.foundations.scala.ScalaDbTypes
-import dev.typr.foundations.scala.SqlExpr
-import dev.typr.foundations.scala.SqlExpr.Field
-import dev.typr.foundations.scala.SqlExpr.IdField
-import dev.typr.foundations.scala.SqlExpr.OptField
-import dev.typr.foundations.scala.TupleExpr9
+import dev.typr.dsl.FieldsBase
+import dev.typr.dsl.Path
+import dev.typr.dsl.SqlExpr.FieldLike
+import dev.typr.dslsc.ForeignKey
+import dev.typr.dslsc.RelationStructure
+import dev.typr.dslsc.SqlExpr
+import dev.typr.dslsc.SqlExpr.Field
+import dev.typr.dslsc.SqlExpr.IdField
+import dev.typr.dslsc.SqlExpr.OptField
+import dev.typr.dslsc.TupleExpr9
+import dev.typr.foundations.RowCodec
+import dev.typr.foundationssc.PgTypes
 import java.time.LocalDateTime
 import java.util.UUID
 
@@ -36,7 +35,7 @@ class SalespersonFields(val `_path`: java.util.List[Path]) extends TupleExpr9[Bu
       None,
       Some("int4"),
       (row, value) => row.copy(businessentityid = value),
-      BusinessentityId.pgType
+      BusinessentityId.pgType.underlying
     )
   }
 
@@ -48,7 +47,7 @@ class SalespersonFields(val `_path`: java.util.List[Path]) extends TupleExpr9[Bu
       None,
       Some("int4"),
       (row, value) => row.copy(territoryid = value),
-      SalesterritoryId.pgType
+      SalesterritoryId.pgType.underlying
     )
   }
 
@@ -60,7 +59,7 @@ class SalespersonFields(val `_path`: java.util.List[Path]) extends TupleExpr9[Bu
       None,
       Some("numeric"),
       (row, value) => row.copy(salesquota = value),
-      ScalaDbTypes.PgTypes.numeric
+      PgTypes.numeric.underlying
     )
   }
 
@@ -72,7 +71,7 @@ class SalespersonFields(val `_path`: java.util.List[Path]) extends TupleExpr9[Bu
       None,
       Some("numeric"),
       (row, value) => row.copy(bonus = value),
-      ScalaDbTypes.PgTypes.numeric
+      PgTypes.numeric.underlying
     )
   }
 
@@ -84,7 +83,7 @@ class SalespersonFields(val `_path`: java.util.List[Path]) extends TupleExpr9[Bu
       None,
       Some("numeric"),
       (row, value) => row.copy(commissionpct = value),
-      ScalaDbTypes.PgTypes.numeric
+      PgTypes.numeric.underlying
     )
   }
 
@@ -96,7 +95,7 @@ class SalespersonFields(val `_path`: java.util.List[Path]) extends TupleExpr9[Bu
       None,
       Some("numeric"),
       (row, value) => row.copy(salesytd = value),
-      ScalaDbTypes.PgTypes.numeric
+      PgTypes.numeric.underlying
     )
   }
 
@@ -108,7 +107,7 @@ class SalespersonFields(val `_path`: java.util.List[Path]) extends TupleExpr9[Bu
       None,
       Some("numeric"),
       (row, value) => row.copy(saleslastyear = value),
-      ScalaDbTypes.PgTypes.numeric
+      PgTypes.numeric.underlying
     )
   }
 
@@ -120,7 +119,7 @@ class SalespersonFields(val `_path`: java.util.List[Path]) extends TupleExpr9[Bu
       None,
       Some("uuid"),
       (row, value) => row.copy(rowguid = value),
-      PgTypes.uuid
+      PgTypes.uuid.underlying
     )
   }
 
@@ -132,7 +131,7 @@ class SalespersonFields(val `_path`: java.util.List[Path]) extends TupleExpr9[Bu
       None,
       Some("timestamp"),
       (row, value) => row.copy(modifieddate = value),
-      PgTypes.timestamp
+      PgTypes.timestamp.underlying
     )
   }
 
@@ -142,7 +141,7 @@ class SalespersonFields(val `_path`: java.util.List[Path]) extends TupleExpr9[Bu
 
   override def columns: java.util.List[FieldLike[?, SalespersonRow]] = java.util.List.of(this.businessentityid.underlying, this.territoryid.underlying, this.salesquota.underlying, this.bonus.underlying, this.commissionpct.underlying, this.salesytd.underlying, this.saleslastyear.underlying, this.rowguid.underlying, this.modifieddate.underlying)
 
-  override def rowParser: RowParser[SalespersonRow] = SalespersonRow._rowParser.underlying
+  override def rowCodec: RowCodec[SalespersonRow] = SalespersonRow.rowCodec.underlying
 
   override def withPaths(`_path`: java.util.List[Path]): RelationStructure[SalespersonFields, SalespersonRow] = new SalespersonFields(`_path`)
 

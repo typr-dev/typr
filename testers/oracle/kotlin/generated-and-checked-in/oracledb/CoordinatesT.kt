@@ -6,9 +6,9 @@
 package oracledb
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import dev.typr.foundations.OracleObject
-import dev.typr.foundations.OracleType
-import dev.typr.foundations.kotlin.KotlinDbTypes
+import dev.typr.foundationskt.OracleType
+import dev.typr.foundationskt.OracleTypes
+import dev.typr.foundationskt.RowCodec
 import java.math.BigDecimal
 
 /** Oracle Object Type: COORDINATES_T */
@@ -17,6 +17,6 @@ data class CoordinatesT(
   @field:JsonProperty("LONGITUDE") val longitude: BigDecimal
 ) {
   companion object {
-    val oracleType: OracleType<CoordinatesT> = OracleObject.builder<CoordinatesT>("COORDINATES_T").addAttribute("LATITUDE", KotlinDbTypes.OracleTypes.number, CoordinatesT::latitude).addAttribute("LONGITUDE", KotlinDbTypes.OracleTypes.number, CoordinatesT::longitude).build({ attrs -> CoordinatesT((attrs[0] as BigDecimal), (attrs[1] as BigDecimal)) }).asType()
+    val oracleType: OracleType<CoordinatesT> = OracleTypes.compositeOf("COORDINATES_T", RowCodec.namedBuilder<CoordinatesT>().field("LATITUDE", OracleTypes.number, CoordinatesT::latitude).field("LONGITUDE", OracleTypes.number, CoordinatesT::longitude).build({ t0, t1 -> CoordinatesT(t0, t1) }))
   }
 }

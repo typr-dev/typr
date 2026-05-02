@@ -5,37 +5,36 @@
  */
 package testdb.db2testnull
 
-import dev.typr.foundations.Db2Types
-import dev.typr.foundations.RowParser
+import dev.typr.dsl.FieldsBase
+import dev.typr.dsl.Path
+import dev.typr.dsl.SqlExpr.FieldLike
+import dev.typr.dslkt.RelationStructure
+import dev.typr.dslkt.SqlExpr
+import dev.typr.dslkt.SqlExpr.OptField
+import dev.typr.dslkt.TupleExpr24
+import dev.typr.foundations.RowCodec
 import dev.typr.foundations.data.Xml
-import dev.typr.foundations.dsl.FieldsBase
-import dev.typr.foundations.dsl.Path
-import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.kotlin.KotlinDbTypes
-import dev.typr.foundations.kotlin.RelationStructure
-import dev.typr.foundations.kotlin.SqlExpr
-import dev.typr.foundations.kotlin.SqlExpr.OptField
-import dev.typr.foundations.kotlin.TupleExpr24
+import dev.typr.foundationskt.Db2Types
 import java.math.BigDecimal
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 import kotlin.collections.List
 
-data class Db2testnullFields(val _path: List<Path>) : TupleExpr24<Short, Int, Long, BigDecimal, BigDecimal, BigDecimal, BigDecimal, Float, Double, Boolean, String, String, String, String, String, ByteArray, ByteArray, ByteArray, LocalDate, LocalTime, LocalDateTime, LocalDateTime, LocalDateTime, Xml>, RelationStructure<Db2testnullFields, Db2testnullRow>, FieldsBase<Db2testnullRow> {
-  override fun _1(): SqlExpr<Short> = smallintCol()
+data class Db2testnullFields(val _path: List<Path>) : TupleExpr24<kotlin.Short, Int, kotlin.Long, BigDecimal, BigDecimal, BigDecimal, BigDecimal, kotlin.Float, kotlin.Double, kotlin.Boolean, kotlin.String, kotlin.String, kotlin.String, kotlin.String, kotlin.String, ByteArray, ByteArray, ByteArray, LocalDate, LocalTime, LocalDateTime, LocalDateTime, LocalDateTime, Xml>, RelationStructure<Db2testnullFields, Db2testnullRow>, FieldsBase<Db2testnullRow> {
+  override fun _1(): SqlExpr<kotlin.Short> = smallintCol()
 
-  override fun _10(): SqlExpr<Boolean> = boolCol()
+  override fun _10(): SqlExpr<kotlin.Boolean> = boolCol()
 
-  override fun _11(): SqlExpr<String> = charCol()
+  override fun _11(): SqlExpr<kotlin.String> = charCol()
 
-  override fun _12(): SqlExpr<String> = varcharCol()
+  override fun _12(): SqlExpr<kotlin.String> = varcharCol()
 
-  override fun _13(): SqlExpr<String> = clobCol()
+  override fun _13(): SqlExpr<kotlin.String> = clobCol()
 
-  override fun _14(): SqlExpr<String> = graphicCol()
+  override fun _14(): SqlExpr<kotlin.String> = graphicCol()
 
-  override fun _15(): SqlExpr<String> = vargraphicCol()
+  override fun _15(): SqlExpr<kotlin.String> = vargraphicCol()
 
   override fun _16(): SqlExpr<ByteArray> = binaryCol()
 
@@ -57,7 +56,7 @@ data class Db2testnullFields(val _path: List<Path>) : TupleExpr24<Short, Int, Lo
 
   override fun _24(): SqlExpr<Xml> = xmlCol()
 
-  override fun _3(): SqlExpr<Long> = bigintCol()
+  override fun _3(): SqlExpr<kotlin.Long> = bigintCol()
 
   override fun _4(): SqlExpr<BigDecimal> = decimalCol()
 
@@ -67,65 +66,65 @@ data class Db2testnullFields(val _path: List<Path>) : TupleExpr24<Short, Int, Lo
 
   override fun _7(): SqlExpr<BigDecimal> = decfloat34Col()
 
-  override fun _8(): SqlExpr<Float> = realCol()
+  override fun _8(): SqlExpr<kotlin.Float> = realCol()
 
-  override fun _9(): SqlExpr<Double> = doubleCol()
+  override fun _9(): SqlExpr<kotlin.Double> = doubleCol()
 
   override fun _path(): List<Path> = _path
 
-  fun bigintCol(): OptField<Long, Db2testnullRow> = OptField<Long, Db2testnullRow>(_path, "BIGINT_COL", Db2testnullRow::bigintCol, null, null, { row, value -> row.copy(bigintCol = value) }, KotlinDbTypes.Db2Types.bigint)
+  fun bigintCol(): OptField<kotlin.Long, Db2testnullRow> = OptField<kotlin.Long, Db2testnullRow>(_path, "BIGINT_COL", Db2testnullRow::bigintCol, null, null, { row, value -> row.copy(bigintCol = value) }, Db2Types.bigint.underlying)
 
-  fun binaryCol(): OptField<ByteArray, Db2testnullRow> = OptField<ByteArray, Db2testnullRow>(_path, "BINARY_COL", Db2testnullRow::binaryCol, null, null, { row, value -> row.copy(binaryCol = value) }, Db2Types.binary)
+  fun binaryCol(): OptField<ByteArray, Db2testnullRow> = OptField<ByteArray, Db2testnullRow>(_path, "BINARY_COL", Db2testnullRow::binaryCol, null, null, { row, value -> row.copy(binaryCol = value) }, Db2Types.binary.underlying)
 
-  fun blobCol(): OptField<ByteArray, Db2testnullRow> = OptField<ByteArray, Db2testnullRow>(_path, "BLOB_COL", Db2testnullRow::blobCol, null, null, { row, value -> row.copy(blobCol = value) }, Db2Types.blob)
+  fun blobCol(): OptField<ByteArray, Db2testnullRow> = OptField<ByteArray, Db2testnullRow>(_path, "BLOB_COL", Db2testnullRow::blobCol, null, null, { row, value -> row.copy(blobCol = value) }, Db2Types.blob.underlying)
 
-  fun boolCol(): OptField<Boolean, Db2testnullRow> = OptField<Boolean, Db2testnullRow>(_path, "BOOL_COL", Db2testnullRow::boolCol, null, null, { row, value -> row.copy(boolCol = value) }, KotlinDbTypes.Db2Types.boolean_)
+  fun boolCol(): OptField<kotlin.Boolean, Db2testnullRow> = OptField<kotlin.Boolean, Db2testnullRow>(_path, "BOOL_COL", Db2testnullRow::boolCol, null, null, { row, value -> row.copy(boolCol = value) }, Db2Types.boolean_.underlying)
 
-  fun charCol(): OptField<String, Db2testnullRow> = OptField<String, Db2testnullRow>(_path, "CHAR_COL", Db2testnullRow::charCol, null, null, { row, value -> row.copy(charCol = value) }, Db2Types.char_)
+  fun charCol(): OptField<kotlin.String, Db2testnullRow> = OptField<kotlin.String, Db2testnullRow>(_path, "CHAR_COL", Db2testnullRow::charCol, null, null, { row, value -> row.copy(charCol = value) }, Db2Types.char_.underlying)
 
-  fun clobCol(): OptField<String, Db2testnullRow> = OptField<String, Db2testnullRow>(_path, "CLOB_COL", Db2testnullRow::clobCol, null, null, { row, value -> row.copy(clobCol = value) }, Db2Types.clob)
+  fun clobCol(): OptField<kotlin.String, Db2testnullRow> = OptField<kotlin.String, Db2testnullRow>(_path, "CLOB_COL", Db2testnullRow::clobCol, null, null, { row, value -> row.copy(clobCol = value) }, Db2Types.clob.underlying)
 
   override fun columns(): List<FieldLike<*, Db2testnullRow>> = listOf(this.smallintCol().underlying, this.intCol().underlying, this.bigintCol().underlying, this.decimalCol().underlying, this.numericCol().underlying, this.decfloat16Col().underlying, this.decfloat34Col().underlying, this.realCol().underlying, this.doubleCol().underlying, this.boolCol().underlying, this.charCol().underlying, this.varcharCol().underlying, this.clobCol().underlying, this.graphicCol().underlying, this.vargraphicCol().underlying, this.binaryCol().underlying, this.varbinaryCol().underlying, this.blobCol().underlying, this.dateCol().underlying, this.timeCol().underlying, this.timestampCol().underlying, this.timestamp6Col().underlying, this.timestamp12Col().underlying, this.xmlCol().underlying)
 
-  fun dateCol(): OptField<LocalDate, Db2testnullRow> = OptField<LocalDate, Db2testnullRow>(_path, "DATE_COL", Db2testnullRow::dateCol, null, null, { row, value -> row.copy(dateCol = value) }, Db2Types.date)
+  fun dateCol(): OptField<LocalDate, Db2testnullRow> = OptField<LocalDate, Db2testnullRow>(_path, "DATE_COL", Db2testnullRow::dateCol, null, null, { row, value -> row.copy(dateCol = value) }, Db2Types.date.underlying)
 
-  fun decfloat16Col(): OptField<BigDecimal, Db2testnullRow> = OptField<BigDecimal, Db2testnullRow>(_path, "DECFLOAT16_COL", Db2testnullRow::decfloat16Col, null, null, { row, value -> row.copy(decfloat16Col = value) }, KotlinDbTypes.Db2Types.decfloat)
+  fun decfloat16Col(): OptField<BigDecimal, Db2testnullRow> = OptField<BigDecimal, Db2testnullRow>(_path, "DECFLOAT16_COL", Db2testnullRow::decfloat16Col, null, null, { row, value -> row.copy(decfloat16Col = value) }, Db2Types.decfloat.underlying)
 
-  fun decfloat34Col(): OptField<BigDecimal, Db2testnullRow> = OptField<BigDecimal, Db2testnullRow>(_path, "DECFLOAT34_COL", Db2testnullRow::decfloat34Col, null, null, { row, value -> row.copy(decfloat34Col = value) }, KotlinDbTypes.Db2Types.decfloat)
+  fun decfloat34Col(): OptField<BigDecimal, Db2testnullRow> = OptField<BigDecimal, Db2testnullRow>(_path, "DECFLOAT34_COL", Db2testnullRow::decfloat34Col, null, null, { row, value -> row.copy(decfloat34Col = value) }, Db2Types.decfloat.underlying)
 
-  fun decimalCol(): OptField<BigDecimal, Db2testnullRow> = OptField<BigDecimal, Db2testnullRow>(_path, "DECIMAL_COL", Db2testnullRow::decimalCol, null, null, { row, value -> row.copy(decimalCol = value) }, KotlinDbTypes.Db2Types.decimal)
+  fun decimalCol(): OptField<BigDecimal, Db2testnullRow> = OptField<BigDecimal, Db2testnullRow>(_path, "DECIMAL_COL", Db2testnullRow::decimalCol, null, null, { row, value -> row.copy(decimalCol = value) }, Db2Types.decimal.underlying)
 
-  fun doubleCol(): OptField<Double, Db2testnullRow> = OptField<Double, Db2testnullRow>(_path, "DOUBLE_COL", Db2testnullRow::doubleCol, null, null, { row, value -> row.copy(doubleCol = value) }, KotlinDbTypes.Db2Types.double_)
+  fun doubleCol(): OptField<kotlin.Double, Db2testnullRow> = OptField<kotlin.Double, Db2testnullRow>(_path, "DOUBLE_COL", Db2testnullRow::doubleCol, null, null, { row, value -> row.copy(doubleCol = value) }, Db2Types.double_.underlying)
 
-  fun graphicCol(): OptField<String, Db2testnullRow> = OptField<String, Db2testnullRow>(_path, "GRAPHIC_COL", Db2testnullRow::graphicCol, null, null, { row, value -> row.copy(graphicCol = value) }, Db2Types.graphic)
+  fun graphicCol(): OptField<kotlin.String, Db2testnullRow> = OptField<kotlin.String, Db2testnullRow>(_path, "GRAPHIC_COL", Db2testnullRow::graphicCol, null, null, { row, value -> row.copy(graphicCol = value) }, Db2Types.graphic.underlying)
 
-  fun intCol(): OptField<Int, Db2testnullRow> = OptField<Int, Db2testnullRow>(_path, "INT_COL", Db2testnullRow::intCol, null, null, { row, value -> row.copy(intCol = value) }, KotlinDbTypes.Db2Types.integer)
+  fun intCol(): OptField<Int, Db2testnullRow> = OptField<Int, Db2testnullRow>(_path, "INT_COL", Db2testnullRow::intCol, null, null, { row, value -> row.copy(intCol = value) }, Db2Types.integer.underlying)
 
-  fun numericCol(): OptField<BigDecimal, Db2testnullRow> = OptField<BigDecimal, Db2testnullRow>(_path, "NUMERIC_COL", Db2testnullRow::numericCol, null, null, { row, value -> row.copy(numericCol = value) }, KotlinDbTypes.Db2Types.decimal)
+  fun numericCol(): OptField<BigDecimal, Db2testnullRow> = OptField<BigDecimal, Db2testnullRow>(_path, "NUMERIC_COL", Db2testnullRow::numericCol, null, null, { row, value -> row.copy(numericCol = value) }, Db2Types.decimal.underlying)
 
-  fun realCol(): OptField<Float, Db2testnullRow> = OptField<Float, Db2testnullRow>(_path, "REAL_COL", Db2testnullRow::realCol, null, null, { row, value -> row.copy(realCol = value) }, KotlinDbTypes.Db2Types.real)
+  fun realCol(): OptField<kotlin.Float, Db2testnullRow> = OptField<kotlin.Float, Db2testnullRow>(_path, "REAL_COL", Db2testnullRow::realCol, null, null, { row, value -> row.copy(realCol = value) }, Db2Types.real.underlying)
 
-  override fun rowParser(): RowParser<Db2testnullRow> = Db2testnullRow._rowParser.underlying
+  override fun rowCodec(): RowCodec<Db2testnullRow> = Db2testnullRow.rowCodec.underlying
 
-  fun smallintCol(): OptField<Short, Db2testnullRow> = OptField<Short, Db2testnullRow>(_path, "SMALLINT_COL", Db2testnullRow::smallintCol, null, null, { row, value -> row.copy(smallintCol = value) }, KotlinDbTypes.Db2Types.smallint)
+  fun smallintCol(): OptField<kotlin.Short, Db2testnullRow> = OptField<kotlin.Short, Db2testnullRow>(_path, "SMALLINT_COL", Db2testnullRow::smallintCol, null, null, { row, value -> row.copy(smallintCol = value) }, Db2Types.smallint.underlying)
 
-  fun timeCol(): OptField<LocalTime, Db2testnullRow> = OptField<LocalTime, Db2testnullRow>(_path, "TIME_COL", Db2testnullRow::timeCol, null, null, { row, value -> row.copy(timeCol = value) }, Db2Types.time)
+  fun timeCol(): OptField<LocalTime, Db2testnullRow> = OptField<LocalTime, Db2testnullRow>(_path, "TIME_COL", Db2testnullRow::timeCol, null, null, { row, value -> row.copy(timeCol = value) }, Db2Types.time.underlying)
 
-  fun timestamp12Col(): OptField<LocalDateTime, Db2testnullRow> = OptField<LocalDateTime, Db2testnullRow>(_path, "TIMESTAMP12_COL", Db2testnullRow::timestamp12Col, null, null, { row, value -> row.copy(timestamp12Col = value) }, Db2Types.timestamp)
+  fun timestamp12Col(): OptField<LocalDateTime, Db2testnullRow> = OptField<LocalDateTime, Db2testnullRow>(_path, "TIMESTAMP12_COL", Db2testnullRow::timestamp12Col, null, null, { row, value -> row.copy(timestamp12Col = value) }, Db2Types.timestamp.underlying)
 
-  fun timestamp6Col(): OptField<LocalDateTime, Db2testnullRow> = OptField<LocalDateTime, Db2testnullRow>(_path, "TIMESTAMP6_COL", Db2testnullRow::timestamp6Col, null, null, { row, value -> row.copy(timestamp6Col = value) }, Db2Types.timestamp)
+  fun timestamp6Col(): OptField<LocalDateTime, Db2testnullRow> = OptField<LocalDateTime, Db2testnullRow>(_path, "TIMESTAMP6_COL", Db2testnullRow::timestamp6Col, null, null, { row, value -> row.copy(timestamp6Col = value) }, Db2Types.timestamp.underlying)
 
-  fun timestampCol(): OptField<LocalDateTime, Db2testnullRow> = OptField<LocalDateTime, Db2testnullRow>(_path, "TIMESTAMP_COL", Db2testnullRow::timestampCol, null, null, { row, value -> row.copy(timestampCol = value) }, Db2Types.timestamp)
+  fun timestampCol(): OptField<LocalDateTime, Db2testnullRow> = OptField<LocalDateTime, Db2testnullRow>(_path, "TIMESTAMP_COL", Db2testnullRow::timestampCol, null, null, { row, value -> row.copy(timestampCol = value) }, Db2Types.timestamp.underlying)
 
-  fun varbinaryCol(): OptField<ByteArray, Db2testnullRow> = OptField<ByteArray, Db2testnullRow>(_path, "VARBINARY_COL", Db2testnullRow::varbinaryCol, null, null, { row, value -> row.copy(varbinaryCol = value) }, Db2Types.varbinary)
+  fun varbinaryCol(): OptField<ByteArray, Db2testnullRow> = OptField<ByteArray, Db2testnullRow>(_path, "VARBINARY_COL", Db2testnullRow::varbinaryCol, null, null, { row, value -> row.copy(varbinaryCol = value) }, Db2Types.varbinary.underlying)
 
-  fun varcharCol(): OptField<String, Db2testnullRow> = OptField<String, Db2testnullRow>(_path, "VARCHAR_COL", Db2testnullRow::varcharCol, null, null, { row, value -> row.copy(varcharCol = value) }, Db2Types.varchar)
+  fun varcharCol(): OptField<kotlin.String, Db2testnullRow> = OptField<kotlin.String, Db2testnullRow>(_path, "VARCHAR_COL", Db2testnullRow::varcharCol, null, null, { row, value -> row.copy(varcharCol = value) }, Db2Types.varchar.underlying)
 
-  fun vargraphicCol(): OptField<String, Db2testnullRow> = OptField<String, Db2testnullRow>(_path, "VARGRAPHIC_COL", Db2testnullRow::vargraphicCol, null, null, { row, value -> row.copy(vargraphicCol = value) }, Db2Types.vargraphic)
+  fun vargraphicCol(): OptField<kotlin.String, Db2testnullRow> = OptField<kotlin.String, Db2testnullRow>(_path, "VARGRAPHIC_COL", Db2testnullRow::vargraphicCol, null, null, { row, value -> row.copy(vargraphicCol = value) }, Db2Types.vargraphic.underlying)
 
   override fun withPaths(_path: List<Path>): RelationStructure<Db2testnullFields, Db2testnullRow> = Db2testnullFields(_path)
 
-  fun xmlCol(): OptField<Xml, Db2testnullRow> = OptField<Xml, Db2testnullRow>(_path, "XML_COL", Db2testnullRow::xmlCol, null, null, { row, value -> row.copy(xmlCol = value) }, Db2Types.xml)
+  fun xmlCol(): OptField<Xml, Db2testnullRow> = OptField<Xml, Db2testnullRow>(_path, "XML_COL", Db2testnullRow::xmlCol, null, null, { row, value -> row.copy(xmlCol = value) }, Db2Types.xml.underlying)
 
   companion object {
     val structure: Db2testnullFields = Db2testnullFields(emptyList<Path>())

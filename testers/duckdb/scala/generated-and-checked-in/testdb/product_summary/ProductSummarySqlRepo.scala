@@ -5,8 +5,8 @@
  */
 package testdb.product_summary
 
-import java.sql.Connection
+import dev.typr.foundationssc.ConnectionRead
 
 trait ProductSummarySqlRepo {
-  def apply(using c: Connection): List[ProductSummarySqlRow]
+  def apply(using c: ConnectionRead): List[ProductSummarySqlRow]
 }

@@ -5,17 +5,17 @@
  */
 package testdb.customer_order_summary
 
-import dev.typr.foundations.scala.Dialect
-import dev.typr.foundations.scala.SelectBuilder
-import java.sql.Connection
-import dev.typr.foundations.scala.Fragment.sql
+import dev.typr.dslsc.Dialect
+import dev.typr.dslsc.SelectBuilder
+import dev.typr.foundationssc.ConnectionRead
+import dev.typr.foundationssc.Fragment.sql
 
 class CustomerOrderSummaryViewRepoImpl extends CustomerOrderSummaryViewRepo {
-  override def select: SelectBuilder[CustomerOrderSummaryViewFields, CustomerOrderSummaryViewRow] = SelectBuilder.of(""""CUSTOMER_ORDER_SUMMARY"""", CustomerOrderSummaryViewFields.structure, CustomerOrderSummaryViewRow.`_rowParser`, Dialect.DB2)
+  override def select: SelectBuilder[CustomerOrderSummaryViewFields, CustomerOrderSummaryViewRow] = SelectBuilder.of(""""CUSTOMER_ORDER_SUMMARY"""", CustomerOrderSummaryViewFields.structure, CustomerOrderSummaryViewRow.rowCodec, Dialect.DB2)
 
-  override def selectAll(using c: Connection): List[CustomerOrderSummaryViewRow] = {
+  override def selectAll(using c: ConnectionRead): List[CustomerOrderSummaryViewRow] = {
     sql"""select "CUSTOMER_ID", "NAME", "ORDER_COUNT", "TOTAL_SPENT"
     from "CUSTOMER_ORDER_SUMMARY"
-    """.query(CustomerOrderSummaryViewRow.`_rowParser`.all()).runUnchecked(c)
+    """.query(CustomerOrderSummaryViewRow.rowCodec.all()).run(using c)
   }
 }

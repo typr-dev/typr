@@ -5,18 +5,18 @@
  */
 package adventureworks.public.users
 
-import dev.typr.foundations.PgTypes
-import dev.typr.foundations.RowParser
+import dev.typr.dsl.FieldsBase
+import dev.typr.dsl.Path
+import dev.typr.dsl.SqlExpr.FieldLike
+import dev.typr.dslsc.RelationStructure
+import dev.typr.dslsc.SqlExpr
+import dev.typr.dslsc.SqlExpr.Field
+import dev.typr.dslsc.SqlExpr.IdField
+import dev.typr.dslsc.SqlExpr.OptField
+import dev.typr.dslsc.TupleExpr7
+import dev.typr.foundations.RowCodec
 import dev.typr.foundations.data.Unknown
-import dev.typr.foundations.dsl.FieldsBase
-import dev.typr.foundations.dsl.Path
-import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.scala.RelationStructure
-import dev.typr.foundations.scala.SqlExpr
-import dev.typr.foundations.scala.SqlExpr.Field
-import dev.typr.foundations.scala.SqlExpr.IdField
-import dev.typr.foundations.scala.SqlExpr.OptField
-import dev.typr.foundations.scala.TupleExpr7
+import dev.typr.foundationssc.PgTypes
 import java.time.Instant
 
 class UsersFields(val `_path`: java.util.List[Path]) extends TupleExpr7[UsersId, String, String, Unknown, String, Instant, Instant] with RelationStructure[UsersFields, UsersRow]  with FieldsBase[UsersRow] {
@@ -28,7 +28,7 @@ class UsersFields(val `_path`: java.util.List[Path]) extends TupleExpr7[UsersId,
       None,
       Some("uuid"),
       (row, value) => row.copy(userId = value),
-      UsersId.pgType
+      UsersId.pgType.underlying
     )
   }
 
@@ -40,7 +40,7 @@ class UsersFields(val `_path`: java.util.List[Path]) extends TupleExpr7[UsersId,
       None,
       None,
       (row, value) => row.copy(name = value),
-      PgTypes.text
+      PgTypes.text.underlying
     )
   }
 
@@ -52,7 +52,7 @@ class UsersFields(val `_path`: java.util.List[Path]) extends TupleExpr7[UsersId,
       None,
       None,
       (row, value) => row.copy(lastName = value),
-      PgTypes.text
+      PgTypes.text.underlying
     )
   }
 
@@ -64,7 +64,7 @@ class UsersFields(val `_path`: java.util.List[Path]) extends TupleExpr7[UsersId,
       Some("text"),
       Some("citext"),
       (row, value) => row.copy(email = value),
-      PgTypes.unknown
+      PgTypes.unknown.underlying
     )
   }
 
@@ -76,7 +76,7 @@ class UsersFields(val `_path`: java.util.List[Path]) extends TupleExpr7[UsersId,
       None,
       None,
       (row, value) => row.copy(password = value),
-      PgTypes.text
+      PgTypes.text.underlying
     )
   }
 
@@ -88,7 +88,7 @@ class UsersFields(val `_path`: java.util.List[Path]) extends TupleExpr7[UsersId,
       None,
       Some("timestamptz"),
       (row, value) => row.copy(createdAt = value),
-      PgTypes.timestamptz
+      PgTypes.timestamptz.underlying
     )
   }
 
@@ -100,13 +100,13 @@ class UsersFields(val `_path`: java.util.List[Path]) extends TupleExpr7[UsersId,
       None,
       Some("timestamptz"),
       (row, value) => row.copy(verifiedOn = value),
-      PgTypes.timestamptz
+      PgTypes.timestamptz.underlying
     )
   }
 
   override def columns: java.util.List[FieldLike[?, UsersRow]] = java.util.List.of(this.userId.underlying, this.name.underlying, this.lastName.underlying, this.email.underlying, this.password.underlying, this.createdAt.underlying, this.verifiedOn.underlying)
 
-  override def rowParser: RowParser[UsersRow] = UsersRow._rowParser.underlying
+  override def rowCodec: RowCodec[UsersRow] = UsersRow.rowCodec.underlying
 
   override def withPaths(`_path`: java.util.List[Path]): RelationStructure[UsersFields, UsersRow] = new UsersFields(`_path`)
 

@@ -6,12 +6,10 @@
 package testdb.db2test
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import dev.typr.foundations.Db2Types
 import dev.typr.foundations.Tuple.Tuple24
 import dev.typr.foundations.data.Xml
-import dev.typr.foundations.kotlin.KotlinDbTypes
-import dev.typr.foundations.kotlin.RowParser
-import dev.typr.foundations.kotlin.RowParsers
+import dev.typr.foundationskt.Db2Types
+import dev.typr.foundationskt.RowCodec
 import java.math.BigDecimal
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -21,21 +19,21 @@ import java.time.LocalTime
   * Primary key: INT_COL
   */
 data class Db2testRow(
-  @field:JsonProperty("SMALLINT_COL") val smallintCol: Short,
+  @field:JsonProperty("SMALLINT_COL") val smallintCol: kotlin.Short,
   @field:JsonProperty("INT_COL") val intCol: Db2testId,
-  @field:JsonProperty("BIGINT_COL") val bigintCol: Long,
+  @field:JsonProperty("BIGINT_COL") val bigintCol: kotlin.Long,
   @field:JsonProperty("DECIMAL_COL") val decimalCol: BigDecimal,
   @field:JsonProperty("NUMERIC_COL") val numericCol: BigDecimal,
   @field:JsonProperty("DECFLOAT16_COL") val decfloat16Col: BigDecimal,
   @field:JsonProperty("DECFLOAT34_COL") val decfloat34Col: BigDecimal,
-  @field:JsonProperty("REAL_COL") val realCol: Float,
-  @field:JsonProperty("DOUBLE_COL") val doubleCol: Double,
-  @field:JsonProperty("BOOL_COL") val boolCol: Boolean,
-  @field:JsonProperty("CHAR_COL") val charCol: String,
-  @field:JsonProperty("VARCHAR_COL") val varcharCol: String,
-  @field:JsonProperty("CLOB_COL") val clobCol: String,
-  @field:JsonProperty("GRAPHIC_COL") val graphicCol: String,
-  @field:JsonProperty("VARGRAPHIC_COL") val vargraphicCol: String,
+  @field:JsonProperty("REAL_COL") val realCol: kotlin.Float,
+  @field:JsonProperty("DOUBLE_COL") val doubleCol: kotlin.Double,
+  @field:JsonProperty("BOOL_COL") val boolCol: kotlin.Boolean,
+  @field:JsonProperty("CHAR_COL") val charCol: kotlin.String,
+  @field:JsonProperty("VARCHAR_COL") val varcharCol: kotlin.String,
+  @field:JsonProperty("CLOB_COL") val clobCol: kotlin.String,
+  @field:JsonProperty("GRAPHIC_COL") val graphicCol: kotlin.String,
+  @field:JsonProperty("VARGRAPHIC_COL") val vargraphicCol: kotlin.String,
   @field:JsonProperty("BINARY_COL") val binaryCol: ByteArray,
   @field:JsonProperty("VARBINARY_COL") val varbinaryCol: ByteArray,
   @field:JsonProperty("BLOB_COL") val blobCol: ByteArray,
@@ -45,20 +43,20 @@ data class Db2testRow(
   @field:JsonProperty("TIMESTAMP6_COL") val timestamp6Col: LocalDateTime,
   @field:JsonProperty("TIMESTAMP12_COL") val timestamp12Col: LocalDateTime,
   @field:JsonProperty("XML_COL") val xmlCol: Xml
-) : Tuple24<Short, Db2testId, Long, BigDecimal, BigDecimal, BigDecimal, BigDecimal, Float, Double, Boolean, String, String, String, String, String, ByteArray, ByteArray, ByteArray, LocalDate, LocalTime, LocalDateTime, LocalDateTime, LocalDateTime, Xml> {
-  override fun _1(): Short = smallintCol
+) : Tuple24<kotlin.Short, Db2testId, kotlin.Long, BigDecimal, BigDecimal, BigDecimal, BigDecimal, kotlin.Float, kotlin.Double, kotlin.Boolean, kotlin.String, kotlin.String, kotlin.String, kotlin.String, kotlin.String, ByteArray, ByteArray, ByteArray, LocalDate, LocalTime, LocalDateTime, LocalDateTime, LocalDateTime, Xml> {
+  override fun _1(): kotlin.Short = smallintCol
 
-  override fun _10(): Boolean = boolCol
+  override fun _10(): kotlin.Boolean = boolCol
 
-  override fun _11(): String = charCol
+  override fun _11(): kotlin.String = charCol
 
-  override fun _12(): String = varcharCol
+  override fun _12(): kotlin.String = varcharCol
 
-  override fun _13(): String = clobCol
+  override fun _13(): kotlin.String = clobCol
 
-  override fun _14(): String = graphicCol
+  override fun _14(): kotlin.String = graphicCol
 
-  override fun _15(): String = vargraphicCol
+  override fun _15(): kotlin.String = vargraphicCol
 
   override fun _16(): ByteArray = binaryCol
 
@@ -80,7 +78,7 @@ data class Db2testRow(
 
   override fun _24(): Xml = xmlCol
 
-  override fun _3(): Long = bigintCol
+  override fun _3(): kotlin.Long = bigintCol
 
   override fun _4(): BigDecimal = decimalCol
 
@@ -90,13 +88,13 @@ data class Db2testRow(
 
   override fun _7(): BigDecimal = decfloat34Col
 
-  override fun _8(): Float = realCol
+  override fun _8(): kotlin.Float = realCol
 
-  override fun _9(): Double = doubleCol
+  override fun _9(): kotlin.Double = doubleCol
 
   fun id(): Db2testId = intCol
 
   companion object {
-    val _rowParser: RowParser<Db2testRow> = RowParsers.of(KotlinDbTypes.Db2Types.smallint, Db2testId.db2Type, KotlinDbTypes.Db2Types.bigint, KotlinDbTypes.Db2Types.decimal, KotlinDbTypes.Db2Types.decimal, KotlinDbTypes.Db2Types.decfloat, KotlinDbTypes.Db2Types.decfloat, KotlinDbTypes.Db2Types.real, KotlinDbTypes.Db2Types.double_, KotlinDbTypes.Db2Types.boolean_, Db2Types.char_, Db2Types.varchar, Db2Types.clob, Db2Types.graphic, Db2Types.vargraphic, Db2Types.binary, Db2Types.varbinary, Db2Types.blob, Db2Types.date, Db2Types.time, Db2Types.timestamp, Db2Types.timestamp, Db2Types.timestamp, Db2Types.xml, { t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15, t16, t17, t18, t19, t20, t21, t22, t23 -> Db2testRow(t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15, t16, t17, t18, t19, t20, t21, t22, t23) }, { row -> arrayOf<Any?>(row.smallintCol, row.intCol, row.bigintCol, row.decimalCol, row.numericCol, row.decfloat16Col, row.decfloat34Col, row.realCol, row.doubleCol, row.boolCol, row.charCol, row.varcharCol, row.clobCol, row.graphicCol, row.vargraphicCol, row.binaryCol, row.varbinaryCol, row.blobCol, row.dateCol, row.timeCol, row.timestampCol, row.timestamp6Col, row.timestamp12Col, row.xmlCol) })
+    val rowCodec: RowCodec<Db2testRow> = RowCodec(dev.typr.foundations.RowCodec.create(listOf(Db2Types.smallint.underlying, Db2testId.db2Type.underlying, Db2Types.bigint.underlying, Db2Types.decimal.underlying, Db2Types.decimal.underlying, Db2Types.decfloat.underlying, Db2Types.decfloat.underlying, Db2Types.real.underlying, Db2Types.double_.underlying, Db2Types.boolean_.underlying, Db2Types.char_.underlying, Db2Types.varchar.underlying, Db2Types.clob.underlying, Db2Types.graphic.underlying, Db2Types.vargraphic.underlying, Db2Types.binary.underlying, Db2Types.varbinary.underlying, Db2Types.blob.underlying, Db2Types.date.underlying, Db2Types.time.underlying, Db2Types.timestamp.underlying, Db2Types.timestamp.underlying, Db2Types.timestamp.underlying, Db2Types.xml.underlying), { a -> Db2testRow(a[0] as kotlin.Short, a[1] as Db2testId, a[2] as kotlin.Long, a[3] as BigDecimal, a[4] as BigDecimal, a[5] as BigDecimal, a[6] as BigDecimal, a[7] as kotlin.Float, a[8] as kotlin.Double, a[9] as kotlin.Boolean, a[10] as kotlin.String, a[11] as kotlin.String, a[12] as kotlin.String, a[13] as kotlin.String, a[14] as kotlin.String, a[15] as ByteArray, a[16] as ByteArray, a[17] as ByteArray, a[18] as LocalDate, a[19] as LocalTime, a[20] as LocalDateTime, a[21] as LocalDateTime, a[22] as LocalDateTime, a[23] as Xml) }, { row: Db2testRow -> arrayOf<Any?>(row.smallintCol, row.intCol, row.bigintCol, row.decimalCol, row.numericCol, row.decfloat16Col, row.decfloat34Col, row.realCol, row.doubleCol, row.boolCol, row.charCol, row.varcharCol, row.clobCol, row.graphicCol, row.vargraphicCol, row.binaryCol, row.varbinaryCol, row.blobCol, row.dateCol, row.timeCol, row.timestampCol, row.timestamp6Col, row.timestamp12Col, row.xmlCol) }))
   }
 }

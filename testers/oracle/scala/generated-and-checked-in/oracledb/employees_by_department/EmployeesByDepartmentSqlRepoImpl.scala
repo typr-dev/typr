@@ -5,17 +5,17 @@
  */
 package oracledb.employees_by_department
 
+import dev.typr.foundations.ConnectionRead
 import dev.typr.foundations.Fragment
 import dev.typr.foundations.OracleTypes
-import java.sql.Connection
-import dev.typr.foundations.Fragment.interpolate
+import dev.typr.foundations.Fragment.concat
 
 class EmployeesByDepartmentSqlRepoImpl extends EmployeesByDepartmentSqlRepo {
   override def apply(
     deptCode: String,
     deptRegion: String
-  )(using c: Connection): java.util.List[EmployeesByDepartmentSqlRow] = {
-    interpolate(Fragment.lit("""-- Get employees in a department
+  )(using c: ConnectionRead): java.util.List[EmployeesByDepartmentSqlRow] = {
+    concat(Fragment.of("""-- Get employees in a department
     SELECT
         e.emp_number,
         e.emp_suffix,
@@ -26,9 +26,9 @@ class EmployeesByDepartmentSqlRepoImpl extends EmployeesByDepartmentSqlRepo {
         d.budget
     FROM employees e
     INNER JOIN departments d ON e.dept_code = d.dept_code AND e.dept_region = d.dept_region
-    WHERE e.dept_code = """), Fragment.encode(OracleTypes.varchar2, deptCode), Fragment.lit("""
-      AND e.dept_region = """), Fragment.encode(OracleTypes.varchar2, deptRegion), Fragment.lit("""
+    WHERE e.dept_code = """), Fragment.encode(OracleTypes.varchar2, deptCode), Fragment.of("""
+      AND e.dept_region = """), Fragment.encode(OracleTypes.varchar2, deptRegion), Fragment.of("""
     ORDER BY e.emp_name
-    """)).query(EmployeesByDepartmentSqlRow.`_rowParser`.all()).runUnchecked(c)
+    """)).query(EmployeesByDepartmentSqlRow.rowCodec.all()).run(c)
   }
 }

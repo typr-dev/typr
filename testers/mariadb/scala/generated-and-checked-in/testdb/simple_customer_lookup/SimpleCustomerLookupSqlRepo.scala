@@ -5,8 +5,8 @@
  */
 package testdb.simple_customer_lookup
 
-import java.sql.Connection
+import dev.typr.foundationssc.ConnectionRead
 
 trait SimpleCustomerLookupSqlRepo {
-  def apply(email: String)(using c: Connection): List[SimpleCustomerLookupSqlRow]
+  def apply(email: String)(using c: ConnectionRead): List[SimpleCustomerLookupSqlRow]
 }

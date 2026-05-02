@@ -5,10 +5,11 @@
  */
 package testdb.order_history
 
-import dev.typr.foundations.kotlin.DeleteBuilder
-import dev.typr.foundations.kotlin.SelectBuilder
-import dev.typr.foundations.kotlin.UpdateBuilder
-import java.sql.Connection
+import dev.typr.dslkt.DeleteBuilder
+import dev.typr.dslkt.SelectBuilder
+import dev.typr.dslkt.UpdateBuilder
+import dev.typr.foundationskt.Connection
+import dev.typr.foundationskt.ConnectionRead
 import kotlin.collections.Iterator
 import kotlin.collections.List
 import kotlin.collections.Map
@@ -19,10 +20,10 @@ interface OrderHistoryRepo {
   abstract fun deleteById(
     historyId: OrderHistoryId,
     c: Connection
-  ): Boolean
+  ): kotlin.Boolean
 
   abstract fun deleteByIds(
-    historyIds: Array<OrderHistoryId>,
+    historyIds: List<OrderHistoryId>,
     c: Connection
   ): Int
 
@@ -38,21 +39,21 @@ interface OrderHistoryRepo {
 
   abstract fun select(): SelectBuilder<OrderHistoryFields, OrderHistoryRow>
 
-  abstract fun selectAll(c: Connection): List<OrderHistoryRow>
+  abstract fun selectAll(c: ConnectionRead): List<OrderHistoryRow>
 
   abstract fun selectById(
     historyId: OrderHistoryId,
-    c: Connection
+    c: ConnectionRead
   ): OrderHistoryRow?
 
   abstract fun selectByIds(
-    historyIds: Array<OrderHistoryId>,
-    c: Connection
+    historyIds: List<OrderHistoryId>,
+    c: ConnectionRead
   ): List<OrderHistoryRow>
 
   abstract fun selectByIdsTracked(
-    historyIds: Array<OrderHistoryId>,
-    c: Connection
+    historyIds: List<OrderHistoryId>,
+    c: ConnectionRead
   ): Map<OrderHistoryId, OrderHistoryRow>
 
   abstract fun update(): UpdateBuilder<OrderHistoryFields, OrderHistoryRow>
@@ -60,7 +61,7 @@ interface OrderHistoryRepo {
   abstract fun update(
     row: OrderHistoryRow,
     c: Connection
-  ): Boolean
+  ): kotlin.Boolean
 
   abstract fun upsert(
     unsaved: OrderHistoryRow,

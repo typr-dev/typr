@@ -9,7 +9,7 @@ import adventureworks.customtypes.Defaulted
 import adventureworks.customtypes.Defaulted.UseDefault
 import adventureworks.public.Name
 import dev.typr.foundations.PgText
-import dev.typr.foundations.PgTypes
+import dev.typr.foundationssc.PgTypes
 import java.time.LocalDateTime
 
 /** This class corresponds to a row in table `production.unitmeasure` which has not been persisted yet */
@@ -25,5 +25,5 @@ case class UnitmeasureRowUnsaved(
 }
 
 object UnitmeasureRowUnsaved {
-  given pgText: PgText[UnitmeasureRowUnsaved] = PgText.instance((row, sb) => { UnitmeasureId.pgType.text.unsafeEncode(row.unitmeasurecode, sb); sb.append(PgText.DELIMETER); Name.pgType.text.unsafeEncode(row.name, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using PgTypes.timestamp.text).unsafeEncode(row.modifieddate, sb) })
+  given pgText: PgText[UnitmeasureRowUnsaved] = PgText.instance((row, sb) => { UnitmeasureId.pgType.pgText().unsafeEncode(row.unitmeasurecode, sb); sb.append(PgText.DELIMETER); Name.pgType.pgText().unsafeEncode(row.name, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using PgTypes.timestamp.pgText()).unsafeEncode(row.modifieddate, sb) })
 }

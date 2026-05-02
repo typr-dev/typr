@@ -6,11 +6,10 @@
 package adventureworks.production.productsubcategory
 
 import com.fasterxml.jackson.annotation.JsonValue
-import dev.typr.foundations.PgType
-import dev.typr.foundations.PgTypes
-import dev.typr.foundations.internal.arrayMap
-import dev.typr.foundations.kotlin.Bijection
-import dev.typr.foundations.kotlin.KotlinDbTypes
+import dev.typr.foundationskt.Bijection
+import dev.typr.foundationskt.PgType
+import dev.typr.foundationskt.PgTypes
+import kotlin.collections.List
 
 /** Type for the primary key of table `production.productsubcategory` */
 data class ProductsubcategoryId(@field:JsonValue val value: Int) {
@@ -23,9 +22,9 @@ data class ProductsubcategoryId(@field:JsonValue val value: Int) {
       Bijection.of(ProductsubcategoryId::value, ::ProductsubcategoryId)
 
     val pgType: PgType<ProductsubcategoryId> =
-      KotlinDbTypes.PgTypes.int4.bimap(::ProductsubcategoryId, ProductsubcategoryId::value)
+      PgTypes.int4.to(Bijection.of(::ProductsubcategoryId, ProductsubcategoryId::value))
 
-    val pgTypeArray: PgType<Array<ProductsubcategoryId>> =
-      PgTypes.int4Array.bimap({ xs -> arrayMap.map(xs, ::ProductsubcategoryId, ProductsubcategoryId::class.java) }, { xs -> arrayMap.map(xs, ProductsubcategoryId::value, Int::class.javaObjectType) })
+    val pgTypeArray: PgType<List<ProductsubcategoryId>> =
+      pgType.array()
   }
 }

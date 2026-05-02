@@ -47,7 +47,9 @@ public class AllTypesTest {
         Optional.of(LocalDate.of(2025, 1, 15)), // date
         Optional.of(LocalTime.of(14, 30, 45)), // time
         Optional.of(LocalDateTime.of(2025, 1, 15, 14, 30, 45)), // timestamp
-        Optional.of(OffsetDateTime.of(2025, 1, 15, 14, 30, 45, 0, ZoneOffset.UTC)), // timestamptz
+        Optional.of(
+            OffsetDateTime.of(2025, 1, 15, 14, 30, 45, 0, ZoneOffset.UTC)
+                .toInstant()), // timestamptz
         Optional.of(Duration.ofHours(2).plusMinutes(30)), // interval
         Optional.of(UUID.fromString("550e8400-e29b-41d4-a716-446655440000")), // uuid
         Optional.of(new Json("{\"key\": \"value\"}")), // json

@@ -24,7 +24,7 @@ object Mydomain {
 
   given arrayToStatement: ToStatement[Array[Mydomain]] = ToStatement.arrayToParameter(using ParameterMetaData.StringParameterMetaData).contramap(_.map(_.value))
 
-  given bijection: Bijection[Mydomain, String] = Bijection.apply[Mydomain, String](_.value)(Mydomain.apply)
+  given bijection: Bijection[Mydomain, String] = Bijection[Mydomain, String](_.value)(Mydomain.apply)
 
   given column: Column[Mydomain] = Column.columnToString.map(Mydomain.apply)
 

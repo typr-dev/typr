@@ -36,7 +36,7 @@ object TypoMoney {
 
   implicit lazy val arrayToStatement: ToStatement[Array[TypoMoney]] = ToStatement[Array[TypoMoney]]((s, index, v) => s.setArray(index, s.getConnection.createArrayOf("money", v.map(v => v.value.bigDecimal))))
 
-  implicit lazy val bijection: Bijection[TypoMoney, BigDecimal] = Bijection.apply[TypoMoney, BigDecimal](_.value)(TypoMoney.apply)
+  implicit lazy val bijection: Bijection[TypoMoney, BigDecimal] = Bijection[TypoMoney, BigDecimal](_.value)(TypoMoney.apply)
 
   implicit lazy val column: Column[TypoMoney] = {
     Column.nonNull[TypoMoney]((v1: Any, _) =>

@@ -5,20 +5,18 @@
  */
 package testdb.product_details_with_sales
 
-import dev.typr.foundations.DuckDbTypes
-import dev.typr.foundations.scala.DbTypeOps
-import dev.typr.foundations.scala.Fragment
-import dev.typr.foundations.scala.ScalaDbTypes
-import java.sql.Connection
-import dev.typr.foundations.scala.Fragment.sql
+import dev.typr.foundationssc.ConnectionRead
+import dev.typr.foundationssc.DuckDbTypes
+import dev.typr.foundationssc.Fragment
+import dev.typr.foundationssc.Fragment.sql
 
 class ProductDetailsWithSalesSqlRepoImpl extends ProductDetailsWithSalesSqlRepo {
   override def apply(
-    productIds: Option[Array[Int]],
+    productIds: Option[List[Int]],
     skuPattern: Option[String],
     minPrice: Option[BigDecimal],
     maxPrice: Option[BigDecimal]
-  )(using c: Connection): List[ProductDetailsWithSalesSqlRow] = {
+  )(using c: ConnectionRead): List[ProductDetailsWithSalesSqlRow] = {
     sql"""-- Product details with sales statistics and JSON metadata
     -- Tests: JSON column handling, complex aggregations, CASE expressions
   
@@ -40,11 +38,11 @@ class ProductDetailsWithSalesSqlRepoImpl extends ProductDetailsWithSalesSqlRepo 
     FROM products p
     LEFT JOIN order_items oi ON p.product_id = oi.product_id
     WHERE
-        (${Fragment.encode(ScalaDbTypes.DuckDbTypes.integerArrayUnboxed.nullable, productIds)} IS NULL OR p.product_id = ANY(CAST(${Fragment.encode(ScalaDbTypes.DuckDbTypes.integerArrayUnboxed.nullable, productIds)} AS INTEGER[])))
-        AND (${Fragment.encode(DuckDbTypes.text.nullable, skuPattern)} IS NULL OR p.sku LIKE CAST(${Fragment.encode(DuckDbTypes.text.nullable, skuPattern)} AS VARCHAR))
-        AND (${Fragment.encode(ScalaDbTypes.DuckDbTypes.numeric.nullable, minPrice)} IS NULL OR p.price >= CAST(${Fragment.encode(ScalaDbTypes.DuckDbTypes.numeric.nullable, minPrice)} AS DECIMAL))
-        AND (${Fragment.encode(ScalaDbTypes.DuckDbTypes.numeric.nullable, maxPrice)} IS NULL OR p.price <= CAST(${Fragment.encode(ScalaDbTypes.DuckDbTypes.numeric.nullable, maxPrice)} AS DECIMAL))
+        (${Fragment.encode(DuckDbTypes.integer.list.opt, productIds)} IS NULL OR p.product_id = ANY(CAST(${Fragment.encode(DuckDbTypes.integer.list.opt, productIds)} AS INTEGER[])))
+        AND (${Fragment.encode(DuckDbTypes.text.opt, skuPattern)} IS NULL OR p.sku LIKE CAST(${Fragment.encode(DuckDbTypes.text.opt, skuPattern)} AS VARCHAR))
+        AND (${Fragment.encode(DuckDbTypes.numeric.opt, minPrice)} IS NULL OR p.price >= CAST(${Fragment.encode(DuckDbTypes.numeric.opt, minPrice)} AS DECIMAL))
+        AND (${Fragment.encode(DuckDbTypes.numeric.opt, maxPrice)} IS NULL OR p.price <= CAST(${Fragment.encode(DuckDbTypes.numeric.opt, maxPrice)} AS DECIMAL))
     GROUP BY p.product_id, p.sku, p.name, p.price, p.metadata
-    ORDER BY total_revenue DESC""".query(ProductDetailsWithSalesSqlRow.`_rowParser`.all()).runUnchecked(c)
+    ORDER BY total_revenue DESC""".query(ProductDetailsWithSalesSqlRow.rowCodec.all()).run(using c)
   }
 }

@@ -5,17 +5,18 @@
  */
 package adventureworks.production.unitmeasure
 
-import dev.typr.foundations.kotlin.DeleteBuilder
-import dev.typr.foundations.kotlin.DeleteBuilderMock
-import dev.typr.foundations.kotlin.DeleteParams
-import dev.typr.foundations.kotlin.SelectBuilder
-import dev.typr.foundations.kotlin.SelectBuilderMock
-import dev.typr.foundations.kotlin.SelectParams
-import dev.typr.foundations.kotlin.UpdateBuilder
-import dev.typr.foundations.kotlin.UpdateBuilderMock
-import dev.typr.foundations.kotlin.UpdateParams
+import dev.typr.dslkt.DeleteBuilder
+import dev.typr.dslkt.DeleteBuilderMock
+import dev.typr.dslkt.DeleteParams
+import dev.typr.dslkt.SelectBuilder
+import dev.typr.dslkt.SelectBuilderMock
+import dev.typr.dslkt.SelectParams
+import dev.typr.dslkt.UpdateBuilder
+import dev.typr.dslkt.UpdateBuilderMock
+import dev.typr.dslkt.UpdateParams
+import dev.typr.foundationskt.Connection
+import dev.typr.foundationskt.ConnectionRead
 import java.lang.RuntimeException
-import java.sql.Connection
 import java.util.ArrayList
 import kotlin.collections.Iterator
 import kotlin.collections.List
@@ -31,10 +32,10 @@ data class UnitmeasureRepoMock(
   override fun deleteById(
     unitmeasurecode: UnitmeasureId,
     c: Connection
-  ): Boolean = map.remove(unitmeasurecode) != null
+  ): kotlin.Boolean = map.remove(unitmeasurecode) != null
 
   override fun deleteByIds(
-    unitmeasurecodes: Array<UnitmeasureId>,
+    unitmeasurecodes: List<UnitmeasureId>,
     c: Connection
   ): Int {
     var count = 0
@@ -66,7 +67,7 @@ data class UnitmeasureRepoMock(
     unsaved: Iterator<UnitmeasureRow>,
     batchSize: Int,
     c: Connection
-  ): Long {
+  ): kotlin.Long {
     var count = 0L
     while (unsaved.hasNext()) {
       val row = unsaved.next()
@@ -81,7 +82,7 @@ data class UnitmeasureRepoMock(
     unsaved: Iterator<UnitmeasureRowUnsaved>,
     batchSize: Int,
     c: Connection
-  ): Long {
+  ): kotlin.Long {
     var count = 0L
     while (unsaved.hasNext()) {
       val unsavedRow = unsaved.next()
@@ -94,16 +95,16 @@ data class UnitmeasureRepoMock(
 
   override fun select(): SelectBuilder<UnitmeasureFields, UnitmeasureRow> = SelectBuilderMock(UnitmeasureFields.structure, { map.values.toList() }, SelectParams.empty())
 
-  override fun selectAll(c: Connection): List<UnitmeasureRow> = map.values.toList()
+  override fun selectAll(c: ConnectionRead): List<UnitmeasureRow> = map.values.toList()
 
   override fun selectById(
     unitmeasurecode: UnitmeasureId,
-    c: Connection
+    c: ConnectionRead
   ): UnitmeasureRow? = map[unitmeasurecode]
 
   override fun selectByIds(
-    unitmeasurecodes: Array<UnitmeasureId>,
-    c: Connection
+    unitmeasurecodes: List<UnitmeasureId>,
+    c: ConnectionRead
   ): List<UnitmeasureRow> {
     val result = ArrayList<UnitmeasureRow>()
     for (id in unitmeasurecodes) {
@@ -116,8 +117,8 @@ data class UnitmeasureRepoMock(
   }
 
   override fun selectByIdsTracked(
-    unitmeasurecodes: Array<UnitmeasureId>,
-    c: Connection
+    unitmeasurecodes: List<UnitmeasureId>,
+    c: ConnectionRead
   ): Map<UnitmeasureId, UnitmeasureRow> = selectByIds(unitmeasurecodes, c).associateBy({ row: UnitmeasureRow -> row.unitmeasurecode })
 
   override fun update(): UpdateBuilder<UnitmeasureFields, UnitmeasureRow> = UpdateBuilderMock(UnitmeasureFields.structure, { map.values.toList() }, UpdateParams.empty(), { row -> row })
@@ -125,7 +126,7 @@ data class UnitmeasureRepoMock(
   override fun update(
     row: UnitmeasureRow,
     c: Connection
-  ): Boolean {
+  ): kotlin.Boolean {
     val shouldUpdate = map[row.unitmeasurecode]?.takeIf({ oldRow -> (oldRow != row) }) != null
     if (shouldUpdate) {
       map[row.unitmeasurecode] = row

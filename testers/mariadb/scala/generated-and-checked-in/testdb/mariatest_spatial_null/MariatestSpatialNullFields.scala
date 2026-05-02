@@ -5,16 +5,16 @@
  */
 package testdb.mariatest_spatial_null
 
-import dev.typr.foundations.MariaTypes
-import dev.typr.foundations.RowParser
-import dev.typr.foundations.dsl.FieldsBase
-import dev.typr.foundations.dsl.Path
-import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.scala.RelationStructure
-import dev.typr.foundations.scala.SqlExpr
-import dev.typr.foundations.scala.SqlExpr.IdField
-import dev.typr.foundations.scala.SqlExpr.OptField
-import dev.typr.foundations.scala.TupleExpr9
+import dev.typr.dsl.FieldsBase
+import dev.typr.dsl.Path
+import dev.typr.dsl.SqlExpr.FieldLike
+import dev.typr.dslsc.RelationStructure
+import dev.typr.dslsc.SqlExpr
+import dev.typr.dslsc.SqlExpr.IdField
+import dev.typr.dslsc.SqlExpr.OptField
+import dev.typr.dslsc.TupleExpr9
+import dev.typr.foundations.RowCodec
+import dev.typr.foundationssc.MariaTypes
 import org.mariadb.jdbc.`type`.Geometry
 import org.mariadb.jdbc.`type`.GeometryCollection
 import org.mariadb.jdbc.`type`.LineString
@@ -33,7 +33,7 @@ class MariatestSpatialNullFields(val `_path`: java.util.List[Path]) extends Tupl
       None,
       None,
       (row, value) => row.copy(id = value),
-      MariatestSpatialNullId.mariaType
+      MariatestSpatialNullId.mariaType.underlying
     )
   }
 
@@ -45,7 +45,7 @@ class MariatestSpatialNullFields(val `_path`: java.util.List[Path]) extends Tupl
       None,
       None,
       (row, value) => row.copy(geometryCol = value),
-      MariaTypes.geometry
+      MariaTypes.geometry.underlying
     )
   }
 
@@ -57,7 +57,7 @@ class MariatestSpatialNullFields(val `_path`: java.util.List[Path]) extends Tupl
       None,
       None,
       (row, value) => row.copy(pointCol = value),
-      MariaTypes.point
+      MariaTypes.point.underlying
     )
   }
 
@@ -69,7 +69,7 @@ class MariatestSpatialNullFields(val `_path`: java.util.List[Path]) extends Tupl
       None,
       None,
       (row, value) => row.copy(linestringCol = value),
-      MariaTypes.linestring
+      MariaTypes.linestring.underlying
     )
   }
 
@@ -81,7 +81,7 @@ class MariatestSpatialNullFields(val `_path`: java.util.List[Path]) extends Tupl
       None,
       None,
       (row, value) => row.copy(polygonCol = value),
-      MariaTypes.polygon
+      MariaTypes.polygon.underlying
     )
   }
 
@@ -93,7 +93,7 @@ class MariatestSpatialNullFields(val `_path`: java.util.List[Path]) extends Tupl
       None,
       None,
       (row, value) => row.copy(multipointCol = value),
-      MariaTypes.multipoint
+      MariaTypes.multipoint.underlying
     )
   }
 
@@ -105,7 +105,7 @@ class MariatestSpatialNullFields(val `_path`: java.util.List[Path]) extends Tupl
       None,
       None,
       (row, value) => row.copy(multilinestringCol = value),
-      MariaTypes.multilinestring
+      MariaTypes.multilinestring.underlying
     )
   }
 
@@ -117,7 +117,7 @@ class MariatestSpatialNullFields(val `_path`: java.util.List[Path]) extends Tupl
       None,
       None,
       (row, value) => row.copy(multipolygonCol = value),
-      MariaTypes.multipolygon
+      MariaTypes.multipolygon.underlying
     )
   }
 
@@ -129,13 +129,13 @@ class MariatestSpatialNullFields(val `_path`: java.util.List[Path]) extends Tupl
       None,
       None,
       (row, value) => row.copy(geometrycollectionCol = value),
-      MariaTypes.geometrycollection
+      MariaTypes.geometrycollection.underlying
     )
   }
 
   override def columns: java.util.List[FieldLike[?, MariatestSpatialNullRow]] = java.util.List.of(this.id.underlying, this.geometryCol.underlying, this.pointCol.underlying, this.linestringCol.underlying, this.polygonCol.underlying, this.multipointCol.underlying, this.multilinestringCol.underlying, this.multipolygonCol.underlying, this.geometrycollectionCol.underlying)
 
-  override def rowParser: RowParser[MariatestSpatialNullRow] = MariatestSpatialNullRow._rowParser.underlying
+  override def rowCodec: RowCodec[MariatestSpatialNullRow] = MariatestSpatialNullRow.rowCodec.underlying
 
   override def withPaths(`_path`: java.util.List[Path]): RelationStructure[MariatestSpatialNullFields, MariatestSpatialNullRow] = new MariatestSpatialNullFields(`_path`)
 

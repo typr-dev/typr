@@ -5,17 +5,18 @@
  */
 package oracledb.all_scalar_types
 
-import dev.typr.foundations.kotlin.DeleteBuilder
-import dev.typr.foundations.kotlin.DeleteBuilderMock
-import dev.typr.foundations.kotlin.DeleteParams
-import dev.typr.foundations.kotlin.SelectBuilder
-import dev.typr.foundations.kotlin.SelectBuilderMock
-import dev.typr.foundations.kotlin.SelectParams
-import dev.typr.foundations.kotlin.UpdateBuilder
-import dev.typr.foundations.kotlin.UpdateBuilderMock
-import dev.typr.foundations.kotlin.UpdateParams
+import dev.typr.dslkt.DeleteBuilder
+import dev.typr.dslkt.DeleteBuilderMock
+import dev.typr.dslkt.DeleteParams
+import dev.typr.dslkt.SelectBuilder
+import dev.typr.dslkt.SelectBuilderMock
+import dev.typr.dslkt.SelectParams
+import dev.typr.dslkt.UpdateBuilder
+import dev.typr.dslkt.UpdateBuilderMock
+import dev.typr.dslkt.UpdateParams
+import dev.typr.foundationskt.Connection
+import dev.typr.foundationskt.ConnectionRead
 import java.lang.RuntimeException
-import java.sql.Connection
 import java.util.ArrayList
 import kotlin.collections.Iterator
 import kotlin.collections.List
@@ -31,10 +32,10 @@ data class AllScalarTypesRepoMock(
   override fun deleteById(
     id: AllScalarTypesId,
     c: Connection
-  ): Boolean = map.remove(id) != null
+  ): kotlin.Boolean = map.remove(id) != null
 
   override fun deleteByIds(
-    ids: Array<AllScalarTypesId>,
+    ids: List<AllScalarTypesId>,
     c: Connection
   ): Int {
     var count = 0
@@ -64,16 +65,16 @@ data class AllScalarTypesRepoMock(
 
   override fun select(): SelectBuilder<AllScalarTypesFields, AllScalarTypesRow> = SelectBuilderMock(AllScalarTypesFields.structure, { map.values.toList() }, SelectParams.empty())
 
-  override fun selectAll(c: Connection): List<AllScalarTypesRow> = map.values.toList()
+  override fun selectAll(c: ConnectionRead): List<AllScalarTypesRow> = map.values.toList()
 
   override fun selectById(
     id: AllScalarTypesId,
-    c: Connection
+    c: ConnectionRead
   ): AllScalarTypesRow? = map[id]
 
   override fun selectByIds(
-    ids: Array<AllScalarTypesId>,
-    c: Connection
+    ids: List<AllScalarTypesId>,
+    c: ConnectionRead
   ): List<AllScalarTypesRow> {
     val result = ArrayList<AllScalarTypesRow>()
     for (id in ids) {
@@ -86,8 +87,8 @@ data class AllScalarTypesRepoMock(
   }
 
   override fun selectByIdsTracked(
-    ids: Array<AllScalarTypesId>,
-    c: Connection
+    ids: List<AllScalarTypesId>,
+    c: ConnectionRead
   ): Map<AllScalarTypesId, AllScalarTypesRow> = selectByIds(ids, c).associateBy({ row: AllScalarTypesRow -> row.id })
 
   override fun update(): UpdateBuilder<AllScalarTypesFields, AllScalarTypesRow> = UpdateBuilderMock(AllScalarTypesFields.structure, { map.values.toList() }, UpdateParams.empty(), { row -> row })
@@ -95,7 +96,7 @@ data class AllScalarTypesRepoMock(
   override fun update(
     row: AllScalarTypesRow,
     c: Connection
-  ): Boolean {
+  ): kotlin.Boolean {
     val shouldUpdate = map[row.id]?.takeIf({ oldRow -> (oldRow != row) }) != null
     if (shouldUpdate) {
       map[row.id] = row

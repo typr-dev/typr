@@ -7,14 +7,15 @@ package adventureworks.public.titledperson
 
 import adventureworks.public.title.TitleId
 import adventureworks.public.title_domain.TitleDomainId
-import dev.typr.foundations.PgTypes
-import dev.typr.foundations.kotlin.DeleteBuilder
-import dev.typr.foundations.kotlin.Dialect
-import dev.typr.foundations.kotlin.Fragment
-import dev.typr.foundations.kotlin.SelectBuilder
-import dev.typr.foundations.kotlin.UpdateBuilder
-import dev.typr.foundations.streamingInsert
-import java.sql.Connection
+import dev.typr.dslkt.DeleteBuilder
+import dev.typr.dslkt.Dialect
+import dev.typr.dslkt.SelectBuilder
+import dev.typr.dslkt.UpdateBuilder
+import dev.typr.foundationskt.Connection
+import dev.typr.foundationskt.ConnectionRead
+import dev.typr.foundationskt.Fragment
+import dev.typr.foundationskt.PgTypes
+import dev.typr.foundationskt.StreamingInsert
 import kotlin.collections.Iterator
 import kotlin.collections.List
 
@@ -24,18 +25,18 @@ class TitledpersonRepoImpl() : TitledpersonRepo {
   override fun insert(
     unsaved: TitledpersonRow,
     c: Connection
-  ): TitledpersonRow = Fragment.interpolate(Fragment.lit("insert into \"public\".\"titledperson\"(\"title_short\", \"title\", \"name\")\nvalues ("), Fragment.encode(TitleDomainId.pgType, unsaved.titleShort), Fragment.lit("::text, "), Fragment.encode(TitleId.pgType, unsaved.title), Fragment.lit(", "), Fragment.encode(PgTypes.text, unsaved.name), Fragment.lit(")\nRETURNING \"title_short\", \"title\", \"name\"\n"))
-    .updateReturning(TitledpersonRow._rowParser.exactlyOne()).runUnchecked(c)
+  ): TitledpersonRow = Fragment.concat(Fragment.of("insert into \"public\".\"titledperson\"(\"title_short\", \"title\", \"name\")\nvalues ("), Fragment.encode(TitleDomainId.pgType, unsaved.titleShort), Fragment.of("::text, "), Fragment.encode(TitleId.pgType, unsaved.title), Fragment.of(", "), Fragment.encode(PgTypes.text, unsaved.name), Fragment.of(")\nRETURNING \"title_short\", \"title\", \"name\"\n"))
+    .updateReturning(TitledpersonRow.rowCodec.exactlyOne()).run(c)
 
   override fun insertStreaming(
     unsaved: Iterator<TitledpersonRow>,
     batchSize: Int,
     c: Connection
-  ): Long = streamingInsert.insertUnchecked("COPY \"public\".\"titledperson\"(\"title_short\", \"title\", \"name\") FROM STDIN", batchSize, unsaved, c, TitledpersonRow.pgText)
+  ): kotlin.Long = StreamingInsert.of("COPY \"public\".\"titledperson\"(\"title_short\", \"title\", \"name\") FROM STDIN", batchSize, unsaved, TitledpersonRow.pgText).run(c)
 
-  override fun select(): SelectBuilder<TitledpersonFields, TitledpersonRow> = SelectBuilder.of("\"public\".\"titledperson\"", TitledpersonFields.structure, TitledpersonRow._rowParser, Dialect.POSTGRESQL)
+  override fun select(): SelectBuilder<TitledpersonFields, TitledpersonRow> = SelectBuilder.of("\"public\".\"titledperson\"", TitledpersonFields.structure, TitledpersonRow.rowCodec, Dialect.POSTGRESQL)
 
-  override fun selectAll(c: Connection): List<TitledpersonRow> = Fragment.interpolate(Fragment.lit("select \"title_short\", \"title\", \"name\"\nfrom \"public\".\"titledperson\"\n")).query(TitledpersonRow._rowParser.all()).runUnchecked(c)
+  override fun selectAll(c: ConnectionRead): List<TitledpersonRow> = Fragment.concat(Fragment.of("select \"title_short\", \"title\", \"name\"\nfrom \"public\".\"titledperson\"\n")).query(TitledpersonRow.rowCodec.all()).run(c)
 
-  override fun update(): UpdateBuilder<TitledpersonFields, TitledpersonRow> = UpdateBuilder.of("\"public\".\"titledperson\"", TitledpersonFields.structure, TitledpersonRow._rowParser, Dialect.POSTGRESQL)
+  override fun update(): UpdateBuilder<TitledpersonFields, TitledpersonRow> = UpdateBuilder.of("\"public\".\"titledperson\"", TitledpersonFields.structure, TitledpersonRow.rowCodec, Dialect.POSTGRESQL)
 }

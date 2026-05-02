@@ -128,7 +128,7 @@ class CompositeIdTest {
                 c
             )
 
-            val ids = arrayOf(
+            val ids = listOf(
                 ProductCategoriesId(product.productId, category1.categoryId),
                 ProductCategoriesId(product.productId, category3.categoryId)
             )
@@ -175,7 +175,7 @@ class CompositeIdTest {
 
             val id1 = ProductCategoriesId(product.productId, category1.categoryId)
             val id2 = ProductCategoriesId(product.productId, category2.categoryId)
-            val ids = arrayOf(id1, id2)
+            val ids = listOf(id1, id2)
 
             val tracked = productCategoriesRepo.selectByIdsTracked(ids, c)
 
@@ -276,7 +276,7 @@ class CompositeIdTest {
                 c
             )
 
-            val idsToDelete = arrayOf(
+            val idsToDelete = listOf(
                 ProductCategoriesId(product.productId, category1.categoryId),
                 ProductCategoriesId(product.productId, category2.categoryId)
             )

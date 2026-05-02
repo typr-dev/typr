@@ -24,7 +24,7 @@ object CountryregionId {
 
   given arraySetter: Setter[Array[CountryregionId]] = adventureworks.StringArraySetter.contramap(_.map(_.value))
 
-  given bijection: Bijection[CountryregionId, String] = Bijection.apply[CountryregionId, String](_.value)(CountryregionId.apply)
+  given bijection: Bijection[CountryregionId, String] = Bijection[CountryregionId, String](_.value)(CountryregionId.apply)
 
   given jdbcDecoder: JdbcDecoder[CountryregionId] = JdbcDecoder.stringDecoder.map(CountryregionId.apply)
 

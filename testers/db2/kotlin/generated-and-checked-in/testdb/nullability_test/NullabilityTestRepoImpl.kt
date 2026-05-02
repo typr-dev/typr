@@ -5,15 +5,14 @@
  */
 package testdb.nullability_test
 
-import dev.typr.foundations.Db2Types
-import dev.typr.foundations.kotlin.DeleteBuilder
-import dev.typr.foundations.kotlin.Dialect
-import dev.typr.foundations.kotlin.Fragment
-import dev.typr.foundations.kotlin.KotlinDbTypes
-import dev.typr.foundations.kotlin.SelectBuilder
-import dev.typr.foundations.kotlin.UpdateBuilder
-import dev.typr.foundations.kotlin.nullable
-import java.sql.Connection
+import dev.typr.dslkt.DeleteBuilder
+import dev.typr.dslkt.Dialect
+import dev.typr.dslkt.SelectBuilder
+import dev.typr.dslkt.UpdateBuilder
+import dev.typr.foundationskt.Connection
+import dev.typr.foundationskt.ConnectionRead
+import dev.typr.foundationskt.Db2Types
+import dev.typr.foundationskt.Fragment
 import java.util.ArrayList
 import kotlin.collections.List
 
@@ -23,8 +22,8 @@ class NullabilityTestRepoImpl() : NullabilityTestRepo {
   override fun insert(
     unsaved: NullabilityTestRow,
     c: Connection
-  ): NullabilityTestRow = Fragment.interpolate(Fragment.lit("SELECT \"ID\", \"REQUIRED_COL\", \"OPTIONAL_COL\", \"DEFAULTED_COL\" FROM FINAL TABLE (INSERT INTO \"NULLABILITY_TEST\"(\"ID\", \"REQUIRED_COL\", \"OPTIONAL_COL\", \"DEFAULTED_COL\")\nVALUES ("), Fragment.encode(KotlinDbTypes.Db2Types.integer, unsaved.id), Fragment.lit(", "), Fragment.encode(Db2Types.varchar, unsaved.requiredCol), Fragment.lit(", "), Fragment.encode(Db2Types.varchar.nullable(), unsaved.optionalCol), Fragment.lit(", "), Fragment.encode(Db2Types.varchar.nullable(), unsaved.defaultedCol), Fragment.lit("))\n"))
-    .updateReturning(NullabilityTestRow._rowParser.exactlyOne()).runUnchecked(c)
+  ): NullabilityTestRow = Fragment.concat(Fragment.of("SELECT \"ID\", \"REQUIRED_COL\", \"OPTIONAL_COL\", \"DEFAULTED_COL\" FROM FINAL TABLE (INSERT INTO \"NULLABILITY_TEST\"(\"ID\", \"REQUIRED_COL\", \"OPTIONAL_COL\", \"DEFAULTED_COL\")\nVALUES ("), Fragment.encode(Db2Types.integer, unsaved.id), Fragment.of(", "), Fragment.encode(Db2Types.varchar, unsaved.requiredCol), Fragment.of(", "), Fragment.encode(Db2Types.varchar.opt(), unsaved.optionalCol), Fragment.of(", "), Fragment.encode(Db2Types.varchar.opt(), unsaved.defaultedCol), Fragment.of("))\n"))
+    .updateReturning(NullabilityTestRow.rowCodec.exactlyOne()).run(c)
 
   override fun insert(
     unsaved: NullabilityTestRowUnsaved,
@@ -32,24 +31,24 @@ class NullabilityTestRepoImpl() : NullabilityTestRepo {
   ): NullabilityTestRow {
     val columns: ArrayList<Fragment> = ArrayList()
     val values: ArrayList<Fragment> = ArrayList()
-    columns.add(Fragment.lit("\"ID\""))
-    values.add(Fragment.interpolate(Fragment.encode(KotlinDbTypes.Db2Types.integer, unsaved.id), Fragment.lit("")))
-    columns.add(Fragment.lit("\"REQUIRED_COL\""))
-    values.add(Fragment.interpolate(Fragment.encode(Db2Types.varchar, unsaved.requiredCol), Fragment.lit("")))
-    columns.add(Fragment.lit("\"OPTIONAL_COL\""))
-    values.add(Fragment.interpolate(Fragment.encode(Db2Types.varchar.nullable(), unsaved.optionalCol), Fragment.lit("")))
+    columns.add(Fragment.of("\"ID\""))
+    values.add(Fragment.concat(Fragment.encode(Db2Types.integer, unsaved.id), Fragment.of("")))
+    columns.add(Fragment.of("\"REQUIRED_COL\""))
+    values.add(Fragment.concat(Fragment.encode(Db2Types.varchar, unsaved.requiredCol), Fragment.of("")))
+    columns.add(Fragment.of("\"OPTIONAL_COL\""))
+    values.add(Fragment.concat(Fragment.encode(Db2Types.varchar.opt(), unsaved.optionalCol), Fragment.of("")))
     unsaved.defaultedCol.visit(
       {  },
-      { value -> columns.add(Fragment.lit("\"DEFAULTED_COL\""))
-      values.add(Fragment.interpolate(Fragment.encode(Db2Types.varchar.nullable(), value), Fragment.lit(""))) }
+      { value -> columns.add(Fragment.of("\"DEFAULTED_COL\""))
+      values.add(Fragment.concat(Fragment.encode(Db2Types.varchar.opt(), value), Fragment.of(""))) }
     );
-    val q: Fragment = Fragment.interpolate(Fragment.lit("SELECT \"ID\", \"REQUIRED_COL\", \"OPTIONAL_COL\", \"DEFAULTED_COL\" FROM FINAL TABLE (INSERT INTO \"NULLABILITY_TEST\"("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nVALUES ("), Fragment.comma(values.toMutableList()), Fragment.lit("))\n"))
-    return q.updateReturning(NullabilityTestRow._rowParser.exactlyOne()).runUnchecked(c)
+    val q: Fragment = Fragment.concat(Fragment.of("SELECT \"ID\", \"REQUIRED_COL\", \"OPTIONAL_COL\", \"DEFAULTED_COL\" FROM FINAL TABLE (INSERT INTO \"NULLABILITY_TEST\"("), Fragment.comma(columns.toMutableList()), Fragment.of(")\nVALUES ("), Fragment.comma(values.toMutableList()), Fragment.of("))\n"))
+    return q.updateReturning(NullabilityTestRow.rowCodec.exactlyOne()).run(c)
   }
 
-  override fun select(): SelectBuilder<NullabilityTestFields, NullabilityTestRow> = SelectBuilder.of("\"NULLABILITY_TEST\"", NullabilityTestFields.structure, NullabilityTestRow._rowParser, Dialect.DB2)
+  override fun select(): SelectBuilder<NullabilityTestFields, NullabilityTestRow> = SelectBuilder.of("\"NULLABILITY_TEST\"", NullabilityTestFields.structure, NullabilityTestRow.rowCodec, Dialect.DB2)
 
-  override fun selectAll(c: Connection): List<NullabilityTestRow> = Fragment.interpolate(Fragment.lit("select \"ID\", \"REQUIRED_COL\", \"OPTIONAL_COL\", \"DEFAULTED_COL\"\nfrom \"NULLABILITY_TEST\"\n")).query(NullabilityTestRow._rowParser.all()).runUnchecked(c)
+  override fun selectAll(c: ConnectionRead): List<NullabilityTestRow> = Fragment.concat(Fragment.of("select \"ID\", \"REQUIRED_COL\", \"OPTIONAL_COL\", \"DEFAULTED_COL\"\nfrom \"NULLABILITY_TEST\"\n")).query(NullabilityTestRow.rowCodec.all()).run(c)
 
-  override fun update(): UpdateBuilder<NullabilityTestFields, NullabilityTestRow> = UpdateBuilder.of("\"NULLABILITY_TEST\"", NullabilityTestFields.structure, NullabilityTestRow._rowParser, Dialect.DB2)
+  override fun update(): UpdateBuilder<NullabilityTestFields, NullabilityTestRow> = UpdateBuilder.of("\"NULLABILITY_TEST\"", NullabilityTestFields.structure, NullabilityTestRow.rowCodec, Dialect.DB2)
 }

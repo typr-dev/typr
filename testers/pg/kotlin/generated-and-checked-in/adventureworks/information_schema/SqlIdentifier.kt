@@ -6,23 +6,23 @@
 package adventureworks.information_schema
 
 import com.fasterxml.jackson.annotation.JsonValue
-import dev.typr.foundations.PgType
-import dev.typr.foundations.PgTypes
-import dev.typr.foundations.internal.arrayMap
-import dev.typr.foundations.kotlin.Bijection
+import dev.typr.foundationskt.Bijection
+import dev.typr.foundationskt.PgType
+import dev.typr.foundationskt.PgTypes
+import kotlin.collections.List
 
 /** Domain `information_schema.sql_identifier`
   * No constraint
   */
-data class SqlIdentifier(@field:JsonValue val value: String) {
+data class SqlIdentifier(@field:JsonValue val value: kotlin.String) {
   companion object {
-    val bijection: Bijection<SqlIdentifier, String> =
+    val bijection: Bijection<SqlIdentifier, kotlin.String> =
       Bijection.of(SqlIdentifier::value, ::SqlIdentifier)
 
     val pgType: PgType<SqlIdentifier> =
-      PgTypes.name.bimap(::SqlIdentifier, SqlIdentifier::value).renamed("\"information_schema\".\"sql_identifier\"")
+      PgType(PgTypes.name.to(Bijection.of(::SqlIdentifier, SqlIdentifier::value)).underlying.renamed("\"information_schema\".\"sql_identifier\""))
 
-    val pgTypeArray: PgType<Array<SqlIdentifier>> =
-      PgTypes.nameArray.bimap({ xs -> arrayMap.map(xs, ::SqlIdentifier, SqlIdentifier::class.java) }, { xs -> arrayMap.map(xs, SqlIdentifier::value, String::class.java) }).renamed("\"information_schema\".\"sql_identifier\"[]")
+    val pgTypeArray: PgType<List<SqlIdentifier>> =
+      pgType.array()
   }
 }

@@ -5,11 +5,11 @@
  */
 package testdb.update_order_status
 
-import dev.typr.foundations.MariaTypes
-import dev.typr.foundations.scala.Fragment
-import java.sql.Connection
+import dev.typr.foundationssc.Connection
+import dev.typr.foundationssc.Fragment
+import dev.typr.foundationssc.MariaTypes
 import testdb.orders.OrdersId
-import dev.typr.foundations.scala.Fragment.sql
+import dev.typr.foundationssc.Fragment.sql
 
 class UpdateOrderStatusSqlRepoImpl extends UpdateOrderStatusSqlRepo {
   override def apply(
@@ -23,6 +23,6 @@ class UpdateOrderStatusSqlRepoImpl extends UpdateOrderStatusSqlRepo {
         shipped_at = CASE WHEN ${Fragment.encode(MariaTypes.varchar, newStatus)} = 'shipped' THEN NOW(6) ELSE shipped_at END,
         delivered_at = CASE WHEN ${Fragment.encode(MariaTypes.varchar, newStatus)} = 'delivered' THEN NOW(6) ELSE delivered_at END
     WHERE order_id = ${Fragment.encode(OrdersId.mariaType, orderId)}
-    """.update().runUnchecked(c)
+    """.update().run(using c)
   }
 }

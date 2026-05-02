@@ -5,17 +5,18 @@
  */
 package adventureworks.production.unitmeasure
 
-import dev.typr.foundations.scala.DeleteBuilder
-import dev.typr.foundations.scala.SelectBuilder
-import dev.typr.foundations.scala.UpdateBuilder
-import java.sql.Connection
+import dev.typr.dslsc.DeleteBuilder
+import dev.typr.dslsc.SelectBuilder
+import dev.typr.dslsc.UpdateBuilder
+import dev.typr.foundationssc.Connection
+import dev.typr.foundationssc.ConnectionRead
 
 trait UnitmeasureRepo {
   def delete: DeleteBuilder[UnitmeasureFields, UnitmeasureRow]
 
   def deleteById(unitmeasurecode: UnitmeasureId)(using c: Connection): Boolean
 
-  def deleteByIds(unitmeasurecodes: Array[UnitmeasureId])(using c: Connection): Int
+  def deleteByIds(unitmeasurecodes: List[UnitmeasureId])(using c: Connection): Int
 
   def insert(unsaved: UnitmeasureRow)(using c: Connection): UnitmeasureRow
 
@@ -34,13 +35,13 @@ trait UnitmeasureRepo {
 
   def select: SelectBuilder[UnitmeasureFields, UnitmeasureRow]
 
-  def selectAll(using c: Connection): List[UnitmeasureRow]
+  def selectAll(using c: ConnectionRead): List[UnitmeasureRow]
 
-  def selectById(unitmeasurecode: UnitmeasureId)(using c: Connection): Option[UnitmeasureRow]
+  def selectById(unitmeasurecode: UnitmeasureId)(using c: ConnectionRead): Option[UnitmeasureRow]
 
-  def selectByIds(unitmeasurecodes: Array[UnitmeasureId])(using c: Connection): List[UnitmeasureRow]
+  def selectByIds(unitmeasurecodes: List[UnitmeasureId])(using c: ConnectionRead): List[UnitmeasureRow]
 
-  def selectByIdsTracked(unitmeasurecodes: Array[UnitmeasureId])(using c: Connection): Map[UnitmeasureId, UnitmeasureRow]
+  def selectByIdsTracked(unitmeasurecodes: List[UnitmeasureId])(using c: ConnectionRead): Map[UnitmeasureId, UnitmeasureRow]
 
   def update: UpdateBuilder[UnitmeasureFields, UnitmeasureRow]
 

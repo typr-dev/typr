@@ -6,15 +6,15 @@
 package testdb.test_connection
 
 import com.fasterxml.jackson.annotation.JsonValue
-import dev.typr.foundations.SqlServerType
-import dev.typr.foundations.scala.Bijection
-import dev.typr.foundations.scala.ScalaDbTypes
+import dev.typr.dslsc.Bijection
+import dev.typr.foundationssc.SqlServerType
+import dev.typr.foundationssc.SqlServerTypes
 
 /** Type for the primary key of table `test_connection` */
 case class TestConnectionId(@JsonValue value: Int) extends scala.AnyVal
 
 object TestConnectionId {
-  given bijection: Bijection[TestConnectionId, Int] = Bijection.apply[TestConnectionId, Int](_.value)(TestConnectionId.apply)
+  given bijection: Bijection[TestConnectionId, Int] = Bijection.of[TestConnectionId, Int](_.value, TestConnectionId.apply)
 
-  given sqlServerType: SqlServerType[TestConnectionId] = ScalaDbTypes.SqlServerTypes.int_.bimap(TestConnectionId.apply, _.value)
+  given sqlServerType: SqlServerType[TestConnectionId] = SqlServerTypes.int_.to(Bijection.of(TestConnectionId.apply, _.value))
 }

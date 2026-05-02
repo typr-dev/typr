@@ -5,91 +5,90 @@
  */
 package oracledb.employees
 
-import dev.typr.foundations.OracleTypes
-import dev.typr.foundations.scala.DbTypeOps
-import dev.typr.foundations.scala.DeleteBuilder
-import dev.typr.foundations.scala.Dialect
-import dev.typr.foundations.scala.Fragment
-import dev.typr.foundations.scala.ScalaDbTypes
-import dev.typr.foundations.scala.SelectBuilder
-import dev.typr.foundations.scala.UpdateBuilder
-import java.sql.Connection
+import dev.typr.dslsc.DeleteBuilder
+import dev.typr.dslsc.Dialect
+import dev.typr.dslsc.SelectBuilder
+import dev.typr.dslsc.UpdateBuilder
+import dev.typr.foundationssc.Connection
+import dev.typr.foundationssc.ConnectionRead
+import dev.typr.foundationssc.Fragment
+import dev.typr.foundationssc.OracleTypes
 import oracledb.MoneyT
 import scala.collection.mutable.ListBuffer
-import dev.typr.foundations.scala.Fragment.sql
+import dev.typr.foundationssc.Fragment.sql
 
 class EmployeesRepoImpl extends EmployeesRepo {
   override def delete: DeleteBuilder[EmployeesFields, EmployeesRow] = DeleteBuilder.of(""""EMPLOYEES"""", EmployeesFields.structure, Dialect.ORACLE)
 
-  override def deleteById(compositeId: EmployeesId)(using c: Connection): Boolean = sql"""delete from "EMPLOYEES" where "EMP_NUMBER" = ${Fragment.encode(ScalaDbTypes.OracleTypes.number, compositeId.empNumber)} AND "EMP_SUFFIX" = ${Fragment.encode(OracleTypes.varchar2, compositeId.empSuffix)}""".update().runUnchecked(c) > 0
+  override def deleteById(compositeId: EmployeesId)(using c: Connection): Boolean = sql"""delete from "EMPLOYEES" where "EMP_NUMBER" = ${Fragment.encode(OracleTypes.number, compositeId.empNumber)} AND "EMP_SUFFIX" = ${Fragment.encode(OracleTypes.varchar2, compositeId.empSuffix)}""".update().run(using c) > 0
 
-  override def deleteByIds(compositeIds: Array[EmployeesId])(using c: Connection): Int = {
+  override def deleteByIds(compositeIds: List[EmployeesId])(using c: Connection): Int = {
     val fragments: ListBuffer[Fragment] = ListBuffer()
-    compositeIds.foreach { id => fragments.addOne(Fragment.interpolate(Fragment.lit("("), Fragment.encode(ScalaDbTypes.OracleTypes.number, id.empNumber), Fragment.lit(", "), Fragment.encode(OracleTypes.varchar2, id.empSuffix), Fragment.lit(")"))): @scala.annotation.nowarn }
-    return Fragment.interpolate(Fragment.lit("""delete from "EMPLOYEES" where ("EMP_NUMBER", "EMP_SUFFIX") in ("""), Fragment.comma(fragments), Fragment.lit(")")).update().runUnchecked(c)
+    compositeIds.foreach { id => fragments.addOne(Fragment.concat(Fragment.of("("), Fragment.encode(OracleTypes.number, id.empNumber), Fragment.of(", "), Fragment.encode(OracleTypes.varchar2, id.empSuffix), Fragment.of(")"))): @scala.annotation.nowarn }
+    return Fragment.concat(Fragment.of("""delete from "EMPLOYEES" where ("EMP_NUMBER", "EMP_SUFFIX") in ("""), Fragment.comma(fragments), Fragment.of(")")).update().run(using c)
   }
 
   override def insert(unsaved: EmployeesRow)(using c: Connection): EmployeesId = {
   sql"""insert into "EMPLOYEES"("EMP_NUMBER", "EMP_SUFFIX", "DEPT_CODE", "DEPT_REGION", "EMP_NAME", "SALARY", "HIRE_DATE")
-    values (${Fragment.encode(ScalaDbTypes.OracleTypes.number, unsaved.empNumber)}, ${Fragment.encode(OracleTypes.varchar2, unsaved.empSuffix)}, ${Fragment.encode(OracleTypes.varchar2, unsaved.deptCode)}, ${Fragment.encode(OracleTypes.varchar2, unsaved.deptRegion)}, ${Fragment.encode(OracleTypes.varchar2, unsaved.empName)}, ${Fragment.encode(MoneyT.oracleType.nullable, unsaved.salary)}, ${Fragment.encode(OracleTypes.date, unsaved.hireDate)})
+    values (${Fragment.encode(OracleTypes.number, unsaved.empNumber)}, ${Fragment.encode(OracleTypes.varchar2, unsaved.empSuffix)}, ${Fragment.encode(OracleTypes.varchar2, unsaved.deptCode)}, ${Fragment.encode(OracleTypes.varchar2, unsaved.deptRegion)}, ${Fragment.encode(OracleTypes.varchar2, unsaved.empName)}, ${Fragment.encode(MoneyT.oracleType.opt, unsaved.salary)}, ${Fragment.encode(OracleTypes.date, unsaved.hireDate)})
     """
-    .updateReturningGeneratedKeys(Array[String]("EMP_NUMBER", "EMP_SUFFIX"), EmployeesId.`_rowParser`.exactlyOne()).runUnchecked(c)
+    .updateReturningGeneratedKeys(Array[String]("EMP_NUMBER", "EMP_SUFFIX"), EmployeesId.rowCodec.exactlyOne()).run(using c)
   }
 
   override def insert(unsaved: EmployeesRowUnsaved)(using c: Connection): EmployeesId = {
     val columns: ListBuffer[Fragment] = ListBuffer()
     val values: ListBuffer[Fragment] = ListBuffer()
-    columns.addOne(Fragment.lit(""""EMP_NUMBER"""")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(ScalaDbTypes.OracleTypes.number, unsaved.empNumber)}"): @scala.annotation.nowarn
-    columns.addOne(Fragment.lit(""""EMP_SUFFIX"""")): @scala.annotation.nowarn
+    columns.addOne(Fragment.of(""""EMP_NUMBER"""")): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(OracleTypes.number, unsaved.empNumber)}"): @scala.annotation.nowarn
+    columns.addOne(Fragment.of(""""EMP_SUFFIX"""")): @scala.annotation.nowarn
     values.addOne(sql"${Fragment.encode(OracleTypes.varchar2, unsaved.empSuffix)}"): @scala.annotation.nowarn
-    columns.addOne(Fragment.lit(""""DEPT_CODE"""")): @scala.annotation.nowarn
+    columns.addOne(Fragment.of(""""DEPT_CODE"""")): @scala.annotation.nowarn
     values.addOne(sql"${Fragment.encode(OracleTypes.varchar2, unsaved.deptCode)}"): @scala.annotation.nowarn
-    columns.addOne(Fragment.lit(""""DEPT_REGION"""")): @scala.annotation.nowarn
+    columns.addOne(Fragment.of(""""DEPT_REGION"""")): @scala.annotation.nowarn
     values.addOne(sql"${Fragment.encode(OracleTypes.varchar2, unsaved.deptRegion)}"): @scala.annotation.nowarn
-    columns.addOne(Fragment.lit(""""EMP_NAME"""")): @scala.annotation.nowarn
+    columns.addOne(Fragment.of(""""EMP_NAME"""")): @scala.annotation.nowarn
     values.addOne(sql"${Fragment.encode(OracleTypes.varchar2, unsaved.empName)}"): @scala.annotation.nowarn
-    columns.addOne(Fragment.lit(""""SALARY"""")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(MoneyT.oracleType.nullable, unsaved.salary)}"): @scala.annotation.nowarn
+    columns.addOne(Fragment.of(""""SALARY"""")): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(MoneyT.oracleType.opt, unsaved.salary)}"): @scala.annotation.nowarn
     unsaved.hireDate.visit(
       {  },
-      value => { columns.addOne(Fragment.lit(""""HIRE_DATE"""")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(OracleTypes.date, value)}"): @scala.annotation.nowarn }
+      value => { columns.addOne(Fragment.of(""""HIRE_DATE"""")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(OracleTypes.date, value)}"): @scala.annotation.nowarn }
     );
     val q: Fragment = {
       sql"""insert into "EMPLOYEES"(${Fragment.comma(columns)})
       values (${Fragment.comma(values)})
       """
     }
-    return q.updateReturningGeneratedKeys(Array[String]("EMP_NUMBER", "EMP_SUFFIX"), EmployeesId.`_rowParser`.exactlyOne()).runUnchecked(c)
+    return q.updateReturningGeneratedKeys(Array[String]("EMP_NUMBER", "EMP_SUFFIX"), EmployeesId.rowCodec.exactlyOne()).run(using c)
   }
 
-  override def select: SelectBuilder[EmployeesFields, EmployeesRow] = SelectBuilder.of(""""EMPLOYEES"""", EmployeesFields.structure, EmployeesRow.`_rowParser`, Dialect.ORACLE)
+  override def select: SelectBuilder[EmployeesFields, EmployeesRow] = SelectBuilder.of(""""EMPLOYEES"""", EmployeesFields.structure, EmployeesRow.rowCodec, Dialect.ORACLE)
 
-  override def selectAll(using c: Connection): List[EmployeesRow] = {
+  override def selectAll(using c: ConnectionRead): List[EmployeesRow] = {
     sql"""select "EMP_NUMBER", "EMP_SUFFIX", "DEPT_CODE", "DEPT_REGION", "EMP_NAME", "SALARY", "HIRE_DATE"
     from "EMPLOYEES"
-    """.query(EmployeesRow.`_rowParser`.all()).runUnchecked(c)
+    """.query(EmployeesRow.rowCodec.all()).run(using c)
   }
 
-  override def selectById(compositeId: EmployeesId)(using c: Connection): Option[EmployeesRow] = {
+  override def selectById(compositeId: EmployeesId)(using c: ConnectionRead): Option[EmployeesRow] = {
     sql"""select "EMP_NUMBER", "EMP_SUFFIX", "DEPT_CODE", "DEPT_REGION", "EMP_NAME", "SALARY", "HIRE_DATE"
     from "EMPLOYEES"
-    where "EMP_NUMBER" = ${Fragment.encode(ScalaDbTypes.OracleTypes.number, compositeId.empNumber)} AND "EMP_SUFFIX" = ${Fragment.encode(OracleTypes.varchar2, compositeId.empSuffix)}""".query(EmployeesRow.`_rowParser`.first()).runUnchecked(c)
+    where "EMP_NUMBER" = ${Fragment.encode(OracleTypes.number, compositeId.empNumber)} AND "EMP_SUFFIX" = ${Fragment.encode(OracleTypes.varchar2, compositeId.empSuffix)}""".query(EmployeesRow.rowCodec.first()).run(using c)
   }
 
-  override def selectByIds(compositeIds: Array[EmployeesId])(using c: Connection): List[EmployeesRow] = {
+  override def selectByIds(compositeIds: List[EmployeesId])(using c: ConnectionRead): List[EmployeesRow] = {
     val fragments: ListBuffer[Fragment] = ListBuffer()
-    compositeIds.foreach { id => fragments.addOne(Fragment.interpolate(Fragment.lit("("), Fragment.encode(ScalaDbTypes.OracleTypes.number, id.empNumber), Fragment.lit(", "), Fragment.encode(OracleTypes.varchar2, id.empSuffix), Fragment.lit(")"))): @scala.annotation.nowarn }
-    return Fragment.interpolate(Fragment.lit("""select "EMP_NUMBER", "EMP_SUFFIX", "DEPT_CODE", "DEPT_REGION", "EMP_NAME", "SALARY", "HIRE_DATE" from "EMPLOYEES" where ("EMP_NUMBER", "EMP_SUFFIX") in ("""), Fragment.comma(fragments), Fragment.lit(")")).query(EmployeesRow.`_rowParser`.all()).runUnchecked(c)
+    compositeIds.foreach { id => fragments.addOne(Fragment.concat(Fragment.of("("), Fragment.encode(OracleTypes.number, id.empNumber), Fragment.of(", "), Fragment.encode(OracleTypes.varchar2, id.empSuffix), Fragment.of(")"))): @scala.annotation.nowarn }
+    return Fragment.concat(Fragment.of("""select "EMP_NUMBER", "EMP_SUFFIX", "DEPT_CODE", "DEPT_REGION", "EMP_NAME", "SALARY", "HIRE_DATE" from "EMPLOYEES" where ("EMP_NUMBER", "EMP_SUFFIX") in ("""), Fragment.comma(fragments), Fragment.of(")")).query(EmployeesRow.rowCodec.all()).run(using c)
   }
 
-  override def selectByIdsTracked(compositeIds: Array[EmployeesId])(using c: Connection): Map[EmployeesId, EmployeesRow] = {
+  override def selectByIdsTracked(compositeIds: List[EmployeesId])(using c: ConnectionRead): Map[EmployeesId, EmployeesRow] = {
     val ret: scala.collection.mutable.Map[EmployeesId, EmployeesRow] = scala.collection.mutable.Map.empty[EmployeesId, EmployeesRow]
     selectByIds(compositeIds)(using c).foreach(row => ret.put(row.compositeId, row): @scala.annotation.nowarn)
     return ret.toMap
   }
 
-  override def update: UpdateBuilder[EmployeesFields, EmployeesRow] = UpdateBuilder.of(""""EMPLOYEES"""", EmployeesFields.structure, EmployeesRow.`_rowParser`, Dialect.ORACLE)
+  override def update: UpdateBuilder[EmployeesFields, EmployeesRow] = UpdateBuilder.of(""""EMPLOYEES"""", EmployeesFields.structure, EmployeesRow.rowCodec, Dialect.ORACLE)
 
   override def update(row: EmployeesRow)(using c: Connection): Boolean = {
     val compositeId: EmployeesId = row.compositeId
@@ -97,23 +96,23 @@ class EmployeesRepoImpl extends EmployeesRepo {
     set "DEPT_CODE" = ${Fragment.encode(OracleTypes.varchar2, row.deptCode)},
     "DEPT_REGION" = ${Fragment.encode(OracleTypes.varchar2, row.deptRegion)},
     "EMP_NAME" = ${Fragment.encode(OracleTypes.varchar2, row.empName)},
-    "SALARY" = ${Fragment.encode(MoneyT.oracleType.nullable, row.salary)},
+    "SALARY" = ${Fragment.encode(MoneyT.oracleType.opt, row.salary)},
     "HIRE_DATE" = ${Fragment.encode(OracleTypes.date, row.hireDate)}
-    where "EMP_NUMBER" = ${Fragment.encode(ScalaDbTypes.OracleTypes.number, compositeId.empNumber)} AND "EMP_SUFFIX" = ${Fragment.encode(OracleTypes.varchar2, compositeId.empSuffix)}""".update().runUnchecked(c) > 0
+    where "EMP_NUMBER" = ${Fragment.encode(OracleTypes.number, compositeId.empNumber)} AND "EMP_SUFFIX" = ${Fragment.encode(OracleTypes.varchar2, compositeId.empSuffix)}""".update().run(using c) > 0
   }
 
   override def upsert(unsaved: EmployeesRow)(using c: Connection): Unit = {
     sql"""MERGE INTO "EMPLOYEES" t
-    USING (SELECT ${Fragment.encode(ScalaDbTypes.OracleTypes.number, unsaved.empNumber)}, ${Fragment.encode(OracleTypes.varchar2, unsaved.empSuffix)}, ${Fragment.encode(OracleTypes.varchar2, unsaved.deptCode)}, ${Fragment.encode(OracleTypes.varchar2, unsaved.deptRegion)}, ${Fragment.encode(OracleTypes.varchar2, unsaved.empName)}, ${Fragment.encode(MoneyT.oracleType.nullable, unsaved.salary)}, ${Fragment.encode(OracleTypes.date, unsaved.hireDate)} FROM DUAL) s
+    USING (SELECT ${Fragment.encode(OracleTypes.number, unsaved.empNumber)}, ${Fragment.encode(OracleTypes.varchar2, unsaved.empSuffix)}, ${Fragment.encode(OracleTypes.varchar2, unsaved.deptCode)}, ${Fragment.encode(OracleTypes.varchar2, unsaved.deptRegion)}, ${Fragment.encode(OracleTypes.varchar2, unsaved.empName)}, ${Fragment.encode(MoneyT.oracleType.opt, unsaved.salary)}, ${Fragment.encode(OracleTypes.date, unsaved.hireDate)} FROM DUAL) s
     ON (t."EMP_NUMBER" = s."EMP_NUMBER" AND t."EMP_SUFFIX" = s."EMP_SUFFIX")
     WHEN MATCHED THEN UPDATE SET t."DEPT_CODE" = s."DEPT_CODE",
     t."DEPT_REGION" = s."DEPT_REGION",
     t."EMP_NAME" = s."EMP_NAME",
     t."SALARY" = s."SALARY",
     t."HIRE_DATE" = s."HIRE_DATE"
-    WHEN NOT MATCHED THEN INSERT ("EMP_NUMBER", "EMP_SUFFIX", "DEPT_CODE", "DEPT_REGION", "EMP_NAME", "SALARY", "HIRE_DATE") VALUES (${Fragment.encode(ScalaDbTypes.OracleTypes.number, unsaved.empNumber)}, ${Fragment.encode(OracleTypes.varchar2, unsaved.empSuffix)}, ${Fragment.encode(OracleTypes.varchar2, unsaved.deptCode)}, ${Fragment.encode(OracleTypes.varchar2, unsaved.deptRegion)}, ${Fragment.encode(OracleTypes.varchar2, unsaved.empName)}, ${Fragment.encode(MoneyT.oracleType.nullable, unsaved.salary)}, ${Fragment.encode(OracleTypes.date, unsaved.hireDate)})"""
+    WHEN NOT MATCHED THEN INSERT ("EMP_NUMBER", "EMP_SUFFIX", "DEPT_CODE", "DEPT_REGION", "EMP_NAME", "SALARY", "HIRE_DATE") VALUES (${Fragment.encode(OracleTypes.number, unsaved.empNumber)}, ${Fragment.encode(OracleTypes.varchar2, unsaved.empSuffix)}, ${Fragment.encode(OracleTypes.varchar2, unsaved.deptCode)}, ${Fragment.encode(OracleTypes.varchar2, unsaved.deptRegion)}, ${Fragment.encode(OracleTypes.varchar2, unsaved.empName)}, ${Fragment.encode(MoneyT.oracleType.opt, unsaved.salary)}, ${Fragment.encode(OracleTypes.date, unsaved.hireDate)})"""
       .update()
-      .runUnchecked(c): @scala.annotation.nowarn
+      .run(using c): @scala.annotation.nowarn
   }
 
   override def upsertBatch(unsaved: Iterator[EmployeesRow])(using c: Connection): Unit = {
@@ -126,7 +125,7 @@ class EmployeesRepoImpl extends EmployeesRepo {
     t."SALARY" = s."SALARY",
     t."HIRE_DATE" = s."HIRE_DATE"
     WHEN NOT MATCHED THEN INSERT ("EMP_NUMBER", "EMP_SUFFIX", "DEPT_CODE", "DEPT_REGION", "EMP_NAME", "SALARY", "HIRE_DATE") VALUES (?, ?, ?, ?, ?, ?, ?)"""
-      .updateMany(EmployeesRow.`_rowParser`, unsaved)
-      .runUnchecked(c): @scala.annotation.nowarn
+      .updateMany(EmployeesRow.rowCodec, unsaved)
+      .run(using c): @scala.annotation.nowarn
   }
 }

@@ -5,10 +5,11 @@
  */
 package adventureworks.public.title_domain
 
-import dev.typr.foundations.kotlin.DeleteBuilder
-import dev.typr.foundations.kotlin.SelectBuilder
-import dev.typr.foundations.kotlin.UpdateBuilder
-import java.sql.Connection
+import dev.typr.dslkt.DeleteBuilder
+import dev.typr.dslkt.SelectBuilder
+import dev.typr.dslkt.UpdateBuilder
+import dev.typr.foundationskt.Connection
+import dev.typr.foundationskt.ConnectionRead
 import kotlin.collections.Iterator
 import kotlin.collections.List
 import kotlin.collections.Map
@@ -19,10 +20,10 @@ interface TitleDomainRepo {
   abstract fun deleteById(
     code: TitleDomainId,
     c: Connection
-  ): Boolean
+  ): kotlin.Boolean
 
   abstract fun deleteByIds(
-    codes: Array<TitleDomainId>,
+    codes: List<TitleDomainId>,
     c: Connection
   ): Int
 
@@ -35,25 +36,25 @@ interface TitleDomainRepo {
     unsaved: Iterator<TitleDomainRow>,
     batchSize: Int = 10000,
     c: Connection
-  ): Long
+  ): kotlin.Long
 
   abstract fun select(): SelectBuilder<TitleDomainFields, TitleDomainRow>
 
-  abstract fun selectAll(c: Connection): List<TitleDomainRow>
+  abstract fun selectAll(c: ConnectionRead): List<TitleDomainRow>
 
   abstract fun selectById(
     code: TitleDomainId,
-    c: Connection
+    c: ConnectionRead
   ): TitleDomainRow?
 
   abstract fun selectByIds(
-    codes: Array<TitleDomainId>,
-    c: Connection
+    codes: List<TitleDomainId>,
+    c: ConnectionRead
   ): List<TitleDomainRow>
 
   abstract fun selectByIdsTracked(
-    codes: Array<TitleDomainId>,
-    c: Connection
+    codes: List<TitleDomainId>,
+    c: ConnectionRead
   ): Map<TitleDomainId, TitleDomainRow>
 
   abstract fun update(): UpdateBuilder<TitleDomainFields, TitleDomainRow>

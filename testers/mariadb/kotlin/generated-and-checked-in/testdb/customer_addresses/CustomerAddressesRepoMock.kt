@@ -5,17 +5,18 @@
  */
 package testdb.customer_addresses
 
-import dev.typr.foundations.kotlin.DeleteBuilder
-import dev.typr.foundations.kotlin.DeleteBuilderMock
-import dev.typr.foundations.kotlin.DeleteParams
-import dev.typr.foundations.kotlin.SelectBuilder
-import dev.typr.foundations.kotlin.SelectBuilderMock
-import dev.typr.foundations.kotlin.SelectParams
-import dev.typr.foundations.kotlin.UpdateBuilder
-import dev.typr.foundations.kotlin.UpdateBuilderMock
-import dev.typr.foundations.kotlin.UpdateParams
+import dev.typr.dslkt.DeleteBuilder
+import dev.typr.dslkt.DeleteBuilderMock
+import dev.typr.dslkt.DeleteParams
+import dev.typr.dslkt.SelectBuilder
+import dev.typr.dslkt.SelectBuilderMock
+import dev.typr.dslkt.SelectParams
+import dev.typr.dslkt.UpdateBuilder
+import dev.typr.dslkt.UpdateBuilderMock
+import dev.typr.dslkt.UpdateParams
+import dev.typr.foundationskt.Connection
+import dev.typr.foundationskt.ConnectionRead
 import java.lang.RuntimeException
-import java.sql.Connection
 import java.util.ArrayList
 import kotlin.collections.Iterator
 import kotlin.collections.List
@@ -31,10 +32,10 @@ data class CustomerAddressesRepoMock(
   override fun deleteById(
     addressId: CustomerAddressesId,
     c: Connection
-  ): Boolean = map.remove(addressId) != null
+  ): kotlin.Boolean = map.remove(addressId) != null
 
   override fun deleteByIds(
-    addressIds: Array<CustomerAddressesId>,
+    addressIds: List<CustomerAddressesId>,
     c: Connection
   ): Int {
     var count = 0
@@ -64,16 +65,16 @@ data class CustomerAddressesRepoMock(
 
   override fun select(): SelectBuilder<CustomerAddressesFields, CustomerAddressesRow> = SelectBuilderMock(CustomerAddressesFields.structure, { map.values.toList() }, SelectParams.empty())
 
-  override fun selectAll(c: Connection): List<CustomerAddressesRow> = map.values.toList()
+  override fun selectAll(c: ConnectionRead): List<CustomerAddressesRow> = map.values.toList()
 
   override fun selectById(
     addressId: CustomerAddressesId,
-    c: Connection
+    c: ConnectionRead
   ): CustomerAddressesRow? = map[addressId]
 
   override fun selectByIds(
-    addressIds: Array<CustomerAddressesId>,
-    c: Connection
+    addressIds: List<CustomerAddressesId>,
+    c: ConnectionRead
   ): List<CustomerAddressesRow> {
     val result = ArrayList<CustomerAddressesRow>()
     for (id in addressIds) {
@@ -86,8 +87,8 @@ data class CustomerAddressesRepoMock(
   }
 
   override fun selectByIdsTracked(
-    addressIds: Array<CustomerAddressesId>,
-    c: Connection
+    addressIds: List<CustomerAddressesId>,
+    c: ConnectionRead
   ): Map<CustomerAddressesId, CustomerAddressesRow> = selectByIds(addressIds, c).associateBy({ row: CustomerAddressesRow -> row.addressId })
 
   override fun update(): UpdateBuilder<CustomerAddressesFields, CustomerAddressesRow> = UpdateBuilderMock(CustomerAddressesFields.structure, { map.values.toList() }, UpdateParams.empty(), { row -> row })
@@ -95,7 +96,7 @@ data class CustomerAddressesRepoMock(
   override fun update(
     row: CustomerAddressesRow,
     c: Connection
-  ): Boolean {
+  ): kotlin.Boolean {
     val shouldUpdate = map[row.addressId]?.takeIf({ oldRow -> (oldRow != row) }) != null
     if (shouldUpdate) {
       map[row.addressId] = row

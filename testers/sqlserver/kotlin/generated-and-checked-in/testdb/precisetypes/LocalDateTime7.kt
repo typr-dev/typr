@@ -6,16 +6,16 @@
 package testdb.precisetypes
 
 import com.fasterxml.jackson.annotation.JsonValue
-import dev.typr.foundations.SqlServerType
-import dev.typr.foundations.SqlServerTypes
 import dev.typr.foundations.data.precise.LocalDateTimeN
-import dev.typr.foundations.kotlin.Bijection
+import dev.typr.foundationskt.Bijection
+import dev.typr.foundationskt.SqlServerType
+import dev.typr.foundationskt.SqlServerTypes
 import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
 
 @kotlin.ConsistentCopyVisibility
 data class LocalDateTime7 private constructor(@field:JsonValue val value: LocalDateTime) : LocalDateTimeN {
-  override fun equals(other: Any?): Boolean {
+  override fun equals(other: Any?): kotlin.Boolean {
     if (this === other) return true
     if (other !is LocalDateTimeN) return false
     return value == other.rawValue()
@@ -27,7 +27,7 @@ data class LocalDateTime7 private constructor(@field:JsonValue val value: LocalD
 
   override fun rawValue(): LocalDateTime = value
 
-  override fun semanticEquals(other: LocalDateTimeN): Boolean = if (other == null) false else value == other.rawValue()
+  override fun semanticEquals(other: LocalDateTimeN): kotlin.Boolean = if (other == null) false else (value == other.rawValue())
 
   override fun semanticHashCode(): Int = value.hashCode()
 
@@ -36,14 +36,14 @@ data class LocalDateTime7 private constructor(@field:JsonValue val value: LocalD
   }
 
   companion object {
-    val bijection: Bijection<LocalDateTime7, LocalDateTime> =
-      Bijection.of(LocalDateTime7::value, ::LocalDateTime7)
+    fun of(value: LocalDateTime): LocalDateTime7 = LocalDateTime7(value.truncatedTo(ChronoUnit.NANOS))
 
     fun now(): LocalDateTime7 = LocalDateTime7(LocalDateTime.now().truncatedTo(ChronoUnit.NANOS))
 
-    fun of(value: LocalDateTime): LocalDateTime7 = LocalDateTime7(value.truncatedTo(ChronoUnit.NANOS))
+    val bijection: Bijection<LocalDateTime7, LocalDateTime> =
+      Bijection.of(LocalDateTime7::value, ::LocalDateTime7)
 
     val sqlServerType: SqlServerType<LocalDateTime7> =
-      SqlServerTypes.datetime2.bimap(::LocalDateTime7, LocalDateTime7::value)
+      SqlServerTypes.datetime2.to(Bijection.of(::LocalDateTime7, LocalDateTime7::value))
   }
 }

@@ -5,44 +5,44 @@
  */
 package testdb.test_connection
 
-import dev.typr.foundations.SqlServerTypes
-import dev.typr.foundations.scala.DbTypeOps
-import dev.typr.foundations.scala.DeleteBuilder
-import dev.typr.foundations.scala.Dialect
-import dev.typr.foundations.scala.Fragment
-import dev.typr.foundations.scala.SelectBuilder
-import dev.typr.foundations.scala.UpdateBuilder
-import java.sql.Connection
+import dev.typr.dslsc.DeleteBuilder
+import dev.typr.dslsc.Dialect
+import dev.typr.dslsc.SelectBuilder
+import dev.typr.dslsc.UpdateBuilder
+import dev.typr.foundationssc.Connection
+import dev.typr.foundationssc.ConnectionRead
+import dev.typr.foundationssc.Fragment
+import dev.typr.foundationssc.SqlServerTypes
 import scala.collection.mutable.ListBuffer
-import dev.typr.foundations.scala.Fragment.sql
+import dev.typr.foundationssc.Fragment.sql
 
 class TestConnectionRepoImpl extends TestConnectionRepo {
   override def delete: DeleteBuilder[TestConnectionFields, TestConnectionRow] = DeleteBuilder.of("[test_connection]", TestConnectionFields.structure, Dialect.SQLSERVER)
 
-  override def deleteById(id: TestConnectionId)(using c: Connection): Boolean = sql"delete from [test_connection] where [id] = ${Fragment.encode(TestConnectionId.sqlServerType, id)}".update().runUnchecked(c) > 0
+  override def deleteById(id: TestConnectionId)(using c: Connection): Boolean = sql"delete from [test_connection] where [id] = ${Fragment.encode(TestConnectionId.sqlServerType, id)}".update().run(using c) > 0
 
-  override def deleteByIds(ids: Array[TestConnectionId])(using c: Connection): Int = {
+  override def deleteByIds(ids: List[TestConnectionId])(using c: Connection): Int = {
     val fragments: ListBuffer[Fragment] = ListBuffer()
     ids.foreach { id => fragments.addOne(Fragment.encode(TestConnectionId.sqlServerType, id)): @scala.annotation.nowarn }
-    return Fragment.interpolate(Fragment.lit("delete from [test_connection] where [id] in ("), Fragment.comma(fragments), Fragment.lit(")")).update().runUnchecked(c)
+    return Fragment.concat(Fragment.of("delete from [test_connection] where [id] in ("), Fragment.comma(fragments), Fragment.of(")")).update().run(using c)
   }
 
   override def insert(unsaved: TestConnectionRow)(using c: Connection): TestConnectionRow = {
   sql"""insert into [test_connection]([message], [created_at])
     OUTPUT INSERTED.[id], INSERTED.[message], INSERTED.[created_at]
-    values (${Fragment.encode(SqlServerTypes.nvarchar, unsaved.message)}, ${Fragment.encode(SqlServerTypes.datetime2.nullable, unsaved.createdAt)})
+    values (${Fragment.encode(SqlServerTypes.nvarchar, unsaved.message)}, ${Fragment.encode(SqlServerTypes.datetime2.opt, unsaved.createdAt)})
     """
-    .updateReturning(TestConnectionRow.`_rowParser`.exactlyOne()).runUnchecked(c)
+    .updateReturning(TestConnectionRow.rowCodec.exactlyOne()).run(using c)
   }
 
   override def insert(unsaved: TestConnectionRowUnsaved)(using c: Connection): TestConnectionRow = {
     val columns: ListBuffer[Fragment] = ListBuffer()
     val values: ListBuffer[Fragment] = ListBuffer()
-    columns.addOne(Fragment.lit("[message]")): @scala.annotation.nowarn
+    columns.addOne(Fragment.of("[message]")): @scala.annotation.nowarn
     values.addOne(sql"${Fragment.encode(SqlServerTypes.nvarchar, unsaved.message)}"): @scala.annotation.nowarn
     unsaved.createdAt.visit(
       {  },
-      value => { columns.addOne(Fragment.lit("[created_at]")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(SqlServerTypes.datetime2.nullable, value)}"): @scala.annotation.nowarn }
+      value => { columns.addOne(Fragment.of("[created_at]")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(SqlServerTypes.datetime2.opt, value)}"): @scala.annotation.nowarn }
     );
     val q: Fragment = {
       sql"""insert into [test_connection](${Fragment.comma(columns)})
@@ -50,55 +50,55 @@ class TestConnectionRepoImpl extends TestConnectionRepo {
       values (${Fragment.comma(values)})
       """
     }
-    return q.updateReturning(TestConnectionRow.`_rowParser`.exactlyOne()).runUnchecked(c)
+    return q.updateReturning(TestConnectionRow.rowCodec.exactlyOne()).run(using c)
   }
 
-  override def select: SelectBuilder[TestConnectionFields, TestConnectionRow] = SelectBuilder.of("[test_connection]", TestConnectionFields.structure, TestConnectionRow.`_rowParser`, Dialect.SQLSERVER)
+  override def select: SelectBuilder[TestConnectionFields, TestConnectionRow] = SelectBuilder.of("[test_connection]", TestConnectionFields.structure, TestConnectionRow.rowCodec, Dialect.SQLSERVER)
 
-  override def selectAll(using c: Connection): List[TestConnectionRow] = {
+  override def selectAll(using c: ConnectionRead): List[TestConnectionRow] = {
     sql"""select [id], [message], [created_at]
     from [test_connection]
-    """.query(TestConnectionRow.`_rowParser`.all()).runUnchecked(c)
+    """.query(TestConnectionRow.rowCodec.all()).run(using c)
   }
 
-  override def selectById(id: TestConnectionId)(using c: Connection): Option[TestConnectionRow] = {
+  override def selectById(id: TestConnectionId)(using c: ConnectionRead): Option[TestConnectionRow] = {
     sql"""select [id], [message], [created_at]
     from [test_connection]
-    where [id] = ${Fragment.encode(TestConnectionId.sqlServerType, id)}""".query(TestConnectionRow.`_rowParser`.first()).runUnchecked(c)
+    where [id] = ${Fragment.encode(TestConnectionId.sqlServerType, id)}""".query(TestConnectionRow.rowCodec.first()).run(using c)
   }
 
-  override def selectByIds(ids: Array[TestConnectionId])(using c: Connection): List[TestConnectionRow] = {
+  override def selectByIds(ids: List[TestConnectionId])(using c: ConnectionRead): List[TestConnectionRow] = {
     val fragments: ListBuffer[Fragment] = ListBuffer()
     ids.foreach { id => fragments.addOne(Fragment.encode(TestConnectionId.sqlServerType, id)): @scala.annotation.nowarn }
-    return Fragment.interpolate(Fragment.lit("select [id], [message], [created_at] from [test_connection] where [id] in ("), Fragment.comma(fragments), Fragment.lit(")")).query(TestConnectionRow.`_rowParser`.all()).runUnchecked(c)
+    return Fragment.concat(Fragment.of("select [id], [message], [created_at] from [test_connection] where [id] in ("), Fragment.comma(fragments), Fragment.of(")")).query(TestConnectionRow.rowCodec.all()).run(using c)
   }
 
-  override def selectByIdsTracked(ids: Array[TestConnectionId])(using c: Connection): Map[TestConnectionId, TestConnectionRow] = {
+  override def selectByIdsTracked(ids: List[TestConnectionId])(using c: ConnectionRead): Map[TestConnectionId, TestConnectionRow] = {
     val ret: scala.collection.mutable.Map[TestConnectionId, TestConnectionRow] = scala.collection.mutable.Map.empty[TestConnectionId, TestConnectionRow]
     selectByIds(ids)(using c).foreach(row => ret.put(row.id, row): @scala.annotation.nowarn)
     return ret.toMap
   }
 
-  override def update: UpdateBuilder[TestConnectionFields, TestConnectionRow] = UpdateBuilder.of("[test_connection]", TestConnectionFields.structure, TestConnectionRow.`_rowParser`, Dialect.SQLSERVER)
+  override def update: UpdateBuilder[TestConnectionFields, TestConnectionRow] = UpdateBuilder.of("[test_connection]", TestConnectionFields.structure, TestConnectionRow.rowCodec, Dialect.SQLSERVER)
 
   override def update(row: TestConnectionRow)(using c: Connection): Boolean = {
     val id: TestConnectionId = row.id
     return sql"""update [test_connection]
     set [message] = ${Fragment.encode(SqlServerTypes.nvarchar, row.message)},
-    [created_at] = ${Fragment.encode(SqlServerTypes.datetime2.nullable, row.createdAt)}
-    where [id] = ${Fragment.encode(TestConnectionId.sqlServerType, id)}""".update().runUnchecked(c) > 0
+    [created_at] = ${Fragment.encode(SqlServerTypes.datetime2.opt, row.createdAt)}
+    where [id] = ${Fragment.encode(TestConnectionId.sqlServerType, id)}""".update().run(using c) > 0
   }
 
   override def upsert(unsaved: TestConnectionRow)(using c: Connection): TestConnectionRow = {
   sql"""MERGE INTO [test_connection] AS target
-    USING (VALUES (${Fragment.encode(TestConnectionId.sqlServerType, unsaved.id)}, ${Fragment.encode(SqlServerTypes.nvarchar, unsaved.message)}, ${Fragment.encode(SqlServerTypes.datetime2.nullable, unsaved.createdAt)})) AS source([id], [message], [created_at])
+    USING (VALUES (${Fragment.encode(TestConnectionId.sqlServerType, unsaved.id)}, ${Fragment.encode(SqlServerTypes.nvarchar, unsaved.message)}, ${Fragment.encode(SqlServerTypes.datetime2.opt, unsaved.createdAt)})) AS source([id], [message], [created_at])
     ON target.[id] = source.[id]
     WHEN MATCHED THEN UPDATE SET [message] = source.[message],
     [created_at] = source.[created_at]
-    WHEN NOT MATCHED THEN INSERT ([id], [message], [created_at]) VALUES (${Fragment.encode(TestConnectionId.sqlServerType, unsaved.id)}, ${Fragment.encode(SqlServerTypes.nvarchar, unsaved.message)}, ${Fragment.encode(SqlServerTypes.datetime2.nullable, unsaved.createdAt)})
+    WHEN NOT MATCHED THEN INSERT ([id], [message], [created_at]) VALUES (${Fragment.encode(TestConnectionId.sqlServerType, unsaved.id)}, ${Fragment.encode(SqlServerTypes.nvarchar, unsaved.message)}, ${Fragment.encode(SqlServerTypes.datetime2.opt, unsaved.createdAt)})
     OUTPUT INSERTED.[id], INSERTED.[message], INSERTED.[created_at];"""
-    .updateReturning(TestConnectionRow.`_rowParser`.exactlyOne())
-    .runUnchecked(c)
+    .updateReturning(TestConnectionRow.rowCodec.exactlyOne())
+    .run(using c)
   }
 
   override def upsertBatch(unsaved: Iterator[TestConnectionRow])(using c: Connection): List[TestConnectionRow] = {
@@ -109,7 +109,7 @@ class TestConnectionRepoImpl extends TestConnectionRepo {
     [created_at] = source.[created_at]
     WHEN NOT MATCHED THEN INSERT ([id], [message], [created_at]) VALUES (?, ?, ?)
     OUTPUT INSERTED.[id], INSERTED.[message], INSERTED.[created_at];"""
-      .updateReturningEach(TestConnectionRow.`_rowParser`, unsaved)
-    .runUnchecked(c)
+      .updateReturningEach(TestConnectionRow.rowCodec, unsaved)
+    .run(using c)
   }
 }

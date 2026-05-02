@@ -5,10 +5,11 @@
  */
 package testdb.db2testnull
 
-import dev.typr.foundations.scala.DeleteBuilder
-import dev.typr.foundations.scala.SelectBuilder
-import dev.typr.foundations.scala.UpdateBuilder
-import java.sql.Connection
+import dev.typr.dslsc.DeleteBuilder
+import dev.typr.dslsc.SelectBuilder
+import dev.typr.dslsc.UpdateBuilder
+import dev.typr.foundationssc.Connection
+import dev.typr.foundationssc.ConnectionRead
 
 trait Db2testnullRepo {
   def delete: DeleteBuilder[Db2testnullFields, Db2testnullRow]
@@ -17,7 +18,7 @@ trait Db2testnullRepo {
 
   def select: SelectBuilder[Db2testnullFields, Db2testnullRow]
 
-  def selectAll(using c: Connection): List[Db2testnullRow]
+  def selectAll(using c: ConnectionRead): List[Db2testnullRow]
 
   def update: UpdateBuilder[Db2testnullFields, Db2testnullRow]
 }

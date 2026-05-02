@@ -5,20 +5,19 @@
  */
 package oracledb.employees
 
-import dev.typr.foundations.OracleTypes
-import dev.typr.foundations.RowParser
-import dev.typr.foundations.dsl.FieldsBase
-import dev.typr.foundations.dsl.Path
-import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.scala.ForeignKey
-import dev.typr.foundations.scala.RelationStructure
-import dev.typr.foundations.scala.ScalaDbTypes
-import dev.typr.foundations.scala.SqlExpr
-import dev.typr.foundations.scala.SqlExpr.Field
-import dev.typr.foundations.scala.SqlExpr.IdField
-import dev.typr.foundations.scala.SqlExpr.OptField
-import dev.typr.foundations.scala.TupleExpr
-import dev.typr.foundations.scala.TupleExpr7
+import dev.typr.dsl.FieldsBase
+import dev.typr.dsl.Path
+import dev.typr.dsl.SqlExpr.FieldLike
+import dev.typr.dslsc.ForeignKey
+import dev.typr.dslsc.RelationStructure
+import dev.typr.dslsc.SqlExpr
+import dev.typr.dslsc.SqlExpr.Field
+import dev.typr.dslsc.SqlExpr.IdField
+import dev.typr.dslsc.SqlExpr.OptField
+import dev.typr.dslsc.TupleExpr
+import dev.typr.dslsc.TupleExpr7
+import dev.typr.foundations.RowCodec
+import dev.typr.foundationssc.OracleTypes
 import java.time.LocalDateTime
 import oracledb.MoneyT
 import oracledb.departments.DepartmentsFields
@@ -34,7 +33,7 @@ class EmployeesFields(val `_path`: java.util.List[Path]) extends TupleExpr7[BigD
       None,
       None,
       (row, value) => row.copy(empNumber = value),
-      ScalaDbTypes.OracleTypes.number
+      OracleTypes.number.underlying
     )
   }
 
@@ -46,7 +45,7 @@ class EmployeesFields(val `_path`: java.util.List[Path]) extends TupleExpr7[BigD
       None,
       None,
       (row, value) => row.copy(empSuffix = value),
-      OracleTypes.varchar2
+      OracleTypes.varchar2.underlying
     )
   }
 
@@ -58,7 +57,7 @@ class EmployeesFields(val `_path`: java.util.List[Path]) extends TupleExpr7[BigD
       None,
       None,
       (row, value) => row.copy(deptCode = value),
-      OracleTypes.varchar2
+      OracleTypes.varchar2.underlying
     )
   }
 
@@ -70,7 +69,7 @@ class EmployeesFields(val `_path`: java.util.List[Path]) extends TupleExpr7[BigD
       None,
       None,
       (row, value) => row.copy(deptRegion = value),
-      OracleTypes.varchar2
+      OracleTypes.varchar2.underlying
     )
   }
 
@@ -82,7 +81,7 @@ class EmployeesFields(val `_path`: java.util.List[Path]) extends TupleExpr7[BigD
       None,
       None,
       (row, value) => row.copy(empName = value),
-      OracleTypes.varchar2
+      OracleTypes.varchar2.underlying
     )
   }
 
@@ -94,7 +93,7 @@ class EmployeesFields(val `_path`: java.util.List[Path]) extends TupleExpr7[BigD
       None,
       None,
       (row, value) => row.copy(salary = value),
-      MoneyT.oracleType
+      MoneyT.oracleType.underlying
     )
   }
 
@@ -106,7 +105,7 @@ class EmployeesFields(val `_path`: java.util.List[Path]) extends TupleExpr7[BigD
       None,
       None,
       (row, value) => row.copy(hireDate = value),
-      OracleTypes.date
+      OracleTypes.date.underlying
     )
   }
 
@@ -122,7 +121,7 @@ class EmployeesFields(val `_path`: java.util.List[Path]) extends TupleExpr7[BigD
 
   override def columns: java.util.List[FieldLike[?, EmployeesRow]] = java.util.List.of(this.empNumber.underlying, this.empSuffix.underlying, this.deptCode.underlying, this.deptRegion.underlying, this.empName.underlying, this.salary.underlying, this.hireDate.underlying)
 
-  override def rowParser: RowParser[EmployeesRow] = EmployeesRow._rowParser.underlying
+  override def rowCodec: RowCodec[EmployeesRow] = EmployeesRow.rowCodec.underlying
 
   override def withPaths(`_path`: java.util.List[Path]): RelationStructure[EmployeesFields, EmployeesRow] = new EmployeesFields(`_path`)
 

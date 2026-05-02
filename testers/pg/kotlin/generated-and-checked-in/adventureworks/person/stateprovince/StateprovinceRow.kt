@@ -10,11 +10,11 @@ import adventureworks.person.countryregion.CountryregionId
 import adventureworks.public.Flag
 import adventureworks.public.Name
 import adventureworks.sales.salesterritory.SalesterritoryId
+import dev.typr.dslkt.RowCodecs
 import dev.typr.foundations.PgText
-import dev.typr.foundations.PgTypes
 import dev.typr.foundations.Tuple.Tuple8
-import dev.typr.foundations.kotlin.RowParser
-import dev.typr.foundations.kotlin.RowParsers
+import dev.typr.foundationskt.PgTypes
+import dev.typr.foundationskt.RowCodec
 import java.time.LocalDateTime
 import java.util.UUID
 
@@ -28,7 +28,7 @@ data class StateprovinceRow(
     */
   val stateprovinceid: StateprovinceId,
   /** ISO standard state or province code. */
-  val stateprovincecode: String,
+  val stateprovincecode: kotlin.String,
   /** ISO standard country or region code. Foreign key to CountryRegion.CountryRegionCode.
     * Points to [adventureworks.person.countryregion.CountryregionRow.countryregioncode]
     */
@@ -47,10 +47,10 @@ data class StateprovinceRow(
   val rowguid: UUID,
   /** Default: now() */
   val modifieddate: LocalDateTime
-) : Tuple8<StateprovinceId, String, CountryregionId, Flag, Name, SalesterritoryId, UUID, LocalDateTime> {
+) : Tuple8<StateprovinceId, kotlin.String, CountryregionId, Flag, Name, SalesterritoryId, UUID, LocalDateTime> {
   override fun _1(): StateprovinceId = stateprovinceid
 
-  override fun _2(): String = stateprovincecode
+  override fun _2(): kotlin.String = stateprovincecode
 
   override fun _3(): CountryregionId = countryregioncode
 
@@ -74,9 +74,9 @@ data class StateprovinceRow(
   ): StateprovinceRowUnsaved = StateprovinceRowUnsaved(stateprovincecode, countryregioncode, name, territoryid, stateprovinceid, isonlystateprovinceflag, rowguid, modifieddate)
 
   companion object {
-    val _rowParser: RowParser<StateprovinceRow> = RowParsers.of(StateprovinceId.pgType, PgTypes.bpchar, CountryregionId.pgType, Flag.pgType, Name.pgType, SalesterritoryId.pgType, PgTypes.uuid, PgTypes.timestamp, { t0, t1, t2, t3, t4, t5, t6, t7 -> StateprovinceRow(t0, t1, t2, t3, t4, t5, t6, t7) }, { row -> arrayOf<Any?>(row.stateprovinceid, row.stateprovincecode, row.countryregioncode, row.isonlystateprovinceflag, row.name, row.territoryid, row.rowguid, row.modifieddate) })
+    val rowCodec: RowCodec<StateprovinceRow> = RowCodecs.of(StateprovinceId.pgType, PgTypes.bpchar, CountryregionId.pgType, Flag.pgType, Name.pgType, SalesterritoryId.pgType, PgTypes.uuid, PgTypes.timestamp, { t0: StateprovinceId, t1: kotlin.String, t2: CountryregionId, t3: Flag, t4: Name, t5: SalesterritoryId, t6: UUID, t7: LocalDateTime -> StateprovinceRow(t0, t1, t2, t3, t4, t5, t6, t7) }, { row: StateprovinceRow -> arrayOf<Any?>(row.stateprovinceid, row.stateprovincecode, row.countryregioncode, row.isonlystateprovinceflag, row.name, row.territoryid, row.rowguid, row.modifieddate) })
 
     val pgText: PgText<StateprovinceRow> =
-      PgText.from(_rowParser.underlying)
+      PgText.from(rowCodec.underlying)
   }
 }

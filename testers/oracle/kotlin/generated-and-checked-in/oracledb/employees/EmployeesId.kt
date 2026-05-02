@@ -6,23 +6,22 @@
 package oracledb.employees
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import dev.typr.foundations.OracleTypes
+import dev.typr.dslkt.RowCodecs
 import dev.typr.foundations.Tuple.Tuple2
-import dev.typr.foundations.kotlin.KotlinDbTypes
-import dev.typr.foundations.kotlin.RowParser
-import dev.typr.foundations.kotlin.RowParsers
+import dev.typr.foundationskt.OracleTypes
+import dev.typr.foundationskt.RowCodec
 import java.math.BigDecimal
 
 /** Type for the composite primary key of table `EMPLOYEES` */
 data class EmployeesId(
   @field:JsonProperty("EMP_NUMBER") val empNumber: BigDecimal,
-  @field:JsonProperty("EMP_SUFFIX") val empSuffix: String
-) : Tuple2<BigDecimal, String> {
+  @field:JsonProperty("EMP_SUFFIX") val empSuffix: kotlin.String
+) : Tuple2<BigDecimal, kotlin.String> {
   override fun _1(): BigDecimal = empNumber
 
-  override fun _2(): String = empSuffix
+  override fun _2(): kotlin.String = empSuffix
 
   companion object {
-    val _rowParser: RowParser<EmployeesId> = RowParsers.of(KotlinDbTypes.OracleTypes.number, OracleTypes.varchar2, { t0, t1 -> EmployeesId(t0, t1) }, { row -> arrayOf<Any?>(row.empNumber, row.empSuffix) })
+    val rowCodec: RowCodec<EmployeesId> = RowCodecs.of(OracleTypes.number, OracleTypes.varchar2, { t0: BigDecimal, t1: kotlin.String -> EmployeesId(t0, t1) }, { row: EmployeesId -> arrayOf<Any?>(row.empNumber, row.empSuffix) })
   }
 }

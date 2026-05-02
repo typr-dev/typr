@@ -6,9 +6,9 @@
 package testdb.userdefined
 
 import com.fasterxml.jackson.annotation.JsonValue
-import dev.typr.foundations.MariaType
-import dev.typr.foundations.scala.Bijection
-import dev.typr.foundations.scala.ScalaDbTypes
+import dev.typr.dslsc.Bijection
+import dev.typr.foundationssc.MariaType
+import dev.typr.foundationssc.MariaTypes
 
 /** Shared type `IsVerifiedPurchase`
  * Generated from TypeDefinitions matching
@@ -16,7 +16,7 @@ import dev.typr.foundations.scala.ScalaDbTypes
 case class IsVerifiedPurchase(@JsonValue value: Boolean) extends scala.AnyVal
 
 object IsVerifiedPurchase {
-  given bijection: Bijection[IsVerifiedPurchase, Boolean] = Bijection.apply[IsVerifiedPurchase, Boolean](_.value)(IsVerifiedPurchase.apply)
+  given bijection: Bijection[IsVerifiedPurchase, Boolean] = Bijection.of[IsVerifiedPurchase, Boolean](_.value, IsVerifiedPurchase.apply)
 
-  given mariaType: MariaType[IsVerifiedPurchase] = ScalaDbTypes.MariaTypes.bool.bimap(IsVerifiedPurchase.apply, _.value)
+  given mariaType: MariaType[IsVerifiedPurchase] = MariaTypes.bool.to(Bijection.of(IsVerifiedPurchase.apply, _.value))
 }

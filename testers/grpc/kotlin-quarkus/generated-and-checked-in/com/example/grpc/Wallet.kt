@@ -27,6 +27,19 @@ data class Wallet(
   }
 
   companion object {
+    @Throws(IOException::class)
+    fun parseFrom(input: CodedInputStream): Wallet {
+      var walletId: kotlin.String = ""
+      var provider: kotlin.String = ""
+      while (!input.isAtEnd()) {
+        val tag = input.readTag()
+        if (WireFormat.getTagFieldNumber(tag) == 1) { walletId = input.readString() }
+        else if (WireFormat.getTagFieldNumber(tag) == 2) { provider = input.readString() }
+        else { input.skipField(tag) }
+      }
+      return Wallet(walletId, provider)
+    }
+
     val MARSHALLER: Marshaller<Wallet> =
       object : Marshaller<Wallet> {
         override fun stream(value: Wallet): InputStream {
@@ -48,18 +61,5 @@ data class Wallet(
           } 
         }
       }
-
-    @Throws(IOException::class)
-    fun parseFrom(input: CodedInputStream): Wallet {
-      var walletId: kotlin.String = ""
-      var provider: kotlin.String = ""
-      while (!input.isAtEnd()) {
-        val tag = input.readTag()
-        if (WireFormat.getTagFieldNumber(tag) == 1) { walletId = input.readString() }
-        else if (WireFormat.getTagFieldNumber(tag) == 2) { provider = input.readString() }
-        else { input.skipField(tag) }
-      }
-      return Wallet(walletId, provider)
-    }
   }
 }

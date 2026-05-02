@@ -5,29 +5,30 @@
  */
 package testdb.all_scalar_types
 
-import dev.typr.foundations.scala.DeleteBuilder
-import dev.typr.foundations.scala.SelectBuilder
-import dev.typr.foundations.scala.UpdateBuilder
-import java.sql.Connection
+import dev.typr.dslsc.DeleteBuilder
+import dev.typr.dslsc.SelectBuilder
+import dev.typr.dslsc.UpdateBuilder
+import dev.typr.foundationssc.Connection
+import dev.typr.foundationssc.ConnectionRead
 
 trait AllScalarTypesRepo {
   def delete: DeleteBuilder[AllScalarTypesFields, AllScalarTypesRow]
 
   def deleteById(id: AllScalarTypesId)(using c: Connection): Boolean
 
-  def deleteByIds(ids: Array[AllScalarTypesId])(using c: Connection): Int
+  def deleteByIds(ids: List[AllScalarTypesId])(using c: Connection): Int
 
   def insert(unsaved: AllScalarTypesRow)(using c: Connection): AllScalarTypesRow
 
   def select: SelectBuilder[AllScalarTypesFields, AllScalarTypesRow]
 
-  def selectAll(using c: Connection): List[AllScalarTypesRow]
+  def selectAll(using c: ConnectionRead): List[AllScalarTypesRow]
 
-  def selectById(id: AllScalarTypesId)(using c: Connection): Option[AllScalarTypesRow]
+  def selectById(id: AllScalarTypesId)(using c: ConnectionRead): Option[AllScalarTypesRow]
 
-  def selectByIds(ids: Array[AllScalarTypesId])(using c: Connection): List[AllScalarTypesRow]
+  def selectByIds(ids: List[AllScalarTypesId])(using c: ConnectionRead): List[AllScalarTypesRow]
 
-  def selectByIdsTracked(ids: Array[AllScalarTypesId])(using c: Connection): Map[AllScalarTypesId, AllScalarTypesRow]
+  def selectByIdsTracked(ids: List[AllScalarTypesId])(using c: ConnectionRead): Map[AllScalarTypesId, AllScalarTypesRow]
 
   def update: UpdateBuilder[AllScalarTypesFields, AllScalarTypesRow]
 

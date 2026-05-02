@@ -23,7 +23,7 @@ object ShortText {
 
   given arrayPut: Put[Array[ShortText]] = adventureworks.StringArrayMeta.put.contramap(_.map(_.value))
 
-  given bijection: Bijection[ShortText, String] = Bijection.apply[ShortText, String](_.value)(ShortText.apply)
+  given bijection: Bijection[ShortText, String] = Bijection[ShortText, String](_.value)(ShortText.apply)
 
   given decoder: Decoder[ShortText] = Decoder.decodeString.map(ShortText.apply)
 

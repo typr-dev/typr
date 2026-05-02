@@ -59,8 +59,7 @@ class AllTypesTest extends AnyFunSuite {
   )
 
   test("insertAndSelectAllTypes") {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       val row = createSampleRow(1)
       val inserted = mariatestRepo.insert(row)
 
@@ -80,8 +79,7 @@ class AllTypesTest extends AnyFunSuite {
   }
 
   test("updateAllTypes") {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       val row = createSampleRow(2)
       val inserted = mariatestRepo.insert(row)
 
@@ -102,8 +100,7 @@ class AllTypesTest extends AnyFunSuite {
   }
 
   test("deleteAllTypes") {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       val row = createSampleRow(3)
       val inserted = mariatestRepo.insert(row)
 
@@ -116,8 +113,7 @@ class AllTypesTest extends AnyFunSuite {
   }
 
   test("selectAll") {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       val _ = mariatestRepo.insert(createSampleRow(4))
       val _ = mariatestRepo.insert(createSampleRow(5))
 
@@ -129,8 +125,7 @@ class AllTypesTest extends AnyFunSuite {
   // ==================== Nullable Types Tests ====================
 
   test("insertNullableWithAllNulls") {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       // Use short constructor - all defaults to None/UseDefault
       val unsaved = MariatestnullRowUnsaved()
       val inserted = mariatestnullRepo.insert(unsaved)
@@ -146,8 +141,7 @@ class AllTypesTest extends AnyFunSuite {
   }
 
   test("insertNullableWithValues") {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       // Explicitly test ALL 42 nullable columns with real values - use full constructor
       val unsaved = MariatestnullRowUnsaved(
         tinyintCol = Defaulted.Provided(Some(42.toByte)),
@@ -210,8 +204,7 @@ class AllTypesTest extends AnyFunSuite {
   // ==================== Individual Type Tests ====================
 
   test("integerTypes") {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       val row = createSampleRow(10)
       val inserted = mariatestRepo.insert(row)
 
@@ -223,8 +216,7 @@ class AllTypesTest extends AnyFunSuite {
   }
 
   test("unsignedTypes") {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       val row = createSampleRow(11)
       val inserted = mariatestRepo.insert(row)
 
@@ -237,8 +229,7 @@ class AllTypesTest extends AnyFunSuite {
   }
 
   test("decimalTypes") {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       val row = createSampleRow(12)
       val inserted = mariatestRepo.insert(row)
 
@@ -248,8 +239,7 @@ class AllTypesTest extends AnyFunSuite {
   }
 
   test("dateTimeTypes") {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       val row = createSampleRow(13)
       val inserted = mariatestRepo.insert(row)
 
@@ -261,8 +251,7 @@ class AllTypesTest extends AnyFunSuite {
   }
 
   test("setType") {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       val row1 = createSampleRow(20).copy(setCol = XYZSet.of(List(XYZSetMember.x)))
       val inserted1 = mariatestRepo.insert(row1)
       val _ = assert(inserted1.setCol == XYZSet.of(List(XYZSetMember.x)))
@@ -274,8 +263,7 @@ class AllTypesTest extends AnyFunSuite {
   }
 
   test("inetTypes") {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       val row = createSampleRow(30).copy(
         inet4Col = new Inet4("192.168.0.1"),
         inet6Col = new Inet6("2001:db8::1")
@@ -288,8 +276,7 @@ class AllTypesTest extends AnyFunSuite {
   }
 
   test("jsonType") {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       val jsonValue = Json("{\"name\": \"test\", \"values\": [1, 2, 3]}")
       val row = createSampleRow(40).copy(jsonCol = jsonValue)
       val inserted = mariatestRepo.insert(row)

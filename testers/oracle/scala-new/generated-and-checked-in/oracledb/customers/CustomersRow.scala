@@ -6,11 +6,10 @@
 package oracledb.customers
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import dev.typr.foundations.OracleTypes
+import dev.typr.dslsc.RowCodecs
 import dev.typr.foundations.Tuple.Tuple5
-import dev.typr.foundations.scala.DbTypeOps
-import dev.typr.foundations.scala.RowParser
-import dev.typr.foundations.scala.RowParsers
+import dev.typr.foundationssc.OracleTypes
+import dev.typr.foundationssc.RowCodec
 import java.time.LocalDateTime
 import oracledb.AddressT
 import oracledb.MoneyT
@@ -20,7 +19,7 @@ import oracledb.customtypes.Defaulted
  * Primary key: CUSTOMER_ID
  */
 case class CustomersRow(
-  /** Default: "TYPR"."ISEQ$$_72850".nextval */
+  /** Default: "TYPR"."ISEQ$$_72840".nextval */
   @JsonProperty("CUSTOMER_ID") customerId: CustomersId,
   @JsonProperty("NAME") name: String,
   @JsonProperty("BILLING_ADDRESS") billingAddress: AddressT,
@@ -55,5 +54,5 @@ case class CustomersRow(
 }
 
 object CustomersRow {
-  val `_rowParser`: RowParser[CustomersRow] = RowParsers.of(CustomersId.oracleType, OracleTypes.varchar2, AddressT.oracleType, MoneyT.oracleType.nullable, OracleTypes.timestamp)(CustomersRow.apply)(row => Array[Any](row.customerId, row.name, row.billingAddress, row.creditLimit, row.createdAt))
+  val rowCodec: RowCodec[CustomersRow] = RowCodecs.of(CustomersId.oracleType, OracleTypes.varchar2, AddressT.oracleType, MoneyT.oracleType.opt, OracleTypes.timestamp)(CustomersRow.apply)(row => Array[Any](row.customerId, row.name, row.billingAddress, row.creditLimit, row.createdAt))
 }

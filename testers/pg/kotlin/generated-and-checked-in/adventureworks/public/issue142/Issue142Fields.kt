@@ -5,14 +5,14 @@
  */
 package adventureworks.public.issue142
 
-import dev.typr.foundations.RowParser
-import dev.typr.foundations.dsl.FieldsBase
-import dev.typr.foundations.dsl.Path
-import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.kotlin.RelationStructure
-import dev.typr.foundations.kotlin.SqlExpr
-import dev.typr.foundations.kotlin.SqlExpr.IdField
-import dev.typr.foundations.kotlin.TupleExpr1
+import dev.typr.dsl.FieldsBase
+import dev.typr.dsl.Path
+import dev.typr.dsl.SqlExpr.FieldLike
+import dev.typr.dslkt.RelationStructure
+import dev.typr.dslkt.SqlExpr
+import dev.typr.dslkt.SqlExpr.IdField
+import dev.typr.dslkt.TupleExpr1
+import dev.typr.foundations.RowCodec
 import kotlin.collections.List
 
 data class Issue142Fields(val _path: List<Path>) : TupleExpr1<Issue142Id>, RelationStructure<Issue142Fields, Issue142Row>, FieldsBase<Issue142Row> {
@@ -22,9 +22,9 @@ data class Issue142Fields(val _path: List<Path>) : TupleExpr1<Issue142Id>, Relat
 
   override fun columns(): List<FieldLike<*, Issue142Row>> = listOf(this.tabellkode().underlying)
 
-  override fun rowParser(): RowParser<Issue142Row> = Issue142Row._rowParser.underlying
+  override fun rowCodec(): RowCodec<Issue142Row> = Issue142Row.rowCodec.underlying
 
-  fun tabellkode(): IdField<Issue142Id, Issue142Row> = IdField<Issue142Id, Issue142Row>(_path, "tabellkode", Issue142Row::tabellkode, null, null, { row, value -> row.copy(tabellkode = value) }, Issue142Id.pgType)
+  fun tabellkode(): IdField<Issue142Id, Issue142Row> = IdField<Issue142Id, Issue142Row>(_path, "tabellkode", Issue142Row::tabellkode, null, null, { row, value -> row.copy(tabellkode = value) }, Issue142Id.pgType.underlying)
 
   override fun withPaths(_path: List<Path>): RelationStructure<Issue142Fields, Issue142Row> = Issue142Fields(_path)
 

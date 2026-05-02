@@ -36,7 +36,7 @@ object TypoOffsetTime {
       .contramap(_.map(v => v.value.toString()))
   }
 
-  given bijection: Bijection[TypoOffsetTime, OffsetTime] = Bijection.apply[TypoOffsetTime, OffsetTime](_.value)(TypoOffsetTime.apply)
+  given bijection: Bijection[TypoOffsetTime, OffsetTime] = Bijection[TypoOffsetTime, OffsetTime](_.value)(TypoOffsetTime.apply)
 
   given decoder: Decoder[TypoOffsetTime] = Decoder.decodeOffsetTime.map(TypoOffsetTime.apply)
 

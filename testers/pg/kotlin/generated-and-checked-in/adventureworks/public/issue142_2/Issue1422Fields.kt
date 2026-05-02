@@ -8,15 +8,15 @@ package adventureworks.public.issue142_2
 import adventureworks.public.issue142.Issue142Fields
 import adventureworks.public.issue142.Issue142Id
 import adventureworks.public.issue142.Issue142Row
-import dev.typr.foundations.RowParser
-import dev.typr.foundations.dsl.FieldsBase
-import dev.typr.foundations.dsl.Path
-import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.kotlin.ForeignKey
-import dev.typr.foundations.kotlin.RelationStructure
-import dev.typr.foundations.kotlin.SqlExpr
-import dev.typr.foundations.kotlin.SqlExpr.IdField
-import dev.typr.foundations.kotlin.TupleExpr1
+import dev.typr.dsl.FieldsBase
+import dev.typr.dsl.Path
+import dev.typr.dsl.SqlExpr.FieldLike
+import dev.typr.dslkt.ForeignKey
+import dev.typr.dslkt.RelationStructure
+import dev.typr.dslkt.SqlExpr
+import dev.typr.dslkt.SqlExpr.IdField
+import dev.typr.dslkt.TupleExpr1
+import dev.typr.foundations.RowCodec
 import kotlin.collections.List
 
 data class Issue1422Fields(val _path: List<Path>) : TupleExpr1<Issue142Id>, RelationStructure<Issue1422Fields, Issue1422Row>, FieldsBase<Issue1422Row> {
@@ -28,9 +28,9 @@ data class Issue1422Fields(val _path: List<Path>) : TupleExpr1<Issue142Id>, Rela
 
   fun fkIssue142(): ForeignKey<Issue142Fields, Issue142Row> = ForeignKey.of<Issue142Fields, Issue142Row>("public.tabell2_tabell_fk").withColumnPair<Issue142Id>(tabellkode(), Issue142Fields::tabellkode)
 
-  override fun rowParser(): RowParser<Issue1422Row> = Issue1422Row._rowParser.underlying
+  override fun rowCodec(): RowCodec<Issue1422Row> = Issue1422Row.rowCodec.underlying
 
-  fun tabellkode(): IdField<Issue142Id, Issue1422Row> = IdField<Issue142Id, Issue1422Row>(_path, "tabellkode", Issue1422Row::tabellkode, null, null, { row, value -> row.copy(tabellkode = value) }, Issue142Id.pgType)
+  fun tabellkode(): IdField<Issue142Id, Issue1422Row> = IdField<Issue142Id, Issue1422Row>(_path, "tabellkode", Issue1422Row::tabellkode, null, null, { row, value -> row.copy(tabellkode = value) }, Issue142Id.pgType.underlying)
 
   override fun withPaths(_path: List<Path>): RelationStructure<Issue1422Fields, Issue1422Row> = Issue1422Fields(_path)
 

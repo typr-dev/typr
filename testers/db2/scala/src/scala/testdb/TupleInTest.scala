@@ -1,6 +1,6 @@
 package testdb
 
-import dev.typr.foundations.scala.TupleExpr2
+import dev.typr.dslsc.TupleExpr2
 import org.junit.Assert.*
 import org.junit.Ignore
 import org.junit.Test
@@ -17,8 +17,7 @@ class TupleInTest {
 
   @Test
   def orderItemsCompositeIdInWithMultipleIds(): Unit = {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       val customer = customersRepo.insert(CustomersRowUnsaved("Test Customer", "test@example.com"))
       val order1 = ordersRepo.insert(OrdersRowUnsaved(customer.customerId))
       val order2 = ordersRepo.insert(OrdersRowUnsaved(customer.customerId))
@@ -40,8 +39,7 @@ class TupleInTest {
 
   @Test
   def orderItemsCompositeIdInWithSingleId(): Unit = {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       val customer = customersRepo.insert(CustomersRowUnsaved("Single Customer", "single@example.com"))
       val order = ordersRepo.insert(OrdersRowUnsaved(customer.customerId))
       val item = orderItemsRepo.insert(OrderItemsRow(order.orderId, 1, "Single Item", 1, BigDecimal("99.99")))
@@ -57,8 +55,7 @@ class TupleInTest {
 
   @Test
   def orderItemsCompositeIdInWithEmptyList(): Unit = {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       val customer = customersRepo.insert(CustomersRowUnsaved("Empty Customer", "empty@example.com"))
       val order = ordersRepo.insert(OrdersRowUnsaved(customer.customerId))
       val _ = orderItemsRepo.insert(OrderItemsRow(order.orderId, 1, "Empty Test Item", 1, BigDecimal("25.00")))
@@ -73,8 +70,7 @@ class TupleInTest {
 
   @Test
   def orderItemsCompositeIdInCombinedWithOtherConditions(): Unit = {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       val customer = customersRepo.insert(CustomersRowUnsaved("Condition Customer", "condition@example.com"))
       val order = ordersRepo.insert(OrdersRowUnsaved(customer.customerId))
 
@@ -95,8 +91,7 @@ class TupleInTest {
 
   @Test
   def orderItemsCompositeIdInWithNonExistentIds(): Unit = {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       val customer = customersRepo.insert(CustomersRowUnsaved("Exist Customer", "exist@example.com"))
       val order = ordersRepo.insert(OrdersRowUnsaved(customer.customerId))
       val item = orderItemsRepo.insert(OrderItemsRow(order.orderId, 1, "Existing Item", 1, BigDecimal("75.00")))
@@ -119,8 +114,7 @@ class TupleInTest {
 
   @Test
   def orderItemsCompositeIdComputedVsManual(): Unit = {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       val customer = customersRepo.insert(CustomersRowUnsaved("Computed Customer", "computed@example.com"))
       val order = ordersRepo.insert(OrdersRowUnsaved(customer.customerId))
       val item = orderItemsRepo.insert(OrderItemsRow(order.orderId, 1, "Computed Item", 1, BigDecimal("55.00")))
@@ -143,8 +137,7 @@ class TupleInTest {
 
   @Test
   def tupleInSubqueryBasic(): Unit = {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       import TupleExpr2.bijection
       val customer = customersRepo.insert(CustomersRowUnsaved("Subquery Customer", "subquery@example.com"))
       val order = ordersRepo.insert(OrdersRowUnsaved(customer.customerId))
@@ -174,8 +167,7 @@ class TupleInTest {
 
   @Test
   def tupleInSubqueryWithNoMatches(): Unit = {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       import TupleExpr2.bijection
       val customer = customersRepo.insert(CustomersRowUnsaved("NoMatch Customer", "nomatch@example.com"))
       val order = ordersRepo.insert(OrdersRowUnsaved(customer.customerId))
@@ -201,8 +193,7 @@ class TupleInTest {
 
   @Test
   def tupleInSubqueryCombinedWithOtherConditions(): Unit = {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       import TupleExpr2.bijection
       val customer = customersRepo.insert(CustomersRowUnsaved("Combined Customer", "combined@example.com"))
       val order = ordersRepo.insert(OrdersRowUnsaved(customer.customerId))
@@ -234,8 +225,7 @@ class TupleInTest {
 
   @Test
   def tupleInWithNullableColumn(): Unit = {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       val customer1 = customersRepo.insert(CustomersRowUnsaved("Null Status Customer 1", "null1@example.com"))
       val customer2 = customersRepo.insert(CustomersRowUnsaved("Null Status Customer 2", "null2@example.com"))
 
@@ -263,8 +253,7 @@ class TupleInTest {
 
   @Test
   def tupleInWithNullableColumnMixedMatching(): Unit = {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       val customer1 = customersRepo.insert(CustomersRowUnsaved("Mixed Customer 1", "mixed1@example.com"))
       val customer2 = customersRepo.insert(CustomersRowUnsaved("Mixed Customer 2", "mixed2@example.com"))
 
@@ -295,8 +284,7 @@ class TupleInTest {
   @Ignore("Nested tuple support pending refactoring")
   @Test
   def nestedTupleIn(): Unit = {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       val customer = customersRepo.insert(CustomersRowUnsaved("Nested Tuple Customer", "nested@example.com"))
       val order = ordersRepo.insert(OrdersRowUnsaved(customer.customerId))
 
@@ -347,8 +335,7 @@ class TupleInTest {
   @Ignore("Nested tuple support pending refactoring")
   @Test
   def readNestedTupleFromDatabase(): Unit = {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       val customer = customersRepo.insert(CustomersRowUnsaved("Read Customer", "read@example.com"))
       val order = ordersRepo.insert(OrdersRowUnsaved(customer.customerId))
 

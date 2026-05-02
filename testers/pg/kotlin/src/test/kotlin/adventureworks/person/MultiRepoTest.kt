@@ -12,7 +12,7 @@ import adventureworks.public.Name
 import adventureworks.userdefined.FirstName
 import org.junit.Assert.assertEquals
 import org.junit.Test
-import java.sql.Connection
+import dev.typr.foundationskt.Connection
 import java.util.Random
 
 data class PersonWithAddresses(val person: PersonRow, val addresses: Map<Name, AddressRow>)

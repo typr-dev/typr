@@ -18,7 +18,7 @@ import typr.dsl.Bijection
 case class TypoVector(value: Array[Float])
 
 object TypoVector {
-  implicit lazy val bijection: Bijection[TypoVector, Array[Float]] = Bijection.apply[TypoVector, Array[Float]](_.value)(TypoVector.apply)
+  implicit lazy val bijection: Bijection[TypoVector, Array[Float]] = Bijection[TypoVector, Array[Float]](_.value)(TypoVector.apply)
 
   implicit lazy val decoder: Decoder[TypoVector] = Decoder.decodeArray[Float](Decoder.decodeFloat, implicitly).map(TypoVector.apply)
 

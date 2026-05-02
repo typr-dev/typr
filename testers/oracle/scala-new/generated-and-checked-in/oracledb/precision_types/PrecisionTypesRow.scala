@@ -6,10 +6,10 @@
 package oracledb.precision_types
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import dev.typr.foundations.OracleTypes
+import dev.typr.dslsc.RowCodecs
 import dev.typr.foundations.Tuple.Tuple17
-import dev.typr.foundations.scala.RowParser
-import dev.typr.foundations.scala.RowParsers
+import dev.typr.foundationssc.OracleTypes
+import dev.typr.foundationssc.RowCodec
 import java.time.LocalDateTime
 import oracledb.customtypes.Defaulted
 import oracledb.precisetypes.Decimal10_2
@@ -32,7 +32,7 @@ import oracledb.precisetypes.NonEmptyString50
  * Primary key: ID
  */
 case class PrecisionTypesRow(
-  /** Default: "TYPR"."ISEQ$$_72873".nextval */
+  /** Default: "TYPR"."ISEQ$$_72863".nextval */
   @JsonProperty("ID") id: PrecisionTypesId,
   @JsonProperty("STRING10") string10: NonEmptyString10,
   @JsonProperty("STRING20") string20: NonEmptyString20,
@@ -109,5 +109,5 @@ case class PrecisionTypesRow(
 }
 
 object PrecisionTypesRow {
-  val `_rowParser`: RowParser[PrecisionTypesRow] = RowParsers.of(PrecisionTypesId.oracleType, NonEmptyString10.oracleType, NonEmptyString20.oracleType, NonEmptyString50.oracleType, NonEmptyString100.oracleType, NonEmptyString255.oracleType, NonEmptyPaddedString10.oracleType, Decimal5_2.oracleType, Decimal10_2.oracleType, Decimal18_4.oracleType, Int5.oracleType, Int10.oracleType, Int18.oracleType, OracleTypes.timestamp, LocalDateTime3.oracleType, LocalDateTime6.oracleType, LocalDateTime9.oracleType)(PrecisionTypesRow.apply)(row => Array[Any](row.id, row.string10, row.string20, row.string50, row.string100, row.string255, row.char10, row.number52, row.number102, row.number184, row.number50, row.number100, row.number180, row.ts0, row.ts3, row.ts6, row.ts9))
+  val rowCodec: RowCodec[PrecisionTypesRow] = RowCodecs.of(PrecisionTypesId.oracleType, NonEmptyString10.oracleType, NonEmptyString20.oracleType, NonEmptyString50.oracleType, NonEmptyString100.oracleType, NonEmptyString255.oracleType, NonEmptyPaddedString10.oracleType, Decimal5_2.oracleType, Decimal10_2.oracleType, Decimal18_4.oracleType, Int5.oracleType, Int10.oracleType, Int18.oracleType, OracleTypes.timestamp, LocalDateTime3.oracleType, LocalDateTime6.oracleType, LocalDateTime9.oracleType)(PrecisionTypesRow.apply)(row => Array[Any](row.id, row.string10, row.string20, row.string50, row.string100, row.string255, row.char10, row.number52, row.number102, row.number184, row.number50, row.number100, row.number180, row.ts0, row.ts3, row.ts6, row.ts9))
 }

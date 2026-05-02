@@ -6,15 +6,15 @@
 package testdb.all_scalar_types
 
 import com.fasterxml.jackson.annotation.JsonValue
-import dev.typr.foundations.SqlServerType
-import dev.typr.foundations.scala.Bijection
-import dev.typr.foundations.scala.ScalaDbTypes
+import dev.typr.dslsc.Bijection
+import dev.typr.foundationssc.SqlServerType
+import dev.typr.foundationssc.SqlServerTypes
 
 /** Type for the primary key of table `all_scalar_types` */
 case class AllScalarTypesId(@JsonValue value: Int) extends scala.AnyVal
 
 object AllScalarTypesId {
-  given bijection: Bijection[AllScalarTypesId, Int] = Bijection.apply[AllScalarTypesId, Int](_.value)(AllScalarTypesId.apply)
+  given bijection: Bijection[AllScalarTypesId, Int] = Bijection.of[AllScalarTypesId, Int](_.value, AllScalarTypesId.apply)
 
-  given sqlServerType: SqlServerType[AllScalarTypesId] = ScalaDbTypes.SqlServerTypes.int_.bimap(AllScalarTypesId.apply, _.value)
+  given sqlServerType: SqlServerType[AllScalarTypesId] = SqlServerTypes.int_.to(Bijection.of(AllScalarTypesId.apply, _.value))
 }

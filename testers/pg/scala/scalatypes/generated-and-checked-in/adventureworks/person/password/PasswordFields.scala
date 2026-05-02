@@ -8,17 +8,17 @@ package adventureworks.person.password
 import adventureworks.person.businessentity.BusinessentityId
 import adventureworks.person.person.PersonFields
 import adventureworks.person.person.PersonRow
-import dev.typr.foundations.PgTypes
-import dev.typr.foundations.RowParser
-import dev.typr.foundations.dsl.FieldsBase
-import dev.typr.foundations.dsl.Path
-import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.scala.ForeignKey
-import dev.typr.foundations.scala.RelationStructure
-import dev.typr.foundations.scala.SqlExpr
-import dev.typr.foundations.scala.SqlExpr.Field
-import dev.typr.foundations.scala.SqlExpr.IdField
-import dev.typr.foundations.scala.TupleExpr5
+import dev.typr.dsl.FieldsBase
+import dev.typr.dsl.Path
+import dev.typr.dsl.SqlExpr.FieldLike
+import dev.typr.dslsc.ForeignKey
+import dev.typr.dslsc.RelationStructure
+import dev.typr.dslsc.SqlExpr
+import dev.typr.dslsc.SqlExpr.Field
+import dev.typr.dslsc.SqlExpr.IdField
+import dev.typr.dslsc.TupleExpr5
+import dev.typr.foundations.RowCodec
+import dev.typr.foundationssc.PgTypes
 import java.time.LocalDateTime
 import java.util.UUID
 
@@ -31,7 +31,7 @@ class PasswordFields(val `_path`: java.util.List[Path]) extends TupleExpr5[Busin
       None,
       Some("int4"),
       (row, value) => row.copy(businessentityid = value),
-      BusinessentityId.pgType
+      BusinessentityId.pgType.underlying
     )
   }
 
@@ -43,7 +43,7 @@ class PasswordFields(val `_path`: java.util.List[Path]) extends TupleExpr5[Busin
       None,
       None,
       (row, value) => row.copy(passwordhash = value),
-      PgTypes.text
+      PgTypes.text.underlying
     )
   }
 
@@ -55,7 +55,7 @@ class PasswordFields(val `_path`: java.util.List[Path]) extends TupleExpr5[Busin
       None,
       None,
       (row, value) => row.copy(passwordsalt = value),
-      PgTypes.text
+      PgTypes.text.underlying
     )
   }
 
@@ -67,7 +67,7 @@ class PasswordFields(val `_path`: java.util.List[Path]) extends TupleExpr5[Busin
       None,
       Some("uuid"),
       (row, value) => row.copy(rowguid = value),
-      PgTypes.uuid
+      PgTypes.uuid.underlying
     )
   }
 
@@ -79,7 +79,7 @@ class PasswordFields(val `_path`: java.util.List[Path]) extends TupleExpr5[Busin
       None,
       Some("timestamp"),
       (row, value) => row.copy(modifieddate = value),
-      PgTypes.timestamp
+      PgTypes.timestamp.underlying
     )
   }
 
@@ -87,7 +87,7 @@ class PasswordFields(val `_path`: java.util.List[Path]) extends TupleExpr5[Busin
 
   override def columns: java.util.List[FieldLike[?, PasswordRow]] = java.util.List.of(this.businessentityid.underlying, this.passwordhash.underlying, this.passwordsalt.underlying, this.rowguid.underlying, this.modifieddate.underlying)
 
-  override def rowParser: RowParser[PasswordRow] = PasswordRow._rowParser.underlying
+  override def rowCodec: RowCodec[PasswordRow] = PasswordRow.rowCodec.underlying
 
   override def withPaths(`_path`: java.util.List[Path]): RelationStructure[PasswordFields, PasswordRow] = new PasswordFields(`_path`)
 

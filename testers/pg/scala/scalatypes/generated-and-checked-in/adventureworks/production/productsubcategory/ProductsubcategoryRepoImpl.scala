@@ -7,29 +7,29 @@ package adventureworks.production.productsubcategory
 
 import adventureworks.production.productcategory.ProductcategoryId
 import adventureworks.public.Name
-import dev.typr.foundations.PgTypes
-import dev.typr.foundations.scala.DeleteBuilder
-import dev.typr.foundations.scala.Dialect
-import dev.typr.foundations.scala.Fragment
-import dev.typr.foundations.scala.ScalaIteratorOps
-import dev.typr.foundations.scala.SelectBuilder
-import dev.typr.foundations.scala.UpdateBuilder
-import dev.typr.foundations.streamingInsert
-import java.sql.Connection
+import dev.typr.dslsc.DeleteBuilder
+import dev.typr.dslsc.Dialect
+import dev.typr.dslsc.SelectBuilder
+import dev.typr.dslsc.UpdateBuilder
+import dev.typr.foundationssc.Connection
+import dev.typr.foundationssc.ConnectionRead
+import dev.typr.foundationssc.Fragment
+import dev.typr.foundationssc.PgTypes
+import dev.typr.foundationssc.StreamingInsert
 import scala.collection.mutable.ListBuffer
-import dev.typr.foundations.scala.Fragment.sql
+import dev.typr.foundationssc.Fragment.sql
 
 class ProductsubcategoryRepoImpl extends ProductsubcategoryRepo {
   override def delete: DeleteBuilder[ProductsubcategoryFields, ProductsubcategoryRow] = DeleteBuilder.of(""""production"."productsubcategory"""", ProductsubcategoryFields.structure, Dialect.POSTGRESQL)
 
-  override def deleteById(productsubcategoryid: ProductsubcategoryId)(using c: Connection): Boolean = sql"""delete from "production"."productsubcategory" where "productsubcategoryid" = ${Fragment.encode(ProductsubcategoryId.pgType, productsubcategoryid)}""".update().runUnchecked(c) > 0
+  override def deleteById(productsubcategoryid: ProductsubcategoryId)(using c: Connection): Boolean = sql"""delete from "production"."productsubcategory" where "productsubcategoryid" = ${Fragment.encode(ProductsubcategoryId.pgType, productsubcategoryid)}""".update().run(using c) > 0
 
-  override def deleteByIds(productsubcategoryids: Array[ProductsubcategoryId])(using c: Connection): Int = {
+  override def deleteByIds(productsubcategoryids: List[ProductsubcategoryId])(using c: Connection): Int = {
     sql"""delete
     from "production"."productsubcategory"
-    where "productsubcategoryid" = ANY(${Fragment.encode(ProductsubcategoryId.pgTypeArray, productsubcategoryids)})"""
+    where "productsubcategoryid" = ANY(${Fragment.encode(ProductsubcategoryId.pgType.array, productsubcategoryids)})"""
       .update()
-      .runUnchecked(c)
+      .run(using c)
   }
 
   override def insert(unsaved: ProductsubcategoryRow)(using c: Connection): ProductsubcategoryRow = {
@@ -37,27 +37,27 @@ class ProductsubcategoryRepoImpl extends ProductsubcategoryRepo {
     values (${Fragment.encode(ProductsubcategoryId.pgType, unsaved.productsubcategoryid)}::int4, ${Fragment.encode(ProductcategoryId.pgType, unsaved.productcategoryid)}::int4, ${Fragment.encode(Name.pgType, unsaved.name)}::varchar, ${Fragment.encode(PgTypes.uuid, unsaved.rowguid)}::uuid, ${Fragment.encode(PgTypes.timestamp, unsaved.modifieddate)}::timestamp)
     RETURNING "productsubcategoryid", "productcategoryid", "name", "rowguid", "modifieddate"
     """
-    .updateReturning(ProductsubcategoryRow.`_rowParser`.exactlyOne()).runUnchecked(c)
+    .updateReturning(ProductsubcategoryRow.rowCodec.exactlyOne()).run(using c)
   }
 
   override def insert(unsaved: ProductsubcategoryRowUnsaved)(using c: Connection): ProductsubcategoryRow = {
     val columns: ListBuffer[Fragment] = ListBuffer()
     val values: ListBuffer[Fragment] = ListBuffer()
-    columns.addOne(Fragment.lit(""""productcategoryid"""")): @scala.annotation.nowarn
+    columns.addOne(Fragment.of(""""productcategoryid"""")): @scala.annotation.nowarn
     values.addOne(sql"${Fragment.encode(ProductcategoryId.pgType, unsaved.productcategoryid)}::int4"): @scala.annotation.nowarn
-    columns.addOne(Fragment.lit(""""name"""")): @scala.annotation.nowarn
+    columns.addOne(Fragment.of(""""name"""")): @scala.annotation.nowarn
     values.addOne(sql"${Fragment.encode(Name.pgType, unsaved.name)}::varchar"): @scala.annotation.nowarn
     unsaved.productsubcategoryid.visit(
       {  },
-      value => { columns.addOne(Fragment.lit(""""productsubcategoryid"""")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(ProductsubcategoryId.pgType, value)}::int4"): @scala.annotation.nowarn }
+      value => { columns.addOne(Fragment.of(""""productsubcategoryid"""")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(ProductsubcategoryId.pgType, value)}::int4"): @scala.annotation.nowarn }
     );
     unsaved.rowguid.visit(
       {  },
-      value => { columns.addOne(Fragment.lit(""""rowguid"""")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(PgTypes.uuid, value)}::uuid"): @scala.annotation.nowarn }
+      value => { columns.addOne(Fragment.of(""""rowguid"""")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(PgTypes.uuid, value)}::uuid"): @scala.annotation.nowarn }
     );
     unsaved.modifieddate.visit(
       {  },
-      value => { columns.addOne(Fragment.lit(""""modifieddate"""")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(PgTypes.timestamp, value)}::timestamp"): @scala.annotation.nowarn }
+      value => { columns.addOne(Fragment.of(""""modifieddate"""")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(PgTypes.timestamp, value)}::timestamp"): @scala.annotation.nowarn }
     );
     val q: Fragment = {
       sql"""insert into "production"."productsubcategory"(${Fragment.comma(columns)})
@@ -65,47 +65,47 @@ class ProductsubcategoryRepoImpl extends ProductsubcategoryRepo {
       RETURNING "productsubcategoryid", "productcategoryid", "name", "rowguid", "modifieddate"
       """
     }
-    return q.updateReturning(ProductsubcategoryRow.`_rowParser`.exactlyOne()).runUnchecked(c)
+    return q.updateReturning(ProductsubcategoryRow.rowCodec.exactlyOne()).run(using c)
   }
 
   override def insertStreaming(
     unsaved: Iterator[ProductsubcategoryRow],
     batchSize: Int = 10000
-  )(using c: Connection): Long = streamingInsert.insertUnchecked(s"""COPY "production"."productsubcategory"("productsubcategoryid", "productcategoryid", "name", "rowguid", "modifieddate") FROM STDIN""", batchSize, unsaved.toJavaIterator, c, ProductsubcategoryRow.pgText)
+  )(using c: Connection): Long = StreamingInsert.of(s"""COPY "production"."productsubcategory"("productsubcategoryid", "productcategoryid", "name", "rowguid", "modifieddate") FROM STDIN""", batchSize, unsaved, ProductsubcategoryRow.pgText).run(using c)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
   override def insertUnsavedStreaming(
     unsaved: Iterator[ProductsubcategoryRowUnsaved],
     batchSize: Int = 10000
-  )(using c: Connection): Long = streamingInsert.insertUnchecked(s"""COPY "production"."productsubcategory"("productcategoryid", "name", "productsubcategoryid", "rowguid", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved.toJavaIterator, c, ProductsubcategoryRowUnsaved.pgText)
+  )(using c: Connection): Long = StreamingInsert.of(s"""COPY "production"."productsubcategory"("productcategoryid", "name", "productsubcategoryid", "rowguid", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved, ProductsubcategoryRowUnsaved.pgText).run(using c)
 
-  override def select: SelectBuilder[ProductsubcategoryFields, ProductsubcategoryRow] = SelectBuilder.of(""""production"."productsubcategory"""", ProductsubcategoryFields.structure, ProductsubcategoryRow.`_rowParser`, Dialect.POSTGRESQL)
+  override def select: SelectBuilder[ProductsubcategoryFields, ProductsubcategoryRow] = SelectBuilder.of(""""production"."productsubcategory"""", ProductsubcategoryFields.structure, ProductsubcategoryRow.rowCodec, Dialect.POSTGRESQL)
 
-  override def selectAll(using c: Connection): List[ProductsubcategoryRow] = {
+  override def selectAll(using c: ConnectionRead): List[ProductsubcategoryRow] = {
     sql"""select "productsubcategoryid", "productcategoryid", "name", "rowguid", "modifieddate"
     from "production"."productsubcategory"
-    """.query(ProductsubcategoryRow.`_rowParser`.all()).runUnchecked(c)
+    """.query(ProductsubcategoryRow.rowCodec.all()).run(using c)
   }
 
-  override def selectById(productsubcategoryid: ProductsubcategoryId)(using c: Connection): Option[ProductsubcategoryRow] = {
+  override def selectById(productsubcategoryid: ProductsubcategoryId)(using c: ConnectionRead): Option[ProductsubcategoryRow] = {
     sql"""select "productsubcategoryid", "productcategoryid", "name", "rowguid", "modifieddate"
     from "production"."productsubcategory"
-    where "productsubcategoryid" = ${Fragment.encode(ProductsubcategoryId.pgType, productsubcategoryid)}""".query(ProductsubcategoryRow.`_rowParser`.first()).runUnchecked(c)
+    where "productsubcategoryid" = ${Fragment.encode(ProductsubcategoryId.pgType, productsubcategoryid)}""".query(ProductsubcategoryRow.rowCodec.first()).run(using c)
   }
 
-  override def selectByIds(productsubcategoryids: Array[ProductsubcategoryId])(using c: Connection): List[ProductsubcategoryRow] = {
+  override def selectByIds(productsubcategoryids: List[ProductsubcategoryId])(using c: ConnectionRead): List[ProductsubcategoryRow] = {
     sql"""select "productsubcategoryid", "productcategoryid", "name", "rowguid", "modifieddate"
     from "production"."productsubcategory"
-    where "productsubcategoryid" = ANY(${Fragment.encode(ProductsubcategoryId.pgTypeArray, productsubcategoryids)})""".query(ProductsubcategoryRow.`_rowParser`.all()).runUnchecked(c)
+    where "productsubcategoryid" = ANY(${Fragment.encode(ProductsubcategoryId.pgType.array, productsubcategoryids)})""".query(ProductsubcategoryRow.rowCodec.all()).run(using c)
   }
 
-  override def selectByIdsTracked(productsubcategoryids: Array[ProductsubcategoryId])(using c: Connection): Map[ProductsubcategoryId, ProductsubcategoryRow] = {
+  override def selectByIdsTracked(productsubcategoryids: List[ProductsubcategoryId])(using c: ConnectionRead): Map[ProductsubcategoryId, ProductsubcategoryRow] = {
     val ret: scala.collection.mutable.Map[ProductsubcategoryId, ProductsubcategoryRow] = scala.collection.mutable.Map.empty[ProductsubcategoryId, ProductsubcategoryRow]
     selectByIds(productsubcategoryids)(using c).foreach(row => ret.put(row.productsubcategoryid, row): @scala.annotation.nowarn)
     return ret.toMap
   }
 
-  override def update: UpdateBuilder[ProductsubcategoryFields, ProductsubcategoryRow] = UpdateBuilder.of(""""production"."productsubcategory"""", ProductsubcategoryFields.structure, ProductsubcategoryRow.`_rowParser`, Dialect.POSTGRESQL)
+  override def update: UpdateBuilder[ProductsubcategoryFields, ProductsubcategoryRow] = UpdateBuilder.of(""""production"."productsubcategory"""", ProductsubcategoryFields.structure, ProductsubcategoryRow.rowCodec, Dialect.POSTGRESQL)
 
   override def update(row: ProductsubcategoryRow)(using c: Connection): Boolean = {
     val productsubcategoryid: ProductsubcategoryId = row.productsubcategoryid
@@ -114,7 +114,7 @@ class ProductsubcategoryRepoImpl extends ProductsubcategoryRepo {
     "name" = ${Fragment.encode(Name.pgType, row.name)}::varchar,
     "rowguid" = ${Fragment.encode(PgTypes.uuid, row.rowguid)}::uuid,
     "modifieddate" = ${Fragment.encode(PgTypes.timestamp, row.modifieddate)}::timestamp
-    where "productsubcategoryid" = ${Fragment.encode(ProductsubcategoryId.pgType, productsubcategoryid)}""".update().runUnchecked(c) > 0
+    where "productsubcategoryid" = ${Fragment.encode(ProductsubcategoryId.pgType, productsubcategoryid)}""".update().run(using c) > 0
   }
 
   override def upsert(unsaved: ProductsubcategoryRow)(using c: Connection): ProductsubcategoryRow = {
@@ -127,8 +127,8 @@ class ProductsubcategoryRepoImpl extends ProductsubcategoryRepo {
     "rowguid" = EXCLUDED."rowguid",
     "modifieddate" = EXCLUDED."modifieddate"
     returning "productsubcategoryid", "productcategoryid", "name", "rowguid", "modifieddate""""
-    .updateReturning(ProductsubcategoryRow.`_rowParser`.exactlyOne())
-    .runUnchecked(c)
+    .updateReturning(ProductsubcategoryRow.rowCodec.exactlyOne())
+    .run(using c)
   }
 
   override def upsertBatch(unsaved: Iterator[ProductsubcategoryRow])(using c: Connection): List[ProductsubcategoryRow] = {
@@ -141,8 +141,8 @@ class ProductsubcategoryRepoImpl extends ProductsubcategoryRepo {
     "rowguid" = EXCLUDED."rowguid",
     "modifieddate" = EXCLUDED."modifieddate"
     returning "productsubcategoryid", "productcategoryid", "name", "rowguid", "modifieddate""""
-      .updateManyReturning(ProductsubcategoryRow.`_rowParser`, unsaved)
-    .runUnchecked(c)
+      .updateManyReturning(ProductsubcategoryRow.rowCodec, unsaved)
+    .run(using c)
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
@@ -150,8 +150,8 @@ class ProductsubcategoryRepoImpl extends ProductsubcategoryRepo {
     unsaved: Iterator[ProductsubcategoryRow],
     batchSize: Int = 10000
   )(using c: Connection): Int = {
-    sql"""create temporary table productsubcategory_TEMP (like "production"."productsubcategory") on commit drop""".update().runUnchecked(c): @scala.annotation.nowarn
-    streamingInsert.insertUnchecked(s"""copy productsubcategory_TEMP("productsubcategoryid", "productcategoryid", "name", "rowguid", "modifieddate") from stdin""", batchSize, unsaved.toJavaIterator, c, ProductsubcategoryRow.pgText): @scala.annotation.nowarn
+    sql"""create temporary table productsubcategory_TEMP (like "production"."productsubcategory") on commit drop""".update().run(using c): @scala.annotation.nowarn
+    StreamingInsert.of(s"""copy productsubcategory_TEMP("productsubcategoryid", "productcategoryid", "name", "rowguid", "modifieddate") from stdin""", batchSize, unsaved, ProductsubcategoryRow.pgText).run(using c): @scala.annotation.nowarn
     return sql"""insert into "production"."productsubcategory"("productsubcategoryid", "productcategoryid", "name", "rowguid", "modifieddate")
     select * from productsubcategory_TEMP
     on conflict ("productsubcategoryid")
@@ -161,6 +161,6 @@ class ProductsubcategoryRepoImpl extends ProductsubcategoryRepo {
     "rowguid" = EXCLUDED."rowguid",
     "modifieddate" = EXCLUDED."modifieddate"
     ;
-    drop table productsubcategory_TEMP;""".update().runUnchecked(c)
+    drop table productsubcategory_TEMP;""".update().run(using c)
   }
 }

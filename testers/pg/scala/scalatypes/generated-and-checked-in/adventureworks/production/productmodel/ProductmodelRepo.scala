@@ -5,17 +5,18 @@
  */
 package adventureworks.production.productmodel
 
-import dev.typr.foundations.scala.DeleteBuilder
-import dev.typr.foundations.scala.SelectBuilder
-import dev.typr.foundations.scala.UpdateBuilder
-import java.sql.Connection
+import dev.typr.dslsc.DeleteBuilder
+import dev.typr.dslsc.SelectBuilder
+import dev.typr.dslsc.UpdateBuilder
+import dev.typr.foundationssc.Connection
+import dev.typr.foundationssc.ConnectionRead
 
 trait ProductmodelRepo {
   def delete: DeleteBuilder[ProductmodelFields, ProductmodelRow]
 
   def deleteById(productmodelid: ProductmodelId)(using c: Connection): Boolean
 
-  def deleteByIds(productmodelids: Array[ProductmodelId])(using c: Connection): Int
+  def deleteByIds(productmodelids: List[ProductmodelId])(using c: Connection): Int
 
   def insert(unsaved: ProductmodelRow)(using c: Connection): ProductmodelRow
 
@@ -34,13 +35,13 @@ trait ProductmodelRepo {
 
   def select: SelectBuilder[ProductmodelFields, ProductmodelRow]
 
-  def selectAll(using c: Connection): List[ProductmodelRow]
+  def selectAll(using c: ConnectionRead): List[ProductmodelRow]
 
-  def selectById(productmodelid: ProductmodelId)(using c: Connection): Option[ProductmodelRow]
+  def selectById(productmodelid: ProductmodelId)(using c: ConnectionRead): Option[ProductmodelRow]
 
-  def selectByIds(productmodelids: Array[ProductmodelId])(using c: Connection): List[ProductmodelRow]
+  def selectByIds(productmodelids: List[ProductmodelId])(using c: ConnectionRead): List[ProductmodelRow]
 
-  def selectByIdsTracked(productmodelids: Array[ProductmodelId])(using c: Connection): Map[ProductmodelId, ProductmodelRow]
+  def selectByIdsTracked(productmodelids: List[ProductmodelId])(using c: ConnectionRead): Map[ProductmodelId, ProductmodelRow]
 
   def update: UpdateBuilder[ProductmodelFields, ProductmodelRow]
 

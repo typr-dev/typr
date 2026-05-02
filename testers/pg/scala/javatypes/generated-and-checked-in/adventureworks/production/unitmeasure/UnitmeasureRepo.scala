@@ -5,10 +5,11 @@
  */
 package adventureworks.production.unitmeasure
 
-import dev.typr.foundations.dsl.DeleteBuilder
-import dev.typr.foundations.dsl.SelectBuilder
-import dev.typr.foundations.dsl.UpdateBuilder
-import java.sql.Connection
+import dev.typr.dsl.DeleteBuilder
+import dev.typr.dsl.SelectBuilder
+import dev.typr.dsl.UpdateBuilder
+import dev.typr.foundations.Connection
+import dev.typr.foundations.ConnectionRead
 import java.util.Optional
 
 trait UnitmeasureRepo {
@@ -16,7 +17,7 @@ trait UnitmeasureRepo {
 
   def deleteById(unitmeasurecode: UnitmeasureId)(using c: Connection): java.lang.Boolean
 
-  def deleteByIds(unitmeasurecodes: Array[UnitmeasureId])(using c: Connection): Integer
+  def deleteByIds(unitmeasurecodes: java.util.List[UnitmeasureId])(using c: Connection): Integer
 
   def insert(unsaved: UnitmeasureRow)(using c: Connection): UnitmeasureRow
 
@@ -35,13 +36,13 @@ trait UnitmeasureRepo {
 
   def select: SelectBuilder[UnitmeasureFields, UnitmeasureRow]
 
-  def selectAll(using c: Connection): java.util.List[UnitmeasureRow]
+  def selectAll(using c: ConnectionRead): java.util.List[UnitmeasureRow]
 
-  def selectById(unitmeasurecode: UnitmeasureId)(using c: Connection): Optional[UnitmeasureRow]
+  def selectById(unitmeasurecode: UnitmeasureId)(using c: ConnectionRead): Optional[UnitmeasureRow]
 
-  def selectByIds(unitmeasurecodes: Array[UnitmeasureId])(using c: Connection): java.util.List[UnitmeasureRow]
+  def selectByIds(unitmeasurecodes: java.util.List[UnitmeasureId])(using c: ConnectionRead): java.util.List[UnitmeasureRow]
 
-  def selectByIdsTracked(unitmeasurecodes: Array[UnitmeasureId])(using c: Connection): java.util.Map[UnitmeasureId, UnitmeasureRow]
+  def selectByIdsTracked(unitmeasurecodes: java.util.List[UnitmeasureId])(using c: ConnectionRead): java.util.Map[UnitmeasureId, UnitmeasureRow]
 
   def update: UpdateBuilder[UnitmeasureFields, UnitmeasureRow]
 

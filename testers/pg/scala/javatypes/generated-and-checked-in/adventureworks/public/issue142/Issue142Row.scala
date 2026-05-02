@@ -5,9 +5,9 @@
  */
 package adventureworks.public.issue142
 
+import dev.typr.dsl.RowCodecs
 import dev.typr.foundations.PgText
-import dev.typr.foundations.RowParser
-import dev.typr.foundations.RowParsers
+import dev.typr.foundations.RowCodec
 import dev.typr.foundations.Tuple.Tuple1
 
 /** Table: public.issue142
@@ -20,7 +20,7 @@ case class Issue142Row(tabellkode: Issue142Id) extends Tuple1[Issue142Id] {
 }
 
 object Issue142Row {
-  val `_rowParser`: RowParser[Issue142Row] = RowParsers.of(Issue142Id.pgType, Issue142Row.apply, row => Array[Any](row.tabellkode))
+  given pgText: PgText[Issue142Row] = PgText.from(rowCodec)
 
-  given pgText: PgText[Issue142Row] = PgText.from(`_rowParser`)
+  val rowCodec: RowCodec[Issue142Row] = RowCodecs.of(Issue142Id.pgType, Issue142Row.apply, row => Array[Any](row.tabellkode))
 }

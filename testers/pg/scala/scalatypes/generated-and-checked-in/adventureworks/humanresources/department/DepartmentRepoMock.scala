@@ -5,17 +5,18 @@
  */
 package adventureworks.humanresources.department
 
-import dev.typr.foundations.scala.DeleteBuilder
-import dev.typr.foundations.scala.DeleteBuilderMock
-import dev.typr.foundations.scala.DeleteParams
-import dev.typr.foundations.scala.SelectBuilder
-import dev.typr.foundations.scala.SelectBuilderMock
-import dev.typr.foundations.scala.SelectParams
-import dev.typr.foundations.scala.UpdateBuilder
-import dev.typr.foundations.scala.UpdateBuilderMock
-import dev.typr.foundations.scala.UpdateParams
+import dev.typr.dslsc.DeleteBuilder
+import dev.typr.dslsc.DeleteBuilderMock
+import dev.typr.dslsc.DeleteParams
+import dev.typr.dslsc.SelectBuilder
+import dev.typr.dslsc.SelectBuilderMock
+import dev.typr.dslsc.SelectParams
+import dev.typr.dslsc.UpdateBuilder
+import dev.typr.dslsc.UpdateBuilderMock
+import dev.typr.dslsc.UpdateParams
+import dev.typr.foundationssc.Connection
+import dev.typr.foundationssc.ConnectionRead
 import java.lang.RuntimeException
-import java.sql.Connection
 
 case class DepartmentRepoMock(
   toRow: DepartmentRowUnsaved => DepartmentRow,
@@ -25,7 +26,7 @@ case class DepartmentRepoMock(
 
   override def deleteById(departmentid: DepartmentId)(using c: Connection): Boolean = map.remove(departmentid).isDefined
 
-  override def deleteByIds(departmentids: Array[DepartmentId])(using c: Connection): Int = {
+  override def deleteByIds(departmentids: List[DepartmentId])(using c: Connection): Int = {
     var count = 0
     departmentids.foreach { id => if (map.remove(id).isDefined) {
       count = count + 1
@@ -67,13 +68,13 @@ case class DepartmentRepoMock(
 
   override def select: SelectBuilder[DepartmentFields, DepartmentRow] = SelectBuilderMock(DepartmentFields.structure, () => map.values.toList, SelectParams.empty())
 
-  override def selectAll(using c: Connection): List[DepartmentRow] = map.values.toList
+  override def selectAll(using c: ConnectionRead): List[DepartmentRow] = map.values.toList
 
-  override def selectById(departmentid: DepartmentId)(using c: Connection): Option[DepartmentRow] = map.get(departmentid)
+  override def selectById(departmentid: DepartmentId)(using c: ConnectionRead): Option[DepartmentRow] = map.get(departmentid)
 
-  override def selectByIds(departmentids: Array[DepartmentId])(using c: Connection): List[DepartmentRow] = departmentids.flatMap(map.get(_)).toList
+  override def selectByIds(departmentids: List[DepartmentId])(using c: ConnectionRead): List[DepartmentRow] = departmentids.flatMap(map.get(_)).toList
 
-  override def selectByIdsTracked(departmentids: Array[DepartmentId])(using c: Connection): Map[DepartmentId, DepartmentRow] = selectByIds(departmentids)(using c).map(x => (((row: DepartmentRow) => row.departmentid).apply(x), x)).toMap
+  override def selectByIdsTracked(departmentids: List[DepartmentId])(using c: ConnectionRead): Map[DepartmentId, DepartmentRow] = selectByIds(departmentids)(using c).map(x => (((row: DepartmentRow) => row.departmentid).apply(x), x)).toMap
 
   override def update: UpdateBuilder[DepartmentFields, DepartmentRow] = UpdateBuilderMock(DepartmentFields.structure, () => map.values.toList, UpdateParams.empty(), row => row)
 

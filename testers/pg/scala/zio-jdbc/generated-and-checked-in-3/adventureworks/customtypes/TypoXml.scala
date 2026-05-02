@@ -54,7 +54,7 @@ object TypoXml {
     )
   }
 
-  given bijection: Bijection[TypoXml, String] = Bijection.apply[TypoXml, String](_.value)(TypoXml.apply)
+  given bijection: Bijection[TypoXml, String] = Bijection[TypoXml, String](_.value)(TypoXml.apply)
 
   given jdbcDecoder: JdbcDecoder[TypoXml] = {
     JdbcDecoder[TypoXml](

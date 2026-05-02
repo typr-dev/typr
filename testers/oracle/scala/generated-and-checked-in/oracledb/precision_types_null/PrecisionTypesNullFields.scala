@@ -5,16 +5,16 @@
  */
 package oracledb.precision_types_null
 
+import dev.typr.dsl.FieldsBase
+import dev.typr.dsl.Path
+import dev.typr.dsl.RelationStructure
+import dev.typr.dsl.SqlExpr
+import dev.typr.dsl.SqlExpr.FieldLike
+import dev.typr.dsl.SqlExpr.IdField
+import dev.typr.dsl.SqlExpr.OptField
+import dev.typr.dsl.TupleExpr.TupleExpr17
 import dev.typr.foundations.OracleTypes
-import dev.typr.foundations.RowParser
-import dev.typr.foundations.dsl.FieldsBase
-import dev.typr.foundations.dsl.Path
-import dev.typr.foundations.dsl.RelationStructure
-import dev.typr.foundations.dsl.SqlExpr
-import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.dsl.SqlExpr.IdField
-import dev.typr.foundations.dsl.SqlExpr.OptField
-import dev.typr.foundations.dsl.TupleExpr.TupleExpr17
+import dev.typr.foundations.RowCodec
 import java.time.LocalDateTime
 import java.util.Optional
 import oracledb.precisetypes.Decimal10_2
@@ -240,7 +240,7 @@ class PrecisionTypesNullFields(val `_path`: java.util.List[Path]) extends TupleE
 
   override def columns: java.util.List[FieldLike[?, PrecisionTypesNullRow]] = java.util.List.of(this.id, this.string10, this.string20, this.string50, this.string100, this.string255, this.char10, this.number52, this.number102, this.number184, this.number50, this.number100, this.number180, this.ts0, this.ts3, this.ts6, this.ts9)
 
-  override def rowParser: RowParser[PrecisionTypesNullRow] = PrecisionTypesNullRow._rowParser
+  override def rowCodec: RowCodec[PrecisionTypesNullRow] = PrecisionTypesNullRow.rowCodec
 
   override def withPaths(`_path`: java.util.List[Path]): RelationStructure[PrecisionTypesNullFields, PrecisionTypesNullRow] = new PrecisionTypesNullFields(`_path`)
 

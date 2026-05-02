@@ -5,18 +5,16 @@
  */
 package testdb.customer_orders_summary
 
-import dev.typr.foundations.SqlServerTypes
-import dev.typr.foundations.scala.DbTypeOps
-import dev.typr.foundations.scala.Fragment
-import dev.typr.foundations.scala.ScalaDbTypes
-import java.sql.Connection
-import dev.typr.foundations.scala.Fragment.sql
+import dev.typr.foundationssc.ConnectionRead
+import dev.typr.foundationssc.Fragment
+import dev.typr.foundationssc.SqlServerTypes
+import dev.typr.foundationssc.Fragment.sql
 
 class CustomerOrdersSummarySqlRepoImpl extends CustomerOrdersSummarySqlRepo {
   override def apply(
     customerNamePattern: Option[String],
     minTotal: Option[BigDecimal]
-  )(using c: Connection): List[CustomerOrdersSummarySqlRow] = {
+  )(using c: ConnectionRead): List[CustomerOrdersSummarySqlRow] = {
     sql"""-- Get order summary statistics for customers
     SELECT
         c.customer_id,
@@ -28,11 +26,11 @@ class CustomerOrdersSummarySqlRepoImpl extends CustomerOrdersSummarySqlRepo {
         MAX(o.order_date) as last_order_date
     FROM customers c
     LEFT JOIN orders o ON c.customer_id = o.customer_id
-    WHERE (${Fragment.encode(SqlServerTypes.nvarchar.nullable, customerNamePattern)} IS NULL OR c.name LIKE ${Fragment.encode(SqlServerTypes.nvarchar.nullable, customerNamePattern)})
+    WHERE (${Fragment.encode(SqlServerTypes.nvarchar.opt, customerNamePattern)} IS NULL OR c.name LIKE ${Fragment.encode(SqlServerTypes.nvarchar.opt, customerNamePattern)})
     GROUP BY c.customer_id, c.name, c.email
     HAVING COUNT(o.order_id) > 0
-      AND (${Fragment.encode(ScalaDbTypes.SqlServerTypes.numeric.nullable, minTotal)} IS NULL OR COALESCE(SUM(o.total_amount), 0) >= ${Fragment.encode(ScalaDbTypes.SqlServerTypes.numeric.nullable, minTotal)})
+      AND (${Fragment.encode(SqlServerTypes.numeric.opt, minTotal)} IS NULL OR COALESCE(SUM(o.total_amount), 0) >= ${Fragment.encode(SqlServerTypes.numeric.opt, minTotal)})
     ORDER BY total_spent DESC
-    """.query(CustomerOrdersSummarySqlRow.`_rowParser`.all()).runUnchecked(c)
+    """.query(CustomerOrdersSummarySqlRow.rowCodec.all()).run(using c)
   }
 }

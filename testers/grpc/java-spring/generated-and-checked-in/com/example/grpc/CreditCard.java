@@ -7,8 +7,13 @@ import io.grpc.MethodDescriptor.Marshaller;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.RuntimeException;
 
-public record CreditCard(String cardNumber, String expiryDate, String cvv) {
+public record CreditCard(
+  String cardNumber,
+  String expiryDate,
+  String cvv
+) {
   public CreditCard withCardNumber(String cardNumber) {
     return new CreditCard(cardNumber, expiryDate, cvv);
   }
@@ -21,51 +26,43 @@ public record CreditCard(String cardNumber, String expiryDate, String cvv) {
     return new CreditCard(cardNumber, expiryDate, cvv);
   }
 
-  public static Marshaller<CreditCard> MARSHALLER =
-      new Marshaller<CreditCard>() {
-        @Override
-        public InputStream stream(CreditCard value) {
-          var bytes = new byte[value.getSerializedSize()];
-          var cos = CodedOutputStream.newInstance(bytes);
-          try {
-            value.writeTo(cos);
-            cos.flush();
-          } catch (IOException e) {
-            throw new RuntimeException(e);
-          }
-          return new ByteArrayInputStream(bytes);
-        }
-
-        @Override
-        public CreditCard parse(InputStream stream) {
-          try {
-            return CreditCard.parseFrom(CodedInputStream.newInstance(stream));
-          } catch (IOException e) {
-            throw new RuntimeException(e);
-          }
-        }
-      };
-
-  public static CreditCard parseFrom(CodedInputStream input) throws IOException {
+  static public CreditCard parseFrom(CodedInputStream input) throws IOException {
     String cardNumber = "";
     String expiryDate = "";
     String cvv = "";
     while (!input.isAtEnd()) {
       var tag = input.readTag();
-      if (WireFormat.getTagFieldNumber(tag) == 1) {
-        cardNumber = input.readString();
-      } else if (WireFormat.getTagFieldNumber(tag) == 2) {
-        expiryDate = input.readString();
-      } else if (WireFormat.getTagFieldNumber(tag) == 3) {
-        cvv = input.readString();
-      } else {
-        input.skipField(tag);
-      }
-      ;
-    }
-    ;
+      if (WireFormat.getTagFieldNumber(tag) == 1) { cardNumber = input.readString(); }
+      else if (WireFormat.getTagFieldNumber(tag) == 2) { expiryDate = input.readString(); }
+      else if (WireFormat.getTagFieldNumber(tag) == 3) { cvv = input.readString(); }
+      else { input.skipField(tag); };
+    };
     return new CreditCard(cardNumber, expiryDate, cvv);
   }
+
+  static public Marshaller<CreditCard> MARSHALLER =
+    new Marshaller<CreditCard>() {
+      @Override
+      public InputStream stream(CreditCard value) {
+        var bytes = new byte[value.getSerializedSize()];
+        var cos = CodedOutputStream.newInstance(bytes);
+        try {
+          value.writeTo(cos);
+          cos.flush();
+        } catch (IOException e) {
+          throw new RuntimeException(e);
+        } 
+        return new ByteArrayInputStream(bytes);
+      }
+      @Override
+      public CreditCard parse(InputStream stream) {
+        try {
+          return CreditCard.parseFrom(CodedInputStream.newInstance(stream));
+        } catch (IOException e) {
+          throw new RuntimeException(e);
+        } 
+      }
+    };
 
   public Integer getSerializedSize() {
     Integer size = 0;

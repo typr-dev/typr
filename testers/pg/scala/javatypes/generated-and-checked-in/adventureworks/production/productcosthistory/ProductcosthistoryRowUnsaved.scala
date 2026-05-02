@@ -46,5 +46,5 @@ case class ProductcosthistoryRowUnsaved(
 }
 
 object ProductcosthistoryRowUnsaved {
-  given pgText: PgText[ProductcosthistoryRowUnsaved] = PgText.instance((row, sb) => { ProductId.pgType.text.unsafeEncode(row.productid, sb); sb.append(PgText.DELIMETER); PgTypes.timestamp.text.unsafeEncode(row.startdate, sb); sb.append(PgText.DELIMETER); PgTypes.timestamp.opt().text.unsafeEncode(row.enddate, sb); sb.append(PgText.DELIMETER); PgTypes.numeric.text.unsafeEncode(row.standardcost, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using PgTypes.timestamp.text).unsafeEncode(row.modifieddate, sb) })
+  given pgText: PgText[ProductcosthistoryRowUnsaved] = PgText.instance((row, sb) => { ProductId.pgType.pgText().unsafeEncode(row.productid, sb); sb.append(PgText.DELIMETER); PgTypes.timestamp.pgText().unsafeEncode(row.startdate, sb); sb.append(PgText.DELIMETER); PgTypes.timestamp.opt.pgText().unsafeEncode(row.enddate, sb); sb.append(PgText.DELIMETER); PgTypes.numeric.pgText().unsafeEncode(row.standardcost, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using PgTypes.timestamp.pgText()).unsafeEncode(row.modifieddate, sb) })
 }

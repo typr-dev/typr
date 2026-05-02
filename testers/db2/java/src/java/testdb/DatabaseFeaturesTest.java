@@ -18,7 +18,7 @@ import testdb.nullability_test.*;
  * materialized views.
  */
 public class DatabaseFeaturesTest {
-  private final TestInsert testInsert = new TestInsert(new Random(42));
+  private final TestInsert testInsert = new TestInsert(new Random(1329619040));
   private final DistinctTypeTestRepoImpl distinctTypeRepo = new DistinctTypeTestRepoImpl();
   private final CheckConstraintTestRepoImpl checkConstraintRepo = new CheckConstraintTestRepoImpl();
   private final IdentityParamsTestRepoImpl identityParamsRepo = new IdentityParamsTestRepoImpl();

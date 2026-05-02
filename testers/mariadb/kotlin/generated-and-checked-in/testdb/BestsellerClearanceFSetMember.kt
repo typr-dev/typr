@@ -14,6 +14,8 @@ enum class BestsellerClearanceFSetMember(val value: kotlin.String) {
     new("new"),
     sale("sale");
 
+    
+
     companion object {
         val Names: kotlin.String = entries.joinToString(", ") { it.value }
         val ByName: kotlin.collections.Map<kotlin.String, BestsellerClearanceFSetMember> = entries.associateBy { it.value }

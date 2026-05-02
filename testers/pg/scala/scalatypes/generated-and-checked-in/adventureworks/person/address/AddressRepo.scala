@@ -5,17 +5,18 @@
  */
 package adventureworks.person.address
 
-import dev.typr.foundations.scala.DeleteBuilder
-import dev.typr.foundations.scala.SelectBuilder
-import dev.typr.foundations.scala.UpdateBuilder
-import java.sql.Connection
+import dev.typr.dslsc.DeleteBuilder
+import dev.typr.dslsc.SelectBuilder
+import dev.typr.dslsc.UpdateBuilder
+import dev.typr.foundationssc.Connection
+import dev.typr.foundationssc.ConnectionRead
 
 trait AddressRepo {
   def delete: DeleteBuilder[AddressFields, AddressRow]
 
   def deleteById(addressid: AddressId)(using c: Connection): Boolean
 
-  def deleteByIds(addressids: Array[AddressId])(using c: Connection): Int
+  def deleteByIds(addressids: List[AddressId])(using c: Connection): Int
 
   def insert(unsaved: AddressRow)(using c: Connection): AddressRow
 
@@ -34,13 +35,13 @@ trait AddressRepo {
 
   def select: SelectBuilder[AddressFields, AddressRow]
 
-  def selectAll(using c: Connection): List[AddressRow]
+  def selectAll(using c: ConnectionRead): List[AddressRow]
 
-  def selectById(addressid: AddressId)(using c: Connection): Option[AddressRow]
+  def selectById(addressid: AddressId)(using c: ConnectionRead): Option[AddressRow]
 
-  def selectByIds(addressids: Array[AddressId])(using c: Connection): List[AddressRow]
+  def selectByIds(addressids: List[AddressId])(using c: ConnectionRead): List[AddressRow]
 
-  def selectByIdsTracked(addressids: Array[AddressId])(using c: Connection): Map[AddressId, AddressRow]
+  def selectByIdsTracked(addressids: List[AddressId])(using c: ConnectionRead): Map[AddressId, AddressRow]
 
   def update: UpdateBuilder[AddressFields, AddressRow]
 

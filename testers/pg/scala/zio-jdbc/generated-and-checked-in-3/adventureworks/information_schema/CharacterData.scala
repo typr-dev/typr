@@ -27,7 +27,7 @@ object CharacterData {
 
   given arraySetter: Setter[Array[CharacterData]] = adventureworks.StringArraySetter.contramap(_.map(_.value))
 
-  given bijection: Bijection[CharacterData, String] = Bijection.apply[CharacterData, String](_.value)(CharacterData.apply)
+  given bijection: Bijection[CharacterData, String] = Bijection[CharacterData, String](_.value)(CharacterData.apply)
 
   given jdbcDecoder: JdbcDecoder[CharacterData] = JdbcDecoder.stringDecoder.map(CharacterData.apply)
 

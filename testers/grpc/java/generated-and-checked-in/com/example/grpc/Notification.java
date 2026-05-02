@@ -10,8 +10,13 @@ import io.grpc.MethodDescriptor.Marshaller;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.RuntimeException;
 
-public record Notification(String message, Priority priority, NotificationTarget target) {
+public record Notification(
+  String message,
+  Priority priority,
+  NotificationTarget target
+) {
   public Notification withMessage(String message) {
     return new Notification(message, priority, target);
   }
@@ -24,55 +29,45 @@ public record Notification(String message, Priority priority, NotificationTarget
     return new Notification(message, priority, target);
   }
 
-  public static Marshaller<Notification> MARSHALLER =
-      new Marshaller<Notification>() {
-        @Override
-        public InputStream stream(Notification value) {
-          var bytes = new byte[value.getSerializedSize()];
-          var cos = CodedOutputStream.newInstance(bytes);
-          try {
-            value.writeTo(cos);
-            cos.flush();
-          } catch (IOException e) {
-            throw new RuntimeException(e);
-          }
-          return new ByteArrayInputStream(bytes);
-        }
-
-        @Override
-        public Notification parse(InputStream stream) {
-          try {
-            return Notification.parseFrom(CodedInputStream.newInstance(stream));
-          } catch (IOException e) {
-            throw new RuntimeException(e);
-          }
-        }
-      };
-
-  public static Notification parseFrom(CodedInputStream input) throws IOException {
+  static public Notification parseFrom(CodedInputStream input) throws IOException {
     String message = "";
     Priority priority = Priority.fromValue(0);
     NotificationTarget target = null;
     while (!input.isAtEnd()) {
       var tag = input.readTag();
-      if (WireFormat.getTagFieldNumber(tag) == 1) {
-        message = input.readString();
-      } else if (WireFormat.getTagFieldNumber(tag) == 2) {
-        priority = Priority.fromValue(input.readEnum());
-      } else if (WireFormat.getTagFieldNumber(tag) == 3) {
-        target = new Email(input.readString());
-      } else if (WireFormat.getTagFieldNumber(tag) == 4) {
-        target = new Phone(input.readString());
-      } else if (WireFormat.getTagFieldNumber(tag) == 5) {
-        target = new WebhookUrl(input.readString());
-      } else {
-        input.skipField(tag);
-      }
-      ;
-    }
-    ;
+      if (WireFormat.getTagFieldNumber(tag) == 1) { message = input.readString(); }
+      else if (WireFormat.getTagFieldNumber(tag) == 2) { priority = Priority.fromValue(input.readEnum()); }
+      else if (WireFormat.getTagFieldNumber(tag) == 3) { target = new Email(input.readString()); }
+      else if (WireFormat.getTagFieldNumber(tag) == 4) { target = new Phone(input.readString()); }
+      else if (WireFormat.getTagFieldNumber(tag) == 5) { target = new WebhookUrl(input.readString()); }
+      else { input.skipField(tag); };
+    };
     return new Notification(message, priority, target);
   }
+
+  static public Marshaller<Notification> MARSHALLER =
+    new Marshaller<Notification>() {
+      @Override
+      public InputStream stream(Notification value) {
+        var bytes = new byte[value.getSerializedSize()];
+        var cos = CodedOutputStream.newInstance(bytes);
+        try {
+          value.writeTo(cos);
+          cos.flush();
+        } catch (IOException e) {
+          throw new RuntimeException(e);
+        } 
+        return new ByteArrayInputStream(bytes);
+      }
+      @Override
+      public Notification parse(InputStream stream) {
+        try {
+          return Notification.parseFrom(CodedInputStream.newInstance(stream));
+        } catch (IOException e) {
+          throw new RuntimeException(e);
+        } 
+      }
+    };
 
   public Integer getSerializedSize() {
     Integer size = 0;
@@ -83,8 +78,7 @@ public record Notification(String message, Priority priority, NotificationTarget
       case Email c -> size = size + CodedOutputStream.computeStringSize(3, c.email());
       case Phone c -> size = size + CodedOutputStream.computeStringSize(4, c.phone());
       case WebhookUrl c -> size = size + CodedOutputStream.computeStringSize(5, c.webhookUrl());
-    }
-    ;
+    };
     return size;
   }
 
@@ -96,7 +90,6 @@ public record Notification(String message, Priority priority, NotificationTarget
       case Email c -> output.writeString(3, c.email());
       case Phone c -> output.writeString(4, c.phone());
       case WebhookUrl c -> output.writeString(5, c.webhookUrl());
-    }
-    ;
+    };
   }
 }

@@ -5,17 +5,18 @@
  */
 package testdb.mariatest_unique
 
-import dev.typr.foundations.kotlin.DeleteBuilder
-import dev.typr.foundations.kotlin.DeleteBuilderMock
-import dev.typr.foundations.kotlin.DeleteParams
-import dev.typr.foundations.kotlin.SelectBuilder
-import dev.typr.foundations.kotlin.SelectBuilderMock
-import dev.typr.foundations.kotlin.SelectParams
-import dev.typr.foundations.kotlin.UpdateBuilder
-import dev.typr.foundations.kotlin.UpdateBuilderMock
-import dev.typr.foundations.kotlin.UpdateParams
+import dev.typr.dslkt.DeleteBuilder
+import dev.typr.dslkt.DeleteBuilderMock
+import dev.typr.dslkt.DeleteParams
+import dev.typr.dslkt.SelectBuilder
+import dev.typr.dslkt.SelectBuilderMock
+import dev.typr.dslkt.SelectParams
+import dev.typr.dslkt.UpdateBuilder
+import dev.typr.dslkt.UpdateBuilderMock
+import dev.typr.dslkt.UpdateParams
+import dev.typr.foundationskt.Connection
+import dev.typr.foundationskt.ConnectionRead
 import java.lang.RuntimeException
-import java.sql.Connection
 import java.util.ArrayList
 import kotlin.collections.Iterator
 import kotlin.collections.List
@@ -32,10 +33,10 @@ data class MariatestUniqueRepoMock(
   override fun deleteById(
     id: MariatestUniqueId,
     c: Connection
-  ): Boolean = map.remove(id) != null
+  ): kotlin.Boolean = map.remove(id) != null
 
   override fun deleteByIds(
-    ids: Array<MariatestUniqueId>,
+    ids: List<MariatestUniqueId>,
     c: Connection
   ): Int {
     var count = 0
@@ -65,16 +66,16 @@ data class MariatestUniqueRepoMock(
 
   override fun select(): SelectBuilder<MariatestUniqueFields, MariatestUniqueRow> = SelectBuilderMock(MariatestUniqueFields.structure, { map.values.toList() }, SelectParams.empty())
 
-  override fun selectAll(c: Connection): List<MariatestUniqueRow> = map.values.toList()
+  override fun selectAll(c: ConnectionRead): List<MariatestUniqueRow> = map.values.toList()
 
   override fun selectById(
     id: MariatestUniqueId,
-    c: Connection
+    c: ConnectionRead
   ): MariatestUniqueRow? = map[id]
 
   override fun selectByIds(
-    ids: Array<MariatestUniqueId>,
-    c: Connection
+    ids: List<MariatestUniqueId>,
+    c: ConnectionRead
   ): List<MariatestUniqueRow> {
     val result = ArrayList<MariatestUniqueRow>()
     for (id in ids) {
@@ -87,19 +88,19 @@ data class MariatestUniqueRepoMock(
   }
 
   override fun selectByIdsTracked(
-    ids: Array<MariatestUniqueId>,
-    c: Connection
+    ids: List<MariatestUniqueId>,
+    c: ConnectionRead
   ): Map<MariatestUniqueId, MariatestUniqueRow> = selectByIds(ids, c).associateBy({ row: MariatestUniqueRow -> row.id })
 
   override fun selectByUniqueCodeAndCategory(
-    code: String,
-    category: String,
-    c: Connection
+    code: kotlin.String,
+    category: kotlin.String,
+    c: ConnectionRead
   ): MariatestUniqueRow? = map.values.toList().find({ v -> (code == v.code) && (category == v.category) })
 
   override fun selectByUniqueEmail(
     email: /* user-picked */ Email,
-    c: Connection
+    c: ConnectionRead
   ): MariatestUniqueRow? = map.values.toList().find({ v -> (email == v.email) })
 
   override fun update(): UpdateBuilder<MariatestUniqueFields, MariatestUniqueRow> = UpdateBuilderMock(MariatestUniqueFields.structure, { map.values.toList() }, UpdateParams.empty(), { row -> row })
@@ -107,7 +108,7 @@ data class MariatestUniqueRepoMock(
   override fun update(
     row: MariatestUniqueRow,
     c: Connection
-  ): Boolean {
+  ): kotlin.Boolean {
     val shouldUpdate = map[row.id]?.takeIf({ oldRow -> (oldRow != row) }) != null
     if (shouldUpdate) {
       map[row.id] = row

@@ -22,7 +22,7 @@ object UsersId {
 
   implicit lazy val arrayToStatement: ToStatement[Array[UsersId]] = TypoUUID.arrayToStatement.contramap(_.map(_.value))
 
-  implicit lazy val bijection: Bijection[UsersId, TypoUUID] = Bijection.apply[UsersId, TypoUUID](_.value)(UsersId.apply)
+  implicit lazy val bijection: Bijection[UsersId, TypoUUID] = Bijection[UsersId, TypoUUID](_.value)(UsersId.apply)
 
   implicit lazy val column: Column[UsersId] = TypoUUID.column.map(UsersId.apply)
 

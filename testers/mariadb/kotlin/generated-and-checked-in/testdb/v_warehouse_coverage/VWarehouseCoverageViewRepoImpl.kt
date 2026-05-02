@@ -5,14 +5,14 @@
  */
 package testdb.v_warehouse_coverage
 
-import dev.typr.foundations.kotlin.Dialect
-import dev.typr.foundations.kotlin.Fragment
-import dev.typr.foundations.kotlin.SelectBuilder
-import java.sql.Connection
+import dev.typr.dslkt.Dialect
+import dev.typr.dslkt.SelectBuilder
+import dev.typr.foundationskt.ConnectionRead
+import dev.typr.foundationskt.Fragment
 import kotlin.collections.List
 
 class VWarehouseCoverageViewRepoImpl() : VWarehouseCoverageViewRepo {
-  override fun select(): SelectBuilder<VWarehouseCoverageViewFields, VWarehouseCoverageViewRow> = SelectBuilder.of("`v_warehouse_coverage`", VWarehouseCoverageViewFields.structure, VWarehouseCoverageViewRow._rowParser, Dialect.MARIADB)
+  override fun select(): SelectBuilder<VWarehouseCoverageViewFields, VWarehouseCoverageViewRow> = SelectBuilder.of("`v_warehouse_coverage`", VWarehouseCoverageViewFields.structure, VWarehouseCoverageViewRow.rowCodec, Dialect.MARIADB)
 
-  override fun selectAll(c: Connection): List<VWarehouseCoverageViewRow> = Fragment.interpolate(Fragment.lit("select `warehouse_id`, `code`, `name`, `address`, `location_wkt`, `service_area_wkt`, `timezone`, `is_active`, `products_stocked`, `total_inventory`\nfrom `v_warehouse_coverage`\n")).query(VWarehouseCoverageViewRow._rowParser.all()).runUnchecked(c)
+  override fun selectAll(c: ConnectionRead): List<VWarehouseCoverageViewRow> = Fragment.concat(Fragment.of("select `warehouse_id`, `code`, `name`, `address`, `location_wkt`, `service_area_wkt`, `timezone`, `is_active`, `products_stocked`, `total_inventory`\nfrom `v_warehouse_coverage`\n")).query(VWarehouseCoverageViewRow.rowCodec.all()).run(c)
 }

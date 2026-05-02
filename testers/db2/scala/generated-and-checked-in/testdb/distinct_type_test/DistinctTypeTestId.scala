@@ -6,15 +6,15 @@
 package testdb.distinct_type_test
 
 import com.fasterxml.jackson.annotation.JsonValue
-import dev.typr.foundations.Db2Type
-import dev.typr.foundations.scala.Bijection
-import dev.typr.foundations.scala.ScalaDbTypes
+import dev.typr.dslsc.Bijection
+import dev.typr.foundationssc.Db2Type
+import dev.typr.foundationssc.Db2Types
 
 /** Type for the primary key of table `DISTINCT_TYPE_TEST` */
 case class DistinctTypeTestId(@JsonValue value: Int) extends scala.AnyVal
 
 object DistinctTypeTestId {
-  given bijection: Bijection[DistinctTypeTestId, Int] = Bijection.apply[DistinctTypeTestId, Int](_.value)(DistinctTypeTestId.apply)
+  given bijection: Bijection[DistinctTypeTestId, Int] = Bijection.of[DistinctTypeTestId, Int](_.value, DistinctTypeTestId.apply)
 
-  given db2Type: Db2Type[DistinctTypeTestId] = ScalaDbTypes.Db2Types.integer.bimap(DistinctTypeTestId.apply, _.value)
+  given db2Type: Db2Type[DistinctTypeTestId] = Db2Types.integer.to(Bijection.of(DistinctTypeTestId.apply, _.value))
 }

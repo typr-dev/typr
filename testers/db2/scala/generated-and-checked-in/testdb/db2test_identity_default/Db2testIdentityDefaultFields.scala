@@ -5,16 +5,16 @@
  */
 package testdb.db2test_identity_default
 
-import dev.typr.foundations.Db2Types
-import dev.typr.foundations.RowParser
-import dev.typr.foundations.dsl.FieldsBase
-import dev.typr.foundations.dsl.Path
-import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.scala.RelationStructure
-import dev.typr.foundations.scala.SqlExpr
-import dev.typr.foundations.scala.SqlExpr.Field
-import dev.typr.foundations.scala.SqlExpr.IdField
-import dev.typr.foundations.scala.TupleExpr2
+import dev.typr.dsl.FieldsBase
+import dev.typr.dsl.Path
+import dev.typr.dsl.SqlExpr.FieldLike
+import dev.typr.dslsc.RelationStructure
+import dev.typr.dslsc.SqlExpr
+import dev.typr.dslsc.SqlExpr.Field
+import dev.typr.dslsc.SqlExpr.IdField
+import dev.typr.dslsc.TupleExpr2
+import dev.typr.foundations.RowCodec
+import dev.typr.foundationssc.Db2Types
 
 class Db2testIdentityDefaultFields(val `_path`: java.util.List[Path]) extends TupleExpr2[Db2testIdentityDefaultId, String] with RelationStructure[Db2testIdentityDefaultFields, Db2testIdentityDefaultRow]  with FieldsBase[Db2testIdentityDefaultRow] {
   def id: IdField[Db2testIdentityDefaultId, Db2testIdentityDefaultRow] = {
@@ -25,7 +25,7 @@ class Db2testIdentityDefaultFields(val `_path`: java.util.List[Path]) extends Tu
       None,
       None,
       (row, value) => row.copy(id = value),
-      Db2testIdentityDefaultId.db2Type
+      Db2testIdentityDefaultId.db2Type.underlying
     )
   }
 
@@ -37,13 +37,13 @@ class Db2testIdentityDefaultFields(val `_path`: java.util.List[Path]) extends Tu
       None,
       None,
       (row, value) => row.copy(name = value),
-      Db2Types.varchar
+      Db2Types.varchar.underlying
     )
   }
 
   override def columns: java.util.List[FieldLike[?, Db2testIdentityDefaultRow]] = java.util.List.of(this.id.underlying, this.name.underlying)
 
-  override def rowParser: RowParser[Db2testIdentityDefaultRow] = Db2testIdentityDefaultRow._rowParser.underlying
+  override def rowCodec: RowCodec[Db2testIdentityDefaultRow] = Db2testIdentityDefaultRow.rowCodec.underlying
 
   override def withPaths(`_path`: java.util.List[Path]): RelationStructure[Db2testIdentityDefaultFields, Db2testIdentityDefaultRow] = new Db2testIdentityDefaultFields(`_path`)
 

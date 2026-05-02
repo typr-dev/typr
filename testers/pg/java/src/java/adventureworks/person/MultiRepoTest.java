@@ -13,7 +13,7 @@ import adventureworks.person.person.*;
 import adventureworks.public_.Name;
 import adventureworks.userdefined.FirstName;
 import adventureworks.userdefined.LastName;
-import java.sql.Connection;
+import dev.typr.foundations.Connection;
 import java.util.*;
 import org.junit.Test;
 

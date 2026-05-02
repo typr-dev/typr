@@ -81,5 +81,5 @@ class SchemaValidator {
 }
 
 object SchemaValidator {
-  val SCHEMAS: Map[String, Schema] = Map("com.example.events.Address" -> Address.SCHEMA, "com.example.events.CustomerOrder" -> CustomerOrder.SCHEMA, "com.example.events.DynamicValue" -> DynamicValue.SCHEMA, "com.example.events.common.Money" -> Money.SCHEMA, "com.example.events.Invoice" -> Invoice.SCHEMA, "com.example.events.LinkedListNode" -> LinkedListNode.SCHEMA, "com.example.events.TreeNode" -> TreeNode.SCHEMA, "com.example.events.OrderCancelled" -> OrderCancelled.SCHEMA, "com.example.events.OrderPlaced" -> OrderPlaced.SCHEMA, "com.example.events.OrderUpdated" -> OrderUpdated.SCHEMA)
+  val SCHEMAS: Map[String, Schema] = Map("com.example.events.Address" -> Address.SCHEMA, "com.example.events.CustomerOrder" -> CustomerOrder.SCHEMA, "com.example.events.DynamicValue" -> DynamicValue.SCHEMA, "com.example.events.common.Money" -> Money.SCHEMA, "com.example.events.Invoice" -> Invoice.SCHEMA, "com.example.events.LinkedListNode" -> LinkedListNode.SCHEMA, "com.example.events.TreeNode" -> TreeNode.SCHEMA, "com.example.events.OrderCancelled" -> OrderCancelled.SCHEMA, "com.example.events.OrderPlaced" -> OrderPlaced.SCHEMA, "com.example.events.OrderUpdated" -> OrderUpdated.SCHEMA, "com.example.events.PaymentCallback" -> PaymentCallback.SCHEMA, "com.example.events.PaymentCharged" -> PaymentCharged.SCHEMA)
 }

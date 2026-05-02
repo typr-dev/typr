@@ -9,17 +9,17 @@ import adventureworks.production.productcategory.ProductcategoryFields
 import adventureworks.production.productcategory.ProductcategoryId
 import adventureworks.production.productcategory.ProductcategoryRow
 import adventureworks.public.Name
-import dev.typr.foundations.PgTypes
-import dev.typr.foundations.RowParser
-import dev.typr.foundations.dsl.FieldsBase
-import dev.typr.foundations.dsl.Path
-import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.scala.ForeignKey
-import dev.typr.foundations.scala.RelationStructure
-import dev.typr.foundations.scala.SqlExpr
-import dev.typr.foundations.scala.SqlExpr.Field
-import dev.typr.foundations.scala.SqlExpr.IdField
-import dev.typr.foundations.scala.TupleExpr5
+import dev.typr.dsl.FieldsBase
+import dev.typr.dsl.Path
+import dev.typr.dsl.SqlExpr.FieldLike
+import dev.typr.dslsc.ForeignKey
+import dev.typr.dslsc.RelationStructure
+import dev.typr.dslsc.SqlExpr
+import dev.typr.dslsc.SqlExpr.Field
+import dev.typr.dslsc.SqlExpr.IdField
+import dev.typr.dslsc.TupleExpr5
+import dev.typr.foundations.RowCodec
+import dev.typr.foundationssc.PgTypes
 import java.time.LocalDateTime
 import java.util.UUID
 
@@ -32,7 +32,7 @@ class ProductsubcategoryFields(val `_path`: java.util.List[Path]) extends TupleE
       None,
       Some("int4"),
       (row, value) => row.copy(productsubcategoryid = value),
-      ProductsubcategoryId.pgType
+      ProductsubcategoryId.pgType.underlying
     )
   }
 
@@ -44,7 +44,7 @@ class ProductsubcategoryFields(val `_path`: java.util.List[Path]) extends TupleE
       None,
       Some("int4"),
       (row, value) => row.copy(productcategoryid = value),
-      ProductcategoryId.pgType
+      ProductcategoryId.pgType.underlying
     )
   }
 
@@ -56,7 +56,7 @@ class ProductsubcategoryFields(val `_path`: java.util.List[Path]) extends TupleE
       None,
       Some("varchar"),
       (row, value) => row.copy(name = value),
-      Name.pgType
+      Name.pgType.underlying
     )
   }
 
@@ -68,7 +68,7 @@ class ProductsubcategoryFields(val `_path`: java.util.List[Path]) extends TupleE
       None,
       Some("uuid"),
       (row, value) => row.copy(rowguid = value),
-      PgTypes.uuid
+      PgTypes.uuid.underlying
     )
   }
 
@@ -80,7 +80,7 @@ class ProductsubcategoryFields(val `_path`: java.util.List[Path]) extends TupleE
       None,
       Some("timestamp"),
       (row, value) => row.copy(modifieddate = value),
-      PgTypes.timestamp
+      PgTypes.timestamp.underlying
     )
   }
 
@@ -88,7 +88,7 @@ class ProductsubcategoryFields(val `_path`: java.util.List[Path]) extends TupleE
 
   override def columns: java.util.List[FieldLike[?, ProductsubcategoryRow]] = java.util.List.of(this.productsubcategoryid.underlying, this.productcategoryid.underlying, this.name.underlying, this.rowguid.underlying, this.modifieddate.underlying)
 
-  override def rowParser: RowParser[ProductsubcategoryRow] = ProductsubcategoryRow._rowParser.underlying
+  override def rowCodec: RowCodec[ProductsubcategoryRow] = ProductsubcategoryRow.rowCodec.underlying
 
   override def withPaths(`_path`: java.util.List[Path]): RelationStructure[ProductsubcategoryFields, ProductsubcategoryRow] = new ProductsubcategoryFields(`_path`)
 

@@ -6,12 +6,10 @@
 package testdb.customer_orders
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import dev.typr.foundations.MariaTypes
+import dev.typr.dslsc.RowCodecs
 import dev.typr.foundations.Tuple.Tuple10
-import dev.typr.foundations.scala.DbTypeOps
-import dev.typr.foundations.scala.RowParser
-import dev.typr.foundations.scala.RowParsers
-import dev.typr.foundations.scala.ScalaDbTypes
+import dev.typr.foundationssc.MariaTypes
+import dev.typr.foundationssc.RowCodec
 import java.time.LocalDateTime
 import testdb.customers.CustomersId
 import testdb.orders.OrdersId
@@ -64,5 +62,5 @@ case class CustomerOrdersSqlRow(
 }
 
 object CustomerOrdersSqlRow {
-  val `_rowParser`: RowParser[CustomerOrdersSqlRow] = RowParsers.of(CustomersId.mariaType, Email.mariaType, FirstName.mariaType, LastName.mariaType, MariaTypes.text, OrdersId.mariaType.nullable, MariaTypes.varchar.nullable, MariaTypes.text.nullable, ScalaDbTypes.MariaTypes.numeric.nullable, MariaTypes.datetime.nullable)(CustomerOrdersSqlRow.apply)(row => Array[Any](row.customerId, row.email, row.firstName, row.lastName, row.tier, row.orderId, row.orderNumber, row.orderStatus, row.totalAmount, row.orderedAt))
+  val rowCodec: RowCodec[CustomerOrdersSqlRow] = RowCodecs.of(CustomersId.mariaType, Email.mariaType, FirstName.mariaType, LastName.mariaType, MariaTypes.text, OrdersId.mariaType.opt, MariaTypes.varchar.opt, MariaTypes.text.opt, MariaTypes.numeric.opt, MariaTypes.datetime.opt)(CustomerOrdersSqlRow.apply)(row => Array[Any](row.customerId, row.email, row.firstName, row.lastName, row.tier, row.orderId, row.orderNumber, row.orderStatus, row.totalAmount, row.orderedAt))
 }

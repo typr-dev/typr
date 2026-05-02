@@ -14,10 +14,10 @@ import oracledb.customtypes.Defaulted.UseDefault
 
 /** This class corresponds to a row in table `CUSTOMERS` which has not been persisted yet */
 data class CustomersRowUnsaved(
-  @field:JsonProperty("NAME") val name: String,
+  @field:JsonProperty("NAME") val name: kotlin.String,
   @field:JsonProperty("BILLING_ADDRESS") val billingAddress: AddressT,
   @field:JsonProperty("CREDIT_LIMIT") val creditLimit: MoneyT? = null,
-  /** Default: "TYPR"."ISEQ$$_72850".nextval */
+  /** Default: "TYPR"."ISEQ$$_72840".nextval */
   @field:JsonProperty("CUSTOMER_ID") val customerId: Defaulted<CustomersId> = UseDefault(),
   /** Default: SYSTIMESTAMP  */
   @field:JsonProperty("CREATED_AT") val createdAt: Defaulted<LocalDateTime> = UseDefault()

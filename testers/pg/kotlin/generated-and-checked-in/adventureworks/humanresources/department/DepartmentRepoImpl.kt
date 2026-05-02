@@ -6,14 +6,15 @@
 package adventureworks.humanresources.department
 
 import adventureworks.public.Name
-import dev.typr.foundations.PgTypes
-import dev.typr.foundations.kotlin.DeleteBuilder
-import dev.typr.foundations.kotlin.Dialect
-import dev.typr.foundations.kotlin.Fragment
-import dev.typr.foundations.kotlin.SelectBuilder
-import dev.typr.foundations.kotlin.UpdateBuilder
-import dev.typr.foundations.streamingInsert
-import java.sql.Connection
+import dev.typr.dslkt.DeleteBuilder
+import dev.typr.dslkt.Dialect
+import dev.typr.dslkt.SelectBuilder
+import dev.typr.dslkt.UpdateBuilder
+import dev.typr.foundationskt.Connection
+import dev.typr.foundationskt.ConnectionRead
+import dev.typr.foundationskt.Fragment
+import dev.typr.foundationskt.PgTypes
+import dev.typr.foundationskt.StreamingInsert
 import java.util.ArrayList
 import kotlin.collections.Iterator
 import kotlin.collections.List
@@ -26,20 +27,20 @@ class DepartmentRepoImpl() : DepartmentRepo {
   override fun deleteById(
     departmentid: DepartmentId,
     c: Connection
-  ): Boolean = Fragment.interpolate(Fragment.lit("delete from \"humanresources\".\"department\" where \"departmentid\" = "), Fragment.encode(DepartmentId.pgType, departmentid), Fragment.lit("")).update().runUnchecked(c) > 0
+  ): kotlin.Boolean = Fragment.concat(Fragment.of("delete from \"humanresources\".\"department\" where \"departmentid\" = "), Fragment.encode(DepartmentId.pgType, departmentid), Fragment.of("")).update().run(c) > 0
 
   override fun deleteByIds(
-    departmentids: Array<DepartmentId>,
+    departmentids: List<DepartmentId>,
     c: Connection
-  ): Int = Fragment.interpolate(Fragment.lit("delete\nfrom \"humanresources\".\"department\"\nwhere \"departmentid\" = ANY("), Fragment.encode(DepartmentId.pgTypeArray, departmentids), Fragment.lit(")"))
+  ): Int = Fragment.concat(Fragment.of("delete\nfrom \"humanresources\".\"department\"\nwhere \"departmentid\" = ANY("), Fragment.encode(DepartmentId.pgType.array(), departmentids), Fragment.of(")"))
     .update()
-    .runUnchecked(c)
+    .run(c)
 
   override fun insert(
     unsaved: DepartmentRow,
     c: Connection
-  ): DepartmentRow = Fragment.interpolate(Fragment.lit("insert into \"humanresources\".\"department\"(\"departmentid\", \"name\", \"groupname\", \"modifieddate\")\nvalues ("), Fragment.encode(DepartmentId.pgType, unsaved.departmentid), Fragment.lit("::int4, "), Fragment.encode(Name.pgType, unsaved.name), Fragment.lit("::varchar, "), Fragment.encode(Name.pgType, unsaved.groupname), Fragment.lit("::varchar, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\nRETURNING \"departmentid\", \"name\", \"groupname\", \"modifieddate\"\n"))
-    .updateReturning(DepartmentRow._rowParser.exactlyOne()).runUnchecked(c)
+  ): DepartmentRow = Fragment.concat(Fragment.of("insert into \"humanresources\".\"department\"(\"departmentid\", \"name\", \"groupname\", \"modifieddate\")\nvalues ("), Fragment.encode(DepartmentId.pgType, unsaved.departmentid), Fragment.of("::int4, "), Fragment.encode(Name.pgType, unsaved.name), Fragment.of("::varchar, "), Fragment.encode(Name.pgType, unsaved.groupname), Fragment.of("::varchar, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.of("::timestamp)\nRETURNING \"departmentid\", \"name\", \"groupname\", \"modifieddate\"\n"))
+    .updateReturning(DepartmentRow.rowCodec.exactlyOne()).run(c)
 
   override fun insert(
     unsaved: DepartmentRowUnsaved,
@@ -47,83 +48,83 @@ class DepartmentRepoImpl() : DepartmentRepo {
   ): DepartmentRow {
     val columns: ArrayList<Fragment> = ArrayList()
     val values: ArrayList<Fragment> = ArrayList()
-    columns.add(Fragment.lit("\"name\""))
-    values.add(Fragment.interpolate(Fragment.encode(Name.pgType, unsaved.name), Fragment.lit("::varchar")))
-    columns.add(Fragment.lit("\"groupname\""))
-    values.add(Fragment.interpolate(Fragment.encode(Name.pgType, unsaved.groupname), Fragment.lit("::varchar")))
+    columns.add(Fragment.of("\"name\""))
+    values.add(Fragment.concat(Fragment.encode(Name.pgType, unsaved.name), Fragment.of("::varchar")))
+    columns.add(Fragment.of("\"groupname\""))
+    values.add(Fragment.concat(Fragment.encode(Name.pgType, unsaved.groupname), Fragment.of("::varchar")))
     unsaved.departmentid.visit(
       {  },
-      { value -> columns.add(Fragment.lit("\"departmentid\""))
-      values.add(Fragment.interpolate(Fragment.encode(DepartmentId.pgType, value), Fragment.lit("::int4"))) }
+      { value -> columns.add(Fragment.of("\"departmentid\""))
+      values.add(Fragment.concat(Fragment.encode(DepartmentId.pgType, value), Fragment.of("::int4"))) }
     );
     unsaved.modifieddate.visit(
       {  },
-      { value -> columns.add(Fragment.lit("\"modifieddate\""))
-      values.add(Fragment.interpolate(Fragment.encode(PgTypes.timestamp, value), Fragment.lit("::timestamp"))) }
+      { value -> columns.add(Fragment.of("\"modifieddate\""))
+      values.add(Fragment.concat(Fragment.encode(PgTypes.timestamp, value), Fragment.of("::timestamp"))) }
     );
-    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into \"humanresources\".\"department\"("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nRETURNING \"departmentid\", \"name\", \"groupname\", \"modifieddate\"\n"))
-    return q.updateReturning(DepartmentRow._rowParser.exactlyOne()).runUnchecked(c)
+    val q: Fragment = Fragment.concat(Fragment.of("insert into \"humanresources\".\"department\"("), Fragment.comma(columns.toMutableList()), Fragment.of(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.of(")\nRETURNING \"departmentid\", \"name\", \"groupname\", \"modifieddate\"\n"))
+    return q.updateReturning(DepartmentRow.rowCodec.exactlyOne()).run(c)
   }
 
   override fun insertStreaming(
     unsaved: Iterator<DepartmentRow>,
     batchSize: Int,
     c: Connection
-  ): Long = streamingInsert.insertUnchecked("COPY \"humanresources\".\"department\"(\"departmentid\", \"name\", \"groupname\", \"modifieddate\") FROM STDIN", batchSize, unsaved, c, DepartmentRow.pgText)
+  ): kotlin.Long = StreamingInsert.of("COPY \"humanresources\".\"department\"(\"departmentid\", \"name\", \"groupname\", \"modifieddate\") FROM STDIN", batchSize, unsaved, DepartmentRow.pgText).run(c)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
   override fun insertUnsavedStreaming(
     unsaved: Iterator<DepartmentRowUnsaved>,
     batchSize: Int,
     c: Connection
-  ): Long = streamingInsert.insertUnchecked("COPY \"humanresources\".\"department\"(\"name\", \"groupname\", \"departmentid\", \"modifieddate\") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')", batchSize, unsaved, c, DepartmentRowUnsaved.pgText)
+  ): kotlin.Long = StreamingInsert.of("COPY \"humanresources\".\"department\"(\"name\", \"groupname\", \"departmentid\", \"modifieddate\") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')", batchSize, unsaved, DepartmentRowUnsaved.pgText).run(c)
 
-  override fun select(): SelectBuilder<DepartmentFields, DepartmentRow> = SelectBuilder.of("\"humanresources\".\"department\"", DepartmentFields.structure, DepartmentRow._rowParser, Dialect.POSTGRESQL)
+  override fun select(): SelectBuilder<DepartmentFields, DepartmentRow> = SelectBuilder.of("\"humanresources\".\"department\"", DepartmentFields.structure, DepartmentRow.rowCodec, Dialect.POSTGRESQL)
 
-  override fun selectAll(c: Connection): List<DepartmentRow> = Fragment.interpolate(Fragment.lit("select \"departmentid\", \"name\", \"groupname\", \"modifieddate\"\nfrom \"humanresources\".\"department\"\n")).query(DepartmentRow._rowParser.all()).runUnchecked(c)
+  override fun selectAll(c: ConnectionRead): List<DepartmentRow> = Fragment.concat(Fragment.of("select \"departmentid\", \"name\", \"groupname\", \"modifieddate\"\nfrom \"humanresources\".\"department\"\n")).query(DepartmentRow.rowCodec.all()).run(c)
 
   override fun selectById(
     departmentid: DepartmentId,
-    c: Connection
-  ): DepartmentRow? = Fragment.interpolate(Fragment.lit("select \"departmentid\", \"name\", \"groupname\", \"modifieddate\"\nfrom \"humanresources\".\"department\"\nwhere \"departmentid\" = "), Fragment.encode(DepartmentId.pgType, departmentid), Fragment.lit("")).query(DepartmentRow._rowParser.first()).runUnchecked(c)
+    c: ConnectionRead
+  ): DepartmentRow? = Fragment.concat(Fragment.of("select \"departmentid\", \"name\", \"groupname\", \"modifieddate\"\nfrom \"humanresources\".\"department\"\nwhere \"departmentid\" = "), Fragment.encode(DepartmentId.pgType, departmentid), Fragment.of("")).query(DepartmentRow.rowCodec.first()).run(c)
 
   override fun selectByIds(
-    departmentids: Array<DepartmentId>,
-    c: Connection
-  ): List<DepartmentRow> = Fragment.interpolate(Fragment.lit("select \"departmentid\", \"name\", \"groupname\", \"modifieddate\"\nfrom \"humanresources\".\"department\"\nwhere \"departmentid\" = ANY("), Fragment.encode(DepartmentId.pgTypeArray, departmentids), Fragment.lit(")")).query(DepartmentRow._rowParser.all()).runUnchecked(c)
+    departmentids: List<DepartmentId>,
+    c: ConnectionRead
+  ): List<DepartmentRow> = Fragment.concat(Fragment.of("select \"departmentid\", \"name\", \"groupname\", \"modifieddate\"\nfrom \"humanresources\".\"department\"\nwhere \"departmentid\" = ANY("), Fragment.encode(DepartmentId.pgType.array(), departmentids), Fragment.of(")")).query(DepartmentRow.rowCodec.all()).run(c)
 
   override fun selectByIdsTracked(
-    departmentids: Array<DepartmentId>,
-    c: Connection
+    departmentids: List<DepartmentId>,
+    c: ConnectionRead
   ): Map<DepartmentId, DepartmentRow> {
     val ret: MutableMap<DepartmentId, DepartmentRow> = mutableMapOf<DepartmentId, DepartmentRow>()
     selectByIds(departmentids, c).forEach({ row -> ret.put(row.departmentid, row) })
     return ret.toMap()
   }
 
-  override fun update(): UpdateBuilder<DepartmentFields, DepartmentRow> = UpdateBuilder.of("\"humanresources\".\"department\"", DepartmentFields.structure, DepartmentRow._rowParser, Dialect.POSTGRESQL)
+  override fun update(): UpdateBuilder<DepartmentFields, DepartmentRow> = UpdateBuilder.of("\"humanresources\".\"department\"", DepartmentFields.structure, DepartmentRow.rowCodec, Dialect.POSTGRESQL)
 
   override fun update(
     row: DepartmentRow,
     c: Connection
-  ): Boolean {
+  ): kotlin.Boolean {
     val departmentid: DepartmentId = row.departmentid
-    return Fragment.interpolate(Fragment.lit("update \"humanresources\".\"department\"\nset \"name\" = "), Fragment.encode(Name.pgType, row.name), Fragment.lit("::varchar,\n\"groupname\" = "), Fragment.encode(Name.pgType, row.groupname), Fragment.lit("::varchar,\n\"modifieddate\" = "), Fragment.encode(PgTypes.timestamp, row.modifieddate), Fragment.lit("::timestamp\nwhere \"departmentid\" = "), Fragment.encode(DepartmentId.pgType, departmentid), Fragment.lit("")).update().runUnchecked(c) > 0
+    return Fragment.concat(Fragment.of("update \"humanresources\".\"department\"\nset \"name\" = "), Fragment.encode(Name.pgType, row.name), Fragment.of("::varchar,\n\"groupname\" = "), Fragment.encode(Name.pgType, row.groupname), Fragment.of("::varchar,\n\"modifieddate\" = "), Fragment.encode(PgTypes.timestamp, row.modifieddate), Fragment.of("::timestamp\nwhere \"departmentid\" = "), Fragment.encode(DepartmentId.pgType, departmentid), Fragment.of("")).update().run(c) > 0
   }
 
   override fun upsert(
     unsaved: DepartmentRow,
     c: Connection
-  ): DepartmentRow = Fragment.interpolate(Fragment.lit("insert into \"humanresources\".\"department\"(\"departmentid\", \"name\", \"groupname\", \"modifieddate\")\nvalues ("), Fragment.encode(DepartmentId.pgType, unsaved.departmentid), Fragment.lit("::int4, "), Fragment.encode(Name.pgType, unsaved.name), Fragment.lit("::varchar, "), Fragment.encode(Name.pgType, unsaved.groupname), Fragment.lit("::varchar, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\non conflict (\"departmentid\")\ndo update set\n  \"name\" = EXCLUDED.\"name\",\n\"groupname\" = EXCLUDED.\"groupname\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\nreturning \"departmentid\", \"name\", \"groupname\", \"modifieddate\""))
-    .updateReturning(DepartmentRow._rowParser.exactlyOne())
-    .runUnchecked(c)
+  ): DepartmentRow = Fragment.concat(Fragment.of("insert into \"humanresources\".\"department\"(\"departmentid\", \"name\", \"groupname\", \"modifieddate\")\nvalues ("), Fragment.encode(DepartmentId.pgType, unsaved.departmentid), Fragment.of("::int4, "), Fragment.encode(Name.pgType, unsaved.name), Fragment.of("::varchar, "), Fragment.encode(Name.pgType, unsaved.groupname), Fragment.of("::varchar, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.of("::timestamp)\non conflict (\"departmentid\")\ndo update set\n  \"name\" = EXCLUDED.\"name\",\n\"groupname\" = EXCLUDED.\"groupname\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\nreturning \"departmentid\", \"name\", \"groupname\", \"modifieddate\""))
+    .updateReturning(DepartmentRow.rowCodec.exactlyOne())
+    .run(c)
 
   override fun upsertBatch(
     unsaved: Iterator<DepartmentRow>,
     c: Connection
-  ): List<DepartmentRow> = Fragment.interpolate(Fragment.lit("insert into \"humanresources\".\"department\"(\"departmentid\", \"name\", \"groupname\", \"modifieddate\")\nvalues (?::int4, ?::varchar, ?::varchar, ?::timestamp)\non conflict (\"departmentid\")\ndo update set\n  \"name\" = EXCLUDED.\"name\",\n\"groupname\" = EXCLUDED.\"groupname\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\nreturning \"departmentid\", \"name\", \"groupname\", \"modifieddate\""))
-    .updateManyReturning(DepartmentRow._rowParser, unsaved)
-  .runUnchecked(c)
+  ): List<DepartmentRow> = Fragment.concat(Fragment.of("insert into \"humanresources\".\"department\"(\"departmentid\", \"name\", \"groupname\", \"modifieddate\")\nvalues (?::int4, ?::varchar, ?::varchar, ?::timestamp)\non conflict (\"departmentid\")\ndo update set\n  \"name\" = EXCLUDED.\"name\",\n\"groupname\" = EXCLUDED.\"groupname\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\nreturning \"departmentid\", \"name\", \"groupname\", \"modifieddate\""))
+    .updateManyReturning(DepartmentRow.rowCodec, unsaved)
+  .run(c)
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
   override fun upsertStreaming(
@@ -131,8 +132,8 @@ class DepartmentRepoImpl() : DepartmentRepo {
     batchSize: Int,
     c: Connection
   ): Int {
-    Fragment.interpolate(Fragment.lit("create temporary table department_TEMP (like \"humanresources\".\"department\") on commit drop")).update().runUnchecked(c)
-    streamingInsert.insertUnchecked("copy department_TEMP(\"departmentid\", \"name\", \"groupname\", \"modifieddate\") from stdin", batchSize, unsaved, c, DepartmentRow.pgText)
-    return Fragment.interpolate(Fragment.lit("insert into \"humanresources\".\"department\"(\"departmentid\", \"name\", \"groupname\", \"modifieddate\")\nselect * from department_TEMP\non conflict (\"departmentid\")\ndo update set\n  \"name\" = EXCLUDED.\"name\",\n\"groupname\" = EXCLUDED.\"groupname\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\n;\ndrop table department_TEMP;")).update().runUnchecked(c)
+    Fragment.concat(Fragment.of("create temporary table department_TEMP (like \"humanresources\".\"department\") on commit drop")).update().run(c)
+    StreamingInsert.of("copy department_TEMP(\"departmentid\", \"name\", \"groupname\", \"modifieddate\") from stdin", batchSize, unsaved, DepartmentRow.pgText).run(c)
+    return Fragment.concat(Fragment.of("insert into \"humanresources\".\"department\"(\"departmentid\", \"name\", \"groupname\", \"modifieddate\")\nselect * from department_TEMP\non conflict (\"departmentid\")\ndo update set\n  \"name\" = EXCLUDED.\"name\",\n\"groupname\" = EXCLUDED.\"groupname\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\n;\ndrop table department_TEMP;")).update().run(c)
   }
 }

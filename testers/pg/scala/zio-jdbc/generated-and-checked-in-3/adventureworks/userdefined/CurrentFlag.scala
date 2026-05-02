@@ -27,7 +27,7 @@ object CurrentFlag {
 
   given arraySetter: Setter[Array[CurrentFlag]] = Flag.arraySetter.contramap(_.map(_.value))
 
-  given bijection: Bijection[CurrentFlag, Flag] = Bijection.apply[CurrentFlag, Flag](_.value)(CurrentFlag.apply)
+  given bijection: Bijection[CurrentFlag, Flag] = Bijection[CurrentFlag, Flag](_.value)(CurrentFlag.apply)
 
   given jdbcDecoder: JdbcDecoder[CurrentFlag] = Flag.jdbcDecoder.map(CurrentFlag.apply)
 

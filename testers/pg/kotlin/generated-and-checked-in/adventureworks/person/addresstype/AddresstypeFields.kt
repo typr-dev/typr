@@ -6,16 +6,16 @@
 package adventureworks.person.addresstype
 
 import adventureworks.public.Name
-import dev.typr.foundations.PgTypes
-import dev.typr.foundations.RowParser
-import dev.typr.foundations.dsl.FieldsBase
-import dev.typr.foundations.dsl.Path
-import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.kotlin.RelationStructure
-import dev.typr.foundations.kotlin.SqlExpr
-import dev.typr.foundations.kotlin.SqlExpr.Field
-import dev.typr.foundations.kotlin.SqlExpr.IdField
-import dev.typr.foundations.kotlin.TupleExpr4
+import dev.typr.dsl.FieldsBase
+import dev.typr.dsl.Path
+import dev.typr.dsl.SqlExpr.FieldLike
+import dev.typr.dslkt.RelationStructure
+import dev.typr.dslkt.SqlExpr
+import dev.typr.dslkt.SqlExpr.Field
+import dev.typr.dslkt.SqlExpr.IdField
+import dev.typr.dslkt.TupleExpr4
+import dev.typr.foundations.RowCodec
+import dev.typr.foundationskt.PgTypes
 import java.time.LocalDateTime
 import java.util.UUID
 import kotlin.collections.List
@@ -31,17 +31,17 @@ data class AddresstypeFields(val _path: List<Path>) : TupleExpr4<AddresstypeId, 
 
   override fun _path(): List<Path> = _path
 
-  fun addresstypeid(): IdField<AddresstypeId, AddresstypeRow> = IdField<AddresstypeId, AddresstypeRow>(_path, "addresstypeid", AddresstypeRow::addresstypeid, null, "int4", { row, value -> row.copy(addresstypeid = value) }, AddresstypeId.pgType)
+  fun addresstypeid(): IdField<AddresstypeId, AddresstypeRow> = IdField<AddresstypeId, AddresstypeRow>(_path, "addresstypeid", AddresstypeRow::addresstypeid, null, "int4", { row, value -> row.copy(addresstypeid = value) }, AddresstypeId.pgType.underlying)
 
   override fun columns(): List<FieldLike<*, AddresstypeRow>> = listOf(this.addresstypeid().underlying, this.name().underlying, this.rowguid().underlying, this.modifieddate().underlying)
 
-  fun modifieddate(): Field<LocalDateTime, AddresstypeRow> = Field<LocalDateTime, AddresstypeRow>(_path, "modifieddate", AddresstypeRow::modifieddate, null, "timestamp", { row, value -> row.copy(modifieddate = value) }, PgTypes.timestamp)
+  fun modifieddate(): Field<LocalDateTime, AddresstypeRow> = Field<LocalDateTime, AddresstypeRow>(_path, "modifieddate", AddresstypeRow::modifieddate, null, "timestamp", { row, value -> row.copy(modifieddate = value) }, PgTypes.timestamp.underlying)
 
-  fun name(): Field<Name, AddresstypeRow> = Field<Name, AddresstypeRow>(_path, "name", AddresstypeRow::name, null, "varchar", { row, value -> row.copy(name = value) }, Name.pgType)
+  fun name(): Field<Name, AddresstypeRow> = Field<Name, AddresstypeRow>(_path, "name", AddresstypeRow::name, null, "varchar", { row, value -> row.copy(name = value) }, Name.pgType.underlying)
 
-  override fun rowParser(): RowParser<AddresstypeRow> = AddresstypeRow._rowParser.underlying
+  override fun rowCodec(): RowCodec<AddresstypeRow> = AddresstypeRow.rowCodec.underlying
 
-  fun rowguid(): Field<UUID, AddresstypeRow> = Field<UUID, AddresstypeRow>(_path, "rowguid", AddresstypeRow::rowguid, null, "uuid", { row, value -> row.copy(rowguid = value) }, PgTypes.uuid)
+  fun rowguid(): Field<UUID, AddresstypeRow> = Field<UUID, AddresstypeRow>(_path, "rowguid", AddresstypeRow::rowguid, null, "uuid", { row, value -> row.copy(rowguid = value) }, PgTypes.uuid.underlying)
 
   override fun withPaths(_path: List<Path>): RelationStructure<AddresstypeFields, AddresstypeRow> = AddresstypeFields(_path)
 

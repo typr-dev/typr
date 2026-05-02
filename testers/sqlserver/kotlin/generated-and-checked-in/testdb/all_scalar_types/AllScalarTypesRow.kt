@@ -8,16 +8,13 @@ package testdb.all_scalar_types
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.microsoft.sqlserver.jdbc.Geography
 import com.microsoft.sqlserver.jdbc.Geometry
-import dev.typr.foundations.SqlServerTypes
 import dev.typr.foundations.Tuple.Tuple38
 import dev.typr.foundations.data.HierarchyId
 import dev.typr.foundations.data.Json
 import dev.typr.foundations.data.Uint1
 import dev.typr.foundations.data.Xml
-import dev.typr.foundations.kotlin.KotlinDbTypes
-import dev.typr.foundations.kotlin.RowParser
-import dev.typr.foundations.kotlin.RowParsers
-import dev.typr.foundations.kotlin.nullable
+import dev.typr.foundationskt.RowCodec
+import dev.typr.foundationskt.SqlServerTypes
 import java.math.BigDecimal
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -33,24 +30,24 @@ data class AllScalarTypesRow(
   /** IDENTITY(1, 1) */
   val id: AllScalarTypesId,
   @field:JsonProperty("col_tinyint") val colTinyint: Uint1?,
-  @field:JsonProperty("col_smallint") val colSmallint: Short?,
+  @field:JsonProperty("col_smallint") val colSmallint: kotlin.Short?,
   @field:JsonProperty("col_int") val colInt: Int?,
-  @field:JsonProperty("col_bigint") val colBigint: Long?,
+  @field:JsonProperty("col_bigint") val colBigint: kotlin.Long?,
   @field:JsonProperty("col_decimal") val colDecimal: BigDecimal?,
   @field:JsonProperty("col_numeric") val colNumeric: BigDecimal?,
   @field:JsonProperty("col_money") val colMoney: BigDecimal?,
   @field:JsonProperty("col_smallmoney") val colSmallmoney: BigDecimal?,
-  @field:JsonProperty("col_real") val colReal: Float?,
-  @field:JsonProperty("col_float") val colFloat: Double?,
-  @field:JsonProperty("col_bit") val colBit: Boolean?,
-  @field:JsonProperty("col_char") val colChar: String?,
-  @field:JsonProperty("col_varchar") val colVarchar: String?,
-  @field:JsonProperty("col_varchar_max") val colVarcharMax: String?,
-  @field:JsonProperty("col_text") val colText: String?,
-  @field:JsonProperty("col_nchar") val colNchar: String?,
-  @field:JsonProperty("col_nvarchar") val colNvarchar: String?,
-  @field:JsonProperty("col_nvarchar_max") val colNvarcharMax: String?,
-  @field:JsonProperty("col_ntext") val colNtext: String?,
+  @field:JsonProperty("col_real") val colReal: kotlin.Float?,
+  @field:JsonProperty("col_float") val colFloat: kotlin.Double?,
+  @field:JsonProperty("col_bit") val colBit: kotlin.Boolean?,
+  @field:JsonProperty("col_char") val colChar: kotlin.String?,
+  @field:JsonProperty("col_varchar") val colVarchar: kotlin.String?,
+  @field:JsonProperty("col_varchar_max") val colVarcharMax: kotlin.String?,
+  @field:JsonProperty("col_text") val colText: kotlin.String?,
+  @field:JsonProperty("col_nchar") val colNchar: kotlin.String?,
+  @field:JsonProperty("col_nvarchar") val colNvarchar: kotlin.String?,
+  @field:JsonProperty("col_nvarchar_max") val colNvarcharMax: kotlin.String?,
+  @field:JsonProperty("col_ntext") val colNtext: kotlin.String?,
   @field:JsonProperty("col_binary") val colBinary: ByteArray?,
   @field:JsonProperty("col_varbinary") val colVarbinary: ByteArray?,
   @field:JsonProperty("col_varbinary_max") val colVarbinaryMax: ByteArray?,
@@ -70,33 +67,33 @@ data class AllScalarTypesRow(
   @field:JsonProperty("col_geography") val colGeography: Geography?,
   @field:JsonProperty("col_geometry") val colGeometry: Geometry?,
   /** Default: ('default_value') */
-  @field:JsonProperty("col_not_null") val colNotNull: String
-) : Tuple38<AllScalarTypesId, Uint1?, Short?, Int?, Long?, BigDecimal?, BigDecimal?, BigDecimal?, BigDecimal?, Float?, Double?, Boolean?, String?, String?, String?, String?, String?, String?, String?, String?, ByteArray?, ByteArray?, ByteArray?, ByteArray?, LocalDate?, LocalTime?, LocalDateTime?, LocalDateTime?, LocalDateTime?, OffsetDateTime?, UUID?, Xml?, Json?, ByteArray, HierarchyId?, Geography?, Geometry?, String> {
+  @field:JsonProperty("col_not_null") val colNotNull: kotlin.String
+) : Tuple38<AllScalarTypesId, Uint1?, kotlin.Short?, Int?, kotlin.Long?, BigDecimal?, BigDecimal?, BigDecimal?, BigDecimal?, kotlin.Float?, kotlin.Double?, kotlin.Boolean?, kotlin.String?, kotlin.String?, kotlin.String?, kotlin.String?, kotlin.String?, kotlin.String?, kotlin.String?, kotlin.String?, ByteArray?, ByteArray?, ByteArray?, ByteArray?, LocalDate?, LocalTime?, LocalDateTime?, LocalDateTime?, LocalDateTime?, OffsetDateTime?, UUID?, Xml?, Json?, ByteArray, HierarchyId?, Geography?, Geometry?, kotlin.String> {
   override fun _1(): AllScalarTypesId = id
 
-  override fun _10(): Float? = colReal
+  override fun _10(): kotlin.Float? = colReal
 
-  override fun _11(): Double? = colFloat
+  override fun _11(): kotlin.Double? = colFloat
 
-  override fun _12(): Boolean? = colBit
+  override fun _12(): kotlin.Boolean? = colBit
 
-  override fun _13(): String? = colChar
+  override fun _13(): kotlin.String? = colChar
 
-  override fun _14(): String? = colVarchar
+  override fun _14(): kotlin.String? = colVarchar
 
-  override fun _15(): String? = colVarcharMax
+  override fun _15(): kotlin.String? = colVarcharMax
 
-  override fun _16(): String? = colText
+  override fun _16(): kotlin.String? = colText
 
-  override fun _17(): String? = colNchar
+  override fun _17(): kotlin.String? = colNchar
 
-  override fun _18(): String? = colNvarchar
+  override fun _18(): kotlin.String? = colNvarchar
 
-  override fun _19(): String? = colNvarcharMax
+  override fun _19(): kotlin.String? = colNvarcharMax
 
   override fun _2(): Uint1? = colTinyint
 
-  override fun _20(): String? = colNtext
+  override fun _20(): kotlin.String? = colNtext
 
   override fun _21(): ByteArray? = colBinary
 
@@ -116,7 +113,7 @@ data class AllScalarTypesRow(
 
   override fun _29(): LocalDateTime? = colDatetime2
 
-  override fun _3(): Short? = colSmallint
+  override fun _3(): kotlin.Short? = colSmallint
 
   override fun _30(): OffsetDateTime? = colDatetimeoffset
 
@@ -134,11 +131,11 @@ data class AllScalarTypesRow(
 
   override fun _37(): Geometry? = colGeometry
 
-  override fun _38(): String = colNotNull
+  override fun _38(): kotlin.String = colNotNull
 
   override fun _4(): Int? = colInt
 
-  override fun _5(): Long? = colBigint
+  override fun _5(): kotlin.Long? = colBigint
 
   override fun _6(): BigDecimal? = colDecimal
 
@@ -148,9 +145,9 @@ data class AllScalarTypesRow(
 
   override fun _9(): BigDecimal? = colSmallmoney
 
-  fun toUnsavedRow(colNotNull: Defaulted<String> = Defaulted.Provided(this.colNotNull)): AllScalarTypesRowUnsaved = AllScalarTypesRowUnsaved(colTinyint, colSmallint, colInt, colBigint, colDecimal, colNumeric, colMoney, colSmallmoney, colReal, colFloat, colBit, colChar, colVarchar, colVarcharMax, colText, colNchar, colNvarchar, colNvarcharMax, colNtext, colBinary, colVarbinary, colVarbinaryMax, colImage, colDate, colTime, colDatetime, colSmalldatetime, colDatetime2, colDatetimeoffset, colUniqueidentifier, colXml, colJson, colHierarchyid, colGeography, colGeometry, colNotNull)
+  fun toUnsavedRow(colNotNull: Defaulted<kotlin.String> = Defaulted.Provided(this.colNotNull)): AllScalarTypesRowUnsaved = AllScalarTypesRowUnsaved(colTinyint, colSmallint, colInt, colBigint, colDecimal, colNumeric, colMoney, colSmallmoney, colReal, colFloat, colBit, colChar, colVarchar, colVarcharMax, colText, colNchar, colNvarchar, colNvarcharMax, colNtext, colBinary, colVarbinary, colVarbinaryMax, colImage, colDate, colTime, colDatetime, colSmalldatetime, colDatetime2, colDatetimeoffset, colUniqueidentifier, colXml, colJson, colHierarchyid, colGeography, colGeometry, colNotNull)
 
   companion object {
-    val _rowParser: RowParser<AllScalarTypesRow> = RowParsers.of(AllScalarTypesId.sqlServerType, SqlServerTypes.tinyint.nullable(), KotlinDbTypes.SqlServerTypes.smallint.nullable(), KotlinDbTypes.SqlServerTypes.int_.nullable(), KotlinDbTypes.SqlServerTypes.bigint.nullable(), KotlinDbTypes.SqlServerTypes.decimal.nullable(), KotlinDbTypes.SqlServerTypes.decimal.nullable(), KotlinDbTypes.SqlServerTypes.money.nullable(), KotlinDbTypes.SqlServerTypes.smallmoney.nullable(), KotlinDbTypes.SqlServerTypes.real.nullable(), KotlinDbTypes.SqlServerTypes.float_.nullable(), KotlinDbTypes.SqlServerTypes.bit.nullable(), SqlServerTypes.char_.nullable(), SqlServerTypes.varchar.nullable(), SqlServerTypes.varchar.nullable(), SqlServerTypes.text.nullable(), SqlServerTypes.nchar.nullable(), SqlServerTypes.nvarchar.nullable(), SqlServerTypes.nvarchar.nullable(), SqlServerTypes.ntext.nullable(), SqlServerTypes.binary.nullable(), SqlServerTypes.varbinary.nullable(), SqlServerTypes.varbinary.nullable(), SqlServerTypes.image.nullable(), SqlServerTypes.date.nullable(), SqlServerTypes.time.nullable(), SqlServerTypes.datetime.nullable(), SqlServerTypes.smalldatetime.nullable(), SqlServerTypes.datetime2.nullable(), SqlServerTypes.datetimeoffset.nullable(), SqlServerTypes.uniqueidentifier.nullable(), SqlServerTypes.xml.nullable(), SqlServerTypes.json.nullable(), SqlServerTypes.rowversion, SqlServerTypes.hierarchyid.nullable(), SqlServerTypes.geography.nullable(), SqlServerTypes.geometry.nullable(), SqlServerTypes.nvarchar, { t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15, t16, t17, t18, t19, t20, t21, t22, t23, t24, t25, t26, t27, t28, t29, t30, t31, t32, t33, t34, t35, t36, t37 -> AllScalarTypesRow(t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15, t16, t17, t18, t19, t20, t21, t22, t23, t24, t25, t26, t27, t28, t29, t30, t31, t32, t33, t34, t35, t36, t37) }, { row -> arrayOf<Any?>(row.id, row.colTinyint, row.colSmallint, row.colInt, row.colBigint, row.colDecimal, row.colNumeric, row.colMoney, row.colSmallmoney, row.colReal, row.colFloat, row.colBit, row.colChar, row.colVarchar, row.colVarcharMax, row.colText, row.colNchar, row.colNvarchar, row.colNvarcharMax, row.colNtext, row.colBinary, row.colVarbinary, row.colVarbinaryMax, row.colImage, row.colDate, row.colTime, row.colDatetime, row.colSmalldatetime, row.colDatetime2, row.colDatetimeoffset, row.colUniqueidentifier, row.colXml, row.colJson, row.colRowversion, row.colHierarchyid, row.colGeography, row.colGeometry, row.colNotNull) })
+    val rowCodec: RowCodec<AllScalarTypesRow> = RowCodec(dev.typr.foundations.RowCodec.create(listOf(AllScalarTypesId.sqlServerType.underlying, SqlServerTypes.tinyint.opt().underlying, SqlServerTypes.smallint.opt().underlying, SqlServerTypes.int_.opt().underlying, SqlServerTypes.bigint.opt().underlying, SqlServerTypes.decimal.opt().underlying, SqlServerTypes.decimal.opt().underlying, SqlServerTypes.money.opt().underlying, SqlServerTypes.smallmoney.opt().underlying, SqlServerTypes.real.opt().underlying, SqlServerTypes.float_.opt().underlying, SqlServerTypes.bit.opt().underlying, SqlServerTypes.char_.opt().underlying, SqlServerTypes.varchar.opt().underlying, SqlServerTypes.varchar.opt().underlying, SqlServerTypes.text.opt().underlying, SqlServerTypes.nchar.opt().underlying, SqlServerTypes.nvarchar.opt().underlying, SqlServerTypes.nvarchar.opt().underlying, SqlServerTypes.ntext.opt().underlying, SqlServerTypes.binary.opt().underlying, SqlServerTypes.varbinary.opt().underlying, SqlServerTypes.varbinary.opt().underlying, SqlServerTypes.image.opt().underlying, SqlServerTypes.date.opt().underlying, SqlServerTypes.time.opt().underlying, SqlServerTypes.datetime.opt().underlying, SqlServerTypes.smalldatetime.opt().underlying, SqlServerTypes.datetime2.opt().underlying, SqlServerTypes.datetimeoffset.opt().underlying, SqlServerTypes.uniqueidentifier.opt().underlying, SqlServerTypes.xml.opt().underlying, SqlServerTypes.json.opt().underlying, SqlServerTypes.rowversion.underlying, SqlServerTypes.hierarchyid.opt().underlying, SqlServerTypes.geography.opt().underlying, SqlServerTypes.geometry.opt().underlying, SqlServerTypes.nvarchar.underlying), { a -> AllScalarTypesRow(a[0] as AllScalarTypesId, a[1] as Uint1?, a[2] as kotlin.Short?, a[3] as Int?, a[4] as kotlin.Long?, a[5] as BigDecimal?, a[6] as BigDecimal?, a[7] as BigDecimal?, a[8] as BigDecimal?, a[9] as kotlin.Float?, a[10] as kotlin.Double?, a[11] as kotlin.Boolean?, a[12] as kotlin.String?, a[13] as kotlin.String?, a[14] as kotlin.String?, a[15] as kotlin.String?, a[16] as kotlin.String?, a[17] as kotlin.String?, a[18] as kotlin.String?, a[19] as kotlin.String?, a[20] as ByteArray?, a[21] as ByteArray?, a[22] as ByteArray?, a[23] as ByteArray?, a[24] as LocalDate?, a[25] as LocalTime?, a[26] as LocalDateTime?, a[27] as LocalDateTime?, a[28] as LocalDateTime?, a[29] as OffsetDateTime?, a[30] as UUID?, a[31] as Xml?, a[32] as Json?, a[33] as ByteArray, a[34] as HierarchyId?, a[35] as Geography?, a[36] as Geometry?, a[37] as kotlin.String) }, { row: AllScalarTypesRow -> arrayOf<Any?>(row.id, row.colTinyint, row.colSmallint, row.colInt, row.colBigint, row.colDecimal, row.colNumeric, row.colMoney, row.colSmallmoney, row.colReal, row.colFloat, row.colBit, row.colChar, row.colVarchar, row.colVarcharMax, row.colText, row.colNchar, row.colNvarchar, row.colNvarcharMax, row.colNtext, row.colBinary, row.colVarbinary, row.colVarbinaryMax, row.colImage, row.colDate, row.colTime, row.colDatetime, row.colSmalldatetime, row.colDatetime2, row.colDatetimeoffset, row.colUniqueidentifier, row.colXml, row.colJson, row.colRowversion, row.colHierarchyid, row.colGeography, row.colGeometry, row.colNotNull) }))
   }
 }

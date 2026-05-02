@@ -27,6 +27,19 @@ data class CreateOrderResponse(
   }
 
   companion object {
+    @Throws(IOException::class)
+    fun parseFrom(input: CodedInputStream): CreateOrderResponse {
+      var orderId: kotlin.String = ""
+      var status: OrderStatus = OrderStatus.fromValue(0)
+      while (!input.isAtEnd()) {
+        val tag = input.readTag()
+        if (WireFormat.getTagFieldNumber(tag) == 1) { orderId = input.readString() }
+        else if (WireFormat.getTagFieldNumber(tag) == 2) { status = OrderStatus.fromValue(input.readEnum()) }
+        else { input.skipField(tag) }
+      }
+      return CreateOrderResponse(orderId, status)
+    }
+
     val MARSHALLER: Marshaller<CreateOrderResponse> =
       object : Marshaller<CreateOrderResponse> {
         override fun stream(value: CreateOrderResponse): InputStream {
@@ -48,18 +61,5 @@ data class CreateOrderResponse(
           } 
         }
       }
-
-    @Throws(IOException::class)
-    fun parseFrom(input: CodedInputStream): CreateOrderResponse {
-      var orderId: kotlin.String = ""
-      var status: OrderStatus = OrderStatus.fromValue(0)
-      while (!input.isAtEnd()) {
-        val tag = input.readTag()
-        if (WireFormat.getTagFieldNumber(tag) == 1) { orderId = input.readString() }
-        else if (WireFormat.getTagFieldNumber(tag) == 2) { status = OrderStatus.fromValue(input.readEnum()) }
-        else { input.skipField(tag) }
-      }
-      return CreateOrderResponse(orderId, status)
-    }
   }
 }

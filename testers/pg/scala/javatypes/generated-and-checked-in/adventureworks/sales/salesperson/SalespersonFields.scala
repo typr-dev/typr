@@ -11,18 +11,18 @@ import adventureworks.person.businessentity.BusinessentityId
 import adventureworks.sales.salesterritory.SalesterritoryFields
 import adventureworks.sales.salesterritory.SalesterritoryId
 import adventureworks.sales.salesterritory.SalesterritoryRow
+import dev.typr.dsl.FieldsBase
+import dev.typr.dsl.ForeignKey
+import dev.typr.dsl.Path
+import dev.typr.dsl.RelationStructure
+import dev.typr.dsl.SqlExpr
+import dev.typr.dsl.SqlExpr.Field
+import dev.typr.dsl.SqlExpr.FieldLike
+import dev.typr.dsl.SqlExpr.IdField
+import dev.typr.dsl.SqlExpr.OptField
+import dev.typr.dsl.TupleExpr.TupleExpr9
 import dev.typr.foundations.PgTypes
-import dev.typr.foundations.RowParser
-import dev.typr.foundations.dsl.FieldsBase
-import dev.typr.foundations.dsl.ForeignKey
-import dev.typr.foundations.dsl.Path
-import dev.typr.foundations.dsl.RelationStructure
-import dev.typr.foundations.dsl.SqlExpr
-import dev.typr.foundations.dsl.SqlExpr.Field
-import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.dsl.SqlExpr.IdField
-import dev.typr.foundations.dsl.SqlExpr.OptField
-import dev.typr.foundations.dsl.TupleExpr.TupleExpr9
+import dev.typr.foundations.RowCodec
 import java.time.LocalDateTime
 import java.util.Optional
 import java.util.UUID
@@ -142,7 +142,7 @@ class SalespersonFields(val `_path`: java.util.List[Path]) extends TupleExpr9[Bu
 
   override def columns: java.util.List[FieldLike[?, SalespersonRow]] = java.util.List.of(this.businessentityid, this.territoryid, this.salesquota, this.bonus, this.commissionpct, this.salesytd, this.saleslastyear, this.rowguid, this.modifieddate)
 
-  override def rowParser: RowParser[SalespersonRow] = SalespersonRow._rowParser
+  override def rowCodec: RowCodec[SalespersonRow] = SalespersonRow.rowCodec
 
   override def withPaths(`_path`: java.util.List[Path]): RelationStructure[SalespersonFields, SalespersonRow] = new SalespersonFields(`_path`)
 

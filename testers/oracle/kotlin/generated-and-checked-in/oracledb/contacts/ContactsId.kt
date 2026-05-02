@@ -6,11 +6,11 @@
 package oracledb.contacts
 
 import com.fasterxml.jackson.annotation.JsonValue
-import dev.typr.foundations.OracleType
-import dev.typr.foundations.kotlin.Bijection
-import dev.typr.foundations.kotlin.KotlinDbTypes
-import dev.typr.foundations.kotlin.RowParser
-import dev.typr.foundations.kotlin.RowParsers
+import dev.typr.dslkt.RowCodecs
+import dev.typr.foundationskt.Bijection
+import dev.typr.foundationskt.OracleType
+import dev.typr.foundationskt.OracleTypes
+import dev.typr.foundationskt.RowCodec
 import java.math.BigDecimal
 
 /** Type for the primary key of table `CONTACTS` */
@@ -20,13 +20,13 @@ data class ContactsId(@field:JsonValue val value: BigDecimal) {
   }
 
   companion object {
-    val _rowParser: RowParser<ContactsId> =
-      RowParsers.of(KotlinDbTypes.OracleTypes.number.bimap(::ContactsId, ContactsId::value), { x -> x }, { id -> arrayOf<Any?>(id) })
-
     val bijection: Bijection<ContactsId, BigDecimal> =
       Bijection.of(ContactsId::value, ::ContactsId)
 
     val oracleType: OracleType<ContactsId> =
-      KotlinDbTypes.OracleTypes.number.bimap(::ContactsId, ContactsId::value)
+      OracleTypes.number.to(Bijection.of(::ContactsId, ContactsId::value))
+
+    val rowCodec: RowCodec<ContactsId> =
+      RowCodecs.of(OracleTypes.number.to(Bijection.of(::ContactsId, ContactsId::value)), { x -> x }, { id -> arrayOf<Any?>(id) })
   }
 }

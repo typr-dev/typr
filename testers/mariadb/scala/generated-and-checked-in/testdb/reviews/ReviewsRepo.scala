@@ -5,17 +5,18 @@
  */
 package testdb.reviews
 
-import dev.typr.foundations.scala.DeleteBuilder
-import dev.typr.foundations.scala.SelectBuilder
-import dev.typr.foundations.scala.UpdateBuilder
-import java.sql.Connection
+import dev.typr.dslsc.DeleteBuilder
+import dev.typr.dslsc.SelectBuilder
+import dev.typr.dslsc.UpdateBuilder
+import dev.typr.foundationssc.Connection
+import dev.typr.foundationssc.ConnectionRead
 
 trait ReviewsRepo {
   def delete: DeleteBuilder[ReviewsFields, ReviewsRow]
 
   def deleteById(reviewId: ReviewsId)(using c: Connection): Boolean
 
-  def deleteByIds(reviewIds: Array[ReviewsId])(using c: Connection): Int
+  def deleteByIds(reviewIds: List[ReviewsId])(using c: Connection): Int
 
   def insert(unsaved: ReviewsRow)(using c: Connection): ReviewsRow
 
@@ -23,13 +24,13 @@ trait ReviewsRepo {
 
   def select: SelectBuilder[ReviewsFields, ReviewsRow]
 
-  def selectAll(using c: Connection): List[ReviewsRow]
+  def selectAll(using c: ConnectionRead): List[ReviewsRow]
 
-  def selectById(reviewId: ReviewsId)(using c: Connection): Option[ReviewsRow]
+  def selectById(reviewId: ReviewsId)(using c: ConnectionRead): Option[ReviewsRow]
 
-  def selectByIds(reviewIds: Array[ReviewsId])(using c: Connection): List[ReviewsRow]
+  def selectByIds(reviewIds: List[ReviewsId])(using c: ConnectionRead): List[ReviewsRow]
 
-  def selectByIdsTracked(reviewIds: Array[ReviewsId])(using c: Connection): Map[ReviewsId, ReviewsRow]
+  def selectByIdsTracked(reviewIds: List[ReviewsId])(using c: ConnectionRead): Map[ReviewsId, ReviewsRow]
 
   def update: UpdateBuilder[ReviewsFields, ReviewsRow]
 

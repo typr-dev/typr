@@ -5,72 +5,71 @@
  */
 package testdb.v_product_catalog
 
-import dev.typr.foundations.MariaTypes
-import dev.typr.foundations.RowParser
-import dev.typr.foundations.dsl.FieldsBase
-import dev.typr.foundations.dsl.Path
-import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.kotlin.KotlinDbTypes
-import dev.typr.foundations.kotlin.RelationStructure
-import dev.typr.foundations.kotlin.SqlExpr
-import dev.typr.foundations.kotlin.SqlExpr.Field
-import dev.typr.foundations.kotlin.SqlExpr.OptField
-import dev.typr.foundations.kotlin.TupleExpr11
+import dev.typr.dsl.FieldsBase
+import dev.typr.dsl.Path
+import dev.typr.dsl.SqlExpr.FieldLike
+import dev.typr.dslkt.RelationStructure
+import dev.typr.dslkt.SqlExpr
+import dev.typr.dslkt.SqlExpr.Field
+import dev.typr.dslkt.SqlExpr.OptField
+import dev.typr.dslkt.TupleExpr11
+import dev.typr.foundations.RowCodec
+import dev.typr.foundationskt.MariaTypes
 import java.math.BigDecimal
 import kotlin.collections.List
 import testdb.BestsellerClearanceFSet
 import testdb.products.ProductsId
 
-data class VProductCatalogViewFields(val _path: List<Path>) : TupleExpr11<ProductsId, String, String, String, BigDecimal, String, BestsellerClearanceFSet, String, BigDecimal, BigDecimal, Long>, RelationStructure<VProductCatalogViewFields, VProductCatalogViewRow>, FieldsBase<VProductCatalogViewRow> {
+data class VProductCatalogViewFields(val _path: List<Path>) : TupleExpr11<ProductsId, kotlin.String, kotlin.String, kotlin.String, BigDecimal, kotlin.String, BestsellerClearanceFSet, kotlin.String, BigDecimal, BigDecimal, kotlin.Long>, RelationStructure<VProductCatalogViewFields, VProductCatalogViewRow>, FieldsBase<VProductCatalogViewRow> {
   override fun _1(): SqlExpr<ProductsId> = productId()
 
   override fun _10(): SqlExpr<BigDecimal> = avgRating()
 
-  override fun _11(): SqlExpr<Long> = reviewCount()
+  override fun _11(): SqlExpr<kotlin.Long> = reviewCount()
 
-  override fun _2(): SqlExpr<String> = sku()
+  override fun _2(): SqlExpr<kotlin.String> = sku()
 
-  override fun _3(): SqlExpr<String> = name()
+  override fun _3(): SqlExpr<kotlin.String> = name()
 
-  override fun _4(): SqlExpr<String> = shortDescription()
+  override fun _4(): SqlExpr<kotlin.String> = shortDescription()
 
   override fun _5(): SqlExpr<BigDecimal> = basePrice()
 
-  override fun _6(): SqlExpr<String> = status()
+  override fun _6(): SqlExpr<kotlin.String> = status()
 
   override fun _7(): SqlExpr<BestsellerClearanceFSet> = tags()
 
-  override fun _8(): SqlExpr<String> = brandName()
+  override fun _8(): SqlExpr<kotlin.String> = brandName()
 
   override fun _9(): SqlExpr<BigDecimal> = availableQuantity()
 
   override fun _path(): List<Path> = _path
 
-  fun availableQuantity(): Field<BigDecimal, VProductCatalogViewRow> = Field<BigDecimal, VProductCatalogViewRow>(_path, "available_quantity", VProductCatalogViewRow::availableQuantity, null, null, { row, value -> row.copy(availableQuantity = value) }, KotlinDbTypes.MariaTypes.numeric)
+  fun availableQuantity(): Field<BigDecimal, VProductCatalogViewRow> = Field<BigDecimal, VProductCatalogViewRow>(_path, "available_quantity", VProductCatalogViewRow::availableQuantity, null, null, { row, value -> row.copy(availableQuantity = value) }, MariaTypes.numeric.underlying)
 
-  fun avgRating(): Field<BigDecimal, VProductCatalogViewRow> = Field<BigDecimal, VProductCatalogViewRow>(_path, "avg_rating", VProductCatalogViewRow::avgRating, null, null, { row, value -> row.copy(avgRating = value) }, KotlinDbTypes.MariaTypes.numeric)
+  fun avgRating(): Field<BigDecimal, VProductCatalogViewRow> = Field<BigDecimal, VProductCatalogViewRow>(_path, "avg_rating", VProductCatalogViewRow::avgRating, null, null, { row, value -> row.copy(avgRating = value) }, MariaTypes.numeric.underlying)
 
-  fun basePrice(): Field<BigDecimal, VProductCatalogViewRow> = Field<BigDecimal, VProductCatalogViewRow>(_path, "base_price", VProductCatalogViewRow::basePrice, null, null, { row, value -> row.copy(basePrice = value) }, KotlinDbTypes.MariaTypes.numeric)
+  fun basePrice(): Field<BigDecimal, VProductCatalogViewRow> = Field<BigDecimal, VProductCatalogViewRow>(_path, "base_price", VProductCatalogViewRow::basePrice, null, null, { row, value -> row.copy(basePrice = value) }, MariaTypes.numeric.underlying)
 
-  fun brandName(): OptField<String, VProductCatalogViewRow> = OptField<String, VProductCatalogViewRow>(_path, "brand_name", VProductCatalogViewRow::brandName, null, null, { row, value -> row.copy(brandName = value) }, MariaTypes.varchar)
+  fun brandName(): OptField<kotlin.String, VProductCatalogViewRow> = OptField<kotlin.String, VProductCatalogViewRow>(_path, "brand_name", VProductCatalogViewRow::brandName, null, null, { row, value -> row.copy(brandName = value) }, MariaTypes.varchar.underlying)
 
   override fun columns(): List<FieldLike<*, VProductCatalogViewRow>> = listOf(this.productId().underlying, this.sku().underlying, this.name().underlying, this.shortDescription().underlying, this.basePrice().underlying, this.status().underlying, this.tags().underlying, this.brandName().underlying, this.availableQuantity().underlying, this.avgRating().underlying, this.reviewCount().underlying)
 
-  fun name(): Field<String, VProductCatalogViewRow> = Field<String, VProductCatalogViewRow>(_path, "name", VProductCatalogViewRow::name, null, null, { row, value -> row.copy(name = value) }, MariaTypes.varchar)
+  fun name(): Field<kotlin.String, VProductCatalogViewRow> = Field<kotlin.String, VProductCatalogViewRow>(_path, "name", VProductCatalogViewRow::name, null, null, { row, value -> row.copy(name = value) }, MariaTypes.varchar.underlying)
 
-  fun productId(): Field<ProductsId, VProductCatalogViewRow> = Field<ProductsId, VProductCatalogViewRow>(_path, "product_id", VProductCatalogViewRow::productId, null, null, { row, value -> row.copy(productId = value) }, ProductsId.mariaType)
+  fun productId(): Field<ProductsId, VProductCatalogViewRow> = Field<ProductsId, VProductCatalogViewRow>(_path, "product_id", VProductCatalogViewRow::productId, null, null, { row, value -> row.copy(productId = value) }, ProductsId.mariaType.underlying)
 
-  fun reviewCount(): Field<Long, VProductCatalogViewRow> = Field<Long, VProductCatalogViewRow>(_path, "review_count", VProductCatalogViewRow::reviewCount, null, null, { row, value -> row.copy(reviewCount = value) }, KotlinDbTypes.MariaTypes.bigint)
+  fun reviewCount(): Field<kotlin.Long, VProductCatalogViewRow> = Field<kotlin.Long, VProductCatalogViewRow>(_path, "review_count", VProductCatalogViewRow::reviewCount, null, null, { row, value -> row.copy(reviewCount = value) }, MariaTypes.bigint.underlying)
 
-  override fun rowParser(): RowParser<VProductCatalogViewRow> = VProductCatalogViewRow._rowParser.underlying
+  override fun rowCodec(): RowCodec<VProductCatalogViewRow> = VProductCatalogViewRow.rowCodec.underlying
 
-  fun shortDescription(): OptField<String, VProductCatalogViewRow> = OptField<String, VProductCatalogViewRow>(_path, "short_description", VProductCatalogViewRow::shortDescription, null, null, { row, value -> row.copy(shortDescription = value) }, MariaTypes.varchar)
+  fun shortDescription(): OptField<kotlin.String, VProductCatalogViewRow> = OptField<kotlin.String, VProductCatalogViewRow>(_path, "short_description", VProductCatalogViewRow::shortDescription, null, null, { row, value -> row.copy(shortDescription = value) }, MariaTypes.varchar.underlying)
 
-  fun sku(): Field<String, VProductCatalogViewRow> = Field<String, VProductCatalogViewRow>(_path, "sku", VProductCatalogViewRow::sku, null, null, { row, value -> row.copy(sku = value) }, MariaTypes.varchar)
+  fun sku(): Field<kotlin.String, VProductCatalogViewRow> = Field<kotlin.String, VProductCatalogViewRow>(_path, "sku", VProductCatalogViewRow::sku, null, null, { row, value -> row.copy(sku = value) }, MariaTypes.varchar.underlying)
 
-  fun status(): Field<String, VProductCatalogViewRow> = Field<String, VProductCatalogViewRow>(_path, "status", VProductCatalogViewRow::status, null, null, { row, value -> row.copy(status = value) }, MariaTypes.text)
+  fun status(): Field<kotlin.String, VProductCatalogViewRow> = Field<kotlin.String, VProductCatalogViewRow>(_path, "status", VProductCatalogViewRow::status, null, null, { row, value -> row.copy(status = value) }, MariaTypes.text.underlying)
 
-  fun tags(): OptField<BestsellerClearanceFSet, VProductCatalogViewRow> = OptField<BestsellerClearanceFSet, VProductCatalogViewRow>(_path, "tags", VProductCatalogViewRow::tags, null, null, { row, value -> row.copy(tags = value) }, BestsellerClearanceFSet.mariaType)
+  fun tags(): OptField<BestsellerClearanceFSet, VProductCatalogViewRow> = OptField<BestsellerClearanceFSet, VProductCatalogViewRow>(_path, "tags", VProductCatalogViewRow::tags, null, null, { row, value -> row.copy(tags = value) }, BestsellerClearanceFSet.mariaType.underlying)
 
   override fun withPaths(_path: List<Path>): RelationStructure<VProductCatalogViewFields, VProductCatalogViewRow> = VProductCatalogViewFields(_path)
 

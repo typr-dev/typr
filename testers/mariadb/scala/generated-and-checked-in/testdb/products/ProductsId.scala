@@ -6,16 +6,16 @@
 package testdb.products
 
 import com.fasterxml.jackson.annotation.JsonValue
-import dev.typr.foundations.MariaType
-import dev.typr.foundations.MariaTypes
+import dev.typr.dslsc.Bijection
 import dev.typr.foundations.data.Uint8
-import dev.typr.foundations.scala.Bijection
+import dev.typr.foundationssc.MariaType
+import dev.typr.foundationssc.MariaTypes
 
 /** Type for the primary key of table `products` */
 case class ProductsId(@JsonValue value: Uint8) extends scala.AnyVal
 
 object ProductsId {
-  given bijection: Bijection[ProductsId, Uint8] = Bijection.apply[ProductsId, Uint8](_.value)(ProductsId.apply)
+  given bijection: Bijection[ProductsId, Uint8] = Bijection.of[ProductsId, Uint8](_.value, ProductsId.apply)
 
-  given mariaType: MariaType[ProductsId] = MariaTypes.bigintUnsigned.bimap(ProductsId.apply, _.value)
+  given mariaType: MariaType[ProductsId] = MariaTypes.bigintUnsigned.to(Bijection.of(ProductsId.apply, _.value))
 }

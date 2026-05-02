@@ -6,9 +6,9 @@
 package adventureworks.information_schema
 
 import com.fasterxml.jackson.annotation.JsonValue
+import dev.typr.foundations.Bijection
 import dev.typr.foundations.PgType
 import dev.typr.foundations.PgTypes
-import dev.typr.foundations.dsl.Bijection
 
 /** Domain `information_schema.character_data`
  * No constraint
@@ -16,9 +16,9 @@ import dev.typr.foundations.dsl.Bijection
 case class CharacterData(@JsonValue value: String)
 
 object CharacterData {
-  given bijection: Bijection[CharacterData, String] = Bijection.apply[CharacterData, String](_.value)(CharacterData.apply)
+  given bijection: Bijection[CharacterData, String] = Bijection.of[CharacterData, String](_.value, CharacterData.apply)
 
-  given pgType: PgType[CharacterData] = PgTypes.text.bimap(CharacterData.apply, _.value).renamed(""""information_schema"."character_data"""")
+  given pgType: PgType[CharacterData] = PgTypes.text.to(Bijection.of(CharacterData.apply, _.value)).renamed(""""information_schema"."character_data"""")
 
-  given pgTypeArray: PgType[Array[CharacterData]] = PgTypes.textArray.bimap(xs => xs.map(CharacterData.apply), xs => xs.map(_.value)).renamed(""""information_schema"."character_data"[]""")
+  given pgTypeArray: PgType[java.util.List[CharacterData]] = pgType.array
 }

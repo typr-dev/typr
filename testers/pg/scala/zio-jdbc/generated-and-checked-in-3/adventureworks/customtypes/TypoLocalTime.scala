@@ -53,7 +53,7 @@ object TypoLocalTime {
     )
   }
 
-  given bijection: Bijection[TypoLocalTime, LocalTime] = Bijection.apply[TypoLocalTime, LocalTime](_.value)(TypoLocalTime.apply)
+  given bijection: Bijection[TypoLocalTime, LocalTime] = Bijection[TypoLocalTime, LocalTime](_.value)(TypoLocalTime.apply)
 
   given jdbcDecoder: JdbcDecoder[TypoLocalTime] = {
     JdbcDecoder[TypoLocalTime](

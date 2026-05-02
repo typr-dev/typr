@@ -5,17 +5,17 @@
  */
 package testdb.v_inventory_status
 
-import dev.typr.foundations.scala.Dialect
-import dev.typr.foundations.scala.SelectBuilder
-import java.sql.Connection
-import dev.typr.foundations.scala.Fragment.sql
+import dev.typr.dslsc.Dialect
+import dev.typr.dslsc.SelectBuilder
+import dev.typr.foundationssc.ConnectionRead
+import dev.typr.foundationssc.Fragment.sql
 
 class VInventoryStatusViewRepoImpl extends VInventoryStatusViewRepo {
-  override def select: SelectBuilder[VInventoryStatusViewFields, VInventoryStatusViewRow] = SelectBuilder.of("`v_inventory_status`", VInventoryStatusViewFields.structure, VInventoryStatusViewRow.`_rowParser`, Dialect.MARIADB)
+  override def select: SelectBuilder[VInventoryStatusViewFields, VInventoryStatusViewRow] = SelectBuilder.of("`v_inventory_status`", VInventoryStatusViewFields.structure, VInventoryStatusViewRow.rowCodec, Dialect.MARIADB)
 
-  override def selectAll(using c: Connection): List[VInventoryStatusViewRow] = {
+  override def selectAll(using c: ConnectionRead): List[VInventoryStatusViewRow] = {
     sql"""select `product_id`, `sku`, `product_name`, `warehouse_id`, `warehouse_code`, `warehouse_name`, `quantity_on_hand`, `quantity_reserved`, `quantity_on_order`, `available`, `reorder_point`, `stock_status`, `bin_location`, `last_counted_at`
     from `v_inventory_status`
-    """.query(VInventoryStatusViewRow.`_rowParser`.all()).runUnchecked(c)
+    """.query(VInventoryStatusViewRow.rowCodec.all()).run(using c)
   }
 }

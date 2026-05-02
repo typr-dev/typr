@@ -5,13 +5,13 @@
  */
 package oracledb.customer_search
 
-import dev.typr.foundations.OracleTypes
-import dev.typr.foundations.scala.Fragment
-import java.sql.Connection
-import dev.typr.foundations.scala.Fragment.sql
+import dev.typr.foundationssc.ConnectionRead
+import dev.typr.foundationssc.Fragment
+import dev.typr.foundationssc.OracleTypes
+import dev.typr.foundationssc.Fragment.sql
 
 class CustomerSearchSqlRepoImpl extends CustomerSearchSqlRepo {
-  override def apply(namePattern: String)(using c: Connection): List[CustomerSearchSqlRow] = {
+  override def apply(namePattern: String)(using c: ConnectionRead): List[CustomerSearchSqlRow] = {
     sql"""-- Search customers by name pattern
     SELECT
         c.customer_id,
@@ -22,6 +22,6 @@ class CustomerSearchSqlRepoImpl extends CustomerSearchSqlRepo {
     FROM customers c
     WHERE c.name LIKE ${Fragment.encode(OracleTypes.varchar2, namePattern)}
     ORDER BY c.name
-    """.query(CustomerSearchSqlRow.`_rowParser`.all()).runUnchecked(c)
+    """.query(CustomerSearchSqlRow.rowCodec.all()).run(using c)
   }
 }

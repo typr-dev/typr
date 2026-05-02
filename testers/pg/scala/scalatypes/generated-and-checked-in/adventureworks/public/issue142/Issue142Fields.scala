@@ -5,14 +5,14 @@
  */
 package adventureworks.public.issue142
 
-import dev.typr.foundations.RowParser
-import dev.typr.foundations.dsl.FieldsBase
-import dev.typr.foundations.dsl.Path
-import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.scala.RelationStructure
-import dev.typr.foundations.scala.SqlExpr
-import dev.typr.foundations.scala.SqlExpr.IdField
-import dev.typr.foundations.scala.TupleExpr1
+import dev.typr.dsl.FieldsBase
+import dev.typr.dsl.Path
+import dev.typr.dsl.SqlExpr.FieldLike
+import dev.typr.dslsc.RelationStructure
+import dev.typr.dslsc.SqlExpr
+import dev.typr.dslsc.SqlExpr.IdField
+import dev.typr.dslsc.TupleExpr1
+import dev.typr.foundations.RowCodec
 
 class Issue142Fields(val `_path`: java.util.List[Path]) extends TupleExpr1[Issue142Id] with RelationStructure[Issue142Fields, Issue142Row]  with FieldsBase[Issue142Row] {
   def tabellkode: IdField[Issue142Id, Issue142Row] = {
@@ -23,13 +23,13 @@ class Issue142Fields(val `_path`: java.util.List[Path]) extends TupleExpr1[Issue
       None,
       None,
       (row, value) => row.copy(tabellkode = value),
-      Issue142Id.pgType
+      Issue142Id.pgType.underlying
     )
   }
 
   override def columns: java.util.List[FieldLike[?, Issue142Row]] = java.util.List.of(this.tabellkode.underlying)
 
-  override def rowParser: RowParser[Issue142Row] = Issue142Row._rowParser.underlying
+  override def rowCodec: RowCodec[Issue142Row] = Issue142Row.rowCodec.underlying
 
   override def withPaths(`_path`: java.util.List[Path]): RelationStructure[Issue142Fields, Issue142Row] = new Issue142Fields(`_path`)
 

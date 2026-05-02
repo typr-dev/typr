@@ -27,7 +27,7 @@ object SalariedFlag {
 
   implicit lazy val arraySetter: Setter[Array[SalariedFlag]] = Flag.arraySetter.contramap(_.map(_.value))
 
-  implicit lazy val bijection: Bijection[SalariedFlag, Flag] = Bijection.apply[SalariedFlag, Flag](_.value)(SalariedFlag.apply)
+  implicit lazy val bijection: Bijection[SalariedFlag, Flag] = Bijection[SalariedFlag, Flag](_.value)(SalariedFlag.apply)
 
   implicit lazy val jdbcDecoder: JdbcDecoder[SalariedFlag] = Flag.jdbcDecoder.map(SalariedFlag.apply)
 

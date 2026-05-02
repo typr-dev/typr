@@ -7,7 +7,8 @@ import org.junit.Assert.*
 import org.junit.Test
 import dev.typr.foundations.data.Unknown
 
-import java.sql.Connection
+import dev.typr.foundations.Connection
+
 import java.util.{Optional, UUID}
 import scala.jdk.CollectionConverters.*
 
@@ -57,7 +58,7 @@ class UsersRepoTest {
 
       val _ = usersRepo.insertUnsavedStreaming(before.iterator.asJava, 2)
 
-      val ids = before.map(_.userId).toArray
+      val ids = java.util.List.copyOf(before.map(_.userId).asJava)
       val afterList = usersRepo.selectByIds(ids).asScala.toList
 
       val beforeById = before.map(row => row.userId -> row).toMap
@@ -91,17 +92,9 @@ class UsersRepoTest {
   def testInsertUnsavedStreamingPg(): Unit = {
     val shouldRun = WithConnection {
       val versionResult = dev.typr.foundations.Fragment
-        .lit("SELECT VERSION()")
-        .query(
-          dev.typr.foundations.RowParsers
-            .of(
-              dev.typr.foundations.PgTypes.text,
-              (s: String) => s,
-              (s: String) => Array[Object](s)
-            )
-            .first()
-        )
-        .runUnchecked(summon[Connection])
+        .of("SELECT VERSION()")
+        .query(dev.typr.foundations.RowCodec.of(dev.typr.foundations.PgTypes.text).first())
+        .run(summon[Connection])
 
       if (versionResult.isEmpty) {
         System.err.println("Could not determine PostgreSQL version")

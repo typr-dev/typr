@@ -13,9 +13,9 @@ import dev.typr.foundations.data.Uint8
 import dev.typr.foundations.data.maria.Inet4
 import dev.typr.foundations.data.maria.Inet6
 import dev.typr.foundations.internal.RandomHelper
+import dev.typr.foundationskt.Connection
 import java.lang.Math
 import java.math.BigDecimal
-import java.sql.Connection
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
@@ -165,12 +165,12 @@ import testdb.warehouses.WarehousesRowUnsaved
 /** Methods to generate random data for `Ident(TestInsert)` */
 data class TestInsert(val random: Random) {
   fun AuditLog(
-    tableName: String,
-    recordId: String,
-    action: String,
+    tableName: kotlin.String,
+    recordId: kotlin.String,
+    action: kotlin.String,
     oldValues: Defaulted<Json?> = UseDefault(),
     newValues: Defaulted<Json?> = UseDefault(),
-    changedBy: Defaulted<String?> = UseDefault(),
+    changedBy: Defaulted<kotlin.String?> = UseDefault(),
     changedAt: Defaulted<LocalDateTime> = UseDefault(),
     clientIp: Defaulted<Inet6?> = UseDefault(),
     sessionId: Defaulted<ByteArray?> = UseDefault(),
@@ -178,47 +178,47 @@ data class TestInsert(val random: Random) {
   ): AuditLogRow = (AuditLogRepoImpl()).insert(AuditLogRowUnsaved(tableName = tableName, recordId = recordId, action = action, oldValues = oldValues, newValues = newValues, changedBy = changedBy, changedAt = changedAt, clientIp = clientIp, sessionId = sessionId), c)
 
   fun Brands(
-    name: String,
-    slug: String,
+    name: kotlin.String,
+    slug: kotlin.String,
     logoBlob: Defaulted<ByteArray?> = UseDefault(),
-    websiteUrl: Defaulted<String?> = UseDefault(),
-    countryOfOrigin: Defaulted<String?> = UseDefault(),
+    websiteUrl: Defaulted<kotlin.String?> = UseDefault(),
+    countryOfOrigin: Defaulted<kotlin.String?> = UseDefault(),
     isActive: Defaulted</* user-picked */ IsActive> = UseDefault(),
     c: Connection
   ): BrandsRow = (BrandsRepoImpl()).insert(BrandsRowUnsaved(name = name, slug = slug, logoBlob = logoBlob, websiteUrl = websiteUrl, countryOfOrigin = countryOfOrigin, isActive = isActive), c)
 
   fun Categories(
-    name: String,
-    slug: String,
+    name: kotlin.String,
+    slug: kotlin.String,
     parentId: Defaulted<CategoriesId?> = UseDefault(),
-    description: Defaulted<String?> = UseDefault(),
-    imageUrl: Defaulted<String?> = UseDefault(),
-    sortOrder: Defaulted<Short> = UseDefault(),
-    isVisible: Defaulted<Boolean> = UseDefault(),
+    description: Defaulted<kotlin.String?> = UseDefault(),
+    imageUrl: Defaulted<kotlin.String?> = UseDefault(),
+    sortOrder: Defaulted<kotlin.Short> = UseDefault(),
+    isVisible: Defaulted<kotlin.Boolean> = UseDefault(),
     metadata: Defaulted<Json?> = UseDefault(),
     c: Connection
   ): CategoriesRow = (CategoriesRepoImpl()).insert(CategoriesRowUnsaved(name = name, slug = slug, parentId = parentId, description = description, imageUrl = imageUrl, sortOrder = sortOrder, isVisible = isVisible, metadata = metadata), c)
 
   fun CustomerAddresses(
     customerId: CustomersId,
-    addressType: String,
-    recipientName: String,
-    streetLine1: String,
-    city: String,
-    postalCode: String,
-    countryCode: String,
+    addressType: kotlin.String,
+    recipientName: kotlin.String,
+    streetLine1: kotlin.String,
+    city: kotlin.String,
+    postalCode: kotlin.String,
+    countryCode: kotlin.String,
     isDefault: Defaulted</* user-picked */ IsDefault> = UseDefault(),
-    streetLine2: Defaulted<String?> = UseDefault(),
-    stateProvince: Defaulted<String?> = UseDefault(),
+    streetLine2: Defaulted<kotlin.String?> = UseDefault(),
+    stateProvince: Defaulted<kotlin.String?> = UseDefault(),
     location: Defaulted<Point?> = UseDefault(),
-    deliveryNotes: Defaulted<String?> = UseDefault(),
+    deliveryNotes: Defaulted<kotlin.String?> = UseDefault(),
     createdAt: Defaulted<LocalDateTime> = UseDefault(),
     c: Connection
   ): CustomerAddressesRow = (CustomerAddressesRepoImpl()).insert(CustomerAddressesRowUnsaved(customerId = customerId, addressType = addressType, recipientName = recipientName, streetLine1 = streetLine1, city = city, postalCode = postalCode, countryCode = countryCode, isDefault = isDefault, streetLine2 = streetLine2, stateProvince = stateProvince, location = location, deliveryNotes = deliveryNotes, createdAt = createdAt), c)
 
   fun CustomerStatus(
     statusCode: CustomerStatusId,
-    description: String,
+    description: kotlin.String,
     isActive: Defaulted</* user-picked */ IsActive> = UseDefault(),
     c: Connection
   ): CustomerStatusRow = (CustomerStatusRepoImpl()).insert(CustomerStatusRowUnsaved(statusCode = statusCode, description = description, isActive = isActive), c)
@@ -228,12 +228,12 @@ data class TestInsert(val random: Random) {
     passwordHash: ByteArray,
     firstName: /* user-picked */ FirstName,
     lastName: /* user-picked */ LastName,
-    phone: Defaulted<String?> = UseDefault(),
+    phone: Defaulted<kotlin.String?> = UseDefault(),
     status: Defaulted<CustomerStatusId> = UseDefault(),
-    tier: Defaulted<String> = UseDefault(),
+    tier: Defaulted<kotlin.String> = UseDefault(),
     preferences: Defaulted<Json?> = UseDefault(),
     marketingFlags: Defaulted<EmailMailPushSmsSet?> = UseDefault(),
-    notes: Defaulted<String?> = UseDefault(),
+    notes: Defaulted<kotlin.String?> = UseDefault(),
     createdAt: Defaulted<LocalDateTime> = UseDefault(),
     updatedAt: Defaulted<LocalDateTime> = UseDefault(),
     lastLoginAt: Defaulted<LocalDateTime?> = UseDefault(),
@@ -248,7 +248,7 @@ data class TestInsert(val random: Random) {
     quantityOnOrder: Defaulted<Int> = UseDefault(),
     reorderPoint: Defaulted<Int> = UseDefault(),
     reorderQuantity: Defaulted<Int> = UseDefault(),
-    binLocation: Defaulted<String?> = UseDefault(),
+    binLocation: Defaulted<kotlin.String?> = UseDefault(),
     lastCountedAt: Defaulted<LocalDateTime?> = UseDefault(),
     updatedAt: Defaulted<LocalDateTime> = UseDefault(),
     c: Connection
@@ -257,12 +257,12 @@ data class TestInsert(val random: Random) {
   fun Mariatest(
     bitCol: ByteArray,
     bit1Col: ByteArray,
-    charCol: String,
-    varcharCol: String,
-    tinytextCol: String,
-    textCol: String,
-    mediumtextCol: String,
-    longtextCol: String,
+    charCol: kotlin.String,
+    varcharCol: kotlin.String,
+    tinytextCol: kotlin.String,
+    textCol: kotlin.String,
+    mediumtextCol: kotlin.String,
+    longtextCol: kotlin.String,
     binaryCol: ByteArray,
     varbinaryCol: ByteArray,
     tinyblobCol: ByteArray,
@@ -272,11 +272,11 @@ data class TestInsert(val random: Random) {
     yearCol: Year,
     inet4Col: Inet4,
     inet6Col: Inet6,
-    tinyintCol: Byte = random.nextInt(Byte.MAX_VALUE.toInt()).toByte(),
-    smallintCol: Short = random.nextInt(Short.MAX_VALUE.toInt()).toShort(),
+    tinyintCol: kotlin.Byte = random.nextInt(kotlin.Byte.MAX_VALUE.toInt()).toByte(),
+    smallintCol: kotlin.Short = random.nextInt(kotlin.Short.MAX_VALUE.toInt()).toShort(),
     mediumintCol: Int = random.nextInt(8388607),
     intCol: MariatestId = MariatestId(random.nextInt()),
-    bigintCol: Long = random.nextLong(),
+    bigintCol: kotlin.Long = random.nextLong(),
     tinyintUCol: Uint1 = Uint1.of(random.nextInt(256)),
     smallintUCol: Uint2 = Uint2.of(random.nextInt(65536)),
     mediumintUCol: Uint4 = Uint4.of(random.nextInt(16777216).toLong()),
@@ -284,9 +284,9 @@ data class TestInsert(val random: Random) {
     bigintUCol: Uint8 = Uint8.of(Math.abs(random.nextLong())),
     decimalCol: BigDecimal = BigDecimal.valueOf(random.nextDouble()),
     numericCol: BigDecimal = BigDecimal.valueOf(random.nextDouble()),
-    floatCol: Float = random.nextFloat(),
-    doubleCol: Double = random.nextDouble(),
-    boolCol: Boolean = random.nextBoolean(),
+    floatCol: kotlin.Float = random.nextFloat(),
+    doubleCol: kotlin.Double = random.nextDouble(),
+    boolCol: kotlin.Boolean = random.nextBoolean(),
     dateCol: LocalDate = LocalDate.ofEpochDay(random.nextInt(30000).toLong()),
     timeCol: LocalTime = LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong()),
     timeFspCol: LocalTime = LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong()),
@@ -300,7 +300,7 @@ data class TestInsert(val random: Random) {
   ): MariatestRow = (MariatestRepoImpl()).insert(MariatestRowUnsaved(tinyintCol = tinyintCol, smallintCol = smallintCol, mediumintCol = mediumintCol, intCol = intCol, bigintCol = bigintCol, tinyintUCol = tinyintUCol, smallintUCol = smallintUCol, mediumintUCol = mediumintUCol, intUCol = intUCol, bigintUCol = bigintUCol, decimalCol = decimalCol, numericCol = numericCol, floatCol = floatCol, doubleCol = doubleCol, boolCol = boolCol, bitCol = bitCol, bit1Col = bit1Col, charCol = charCol, varcharCol = varcharCol, tinytextCol = tinytextCol, textCol = textCol, mediumtextCol = mediumtextCol, longtextCol = longtextCol, binaryCol = binaryCol, varbinaryCol = varbinaryCol, tinyblobCol = tinyblobCol, blobCol = blobCol, mediumblobCol = mediumblobCol, longblobCol = longblobCol, dateCol = dateCol, timeCol = timeCol, timeFspCol = timeFspCol, datetimeCol = datetimeCol, datetimeFspCol = datetimeFspCol, yearCol = yearCol, setCol = setCol, jsonCol = jsonCol, inet4Col = inet4Col, inet6Col = inet6Col, timestampCol = timestampCol, timestampFspCol = timestampFspCol), c)
 
   fun MariatestIdentity(
-    name: String,
+    name: kotlin.String,
     c: Connection
   ): MariatestIdentityRow = (MariatestIdentityRepoImpl()).insert(MariatestIdentityRowUnsaved(name = name), c)
 
@@ -330,17 +330,17 @@ data class TestInsert(val random: Random) {
 
   fun MariatestUnique(
     email: /* user-picked */ Email,
-    code: String,
-    category: String,
+    code: kotlin.String,
+    category: kotlin.String,
     c: Connection
   ): MariatestUniqueRow = (MariatestUniqueRepoImpl()).insert(MariatestUniqueRowUnsaved(email = email, code = code, category = category), c)
 
   fun Mariatestnull(
-    tinyintCol: Defaulted<Byte?> = UseDefault(),
-    smallintCol: Defaulted<Short?> = UseDefault(),
+    tinyintCol: Defaulted<kotlin.Byte?> = UseDefault(),
+    smallintCol: Defaulted<kotlin.Short?> = UseDefault(),
     mediumintCol: Defaulted<Int?> = UseDefault(),
     intCol: Defaulted<Int?> = UseDefault(),
-    bigintCol: Defaulted<Long?> = UseDefault(),
+    bigintCol: Defaulted<kotlin.Long?> = UseDefault(),
     tinyintUCol: Defaulted<Uint1?> = UseDefault(),
     smallintUCol: Defaulted<Uint2?> = UseDefault(),
     mediumintUCol: Defaulted<Uint4?> = UseDefault(),
@@ -348,17 +348,17 @@ data class TestInsert(val random: Random) {
     bigintUCol: Defaulted<Uint8?> = UseDefault(),
     decimalCol: Defaulted<BigDecimal?> = UseDefault(),
     numericCol: Defaulted<BigDecimal?> = UseDefault(),
-    floatCol: Defaulted<Float?> = UseDefault(),
-    doubleCol: Defaulted<Double?> = UseDefault(),
-    boolCol: Defaulted<Boolean?> = UseDefault(),
+    floatCol: Defaulted<kotlin.Float?> = UseDefault(),
+    doubleCol: Defaulted<kotlin.Double?> = UseDefault(),
+    boolCol: Defaulted<kotlin.Boolean?> = UseDefault(),
     bitCol: Defaulted<ByteArray?> = UseDefault(),
     bit1Col: Defaulted<ByteArray?> = UseDefault(),
-    charCol: Defaulted<String?> = UseDefault(),
-    varcharCol: Defaulted<String?> = UseDefault(),
-    tinytextCol: Defaulted<String?> = UseDefault(),
-    textCol: Defaulted<String?> = UseDefault(),
-    mediumtextCol: Defaulted<String?> = UseDefault(),
-    longtextCol: Defaulted<String?> = UseDefault(),
+    charCol: Defaulted<kotlin.String?> = UseDefault(),
+    varcharCol: Defaulted<kotlin.String?> = UseDefault(),
+    tinytextCol: Defaulted<kotlin.String?> = UseDefault(),
+    textCol: Defaulted<kotlin.String?> = UseDefault(),
+    mediumtextCol: Defaulted<kotlin.String?> = UseDefault(),
+    longtextCol: Defaulted<kotlin.String?> = UseDefault(),
     binaryCol: Defaulted<ByteArray?> = UseDefault(),
     varbinaryCol: Defaulted<ByteArray?> = UseDefault(),
     tinyblobCol: Defaulted<ByteArray?> = UseDefault(),
@@ -382,10 +382,10 @@ data class TestInsert(val random: Random) {
 
   fun OrderHistory(
     orderId: OrdersId,
-    newStatus: String,
-    previousStatus: Defaulted<String?> = UseDefault(),
-    changedBy: Defaulted<String?> = UseDefault(),
-    changeReason: Defaulted<String?> = UseDefault(),
+    newStatus: kotlin.String,
+    previousStatus: Defaulted<kotlin.String?> = UseDefault(),
+    changedBy: Defaulted<kotlin.String?> = UseDefault(),
+    changeReason: Defaulted<kotlin.String?> = UseDefault(),
     metadata: Defaulted<Json?> = UseDefault(),
     createdAt: Defaulted<LocalDateTime> = UseDefault(),
     c: Connection
@@ -394,37 +394,37 @@ data class TestInsert(val random: Random) {
   fun OrderItems(
     orderId: OrdersId,
     productId: ProductsId,
-    sku: String,
-    productName: String,
+    sku: kotlin.String,
+    productName: kotlin.String,
     quantity: Uint2 = Uint2.of(random.nextInt(65536)),
     unitPrice: BigDecimal = BigDecimal.valueOf(random.nextDouble()),
     lineTotal: BigDecimal = BigDecimal.valueOf(random.nextDouble()),
     discountAmount: Defaulted<BigDecimal> = UseDefault(),
     taxAmount: Defaulted<BigDecimal> = UseDefault(),
-    fulfillmentStatus: Defaulted<String> = UseDefault(),
+    fulfillmentStatus: Defaulted<kotlin.String> = UseDefault(),
     warehouseId: Defaulted<WarehousesId?> = UseDefault(),
-    notes: Defaulted<String?> = UseDefault(),
+    notes: Defaulted<kotlin.String?> = UseDefault(),
     c: Connection
   ): OrderItemsRow = (OrderItemsRepoImpl()).insert(OrderItemsRowUnsaved(orderId = orderId, productId = productId, sku = sku, productName = productName, quantity = quantity, unitPrice = unitPrice, lineTotal = lineTotal, discountAmount = discountAmount, taxAmount = taxAmount, fulfillmentStatus = fulfillmentStatus, warehouseId = warehouseId, notes = notes), c)
 
   fun Orders(
-    orderNumber: String,
+    orderNumber: kotlin.String,
     customerId: CustomersId,
     subtotal: BigDecimal = BigDecimal.valueOf(random.nextDouble()),
     totalAmount: BigDecimal = BigDecimal.valueOf(random.nextDouble()),
-    orderStatus: Defaulted<String> = UseDefault(),
-    paymentStatus: Defaulted<String> = UseDefault(),
+    orderStatus: Defaulted<kotlin.String> = UseDefault(),
+    paymentStatus: Defaulted<kotlin.String> = UseDefault(),
     shippingAddressId: Defaulted<CustomerAddressesId?> = UseDefault(),
     billingAddressId: Defaulted<CustomerAddressesId?> = UseDefault(),
     shippingCost: Defaulted<BigDecimal> = UseDefault(),
     taxAmount: Defaulted<BigDecimal> = UseDefault(),
     discountAmount: Defaulted<BigDecimal> = UseDefault(),
-    currencyCode: Defaulted<String> = UseDefault(),
+    currencyCode: Defaulted<kotlin.String> = UseDefault(),
     promotionId: Defaulted<PromotionsId?> = UseDefault(),
-    notes: Defaulted<String?> = UseDefault(),
-    internalNotes: Defaulted<String?> = UseDefault(),
+    notes: Defaulted<kotlin.String?> = UseDefault(),
+    internalNotes: Defaulted<kotlin.String?> = UseDefault(),
     ipAddress: Defaulted<Inet6?> = UseDefault(),
-    userAgent: Defaulted<String?> = UseDefault(),
+    userAgent: Defaulted<kotlin.String?> = UseDefault(),
     orderedAt: Defaulted<LocalDateTime> = UseDefault(),
     confirmedAt: Defaulted<LocalDateTime?> = UseDefault(),
     shippedAt: Defaulted<LocalDateTime?> = UseDefault(),
@@ -433,12 +433,12 @@ data class TestInsert(val random: Random) {
   ): OrdersRow = (OrdersRepoImpl()).insert(OrdersRowUnsaved(orderNumber = orderNumber, customerId = customerId, subtotal = subtotal, totalAmount = totalAmount, orderStatus = orderStatus, paymentStatus = paymentStatus, shippingAddressId = shippingAddressId, billingAddressId = billingAddressId, shippingCost = shippingCost, taxAmount = taxAmount, discountAmount = discountAmount, currencyCode = currencyCode, promotionId = promotionId, notes = notes, internalNotes = internalNotes, ipAddress = ipAddress, userAgent = userAgent, orderedAt = orderedAt, confirmedAt = confirmedAt, shippedAt = shippedAt, deliveredAt = deliveredAt), c)
 
   fun PaymentMethods(
-    code: String,
-    name: String,
-    methodType: String,
+    code: kotlin.String,
+    name: kotlin.String,
+    methodType: kotlin.String,
     processorConfig: Defaulted<Json?> = UseDefault(),
     isActive: Defaulted</* user-picked */ IsActive> = UseDefault(),
-    sortOrder: Defaulted<Byte> = UseDefault(),
+    sortOrder: Defaulted<kotlin.Byte> = UseDefault(),
     c: Connection
   ): PaymentMethodsRow = (PaymentMethodsRepoImpl()).insert(PaymentMethodsRowUnsaved(code = code, name = name, methodType = methodType, processorConfig = processorConfig, isActive = isActive, sortOrder = sortOrder), c)
 
@@ -446,11 +446,11 @@ data class TestInsert(val random: Random) {
     orderId: OrdersId,
     methodId: PaymentMethodsId,
     amount: BigDecimal = BigDecimal.valueOf(random.nextDouble()),
-    transactionId: Defaulted<String?> = UseDefault(),
-    currencyCode: Defaulted<String> = UseDefault(),
-    status: Defaulted<String> = UseDefault(),
+    transactionId: Defaulted<kotlin.String?> = UseDefault(),
+    currencyCode: Defaulted<kotlin.String> = UseDefault(),
+    status: Defaulted<kotlin.String> = UseDefault(),
     processorResponse: Defaulted<Json?> = UseDefault(),
-    errorMessage: Defaulted<String?> = UseDefault(),
+    errorMessage: Defaulted<kotlin.String?> = UseDefault(),
     ipAddress: Defaulted<Inet6?> = UseDefault(),
     createdAt: Defaulted<LocalDateTime> = UseDefault(),
     processedAt: Defaulted<LocalDateTime?> = UseDefault(),
@@ -512,8 +512,8 @@ data class TestInsert(val random: Random) {
   ): PrecisionTypesNullRow = (PrecisionTypesNullRepoImpl()).insert(PrecisionTypesNullRowUnsaved(string10 = string10, string20 = string20, string50 = string50, string100 = string100, string255 = string255, char10 = char10, decimal52 = decimal52, decimal102 = decimal102, decimal184 = decimal184, numeric82 = numeric82, numeric124 = numeric124, binary16 = binary16, binary32 = binary32, binary64 = binary64, time0 = time0, time3 = time3, time6 = time6, datetime0 = datetime0, datetime3 = datetime3, datetime6 = datetime6, ts0 = ts0, ts3 = ts3, ts6 = ts6), c)
 
   fun PriceTiers(
-    name: String,
-    discountType: String,
+    name: kotlin.String,
+    discountType: kotlin.String,
     discountValue: BigDecimal = BigDecimal.valueOf(random.nextDouble()),
     minQuantity: Defaulted<Uint4> = UseDefault(),
     c: Connection
@@ -523,15 +523,15 @@ data class TestInsert(val random: Random) {
     productId: ProductsId,
     categoryId: CategoriesId,
     isPrimary: Defaulted</* user-picked */ IsPrimary> = UseDefault(),
-    sortOrder: Defaulted<Short> = UseDefault(),
+    sortOrder: Defaulted<kotlin.Short> = UseDefault(),
     c: Connection
   ): ProductCategoriesRow = (ProductCategoriesRepoImpl()).insert(ProductCategoriesRowUnsaved(productId = productId, categoryId = categoryId, isPrimary = isPrimary, sortOrder = sortOrder), c)
 
   fun ProductImages(
     productId: ProductsId,
-    imageUrl: String,
-    thumbnailUrl: Defaulted<String?> = UseDefault(),
-    altText: Defaulted<String?> = UseDefault(),
+    imageUrl: kotlin.String,
+    thumbnailUrl: Defaulted<kotlin.String?> = UseDefault(),
+    altText: Defaulted<kotlin.String?> = UseDefault(),
     sortOrder: Defaulted<Uint1> = UseDefault(),
     isPrimary: Defaulted</* user-picked */ IsPrimary> = UseDefault(),
     imageData: Defaulted<ByteArray?> = UseDefault(),
@@ -543,23 +543,23 @@ data class TestInsert(val random: Random) {
     price: BigDecimal = BigDecimal.valueOf(random.nextDouble()),
     validFrom: LocalDate = LocalDate.ofEpochDay(random.nextInt(30000).toLong()),
     tierId: Defaulted<PriceTiersId?> = UseDefault(),
-    currencyCode: Defaulted<String> = UseDefault(),
+    currencyCode: Defaulted<kotlin.String> = UseDefault(),
     validTo: Defaulted<LocalDate?> = UseDefault(),
     c: Connection
   ): ProductPricesRow = (ProductPricesRepoImpl()).insert(ProductPricesRowUnsaved(productId = productId, price = price, validFrom = validFrom, tierId = tierId, currencyCode = currencyCode, validTo = validTo), c)
 
   fun Products(
-    sku: String,
-    name: String,
+    sku: kotlin.String,
+    name: kotlin.String,
     basePrice: BigDecimal = BigDecimal.valueOf(random.nextDouble()),
     brandId: Defaulted<BrandsId?> = UseDefault(),
-    shortDescription: Defaulted<String?> = UseDefault(),
-    fullDescription: Defaulted<String?> = UseDefault(),
+    shortDescription: Defaulted<kotlin.String?> = UseDefault(),
+    fullDescription: Defaulted<kotlin.String?> = UseDefault(),
     costPrice: Defaulted<BigDecimal?> = UseDefault(),
     weightKg: Defaulted<BigDecimal?> = UseDefault(),
     dimensionsJson: Defaulted<Json?> = UseDefault(),
-    status: Defaulted<String> = UseDefault(),
-    taxClass: Defaulted<String> = UseDefault(),
+    status: Defaulted<kotlin.String> = UseDefault(),
+    taxClass: Defaulted<kotlin.String> = UseDefault(),
     tags: Defaulted<BestsellerClearanceFSet?> = UseDefault(),
     attributes: Defaulted<Json?> = UseDefault(),
     seoMetadata: Defaulted<Json?> = UseDefault(),
@@ -570,13 +570,13 @@ data class TestInsert(val random: Random) {
   ): ProductsRow = (ProductsRepoImpl()).insert(ProductsRowUnsaved(sku = sku, name = name, basePrice = basePrice, brandId = brandId, shortDescription = shortDescription, fullDescription = fullDescription, costPrice = costPrice, weightKg = weightKg, dimensionsJson = dimensionsJson, status = status, taxClass = taxClass, tags = tags, attributes = attributes, seoMetadata = seoMetadata, createdAt = createdAt, updatedAt = updatedAt, publishedAt = publishedAt), c)
 
   fun Promotions(
-    code: String,
-    name: String,
-    discountType: String,
+    code: kotlin.String,
+    name: kotlin.String,
+    discountType: kotlin.String,
     discountValue: BigDecimal = BigDecimal.valueOf(random.nextDouble()),
     validFrom: LocalDateTime = LocalDateTime.of(LocalDate.ofEpochDay(random.nextInt(30000).toLong()), LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong())),
     validTo: LocalDateTime = LocalDateTime.of(LocalDate.ofEpochDay(random.nextInt(30000).toLong()), LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong())),
-    description: Defaulted<String?> = UseDefault(),
+    description: Defaulted<kotlin.String?> = UseDefault(),
     minOrderAmount: Defaulted<BigDecimal?> = UseDefault(),
     maxUses: Defaulted<Uint4?> = UseDefault(),
     usesCount: Defaulted<Uint4> = UseDefault(),
@@ -593,8 +593,8 @@ data class TestInsert(val random: Random) {
     customerId: CustomersId,
     rating: Uint1 = Uint1.of(random.nextInt(256)),
     orderItemId: Defaulted<OrderItemsId?> = UseDefault(),
-    title: Defaulted<String?> = UseDefault(),
-    content: Defaulted<String?> = UseDefault(),
+    title: Defaulted<kotlin.String?> = UseDefault(),
+    content: Defaulted<kotlin.String?> = UseDefault(),
     pros: Defaulted<Json?> = UseDefault(),
     cons: Defaulted<Json?> = UseDefault(),
     images: Defaulted<Json?> = UseDefault(),
@@ -602,7 +602,7 @@ data class TestInsert(val random: Random) {
     isApproved: Defaulted</* user-picked */ IsApproved> = UseDefault(),
     helpfulVotes: Defaulted<Uint4> = UseDefault(),
     unhelpfulVotes: Defaulted<Uint4> = UseDefault(),
-    adminResponse: Defaulted<String?> = UseDefault(),
+    adminResponse: Defaulted<kotlin.String?> = UseDefault(),
     respondedAt: Defaulted<LocalDateTime?> = UseDefault(),
     createdAt: Defaulted<LocalDateTime> = UseDefault(),
     updatedAt: Defaulted<LocalDateTime> = UseDefault(),
@@ -612,13 +612,13 @@ data class TestInsert(val random: Random) {
   fun Shipments(
     orderId: OrdersId,
     carrierId: ShippingCarriersId,
-    shippingMethod: String,
+    shippingMethod: kotlin.String,
     shippingCost: BigDecimal = BigDecimal.valueOf(random.nextDouble()),
-    trackingNumber: Defaulted<String?> = UseDefault(),
+    trackingNumber: Defaulted<kotlin.String?> = UseDefault(),
     weightKg: Defaulted<BigDecimal?> = UseDefault(),
     dimensionsJson: Defaulted<Json?> = UseDefault(),
     labelData: Defaulted<ByteArray?> = UseDefault(),
-    status: Defaulted<String> = UseDefault(),
+    status: Defaulted<kotlin.String> = UseDefault(),
     estimatedDeliveryDate: Defaulted<LocalDate?> = UseDefault(),
     actualDeliveryAt: Defaulted<LocalDateTime?> = UseDefault(),
     insuranceAmount: Defaulted<BigDecimal?> = UseDefault(),
@@ -630,24 +630,24 @@ data class TestInsert(val random: Random) {
   ): ShipmentsRow = (ShipmentsRepoImpl()).insert(ShipmentsRowUnsaved(orderId = orderId, carrierId = carrierId, shippingMethod = shippingMethod, shippingCost = shippingCost, trackingNumber = trackingNumber, weightKg = weightKg, dimensionsJson = dimensionsJson, labelData = labelData, status = status, estimatedDeliveryDate = estimatedDeliveryDate, actualDeliveryAt = actualDeliveryAt, insuranceAmount = insuranceAmount, originWarehouseId = originWarehouseId, shippedAt = shippedAt, createdAt = createdAt, updatedAt = updatedAt), c)
 
   fun ShippingCarriers(
-    code: String,
-    name: String,
-    trackingUrlTemplate: Defaulted<String?> = UseDefault(),
+    code: kotlin.String,
+    name: kotlin.String,
+    trackingUrlTemplate: Defaulted<kotlin.String?> = UseDefault(),
     apiConfig: Defaulted<Json?> = UseDefault(),
     isActive: Defaulted</* user-picked */ IsActive> = UseDefault(),
     c: Connection
   ): ShippingCarriersRow = (ShippingCarriersRepoImpl()).insert(ShippingCarriersRowUnsaved(code = code, name = name, trackingUrlTemplate = trackingUrlTemplate, apiConfig = apiConfig, isActive = isActive), c)
 
   fun Warehouses(
-    code: String,
-    name: String,
-    address: String,
+    code: kotlin.String,
+    name: kotlin.String,
+    address: kotlin.String,
     location: Point,
     serviceArea: Defaulted<Polygon?> = UseDefault(),
-    timezone: Defaulted<String> = UseDefault(),
+    timezone: Defaulted<kotlin.String> = UseDefault(),
     isActive: Defaulted</* user-picked */ IsActive> = UseDefault(),
     contactEmail: Defaulted</* user-picked */ Email?> = UseDefault(),
-    contactPhone: Defaulted<String?> = UseDefault(),
+    contactPhone: Defaulted<kotlin.String?> = UseDefault(),
     c: Connection
   ): WarehousesRow = (WarehousesRepoImpl()).insert(WarehousesRowUnsaved(code = code, name = name, address = address, location = location, serviceArea = serviceArea, timezone = timezone, isActive = isActive, contactEmail = contactEmail, contactPhone = contactPhone), c)
 }

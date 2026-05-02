@@ -21,7 +21,7 @@ object UsersId {
 
   implicit lazy val arrayPut: Put[Array[UsersId]] = TypoUUID.arrayPut.contramap(_.map(_.value))
 
-  implicit lazy val bijection: Bijection[UsersId, TypoUUID] = Bijection.apply[UsersId, TypoUUID](_.value)(UsersId.apply)
+  implicit lazy val bijection: Bijection[UsersId, TypoUUID] = Bijection[UsersId, TypoUUID](_.value)(UsersId.apply)
 
   implicit lazy val decoder: Decoder[UsersId] = TypoUUID.decoder.map(UsersId.apply)
 

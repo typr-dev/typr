@@ -21,7 +21,7 @@ object CountryregionId {
 
   implicit lazy val arrayToStatement: ToStatement[Array[CountryregionId]] = ToStatement.arrayToParameter(ParameterMetaData.StringParameterMetaData).contramap(_.map(_.value))
 
-  implicit lazy val bijection: Bijection[CountryregionId, String] = Bijection.apply[CountryregionId, String](_.value)(CountryregionId.apply)
+  implicit lazy val bijection: Bijection[CountryregionId, String] = Bijection[CountryregionId, String](_.value)(CountryregionId.apply)
 
   implicit lazy val column: Column[CountryregionId] = Column.columnToString.map(CountryregionId.apply)
 

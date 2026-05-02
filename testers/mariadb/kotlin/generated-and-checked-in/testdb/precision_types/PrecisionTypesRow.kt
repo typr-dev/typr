@@ -6,10 +6,9 @@
 package testdb.precision_types
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import dev.typr.foundations.MariaTypes
 import dev.typr.foundations.Tuple.Tuple24
-import dev.typr.foundations.kotlin.RowParser
-import dev.typr.foundations.kotlin.RowParsers
+import dev.typr.foundationskt.MariaTypes
+import dev.typr.foundationskt.RowCodec
 import java.time.LocalDateTime
 import java.time.LocalTime
 import testdb.customtypes.Defaulted
@@ -148,6 +147,6 @@ data class PrecisionTypesRow(
   ): PrecisionTypesRowUnsaved = PrecisionTypesRowUnsaved(string10, string20, string50, string100, string255, char10, decimal52, decimal102, decimal184, numeric82, numeric124, binary16, binary32, binary64, time0, time3, time6, datetime0, datetime3, datetime6, ts0, ts3, ts6)
 
   companion object {
-    val _rowParser: RowParser<PrecisionTypesRow> = RowParsers.of(PrecisionTypesId.mariaType, String10.mariaType, String20.mariaType, String50.mariaType, String100.mariaType, String255.mariaType, PaddedString10.mariaType, Decimal5_2.mariaType, Decimal10_2.mariaType, Decimal18_4.mariaType, Decimal8_2.mariaType, Decimal12_4.mariaType, Binary16.mariaType, Binary32.mariaType, Binary64.mariaType, MariaTypes.time, LocalTime3.mariaType, LocalTime6.mariaType, MariaTypes.datetime, LocalDateTime3.mariaType, LocalDateTime6.mariaType, MariaTypes.timestamp, LocalDateTime3.mariaType, LocalDateTime6.mariaType, { t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15, t16, t17, t18, t19, t20, t21, t22, t23 -> PrecisionTypesRow(t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15, t16, t17, t18, t19, t20, t21, t22, t23) }, { row -> arrayOf<Any?>(row.id, row.string10, row.string20, row.string50, row.string100, row.string255, row.char10, row.decimal52, row.decimal102, row.decimal184, row.numeric82, row.numeric124, row.binary16, row.binary32, row.binary64, row.time0, row.time3, row.time6, row.datetime0, row.datetime3, row.datetime6, row.ts0, row.ts3, row.ts6) })
+    val rowCodec: RowCodec<PrecisionTypesRow> = RowCodec(dev.typr.foundations.RowCodec.create(listOf(PrecisionTypesId.mariaType.underlying, String10.mariaType.underlying, String20.mariaType.underlying, String50.mariaType.underlying, String100.mariaType.underlying, String255.mariaType.underlying, PaddedString10.mariaType.underlying, Decimal5_2.mariaType.underlying, Decimal10_2.mariaType.underlying, Decimal18_4.mariaType.underlying, Decimal8_2.mariaType.underlying, Decimal12_4.mariaType.underlying, Binary16.mariaType.underlying, Binary32.mariaType.underlying, Binary64.mariaType.underlying, MariaTypes.time.underlying, LocalTime3.mariaType.underlying, LocalTime6.mariaType.underlying, MariaTypes.datetime.underlying, LocalDateTime3.mariaType.underlying, LocalDateTime6.mariaType.underlying, MariaTypes.timestamp.underlying, LocalDateTime3.mariaType.underlying, LocalDateTime6.mariaType.underlying), { a -> PrecisionTypesRow(a[0] as PrecisionTypesId, a[1] as String10, a[2] as String20, a[3] as String50, a[4] as String100, a[5] as String255, a[6] as PaddedString10, a[7] as Decimal5_2, a[8] as Decimal10_2, a[9] as Decimal18_4, a[10] as Decimal8_2, a[11] as Decimal12_4, a[12] as Binary16, a[13] as Binary32, a[14] as Binary64, a[15] as LocalTime, a[16] as LocalTime3, a[17] as LocalTime6, a[18] as LocalDateTime, a[19] as LocalDateTime3, a[20] as LocalDateTime6, a[21] as LocalDateTime, a[22] as LocalDateTime3, a[23] as LocalDateTime6) }, { row: PrecisionTypesRow -> arrayOf<Any?>(row.id, row.string10, row.string20, row.string50, row.string100, row.string255, row.char10, row.decimal52, row.decimal102, row.decimal184, row.numeric82, row.numeric124, row.binary16, row.binary32, row.binary64, row.time0, row.time3, row.time6, row.datetime0, row.datetime3, row.datetime6, row.ts0, row.ts3, row.ts6) }))
   }
 }

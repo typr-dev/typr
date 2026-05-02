@@ -6,10 +6,10 @@
 package adventureworks.person.emailaddress
 
 import adventureworks.person.businessentity.BusinessentityId
+import dev.typr.dslkt.RowCodecs
 import dev.typr.foundations.Tuple.Tuple2
-import dev.typr.foundations.kotlin.KotlinDbTypes
-import dev.typr.foundations.kotlin.RowParser
-import dev.typr.foundations.kotlin.RowParsers
+import dev.typr.foundationskt.PgTypes
+import dev.typr.foundationskt.RowCodec
 
 /** Type for the composite primary key of table `person.emailaddress` */
 data class EmailaddressId(
@@ -21,6 +21,6 @@ data class EmailaddressId(
   override fun _2(): Int = emailaddressid
 
   companion object {
-    val _rowParser: RowParser<EmailaddressId> = RowParsers.of(BusinessentityId.pgType, KotlinDbTypes.PgTypes.int4, { t0, t1 -> EmailaddressId(t0, t1) }, { row -> arrayOf<Any?>(row.businessentityid, row.emailaddressid) })
+    val rowCodec: RowCodec<EmailaddressId> = RowCodecs.of(BusinessentityId.pgType, PgTypes.int4, { t0: BusinessentityId, t1: Int -> EmailaddressId(t0, t1) }, { row: EmailaddressId -> arrayOf<Any?>(row.businessentityid, row.emailaddressid) })
   }
 }

@@ -5,66 +5,65 @@
  */
 package testdb.categories
 
-import dev.typr.foundations.MariaTypes
-import dev.typr.foundations.RowParser
+import dev.typr.dsl.FieldsBase
+import dev.typr.dsl.Path
+import dev.typr.dsl.SqlExpr.FieldLike
+import dev.typr.dslkt.ForeignKey
+import dev.typr.dslkt.RelationStructure
+import dev.typr.dslkt.SqlExpr
+import dev.typr.dslkt.SqlExpr.Field
+import dev.typr.dslkt.SqlExpr.IdField
+import dev.typr.dslkt.SqlExpr.OptField
+import dev.typr.dslkt.TupleExpr9
+import dev.typr.foundations.RowCodec
 import dev.typr.foundations.data.Json
-import dev.typr.foundations.dsl.FieldsBase
-import dev.typr.foundations.dsl.Path
-import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.kotlin.ForeignKey
-import dev.typr.foundations.kotlin.KotlinDbTypes
-import dev.typr.foundations.kotlin.RelationStructure
-import dev.typr.foundations.kotlin.SqlExpr
-import dev.typr.foundations.kotlin.SqlExpr.Field
-import dev.typr.foundations.kotlin.SqlExpr.IdField
-import dev.typr.foundations.kotlin.SqlExpr.OptField
-import dev.typr.foundations.kotlin.TupleExpr9
+import dev.typr.foundationskt.MariaTypes
 import kotlin.collections.List
 
-data class CategoriesFields(val _path: List<Path>) : TupleExpr9<CategoriesId, CategoriesId, String, String, String, String, Short, Boolean, Json>, RelationStructure<CategoriesFields, CategoriesRow>, FieldsBase<CategoriesRow> {
+data class CategoriesFields(val _path: List<Path>) : TupleExpr9<CategoriesId, CategoriesId, kotlin.String, kotlin.String, kotlin.String, kotlin.String, kotlin.Short, kotlin.Boolean, Json>, RelationStructure<CategoriesFields, CategoriesRow>, FieldsBase<CategoriesRow> {
   override fun _1(): SqlExpr<CategoriesId> = categoryId()
 
   override fun _2(): SqlExpr<CategoriesId> = parentId()
 
-  override fun _3(): SqlExpr<String> = name()
+  override fun _3(): SqlExpr<kotlin.String> = name()
 
-  override fun _4(): SqlExpr<String> = slug()
+  override fun _4(): SqlExpr<kotlin.String> = slug()
 
-  override fun _5(): SqlExpr<String> = description()
+  override fun _5(): SqlExpr<kotlin.String> = description()
 
-  override fun _6(): SqlExpr<String> = imageUrl()
+  override fun _6(): SqlExpr<kotlin.String> = imageUrl()
 
-  override fun _7(): SqlExpr<Short> = sortOrder()
+  override fun _7(): SqlExpr<kotlin.Short> = sortOrder()
 
-  override fun _8(): SqlExpr<Boolean> = isVisible()
+  override fun _8(): SqlExpr<kotlin.Boolean> = isVisible()
 
   override fun _9(): SqlExpr<Json> = metadata()
 
   override fun _path(): List<Path> = _path
 
-  fun categoryId(): IdField<CategoriesId, CategoriesRow> = IdField<CategoriesId, CategoriesRow>(_path, "category_id", CategoriesRow::categoryId, null, null, { row, value -> row.copy(categoryId = value) }, CategoriesId.mariaType)
+  fun categoryId(): IdField<CategoriesId, CategoriesRow> = IdField<CategoriesId, CategoriesRow>(_path, "category_id", CategoriesRow::categoryId, null, null, { row, value -> row.copy(categoryId = value) }, CategoriesId.mariaType.underlying)
 
   override fun columns(): List<FieldLike<*, CategoriesRow>> = listOf(this.categoryId().underlying, this.parentId().underlying, this.name().underlying, this.slug().underlying, this.description().underlying, this.imageUrl().underlying, this.sortOrder().underlying, this.isVisible().underlying, this.metadata().underlying)
 
-  fun description(): OptField<String, CategoriesRow> = OptField<String, CategoriesRow>(_path, "description", CategoriesRow::description, null, null, { row, value -> row.copy(description = value) }, MariaTypes.mediumtext)
+  fun description(): OptField<kotlin.String, CategoriesRow> = OptField<kotlin.String, CategoriesRow>(_path, "description", CategoriesRow::description, null, null, { row, value -> row.copy(description = value) }, MariaTypes.mediumtext.underlying)
 
   fun fkCategories(): ForeignKey<CategoriesFields, CategoriesRow> = ForeignKey.of<CategoriesFields, CategoriesRow>("fk_category_parent").withColumnPair<CategoriesId>(parentId(), CategoriesFields::categoryId)
 
-  fun imageUrl(): OptField<String, CategoriesRow> = OptField<String, CategoriesRow>(_path, "image_url", CategoriesRow::imageUrl, null, null, { row, value -> row.copy(imageUrl = value) }, MariaTypes.varchar)
+  fun imageUrl(): OptField<kotlin.String, CategoriesRow> = OptField<kotlin.String, CategoriesRow>(_path, "image_url", CategoriesRow::imageUrl, null, null, { row, value -> row.copy(imageUrl = value) }, MariaTypes.varchar.underlying)
 
-  fun isVisible(): Field<Boolean, CategoriesRow> = Field<Boolean, CategoriesRow>(_path, "is_visible", CategoriesRow::isVisible, null, null, { row, value -> row.copy(isVisible = value) }, KotlinDbTypes.MariaTypes.bool)
+  fun isVisible(): Field<kotlin.Boolean, CategoriesRow> = Field<kotlin.Boolean, CategoriesRow>(_path, "is_visible", CategoriesRow::isVisible, null, null, { row, value -> row.copy(isVisible = value) }, MariaTypes.bool.underlying)
 
-  fun metadata(): OptField<Json, CategoriesRow> = OptField<Json, CategoriesRow>(_path, "metadata", CategoriesRow::metadata, null, null, { row, value -> row.copy(metadata = value) }, MariaTypes.json)
+  fun metadata(): OptField<Json, CategoriesRow> = OptField<Json, CategoriesRow>(_path, "metadata", CategoriesRow::metadata, null, null, { row, value -> row.copy(metadata = value) }, MariaTypes.json.underlying)
 
-  fun name(): Field<String, CategoriesRow> = Field<String, CategoriesRow>(_path, "name", CategoriesRow::name, null, null, { row, value -> row.copy(name = value) }, MariaTypes.varchar)
+  fun name(): Field<kotlin.String, CategoriesRow> = Field<kotlin.String, CategoriesRow>(_path, "name", CategoriesRow::name, null, null, { row, value -> row.copy(name = value) }, MariaTypes.varchar.underlying)
 
-  fun parentId(): OptField<CategoriesId, CategoriesRow> = OptField<CategoriesId, CategoriesRow>(_path, "parent_id", CategoriesRow::parentId, null, null, { row, value -> row.copy(parentId = value) }, CategoriesId.mariaType)
+  fun parentId(): OptField<CategoriesId, CategoriesRow> = OptField<CategoriesId, CategoriesRow>(_path, "parent_id", CategoriesRow::parentId, null, null, { row, value -> row.copy(parentId = value) }, CategoriesId.mariaType.underlying)
 
-  override fun rowParser(): RowParser<CategoriesRow> = CategoriesRow._rowParser.underlying
+  override fun rowCodec(): RowCodec<CategoriesRow> = CategoriesRow.rowCodec.underlying
 
-  fun slug(): Field<String, CategoriesRow> = Field<String, CategoriesRow>(_path, "slug", CategoriesRow::slug, null, null, { row, value -> row.copy(slug = value) }, MariaTypes.varchar)
+  fun slug(): Field<kotlin.String, CategoriesRow> = Field<kotlin.String, CategoriesRow>(_path, "slug", CategoriesRow::slug, null, null, { row, value -> row.copy(slug = value) }, MariaTypes.varchar.underlying)
 
-  fun sortOrder(): Field<Short, CategoriesRow> = Field<Short, CategoriesRow>(_path, "sort_order", CategoriesRow::sortOrder, null, null, { row, value -> row.copy(sortOrder = value) }, KotlinDbTypes.MariaTypes.smallint)
+  fun sortOrder(): Field<kotlin.Short, CategoriesRow> = Field<kotlin.Short, CategoriesRow>(_path, "sort_order", CategoriesRow::sortOrder, null, null, { row, value -> row.copy(sortOrder = value) }, MariaTypes.smallint.underlying)
 
   override fun withPaths(_path: List<Path>): RelationStructure<CategoriesFields, CategoriesRow> = CategoriesFields(_path)
 

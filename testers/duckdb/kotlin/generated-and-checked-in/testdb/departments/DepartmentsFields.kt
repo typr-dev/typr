@@ -5,47 +5,47 @@
  */
 package testdb.departments
 
-import dev.typr.foundations.DuckDbTypes
-import dev.typr.foundations.RowParser
-import dev.typr.foundations.dsl.FieldsBase
-import dev.typr.foundations.dsl.Path
-import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.kotlin.RelationStructure
-import dev.typr.foundations.kotlin.SqlExpr
-import dev.typr.foundations.kotlin.SqlExpr.Field
-import dev.typr.foundations.kotlin.SqlExpr.IdField
-import dev.typr.foundations.kotlin.SqlExpr.OptField
-import dev.typr.foundations.kotlin.TupleExpr
-import dev.typr.foundations.kotlin.TupleExpr4
+import dev.typr.dsl.FieldsBase
+import dev.typr.dsl.Path
+import dev.typr.dsl.SqlExpr.FieldLike
+import dev.typr.dslkt.RelationStructure
+import dev.typr.dslkt.SqlExpr
+import dev.typr.dslkt.SqlExpr.Field
+import dev.typr.dslkt.SqlExpr.IdField
+import dev.typr.dslkt.SqlExpr.OptField
+import dev.typr.dslkt.TupleExpr
+import dev.typr.dslkt.TupleExpr4
+import dev.typr.foundations.RowCodec
+import dev.typr.foundationskt.DuckDbTypes
 import java.math.BigDecimal
 import kotlin.collections.List
 
-data class DepartmentsFields(val _path: List<Path>) : TupleExpr4<String, String, String, BigDecimal>, RelationStructure<DepartmentsFields, DepartmentsRow>, FieldsBase<DepartmentsRow> {
-  override fun _1(): SqlExpr<String> = deptCode()
+data class DepartmentsFields(val _path: List<Path>) : TupleExpr4<kotlin.String, kotlin.String, kotlin.String, BigDecimal>, RelationStructure<DepartmentsFields, DepartmentsRow>, FieldsBase<DepartmentsRow> {
+  override fun _1(): SqlExpr<kotlin.String> = deptCode()
 
-  override fun _2(): SqlExpr<String> = deptRegion()
+  override fun _2(): SqlExpr<kotlin.String> = deptRegion()
 
-  override fun _3(): SqlExpr<String> = deptName()
+  override fun _3(): SqlExpr<kotlin.String> = deptName()
 
   override fun _4(): SqlExpr<BigDecimal> = budget()
 
   override fun _path(): List<Path> = _path
 
-  fun budget(): OptField<BigDecimal, DepartmentsRow> = OptField<BigDecimal, DepartmentsRow>(_path, "budget", DepartmentsRow::budget, null, "DECIMAL(15,2)", { row, value -> row.copy(budget = value) }, DuckDbTypes.numeric)
+  fun budget(): OptField<BigDecimal, DepartmentsRow> = OptField<BigDecimal, DepartmentsRow>(_path, "budget", DepartmentsRow::budget, null, "DECIMAL(15,2)", { row, value -> row.copy(budget = value) }, DuckDbTypes.numeric.underlying)
 
   override fun columns(): List<FieldLike<*, DepartmentsRow>> = listOf(this.deptCode().underlying, this.deptRegion().underlying, this.deptName().underlying, this.budget().underlying)
 
-  fun compositeIdIn(compositeIds: List<DepartmentsId>): SqlExpr<Boolean> = TupleExpr.of(deptCode(), deptRegion()).among(compositeIds)
+  fun compositeIdIn(compositeIds: List<DepartmentsId>): SqlExpr<kotlin.Boolean> = TupleExpr.of(deptCode(), deptRegion()).among(compositeIds)
 
-  fun compositeIdIs(compositeId: DepartmentsId): SqlExpr<Boolean> = SqlExpr.all(deptCode().isEqual(compositeId.deptCode), deptRegion().isEqual(compositeId.deptRegion))
+  fun compositeIdIs(compositeId: DepartmentsId): SqlExpr<kotlin.Boolean> = SqlExpr.all(deptCode().isEqual(compositeId.deptCode), deptRegion().isEqual(compositeId.deptRegion))
 
-  fun deptCode(): IdField<String, DepartmentsRow> = IdField<String, DepartmentsRow>(_path, "dept_code", DepartmentsRow::deptCode, null, null, { row, value -> row.copy(deptCode = value) }, DuckDbTypes.varchar)
+  fun deptCode(): IdField<kotlin.String, DepartmentsRow> = IdField<kotlin.String, DepartmentsRow>(_path, "dept_code", DepartmentsRow::deptCode, null, null, { row, value -> row.copy(deptCode = value) }, DuckDbTypes.varchar.underlying)
 
-  fun deptName(): Field<String, DepartmentsRow> = Field<String, DepartmentsRow>(_path, "dept_name", DepartmentsRow::deptName, null, null, { row, value -> row.copy(deptName = value) }, DuckDbTypes.varchar)
+  fun deptName(): Field<kotlin.String, DepartmentsRow> = Field<kotlin.String, DepartmentsRow>(_path, "dept_name", DepartmentsRow::deptName, null, null, { row, value -> row.copy(deptName = value) }, DuckDbTypes.varchar.underlying)
 
-  fun deptRegion(): IdField<String, DepartmentsRow> = IdField<String, DepartmentsRow>(_path, "dept_region", DepartmentsRow::deptRegion, null, null, { row, value -> row.copy(deptRegion = value) }, DuckDbTypes.varchar)
+  fun deptRegion(): IdField<kotlin.String, DepartmentsRow> = IdField<kotlin.String, DepartmentsRow>(_path, "dept_region", DepartmentsRow::deptRegion, null, null, { row, value -> row.copy(deptRegion = value) }, DuckDbTypes.varchar.underlying)
 
-  override fun rowParser(): RowParser<DepartmentsRow> = DepartmentsRow._rowParser.underlying
+  override fun rowCodec(): RowCodec<DepartmentsRow> = DepartmentsRow.rowCodec.underlying
 
   override fun withPaths(_path: List<Path>): RelationStructure<DepartmentsFields, DepartmentsRow> = DepartmentsFields(_path)
 

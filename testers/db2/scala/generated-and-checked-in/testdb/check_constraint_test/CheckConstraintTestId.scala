@@ -6,15 +6,15 @@
 package testdb.check_constraint_test
 
 import com.fasterxml.jackson.annotation.JsonValue
-import dev.typr.foundations.Db2Type
-import dev.typr.foundations.scala.Bijection
-import dev.typr.foundations.scala.ScalaDbTypes
+import dev.typr.dslsc.Bijection
+import dev.typr.foundationssc.Db2Type
+import dev.typr.foundationssc.Db2Types
 
 /** Type for the primary key of table `CHECK_CONSTRAINT_TEST` */
 case class CheckConstraintTestId(@JsonValue value: Int) extends scala.AnyVal
 
 object CheckConstraintTestId {
-  given bijection: Bijection[CheckConstraintTestId, Int] = Bijection.apply[CheckConstraintTestId, Int](_.value)(CheckConstraintTestId.apply)
+  given bijection: Bijection[CheckConstraintTestId, Int] = Bijection.of[CheckConstraintTestId, Int](_.value, CheckConstraintTestId.apply)
 
-  given db2Type: Db2Type[CheckConstraintTestId] = ScalaDbTypes.Db2Types.integer.bimap(CheckConstraintTestId.apply, _.value)
+  given db2Type: Db2Type[CheckConstraintTestId] = Db2Types.integer.to(Bijection.of(CheckConstraintTestId.apply, _.value))
 }

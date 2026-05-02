@@ -6,30 +6,29 @@
 package oracledb.contacts
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import dev.typr.foundations.OracleTypes
+import dev.typr.dslkt.RowCodecs
 import dev.typr.foundations.Tuple.Tuple4
-import dev.typr.foundations.kotlin.RowParser
-import dev.typr.foundations.kotlin.RowParsers
-import dev.typr.foundations.kotlin.nullable
+import dev.typr.foundationskt.OracleTypes
+import dev.typr.foundationskt.RowCodec
+import oracledb.EmailTableT
 import oracledb.TagVarrayT
 import oracledb.customtypes.Defaulted
-import oracledb.userdefined.Email
 
 /** Table: CONTACTS
   * Primary key: CONTACT_ID
   */
 data class ContactsRow(
-  /** Default: "TYPR"."ISEQ$$_72857".nextval */
+  /** Default: "TYPR"."ISEQ$$_72847".nextval */
   @field:JsonProperty("CONTACT_ID") val contactId: ContactsId,
-  @field:JsonProperty("NAME") val name: String,
-  @field:JsonProperty("EMAILS") val emails: /* user-picked */ Email?,
+  @field:JsonProperty("NAME") val name: kotlin.String,
+  @field:JsonProperty("EMAILS") val emails: EmailTableT?,
   @field:JsonProperty("TAGS") val tags: TagVarrayT?
-) : Tuple4<ContactsId, String, /* user-picked */ Email?, TagVarrayT?> {
+) : Tuple4<ContactsId, kotlin.String, EmailTableT?, TagVarrayT?> {
   override fun _1(): ContactsId = contactId
 
-  override fun _2(): String = name
+  override fun _2(): kotlin.String = name
 
-  override fun _3(): /* user-picked */ Email? = emails
+  override fun _3(): EmailTableT? = emails
 
   override fun _4(): TagVarrayT? = tags
 
@@ -38,6 +37,6 @@ data class ContactsRow(
   fun toUnsavedRow(contactId: Defaulted<ContactsId>): ContactsRowUnsaved = ContactsRowUnsaved(name, emails, tags, contactId)
 
   companion object {
-    val _rowParser: RowParser<ContactsRow> = RowParsers.of(ContactsId.oracleType, OracleTypes.varchar2, Email.oracleType.nullable(), TagVarrayT.oracleType.nullable(), { t0, t1, t2, t3 -> ContactsRow(t0, t1, t2, t3) }, { row -> arrayOf<Any?>(row.contactId, row.name, row.emails, row.tags) })
+    val rowCodec: RowCodec<ContactsRow> = RowCodecs.of(ContactsId.oracleType, OracleTypes.varchar2, EmailTableT.oracleType.opt(), TagVarrayT.oracleType.opt(), { t0: ContactsId, t1: kotlin.String, t2: EmailTableT?, t3: TagVarrayT? -> ContactsRow(t0, t1, t2, t3) }, { row: ContactsRow -> arrayOf<Any?>(row.contactId, row.name, row.emails, row.tags) })
   }
 }

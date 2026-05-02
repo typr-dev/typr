@@ -8,18 +8,18 @@ package adventureworks.person.address
 import adventureworks.person.stateprovince.StateprovinceFields
 import adventureworks.person.stateprovince.StateprovinceId
 import adventureworks.person.stateprovince.StateprovinceRow
+import dev.typr.dsl.FieldsBase
+import dev.typr.dsl.ForeignKey
+import dev.typr.dsl.Path
+import dev.typr.dsl.RelationStructure
+import dev.typr.dsl.SqlExpr
+import dev.typr.dsl.SqlExpr.Field
+import dev.typr.dsl.SqlExpr.FieldLike
+import dev.typr.dsl.SqlExpr.IdField
+import dev.typr.dsl.SqlExpr.OptField
+import dev.typr.dsl.TupleExpr.TupleExpr9
 import dev.typr.foundations.PgTypes
-import dev.typr.foundations.RowParser
-import dev.typr.foundations.dsl.FieldsBase
-import dev.typr.foundations.dsl.ForeignKey
-import dev.typr.foundations.dsl.Path
-import dev.typr.foundations.dsl.RelationStructure
-import dev.typr.foundations.dsl.SqlExpr
-import dev.typr.foundations.dsl.SqlExpr.Field
-import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.dsl.SqlExpr.IdField
-import dev.typr.foundations.dsl.SqlExpr.OptField
-import dev.typr.foundations.dsl.TupleExpr.TupleExpr9
+import dev.typr.foundations.RowCodec
 import java.time.LocalDateTime
 import java.util.Optional
 import java.util.UUID
@@ -137,7 +137,7 @@ class AddressFields(val `_path`: java.util.List[Path]) extends TupleExpr9[Addres
 
   override def columns: java.util.List[FieldLike[?, AddressRow]] = java.util.List.of(this.addressid, this.addressline1, this.addressline2, this.city, this.stateprovinceid, this.postalcode, this.spatiallocation, this.rowguid, this.modifieddate)
 
-  override def rowParser: RowParser[AddressRow] = AddressRow._rowParser
+  override def rowCodec: RowCodec[AddressRow] = AddressRow.rowCodec
 
   override def withPaths(`_path`: java.util.List[Path]): RelationStructure[AddressFields, AddressRow] = new AddressFields(`_path`)
 

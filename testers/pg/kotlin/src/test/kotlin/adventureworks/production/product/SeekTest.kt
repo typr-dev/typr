@@ -4,7 +4,7 @@ import adventureworks.public.Name
 import org.junit.Assert.*
 import org.junit.Test
 import dev.typr.foundations.PgTypes
-import dev.typr.foundations.kotlin.SqlExpr
+import dev.typr.dslkt.SqlExpr
 import java.math.BigDecimal
 
 class SeekTest {

@@ -13,17 +13,17 @@ import adventureworks.public.Name
 import adventureworks.sales.salesterritory.SalesterritoryFields
 import adventureworks.sales.salesterritory.SalesterritoryId
 import adventureworks.sales.salesterritory.SalesterritoryRow
-import dev.typr.foundations.PgTypes
-import dev.typr.foundations.RowParser
-import dev.typr.foundations.dsl.FieldsBase
-import dev.typr.foundations.dsl.Path
-import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.scala.ForeignKey
-import dev.typr.foundations.scala.RelationStructure
-import dev.typr.foundations.scala.SqlExpr
-import dev.typr.foundations.scala.SqlExpr.Field
-import dev.typr.foundations.scala.SqlExpr.IdField
-import dev.typr.foundations.scala.TupleExpr8
+import dev.typr.dsl.FieldsBase
+import dev.typr.dsl.Path
+import dev.typr.dsl.SqlExpr.FieldLike
+import dev.typr.dslsc.ForeignKey
+import dev.typr.dslsc.RelationStructure
+import dev.typr.dslsc.SqlExpr
+import dev.typr.dslsc.SqlExpr.Field
+import dev.typr.dslsc.SqlExpr.IdField
+import dev.typr.dslsc.TupleExpr8
+import dev.typr.foundations.RowCodec
+import dev.typr.foundationssc.PgTypes
 import java.time.LocalDateTime
 import java.util.UUID
 
@@ -36,7 +36,7 @@ class StateprovinceFields(val `_path`: java.util.List[Path]) extends TupleExpr8[
       None,
       Some("int4"),
       (row, value) => row.copy(stateprovinceid = value),
-      StateprovinceId.pgType
+      StateprovinceId.pgType.underlying
     )
   }
 
@@ -48,7 +48,7 @@ class StateprovinceFields(val `_path`: java.util.List[Path]) extends TupleExpr8[
       None,
       Some("bpchar"),
       (row, value) => row.copy(stateprovincecode = value),
-      PgTypes.bpchar
+      PgTypes.bpchar.underlying
     )
   }
 
@@ -60,7 +60,7 @@ class StateprovinceFields(val `_path`: java.util.List[Path]) extends TupleExpr8[
       None,
       None,
       (row, value) => row.copy(countryregioncode = value),
-      CountryregionId.pgType
+      CountryregionId.pgType.underlying
     )
   }
 
@@ -72,7 +72,7 @@ class StateprovinceFields(val `_path`: java.util.List[Path]) extends TupleExpr8[
       None,
       Some("bool"),
       (row, value) => row.copy(isonlystateprovinceflag = value),
-      Flag.pgType
+      Flag.pgType.underlying
     )
   }
 
@@ -84,7 +84,7 @@ class StateprovinceFields(val `_path`: java.util.List[Path]) extends TupleExpr8[
       None,
       Some("varchar"),
       (row, value) => row.copy(name = value),
-      Name.pgType
+      Name.pgType.underlying
     )
   }
 
@@ -96,7 +96,7 @@ class StateprovinceFields(val `_path`: java.util.List[Path]) extends TupleExpr8[
       None,
       Some("int4"),
       (row, value) => row.copy(territoryid = value),
-      SalesterritoryId.pgType
+      SalesterritoryId.pgType.underlying
     )
   }
 
@@ -108,7 +108,7 @@ class StateprovinceFields(val `_path`: java.util.List[Path]) extends TupleExpr8[
       None,
       Some("uuid"),
       (row, value) => row.copy(rowguid = value),
-      PgTypes.uuid
+      PgTypes.uuid.underlying
     )
   }
 
@@ -120,7 +120,7 @@ class StateprovinceFields(val `_path`: java.util.List[Path]) extends TupleExpr8[
       None,
       Some("timestamp"),
       (row, value) => row.copy(modifieddate = value),
-      PgTypes.timestamp
+      PgTypes.timestamp.underlying
     )
   }
 
@@ -130,7 +130,7 @@ class StateprovinceFields(val `_path`: java.util.List[Path]) extends TupleExpr8[
 
   override def columns: java.util.List[FieldLike[?, StateprovinceRow]] = java.util.List.of(this.stateprovinceid.underlying, this.stateprovincecode.underlying, this.countryregioncode.underlying, this.isonlystateprovinceflag.underlying, this.name.underlying, this.territoryid.underlying, this.rowguid.underlying, this.modifieddate.underlying)
 
-  override def rowParser: RowParser[StateprovinceRow] = StateprovinceRow._rowParser.underlying
+  override def rowCodec: RowCodec[StateprovinceRow] = StateprovinceRow.rowCodec.underlying
 
   override def withPaths(`_path`: java.util.List[Path]): RelationStructure[StateprovinceFields, StateprovinceRow] = new StateprovinceFields(`_path`)
 

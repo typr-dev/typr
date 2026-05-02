@@ -6,9 +6,9 @@
 package oracledb.products
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import dev.typr.dsl.RowCodecs
 import dev.typr.foundations.OracleTypes
-import dev.typr.foundations.RowParser
-import dev.typr.foundations.RowParsers
+import dev.typr.foundations.RowCodec
 import dev.typr.foundations.Tuple.Tuple5
 import java.util.Optional
 import oracledb.MoneyT
@@ -19,7 +19,7 @@ import oracledb.customtypes.Defaulted
  * Primary key: PRODUCT_ID
  */
 case class ProductsRow(
-  /** Default: "TYPR"."ISEQ$$_72853".nextval */
+  /** Default: "TYPR"."ISEQ$$_72843".nextval */
   @JsonProperty("PRODUCT_ID") productId: ProductsId,
   @JsonProperty("SKU") sku: String,
   @JsonProperty("NAME") name: String,
@@ -50,5 +50,5 @@ case class ProductsRow(
 }
 
 object ProductsRow {
-  val `_rowParser`: RowParser[ProductsRow] = RowParsers.of(ProductsId.oracleType, OracleTypes.varchar2, OracleTypes.varchar2, MoneyT.oracleType, TagVarrayT.oracleType.opt(), ProductsRow.apply, row => Array[Any](row.productId, row.sku, row.name, row.price, row.tags))
+  val rowCodec: RowCodec[ProductsRow] = RowCodecs.of(ProductsId.oracleType, OracleTypes.varchar2, OracleTypes.varchar2, MoneyT.oracleType, TagVarrayT.oracleType.opt, ProductsRow.apply, row => Array[Any](row.productId, row.sku, row.name, row.price, row.tags))
 }

@@ -5,12 +5,12 @@
  */
 package testdb.v_product_catalog
 
-import dev.typr.foundations.kotlin.SelectBuilder
-import java.sql.Connection
+import dev.typr.dslkt.SelectBuilder
+import dev.typr.foundationskt.ConnectionRead
 import kotlin.collections.List
 
 interface VProductCatalogViewRepo {
   abstract fun select(): SelectBuilder<VProductCatalogViewFields, VProductCatalogViewRow>
 
-  abstract fun selectAll(c: Connection): List<VProductCatalogViewRow>
+  abstract fun selectAll(c: ConnectionRead): List<VProductCatalogViewRow>
 }

@@ -24,7 +24,7 @@ object DepartmentId {
 
   given arraySetter: Setter[Array[DepartmentId]] = adventureworks.IntArraySetter.contramap(_.map(_.value))
 
-  given bijection: Bijection[DepartmentId, Int] = Bijection.apply[DepartmentId, Int](_.value)(DepartmentId.apply)
+  given bijection: Bijection[DepartmentId, Int] = Bijection[DepartmentId, Int](_.value)(DepartmentId.apply)
 
   given jdbcDecoder: JdbcDecoder[DepartmentId] = JdbcDecoder.intDecoder.map(DepartmentId.apply)
 

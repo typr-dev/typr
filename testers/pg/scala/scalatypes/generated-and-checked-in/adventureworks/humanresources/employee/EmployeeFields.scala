@@ -10,19 +10,18 @@ import adventureworks.person.person.PersonFields
 import adventureworks.person.person.PersonRow
 import adventureworks.userdefined.CurrentFlag
 import adventureworks.userdefined.SalariedFlag
-import dev.typr.foundations.PgTypes
-import dev.typr.foundations.RowParser
-import dev.typr.foundations.dsl.FieldsBase
-import dev.typr.foundations.dsl.Path
-import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.scala.ForeignKey
-import dev.typr.foundations.scala.RelationStructure
-import dev.typr.foundations.scala.ScalaDbTypes
-import dev.typr.foundations.scala.SqlExpr
-import dev.typr.foundations.scala.SqlExpr.Field
-import dev.typr.foundations.scala.SqlExpr.IdField
-import dev.typr.foundations.scala.SqlExpr.OptField
-import dev.typr.foundations.scala.TupleExpr15
+import dev.typr.dsl.FieldsBase
+import dev.typr.dsl.Path
+import dev.typr.dsl.SqlExpr.FieldLike
+import dev.typr.dslsc.ForeignKey
+import dev.typr.dslsc.RelationStructure
+import dev.typr.dslsc.SqlExpr
+import dev.typr.dslsc.SqlExpr.Field
+import dev.typr.dslsc.SqlExpr.IdField
+import dev.typr.dslsc.SqlExpr.OptField
+import dev.typr.dslsc.TupleExpr15
+import dev.typr.foundations.RowCodec
+import dev.typr.foundationssc.PgTypes
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.UUID
@@ -36,7 +35,7 @@ class EmployeeFields(val `_path`: java.util.List[Path]) extends TupleExpr15[Busi
       None,
       Some("int4"),
       (row, value) => row.copy(businessentityid = value),
-      BusinessentityId.pgType
+      BusinessentityId.pgType.underlying
     )
   }
 
@@ -48,7 +47,7 @@ class EmployeeFields(val `_path`: java.util.List[Path]) extends TupleExpr15[Busi
       None,
       None,
       (row, value) => row.copy(nationalidnumber = value),
-      PgTypes.text
+      PgTypes.text.underlying
     )
   }
 
@@ -60,7 +59,7 @@ class EmployeeFields(val `_path`: java.util.List[Path]) extends TupleExpr15[Busi
       None,
       None,
       (row, value) => row.copy(loginid = value),
-      PgTypes.text
+      PgTypes.text.underlying
     )
   }
 
@@ -72,7 +71,7 @@ class EmployeeFields(val `_path`: java.util.List[Path]) extends TupleExpr15[Busi
       None,
       None,
       (row, value) => row.copy(jobtitle = value),
-      PgTypes.text
+      PgTypes.text.underlying
     )
   }
 
@@ -84,7 +83,7 @@ class EmployeeFields(val `_path`: java.util.List[Path]) extends TupleExpr15[Busi
       None,
       Some("date"),
       (row, value) => row.copy(birthdate = value),
-      PgTypes.date
+      PgTypes.date.underlying
     )
   }
 
@@ -96,7 +95,7 @@ class EmployeeFields(val `_path`: java.util.List[Path]) extends TupleExpr15[Busi
       None,
       Some("bpchar"),
       (row, value) => row.copy(maritalstatus = value),
-      PgTypes.bpchar
+      PgTypes.bpchar.underlying
     )
   }
 
@@ -108,7 +107,7 @@ class EmployeeFields(val `_path`: java.util.List[Path]) extends TupleExpr15[Busi
       None,
       Some("bpchar"),
       (row, value) => row.copy(gender = value),
-      PgTypes.bpchar
+      PgTypes.bpchar.underlying
     )
   }
 
@@ -120,7 +119,7 @@ class EmployeeFields(val `_path`: java.util.List[Path]) extends TupleExpr15[Busi
       None,
       Some("date"),
       (row, value) => row.copy(hiredate = value),
-      PgTypes.date
+      PgTypes.date.underlying
     )
   }
 
@@ -132,7 +131,7 @@ class EmployeeFields(val `_path`: java.util.List[Path]) extends TupleExpr15[Busi
       None,
       Some("bool"),
       (row, value) => row.copy(salariedflag = value),
-      SalariedFlag.pgType
+      SalariedFlag.pgType.underlying
     )
   }
 
@@ -144,7 +143,7 @@ class EmployeeFields(val `_path`: java.util.List[Path]) extends TupleExpr15[Busi
       None,
       Some("int2"),
       (row, value) => row.copy(vacationhours = value),
-      ScalaDbTypes.PgTypes.int2
+      PgTypes.int2.underlying
     )
   }
 
@@ -156,7 +155,7 @@ class EmployeeFields(val `_path`: java.util.List[Path]) extends TupleExpr15[Busi
       None,
       Some("int2"),
       (row, value) => row.copy(sickleavehours = value),
-      ScalaDbTypes.PgTypes.int2
+      PgTypes.int2.underlying
     )
   }
 
@@ -168,7 +167,7 @@ class EmployeeFields(val `_path`: java.util.List[Path]) extends TupleExpr15[Busi
       None,
       Some("bool"),
       (row, value) => row.copy(currentflag = value),
-      CurrentFlag.pgType
+      CurrentFlag.pgType.underlying
     )
   }
 
@@ -180,7 +179,7 @@ class EmployeeFields(val `_path`: java.util.List[Path]) extends TupleExpr15[Busi
       None,
       Some("uuid"),
       (row, value) => row.copy(rowguid = value),
-      PgTypes.uuid
+      PgTypes.uuid.underlying
     )
   }
 
@@ -192,7 +191,7 @@ class EmployeeFields(val `_path`: java.util.List[Path]) extends TupleExpr15[Busi
       None,
       Some("timestamp"),
       (row, value) => row.copy(modifieddate = value),
-      PgTypes.timestamp
+      PgTypes.timestamp.underlying
     )
   }
 
@@ -204,7 +203,7 @@ class EmployeeFields(val `_path`: java.util.List[Path]) extends TupleExpr15[Busi
       None,
       None,
       (row, value) => row.copy(organizationnode = value),
-      PgTypes.text
+      PgTypes.text.underlying
     )
   }
 
@@ -212,7 +211,7 @@ class EmployeeFields(val `_path`: java.util.List[Path]) extends TupleExpr15[Busi
 
   override def columns: java.util.List[FieldLike[?, EmployeeRow]] = java.util.List.of(this.businessentityid.underlying, this.nationalidnumber.underlying, this.loginid.underlying, this.jobtitle.underlying, this.birthdate.underlying, this.maritalstatus.underlying, this.gender.underlying, this.hiredate.underlying, this.salariedflag.underlying, this.vacationhours.underlying, this.sickleavehours.underlying, this.currentflag.underlying, this.rowguid.underlying, this.modifieddate.underlying, this.organizationnode.underlying)
 
-  override def rowParser: RowParser[EmployeeRow] = EmployeeRow._rowParser.underlying
+  override def rowCodec: RowCodec[EmployeeRow] = EmployeeRow.rowCodec.underlying
 
   override def withPaths(`_path`: java.util.List[Path]): RelationStructure[EmployeeFields, EmployeeRow] = new EmployeeFields(`_path`)
 

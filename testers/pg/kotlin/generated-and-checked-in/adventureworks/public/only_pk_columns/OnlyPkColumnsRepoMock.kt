@@ -5,17 +5,18 @@
  */
 package adventureworks.public.only_pk_columns
 
-import dev.typr.foundations.kotlin.DeleteBuilder
-import dev.typr.foundations.kotlin.DeleteBuilderMock
-import dev.typr.foundations.kotlin.DeleteParams
-import dev.typr.foundations.kotlin.SelectBuilder
-import dev.typr.foundations.kotlin.SelectBuilderMock
-import dev.typr.foundations.kotlin.SelectParams
-import dev.typr.foundations.kotlin.UpdateBuilder
-import dev.typr.foundations.kotlin.UpdateBuilderMock
-import dev.typr.foundations.kotlin.UpdateParams
+import dev.typr.dslkt.DeleteBuilder
+import dev.typr.dslkt.DeleteBuilderMock
+import dev.typr.dslkt.DeleteParams
+import dev.typr.dslkt.SelectBuilder
+import dev.typr.dslkt.SelectBuilderMock
+import dev.typr.dslkt.SelectParams
+import dev.typr.dslkt.UpdateBuilder
+import dev.typr.dslkt.UpdateBuilderMock
+import dev.typr.dslkt.UpdateParams
+import dev.typr.foundationskt.Connection
+import dev.typr.foundationskt.ConnectionRead
 import java.lang.RuntimeException
-import java.sql.Connection
 import java.util.ArrayList
 import kotlin.collections.Iterator
 import kotlin.collections.List
@@ -28,10 +29,10 @@ data class OnlyPkColumnsRepoMock(val map: MutableMap<OnlyPkColumnsId, OnlyPkColu
   override fun deleteById(
     compositeId: OnlyPkColumnsId,
     c: Connection
-  ): Boolean = map.remove(compositeId) != null
+  ): kotlin.Boolean = map.remove(compositeId) != null
 
   override fun deleteByIds(
-    compositeIds: Array<OnlyPkColumnsId>,
+    compositeIds: List<OnlyPkColumnsId>,
     c: Connection
   ): Int {
     var count = 0
@@ -58,7 +59,7 @@ data class OnlyPkColumnsRepoMock(val map: MutableMap<OnlyPkColumnsId, OnlyPkColu
     unsaved: Iterator<OnlyPkColumnsRow>,
     batchSize: Int,
     c: Connection
-  ): Long {
+  ): kotlin.Long {
     var count = 0L
     while (unsaved.hasNext()) {
       val row = unsaved.next()
@@ -70,16 +71,16 @@ data class OnlyPkColumnsRepoMock(val map: MutableMap<OnlyPkColumnsId, OnlyPkColu
 
   override fun select(): SelectBuilder<OnlyPkColumnsFields, OnlyPkColumnsRow> = SelectBuilderMock(OnlyPkColumnsFields.structure, { map.values.toList() }, SelectParams.empty())
 
-  override fun selectAll(c: Connection): List<OnlyPkColumnsRow> = map.values.toList()
+  override fun selectAll(c: ConnectionRead): List<OnlyPkColumnsRow> = map.values.toList()
 
   override fun selectById(
     compositeId: OnlyPkColumnsId,
-    c: Connection
+    c: ConnectionRead
   ): OnlyPkColumnsRow? = map[compositeId]
 
   override fun selectByIds(
-    compositeIds: Array<OnlyPkColumnsId>,
-    c: Connection
+    compositeIds: List<OnlyPkColumnsId>,
+    c: ConnectionRead
   ): List<OnlyPkColumnsRow> {
     val result = ArrayList<OnlyPkColumnsRow>()
     for (id in compositeIds) {
@@ -92,8 +93,8 @@ data class OnlyPkColumnsRepoMock(val map: MutableMap<OnlyPkColumnsId, OnlyPkColu
   }
 
   override fun selectByIdsTracked(
-    compositeIds: Array<OnlyPkColumnsId>,
-    c: Connection
+    compositeIds: List<OnlyPkColumnsId>,
+    c: ConnectionRead
   ): Map<OnlyPkColumnsId, OnlyPkColumnsRow> = selectByIds(compositeIds, c).associateBy({ row: OnlyPkColumnsRow -> row.compositeId() })
 
   override fun update(): UpdateBuilder<OnlyPkColumnsFields, OnlyPkColumnsRow> = UpdateBuilderMock(OnlyPkColumnsFields.structure, { map.values.toList() }, UpdateParams.empty(), { row -> row })

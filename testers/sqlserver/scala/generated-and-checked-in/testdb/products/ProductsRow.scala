@@ -6,12 +6,10 @@
 package testdb.products
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import dev.typr.foundations.SqlServerTypes
+import dev.typr.dslsc.RowCodecs
 import dev.typr.foundations.Tuple.Tuple4
-import dev.typr.foundations.scala.DbTypeOps
-import dev.typr.foundations.scala.RowParser
-import dev.typr.foundations.scala.RowParsers
-import dev.typr.foundations.scala.ScalaDbTypes
+import dev.typr.foundationssc.RowCodec
+import dev.typr.foundationssc.SqlServerTypes
 
 /** Table: products
  * Primary key: product_id
@@ -37,5 +35,5 @@ case class ProductsRow(
 }
 
 object ProductsRow {
-  val `_rowParser`: RowParser[ProductsRow] = RowParsers.of(ProductsId.sqlServerType, SqlServerTypes.nvarchar, ScalaDbTypes.SqlServerTypes.money, SqlServerTypes.nvarchar.nullable)(ProductsRow.apply)(row => Array[Any](row.productId, row.name, row.price, row.description))
+  val rowCodec: RowCodec[ProductsRow] = RowCodecs.of(ProductsId.sqlServerType, SqlServerTypes.nvarchar, SqlServerTypes.money, SqlServerTypes.nvarchar.opt)(ProductsRow.apply)(row => Array[Any](row.productId, row.name, row.price, row.description))
 }

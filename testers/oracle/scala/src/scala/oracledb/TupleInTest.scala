@@ -1,6 +1,7 @@
 package oracledb
 
-import dev.typr.foundations.dsl.SqlExpr
+import dev.typr.dsl.SqlExpr
+import dev.typr.foundations.Connection
 import oracledb.departments.*
 import org.scalatest.funsuite.AnyFunSuite
 
@@ -13,8 +14,7 @@ class TupleInTest extends AnyFunSuite {
   // =============== Departments (2-column String,String composite key) ===============
 
   test("departments compositeIdIn with multiple IDs - real") {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       val row1 = DepartmentsRow("ENG", "US", "Engineering US", Optional.of(MoneyT(BigDecimal("1000000"), "USD")))
       val row2 = DepartmentsRow("ENG", "EU", "Engineering EU", Optional.of(MoneyT(BigDecimal("800000"), "EUR")))
       val row3 = DepartmentsRow("HR", "US", "Human Resources US", Optional.of(MoneyT(BigDecimal("500000"), "USD")))
@@ -27,7 +27,7 @@ class TupleInTest extends AnyFunSuite {
 
       val result = departmentsRepo.select
         .where(d => d.compositeIdIn(java.util.List.of(row1.compositeId, row3.compositeId)))
-        .toList(c)
+        .toList(summon[Connection])
 
       val _ = assert(result.size() == 2)
       val resultIds = Set(result.get(0).compositeId, result.get(1).compositeId)
@@ -36,8 +36,7 @@ class TupleInTest extends AnyFunSuite {
   }
 
   test("departments compositeIdIn with single ID - real") {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       val row1 = DepartmentsRow("SALES", "APAC", "Sales APAC", Optional.empty())
       val row2 = DepartmentsRow("SALES", "EMEA", "Sales EMEA", Optional.empty())
 
@@ -46,7 +45,7 @@ class TupleInTest extends AnyFunSuite {
 
       val result = departmentsRepo.select
         .where(d => d.compositeIdIn(java.util.List.of(row1.compositeId)))
-        .toList(c)
+        .toList(summon[Connection])
 
       val _ = assert(result.size() == 1)
       val _ = assert(result.get(0) == row1)
@@ -54,22 +53,20 @@ class TupleInTest extends AnyFunSuite {
   }
 
   test("departments compositeIdIn with empty list - real") {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       val row = DepartmentsRow("TEST", "REGION", "Test Dept", Optional.empty())
       val _ = departmentsRepo.insert(row)
 
       val result = departmentsRepo.select
         .where(d => d.compositeIdIn(java.util.List.of()))
-        .toList(c)
+        .toList(summon[Connection])
 
       val _ = assert(result.size() == 0)
     }
   }
 
   test("departments compositeIdIn combined with other conditions - real") {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       val row1 = DepartmentsRow("DEV", "US", "Development US", Optional.of(MoneyT(BigDecimal("2000000"), "USD")))
       val row2 = DepartmentsRow("DEV", "EU", "Development EU", Optional.of(MoneyT(BigDecimal("100000"), "EUR")))
       val row3 = DepartmentsRow("QA", "US", "QA US", Optional.of(MoneyT(BigDecimal("500000"), "USD")))
@@ -85,7 +82,7 @@ class TupleInTest extends AnyFunSuite {
             d.deptName.isEqual("Development US")
           )
         )
-        .toList(c)
+        .toList(summon[Connection])
 
       val _ = assert(result.size() == 1)
       val _ = assert(result.get(0).compositeId == row1.compositeId)
@@ -95,8 +92,7 @@ class TupleInTest extends AnyFunSuite {
   // ==================== TupleInSubquery Tests ====================
 
   test("tuple IN subquery basic - real") {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       val row1 = DepartmentsRow("SMALL1", "MATCH", "Small Dept 1", Optional.of(MoneyT(BigDecimal("10000"), "USD")))
       val row2 = DepartmentsRow("SMALL2", "MATCH", "Small Dept 2", Optional.of(MoneyT(BigDecimal("20000"), "USD")))
       val row3 = DepartmentsRow("LARGE", "OTHER", "Large Dept", Optional.of(MoneyT(BigDecimal("1000000"), "USD")))
@@ -116,7 +112,7 @@ class TupleInTest extends AnyFunSuite {
                 .subquery
             )
         )
-        .toList(c)
+        .toList(summon[Connection])
 
       val _ = assert(result.size() == 2)
       val codes = Set(result.get(0).deptCode, result.get(1).deptCode)
@@ -125,8 +121,7 @@ class TupleInTest extends AnyFunSuite {
   }
 
   test("tuple IN subquery with no matches - real") {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       val row = DepartmentsRow("TEST1", "REGION1", "Test Dept 1", Optional.empty())
       val _ = departmentsRepo.insert(row)
 
@@ -141,15 +136,14 @@ class TupleInTest extends AnyFunSuite {
                 .subquery
             )
         )
-        .toList(c)
+        .toList(summon[Connection])
 
       val _ = assert(result.size() == 0)
     }
   }
 
   test("tuple IN subquery combined with other conditions - real") {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       val row1 = DepartmentsRow("A", "X", "Dept A", Optional.empty())
       val row2 = DepartmentsRow("B", "X", "Dept B", Optional.empty())
       val row3 = DepartmentsRow("C", "X", "Dept C", Optional.empty())
@@ -172,7 +166,7 @@ class TupleInTest extends AnyFunSuite {
             d.deptCode.isNotEqual("A")
           )
         )
-        .toList(c)
+        .toList(summon[Connection])
 
       val _ = assert(result.size() == 2)
       val codes = Set(result.get(0).deptCode, result.get(1).deptCode)
@@ -183,8 +177,7 @@ class TupleInTest extends AnyFunSuite {
   // ==================== Nullable Column Tuple IN Tests ====================
 
   ignore("tuple IN with nullable column - real - Oracle does not support nullable values in tuple IN") {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       // Create departments - some with budget (nullable), some without
       val row1 = DepartmentsRow("NULL1", "REG1", "Dept With No Budget 1", Optional.empty())
       val row2 = DepartmentsRow("NULL2", "REG2", "Dept With No Budget 2", Optional.empty())
@@ -206,7 +199,7 @@ class TupleInTest extends AnyFunSuite {
               )
             )
         )
-        .toList(c)
+        .toList(summon[Connection])
 
       val _ = assert(result.size() >= 0, "Should handle nullable column tuple IN")
     }
@@ -215,8 +208,7 @@ class TupleInTest extends AnyFunSuite {
   // ==================== Nested Tuple Tests ====================
 
   ignore("nested tuple IN - real - Oracle does not support nested tuples in IN clause") {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       val row1 = DepartmentsRow("NEST1", "R1", "Nested Dept 1", Optional.empty())
       val row2 = DepartmentsRow("NEST2", "R2", "Nested Dept 2", Optional.empty())
       val row3 = DepartmentsRow("NEST3", "R3", "Nested Dept 3", Optional.empty())
@@ -238,7 +230,7 @@ class TupleInTest extends AnyFunSuite {
               )
             )
         )
-        .toList(c)
+        .toList(summon[Connection])
 
       val _ = assert(result.size() == 2, "Should find 2 departments matching nested tuple pattern")
 
@@ -254,7 +246,7 @@ class TupleInTest extends AnyFunSuite {
               )
             )
         )
-        .toList(c)
+        .toList(summon[Connection])
 
       val _ = assert(resultNoMatch.isEmpty, "Should not match misaligned nested tuple")
     }
@@ -263,8 +255,7 @@ class TupleInTest extends AnyFunSuite {
   // ==================== Read Nested Tuple from Database Tests ====================
 
   ignore("readNestedTupleFromDatabase - Oracle does not support nested tuples") {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       // Insert test data
       val row1 = DepartmentsRow("READ1", "REG1", "Read Dept 1", java.util.Optional.empty())
       val row2 = DepartmentsRow("READ2", "REG2", "Read Dept 2", java.util.Optional.empty())
@@ -279,7 +270,7 @@ class TupleInTest extends AnyFunSuite {
         .where(d => d.deptCode.in("READ1", "READ2", "READ3"))
         .orderBy(d => d.deptCode.asc)
         .map(d => d.deptCode.tupleWith(d.deptRegion).tupleWith(d.deptName))
-        .toList(c)
+        .toList(summon[Connection])
 
       val _ = assert(result.size() == 3, "Should read 3 nested tuples")
 

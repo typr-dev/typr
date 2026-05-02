@@ -24,7 +24,7 @@ object CharacterData {
 
   implicit lazy val arrayToStatement: ToStatement[Array[CharacterData]] = ToStatement.arrayToParameter(ParameterMetaData.StringParameterMetaData).contramap(_.map(_.value))
 
-  implicit lazy val bijection: Bijection[CharacterData, String] = Bijection.apply[CharacterData, String](_.value)(CharacterData.apply)
+  implicit lazy val bijection: Bijection[CharacterData, String] = Bijection[CharacterData, String](_.value)(CharacterData.apply)
 
   implicit lazy val column: Column[CharacterData] = Column.columnToString.map(CharacterData.apply)
 

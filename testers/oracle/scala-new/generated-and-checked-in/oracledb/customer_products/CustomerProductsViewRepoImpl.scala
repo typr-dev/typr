@@ -5,17 +5,17 @@
  */
 package oracledb.customer_products
 
-import dev.typr.foundations.scala.Dialect
-import dev.typr.foundations.scala.SelectBuilder
-import java.sql.Connection
-import dev.typr.foundations.scala.Fragment.sql
+import dev.typr.dslsc.Dialect
+import dev.typr.dslsc.SelectBuilder
+import dev.typr.foundationssc.ConnectionRead
+import dev.typr.foundationssc.Fragment.sql
 
 class CustomerProductsViewRepoImpl extends CustomerProductsViewRepo {
-  override def select: SelectBuilder[CustomerProductsViewFields, CustomerProductsViewRow] = SelectBuilder.of(""""CUSTOMER_PRODUCTS"""", CustomerProductsViewFields.structure, CustomerProductsViewRow.`_rowParser`, Dialect.ORACLE)
+  override def select: SelectBuilder[CustomerProductsViewFields, CustomerProductsViewRow] = SelectBuilder.of(""""CUSTOMER_PRODUCTS"""", CustomerProductsViewFields.structure, CustomerProductsViewRow.rowCodec, Dialect.ORACLE)
 
-  override def selectAll(using c: Connection): List[CustomerProductsViewRow] = {
+  override def selectAll(using c: ConnectionRead): List[CustomerProductsViewRow] = {
     sql"""select "CUSTOMER_ID", "CUSTOMER_NAME", "BILLING_ADDRESS", "PRODUCT_ID", "PRODUCT_NAME", "PRICE"
     from "CUSTOMER_PRODUCTS"
-    """.query(CustomerProductsViewRow.`_rowParser`.all()).runUnchecked(c)
+    """.query(CustomerProductsViewRow.rowCodec.all()).run(using c)
   }
 }

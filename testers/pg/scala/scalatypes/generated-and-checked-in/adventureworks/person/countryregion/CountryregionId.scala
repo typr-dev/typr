@@ -6,17 +6,17 @@
 package adventureworks.person.countryregion
 
 import com.fasterxml.jackson.annotation.JsonValue
-import dev.typr.foundations.PgType
-import dev.typr.foundations.PgTypes
-import dev.typr.foundations.scala.Bijection
+import dev.typr.dslsc.Bijection
+import dev.typr.foundationssc.PgType
+import dev.typr.foundationssc.PgTypes
 
 /** Type for the primary key of table `person.countryregion` */
 case class CountryregionId(@JsonValue value: String) extends scala.AnyVal
 
 object CountryregionId {
-  given bijection: Bijection[CountryregionId, String] = Bijection.apply[CountryregionId, String](_.value)(CountryregionId.apply)
+  given bijection: Bijection[CountryregionId, String] = Bijection.of[CountryregionId, String](_.value, CountryregionId.apply)
 
-  given pgType: PgType[CountryregionId] = PgTypes.text.bimap(CountryregionId.apply, _.value)
+  given pgType: PgType[CountryregionId] = PgTypes.text.to(Bijection.of(CountryregionId.apply, _.value))
 
-  given pgTypeArray: PgType[Array[CountryregionId]] = PgTypes.textArray.bimap(xs => xs.map(CountryregionId.apply), xs => xs.map(_.value))
+  given pgTypeArray: PgType[List[CountryregionId]] = pgType.array
 }

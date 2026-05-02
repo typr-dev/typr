@@ -5,10 +5,11 @@
  */
 package testdb.check_constraint_test
 
-import dev.typr.foundations.kotlin.DeleteBuilder
-import dev.typr.foundations.kotlin.SelectBuilder
-import dev.typr.foundations.kotlin.UpdateBuilder
-import java.sql.Connection
+import dev.typr.dslkt.DeleteBuilder
+import dev.typr.dslkt.SelectBuilder
+import dev.typr.dslkt.UpdateBuilder
+import dev.typr.foundationskt.Connection
+import dev.typr.foundationskt.ConnectionRead
 import kotlin.collections.Iterator
 import kotlin.collections.List
 import kotlin.collections.Map
@@ -19,10 +20,10 @@ interface CheckConstraintTestRepo {
   abstract fun deleteById(
     id: CheckConstraintTestId,
     c: Connection
-  ): Boolean
+  ): kotlin.Boolean
 
   abstract fun deleteByIds(
-    ids: Array<CheckConstraintTestId>,
+    ids: List<CheckConstraintTestId>,
     c: Connection
   ): Int
 
@@ -33,21 +34,21 @@ interface CheckConstraintTestRepo {
 
   abstract fun select(): SelectBuilder<CheckConstraintTestFields, CheckConstraintTestRow>
 
-  abstract fun selectAll(c: Connection): List<CheckConstraintTestRow>
+  abstract fun selectAll(c: ConnectionRead): List<CheckConstraintTestRow>
 
   abstract fun selectById(
     id: CheckConstraintTestId,
-    c: Connection
+    c: ConnectionRead
   ): CheckConstraintTestRow?
 
   abstract fun selectByIds(
-    ids: Array<CheckConstraintTestId>,
-    c: Connection
+    ids: List<CheckConstraintTestId>,
+    c: ConnectionRead
   ): List<CheckConstraintTestRow>
 
   abstract fun selectByIdsTracked(
-    ids: Array<CheckConstraintTestId>,
-    c: Connection
+    ids: List<CheckConstraintTestId>,
+    c: ConnectionRead
   ): Map<CheckConstraintTestId, CheckConstraintTestRow>
 
   abstract fun update(): UpdateBuilder<CheckConstraintTestFields, CheckConstraintTestRow>
@@ -55,7 +56,7 @@ interface CheckConstraintTestRepo {
   abstract fun update(
     row: CheckConstraintTestRow,
     c: Connection
-  ): Boolean
+  ): kotlin.Boolean
 
   abstract fun upsert(
     unsaved: CheckConstraintTestRow,

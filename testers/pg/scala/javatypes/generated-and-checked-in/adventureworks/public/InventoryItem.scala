@@ -5,24 +5,21 @@
  */
 package adventureworks.public
 
-import dev.typr.foundations.PgRead
-import dev.typr.foundations.PgStruct
 import dev.typr.foundations.PgType
 import dev.typr.foundations.PgTypes
+import dev.typr.foundations.RowCodec
 import java.util.Optional
 
 /** PostgreSQL composite type: public.inventory_item */
 case class InventoryItem(
   name: Optional[String],
-  tags: Optional[Array[String]],
-  prices: Optional[Array[java.math.BigDecimal]],
+  tags: Optional[java.util.List[String]],
+  prices: Optional[java.util.List[java.math.BigDecimal]],
   available: Optional[java.lang.Boolean]
 )
 
 object InventoryItem {
-  given pgStruct: PgStruct[InventoryItem] = PgStruct.builder[InventoryItem]("public.inventory_item").optField("name", PgTypes.text, (v: InventoryItem) => v.name).optField("tags", PgTypes.textArray, (v: InventoryItem) => v.tags).optField("prices", PgTypes.numericArray, (v: InventoryItem) => v.prices).optField("available", PgTypes.bool, (v: InventoryItem) => v.available).build(arr => InventoryItem(name = Optional.ofNullable(arr(0).asInstanceOf[String]), tags = Optional.ofNullable(arr(1).asInstanceOf[Array[String]]), prices = Optional.ofNullable(arr(2).asInstanceOf[Array[java.math.BigDecimal]]), available = Optional.ofNullable(arr(3).asInstanceOf[java.lang.Boolean])))
+  given pgType: PgType[InventoryItem] = PgTypes.compositeOf("public.inventory_item", RowCodec.namedBuilder[InventoryItem]().field("name", PgTypes.text.opt(), (v: InventoryItem) => v.name).field("tags", PgTypes.text.array().opt(), (v: InventoryItem) => v.tags).field("prices", PgTypes.numeric.array().opt(), (v: InventoryItem) => v.prices).field("available", PgTypes.bool.opt(), (v: InventoryItem) => v.available).build((t0, t1, t2, t3) => InventoryItem(name = t0, tags = t1, prices = t2, available = t3)))
 
-  given pgType: PgType[InventoryItem] = pgStruct.asType()
-
-  given pgTypeArray: PgType[Array[InventoryItem]] = pgType.array(PgRead.readCompositeArray(pgType.pgCompositeText(), n => new Array[InventoryItem](n)), n => new Array[InventoryItem](n))
+  given pgTypeArray: PgType[java.util.List[InventoryItem]] = pgType.array()
 }

@@ -19,19 +19,19 @@ data class OrderHistoryRowUnsaved(
     */
   @field:JsonProperty("order_id") val orderId: OrdersId,
   /**  */
-  @field:JsonProperty("new_status") val newStatus: String,
+  @field:JsonProperty("new_status") val newStatus: kotlin.String,
   /** Default: NULL
 
     */
-  @field:JsonProperty("previous_status") val previousStatus: Defaulted<String?> = UseDefault(),
+  @field:JsonProperty("previous_status") val previousStatus: Defaulted<kotlin.String?> = UseDefault(),
   /** Default: NULL
 
     */
-  @field:JsonProperty("changed_by") val changedBy: Defaulted<String?> = UseDefault(),
+  @field:JsonProperty("changed_by") val changedBy: Defaulted<kotlin.String?> = UseDefault(),
   /** Default: NULL
 
     */
-  @field:JsonProperty("change_reason") val changeReason: Defaulted<String?> = UseDefault(),
+  @field:JsonProperty("change_reason") val changeReason: Defaulted<kotlin.String?> = UseDefault(),
   /** Default: NULL
 
     */
@@ -42,9 +42,9 @@ data class OrderHistoryRowUnsaved(
   @field:JsonProperty("created_at") val createdAt: Defaulted<LocalDateTime> = UseDefault()
 ) {
   fun toRow(
-    previousStatusDefault: () -> String?,
-    changedByDefault: () -> String?,
-    changeReasonDefault: () -> String?,
+    previousStatusDefault: () -> kotlin.String?,
+    changedByDefault: () -> kotlin.String?,
+    changeReasonDefault: () -> kotlin.String?,
     metadataDefault: () -> Json?,
     createdAtDefault: () -> LocalDateTime,
     historyIdDefault: () -> OrderHistoryId

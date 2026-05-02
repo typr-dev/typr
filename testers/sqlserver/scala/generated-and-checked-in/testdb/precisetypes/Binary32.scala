@@ -6,10 +6,10 @@
 package testdb.precisetypes
 
 import com.fasterxml.jackson.annotation.JsonValue
-import dev.typr.foundations.SqlServerType
-import dev.typr.foundations.SqlServerTypes
+import dev.typr.dslsc.Bijection
 import dev.typr.foundations.data.precise.BinaryN
-import dev.typr.foundations.scala.Bijection
+import dev.typr.foundationssc.SqlServerType
+import dev.typr.foundationssc.SqlServerTypes
 import java.lang.IllegalArgumentException
 import java.util.Arrays
 
@@ -28,11 +28,11 @@ case class Binary32 private(@JsonValue value: Array[Byte]) extends BinaryN {
 }
 
 object Binary32 {
-  given bijection: Bijection[Binary32, Array[Byte]] = Bijection.apply[Binary32, Array[Byte]](_.value)(Binary32.apply)
+  given bijection: Bijection[Binary32, Array[Byte]] = Bijection.of[Binary32, Array[Byte]](_.value, Binary32.apply)
 
   def of(value: Array[Byte]): Option[Binary32] = (if (value.length <= 32) Some(new Binary32(value)) else None)
 
-  given sqlServerType: SqlServerType[Binary32] = SqlServerTypes.binary.bimap(Binary32.apply, _.value)
+  given sqlServerType: SqlServerType[Binary32] = SqlServerTypes.binary.to(Bijection.of(Binary32.apply, _.value))
 
   def unsafeForce(value: Array[Byte]): Binary32 = {
     if (value.length > 32) {

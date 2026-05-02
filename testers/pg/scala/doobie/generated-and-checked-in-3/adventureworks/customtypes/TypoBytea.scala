@@ -17,7 +17,7 @@ import typr.dsl.Bijection
 case class TypoBytea(value: Array[Byte])
 
 object TypoBytea {
-  given bijection: Bijection[TypoBytea, Array[Byte]] = Bijection.apply[TypoBytea, Array[Byte]](_.value)(TypoBytea.apply)
+  given bijection: Bijection[TypoBytea, Array[Byte]] = Bijection[TypoBytea, Array[Byte]](_.value)(TypoBytea.apply)
 
   given decoder: Decoder[TypoBytea] = Decoder.decodeArray[Byte](using Decoder.decodeByte, implicitly).map(TypoBytea.apply)
 

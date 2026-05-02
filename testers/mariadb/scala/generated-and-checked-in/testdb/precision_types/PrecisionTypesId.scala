@@ -6,15 +6,15 @@
 package testdb.precision_types
 
 import com.fasterxml.jackson.annotation.JsonValue
-import dev.typr.foundations.MariaType
-import dev.typr.foundations.scala.Bijection
-import dev.typr.foundations.scala.ScalaDbTypes
+import dev.typr.dslsc.Bijection
+import dev.typr.foundationssc.MariaType
+import dev.typr.foundationssc.MariaTypes
 
 /** Type for the primary key of table `precision_types` */
 case class PrecisionTypesId(@JsonValue value: Int) extends scala.AnyVal
 
 object PrecisionTypesId {
-  given bijection: Bijection[PrecisionTypesId, Int] = Bijection.apply[PrecisionTypesId, Int](_.value)(PrecisionTypesId.apply)
+  given bijection: Bijection[PrecisionTypesId, Int] = Bijection.of[PrecisionTypesId, Int](_.value, PrecisionTypesId.apply)
 
-  given mariaType: MariaType[PrecisionTypesId] = ScalaDbTypes.MariaTypes.int_.bimap(PrecisionTypesId.apply, _.value)
+  given mariaType: MariaType[PrecisionTypesId] = MariaTypes.int_.to(Bijection.of(PrecisionTypesId.apply, _.value))
 }

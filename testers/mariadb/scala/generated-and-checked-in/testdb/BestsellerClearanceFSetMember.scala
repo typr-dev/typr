@@ -9,27 +9,18 @@ package testdb
 
 /** Members of MariaDB SET type with values: bestseller, clearance, featured, new, sale */
 
-sealed abstract class BestsellerClearanceFSetMember(val value: java.lang.String)
+enum BestsellerClearanceFSetMember {
+  case bestseller, clearance, featured, `new`, sale
+  
+}
 
 object BestsellerClearanceFSetMember {
   
+  extension (e: BestsellerClearanceFSetMember) def value: java.lang.String = e.toString
   def apply(str: java.lang.String): scala.Either[java.lang.String, BestsellerClearanceFSetMember] =
-    ByName.get(str).toRight(s"'$str' does not match any of the following legal values: $Names")
-  def force(str: java.lang.String): BestsellerClearanceFSetMember =
-    apply(str) match {
-      case scala.Left(msg) => sys.error(msg)
-      case scala.Right(value) => value
-    }
-  case object bestseller extends BestsellerClearanceFSetMember("bestseller")
-
-  case object clearance extends BestsellerClearanceFSetMember("clearance")
-
-  case object featured extends BestsellerClearanceFSetMember("featured")
-
-  case object `new` extends BestsellerClearanceFSetMember("new")
-
-  case object sale extends BestsellerClearanceFSetMember("sale")
-  val All: scala.List[BestsellerClearanceFSetMember] = scala.List(bestseller, clearance, featured, `new`, sale)
-  val Names: java.lang.String = All.map(_.value).mkString(", ")
-  val ByName: scala.collection.immutable.Map[java.lang.String, BestsellerClearanceFSetMember] = All.map(x => (x.value, x)).toMap
+    scala.util.Try(BestsellerClearanceFSetMember.valueOf(str)).toEither.left.map(_ => s"'$str' does not match any of the following legal values: $Names")
+  def force(str: java.lang.String): BestsellerClearanceFSetMember = BestsellerClearanceFSetMember.valueOf(str)
+  val All: scala.List[BestsellerClearanceFSetMember] = values.toList
+  val Names: java.lang.String = All.map(_.toString).mkString(", ")
+  val ByName: scala.collection.immutable.Map[java.lang.String, BestsellerClearanceFSetMember] = All.map(x => (x.toString, x)).toMap
 }

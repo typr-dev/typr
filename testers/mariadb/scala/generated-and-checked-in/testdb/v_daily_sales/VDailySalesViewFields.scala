@@ -5,17 +5,16 @@
  */
 package testdb.v_daily_sales
 
-import dev.typr.foundations.MariaTypes
-import dev.typr.foundations.RowParser
-import dev.typr.foundations.dsl.FieldsBase
-import dev.typr.foundations.dsl.Path
-import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.scala.RelationStructure
-import dev.typr.foundations.scala.ScalaDbTypes
-import dev.typr.foundations.scala.SqlExpr
-import dev.typr.foundations.scala.SqlExpr.Field
-import dev.typr.foundations.scala.SqlExpr.OptField
-import dev.typr.foundations.scala.TupleExpr10
+import dev.typr.dsl.FieldsBase
+import dev.typr.dsl.Path
+import dev.typr.dsl.SqlExpr.FieldLike
+import dev.typr.dslsc.RelationStructure
+import dev.typr.dslsc.SqlExpr
+import dev.typr.dslsc.SqlExpr.Field
+import dev.typr.dslsc.SqlExpr.OptField
+import dev.typr.dslsc.TupleExpr10
+import dev.typr.foundations.RowCodec
+import dev.typr.foundationssc.MariaTypes
 import java.time.LocalDate
 
 class VDailySalesViewFields(val `_path`: java.util.List[Path]) extends TupleExpr10[LocalDate, Long, Long, BigDecimal, BigDecimal, BigDecimal, BigDecimal, BigDecimal, BigDecimal, BigDecimal] with RelationStructure[VDailySalesViewFields, VDailySalesViewRow]  with FieldsBase[VDailySalesViewRow] {
@@ -27,7 +26,7 @@ class VDailySalesViewFields(val `_path`: java.util.List[Path]) extends TupleExpr
       None,
       None,
       (row, value) => row.copy(orderDate = value),
-      MariaTypes.date
+      MariaTypes.date.underlying
     )
   }
 
@@ -39,7 +38,7 @@ class VDailySalesViewFields(val `_path`: java.util.List[Path]) extends TupleExpr
       None,
       None,
       (row, value) => row.copy(orderCount = value),
-      ScalaDbTypes.MariaTypes.bigint
+      MariaTypes.bigint.underlying
     )
   }
 
@@ -51,7 +50,7 @@ class VDailySalesViewFields(val `_path`: java.util.List[Path]) extends TupleExpr
       None,
       None,
       (row, value) => row.copy(uniqueCustomers = value),
-      ScalaDbTypes.MariaTypes.bigint
+      MariaTypes.bigint.underlying
     )
   }
 
@@ -63,7 +62,7 @@ class VDailySalesViewFields(val `_path`: java.util.List[Path]) extends TupleExpr
       None,
       None,
       (row, value) => row.copy(itemsSold = value),
-      ScalaDbTypes.MariaTypes.numeric
+      MariaTypes.numeric.underlying
     )
   }
 
@@ -75,7 +74,7 @@ class VDailySalesViewFields(val `_path`: java.util.List[Path]) extends TupleExpr
       None,
       None,
       (row, value) => row.copy(grossSales = value),
-      ScalaDbTypes.MariaTypes.numeric
+      MariaTypes.numeric.underlying
     )
   }
 
@@ -87,7 +86,7 @@ class VDailySalesViewFields(val `_path`: java.util.List[Path]) extends TupleExpr
       None,
       None,
       (row, value) => row.copy(totalDiscounts = value),
-      ScalaDbTypes.MariaTypes.numeric
+      MariaTypes.numeric.underlying
     )
   }
 
@@ -99,7 +98,7 @@ class VDailySalesViewFields(val `_path`: java.util.List[Path]) extends TupleExpr
       None,
       None,
       (row, value) => row.copy(totalShipping = value),
-      ScalaDbTypes.MariaTypes.numeric
+      MariaTypes.numeric.underlying
     )
   }
 
@@ -111,7 +110,7 @@ class VDailySalesViewFields(val `_path`: java.util.List[Path]) extends TupleExpr
       None,
       None,
       (row, value) => row.copy(totalTax = value),
-      ScalaDbTypes.MariaTypes.numeric
+      MariaTypes.numeric.underlying
     )
   }
 
@@ -123,7 +122,7 @@ class VDailySalesViewFields(val `_path`: java.util.List[Path]) extends TupleExpr
       None,
       None,
       (row, value) => row.copy(netSales = value),
-      ScalaDbTypes.MariaTypes.numeric
+      MariaTypes.numeric.underlying
     )
   }
 
@@ -135,13 +134,13 @@ class VDailySalesViewFields(val `_path`: java.util.List[Path]) extends TupleExpr
       None,
       None,
       (row, value) => row.copy(avgOrderValue = value),
-      ScalaDbTypes.MariaTypes.numeric
+      MariaTypes.numeric.underlying
     )
   }
 
   override def columns: java.util.List[FieldLike[?, VDailySalesViewRow]] = java.util.List.of(this.orderDate.underlying, this.orderCount.underlying, this.uniqueCustomers.underlying, this.itemsSold.underlying, this.grossSales.underlying, this.totalDiscounts.underlying, this.totalShipping.underlying, this.totalTax.underlying, this.netSales.underlying, this.avgOrderValue.underlying)
 
-  override def rowParser: RowParser[VDailySalesViewRow] = VDailySalesViewRow._rowParser.underlying
+  override def rowCodec: RowCodec[VDailySalesViewRow] = VDailySalesViewRow.rowCodec.underlying
 
   override def withPaths(`_path`: java.util.List[Path]): RelationStructure[VDailySalesViewFields, VDailySalesViewRow] = new VDailySalesViewFields(`_path`)
 

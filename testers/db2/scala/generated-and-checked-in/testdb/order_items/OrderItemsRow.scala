@@ -6,11 +6,10 @@
 package testdb.order_items
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import dev.typr.foundations.Db2Types
+import dev.typr.dslsc.RowCodecs
 import dev.typr.foundations.Tuple.Tuple5
-import dev.typr.foundations.scala.RowParser
-import dev.typr.foundations.scala.RowParsers
-import dev.typr.foundations.scala.ScalaDbTypes
+import dev.typr.foundationssc.Db2Types
+import dev.typr.foundationssc.RowCodec
 import testdb.orders.OrdersId
 
 /** Table: ORDER_ITEMS
@@ -40,8 +39,6 @@ case class OrderItemsRow(
 }
 
 object OrderItemsRow {
-  val `_rowParser`: RowParser[OrderItemsRow] = RowParsers.of(OrdersId.db2Type, ScalaDbTypes.Db2Types.integer, Db2Types.varchar, ScalaDbTypes.Db2Types.integer, ScalaDbTypes.Db2Types.decimal)(OrderItemsRow.apply)(row => Array[Any](row.orderId, row.itemNumber, row.productName, row.quantity, row.unitPrice))
-
   def apply(
     compositeId: OrderItemsId,
     productName: String,
@@ -56,4 +53,6 @@ object OrderItemsRow {
       unitPrice
     )
   }
+
+  val rowCodec: RowCodec[OrderItemsRow] = RowCodecs.of(OrdersId.db2Type, Db2Types.integer, Db2Types.varchar, Db2Types.integer, Db2Types.decimal)(OrderItemsRow.apply)(row => Array[Any](row.orderId, row.itemNumber, row.productName, row.quantity, row.unitPrice))
 }

@@ -36,7 +36,7 @@ object TypoShort {
 
   implicit lazy val arrayToStatement: ToStatement[Array[TypoShort]] = ToStatement[Array[TypoShort]]((s, index, v) => s.setArray(index, s.getConnection.createArrayOf("int2", v.map(v => v.value: java.lang.Short))))
 
-  implicit lazy val bijection: Bijection[TypoShort, Short] = Bijection.apply[TypoShort, Short](_.value)(TypoShort.apply)
+  implicit lazy val bijection: Bijection[TypoShort, Short] = Bijection[TypoShort, Short](_.value)(TypoShort.apply)
 
   implicit lazy val column: Column[TypoShort] = {
     Column.nonNull[TypoShort]((v1: Any, _) =>

@@ -5,10 +5,11 @@
  */
 package adventureworks.production.product
 
-import dev.typr.foundations.kotlin.DeleteBuilder
-import dev.typr.foundations.kotlin.SelectBuilder
-import dev.typr.foundations.kotlin.UpdateBuilder
-import java.sql.Connection
+import dev.typr.dslkt.DeleteBuilder
+import dev.typr.dslkt.SelectBuilder
+import dev.typr.dslkt.UpdateBuilder
+import dev.typr.foundationskt.Connection
+import dev.typr.foundationskt.ConnectionRead
 import kotlin.collections.Iterator
 import kotlin.collections.List
 import kotlin.collections.Map
@@ -19,10 +20,10 @@ interface ProductRepo {
   abstract fun deleteById(
     productid: ProductId,
     c: Connection
-  ): Boolean
+  ): kotlin.Boolean
 
   abstract fun deleteByIds(
-    productids: Array<ProductId>,
+    productids: List<ProductId>,
     c: Connection
   ): Int
 
@@ -40,32 +41,32 @@ interface ProductRepo {
     unsaved: Iterator<ProductRow>,
     batchSize: Int = 10000,
     c: Connection
-  ): Long
+  ): kotlin.Long
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
   abstract fun insertUnsavedStreaming(
     unsaved: Iterator<ProductRowUnsaved>,
     batchSize: Int = 10000,
     c: Connection
-  ): Long
+  ): kotlin.Long
 
   abstract fun select(): SelectBuilder<ProductFields, ProductRow>
 
-  abstract fun selectAll(c: Connection): List<ProductRow>
+  abstract fun selectAll(c: ConnectionRead): List<ProductRow>
 
   abstract fun selectById(
     productid: ProductId,
-    c: Connection
+    c: ConnectionRead
   ): ProductRow?
 
   abstract fun selectByIds(
-    productids: Array<ProductId>,
-    c: Connection
+    productids: List<ProductId>,
+    c: ConnectionRead
   ): List<ProductRow>
 
   abstract fun selectByIdsTracked(
-    productids: Array<ProductId>,
-    c: Connection
+    productids: List<ProductId>,
+    c: ConnectionRead
   ): Map<ProductId, ProductRow>
 
   abstract fun update(): UpdateBuilder<ProductFields, ProductRow>
@@ -73,7 +74,7 @@ interface ProductRepo {
   abstract fun update(
     row: ProductRow,
     c: Connection
-  ): Boolean
+  ): kotlin.Boolean
 
   abstract fun upsert(
     unsaved: ProductRow,

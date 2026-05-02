@@ -6,11 +6,10 @@
 package adventureworks.person.address
 
 import com.fasterxml.jackson.annotation.JsonValue
-import dev.typr.foundations.PgType
-import dev.typr.foundations.PgTypes
-import dev.typr.foundations.internal.arrayMap
-import dev.typr.foundations.kotlin.Bijection
-import dev.typr.foundations.kotlin.KotlinDbTypes
+import dev.typr.foundationskt.Bijection
+import dev.typr.foundationskt.PgType
+import dev.typr.foundationskt.PgTypes
+import kotlin.collections.List
 
 /** Type for the primary key of table `person.address` */
 data class AddressId(@field:JsonValue val value: Int) {
@@ -23,9 +22,9 @@ data class AddressId(@field:JsonValue val value: Int) {
       Bijection.of(AddressId::value, ::AddressId)
 
     val pgType: PgType<AddressId> =
-      KotlinDbTypes.PgTypes.int4.bimap(::AddressId, AddressId::value)
+      PgTypes.int4.to(Bijection.of(::AddressId, AddressId::value))
 
-    val pgTypeArray: PgType<Array<AddressId>> =
-      PgTypes.int4Array.bimap({ xs -> arrayMap.map(xs, ::AddressId, AddressId::class.java) }, { xs -> arrayMap.map(xs, AddressId::value, Int::class.javaObjectType) })
+    val pgTypeArray: PgType<List<AddressId>> =
+      pgType.array()
   }
 }

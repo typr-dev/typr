@@ -16,9 +16,7 @@ class CompositeIdTest extends AnyFunSuite {
   val brandsRepo: BrandsRepoImpl = new BrandsRepoImpl
 
   test("insertWithCompositeId") {
-    withConnection { c =>
-      given java.sql.Connection = c
-
+    withConnection {
       val brand = brandsRepo.insert(BrandsRowUnsaved("TestBrand", "test-brand"))
 
       val product = productsRepo.insert(
@@ -46,9 +44,7 @@ class CompositeIdTest extends AnyFunSuite {
   }
 
   test("selectByCompositeId") {
-    withConnection { c =>
-      given java.sql.Connection = c
-
+    withConnection {
       val product = productsRepo.insert(ProductsRowUnsaved("SKU002", "Product", BigDecimal("50.00")))
       val category = categoriesRepo.insert(CategoriesRowUnsaved("Category", "cat-slug"))
 
@@ -73,9 +69,7 @@ class CompositeIdTest extends AnyFunSuite {
   }
 
   test("selectByCompositeIds") {
-    withConnection { c =>
-      given java.sql.Connection = c
-
+    withConnection {
       val product = productsRepo.insert(ProductsRowUnsaved("SKU003", "Product", BigDecimal("75.00")))
       val category1 = categoriesRepo.insert(CategoriesRowUnsaved("Category1", "cat1-slug"))
       val category2 = categoriesRepo.insert(CategoriesRowUnsaved("Category2", "cat2-slug"))
@@ -85,7 +79,7 @@ class CompositeIdTest extends AnyFunSuite {
       productCategoriesRepo.insert(ProductCategoriesRowUnsaved(product.productId, category2.categoryId))
       productCategoriesRepo.insert(ProductCategoriesRowUnsaved(product.productId, category3.categoryId))
 
-      val ids = Array(
+      val ids = List(
         ProductCategoriesId(product.productId, category1.categoryId),
         ProductCategoriesId(product.productId, category3.categoryId)
       )
@@ -96,9 +90,7 @@ class CompositeIdTest extends AnyFunSuite {
   }
 
   test("selectByIdsTracked") {
-    withConnection { c =>
-      given java.sql.Connection = c
-
+    withConnection {
       val product = productsRepo.insert(ProductsRowUnsaved("SKU004", "Product", BigDecimal("100.00")))
       val category1 = categoriesRepo.insert(CategoriesRowUnsaved("Cat1", "cat1"))
       val category2 = categoriesRepo.insert(CategoriesRowUnsaved("Cat2", "cat2"))
@@ -122,7 +114,7 @@ class CompositeIdTest extends AnyFunSuite {
 
       val id1 = ProductCategoriesId(product.productId, category1.categoryId)
       val id2 = ProductCategoriesId(product.productId, category2.categoryId)
-      val ids = Array(id1, id2)
+      val ids = List(id1, id2)
 
       val tracked = productCategoriesRepo.selectByIdsTracked(ids)
 
@@ -133,9 +125,7 @@ class CompositeIdTest extends AnyFunSuite {
   }
 
   test("updateWithCompositeId") {
-    withConnection { c =>
-      given java.sql.Connection = c
-
+    withConnection {
       val product = productsRepo.insert(ProductsRowUnsaved("SKU005", "Product", BigDecimal("25.00")))
       val category = categoriesRepo.insert(CategoriesRowUnsaved("Category", "cat-slug"))
 
@@ -160,9 +150,7 @@ class CompositeIdTest extends AnyFunSuite {
   }
 
   test("deleteByCompositeId") {
-    withConnection { c =>
-      given java.sql.Connection = c
-
+    withConnection {
       val product = productsRepo.insert(ProductsRowUnsaved("SKU006", "Product", BigDecimal("15.00")))
       val category = categoriesRepo.insert(CategoriesRowUnsaved("ToDelete", "delete-cat"))
 
@@ -179,9 +167,7 @@ class CompositeIdTest extends AnyFunSuite {
   }
 
   test("deleteByCompositeIds") {
-    withConnection { c =>
-      given java.sql.Connection = c
-
+    withConnection {
       val product = productsRepo.insert(ProductsRowUnsaved("SKU007", "Product", BigDecimal("200.00")))
       val category1 = categoriesRepo.insert(CategoriesRowUnsaved("Del1", "del1"))
       val category2 = categoriesRepo.insert(CategoriesRowUnsaved("Del2", "del2"))
@@ -191,7 +177,7 @@ class CompositeIdTest extends AnyFunSuite {
       productCategoriesRepo.insert(ProductCategoriesRowUnsaved(product.productId, category2.categoryId))
       productCategoriesRepo.insert(ProductCategoriesRowUnsaved(product.productId, category3.categoryId))
 
-      val idsToDelete = Array(
+      val idsToDelete = List(
         ProductCategoriesId(product.productId, category1.categoryId),
         ProductCategoriesId(product.productId, category2.categoryId)
       )
@@ -206,9 +192,7 @@ class CompositeIdTest extends AnyFunSuite {
   }
 
   test("upsertWithCompositeId") {
-    withConnection { c =>
-      given java.sql.Connection = c
-
+    withConnection {
       val product = productsRepo.insert(ProductsRowUnsaved("SKU008", "Product", BigDecimal("300.00")))
       val category = categoriesRepo.insert(CategoriesRowUnsaved("Upsert", "upsert"))
 
@@ -233,9 +217,7 @@ class CompositeIdTest extends AnyFunSuite {
   }
 
   test("dslWithCompositeId") {
-    withConnection { c =>
-      given java.sql.Connection = c
-
+    withConnection {
       val product1 = productsRepo.insert(ProductsRowUnsaved("SKU-DSL1", "Product1", BigDecimal("10.00")))
       val product2 = productsRepo.insert(ProductsRowUnsaved("SKU-DSL2", "Product2", BigDecimal("20.00")))
       val category = categoriesRepo.insert(CategoriesRowUnsaved("DSL-Cat", "dsl-cat"))

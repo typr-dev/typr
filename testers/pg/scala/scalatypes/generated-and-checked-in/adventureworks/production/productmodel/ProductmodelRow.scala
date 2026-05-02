@@ -7,13 +7,12 @@ package adventureworks.production.productmodel
 
 import adventureworks.customtypes.Defaulted
 import adventureworks.public.Name
+import dev.typr.dslsc.RowCodecs
 import dev.typr.foundations.PgText
-import dev.typr.foundations.PgTypes
 import dev.typr.foundations.Tuple.Tuple6
 import dev.typr.foundations.data.Xml
-import dev.typr.foundations.scala.DbTypeOps
-import dev.typr.foundations.scala.RowParser
-import dev.typr.foundations.scala.RowParsers
+import dev.typr.foundationssc.PgTypes
+import dev.typr.foundationssc.RowCodec
 import java.time.LocalDateTime
 import java.util.UUID
 
@@ -68,7 +67,7 @@ case class ProductmodelRow(
 }
 
 object ProductmodelRow {
-  val `_rowParser`: RowParser[ProductmodelRow] = RowParsers.of(ProductmodelId.pgType, Name.pgType, PgTypes.xml.nullable, PgTypes.xml.nullable, PgTypes.uuid, PgTypes.timestamp)(ProductmodelRow.apply)(row => Array[Any](row.productmodelid, row.name, row.catalogdescription, row.instructions, row.rowguid, row.modifieddate))
+  given pgText: PgText[ProductmodelRow] = PgText.from(rowCodec.underlying)
 
-  given pgText: PgText[ProductmodelRow] = PgText.from(`_rowParser`.underlying)
+  val rowCodec: RowCodec[ProductmodelRow] = RowCodecs.of(ProductmodelId.pgType, Name.pgType, PgTypes.xml.opt, PgTypes.xml.opt, PgTypes.uuid, PgTypes.timestamp)(ProductmodelRow.apply)(row => Array[Any](row.productmodelid, row.name, row.catalogdescription, row.instructions, row.rowguid, row.modifieddate))
 }

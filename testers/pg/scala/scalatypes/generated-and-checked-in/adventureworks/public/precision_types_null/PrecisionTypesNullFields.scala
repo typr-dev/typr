@@ -12,17 +12,16 @@ import adventureworks.precisetypes.String100
 import adventureworks.precisetypes.String20
 import adventureworks.precisetypes.String255
 import adventureworks.precisetypes.String50
-import dev.typr.foundations.PgTypes
-import dev.typr.foundations.RowParser
-import dev.typr.foundations.dsl.FieldsBase
-import dev.typr.foundations.dsl.Path
-import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.scala.RelationStructure
-import dev.typr.foundations.scala.ScalaDbTypes
-import dev.typr.foundations.scala.SqlExpr
-import dev.typr.foundations.scala.SqlExpr.IdField
-import dev.typr.foundations.scala.SqlExpr.OptField
-import dev.typr.foundations.scala.TupleExpr25
+import dev.typr.dsl.FieldsBase
+import dev.typr.dsl.Path
+import dev.typr.dsl.SqlExpr.FieldLike
+import dev.typr.dslsc.RelationStructure
+import dev.typr.dslsc.SqlExpr
+import dev.typr.dslsc.SqlExpr.IdField
+import dev.typr.dslsc.SqlExpr.OptField
+import dev.typr.dslsc.TupleExpr25
+import dev.typr.foundations.RowCodec
+import dev.typr.foundationssc.PgTypes
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.LocalTime
@@ -37,7 +36,7 @@ class PrecisionTypesNullFields(val `_path`: java.util.List[Path]) extends TupleE
       None,
       Some("int4"),
       (row, value) => row.copy(id = value),
-      PrecisionTypesNullId.pgType
+      PrecisionTypesNullId.pgType.underlying
     )
   }
 
@@ -49,7 +48,7 @@ class PrecisionTypesNullFields(val `_path`: java.util.List[Path]) extends TupleE
       None,
       None,
       (row, value) => row.copy(string10 = value),
-      String10.pgType
+      String10.pgType.underlying
     )
   }
 
@@ -61,7 +60,7 @@ class PrecisionTypesNullFields(val `_path`: java.util.List[Path]) extends TupleE
       None,
       None,
       (row, value) => row.copy(string20 = value),
-      String20.pgType
+      String20.pgType.underlying
     )
   }
 
@@ -73,7 +72,7 @@ class PrecisionTypesNullFields(val `_path`: java.util.List[Path]) extends TupleE
       None,
       None,
       (row, value) => row.copy(string50 = value),
-      String50.pgType
+      String50.pgType.underlying
     )
   }
 
@@ -85,7 +84,7 @@ class PrecisionTypesNullFields(val `_path`: java.util.List[Path]) extends TupleE
       None,
       None,
       (row, value) => row.copy(string100 = value),
-      String100.pgType
+      String100.pgType.underlying
     )
   }
 
@@ -97,7 +96,7 @@ class PrecisionTypesNullFields(val `_path`: java.util.List[Path]) extends TupleE
       None,
       None,
       (row, value) => row.copy(string255 = value),
-      String255.pgType
+      String255.pgType.underlying
     )
   }
 
@@ -109,7 +108,7 @@ class PrecisionTypesNullFields(val `_path`: java.util.List[Path]) extends TupleE
       None,
       Some("bpchar"),
       (row, value) => row.copy(bpchar3 = value),
-      PaddedString3.pgType
+      PaddedString3.pgType.underlying
     )
   }
 
@@ -121,7 +120,7 @@ class PrecisionTypesNullFields(val `_path`: java.util.List[Path]) extends TupleE
       None,
       Some("bpchar"),
       (row, value) => row.copy(bpchar10 = value),
-      PaddedString10.pgType
+      PaddedString10.pgType.underlying
     )
   }
 
@@ -133,7 +132,7 @@ class PrecisionTypesNullFields(val `_path`: java.util.List[Path]) extends TupleE
       None,
       Some("numeric"),
       (row, value) => row.copy(decimal52 = value),
-      ScalaDbTypes.PgTypes.numeric
+      PgTypes.numeric.underlying
     )
   }
 
@@ -145,7 +144,7 @@ class PrecisionTypesNullFields(val `_path`: java.util.List[Path]) extends TupleE
       None,
       Some("numeric"),
       (row, value) => row.copy(decimal102 = value),
-      ScalaDbTypes.PgTypes.numeric
+      PgTypes.numeric.underlying
     )
   }
 
@@ -157,7 +156,7 @@ class PrecisionTypesNullFields(val `_path`: java.util.List[Path]) extends TupleE
       None,
       Some("numeric"),
       (row, value) => row.copy(decimal184 = value),
-      ScalaDbTypes.PgTypes.numeric
+      PgTypes.numeric.underlying
     )
   }
 
@@ -169,7 +168,7 @@ class PrecisionTypesNullFields(val `_path`: java.util.List[Path]) extends TupleE
       None,
       Some("numeric"),
       (row, value) => row.copy(numeric82 = value),
-      ScalaDbTypes.PgTypes.numeric
+      PgTypes.numeric.underlying
     )
   }
 
@@ -181,7 +180,7 @@ class PrecisionTypesNullFields(val `_path`: java.util.List[Path]) extends TupleE
       None,
       Some("numeric"),
       (row, value) => row.copy(numeric124 = value),
-      ScalaDbTypes.PgTypes.numeric
+      PgTypes.numeric.underlying
     )
   }
 
@@ -193,7 +192,7 @@ class PrecisionTypesNullFields(val `_path`: java.util.List[Path]) extends TupleE
       None,
       Some("timestamp"),
       (row, value) => row.copy(timestamp0 = value),
-      PgTypes.timestamp
+      PgTypes.timestamp.underlying
     )
   }
 
@@ -205,7 +204,7 @@ class PrecisionTypesNullFields(val `_path`: java.util.List[Path]) extends TupleE
       None,
       Some("timestamp"),
       (row, value) => row.copy(timestamp3 = value),
-      PgTypes.timestamp
+      PgTypes.timestamp.underlying
     )
   }
 
@@ -217,7 +216,7 @@ class PrecisionTypesNullFields(val `_path`: java.util.List[Path]) extends TupleE
       None,
       Some("timestamp"),
       (row, value) => row.copy(timestamp6 = value),
-      PgTypes.timestamp
+      PgTypes.timestamp.underlying
     )
   }
 
@@ -229,7 +228,7 @@ class PrecisionTypesNullFields(val `_path`: java.util.List[Path]) extends TupleE
       None,
       Some("timestamptz"),
       (row, value) => row.copy(timestamptz0 = value),
-      PgTypes.timestamptz
+      PgTypes.timestamptz.underlying
     )
   }
 
@@ -241,7 +240,7 @@ class PrecisionTypesNullFields(val `_path`: java.util.List[Path]) extends TupleE
       None,
       Some("timestamptz"),
       (row, value) => row.copy(timestamptz3 = value),
-      PgTypes.timestamptz
+      PgTypes.timestamptz.underlying
     )
   }
 
@@ -253,7 +252,7 @@ class PrecisionTypesNullFields(val `_path`: java.util.List[Path]) extends TupleE
       None,
       Some("timestamptz"),
       (row, value) => row.copy(timestamptz6 = value),
-      PgTypes.timestamptz
+      PgTypes.timestamptz.underlying
     )
   }
 
@@ -265,7 +264,7 @@ class PrecisionTypesNullFields(val `_path`: java.util.List[Path]) extends TupleE
       None,
       Some("time"),
       (row, value) => row.copy(time0 = value),
-      PgTypes.time
+      PgTypes.time.underlying
     )
   }
 
@@ -277,7 +276,7 @@ class PrecisionTypesNullFields(val `_path`: java.util.List[Path]) extends TupleE
       None,
       Some("time"),
       (row, value) => row.copy(time3 = value),
-      PgTypes.time
+      PgTypes.time.underlying
     )
   }
 
@@ -289,7 +288,7 @@ class PrecisionTypesNullFields(val `_path`: java.util.List[Path]) extends TupleE
       None,
       Some("time"),
       (row, value) => row.copy(time6 = value),
-      PgTypes.time
+      PgTypes.time.underlying
     )
   }
 
@@ -301,7 +300,7 @@ class PrecisionTypesNullFields(val `_path`: java.util.List[Path]) extends TupleE
       None,
       Some("timetz"),
       (row, value) => row.copy(timetz0 = value),
-      PgTypes.timetz
+      PgTypes.timetz.underlying
     )
   }
 
@@ -313,7 +312,7 @@ class PrecisionTypesNullFields(val `_path`: java.util.List[Path]) extends TupleE
       None,
       Some("timetz"),
       (row, value) => row.copy(timetz3 = value),
-      PgTypes.timetz
+      PgTypes.timetz.underlying
     )
   }
 
@@ -325,13 +324,13 @@ class PrecisionTypesNullFields(val `_path`: java.util.List[Path]) extends TupleE
       None,
       Some("timetz"),
       (row, value) => row.copy(timetz6 = value),
-      PgTypes.timetz
+      PgTypes.timetz.underlying
     )
   }
 
   override def columns: java.util.List[FieldLike[?, PrecisionTypesNullRow]] = java.util.List.of(this.id.underlying, this.string10.underlying, this.string20.underlying, this.string50.underlying, this.string100.underlying, this.string255.underlying, this.bpchar3.underlying, this.bpchar10.underlying, this.decimal52.underlying, this.decimal102.underlying, this.decimal184.underlying, this.numeric82.underlying, this.numeric124.underlying, this.timestamp0.underlying, this.timestamp3.underlying, this.timestamp6.underlying, this.timestamptz0.underlying, this.timestamptz3.underlying, this.timestamptz6.underlying, this.time0.underlying, this.time3.underlying, this.time6.underlying, this.timetz0.underlying, this.timetz3.underlying, this.timetz6.underlying)
 
-  override def rowParser: RowParser[PrecisionTypesNullRow] = PrecisionTypesNullRow._rowParser.underlying
+  override def rowCodec: RowCodec[PrecisionTypesNullRow] = PrecisionTypesNullRow.rowCodec.underlying
 
   override def withPaths(`_path`: java.util.List[Path]): RelationStructure[PrecisionTypesNullFields, PrecisionTypesNullRow] = new PrecisionTypesNullFields(`_path`)
 

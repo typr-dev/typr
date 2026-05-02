@@ -6,23 +6,23 @@
 package testdb.userdefined
 
 import com.fasterxml.jackson.annotation.JsonValue
-import dev.typr.foundations.MariaType
-import dev.typr.foundations.kotlin.Bijection
-import dev.typr.foundations.kotlin.KotlinDbTypes
+import dev.typr.foundationskt.Bijection
+import dev.typr.foundationskt.MariaType
+import dev.typr.foundationskt.MariaTypes
 
 /** Shared type `IsActive`
   * Generated from TypeDefinitions matching
   */
-data class IsActive(@field:JsonValue val value: Boolean) {
+data class IsActive(@field:JsonValue val value: kotlin.Boolean) {
   override fun toString(): kotlin.String {
     return value.toString()
   }
 
   companion object {
-    val bijection: Bijection<IsActive, Boolean> =
+    val bijection: Bijection<IsActive, kotlin.Boolean> =
       Bijection.of(IsActive::value, ::IsActive)
 
     val mariaType: MariaType<IsActive> =
-      KotlinDbTypes.MariaTypes.bool.bimap(::IsActive, IsActive::value)
+      MariaTypes.bool.to(Bijection.of(::IsActive, IsActive::value))
   }
 }

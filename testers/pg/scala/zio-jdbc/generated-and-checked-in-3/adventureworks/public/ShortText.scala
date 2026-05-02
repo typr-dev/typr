@@ -27,7 +27,7 @@ object ShortText {
 
   given arraySetter: Setter[Array[ShortText]] = adventureworks.StringArraySetter.contramap(_.map(_.value))
 
-  given bijection: Bijection[ShortText, String] = Bijection.apply[ShortText, String](_.value)(ShortText.apply)
+  given bijection: Bijection[ShortText, String] = Bijection[ShortText, String](_.value)(ShortText.apply)
 
   given jdbcDecoder: JdbcDecoder[ShortText] = JdbcDecoder.stringDecoder.map(ShortText.apply)
 

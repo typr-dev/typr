@@ -5,17 +5,18 @@
  */
 package testdb.product_images
 
-import dev.typr.foundations.kotlin.DeleteBuilder
-import dev.typr.foundations.kotlin.DeleteBuilderMock
-import dev.typr.foundations.kotlin.DeleteParams
-import dev.typr.foundations.kotlin.SelectBuilder
-import dev.typr.foundations.kotlin.SelectBuilderMock
-import dev.typr.foundations.kotlin.SelectParams
-import dev.typr.foundations.kotlin.UpdateBuilder
-import dev.typr.foundations.kotlin.UpdateBuilderMock
-import dev.typr.foundations.kotlin.UpdateParams
+import dev.typr.dslkt.DeleteBuilder
+import dev.typr.dslkt.DeleteBuilderMock
+import dev.typr.dslkt.DeleteParams
+import dev.typr.dslkt.SelectBuilder
+import dev.typr.dslkt.SelectBuilderMock
+import dev.typr.dslkt.SelectParams
+import dev.typr.dslkt.UpdateBuilder
+import dev.typr.dslkt.UpdateBuilderMock
+import dev.typr.dslkt.UpdateParams
+import dev.typr.foundationskt.Connection
+import dev.typr.foundationskt.ConnectionRead
 import java.lang.RuntimeException
-import java.sql.Connection
 import java.util.ArrayList
 import kotlin.collections.Iterator
 import kotlin.collections.List
@@ -31,10 +32,10 @@ data class ProductImagesRepoMock(
   override fun deleteById(
     imageId: ProductImagesId,
     c: Connection
-  ): Boolean = map.remove(imageId) != null
+  ): kotlin.Boolean = map.remove(imageId) != null
 
   override fun deleteByIds(
-    imageIds: Array<ProductImagesId>,
+    imageIds: List<ProductImagesId>,
     c: Connection
   ): Int {
     var count = 0
@@ -64,16 +65,16 @@ data class ProductImagesRepoMock(
 
   override fun select(): SelectBuilder<ProductImagesFields, ProductImagesRow> = SelectBuilderMock(ProductImagesFields.structure, { map.values.toList() }, SelectParams.empty())
 
-  override fun selectAll(c: Connection): List<ProductImagesRow> = map.values.toList()
+  override fun selectAll(c: ConnectionRead): List<ProductImagesRow> = map.values.toList()
 
   override fun selectById(
     imageId: ProductImagesId,
-    c: Connection
+    c: ConnectionRead
   ): ProductImagesRow? = map[imageId]
 
   override fun selectByIds(
-    imageIds: Array<ProductImagesId>,
-    c: Connection
+    imageIds: List<ProductImagesId>,
+    c: ConnectionRead
   ): List<ProductImagesRow> {
     val result = ArrayList<ProductImagesRow>()
     for (id in imageIds) {
@@ -86,8 +87,8 @@ data class ProductImagesRepoMock(
   }
 
   override fun selectByIdsTracked(
-    imageIds: Array<ProductImagesId>,
-    c: Connection
+    imageIds: List<ProductImagesId>,
+    c: ConnectionRead
   ): Map<ProductImagesId, ProductImagesRow> = selectByIds(imageIds, c).associateBy({ row: ProductImagesRow -> row.imageId })
 
   override fun update(): UpdateBuilder<ProductImagesFields, ProductImagesRow> = UpdateBuilderMock(ProductImagesFields.structure, { map.values.toList() }, UpdateParams.empty(), { row -> row })
@@ -95,7 +96,7 @@ data class ProductImagesRepoMock(
   override fun update(
     row: ProductImagesRow,
     c: Connection
-  ): Boolean {
+  ): kotlin.Boolean {
     val shouldUpdate = map[row.imageId]?.takeIf({ oldRow -> (oldRow != row) }) != null
     if (shouldUpdate) {
       map[row.imageId] = row

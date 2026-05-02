@@ -6,11 +6,10 @@
 package oracledb.employees
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import dev.typr.foundations.OracleTypes
+import dev.typr.dslsc.RowCodecs
 import dev.typr.foundations.Tuple.Tuple2
-import dev.typr.foundations.scala.RowParser
-import dev.typr.foundations.scala.RowParsers
-import dev.typr.foundations.scala.ScalaDbTypes
+import dev.typr.foundationssc.OracleTypes
+import dev.typr.foundationssc.RowCodec
 
 /** Type for the composite primary key of table `EMPLOYEES` */
 case class EmployeesId(
@@ -23,5 +22,5 @@ case class EmployeesId(
 }
 
 object EmployeesId {
-  val `_rowParser`: RowParser[EmployeesId] = RowParsers.of(ScalaDbTypes.OracleTypes.number, OracleTypes.varchar2)(EmployeesId.apply)(row => Array[Any](row.empNumber, row.empSuffix))
+  val rowCodec: RowCodec[EmployeesId] = RowCodecs.of(OracleTypes.number, OracleTypes.varchar2)(EmployeesId.apply)(row => Array[Any](row.empNumber, row.empSuffix))
 }

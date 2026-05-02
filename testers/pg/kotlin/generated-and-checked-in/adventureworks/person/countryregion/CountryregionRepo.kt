@@ -5,10 +5,11 @@
  */
 package adventureworks.person.countryregion
 
-import dev.typr.foundations.kotlin.DeleteBuilder
-import dev.typr.foundations.kotlin.SelectBuilder
-import dev.typr.foundations.kotlin.UpdateBuilder
-import java.sql.Connection
+import dev.typr.dslkt.DeleteBuilder
+import dev.typr.dslkt.SelectBuilder
+import dev.typr.dslkt.UpdateBuilder
+import dev.typr.foundationskt.Connection
+import dev.typr.foundationskt.ConnectionRead
 import kotlin.collections.Iterator
 import kotlin.collections.List
 import kotlin.collections.Map
@@ -19,10 +20,10 @@ interface CountryregionRepo {
   abstract fun deleteById(
     countryregioncode: CountryregionId,
     c: Connection
-  ): Boolean
+  ): kotlin.Boolean
 
   abstract fun deleteByIds(
-    countryregioncodes: Array<CountryregionId>,
+    countryregioncodes: List<CountryregionId>,
     c: Connection
   ): Int
 
@@ -40,32 +41,32 @@ interface CountryregionRepo {
     unsaved: Iterator<CountryregionRow>,
     batchSize: Int = 10000,
     c: Connection
-  ): Long
+  ): kotlin.Long
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
   abstract fun insertUnsavedStreaming(
     unsaved: Iterator<CountryregionRowUnsaved>,
     batchSize: Int = 10000,
     c: Connection
-  ): Long
+  ): kotlin.Long
 
   abstract fun select(): SelectBuilder<CountryregionFields, CountryregionRow>
 
-  abstract fun selectAll(c: Connection): List<CountryregionRow>
+  abstract fun selectAll(c: ConnectionRead): List<CountryregionRow>
 
   abstract fun selectById(
     countryregioncode: CountryregionId,
-    c: Connection
+    c: ConnectionRead
   ): CountryregionRow?
 
   abstract fun selectByIds(
-    countryregioncodes: Array<CountryregionId>,
-    c: Connection
+    countryregioncodes: List<CountryregionId>,
+    c: ConnectionRead
   ): List<CountryregionRow>
 
   abstract fun selectByIdsTracked(
-    countryregioncodes: Array<CountryregionId>,
-    c: Connection
+    countryregioncodes: List<CountryregionId>,
+    c: ConnectionRead
   ): Map<CountryregionId, CountryregionRow>
 
   abstract fun update(): UpdateBuilder<CountryregionFields, CountryregionRow>
@@ -73,7 +74,7 @@ interface CountryregionRepo {
   abstract fun update(
     row: CountryregionRow,
     c: Connection
-  ): Boolean
+  ): kotlin.Boolean
 
   abstract fun upsert(
     unsaved: CountryregionRow,

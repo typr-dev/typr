@@ -5,25 +5,26 @@
  */
 package testdb.mariatest_identity
 
-import dev.typr.foundations.MariaTypes
-import dev.typr.foundations.scala.DeleteBuilder
-import dev.typr.foundations.scala.Dialect
-import dev.typr.foundations.scala.Fragment
-import dev.typr.foundations.scala.SelectBuilder
-import dev.typr.foundations.scala.UpdateBuilder
-import java.sql.Connection
+import dev.typr.dslsc.DeleteBuilder
+import dev.typr.dslsc.Dialect
+import dev.typr.dslsc.SelectBuilder
+import dev.typr.dslsc.UpdateBuilder
+import dev.typr.foundationssc.Connection
+import dev.typr.foundationssc.ConnectionRead
+import dev.typr.foundationssc.Fragment
+import dev.typr.foundationssc.MariaTypes
 import scala.collection.mutable.ListBuffer
-import dev.typr.foundations.scala.Fragment.sql
+import dev.typr.foundationssc.Fragment.sql
 
 class MariatestIdentityRepoImpl extends MariatestIdentityRepo {
   override def delete: DeleteBuilder[MariatestIdentityFields, MariatestIdentityRow] = DeleteBuilder.of("`mariatest_identity`", MariatestIdentityFields.structure, Dialect.MARIADB)
 
-  override def deleteById(id: MariatestIdentityId)(using c: Connection): Boolean = sql"delete from `mariatest_identity` where `id` = ${Fragment.encode(MariatestIdentityId.mariaType, id)}".update().runUnchecked(c) > 0
+  override def deleteById(id: MariatestIdentityId)(using c: Connection): Boolean = sql"delete from `mariatest_identity` where `id` = ${Fragment.encode(MariatestIdentityId.mariaType, id)}".update().run(using c) > 0
 
-  override def deleteByIds(ids: Array[MariatestIdentityId])(using c: Connection): Int = {
+  override def deleteByIds(ids: List[MariatestIdentityId])(using c: Connection): Int = {
     val fragments: ListBuffer[Fragment] = ListBuffer()
     ids.foreach { id => fragments.addOne(Fragment.encode(MariatestIdentityId.mariaType, id)): @scala.annotation.nowarn }
-    return Fragment.interpolate(Fragment.lit("delete from `mariatest_identity` where `id` in ("), Fragment.comma(fragments), Fragment.lit(")")).update().runUnchecked(c)
+    return Fragment.concat(Fragment.of("delete from `mariatest_identity` where `id` in ("), Fragment.comma(fragments), Fragment.of(")")).update().run(using c)
   }
 
   override def insert(unsaved: MariatestIdentityRow)(using c: Connection): MariatestIdentityRow = {
@@ -31,13 +32,13 @@ class MariatestIdentityRepoImpl extends MariatestIdentityRepo {
     values (${Fragment.encode(MariaTypes.varchar, unsaved.name)})
     RETURNING `id`, `name`
     """
-    .updateReturning(MariatestIdentityRow.`_rowParser`.exactlyOne()).runUnchecked(c)
+    .updateReturning(MariatestIdentityRow.rowCodec.exactlyOne()).run(using c)
   }
 
   override def insert(unsaved: MariatestIdentityRowUnsaved)(using c: Connection): MariatestIdentityRow = {
     val columns: ListBuffer[Fragment] = ListBuffer()
     val values: ListBuffer[Fragment] = ListBuffer()
-    columns.addOne(Fragment.lit("`name`")): @scala.annotation.nowarn
+    columns.addOne(Fragment.of("`name`")): @scala.annotation.nowarn
     values.addOne(sql"${Fragment.encode(MariaTypes.varchar, unsaved.name)}"): @scala.annotation.nowarn
     val q: Fragment = {
       sql"""insert into `mariatest_identity`(${Fragment.comma(columns)})
@@ -45,42 +46,42 @@ class MariatestIdentityRepoImpl extends MariatestIdentityRepo {
       RETURNING `id`, `name`
       """
     }
-    return q.updateReturning(MariatestIdentityRow.`_rowParser`.exactlyOne()).runUnchecked(c)
+    return q.updateReturning(MariatestIdentityRow.rowCodec.exactlyOne()).run(using c)
   }
 
-  override def select: SelectBuilder[MariatestIdentityFields, MariatestIdentityRow] = SelectBuilder.of("`mariatest_identity`", MariatestIdentityFields.structure, MariatestIdentityRow.`_rowParser`, Dialect.MARIADB)
+  override def select: SelectBuilder[MariatestIdentityFields, MariatestIdentityRow] = SelectBuilder.of("`mariatest_identity`", MariatestIdentityFields.structure, MariatestIdentityRow.rowCodec, Dialect.MARIADB)
 
-  override def selectAll(using c: Connection): List[MariatestIdentityRow] = {
+  override def selectAll(using c: ConnectionRead): List[MariatestIdentityRow] = {
     sql"""select `id`, `name`
     from `mariatest_identity`
-    """.query(MariatestIdentityRow.`_rowParser`.all()).runUnchecked(c)
+    """.query(MariatestIdentityRow.rowCodec.all()).run(using c)
   }
 
-  override def selectById(id: MariatestIdentityId)(using c: Connection): Option[MariatestIdentityRow] = {
+  override def selectById(id: MariatestIdentityId)(using c: ConnectionRead): Option[MariatestIdentityRow] = {
     sql"""select `id`, `name`
     from `mariatest_identity`
-    where `id` = ${Fragment.encode(MariatestIdentityId.mariaType, id)}""".query(MariatestIdentityRow.`_rowParser`.first()).runUnchecked(c)
+    where `id` = ${Fragment.encode(MariatestIdentityId.mariaType, id)}""".query(MariatestIdentityRow.rowCodec.first()).run(using c)
   }
 
-  override def selectByIds(ids: Array[MariatestIdentityId])(using c: Connection): List[MariatestIdentityRow] = {
+  override def selectByIds(ids: List[MariatestIdentityId])(using c: ConnectionRead): List[MariatestIdentityRow] = {
     val fragments: ListBuffer[Fragment] = ListBuffer()
     ids.foreach { id => fragments.addOne(Fragment.encode(MariatestIdentityId.mariaType, id)): @scala.annotation.nowarn }
-    return Fragment.interpolate(Fragment.lit("select `id`, `name` from `mariatest_identity` where `id` in ("), Fragment.comma(fragments), Fragment.lit(")")).query(MariatestIdentityRow.`_rowParser`.all()).runUnchecked(c)
+    return Fragment.concat(Fragment.of("select `id`, `name` from `mariatest_identity` where `id` in ("), Fragment.comma(fragments), Fragment.of(")")).query(MariatestIdentityRow.rowCodec.all()).run(using c)
   }
 
-  override def selectByIdsTracked(ids: Array[MariatestIdentityId])(using c: Connection): Map[MariatestIdentityId, MariatestIdentityRow] = {
+  override def selectByIdsTracked(ids: List[MariatestIdentityId])(using c: ConnectionRead): Map[MariatestIdentityId, MariatestIdentityRow] = {
     val ret: scala.collection.mutable.Map[MariatestIdentityId, MariatestIdentityRow] = scala.collection.mutable.Map.empty[MariatestIdentityId, MariatestIdentityRow]
     selectByIds(ids)(using c).foreach(row => ret.put(row.id, row): @scala.annotation.nowarn)
     return ret.toMap
   }
 
-  override def update: UpdateBuilder[MariatestIdentityFields, MariatestIdentityRow] = UpdateBuilder.of("`mariatest_identity`", MariatestIdentityFields.structure, MariatestIdentityRow.`_rowParser`, Dialect.MARIADB)
+  override def update: UpdateBuilder[MariatestIdentityFields, MariatestIdentityRow] = UpdateBuilder.of("`mariatest_identity`", MariatestIdentityFields.structure, MariatestIdentityRow.rowCodec, Dialect.MARIADB)
 
   override def update(row: MariatestIdentityRow)(using c: Connection): Boolean = {
     val id: MariatestIdentityId = row.id
     return sql"""update `mariatest_identity`
     set `name` = ${Fragment.encode(MariaTypes.varchar, row.name)}
-    where `id` = ${Fragment.encode(MariatestIdentityId.mariaType, id)}""".update().runUnchecked(c) > 0
+    where `id` = ${Fragment.encode(MariatestIdentityId.mariaType, id)}""".update().run(using c) > 0
   }
 
   override def upsert(unsaved: MariatestIdentityRow)(using c: Connection): MariatestIdentityRow = {
@@ -88,8 +89,8 @@ class MariatestIdentityRepoImpl extends MariatestIdentityRepo {
     VALUES (${Fragment.encode(MariatestIdentityId.mariaType, unsaved.id)}, ${Fragment.encode(MariaTypes.varchar, unsaved.name)})
     ON DUPLICATE KEY UPDATE `name` = VALUES(`name`)
     RETURNING `id`, `name`"""
-    .updateReturning(MariatestIdentityRow.`_rowParser`.exactlyOne())
-    .runUnchecked(c)
+    .updateReturning(MariatestIdentityRow.rowCodec.exactlyOne())
+    .run(using c)
   }
 
   override def upsertBatch(unsaved: Iterator[MariatestIdentityRow])(using c: Connection): List[MariatestIdentityRow] = {
@@ -97,7 +98,7 @@ class MariatestIdentityRepoImpl extends MariatestIdentityRepo {
     VALUES (?, ?)
     ON DUPLICATE KEY UPDATE `name` = VALUES(`name`)
     RETURNING `id`, `name`"""
-      .updateReturningEach(MariatestIdentityRow.`_rowParser`, unsaved)
-    .runUnchecked(c)
+      .updateReturningEach(MariatestIdentityRow.rowCodec, unsaved)
+    .run(using c)
   }
 }

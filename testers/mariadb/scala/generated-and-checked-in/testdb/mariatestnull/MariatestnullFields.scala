@@ -5,8 +5,14 @@
  */
 package testdb.mariatestnull
 
-import dev.typr.foundations.MariaTypes
-import dev.typr.foundations.RowParser
+import dev.typr.dsl.FieldsBase
+import dev.typr.dsl.Path
+import dev.typr.dsl.SqlExpr.FieldLike
+import dev.typr.dslsc.RelationStructure
+import dev.typr.dslsc.SqlExpr
+import dev.typr.dslsc.SqlExpr.OptField
+import dev.typr.dslsc.TupleExpr41
+import dev.typr.foundations.RowCodec
 import dev.typr.foundations.data.Json
 import dev.typr.foundations.data.Uint1
 import dev.typr.foundations.data.Uint2
@@ -14,14 +20,7 @@ import dev.typr.foundations.data.Uint4
 import dev.typr.foundations.data.Uint8
 import dev.typr.foundations.data.maria.Inet4
 import dev.typr.foundations.data.maria.Inet6
-import dev.typr.foundations.dsl.FieldsBase
-import dev.typr.foundations.dsl.Path
-import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.scala.RelationStructure
-import dev.typr.foundations.scala.ScalaDbTypes
-import dev.typr.foundations.scala.SqlExpr
-import dev.typr.foundations.scala.SqlExpr.OptField
-import dev.typr.foundations.scala.TupleExpr41
+import dev.typr.foundationssc.MariaTypes
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
@@ -37,7 +36,7 @@ class MariatestnullFields(val `_path`: java.util.List[Path]) extends TupleExpr41
       None,
       None,
       (row, value) => row.copy(tinyintCol = value),
-      ScalaDbTypes.MariaTypes.tinyint
+      MariaTypes.tinyint.underlying
     )
   }
 
@@ -49,7 +48,7 @@ class MariatestnullFields(val `_path`: java.util.List[Path]) extends TupleExpr41
       None,
       None,
       (row, value) => row.copy(smallintCol = value),
-      ScalaDbTypes.MariaTypes.smallint
+      MariaTypes.smallint.underlying
     )
   }
 
@@ -61,7 +60,7 @@ class MariatestnullFields(val `_path`: java.util.List[Path]) extends TupleExpr41
       None,
       None,
       (row, value) => row.copy(mediumintCol = value),
-      ScalaDbTypes.MariaTypes.mediumint
+      MariaTypes.mediumint.underlying
     )
   }
 
@@ -73,7 +72,7 @@ class MariatestnullFields(val `_path`: java.util.List[Path]) extends TupleExpr41
       None,
       None,
       (row, value) => row.copy(intCol = value),
-      ScalaDbTypes.MariaTypes.int_
+      MariaTypes.int_.underlying
     )
   }
 
@@ -85,7 +84,7 @@ class MariatestnullFields(val `_path`: java.util.List[Path]) extends TupleExpr41
       None,
       None,
       (row, value) => row.copy(bigintCol = value),
-      ScalaDbTypes.MariaTypes.bigint
+      MariaTypes.bigint.underlying
     )
   }
 
@@ -97,7 +96,7 @@ class MariatestnullFields(val `_path`: java.util.List[Path]) extends TupleExpr41
       None,
       None,
       (row, value) => row.copy(tinyintUCol = value),
-      MariaTypes.tinyintUnsigned
+      MariaTypes.tinyintUnsigned.underlying
     )
   }
 
@@ -109,7 +108,7 @@ class MariatestnullFields(val `_path`: java.util.List[Path]) extends TupleExpr41
       None,
       None,
       (row, value) => row.copy(smallintUCol = value),
-      MariaTypes.smallintUnsigned
+      MariaTypes.smallintUnsigned.underlying
     )
   }
 
@@ -121,7 +120,7 @@ class MariatestnullFields(val `_path`: java.util.List[Path]) extends TupleExpr41
       None,
       None,
       (row, value) => row.copy(mediumintUCol = value),
-      MariaTypes.mediumintUnsigned
+      MariaTypes.mediumintUnsigned.underlying
     )
   }
 
@@ -133,7 +132,7 @@ class MariatestnullFields(val `_path`: java.util.List[Path]) extends TupleExpr41
       None,
       None,
       (row, value) => row.copy(intUCol = value),
-      MariaTypes.intUnsigned
+      MariaTypes.intUnsigned.underlying
     )
   }
 
@@ -145,7 +144,7 @@ class MariatestnullFields(val `_path`: java.util.List[Path]) extends TupleExpr41
       None,
       None,
       (row, value) => row.copy(bigintUCol = value),
-      MariaTypes.bigintUnsigned
+      MariaTypes.bigintUnsigned.underlying
     )
   }
 
@@ -157,7 +156,7 @@ class MariatestnullFields(val `_path`: java.util.List[Path]) extends TupleExpr41
       None,
       None,
       (row, value) => row.copy(decimalCol = value),
-      ScalaDbTypes.MariaTypes.numeric
+      MariaTypes.numeric.underlying
     )
   }
 
@@ -169,7 +168,7 @@ class MariatestnullFields(val `_path`: java.util.List[Path]) extends TupleExpr41
       None,
       None,
       (row, value) => row.copy(numericCol = value),
-      ScalaDbTypes.MariaTypes.numeric
+      MariaTypes.numeric.underlying
     )
   }
 
@@ -181,7 +180,7 @@ class MariatestnullFields(val `_path`: java.util.List[Path]) extends TupleExpr41
       None,
       None,
       (row, value) => row.copy(floatCol = value),
-      ScalaDbTypes.MariaTypes.float_
+      MariaTypes.float_.underlying
     )
   }
 
@@ -193,7 +192,7 @@ class MariatestnullFields(val `_path`: java.util.List[Path]) extends TupleExpr41
       None,
       None,
       (row, value) => row.copy(doubleCol = value),
-      ScalaDbTypes.MariaTypes.double_
+      MariaTypes.double_.underlying
     )
   }
 
@@ -205,7 +204,7 @@ class MariatestnullFields(val `_path`: java.util.List[Path]) extends TupleExpr41
       None,
       None,
       (row, value) => row.copy(boolCol = value),
-      ScalaDbTypes.MariaTypes.bool
+      MariaTypes.bool.underlying
     )
   }
 
@@ -217,7 +216,7 @@ class MariatestnullFields(val `_path`: java.util.List[Path]) extends TupleExpr41
       None,
       None,
       (row, value) => row.copy(bitCol = value),
-      MariaTypes.bit
+      MariaTypes.bit.underlying
     )
   }
 
@@ -229,7 +228,7 @@ class MariatestnullFields(val `_path`: java.util.List[Path]) extends TupleExpr41
       None,
       None,
       (row, value) => row.copy(bit1Col = value),
-      MariaTypes.bit
+      MariaTypes.bit.underlying
     )
   }
 
@@ -241,7 +240,7 @@ class MariatestnullFields(val `_path`: java.util.List[Path]) extends TupleExpr41
       None,
       None,
       (row, value) => row.copy(charCol = value),
-      MariaTypes.char_
+      MariaTypes.char_.underlying
     )
   }
 
@@ -253,7 +252,7 @@ class MariatestnullFields(val `_path`: java.util.List[Path]) extends TupleExpr41
       None,
       None,
       (row, value) => row.copy(varcharCol = value),
-      MariaTypes.varchar
+      MariaTypes.varchar.underlying
     )
   }
 
@@ -265,7 +264,7 @@ class MariatestnullFields(val `_path`: java.util.List[Path]) extends TupleExpr41
       None,
       None,
       (row, value) => row.copy(tinytextCol = value),
-      MariaTypes.tinytext
+      MariaTypes.tinytext.underlying
     )
   }
 
@@ -277,7 +276,7 @@ class MariatestnullFields(val `_path`: java.util.List[Path]) extends TupleExpr41
       None,
       None,
       (row, value) => row.copy(textCol = value),
-      MariaTypes.text
+      MariaTypes.text.underlying
     )
   }
 
@@ -289,7 +288,7 @@ class MariatestnullFields(val `_path`: java.util.List[Path]) extends TupleExpr41
       None,
       None,
       (row, value) => row.copy(mediumtextCol = value),
-      MariaTypes.mediumtext
+      MariaTypes.mediumtext.underlying
     )
   }
 
@@ -301,7 +300,7 @@ class MariatestnullFields(val `_path`: java.util.List[Path]) extends TupleExpr41
       None,
       None,
       (row, value) => row.copy(longtextCol = value),
-      MariaTypes.longtext
+      MariaTypes.longtext.underlying
     )
   }
 
@@ -313,7 +312,7 @@ class MariatestnullFields(val `_path`: java.util.List[Path]) extends TupleExpr41
       None,
       None,
       (row, value) => row.copy(binaryCol = value),
-      MariaTypes.binary
+      MariaTypes.binary.underlying
     )
   }
 
@@ -325,7 +324,7 @@ class MariatestnullFields(val `_path`: java.util.List[Path]) extends TupleExpr41
       None,
       None,
       (row, value) => row.copy(varbinaryCol = value),
-      MariaTypes.varbinary
+      MariaTypes.varbinary.underlying
     )
   }
 
@@ -337,7 +336,7 @@ class MariatestnullFields(val `_path`: java.util.List[Path]) extends TupleExpr41
       None,
       None,
       (row, value) => row.copy(tinyblobCol = value),
-      MariaTypes.tinyblob
+      MariaTypes.tinyblob.underlying
     )
   }
 
@@ -349,7 +348,7 @@ class MariatestnullFields(val `_path`: java.util.List[Path]) extends TupleExpr41
       None,
       None,
       (row, value) => row.copy(blobCol = value),
-      MariaTypes.blob
+      MariaTypes.blob.underlying
     )
   }
 
@@ -361,7 +360,7 @@ class MariatestnullFields(val `_path`: java.util.List[Path]) extends TupleExpr41
       None,
       None,
       (row, value) => row.copy(mediumblobCol = value),
-      MariaTypes.mediumblob
+      MariaTypes.mediumblob.underlying
     )
   }
 
@@ -373,7 +372,7 @@ class MariatestnullFields(val `_path`: java.util.List[Path]) extends TupleExpr41
       None,
       None,
       (row, value) => row.copy(longblobCol = value),
-      MariaTypes.longblob
+      MariaTypes.longblob.underlying
     )
   }
 
@@ -385,7 +384,7 @@ class MariatestnullFields(val `_path`: java.util.List[Path]) extends TupleExpr41
       None,
       None,
       (row, value) => row.copy(dateCol = value),
-      MariaTypes.date
+      MariaTypes.date.underlying
     )
   }
 
@@ -397,7 +396,7 @@ class MariatestnullFields(val `_path`: java.util.List[Path]) extends TupleExpr41
       None,
       None,
       (row, value) => row.copy(timeCol = value),
-      MariaTypes.time
+      MariaTypes.time.underlying
     )
   }
 
@@ -409,7 +408,7 @@ class MariatestnullFields(val `_path`: java.util.List[Path]) extends TupleExpr41
       None,
       None,
       (row, value) => row.copy(timeFspCol = value),
-      MariaTypes.time
+      MariaTypes.time.underlying
     )
   }
 
@@ -421,7 +420,7 @@ class MariatestnullFields(val `_path`: java.util.List[Path]) extends TupleExpr41
       None,
       None,
       (row, value) => row.copy(datetimeCol = value),
-      MariaTypes.datetime
+      MariaTypes.datetime.underlying
     )
   }
 
@@ -433,7 +432,7 @@ class MariatestnullFields(val `_path`: java.util.List[Path]) extends TupleExpr41
       None,
       None,
       (row, value) => row.copy(datetimeFspCol = value),
-      MariaTypes.datetime
+      MariaTypes.datetime.underlying
     )
   }
 
@@ -445,7 +444,7 @@ class MariatestnullFields(val `_path`: java.util.List[Path]) extends TupleExpr41
       None,
       None,
       (row, value) => row.copy(timestampCol = value),
-      MariaTypes.timestamp
+      MariaTypes.timestamp.underlying
     )
   }
 
@@ -457,7 +456,7 @@ class MariatestnullFields(val `_path`: java.util.List[Path]) extends TupleExpr41
       None,
       None,
       (row, value) => row.copy(timestampFspCol = value),
-      MariaTypes.timestamp
+      MariaTypes.timestamp.underlying
     )
   }
 
@@ -469,7 +468,7 @@ class MariatestnullFields(val `_path`: java.util.List[Path]) extends TupleExpr41
       None,
       None,
       (row, value) => row.copy(yearCol = value),
-      MariaTypes.year
+      MariaTypes.year.underlying
     )
   }
 
@@ -481,7 +480,7 @@ class MariatestnullFields(val `_path`: java.util.List[Path]) extends TupleExpr41
       None,
       None,
       (row, value) => row.copy(setCol = value),
-      XYZSet.mariaType
+      XYZSet.mariaType.underlying
     )
   }
 
@@ -493,7 +492,7 @@ class MariatestnullFields(val `_path`: java.util.List[Path]) extends TupleExpr41
       None,
       None,
       (row, value) => row.copy(jsonCol = value),
-      MariaTypes.json
+      MariaTypes.json.underlying
     )
   }
 
@@ -505,7 +504,7 @@ class MariatestnullFields(val `_path`: java.util.List[Path]) extends TupleExpr41
       None,
       None,
       (row, value) => row.copy(inet4Col = value),
-      MariaTypes.inet4
+      MariaTypes.inet4.underlying
     )
   }
 
@@ -517,13 +516,13 @@ class MariatestnullFields(val `_path`: java.util.List[Path]) extends TupleExpr41
       None,
       None,
       (row, value) => row.copy(inet6Col = value),
-      MariaTypes.inet6
+      MariaTypes.inet6.underlying
     )
   }
 
   override def columns: java.util.List[FieldLike[?, MariatestnullRow]] = java.util.List.of(this.tinyintCol.underlying, this.smallintCol.underlying, this.mediumintCol.underlying, this.intCol.underlying, this.bigintCol.underlying, this.tinyintUCol.underlying, this.smallintUCol.underlying, this.mediumintUCol.underlying, this.intUCol.underlying, this.bigintUCol.underlying, this.decimalCol.underlying, this.numericCol.underlying, this.floatCol.underlying, this.doubleCol.underlying, this.boolCol.underlying, this.bitCol.underlying, this.bit1Col.underlying, this.charCol.underlying, this.varcharCol.underlying, this.tinytextCol.underlying, this.textCol.underlying, this.mediumtextCol.underlying, this.longtextCol.underlying, this.binaryCol.underlying, this.varbinaryCol.underlying, this.tinyblobCol.underlying, this.blobCol.underlying, this.mediumblobCol.underlying, this.longblobCol.underlying, this.dateCol.underlying, this.timeCol.underlying, this.timeFspCol.underlying, this.datetimeCol.underlying, this.datetimeFspCol.underlying, this.timestampCol.underlying, this.timestampFspCol.underlying, this.yearCol.underlying, this.setCol.underlying, this.jsonCol.underlying, this.inet4Col.underlying, this.inet6Col.underlying)
 
-  override def rowParser: RowParser[MariatestnullRow] = MariatestnullRow._rowParser.underlying
+  override def rowCodec: RowCodec[MariatestnullRow] = MariatestnullRow.rowCodec.underlying
 
   override def withPaths(`_path`: java.util.List[Path]): RelationStructure[MariatestnullFields, MariatestnullRow] = new MariatestnullFields(`_path`)
 

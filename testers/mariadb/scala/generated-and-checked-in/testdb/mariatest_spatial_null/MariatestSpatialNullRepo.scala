@@ -5,17 +5,18 @@
  */
 package testdb.mariatest_spatial_null
 
-import dev.typr.foundations.scala.DeleteBuilder
-import dev.typr.foundations.scala.SelectBuilder
-import dev.typr.foundations.scala.UpdateBuilder
-import java.sql.Connection
+import dev.typr.dslsc.DeleteBuilder
+import dev.typr.dslsc.SelectBuilder
+import dev.typr.dslsc.UpdateBuilder
+import dev.typr.foundationssc.Connection
+import dev.typr.foundationssc.ConnectionRead
 
 trait MariatestSpatialNullRepo {
   def delete: DeleteBuilder[MariatestSpatialNullFields, MariatestSpatialNullRow]
 
   def deleteById(id: MariatestSpatialNullId)(using c: Connection): Boolean
 
-  def deleteByIds(ids: Array[MariatestSpatialNullId])(using c: Connection): Int
+  def deleteByIds(ids: List[MariatestSpatialNullId])(using c: Connection): Int
 
   def insert(unsaved: MariatestSpatialNullRow)(using c: Connection): MariatestSpatialNullRow
 
@@ -23,13 +24,13 @@ trait MariatestSpatialNullRepo {
 
   def select: SelectBuilder[MariatestSpatialNullFields, MariatestSpatialNullRow]
 
-  def selectAll(using c: Connection): List[MariatestSpatialNullRow]
+  def selectAll(using c: ConnectionRead): List[MariatestSpatialNullRow]
 
-  def selectById(id: MariatestSpatialNullId)(using c: Connection): Option[MariatestSpatialNullRow]
+  def selectById(id: MariatestSpatialNullId)(using c: ConnectionRead): Option[MariatestSpatialNullRow]
 
-  def selectByIds(ids: Array[MariatestSpatialNullId])(using c: Connection): List[MariatestSpatialNullRow]
+  def selectByIds(ids: List[MariatestSpatialNullId])(using c: ConnectionRead): List[MariatestSpatialNullRow]
 
-  def selectByIdsTracked(ids: Array[MariatestSpatialNullId])(using c: Connection): Map[MariatestSpatialNullId, MariatestSpatialNullRow]
+  def selectByIdsTracked(ids: List[MariatestSpatialNullId])(using c: ConnectionRead): Map[MariatestSpatialNullId, MariatestSpatialNullRow]
 
   def update: UpdateBuilder[MariatestSpatialNullFields, MariatestSpatialNullRow]
 

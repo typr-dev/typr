@@ -5,13 +5,10 @@
  */
 package adventureworks.public
 
-import dev.typr.foundations.PgRead
-import dev.typr.foundations.PgStruct
-import dev.typr.foundations.PgType
-import dev.typr.foundations.PgTypes
-import dev.typr.foundations.scala.ScalaDbTypes
+import dev.typr.foundationssc.PgType
+import dev.typr.foundationssc.PgTypes
+import dev.typr.foundationssc.RowCodec
 import java.time.LocalDate
-import scala.jdk.OptionConverters.RichOption
 
 /** PostgreSQL composite type: public.employee_record */
 case class EmployeeRecord(
@@ -23,9 +20,7 @@ case class EmployeeRecord(
 )
 
 object EmployeeRecord {
-  given pgStruct: PgStruct[EmployeeRecord] = PgStruct.builder[EmployeeRecord]("public.employee_record").optField("name", PersonName.pgType, (v: EmployeeRecord) => v.name.asJava).optField("contact", ContactInfo.pgType, (v: EmployeeRecord) => v.contact.asJava).optField("employeeId", ScalaDbTypes.PgTypes.int4, (v: EmployeeRecord) => v.employeeId.asJava).optField("salary", ScalaDbTypes.PgTypes.numeric, (v: EmployeeRecord) => v.salary.asJava).optField("hireDate", PgTypes.date, (v: EmployeeRecord) => v.hireDate.asJava).build(arr => EmployeeRecord(name = Option(arr(0).asInstanceOf[PersonName]), contact = Option(arr(1).asInstanceOf[ContactInfo]), employeeId = Option(arr(2).asInstanceOf[Int]), salary = Option(arr(3).asInstanceOf[BigDecimal]), hireDate = Option(arr(4).asInstanceOf[LocalDate])))
+  given pgType: PgType[EmployeeRecord] = PgTypes.compositeOf("public.employee_record", RowCodec.namedBuilder[EmployeeRecord]().field("name", PersonName.pgType.opt)((v: EmployeeRecord) => v.name).field("contact", ContactInfo.pgType.opt)((v: EmployeeRecord) => v.contact).field("employeeId", PgTypes.int4.opt)((v: EmployeeRecord) => v.employeeId).field("salary", PgTypes.numeric.opt)((v: EmployeeRecord) => v.salary).field("hireDate", PgTypes.date.opt)((v: EmployeeRecord) => v.hireDate).build((t0, t1, t2, t3, t4) => EmployeeRecord(name = t0, contact = t1, employeeId = t2, salary = t3, hireDate = t4)))
 
-  given pgType: PgType[EmployeeRecord] = pgStruct.asType()
-
-  given pgTypeArray: PgType[Array[EmployeeRecord]] = pgType.array(PgRead.readCompositeArray(pgType.pgCompositeText(), n => new Array[EmployeeRecord](n)), n => new Array[EmployeeRecord](n))
+  given pgTypeArray: PgType[scala.collection.immutable.List[EmployeeRecord]] = pgType.array
 }

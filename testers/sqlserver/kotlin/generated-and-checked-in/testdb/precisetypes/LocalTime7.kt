@@ -6,16 +6,16 @@
 package testdb.precisetypes
 
 import com.fasterxml.jackson.annotation.JsonValue
-import dev.typr.foundations.SqlServerType
-import dev.typr.foundations.SqlServerTypes
 import dev.typr.foundations.data.precise.LocalTimeN
-import dev.typr.foundations.kotlin.Bijection
+import dev.typr.foundationskt.Bijection
+import dev.typr.foundationskt.SqlServerType
+import dev.typr.foundationskt.SqlServerTypes
 import java.time.LocalTime
 import java.time.temporal.ChronoUnit
 
 @kotlin.ConsistentCopyVisibility
 data class LocalTime7 private constructor(@field:JsonValue val value: LocalTime) : LocalTimeN {
-  override fun equals(other: Any?): Boolean {
+  override fun equals(other: Any?): kotlin.Boolean {
     if (this === other) return true
     if (other !is LocalTimeN) return false
     return value == other.rawValue()
@@ -27,7 +27,7 @@ data class LocalTime7 private constructor(@field:JsonValue val value: LocalTime)
 
   override fun rawValue(): LocalTime = value
 
-  override fun semanticEquals(other: LocalTimeN): Boolean = if (other == null) false else value == other.rawValue()
+  override fun semanticEquals(other: LocalTimeN): kotlin.Boolean = if (other == null) false else (value == other.rawValue())
 
   override fun semanticHashCode(): Int = value.hashCode()
 
@@ -36,14 +36,14 @@ data class LocalTime7 private constructor(@field:JsonValue val value: LocalTime)
   }
 
   companion object {
-    val bijection: Bijection<LocalTime7, LocalTime> =
-      Bijection.of(LocalTime7::value, ::LocalTime7)
+    fun of(value: LocalTime): LocalTime7 = LocalTime7(value.truncatedTo(ChronoUnit.NANOS))
 
     fun now(): LocalTime7 = LocalTime7(LocalTime.now().truncatedTo(ChronoUnit.NANOS))
 
-    fun of(value: LocalTime): LocalTime7 = LocalTime7(value.truncatedTo(ChronoUnit.NANOS))
+    val bijection: Bijection<LocalTime7, LocalTime> =
+      Bijection.of(LocalTime7::value, ::LocalTime7)
 
     val sqlServerType: SqlServerType<LocalTime7> =
-      SqlServerTypes.time.bimap(::LocalTime7, LocalTime7::value)
+      SqlServerTypes.time.to(Bijection.of(::LocalTime7, LocalTime7::value))
   }
 }

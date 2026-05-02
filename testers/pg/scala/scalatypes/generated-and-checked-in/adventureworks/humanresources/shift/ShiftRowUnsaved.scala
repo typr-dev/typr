@@ -9,7 +9,7 @@ import adventureworks.customtypes.Defaulted
 import adventureworks.customtypes.Defaulted.UseDefault
 import adventureworks.public.Name
 import dev.typr.foundations.PgText
-import dev.typr.foundations.PgTypes
+import dev.typr.foundationssc.PgTypes
 import java.time.LocalDateTime
 import java.time.LocalTime
 
@@ -43,5 +43,5 @@ case class ShiftRowUnsaved(
 }
 
 object ShiftRowUnsaved {
-  given pgText: PgText[ShiftRowUnsaved] = PgText.instance((row, sb) => { Name.pgType.text.unsafeEncode(row.name, sb); sb.append(PgText.DELIMETER); PgTypes.time.text.unsafeEncode(row.starttime, sb); sb.append(PgText.DELIMETER); PgTypes.time.text.unsafeEncode(row.endtime, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using ShiftId.pgType.text).unsafeEncode(row.shiftid, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using PgTypes.timestamp.text).unsafeEncode(row.modifieddate, sb) })
+  given pgText: PgText[ShiftRowUnsaved] = PgText.instance((row, sb) => { Name.pgType.pgText().unsafeEncode(row.name, sb); sb.append(PgText.DELIMETER); PgTypes.time.pgText().unsafeEncode(row.starttime, sb); sb.append(PgText.DELIMETER); PgTypes.time.pgText().unsafeEncode(row.endtime, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using ShiftId.pgType.pgText()).unsafeEncode(row.shiftid, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using PgTypes.timestamp.pgText()).unsafeEncode(row.modifieddate, sb) })
 }

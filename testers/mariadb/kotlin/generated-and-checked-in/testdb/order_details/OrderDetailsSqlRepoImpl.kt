@@ -5,14 +5,14 @@
  */
 package testdb.order_details
 
-import dev.typr.foundations.kotlin.Fragment
-import java.sql.Connection
+import dev.typr.foundationskt.ConnectionRead
+import dev.typr.foundationskt.Fragment
 import kotlin.collections.List
 import testdb.orders.OrdersId
 
 class OrderDetailsSqlRepoImpl() : OrderDetailsSqlRepo {
   override fun apply(
     orderId: /* user-picked */ OrdersId,
-    c: Connection
-  ): List<OrderDetailsSqlRow> = Fragment.interpolate(Fragment.lit("-- Get order with all items\nSELECT o.order_id,\n       o.order_number,\n       o.order_status,\n       o.payment_status,\n       o.subtotal,\n       o.shipping_cost,\n       o.tax_amount,\n       o.discount_amount,\n       o.total_amount,\n       o.ordered_at,\n       oi.item_id,\n       oi.product_id,\n       oi.sku,\n       oi.product_name,\n       oi.quantity,\n       oi.unit_price,\n       oi.line_total\nFROM orders o\nJOIN order_items oi ON o.order_id = oi.order_id\nWHERE o.order_id = "), Fragment.encode(OrdersId.mariaType, orderId), Fragment.lit("\n")).query(OrderDetailsSqlRow._rowParser.all()).runUnchecked(c)
+    c: ConnectionRead
+  ): List<OrderDetailsSqlRow> = Fragment.concat(Fragment.of("-- Get order with all items\nSELECT o.order_id,\n       o.order_number,\n       o.order_status,\n       o.payment_status,\n       o.subtotal,\n       o.shipping_cost,\n       o.tax_amount,\n       o.discount_amount,\n       o.total_amount,\n       o.ordered_at,\n       oi.item_id,\n       oi.product_id,\n       oi.sku,\n       oi.product_name,\n       oi.quantity,\n       oi.unit_price,\n       oi.line_total\nFROM orders o\nJOIN order_items oi ON o.order_id = oi.order_id\nWHERE o.order_id = "), Fragment.encode(OrdersId.mariaType, orderId), Fragment.of("\n")).query(OrderDetailsSqlRow.rowCodec.all()).run(c)
 }

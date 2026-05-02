@@ -27,7 +27,7 @@ object CharacterData {
 
   implicit lazy val arraySetter: Setter[Array[CharacterData]] = adventureworks.StringArraySetter.contramap(_.map(_.value))
 
-  implicit lazy val bijection: Bijection[CharacterData, String] = Bijection.apply[CharacterData, String](_.value)(CharacterData.apply)
+  implicit lazy val bijection: Bijection[CharacterData, String] = Bijection[CharacterData, String](_.value)(CharacterData.apply)
 
   implicit lazy val jdbcDecoder: JdbcDecoder[CharacterData] = JdbcDecoder.stringDecoder.map(CharacterData.apply)
 

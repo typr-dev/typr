@@ -3,8 +3,8 @@ package adventureworks;
 import static org.junit.Assert.*;
 
 import adventureworks.person.businessentity.*;
+import dev.typr.dsl.SqlExpr;
 import dev.typr.foundations.PgType;
-import dev.typr.foundations.dsl.SqlExpr;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;

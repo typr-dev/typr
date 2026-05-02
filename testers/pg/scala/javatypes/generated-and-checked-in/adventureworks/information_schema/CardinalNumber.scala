@@ -6,9 +6,9 @@
 package adventureworks.information_schema
 
 import com.fasterxml.jackson.annotation.JsonValue
+import dev.typr.foundations.Bijection
 import dev.typr.foundations.PgType
 import dev.typr.foundations.PgTypes
-import dev.typr.foundations.dsl.Bijection
 
 /** Domain `information_schema.cardinal_number`
  * Constraint: CHECK ((VALUE >= 0))
@@ -16,9 +16,9 @@ import dev.typr.foundations.dsl.Bijection
 case class CardinalNumber(@JsonValue value: Integer)
 
 object CardinalNumber {
-  given bijection: Bijection[CardinalNumber, Integer] = Bijection.apply[CardinalNumber, Integer](_.value)(CardinalNumber.apply)
+  given bijection: Bijection[CardinalNumber, Integer] = Bijection.of[CardinalNumber, Integer](_.value, CardinalNumber.apply)
 
-  given pgType: PgType[CardinalNumber] = PgTypes.int4.bimap(CardinalNumber.apply, _.value).renamed(""""information_schema"."cardinal_number"""")
+  given pgType: PgType[CardinalNumber] = PgTypes.int4.to(Bijection.of(CardinalNumber.apply, _.value)).renamed(""""information_schema"."cardinal_number"""")
 
-  given pgTypeArray: PgType[Array[CardinalNumber]] = PgTypes.int4Array.bimap(xs => xs.map(CardinalNumber.apply), xs => xs.map(_.value)).renamed(""""information_schema"."cardinal_number"[]""")
+  given pgTypeArray: PgType[java.util.List[CardinalNumber]] = pgType.array
 }

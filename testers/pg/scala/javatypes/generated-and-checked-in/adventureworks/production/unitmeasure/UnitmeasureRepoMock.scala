@@ -5,17 +5,18 @@
  */
 package adventureworks.production.unitmeasure
 
-import dev.typr.foundations.dsl.DeleteBuilder
-import dev.typr.foundations.dsl.DeleteBuilderMock
-import dev.typr.foundations.dsl.DeleteParams
-import dev.typr.foundations.dsl.SelectBuilder
-import dev.typr.foundations.dsl.SelectBuilderMock
-import dev.typr.foundations.dsl.SelectParams
-import dev.typr.foundations.dsl.UpdateBuilder
-import dev.typr.foundations.dsl.UpdateBuilderMock
-import dev.typr.foundations.dsl.UpdateParams
+import dev.typr.dsl.DeleteBuilder
+import dev.typr.dsl.DeleteBuilderMock
+import dev.typr.dsl.DeleteParams
+import dev.typr.dsl.SelectBuilder
+import dev.typr.dsl.SelectBuilderMock
+import dev.typr.dsl.SelectParams
+import dev.typr.dsl.UpdateBuilder
+import dev.typr.dsl.UpdateBuilderMock
+import dev.typr.dsl.UpdateParams
+import dev.typr.foundations.Connection
+import dev.typr.foundations.ConnectionRead
 import java.lang.RuntimeException
-import java.sql.Connection
 import java.util.ArrayList
 import java.util.HashMap
 import java.util.Optional
@@ -30,9 +31,9 @@ case class UnitmeasureRepoMock(
 
   override def deleteById(unitmeasurecode: UnitmeasureId)(using c: Connection): java.lang.Boolean = Optional.ofNullable(map.remove(unitmeasurecode)).isPresent()
 
-  override def deleteByIds(unitmeasurecodes: Array[UnitmeasureId])(using c: Connection): Integer = {
+  override def deleteByIds(unitmeasurecodes: java.util.List[UnitmeasureId])(using c: Connection): Integer = {
     var count = 0
-    unitmeasurecodes.foreach { id => if (Optional.ofNullable(map.remove(id)).isPresent()) {
+    unitmeasurecodes.forEach { id => if (Optional.ofNullable(map.remove(id)).isPresent()) {
       count = count + 1
     } }
     return count
@@ -78,19 +79,19 @@ case class UnitmeasureRepoMock(
 
   override def select: SelectBuilder[UnitmeasureFields, UnitmeasureRow] = SelectBuilderMock(UnitmeasureFields.structure, () => new ArrayList(map.values()), SelectParams.empty())
 
-  override def selectAll(using c: Connection): java.util.List[UnitmeasureRow] = new ArrayList(map.values())
+  override def selectAll(using c: ConnectionRead): java.util.List[UnitmeasureRow] = new ArrayList(map.values())
 
-  override def selectById(unitmeasurecode: UnitmeasureId)(using c: Connection): Optional[UnitmeasureRow] = Optional.ofNullable(map.get(unitmeasurecode))
+  override def selectById(unitmeasurecode: UnitmeasureId)(using c: ConnectionRead): Optional[UnitmeasureRow] = Optional.ofNullable(map.get(unitmeasurecode))
 
-  override def selectByIds(unitmeasurecodes: Array[UnitmeasureId])(using c: Connection): java.util.List[UnitmeasureRow] = {
+  override def selectByIds(unitmeasurecodes: java.util.List[UnitmeasureId])(using c: ConnectionRead): java.util.List[UnitmeasureRow] = {
     val result = new ArrayList[UnitmeasureRow]()
-    unitmeasurecodes.foreach { id => val opt = Optional.ofNullable(map.get(id)); if (opt.isPresent()) {
+    unitmeasurecodes.forEach { id => val opt = Optional.ofNullable(map.get(id)); if (opt.isPresent()) {
       result.add(opt.get()): @scala.annotation.nowarn
     } }
     return result
   }
 
-  override def selectByIdsTracked(unitmeasurecodes: Array[UnitmeasureId])(using c: Connection): java.util.Map[UnitmeasureId, UnitmeasureRow] = selectByIds(unitmeasurecodes)(using c).stream().collect(Collectors.toMap((row: UnitmeasureRow) => row.unitmeasurecode, Function.identity()))
+  override def selectByIdsTracked(unitmeasurecodes: java.util.List[UnitmeasureId])(using c: ConnectionRead): java.util.Map[UnitmeasureId, UnitmeasureRow] = selectByIds(unitmeasurecodes)(using c).stream().collect(Collectors.toMap((row: UnitmeasureRow) => row.unitmeasurecode, Function.identity()))
 
   override def update: UpdateBuilder[UnitmeasureFields, UnitmeasureRow] = UpdateBuilderMock(UnitmeasureFields.structure, () => new ArrayList(map.values()), UpdateParams.empty(), row => row)
 

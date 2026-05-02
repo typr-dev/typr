@@ -7,11 +7,11 @@ package adventureworks.person.addresstype
 
 import adventureworks.customtypes.Defaulted
 import adventureworks.public.Name
+import dev.typr.dslsc.RowCodecs
 import dev.typr.foundations.PgText
-import dev.typr.foundations.PgTypes
 import dev.typr.foundations.Tuple.Tuple4
-import dev.typr.foundations.scala.RowParser
-import dev.typr.foundations.scala.RowParsers
+import dev.typr.foundationssc.PgTypes
+import dev.typr.foundationssc.RowCodec
 import java.time.LocalDateTime
 import java.util.UUID
 
@@ -56,7 +56,7 @@ case class AddresstypeRow(
 }
 
 object AddresstypeRow {
-  val `_rowParser`: RowParser[AddresstypeRow] = RowParsers.of(AddresstypeId.pgType, Name.pgType, PgTypes.uuid, PgTypes.timestamp)(AddresstypeRow.apply)(row => Array[Any](row.addresstypeid, row.name, row.rowguid, row.modifieddate))
+  given pgText: PgText[AddresstypeRow] = PgText.from(rowCodec.underlying)
 
-  given pgText: PgText[AddresstypeRow] = PgText.from(`_rowParser`.underlying)
+  val rowCodec: RowCodec[AddresstypeRow] = RowCodecs.of(AddresstypeId.pgType, Name.pgType, PgTypes.uuid, PgTypes.timestamp)(AddresstypeRow.apply)(row => Array[Any](row.addresstypeid, row.name, row.rowguid, row.modifieddate))
 }

@@ -30,6 +30,21 @@ data class CreditCard(
   }
 
   companion object {
+    @Throws(IOException::class)
+    fun parseFrom(input: CodedInputStream): CreditCard {
+      var cardNumber: kotlin.String = ""
+      var expiryDate: kotlin.String = ""
+      var cvv: kotlin.String = ""
+      while (!input.isAtEnd()) {
+        val tag = input.readTag()
+        if (WireFormat.getTagFieldNumber(tag) == 1) { cardNumber = input.readString() }
+        else if (WireFormat.getTagFieldNumber(tag) == 2) { expiryDate = input.readString() }
+        else if (WireFormat.getTagFieldNumber(tag) == 3) { cvv = input.readString() }
+        else { input.skipField(tag) }
+      }
+      return CreditCard(cardNumber, expiryDate, cvv)
+    }
+
     val MARSHALLER: Marshaller<CreditCard> =
       object : Marshaller<CreditCard> {
         override fun stream(value: CreditCard): InputStream {
@@ -51,20 +66,5 @@ data class CreditCard(
           } 
         }
       }
-
-    @Throws(IOException::class)
-    fun parseFrom(input: CodedInputStream): CreditCard {
-      var cardNumber: kotlin.String = ""
-      var expiryDate: kotlin.String = ""
-      var cvv: kotlin.String = ""
-      while (!input.isAtEnd()) {
-        val tag = input.readTag()
-        if (WireFormat.getTagFieldNumber(tag) == 1) { cardNumber = input.readString() }
-        else if (WireFormat.getTagFieldNumber(tag) == 2) { expiryDate = input.readString() }
-        else if (WireFormat.getTagFieldNumber(tag) == 3) { cvv = input.readString() }
-        else { input.skipField(tag) }
-      }
-      return CreditCard(cardNumber, expiryDate, cvv)
-    }
   }
 }

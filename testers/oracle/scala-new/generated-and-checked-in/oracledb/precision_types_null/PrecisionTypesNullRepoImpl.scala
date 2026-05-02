@@ -5,14 +5,14 @@
  */
 package oracledb.precision_types_null
 
-import dev.typr.foundations.OracleTypes
-import dev.typr.foundations.scala.DbTypeOps
-import dev.typr.foundations.scala.DeleteBuilder
-import dev.typr.foundations.scala.Dialect
-import dev.typr.foundations.scala.Fragment
-import dev.typr.foundations.scala.SelectBuilder
-import dev.typr.foundations.scala.UpdateBuilder
-import java.sql.Connection
+import dev.typr.dslsc.DeleteBuilder
+import dev.typr.dslsc.Dialect
+import dev.typr.dslsc.SelectBuilder
+import dev.typr.dslsc.UpdateBuilder
+import dev.typr.foundationssc.Connection
+import dev.typr.foundationssc.ConnectionRead
+import dev.typr.foundationssc.Fragment
+import dev.typr.foundationssc.OracleTypes
 import oracledb.precisetypes.Decimal10_2
 import oracledb.precisetypes.Decimal18_4
 import oracledb.precisetypes.Decimal5_2
@@ -29,126 +29,126 @@ import oracledb.precisetypes.NonEmptyString20
 import oracledb.precisetypes.NonEmptyString255
 import oracledb.precisetypes.NonEmptyString50
 import scala.collection.mutable.ListBuffer
-import dev.typr.foundations.scala.Fragment.sql
+import dev.typr.foundationssc.Fragment.sql
 
 class PrecisionTypesNullRepoImpl extends PrecisionTypesNullRepo {
   override def delete: DeleteBuilder[PrecisionTypesNullFields, PrecisionTypesNullRow] = DeleteBuilder.of(""""PRECISION_TYPES_NULL"""", PrecisionTypesNullFields.structure, Dialect.ORACLE)
 
-  override def deleteById(id: PrecisionTypesNullId)(using c: Connection): Boolean = sql"""delete from "PRECISION_TYPES_NULL" where "ID" = ${Fragment.encode(PrecisionTypesNullId.oracleType, id)}""".update().runUnchecked(c) > 0
+  override def deleteById(id: PrecisionTypesNullId)(using c: Connection): Boolean = sql"""delete from "PRECISION_TYPES_NULL" where "ID" = ${Fragment.encode(PrecisionTypesNullId.oracleType, id)}""".update().run(using c) > 0
 
-  override def deleteByIds(ids: Array[PrecisionTypesNullId])(using c: Connection): Int = {
+  override def deleteByIds(ids: List[PrecisionTypesNullId])(using c: Connection): Int = {
     val fragments: ListBuffer[Fragment] = ListBuffer()
     ids.foreach { id => fragments.addOne(Fragment.encode(PrecisionTypesNullId.oracleType, id)): @scala.annotation.nowarn }
-    return Fragment.interpolate(Fragment.lit("""delete from "PRECISION_TYPES_NULL" where "ID" in ("""), Fragment.comma(fragments), Fragment.lit(")")).update().runUnchecked(c)
+    return Fragment.concat(Fragment.of("""delete from "PRECISION_TYPES_NULL" where "ID" in ("""), Fragment.comma(fragments), Fragment.of(")")).update().run(using c)
   }
 
   override def insert(unsaved: PrecisionTypesNullRow)(using c: Connection): PrecisionTypesNullRow = {
   sql"""insert into "PRECISION_TYPES_NULL"("ID", "STRING10", "STRING20", "STRING50", "STRING100", "STRING255", "CHAR10", "NUMBER5_2", "NUMBER10_2", "NUMBER18_4", "NUMBER5_0", "NUMBER10_0", "NUMBER18_0", "TS0", "TS3", "TS6", "TS9")
-    values (${Fragment.encode(PrecisionTypesNullId.oracleType, unsaved.id)}, ${Fragment.encode(NonEmptyString10.oracleType.nullable, unsaved.string10)}, ${Fragment.encode(NonEmptyString20.oracleType.nullable, unsaved.string20)}, ${Fragment.encode(NonEmptyString50.oracleType.nullable, unsaved.string50)}, ${Fragment.encode(NonEmptyString100.oracleType.nullable, unsaved.string100)}, ${Fragment.encode(NonEmptyString255.oracleType.nullable, unsaved.string255)}, ${Fragment.encode(NonEmptyPaddedString10.oracleType.nullable, unsaved.char10)}, ${Fragment.encode(Decimal5_2.oracleType.nullable, unsaved.number52)}, ${Fragment.encode(Decimal10_2.oracleType.nullable, unsaved.number102)}, ${Fragment.encode(Decimal18_4.oracleType.nullable, unsaved.number184)}, ${Fragment.encode(Int5.oracleType.nullable, unsaved.number50)}, ${Fragment.encode(Int10.oracleType.nullable, unsaved.number100)}, ${Fragment.encode(Int18.oracleType.nullable, unsaved.number180)}, ${Fragment.encode(OracleTypes.timestamp.nullable, unsaved.ts0)}, ${Fragment.encode(LocalDateTime3.oracleType.nullable, unsaved.ts3)}, ${Fragment.encode(LocalDateTime6.oracleType.nullable, unsaved.ts6)}, ${Fragment.encode(LocalDateTime9.oracleType.nullable, unsaved.ts9)})
+    values (${Fragment.encode(PrecisionTypesNullId.oracleType, unsaved.id)}, ${Fragment.encode(NonEmptyString10.oracleType.opt, unsaved.string10)}, ${Fragment.encode(NonEmptyString20.oracleType.opt, unsaved.string20)}, ${Fragment.encode(NonEmptyString50.oracleType.opt, unsaved.string50)}, ${Fragment.encode(NonEmptyString100.oracleType.opt, unsaved.string100)}, ${Fragment.encode(NonEmptyString255.oracleType.opt, unsaved.string255)}, ${Fragment.encode(NonEmptyPaddedString10.oracleType.opt, unsaved.char10)}, ${Fragment.encode(Decimal5_2.oracleType.opt, unsaved.number52)}, ${Fragment.encode(Decimal10_2.oracleType.opt, unsaved.number102)}, ${Fragment.encode(Decimal18_4.oracleType.opt, unsaved.number184)}, ${Fragment.encode(Int5.oracleType.opt, unsaved.number50)}, ${Fragment.encode(Int10.oracleType.opt, unsaved.number100)}, ${Fragment.encode(Int18.oracleType.opt, unsaved.number180)}, ${Fragment.encode(OracleTypes.timestamp.opt, unsaved.ts0)}, ${Fragment.encode(LocalDateTime3.oracleType.opt, unsaved.ts3)}, ${Fragment.encode(LocalDateTime6.oracleType.opt, unsaved.ts6)}, ${Fragment.encode(LocalDateTime9.oracleType.opt, unsaved.ts9)})
     """
-    .updateReturningGeneratedKeys(Array[String]("ID", "STRING10", "STRING20", "STRING50", "STRING100", "STRING255", "CHAR10", "NUMBER5_2", "NUMBER10_2", "NUMBER18_4", "NUMBER5_0", "NUMBER10_0", "NUMBER18_0", "TS0", "TS3", "TS6", "TS9"), PrecisionTypesNullRow.`_rowParser`.exactlyOne()).runUnchecked(c)
+    .updateReturningGeneratedKeys(Array[String]("ID", "STRING10", "STRING20", "STRING50", "STRING100", "STRING255", "CHAR10", "NUMBER5_2", "NUMBER10_2", "NUMBER18_4", "NUMBER5_0", "NUMBER10_0", "NUMBER18_0", "TS0", "TS3", "TS6", "TS9"), PrecisionTypesNullRow.rowCodec.exactlyOne()).run(using c)
   }
 
   override def insert(unsaved: PrecisionTypesNullRowUnsaved)(using c: Connection): PrecisionTypesNullRow = {
     val columns: ListBuffer[Fragment] = ListBuffer()
     val values: ListBuffer[Fragment] = ListBuffer()
-    columns.addOne(Fragment.lit(""""STRING10"""")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(NonEmptyString10.oracleType.nullable, unsaved.string10)}"): @scala.annotation.nowarn
-    columns.addOne(Fragment.lit(""""STRING20"""")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(NonEmptyString20.oracleType.nullable, unsaved.string20)}"): @scala.annotation.nowarn
-    columns.addOne(Fragment.lit(""""STRING50"""")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(NonEmptyString50.oracleType.nullable, unsaved.string50)}"): @scala.annotation.nowarn
-    columns.addOne(Fragment.lit(""""STRING100"""")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(NonEmptyString100.oracleType.nullable, unsaved.string100)}"): @scala.annotation.nowarn
-    columns.addOne(Fragment.lit(""""STRING255"""")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(NonEmptyString255.oracleType.nullable, unsaved.string255)}"): @scala.annotation.nowarn
-    columns.addOne(Fragment.lit(""""CHAR10"""")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(NonEmptyPaddedString10.oracleType.nullable, unsaved.char10)}"): @scala.annotation.nowarn
-    columns.addOne(Fragment.lit(""""NUMBER5_2"""")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(Decimal5_2.oracleType.nullable, unsaved.number52)}"): @scala.annotation.nowarn
-    columns.addOne(Fragment.lit(""""NUMBER10_2"""")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(Decimal10_2.oracleType.nullable, unsaved.number102)}"): @scala.annotation.nowarn
-    columns.addOne(Fragment.lit(""""NUMBER18_4"""")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(Decimal18_4.oracleType.nullable, unsaved.number184)}"): @scala.annotation.nowarn
-    columns.addOne(Fragment.lit(""""NUMBER5_0"""")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(Int5.oracleType.nullable, unsaved.number50)}"): @scala.annotation.nowarn
-    columns.addOne(Fragment.lit(""""NUMBER10_0"""")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(Int10.oracleType.nullable, unsaved.number100)}"): @scala.annotation.nowarn
-    columns.addOne(Fragment.lit(""""NUMBER18_0"""")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(Int18.oracleType.nullable, unsaved.number180)}"): @scala.annotation.nowarn
-    columns.addOne(Fragment.lit(""""TS0"""")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(OracleTypes.timestamp.nullable, unsaved.ts0)}"): @scala.annotation.nowarn
-    columns.addOne(Fragment.lit(""""TS3"""")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(LocalDateTime3.oracleType.nullable, unsaved.ts3)}"): @scala.annotation.nowarn
-    columns.addOne(Fragment.lit(""""TS6"""")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(LocalDateTime6.oracleType.nullable, unsaved.ts6)}"): @scala.annotation.nowarn
-    columns.addOne(Fragment.lit(""""TS9"""")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(LocalDateTime9.oracleType.nullable, unsaved.ts9)}"): @scala.annotation.nowarn
+    columns.addOne(Fragment.of(""""STRING10"""")): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(NonEmptyString10.oracleType.opt, unsaved.string10)}"): @scala.annotation.nowarn
+    columns.addOne(Fragment.of(""""STRING20"""")): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(NonEmptyString20.oracleType.opt, unsaved.string20)}"): @scala.annotation.nowarn
+    columns.addOne(Fragment.of(""""STRING50"""")): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(NonEmptyString50.oracleType.opt, unsaved.string50)}"): @scala.annotation.nowarn
+    columns.addOne(Fragment.of(""""STRING100"""")): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(NonEmptyString100.oracleType.opt, unsaved.string100)}"): @scala.annotation.nowarn
+    columns.addOne(Fragment.of(""""STRING255"""")): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(NonEmptyString255.oracleType.opt, unsaved.string255)}"): @scala.annotation.nowarn
+    columns.addOne(Fragment.of(""""CHAR10"""")): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(NonEmptyPaddedString10.oracleType.opt, unsaved.char10)}"): @scala.annotation.nowarn
+    columns.addOne(Fragment.of(""""NUMBER5_2"""")): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(Decimal5_2.oracleType.opt, unsaved.number52)}"): @scala.annotation.nowarn
+    columns.addOne(Fragment.of(""""NUMBER10_2"""")): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(Decimal10_2.oracleType.opt, unsaved.number102)}"): @scala.annotation.nowarn
+    columns.addOne(Fragment.of(""""NUMBER18_4"""")): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(Decimal18_4.oracleType.opt, unsaved.number184)}"): @scala.annotation.nowarn
+    columns.addOne(Fragment.of(""""NUMBER5_0"""")): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(Int5.oracleType.opt, unsaved.number50)}"): @scala.annotation.nowarn
+    columns.addOne(Fragment.of(""""NUMBER10_0"""")): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(Int10.oracleType.opt, unsaved.number100)}"): @scala.annotation.nowarn
+    columns.addOne(Fragment.of(""""NUMBER18_0"""")): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(Int18.oracleType.opt, unsaved.number180)}"): @scala.annotation.nowarn
+    columns.addOne(Fragment.of(""""TS0"""")): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(OracleTypes.timestamp.opt, unsaved.ts0)}"): @scala.annotation.nowarn
+    columns.addOne(Fragment.of(""""TS3"""")): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(LocalDateTime3.oracleType.opt, unsaved.ts3)}"): @scala.annotation.nowarn
+    columns.addOne(Fragment.of(""""TS6"""")): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(LocalDateTime6.oracleType.opt, unsaved.ts6)}"): @scala.annotation.nowarn
+    columns.addOne(Fragment.of(""""TS9"""")): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(LocalDateTime9.oracleType.opt, unsaved.ts9)}"): @scala.annotation.nowarn
     unsaved.id.visit(
       {  },
-      value => { columns.addOne(Fragment.lit(""""ID"""")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(PrecisionTypesNullId.oracleType, value)}"): @scala.annotation.nowarn }
+      value => { columns.addOne(Fragment.of(""""ID"""")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(PrecisionTypesNullId.oracleType, value)}"): @scala.annotation.nowarn }
     );
     val q: Fragment = {
       sql"""insert into "PRECISION_TYPES_NULL"(${Fragment.comma(columns)})
       values (${Fragment.comma(values)})
       """
     }
-    return q.updateReturningGeneratedKeys(Array[String]("ID", "STRING10", "STRING20", "STRING50", "STRING100", "STRING255", "CHAR10", "NUMBER5_2", "NUMBER10_2", "NUMBER18_4", "NUMBER5_0", "NUMBER10_0", "NUMBER18_0", "TS0", "TS3", "TS6", "TS9"), PrecisionTypesNullRow.`_rowParser`.exactlyOne()).runUnchecked(c)
+    return q.updateReturningGeneratedKeys(Array[String]("ID", "STRING10", "STRING20", "STRING50", "STRING100", "STRING255", "CHAR10", "NUMBER5_2", "NUMBER10_2", "NUMBER18_4", "NUMBER5_0", "NUMBER10_0", "NUMBER18_0", "TS0", "TS3", "TS6", "TS9"), PrecisionTypesNullRow.rowCodec.exactlyOne()).run(using c)
   }
 
-  override def select: SelectBuilder[PrecisionTypesNullFields, PrecisionTypesNullRow] = SelectBuilder.of(""""PRECISION_TYPES_NULL"""", PrecisionTypesNullFields.structure, PrecisionTypesNullRow.`_rowParser`, Dialect.ORACLE)
+  override def select: SelectBuilder[PrecisionTypesNullFields, PrecisionTypesNullRow] = SelectBuilder.of(""""PRECISION_TYPES_NULL"""", PrecisionTypesNullFields.structure, PrecisionTypesNullRow.rowCodec, Dialect.ORACLE)
 
-  override def selectAll(using c: Connection): List[PrecisionTypesNullRow] = {
+  override def selectAll(using c: ConnectionRead): List[PrecisionTypesNullRow] = {
     sql"""select "ID", "STRING10", "STRING20", "STRING50", "STRING100", "STRING255", "CHAR10", "NUMBER5_2", "NUMBER10_2", "NUMBER18_4", "NUMBER5_0", "NUMBER10_0", "NUMBER18_0", "TS0", "TS3", "TS6", "TS9"
     from "PRECISION_TYPES_NULL"
-    """.query(PrecisionTypesNullRow.`_rowParser`.all()).runUnchecked(c)
+    """.query(PrecisionTypesNullRow.rowCodec.all()).run(using c)
   }
 
-  override def selectById(id: PrecisionTypesNullId)(using c: Connection): Option[PrecisionTypesNullRow] = {
+  override def selectById(id: PrecisionTypesNullId)(using c: ConnectionRead): Option[PrecisionTypesNullRow] = {
     sql"""select "ID", "STRING10", "STRING20", "STRING50", "STRING100", "STRING255", "CHAR10", "NUMBER5_2", "NUMBER10_2", "NUMBER18_4", "NUMBER5_0", "NUMBER10_0", "NUMBER18_0", "TS0", "TS3", "TS6", "TS9"
     from "PRECISION_TYPES_NULL"
-    where "ID" = ${Fragment.encode(PrecisionTypesNullId.oracleType, id)}""".query(PrecisionTypesNullRow.`_rowParser`.first()).runUnchecked(c)
+    where "ID" = ${Fragment.encode(PrecisionTypesNullId.oracleType, id)}""".query(PrecisionTypesNullRow.rowCodec.first()).run(using c)
   }
 
-  override def selectByIds(ids: Array[PrecisionTypesNullId])(using c: Connection): List[PrecisionTypesNullRow] = {
+  override def selectByIds(ids: List[PrecisionTypesNullId])(using c: ConnectionRead): List[PrecisionTypesNullRow] = {
     val fragments: ListBuffer[Fragment] = ListBuffer()
     ids.foreach { id => fragments.addOne(Fragment.encode(PrecisionTypesNullId.oracleType, id)): @scala.annotation.nowarn }
-    return Fragment.interpolate(Fragment.lit("""select "ID", "STRING10", "STRING20", "STRING50", "STRING100", "STRING255", "CHAR10", "NUMBER5_2", "NUMBER10_2", "NUMBER18_4", "NUMBER5_0", "NUMBER10_0", "NUMBER18_0", "TS0", "TS3", "TS6", "TS9" from "PRECISION_TYPES_NULL" where "ID" in ("""), Fragment.comma(fragments), Fragment.lit(")")).query(PrecisionTypesNullRow.`_rowParser`.all()).runUnchecked(c)
+    return Fragment.concat(Fragment.of("""select "ID", "STRING10", "STRING20", "STRING50", "STRING100", "STRING255", "CHAR10", "NUMBER5_2", "NUMBER10_2", "NUMBER18_4", "NUMBER5_0", "NUMBER10_0", "NUMBER18_0", "TS0", "TS3", "TS6", "TS9" from "PRECISION_TYPES_NULL" where "ID" in ("""), Fragment.comma(fragments), Fragment.of(")")).query(PrecisionTypesNullRow.rowCodec.all()).run(using c)
   }
 
-  override def selectByIdsTracked(ids: Array[PrecisionTypesNullId])(using c: Connection): Map[PrecisionTypesNullId, PrecisionTypesNullRow] = {
+  override def selectByIdsTracked(ids: List[PrecisionTypesNullId])(using c: ConnectionRead): Map[PrecisionTypesNullId, PrecisionTypesNullRow] = {
     val ret: scala.collection.mutable.Map[PrecisionTypesNullId, PrecisionTypesNullRow] = scala.collection.mutable.Map.empty[PrecisionTypesNullId, PrecisionTypesNullRow]
     selectByIds(ids)(using c).foreach(row => ret.put(row.id, row): @scala.annotation.nowarn)
     return ret.toMap
   }
 
-  override def update: UpdateBuilder[PrecisionTypesNullFields, PrecisionTypesNullRow] = UpdateBuilder.of(""""PRECISION_TYPES_NULL"""", PrecisionTypesNullFields.structure, PrecisionTypesNullRow.`_rowParser`, Dialect.ORACLE)
+  override def update: UpdateBuilder[PrecisionTypesNullFields, PrecisionTypesNullRow] = UpdateBuilder.of(""""PRECISION_TYPES_NULL"""", PrecisionTypesNullFields.structure, PrecisionTypesNullRow.rowCodec, Dialect.ORACLE)
 
   override def update(row: PrecisionTypesNullRow)(using c: Connection): Boolean = {
     val id: PrecisionTypesNullId = row.id
     return sql"""update "PRECISION_TYPES_NULL"
-    set "STRING10" = ${Fragment.encode(NonEmptyString10.oracleType.nullable, row.string10)},
-    "STRING20" = ${Fragment.encode(NonEmptyString20.oracleType.nullable, row.string20)},
-    "STRING50" = ${Fragment.encode(NonEmptyString50.oracleType.nullable, row.string50)},
-    "STRING100" = ${Fragment.encode(NonEmptyString100.oracleType.nullable, row.string100)},
-    "STRING255" = ${Fragment.encode(NonEmptyString255.oracleType.nullable, row.string255)},
-    "CHAR10" = ${Fragment.encode(NonEmptyPaddedString10.oracleType.nullable, row.char10)},
-    "NUMBER5_2" = ${Fragment.encode(Decimal5_2.oracleType.nullable, row.number52)},
-    "NUMBER10_2" = ${Fragment.encode(Decimal10_2.oracleType.nullable, row.number102)},
-    "NUMBER18_4" = ${Fragment.encode(Decimal18_4.oracleType.nullable, row.number184)},
-    "NUMBER5_0" = ${Fragment.encode(Int5.oracleType.nullable, row.number50)},
-    "NUMBER10_0" = ${Fragment.encode(Int10.oracleType.nullable, row.number100)},
-    "NUMBER18_0" = ${Fragment.encode(Int18.oracleType.nullable, row.number180)},
-    "TS0" = ${Fragment.encode(OracleTypes.timestamp.nullable, row.ts0)},
-    "TS3" = ${Fragment.encode(LocalDateTime3.oracleType.nullable, row.ts3)},
-    "TS6" = ${Fragment.encode(LocalDateTime6.oracleType.nullable, row.ts6)},
-    "TS9" = ${Fragment.encode(LocalDateTime9.oracleType.nullable, row.ts9)}
-    where "ID" = ${Fragment.encode(PrecisionTypesNullId.oracleType, id)}""".update().runUnchecked(c) > 0
+    set "STRING10" = ${Fragment.encode(NonEmptyString10.oracleType.opt, row.string10)},
+    "STRING20" = ${Fragment.encode(NonEmptyString20.oracleType.opt, row.string20)},
+    "STRING50" = ${Fragment.encode(NonEmptyString50.oracleType.opt, row.string50)},
+    "STRING100" = ${Fragment.encode(NonEmptyString100.oracleType.opt, row.string100)},
+    "STRING255" = ${Fragment.encode(NonEmptyString255.oracleType.opt, row.string255)},
+    "CHAR10" = ${Fragment.encode(NonEmptyPaddedString10.oracleType.opt, row.char10)},
+    "NUMBER5_2" = ${Fragment.encode(Decimal5_2.oracleType.opt, row.number52)},
+    "NUMBER10_2" = ${Fragment.encode(Decimal10_2.oracleType.opt, row.number102)},
+    "NUMBER18_4" = ${Fragment.encode(Decimal18_4.oracleType.opt, row.number184)},
+    "NUMBER5_0" = ${Fragment.encode(Int5.oracleType.opt, row.number50)},
+    "NUMBER10_0" = ${Fragment.encode(Int10.oracleType.opt, row.number100)},
+    "NUMBER18_0" = ${Fragment.encode(Int18.oracleType.opt, row.number180)},
+    "TS0" = ${Fragment.encode(OracleTypes.timestamp.opt, row.ts0)},
+    "TS3" = ${Fragment.encode(LocalDateTime3.oracleType.opt, row.ts3)},
+    "TS6" = ${Fragment.encode(LocalDateTime6.oracleType.opt, row.ts6)},
+    "TS9" = ${Fragment.encode(LocalDateTime9.oracleType.opt, row.ts9)}
+    where "ID" = ${Fragment.encode(PrecisionTypesNullId.oracleType, id)}""".update().run(using c) > 0
   }
 
   override def upsert(unsaved: PrecisionTypesNullRow)(using c: Connection): Unit = {
     sql"""MERGE INTO "PRECISION_TYPES_NULL" t
-    USING (SELECT ${Fragment.encode(PrecisionTypesNullId.oracleType, unsaved.id)}, ${Fragment.encode(NonEmptyString10.oracleType.nullable, unsaved.string10)}, ${Fragment.encode(NonEmptyString20.oracleType.nullable, unsaved.string20)}, ${Fragment.encode(NonEmptyString50.oracleType.nullable, unsaved.string50)}, ${Fragment.encode(NonEmptyString100.oracleType.nullable, unsaved.string100)}, ${Fragment.encode(NonEmptyString255.oracleType.nullable, unsaved.string255)}, ${Fragment.encode(NonEmptyPaddedString10.oracleType.nullable, unsaved.char10)}, ${Fragment.encode(Decimal5_2.oracleType.nullable, unsaved.number52)}, ${Fragment.encode(Decimal10_2.oracleType.nullable, unsaved.number102)}, ${Fragment.encode(Decimal18_4.oracleType.nullable, unsaved.number184)}, ${Fragment.encode(Int5.oracleType.nullable, unsaved.number50)}, ${Fragment.encode(Int10.oracleType.nullable, unsaved.number100)}, ${Fragment.encode(Int18.oracleType.nullable, unsaved.number180)}, ${Fragment.encode(OracleTypes.timestamp.nullable, unsaved.ts0)}, ${Fragment.encode(LocalDateTime3.oracleType.nullable, unsaved.ts3)}, ${Fragment.encode(LocalDateTime6.oracleType.nullable, unsaved.ts6)}, ${Fragment.encode(LocalDateTime9.oracleType.nullable, unsaved.ts9)} FROM DUAL) s
+    USING (SELECT ${Fragment.encode(PrecisionTypesNullId.oracleType, unsaved.id)}, ${Fragment.encode(NonEmptyString10.oracleType.opt, unsaved.string10)}, ${Fragment.encode(NonEmptyString20.oracleType.opt, unsaved.string20)}, ${Fragment.encode(NonEmptyString50.oracleType.opt, unsaved.string50)}, ${Fragment.encode(NonEmptyString100.oracleType.opt, unsaved.string100)}, ${Fragment.encode(NonEmptyString255.oracleType.opt, unsaved.string255)}, ${Fragment.encode(NonEmptyPaddedString10.oracleType.opt, unsaved.char10)}, ${Fragment.encode(Decimal5_2.oracleType.opt, unsaved.number52)}, ${Fragment.encode(Decimal10_2.oracleType.opt, unsaved.number102)}, ${Fragment.encode(Decimal18_4.oracleType.opt, unsaved.number184)}, ${Fragment.encode(Int5.oracleType.opt, unsaved.number50)}, ${Fragment.encode(Int10.oracleType.opt, unsaved.number100)}, ${Fragment.encode(Int18.oracleType.opt, unsaved.number180)}, ${Fragment.encode(OracleTypes.timestamp.opt, unsaved.ts0)}, ${Fragment.encode(LocalDateTime3.oracleType.opt, unsaved.ts3)}, ${Fragment.encode(LocalDateTime6.oracleType.opt, unsaved.ts6)}, ${Fragment.encode(LocalDateTime9.oracleType.opt, unsaved.ts9)} FROM DUAL) s
     ON (t."ID" = s."ID")
     WHEN MATCHED THEN UPDATE SET t."STRING10" = s."STRING10",
     t."STRING20" = s."STRING20",
@@ -166,9 +166,9 @@ class PrecisionTypesNullRepoImpl extends PrecisionTypesNullRepo {
     t."TS3" = s."TS3",
     t."TS6" = s."TS6",
     t."TS9" = s."TS9"
-    WHEN NOT MATCHED THEN INSERT ("ID", "STRING10", "STRING20", "STRING50", "STRING100", "STRING255", "CHAR10", "NUMBER5_2", "NUMBER10_2", "NUMBER18_4", "NUMBER5_0", "NUMBER10_0", "NUMBER18_0", "TS0", "TS3", "TS6", "TS9") VALUES (${Fragment.encode(PrecisionTypesNullId.oracleType, unsaved.id)}, ${Fragment.encode(NonEmptyString10.oracleType.nullable, unsaved.string10)}, ${Fragment.encode(NonEmptyString20.oracleType.nullable, unsaved.string20)}, ${Fragment.encode(NonEmptyString50.oracleType.nullable, unsaved.string50)}, ${Fragment.encode(NonEmptyString100.oracleType.nullable, unsaved.string100)}, ${Fragment.encode(NonEmptyString255.oracleType.nullable, unsaved.string255)}, ${Fragment.encode(NonEmptyPaddedString10.oracleType.nullable, unsaved.char10)}, ${Fragment.encode(Decimal5_2.oracleType.nullable, unsaved.number52)}, ${Fragment.encode(Decimal10_2.oracleType.nullable, unsaved.number102)}, ${Fragment.encode(Decimal18_4.oracleType.nullable, unsaved.number184)}, ${Fragment.encode(Int5.oracleType.nullable, unsaved.number50)}, ${Fragment.encode(Int10.oracleType.nullable, unsaved.number100)}, ${Fragment.encode(Int18.oracleType.nullable, unsaved.number180)}, ${Fragment.encode(OracleTypes.timestamp.nullable, unsaved.ts0)}, ${Fragment.encode(LocalDateTime3.oracleType.nullable, unsaved.ts3)}, ${Fragment.encode(LocalDateTime6.oracleType.nullable, unsaved.ts6)}, ${Fragment.encode(LocalDateTime9.oracleType.nullable, unsaved.ts9)})"""
+    WHEN NOT MATCHED THEN INSERT ("ID", "STRING10", "STRING20", "STRING50", "STRING100", "STRING255", "CHAR10", "NUMBER5_2", "NUMBER10_2", "NUMBER18_4", "NUMBER5_0", "NUMBER10_0", "NUMBER18_0", "TS0", "TS3", "TS6", "TS9") VALUES (${Fragment.encode(PrecisionTypesNullId.oracleType, unsaved.id)}, ${Fragment.encode(NonEmptyString10.oracleType.opt, unsaved.string10)}, ${Fragment.encode(NonEmptyString20.oracleType.opt, unsaved.string20)}, ${Fragment.encode(NonEmptyString50.oracleType.opt, unsaved.string50)}, ${Fragment.encode(NonEmptyString100.oracleType.opt, unsaved.string100)}, ${Fragment.encode(NonEmptyString255.oracleType.opt, unsaved.string255)}, ${Fragment.encode(NonEmptyPaddedString10.oracleType.opt, unsaved.char10)}, ${Fragment.encode(Decimal5_2.oracleType.opt, unsaved.number52)}, ${Fragment.encode(Decimal10_2.oracleType.opt, unsaved.number102)}, ${Fragment.encode(Decimal18_4.oracleType.opt, unsaved.number184)}, ${Fragment.encode(Int5.oracleType.opt, unsaved.number50)}, ${Fragment.encode(Int10.oracleType.opt, unsaved.number100)}, ${Fragment.encode(Int18.oracleType.opt, unsaved.number180)}, ${Fragment.encode(OracleTypes.timestamp.opt, unsaved.ts0)}, ${Fragment.encode(LocalDateTime3.oracleType.opt, unsaved.ts3)}, ${Fragment.encode(LocalDateTime6.oracleType.opt, unsaved.ts6)}, ${Fragment.encode(LocalDateTime9.oracleType.opt, unsaved.ts9)})"""
       .update()
-      .runUnchecked(c): @scala.annotation.nowarn
+      .run(using c): @scala.annotation.nowarn
   }
 
   override def upsertBatch(unsaved: Iterator[PrecisionTypesNullRow])(using c: Connection): Unit = {
@@ -192,7 +192,7 @@ class PrecisionTypesNullRepoImpl extends PrecisionTypesNullRepo {
     t."TS6" = s."TS6",
     t."TS9" = s."TS9"
     WHEN NOT MATCHED THEN INSERT ("ID", "STRING10", "STRING20", "STRING50", "STRING100", "STRING255", "CHAR10", "NUMBER5_2", "NUMBER10_2", "NUMBER18_4", "NUMBER5_0", "NUMBER10_0", "NUMBER18_0", "TS0", "TS3", "TS6", "TS9") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"""
-      .updateMany(PrecisionTypesNullRow.`_rowParser`, unsaved)
-      .runUnchecked(c): @scala.annotation.nowarn
+      .updateMany(PrecisionTypesNullRow.rowCodec, unsaved)
+      .run(using c): @scala.annotation.nowarn
   }
 }

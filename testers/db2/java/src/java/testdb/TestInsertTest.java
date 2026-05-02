@@ -10,7 +10,7 @@ import org.junit.Test;
  * customization, and foreign key handling.
  */
 public class TestInsertTest {
-  private final TestInsert testInsert = new TestInsert(new Random(42));
+  private final TestInsert testInsert = new TestInsert(new Random(505111434));
 
   @Test
   public void testCustomersInsert() {

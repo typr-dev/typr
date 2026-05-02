@@ -5,19 +5,19 @@
  */
 package testdb.audit_log
 
-import dev.typr.foundations.MariaTypes
-import dev.typr.foundations.RowParser
+import dev.typr.dsl.FieldsBase
+import dev.typr.dsl.Path
+import dev.typr.dsl.SqlExpr.FieldLike
+import dev.typr.dslsc.RelationStructure
+import dev.typr.dslsc.SqlExpr
+import dev.typr.dslsc.SqlExpr.Field
+import dev.typr.dslsc.SqlExpr.IdField
+import dev.typr.dslsc.SqlExpr.OptField
+import dev.typr.dslsc.TupleExpr10
+import dev.typr.foundations.RowCodec
 import dev.typr.foundations.data.Json
 import dev.typr.foundations.data.maria.Inet6
-import dev.typr.foundations.dsl.FieldsBase
-import dev.typr.foundations.dsl.Path
-import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.scala.RelationStructure
-import dev.typr.foundations.scala.SqlExpr
-import dev.typr.foundations.scala.SqlExpr.Field
-import dev.typr.foundations.scala.SqlExpr.IdField
-import dev.typr.foundations.scala.SqlExpr.OptField
-import dev.typr.foundations.scala.TupleExpr10
+import dev.typr.foundationssc.MariaTypes
 import java.time.LocalDateTime
 
 class AuditLogFields(val `_path`: java.util.List[Path]) extends TupleExpr10[AuditLogId, String, String, String, Json, Json, String, LocalDateTime, Inet6, Array[Byte]] with RelationStructure[AuditLogFields, AuditLogRow]  with FieldsBase[AuditLogRow] {
@@ -29,7 +29,7 @@ class AuditLogFields(val `_path`: java.util.List[Path]) extends TupleExpr10[Audi
       None,
       None,
       (row, value) => row.copy(logId = value),
-      AuditLogId.mariaType
+      AuditLogId.mariaType.underlying
     )
   }
 
@@ -41,7 +41,7 @@ class AuditLogFields(val `_path`: java.util.List[Path]) extends TupleExpr10[Audi
       None,
       None,
       (row, value) => row.copy(tableName = value),
-      MariaTypes.varchar
+      MariaTypes.varchar.underlying
     )
   }
 
@@ -53,7 +53,7 @@ class AuditLogFields(val `_path`: java.util.List[Path]) extends TupleExpr10[Audi
       None,
       None,
       (row, value) => row.copy(recordId = value),
-      MariaTypes.varchar
+      MariaTypes.varchar.underlying
     )
   }
 
@@ -65,7 +65,7 @@ class AuditLogFields(val `_path`: java.util.List[Path]) extends TupleExpr10[Audi
       None,
       None,
       (row, value) => row.copy(action = value),
-      MariaTypes.text
+      MariaTypes.text.underlying
     )
   }
 
@@ -77,7 +77,7 @@ class AuditLogFields(val `_path`: java.util.List[Path]) extends TupleExpr10[Audi
       None,
       None,
       (row, value) => row.copy(oldValues = value),
-      MariaTypes.json
+      MariaTypes.json.underlying
     )
   }
 
@@ -89,7 +89,7 @@ class AuditLogFields(val `_path`: java.util.List[Path]) extends TupleExpr10[Audi
       None,
       None,
       (row, value) => row.copy(newValues = value),
-      MariaTypes.json
+      MariaTypes.json.underlying
     )
   }
 
@@ -101,7 +101,7 @@ class AuditLogFields(val `_path`: java.util.List[Path]) extends TupleExpr10[Audi
       None,
       None,
       (row, value) => row.copy(changedBy = value),
-      MariaTypes.varchar
+      MariaTypes.varchar.underlying
     )
   }
 
@@ -113,7 +113,7 @@ class AuditLogFields(val `_path`: java.util.List[Path]) extends TupleExpr10[Audi
       None,
       None,
       (row, value) => row.copy(changedAt = value),
-      MariaTypes.datetime
+      MariaTypes.datetime.underlying
     )
   }
 
@@ -125,7 +125,7 @@ class AuditLogFields(val `_path`: java.util.List[Path]) extends TupleExpr10[Audi
       None,
       None,
       (row, value) => row.copy(clientIp = value),
-      MariaTypes.inet6
+      MariaTypes.inet6.underlying
     )
   }
 
@@ -137,13 +137,13 @@ class AuditLogFields(val `_path`: java.util.List[Path]) extends TupleExpr10[Audi
       None,
       None,
       (row, value) => row.copy(sessionId = value),
-      MariaTypes.varbinary
+      MariaTypes.varbinary.underlying
     )
   }
 
   override def columns: java.util.List[FieldLike[?, AuditLogRow]] = java.util.List.of(this.logId.underlying, this.tableName.underlying, this.recordId.underlying, this.action.underlying, this.oldValues.underlying, this.newValues.underlying, this.changedBy.underlying, this.changedAt.underlying, this.clientIp.underlying, this.sessionId.underlying)
 
-  override def rowParser: RowParser[AuditLogRow] = AuditLogRow._rowParser.underlying
+  override def rowCodec: RowCodec[AuditLogRow] = AuditLogRow.rowCodec.underlying
 
   override def withPaths(`_path`: java.util.List[Path]): RelationStructure[AuditLogFields, AuditLogRow] = new AuditLogFields(`_path`)
 

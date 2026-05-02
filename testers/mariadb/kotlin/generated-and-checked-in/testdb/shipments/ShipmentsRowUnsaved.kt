@@ -27,13 +27,13 @@ data class ShipmentsRowUnsaved(
     */
   @field:JsonProperty("carrier_id") val carrierId: ShippingCarriersId,
   /**  */
-  @field:JsonProperty("shipping_method") val shippingMethod: String,
+  @field:JsonProperty("shipping_method") val shippingMethod: kotlin.String,
   /**  */
   @field:JsonProperty("shipping_cost") val shippingCost: BigDecimal,
   /** Default: NULL
 
     */
-  @field:JsonProperty("tracking_number") val trackingNumber: Defaulted<String?> = UseDefault(),
+  @field:JsonProperty("tracking_number") val trackingNumber: Defaulted<kotlin.String?> = UseDefault(),
   /** Default: NULL
 
     */
@@ -49,7 +49,7 @@ data class ShipmentsRowUnsaved(
   /** Default: 'pending'
 
     */
-  val status: Defaulted<String> = UseDefault(),
+  val status: Defaulted<kotlin.String> = UseDefault(),
   /** Default: NULL
 
     */
@@ -80,11 +80,11 @@ data class ShipmentsRowUnsaved(
   @field:JsonProperty("updated_at") val updatedAt: Defaulted<LocalDateTime> = UseDefault()
 ) {
   fun toRow(
-    trackingNumberDefault: () -> String?,
+    trackingNumberDefault: () -> kotlin.String?,
     weightKgDefault: () -> BigDecimal?,
     dimensionsJsonDefault: () -> Json?,
     labelDataDefault: () -> ByteArray?,
-    statusDefault: () -> String,
+    statusDefault: () -> kotlin.String,
     estimatedDeliveryDateDefault: () -> LocalDate?,
     actualDeliveryAtDefault: () -> LocalDateTime?,
     insuranceAmountDefault: () -> BigDecimal?,

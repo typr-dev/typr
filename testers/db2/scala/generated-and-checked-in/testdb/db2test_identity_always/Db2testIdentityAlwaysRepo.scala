@@ -5,17 +5,18 @@
  */
 package testdb.db2test_identity_always
 
-import dev.typr.foundations.scala.DeleteBuilder
-import dev.typr.foundations.scala.SelectBuilder
-import dev.typr.foundations.scala.UpdateBuilder
-import java.sql.Connection
+import dev.typr.dslsc.DeleteBuilder
+import dev.typr.dslsc.SelectBuilder
+import dev.typr.dslsc.UpdateBuilder
+import dev.typr.foundationssc.Connection
+import dev.typr.foundationssc.ConnectionRead
 
 trait Db2testIdentityAlwaysRepo {
   def delete: DeleteBuilder[Db2testIdentityAlwaysFields, Db2testIdentityAlwaysRow]
 
   def deleteById(id: Db2testIdentityAlwaysId)(using c: Connection): Boolean
 
-  def deleteByIds(ids: Array[Db2testIdentityAlwaysId])(using c: Connection): Int
+  def deleteByIds(ids: List[Db2testIdentityAlwaysId])(using c: Connection): Int
 
   def insert(unsaved: Db2testIdentityAlwaysRow)(using c: Connection): Db2testIdentityAlwaysRow
 
@@ -23,13 +24,13 @@ trait Db2testIdentityAlwaysRepo {
 
   def select: SelectBuilder[Db2testIdentityAlwaysFields, Db2testIdentityAlwaysRow]
 
-  def selectAll(using c: Connection): List[Db2testIdentityAlwaysRow]
+  def selectAll(using c: ConnectionRead): List[Db2testIdentityAlwaysRow]
 
-  def selectById(id: Db2testIdentityAlwaysId)(using c: Connection): Option[Db2testIdentityAlwaysRow]
+  def selectById(id: Db2testIdentityAlwaysId)(using c: ConnectionRead): Option[Db2testIdentityAlwaysRow]
 
-  def selectByIds(ids: Array[Db2testIdentityAlwaysId])(using c: Connection): List[Db2testIdentityAlwaysRow]
+  def selectByIds(ids: List[Db2testIdentityAlwaysId])(using c: ConnectionRead): List[Db2testIdentityAlwaysRow]
 
-  def selectByIdsTracked(ids: Array[Db2testIdentityAlwaysId])(using c: Connection): Map[Db2testIdentityAlwaysId, Db2testIdentityAlwaysRow]
+  def selectByIdsTracked(ids: List[Db2testIdentityAlwaysId])(using c: ConnectionRead): Map[Db2testIdentityAlwaysId, Db2testIdentityAlwaysRow]
 
   def update: UpdateBuilder[Db2testIdentityAlwaysFields, Db2testIdentityAlwaysRow]
 

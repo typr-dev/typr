@@ -5,19 +5,18 @@
  */
 package testdb.product_prices
 
-import dev.typr.foundations.MariaTypes
-import dev.typr.foundations.RowParser
-import dev.typr.foundations.dsl.FieldsBase
-import dev.typr.foundations.dsl.Path
-import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.scala.ForeignKey
-import dev.typr.foundations.scala.RelationStructure
-import dev.typr.foundations.scala.ScalaDbTypes
-import dev.typr.foundations.scala.SqlExpr
-import dev.typr.foundations.scala.SqlExpr.Field
-import dev.typr.foundations.scala.SqlExpr.IdField
-import dev.typr.foundations.scala.SqlExpr.OptField
-import dev.typr.foundations.scala.TupleExpr7
+import dev.typr.dsl.FieldsBase
+import dev.typr.dsl.Path
+import dev.typr.dsl.SqlExpr.FieldLike
+import dev.typr.dslsc.ForeignKey
+import dev.typr.dslsc.RelationStructure
+import dev.typr.dslsc.SqlExpr
+import dev.typr.dslsc.SqlExpr.Field
+import dev.typr.dslsc.SqlExpr.IdField
+import dev.typr.dslsc.SqlExpr.OptField
+import dev.typr.dslsc.TupleExpr7
+import dev.typr.foundations.RowCodec
+import dev.typr.foundationssc.MariaTypes
 import java.time.LocalDate
 import testdb.price_tiers.PriceTiersFields
 import testdb.price_tiers.PriceTiersId
@@ -35,7 +34,7 @@ class ProductPricesFields(val `_path`: java.util.List[Path]) extends TupleExpr7[
       None,
       None,
       (row, value) => row.copy(priceId = value),
-      ProductPricesId.mariaType
+      ProductPricesId.mariaType.underlying
     )
   }
 
@@ -47,7 +46,7 @@ class ProductPricesFields(val `_path`: java.util.List[Path]) extends TupleExpr7[
       None,
       None,
       (row, value) => row.copy(productId = value),
-      ProductsId.mariaType
+      ProductsId.mariaType.underlying
     )
   }
 
@@ -59,7 +58,7 @@ class ProductPricesFields(val `_path`: java.util.List[Path]) extends TupleExpr7[
       None,
       None,
       (row, value) => row.copy(tierId = value),
-      PriceTiersId.mariaType
+      PriceTiersId.mariaType.underlying
     )
   }
 
@@ -71,7 +70,7 @@ class ProductPricesFields(val `_path`: java.util.List[Path]) extends TupleExpr7[
       None,
       None,
       (row, value) => row.copy(price = value),
-      ScalaDbTypes.MariaTypes.numeric
+      MariaTypes.numeric.underlying
     )
   }
 
@@ -83,7 +82,7 @@ class ProductPricesFields(val `_path`: java.util.List[Path]) extends TupleExpr7[
       None,
       None,
       (row, value) => row.copy(currencyCode = value),
-      MariaTypes.char_
+      MariaTypes.char_.underlying
     )
   }
 
@@ -95,7 +94,7 @@ class ProductPricesFields(val `_path`: java.util.List[Path]) extends TupleExpr7[
       None,
       None,
       (row, value) => row.copy(validFrom = value),
-      MariaTypes.date
+      MariaTypes.date.underlying
     )
   }
 
@@ -107,7 +106,7 @@ class ProductPricesFields(val `_path`: java.util.List[Path]) extends TupleExpr7[
       None,
       None,
       (row, value) => row.copy(validTo = value),
-      MariaTypes.date
+      MariaTypes.date.underlying
     )
   }
 
@@ -117,7 +116,7 @@ class ProductPricesFields(val `_path`: java.util.List[Path]) extends TupleExpr7[
 
   override def columns: java.util.List[FieldLike[?, ProductPricesRow]] = java.util.List.of(this.priceId.underlying, this.productId.underlying, this.tierId.underlying, this.price.underlying, this.currencyCode.underlying, this.validFrom.underlying, this.validTo.underlying)
 
-  override def rowParser: RowParser[ProductPricesRow] = ProductPricesRow._rowParser.underlying
+  override def rowCodec: RowCodec[ProductPricesRow] = ProductPricesRow.rowCodec.underlying
 
   override def withPaths(`_path`: java.util.List[Path]): RelationStructure[ProductPricesFields, ProductPricesRow] = new ProductPricesFields(`_path`)
 

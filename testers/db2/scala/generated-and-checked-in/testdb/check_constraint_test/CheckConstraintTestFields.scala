@@ -5,18 +5,17 @@
  */
 package testdb.check_constraint_test
 
-import dev.typr.foundations.Db2Types
-import dev.typr.foundations.RowParser
-import dev.typr.foundations.dsl.FieldsBase
-import dev.typr.foundations.dsl.Path
-import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.scala.RelationStructure
-import dev.typr.foundations.scala.ScalaDbTypes
-import dev.typr.foundations.scala.SqlExpr
-import dev.typr.foundations.scala.SqlExpr.Field
-import dev.typr.foundations.scala.SqlExpr.IdField
-import dev.typr.foundations.scala.SqlExpr.OptField
-import dev.typr.foundations.scala.TupleExpr4
+import dev.typr.dsl.FieldsBase
+import dev.typr.dsl.Path
+import dev.typr.dsl.SqlExpr.FieldLike
+import dev.typr.dslsc.RelationStructure
+import dev.typr.dslsc.SqlExpr
+import dev.typr.dslsc.SqlExpr.Field
+import dev.typr.dslsc.SqlExpr.IdField
+import dev.typr.dslsc.SqlExpr.OptField
+import dev.typr.dslsc.TupleExpr4
+import dev.typr.foundations.RowCodec
+import dev.typr.foundationssc.Db2Types
 
 class CheckConstraintTestFields(val `_path`: java.util.List[Path]) extends TupleExpr4[CheckConstraintTestId, Int, String, BigDecimal] with RelationStructure[CheckConstraintTestFields, CheckConstraintTestRow]  with FieldsBase[CheckConstraintTestRow] {
   def id: IdField[CheckConstraintTestId, CheckConstraintTestRow] = {
@@ -27,7 +26,7 @@ class CheckConstraintTestFields(val `_path`: java.util.List[Path]) extends Tuple
       None,
       None,
       (row, value) => row.copy(id = value),
-      CheckConstraintTestId.db2Type
+      CheckConstraintTestId.db2Type.underlying
     )
   }
 
@@ -39,7 +38,7 @@ class CheckConstraintTestFields(val `_path`: java.util.List[Path]) extends Tuple
       None,
       None,
       (row, value) => row.copy(age = value),
-      ScalaDbTypes.Db2Types.integer
+      Db2Types.integer.underlying
     )
   }
 
@@ -51,7 +50,7 @@ class CheckConstraintTestFields(val `_path`: java.util.List[Path]) extends Tuple
       None,
       None,
       (row, value) => row.copy(status = value),
-      Db2Types.varchar
+      Db2Types.varchar.underlying
     )
   }
 
@@ -63,13 +62,13 @@ class CheckConstraintTestFields(val `_path`: java.util.List[Path]) extends Tuple
       None,
       None,
       (row, value) => row.copy(price = value),
-      ScalaDbTypes.Db2Types.decimal
+      Db2Types.decimal.underlying
     )
   }
 
   override def columns: java.util.List[FieldLike[?, CheckConstraintTestRow]] = java.util.List.of(this.id.underlying, this.age.underlying, this.status.underlying, this.price.underlying)
 
-  override def rowParser: RowParser[CheckConstraintTestRow] = CheckConstraintTestRow._rowParser.underlying
+  override def rowCodec: RowCodec[CheckConstraintTestRow] = CheckConstraintTestRow.rowCodec.underlying
 
   override def withPaths(`_path`: java.util.List[Path]): RelationStructure[CheckConstraintTestFields, CheckConstraintTestRow] = new CheckConstraintTestFields(`_path`)
 

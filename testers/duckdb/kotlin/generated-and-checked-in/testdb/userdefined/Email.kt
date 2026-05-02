@@ -6,27 +6,27 @@
 package testdb.userdefined
 
 import com.fasterxml.jackson.annotation.JsonValue
-import dev.typr.foundations.DuckDbType
-import dev.typr.foundations.DuckDbTypes
-import dev.typr.foundations.internal.arrayMap
-import dev.typr.foundations.kotlin.Bijection
+import dev.typr.foundationskt.Bijection
+import dev.typr.foundationskt.DuckDbType
+import dev.typr.foundationskt.DuckDbTypes
+import kotlin.collections.List
 
 /** Shared type `Email`
   * Generated from TypeDefinitions matching
   */
-data class Email(@field:JsonValue val value: String) {
+data class Email(@field:JsonValue val value: kotlin.String) {
   override fun toString(): kotlin.String {
-    return value.toString()
+    return value
   }
 
   companion object {
-    val bijection: Bijection<Email, String> =
+    val bijection: Bijection<Email, kotlin.String> =
       Bijection.of(Email::value, ::Email)
 
     val duckDbType: DuckDbType<Email> =
-      DuckDbTypes.varchar.bimap(::Email, Email::value)
+      DuckDbTypes.varchar.to(Bijection.of(::Email, Email::value))
 
-    val duckDbTypeArray: DuckDbType<Array<Email>> =
-      DuckDbTypes.varcharArray.bimap({ xs -> arrayMap.map(xs, ::Email, Email::class.java) }, { xs -> arrayMap.map(xs, Email::value, String::class.java) })
+    val duckDbTypeArray: DuckDbType<List<Email>> =
+      duckDbType.list()
   }
 }

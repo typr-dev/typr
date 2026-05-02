@@ -5,10 +5,11 @@
  */
 package adventureworks.public.title
 
-import dev.typr.foundations.kotlin.DeleteBuilder
-import dev.typr.foundations.kotlin.SelectBuilder
-import dev.typr.foundations.kotlin.UpdateBuilder
-import java.sql.Connection
+import dev.typr.dslkt.DeleteBuilder
+import dev.typr.dslkt.SelectBuilder
+import dev.typr.dslkt.UpdateBuilder
+import dev.typr.foundationskt.Connection
+import dev.typr.foundationskt.ConnectionRead
 import kotlin.collections.Iterator
 import kotlin.collections.List
 import kotlin.collections.Map
@@ -19,10 +20,10 @@ interface TitleRepo {
   abstract fun deleteById(
     code: TitleId,
     c: Connection
-  ): Boolean
+  ): kotlin.Boolean
 
   abstract fun deleteByIds(
-    codes: Array<TitleId>,
+    codes: List<TitleId>,
     c: Connection
   ): Int
 
@@ -35,25 +36,25 @@ interface TitleRepo {
     unsaved: Iterator<TitleRow>,
     batchSize: Int = 10000,
     c: Connection
-  ): Long
+  ): kotlin.Long
 
   abstract fun select(): SelectBuilder<TitleFields, TitleRow>
 
-  abstract fun selectAll(c: Connection): List<TitleRow>
+  abstract fun selectAll(c: ConnectionRead): List<TitleRow>
 
   abstract fun selectById(
     code: TitleId,
-    c: Connection
+    c: ConnectionRead
   ): TitleRow?
 
   abstract fun selectByIds(
-    codes: Array<TitleId>,
-    c: Connection
+    codes: List<TitleId>,
+    c: ConnectionRead
   ): List<TitleRow>
 
   abstract fun selectByIdsTracked(
-    codes: Array<TitleId>,
-    c: Connection
+    codes: List<TitleId>,
+    c: ConnectionRead
   ): Map<TitleId, TitleRow>
 
   abstract fun update(): UpdateBuilder<TitleFields, TitleRow>

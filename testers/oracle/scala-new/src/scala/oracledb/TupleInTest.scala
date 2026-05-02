@@ -1,6 +1,6 @@
 package oracledb
 
-import dev.typr.foundations.scala.SqlExpr
+import dev.typr.dslsc.SqlExpr
 import oracledb.departments.*
 import org.junit.Assert.*
 import org.junit.Ignore
@@ -15,8 +15,7 @@ class TupleInTest {
 
   @Test
   def departmentsCompositeIdInWithMultipleIds(): Unit = {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       val row1 = DepartmentsRow("ENG", "US", "Engineering US", Some(MoneyT(BigDecimal("1000000"), "USD")))
       val row2 = DepartmentsRow("ENG", "EU", "Engineering EU", Some(MoneyT(BigDecimal("800000"), "EUR")))
       val row3 = DepartmentsRow("HR", "US", "Human Resources US", Some(MoneyT(BigDecimal("500000"), "USD")))
@@ -39,8 +38,7 @@ class TupleInTest {
 
   @Test
   def departmentsCompositeIdInWithSingleId(): Unit = {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       val row1 = DepartmentsRow("SALES", "APAC", "Sales APAC", None)
       val row2 = DepartmentsRow("SALES", "EMEA", "Sales EMEA", None)
 
@@ -58,8 +56,7 @@ class TupleInTest {
 
   @Test
   def departmentsCompositeIdInWithEmptyList(): Unit = {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       val row = DepartmentsRow("TEST", "REGION", "Test Dept", None)
       val _ = departmentsRepo.insert(row)
 
@@ -73,8 +70,7 @@ class TupleInTest {
 
   @Test
   def departmentsCompositeIdInCombinedWithOtherConditions(): Unit = {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       val row1 = DepartmentsRow("DEV", "US", "Development US", Some(MoneyT(BigDecimal("2000000"), "USD")))
       val row2 = DepartmentsRow("DEV", "EU", "Development EU", Some(MoneyT(BigDecimal("100000"), "EUR")))
       val row3 = DepartmentsRow("QA", "US", "QA US", Some(MoneyT(BigDecimal("500000"), "USD")))
@@ -99,8 +95,7 @@ class TupleInTest {
 
   @Test
   def departmentsCompositeIdInWithNonExistentIds(): Unit = {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       val row = DepartmentsRow("EXISTING", "DEPT", "Existing Dept", None)
       val _ = departmentsRepo.insert(row)
 
@@ -123,8 +118,7 @@ class TupleInTest {
 
   @Test
   def departmentsCompositeIdComputedVsManual(): Unit = {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       val row = DepartmentsRow("COMPUTED", "TEST", "Computed Test", None)
       val _ = departmentsRepo.insert(row)
 
@@ -146,8 +140,7 @@ class TupleInTest {
 
   @Test
   def tupleInSubqueryBasic(): Unit = {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       val row1 = DepartmentsRow("SMALL1", "MATCH", "Small Dept 1", Some(MoneyT(BigDecimal("10000"), "USD")))
       val row2 = DepartmentsRow("SMALL2", "MATCH", "Small Dept 2", Some(MoneyT(BigDecimal("20000"), "USD")))
       val row3 = DepartmentsRow("LARGE", "OTHER", "Large Dept", Some(MoneyT(BigDecimal("1000000"), "USD")))
@@ -177,8 +170,7 @@ class TupleInTest {
 
   @Test
   def tupleInSubqueryWithNoMatches(): Unit = {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       val row = DepartmentsRow("TEST1", "REGION1", "Test Dept 1", None)
       val _ = departmentsRepo.insert(row)
 
@@ -201,8 +193,7 @@ class TupleInTest {
 
   @Test
   def tupleInSubqueryCombinedWithOtherConditions(): Unit = {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       val row1 = DepartmentsRow("A", "X", "Dept A", None)
       val row2 = DepartmentsRow("B", "X", "Dept B", None)
       val row3 = DepartmentsRow("C", "X", "Dept C", None)
@@ -238,8 +229,7 @@ class TupleInTest {
   @Ignore("Oracle does not support nullable values in tuple IN")
   @Test
   def tupleInWithNullableColumn(): Unit = {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       // Create departments - some with budget (nullable), some without
       val row1 = DepartmentsRow("NULL1", "REG1", "Dept With No Budget 1", None)
       val row2 = DepartmentsRow("NULL2", "REG2", "Dept With No Budget 2", None)
@@ -272,8 +262,7 @@ class TupleInTest {
   @Ignore("Oracle does not support nested tuples in IN clause")
   @Test
   def nestedTupleIn(): Unit = {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       val row1 = DepartmentsRow("NEST1", "R1", "Nested Dept 1", None)
       val row2 = DepartmentsRow("NEST2", "R2", "Nested Dept 2", None)
       val row3 = DepartmentsRow("NEST3", "R3", "Nested Dept 3", None)
@@ -322,8 +311,7 @@ class TupleInTest {
   @Ignore("Oracle does not support nested tuples")
   @Test
   def readNestedTupleFromDatabase(): Unit = {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       // Insert test data
       val row1 = DepartmentsRow("READ1", "REG1", "Read Dept 1", None)
       val row2 = DepartmentsRow("READ2", "REG2", "Read Dept 2", None)

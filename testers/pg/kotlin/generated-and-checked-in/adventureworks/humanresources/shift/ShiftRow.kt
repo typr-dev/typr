@@ -7,11 +7,11 @@ package adventureworks.humanresources.shift
 
 import adventureworks.customtypes.Defaulted
 import adventureworks.public.Name
+import dev.typr.dslkt.RowCodecs
 import dev.typr.foundations.PgText
-import dev.typr.foundations.PgTypes
 import dev.typr.foundations.Tuple.Tuple5
-import dev.typr.foundations.kotlin.RowParser
-import dev.typr.foundations.kotlin.RowParsers
+import dev.typr.foundationskt.PgTypes
+import dev.typr.foundationskt.RowCodec
 import java.time.LocalDateTime
 import java.time.LocalTime
 
@@ -51,9 +51,9 @@ data class ShiftRow(
   ): ShiftRowUnsaved = ShiftRowUnsaved(name, starttime, endtime, shiftid, modifieddate)
 
   companion object {
-    val _rowParser: RowParser<ShiftRow> = RowParsers.of(ShiftId.pgType, Name.pgType, PgTypes.time, PgTypes.time, PgTypes.timestamp, { t0, t1, t2, t3, t4 -> ShiftRow(t0, t1, t2, t3, t4) }, { row -> arrayOf<Any?>(row.shiftid, row.name, row.starttime, row.endtime, row.modifieddate) })
+    val rowCodec: RowCodec<ShiftRow> = RowCodecs.of(ShiftId.pgType, Name.pgType, PgTypes.time, PgTypes.time, PgTypes.timestamp, { t0: ShiftId, t1: Name, t2: LocalTime, t3: LocalTime, t4: LocalDateTime -> ShiftRow(t0, t1, t2, t3, t4) }, { row: ShiftRow -> arrayOf<Any?>(row.shiftid, row.name, row.starttime, row.endtime, row.modifieddate) })
 
     val pgText: PgText<ShiftRow> =
-      PgText.from(_rowParser.underlying)
+      PgText.from(rowCodec.underlying)
   }
 }

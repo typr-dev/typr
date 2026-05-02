@@ -7,22 +7,21 @@ package testdb.all_scalar_types
 
 import com.microsoft.sqlserver.jdbc.Geography
 import com.microsoft.sqlserver.jdbc.Geometry
-import dev.typr.foundations.RowParser
-import dev.typr.foundations.SqlServerTypes
+import dev.typr.dsl.FieldsBase
+import dev.typr.dsl.Path
+import dev.typr.dsl.SqlExpr.FieldLike
+import dev.typr.dslkt.RelationStructure
+import dev.typr.dslkt.SqlExpr
+import dev.typr.dslkt.SqlExpr.Field
+import dev.typr.dslkt.SqlExpr.IdField
+import dev.typr.dslkt.SqlExpr.OptField
+import dev.typr.dslkt.TupleExpr38
+import dev.typr.foundations.RowCodec
 import dev.typr.foundations.data.HierarchyId
 import dev.typr.foundations.data.Json
 import dev.typr.foundations.data.Uint1
 import dev.typr.foundations.data.Xml
-import dev.typr.foundations.dsl.FieldsBase
-import dev.typr.foundations.dsl.Path
-import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.kotlin.KotlinDbTypes
-import dev.typr.foundations.kotlin.RelationStructure
-import dev.typr.foundations.kotlin.SqlExpr
-import dev.typr.foundations.kotlin.SqlExpr.Field
-import dev.typr.foundations.kotlin.SqlExpr.IdField
-import dev.typr.foundations.kotlin.SqlExpr.OptField
-import dev.typr.foundations.kotlin.TupleExpr38
+import dev.typr.foundationskt.SqlServerTypes
 import java.math.BigDecimal
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -31,32 +30,32 @@ import java.time.OffsetDateTime
 import java.util.UUID
 import kotlin.collections.List
 
-data class AllScalarTypesFields(val _path: List<Path>) : TupleExpr38<AllScalarTypesId, Uint1, Short, Int, Long, BigDecimal, BigDecimal, BigDecimal, BigDecimal, Float, Double, Boolean, String, String, String, String, String, String, String, String, ByteArray, ByteArray, ByteArray, ByteArray, LocalDate, LocalTime, LocalDateTime, LocalDateTime, LocalDateTime, OffsetDateTime, UUID, Xml, Json, ByteArray, HierarchyId, Geography, Geometry, String>, RelationStructure<AllScalarTypesFields, AllScalarTypesRow>, FieldsBase<AllScalarTypesRow> {
+data class AllScalarTypesFields(val _path: List<Path>) : TupleExpr38<AllScalarTypesId, Uint1, kotlin.Short, Int, kotlin.Long, BigDecimal, BigDecimal, BigDecimal, BigDecimal, kotlin.Float, kotlin.Double, kotlin.Boolean, kotlin.String, kotlin.String, kotlin.String, kotlin.String, kotlin.String, kotlin.String, kotlin.String, kotlin.String, ByteArray, ByteArray, ByteArray, ByteArray, LocalDate, LocalTime, LocalDateTime, LocalDateTime, LocalDateTime, OffsetDateTime, UUID, Xml, Json, ByteArray, HierarchyId, Geography, Geometry, kotlin.String>, RelationStructure<AllScalarTypesFields, AllScalarTypesRow>, FieldsBase<AllScalarTypesRow> {
   override fun _1(): SqlExpr<AllScalarTypesId> = id()
 
-  override fun _10(): SqlExpr<Float> = colReal()
+  override fun _10(): SqlExpr<kotlin.Float> = colReal()
 
-  override fun _11(): SqlExpr<Double> = colFloat()
+  override fun _11(): SqlExpr<kotlin.Double> = colFloat()
 
-  override fun _12(): SqlExpr<Boolean> = colBit()
+  override fun _12(): SqlExpr<kotlin.Boolean> = colBit()
 
-  override fun _13(): SqlExpr<String> = colChar()
+  override fun _13(): SqlExpr<kotlin.String> = colChar()
 
-  override fun _14(): SqlExpr<String> = colVarchar()
+  override fun _14(): SqlExpr<kotlin.String> = colVarchar()
 
-  override fun _15(): SqlExpr<String> = colVarcharMax()
+  override fun _15(): SqlExpr<kotlin.String> = colVarcharMax()
 
-  override fun _16(): SqlExpr<String> = colText()
+  override fun _16(): SqlExpr<kotlin.String> = colText()
 
-  override fun _17(): SqlExpr<String> = colNchar()
+  override fun _17(): SqlExpr<kotlin.String> = colNchar()
 
-  override fun _18(): SqlExpr<String> = colNvarchar()
+  override fun _18(): SqlExpr<kotlin.String> = colNvarchar()
 
-  override fun _19(): SqlExpr<String> = colNvarcharMax()
+  override fun _19(): SqlExpr<kotlin.String> = colNvarcharMax()
 
   override fun _2(): SqlExpr<Uint1> = colTinyint()
 
-  override fun _20(): SqlExpr<String> = colNtext()
+  override fun _20(): SqlExpr<kotlin.String> = colNtext()
 
   override fun _21(): SqlExpr<ByteArray> = colBinary()
 
@@ -76,7 +75,7 @@ data class AllScalarTypesFields(val _path: List<Path>) : TupleExpr38<AllScalarTy
 
   override fun _29(): SqlExpr<LocalDateTime> = colDatetime2()
 
-  override fun _3(): SqlExpr<Short> = colSmallint()
+  override fun _3(): SqlExpr<kotlin.Short> = colSmallint()
 
   override fun _30(): SqlExpr<OffsetDateTime> = colDatetimeoffset()
 
@@ -94,11 +93,11 @@ data class AllScalarTypesFields(val _path: List<Path>) : TupleExpr38<AllScalarTy
 
   override fun _37(): SqlExpr<Geometry> = colGeometry()
 
-  override fun _38(): SqlExpr<String> = colNotNull()
+  override fun _38(): SqlExpr<kotlin.String> = colNotNull()
 
   override fun _4(): SqlExpr<Int> = colInt()
 
-  override fun _5(): SqlExpr<Long> = colBigint()
+  override fun _5(): SqlExpr<kotlin.Long> = colBigint()
 
   override fun _6(): SqlExpr<BigDecimal> = colDecimal()
 
@@ -110,85 +109,85 @@ data class AllScalarTypesFields(val _path: List<Path>) : TupleExpr38<AllScalarTy
 
   override fun _path(): List<Path> = _path
 
-  fun colBigint(): OptField<Long, AllScalarTypesRow> = OptField<Long, AllScalarTypesRow>(_path, "col_bigint", AllScalarTypesRow::colBigint, null, null, { row, value -> row.copy(colBigint = value) }, KotlinDbTypes.SqlServerTypes.bigint)
+  fun colBigint(): OptField<kotlin.Long, AllScalarTypesRow> = OptField<kotlin.Long, AllScalarTypesRow>(_path, "col_bigint", AllScalarTypesRow::colBigint, null, null, { row, value -> row.copy(colBigint = value) }, SqlServerTypes.bigint.underlying)
 
-  fun colBinary(): OptField<ByteArray, AllScalarTypesRow> = OptField<ByteArray, AllScalarTypesRow>(_path, "col_binary", AllScalarTypesRow::colBinary, null, null, { row, value -> row.copy(colBinary = value) }, SqlServerTypes.binary)
+  fun colBinary(): OptField<ByteArray, AllScalarTypesRow> = OptField<ByteArray, AllScalarTypesRow>(_path, "col_binary", AllScalarTypesRow::colBinary, null, null, { row, value -> row.copy(colBinary = value) }, SqlServerTypes.binary.underlying)
 
-  fun colBit(): OptField<Boolean, AllScalarTypesRow> = OptField<Boolean, AllScalarTypesRow>(_path, "col_bit", AllScalarTypesRow::colBit, null, null, { row, value -> row.copy(colBit = value) }, KotlinDbTypes.SqlServerTypes.bit)
+  fun colBit(): OptField<kotlin.Boolean, AllScalarTypesRow> = OptField<kotlin.Boolean, AllScalarTypesRow>(_path, "col_bit", AllScalarTypesRow::colBit, null, null, { row, value -> row.copy(colBit = value) }, SqlServerTypes.bit.underlying)
 
-  fun colChar(): OptField<String, AllScalarTypesRow> = OptField<String, AllScalarTypesRow>(_path, "col_char", AllScalarTypesRow::colChar, null, null, { row, value -> row.copy(colChar = value) }, SqlServerTypes.char_)
+  fun colChar(): OptField<kotlin.String, AllScalarTypesRow> = OptField<kotlin.String, AllScalarTypesRow>(_path, "col_char", AllScalarTypesRow::colChar, null, null, { row, value -> row.copy(colChar = value) }, SqlServerTypes.char_.underlying)
 
-  fun colDate(): OptField<LocalDate, AllScalarTypesRow> = OptField<LocalDate, AllScalarTypesRow>(_path, "col_date", AllScalarTypesRow::colDate, null, null, { row, value -> row.copy(colDate = value) }, SqlServerTypes.date)
+  fun colDate(): OptField<LocalDate, AllScalarTypesRow> = OptField<LocalDate, AllScalarTypesRow>(_path, "col_date", AllScalarTypesRow::colDate, null, null, { row, value -> row.copy(colDate = value) }, SqlServerTypes.date.underlying)
 
-  fun colDatetime(): OptField<LocalDateTime, AllScalarTypesRow> = OptField<LocalDateTime, AllScalarTypesRow>(_path, "col_datetime", AllScalarTypesRow::colDatetime, null, null, { row, value -> row.copy(colDatetime = value) }, SqlServerTypes.datetime)
+  fun colDatetime(): OptField<LocalDateTime, AllScalarTypesRow> = OptField<LocalDateTime, AllScalarTypesRow>(_path, "col_datetime", AllScalarTypesRow::colDatetime, null, null, { row, value -> row.copy(colDatetime = value) }, SqlServerTypes.datetime.underlying)
 
-  fun colDatetime2(): OptField<LocalDateTime, AllScalarTypesRow> = OptField<LocalDateTime, AllScalarTypesRow>(_path, "col_datetime2", AllScalarTypesRow::colDatetime2, null, null, { row, value -> row.copy(colDatetime2 = value) }, SqlServerTypes.datetime2)
+  fun colDatetime2(): OptField<LocalDateTime, AllScalarTypesRow> = OptField<LocalDateTime, AllScalarTypesRow>(_path, "col_datetime2", AllScalarTypesRow::colDatetime2, null, null, { row, value -> row.copy(colDatetime2 = value) }, SqlServerTypes.datetime2.underlying)
 
-  fun colDatetimeoffset(): OptField<OffsetDateTime, AllScalarTypesRow> = OptField<OffsetDateTime, AllScalarTypesRow>(_path, "col_datetimeoffset", AllScalarTypesRow::colDatetimeoffset, null, null, { row, value -> row.copy(colDatetimeoffset = value) }, SqlServerTypes.datetimeoffset)
+  fun colDatetimeoffset(): OptField<OffsetDateTime, AllScalarTypesRow> = OptField<OffsetDateTime, AllScalarTypesRow>(_path, "col_datetimeoffset", AllScalarTypesRow::colDatetimeoffset, null, null, { row, value -> row.copy(colDatetimeoffset = value) }, SqlServerTypes.datetimeoffset.underlying)
 
-  fun colDecimal(): OptField<BigDecimal, AllScalarTypesRow> = OptField<BigDecimal, AllScalarTypesRow>(_path, "col_decimal", AllScalarTypesRow::colDecimal, null, null, { row, value -> row.copy(colDecimal = value) }, KotlinDbTypes.SqlServerTypes.decimal)
+  fun colDecimal(): OptField<BigDecimal, AllScalarTypesRow> = OptField<BigDecimal, AllScalarTypesRow>(_path, "col_decimal", AllScalarTypesRow::colDecimal, null, null, { row, value -> row.copy(colDecimal = value) }, SqlServerTypes.decimal.underlying)
 
-  fun colFloat(): OptField<Double, AllScalarTypesRow> = OptField<Double, AllScalarTypesRow>(_path, "col_float", AllScalarTypesRow::colFloat, null, null, { row, value -> row.copy(colFloat = value) }, KotlinDbTypes.SqlServerTypes.float_)
+  fun colFloat(): OptField<kotlin.Double, AllScalarTypesRow> = OptField<kotlin.Double, AllScalarTypesRow>(_path, "col_float", AllScalarTypesRow::colFloat, null, null, { row, value -> row.copy(colFloat = value) }, SqlServerTypes.float_.underlying)
 
-  fun colGeography(): OptField<Geography, AllScalarTypesRow> = OptField<Geography, AllScalarTypesRow>(_path, "col_geography", AllScalarTypesRow::colGeography, null, null, { row, value -> row.copy(colGeography = value) }, SqlServerTypes.geography)
+  fun colGeography(): OptField<Geography, AllScalarTypesRow> = OptField<Geography, AllScalarTypesRow>(_path, "col_geography", AllScalarTypesRow::colGeography, null, null, { row, value -> row.copy(colGeography = value) }, SqlServerTypes.geography.underlying)
 
-  fun colGeometry(): OptField<Geometry, AllScalarTypesRow> = OptField<Geometry, AllScalarTypesRow>(_path, "col_geometry", AllScalarTypesRow::colGeometry, null, null, { row, value -> row.copy(colGeometry = value) }, SqlServerTypes.geometry)
+  fun colGeometry(): OptField<Geometry, AllScalarTypesRow> = OptField<Geometry, AllScalarTypesRow>(_path, "col_geometry", AllScalarTypesRow::colGeometry, null, null, { row, value -> row.copy(colGeometry = value) }, SqlServerTypes.geometry.underlying)
 
-  fun colHierarchyid(): OptField<HierarchyId, AllScalarTypesRow> = OptField<HierarchyId, AllScalarTypesRow>(_path, "col_hierarchyid", AllScalarTypesRow::colHierarchyid, null, null, { row, value -> row.copy(colHierarchyid = value) }, SqlServerTypes.hierarchyid)
+  fun colHierarchyid(): OptField<HierarchyId, AllScalarTypesRow> = OptField<HierarchyId, AllScalarTypesRow>(_path, "col_hierarchyid", AllScalarTypesRow::colHierarchyid, null, null, { row, value -> row.copy(colHierarchyid = value) }, SqlServerTypes.hierarchyid.underlying)
 
-  fun colImage(): OptField<ByteArray, AllScalarTypesRow> = OptField<ByteArray, AllScalarTypesRow>(_path, "col_image", AllScalarTypesRow::colImage, null, null, { row, value -> row.copy(colImage = value) }, SqlServerTypes.image)
+  fun colImage(): OptField<ByteArray, AllScalarTypesRow> = OptField<ByteArray, AllScalarTypesRow>(_path, "col_image", AllScalarTypesRow::colImage, null, null, { row, value -> row.copy(colImage = value) }, SqlServerTypes.image.underlying)
 
-  fun colInt(): OptField<Int, AllScalarTypesRow> = OptField<Int, AllScalarTypesRow>(_path, "col_int", AllScalarTypesRow::colInt, null, null, { row, value -> row.copy(colInt = value) }, KotlinDbTypes.SqlServerTypes.int_)
+  fun colInt(): OptField<Int, AllScalarTypesRow> = OptField<Int, AllScalarTypesRow>(_path, "col_int", AllScalarTypesRow::colInt, null, null, { row, value -> row.copy(colInt = value) }, SqlServerTypes.int_.underlying)
 
-  fun colJson(): OptField<Json, AllScalarTypesRow> = OptField<Json, AllScalarTypesRow>(_path, "col_json", AllScalarTypesRow::colJson, null, null, { row, value -> row.copy(colJson = value) }, SqlServerTypes.json)
+  fun colJson(): OptField<Json, AllScalarTypesRow> = OptField<Json, AllScalarTypesRow>(_path, "col_json", AllScalarTypesRow::colJson, null, null, { row, value -> row.copy(colJson = value) }, SqlServerTypes.json.underlying)
 
-  fun colMoney(): OptField<BigDecimal, AllScalarTypesRow> = OptField<BigDecimal, AllScalarTypesRow>(_path, "col_money", AllScalarTypesRow::colMoney, null, null, { row, value -> row.copy(colMoney = value) }, KotlinDbTypes.SqlServerTypes.money)
+  fun colMoney(): OptField<BigDecimal, AllScalarTypesRow> = OptField<BigDecimal, AllScalarTypesRow>(_path, "col_money", AllScalarTypesRow::colMoney, null, null, { row, value -> row.copy(colMoney = value) }, SqlServerTypes.money.underlying)
 
-  fun colNchar(): OptField<String, AllScalarTypesRow> = OptField<String, AllScalarTypesRow>(_path, "col_nchar", AllScalarTypesRow::colNchar, null, null, { row, value -> row.copy(colNchar = value) }, SqlServerTypes.nchar)
+  fun colNchar(): OptField<kotlin.String, AllScalarTypesRow> = OptField<kotlin.String, AllScalarTypesRow>(_path, "col_nchar", AllScalarTypesRow::colNchar, null, null, { row, value -> row.copy(colNchar = value) }, SqlServerTypes.nchar.underlying)
 
-  fun colNotNull(): Field<String, AllScalarTypesRow> = Field<String, AllScalarTypesRow>(_path, "col_not_null", AllScalarTypesRow::colNotNull, null, null, { row, value -> row.copy(colNotNull = value) }, SqlServerTypes.nvarchar)
+  fun colNotNull(): Field<kotlin.String, AllScalarTypesRow> = Field<kotlin.String, AllScalarTypesRow>(_path, "col_not_null", AllScalarTypesRow::colNotNull, null, null, { row, value -> row.copy(colNotNull = value) }, SqlServerTypes.nvarchar.underlying)
 
-  fun colNtext(): OptField<String, AllScalarTypesRow> = OptField<String, AllScalarTypesRow>(_path, "col_ntext", AllScalarTypesRow::colNtext, null, null, { row, value -> row.copy(colNtext = value) }, SqlServerTypes.ntext)
+  fun colNtext(): OptField<kotlin.String, AllScalarTypesRow> = OptField<kotlin.String, AllScalarTypesRow>(_path, "col_ntext", AllScalarTypesRow::colNtext, null, null, { row, value -> row.copy(colNtext = value) }, SqlServerTypes.ntext.underlying)
 
-  fun colNumeric(): OptField<BigDecimal, AllScalarTypesRow> = OptField<BigDecimal, AllScalarTypesRow>(_path, "col_numeric", AllScalarTypesRow::colNumeric, null, null, { row, value -> row.copy(colNumeric = value) }, KotlinDbTypes.SqlServerTypes.decimal)
+  fun colNumeric(): OptField<BigDecimal, AllScalarTypesRow> = OptField<BigDecimal, AllScalarTypesRow>(_path, "col_numeric", AllScalarTypesRow::colNumeric, null, null, { row, value -> row.copy(colNumeric = value) }, SqlServerTypes.decimal.underlying)
 
-  fun colNvarchar(): OptField<String, AllScalarTypesRow> = OptField<String, AllScalarTypesRow>(_path, "col_nvarchar", AllScalarTypesRow::colNvarchar, null, null, { row, value -> row.copy(colNvarchar = value) }, SqlServerTypes.nvarchar)
+  fun colNvarchar(): OptField<kotlin.String, AllScalarTypesRow> = OptField<kotlin.String, AllScalarTypesRow>(_path, "col_nvarchar", AllScalarTypesRow::colNvarchar, null, null, { row, value -> row.copy(colNvarchar = value) }, SqlServerTypes.nvarchar.underlying)
 
-  fun colNvarcharMax(): OptField<String, AllScalarTypesRow> = OptField<String, AllScalarTypesRow>(_path, "col_nvarchar_max", AllScalarTypesRow::colNvarcharMax, null, null, { row, value -> row.copy(colNvarcharMax = value) }, SqlServerTypes.nvarchar)
+  fun colNvarcharMax(): OptField<kotlin.String, AllScalarTypesRow> = OptField<kotlin.String, AllScalarTypesRow>(_path, "col_nvarchar_max", AllScalarTypesRow::colNvarcharMax, null, null, { row, value -> row.copy(colNvarcharMax = value) }, SqlServerTypes.nvarchar.underlying)
 
-  fun colReal(): OptField<Float, AllScalarTypesRow> = OptField<Float, AllScalarTypesRow>(_path, "col_real", AllScalarTypesRow::colReal, null, null, { row, value -> row.copy(colReal = value) }, KotlinDbTypes.SqlServerTypes.real)
+  fun colReal(): OptField<kotlin.Float, AllScalarTypesRow> = OptField<kotlin.Float, AllScalarTypesRow>(_path, "col_real", AllScalarTypesRow::colReal, null, null, { row, value -> row.copy(colReal = value) }, SqlServerTypes.real.underlying)
 
-  fun colRowversion(): Field<ByteArray, AllScalarTypesRow> = Field<ByteArray, AllScalarTypesRow>(_path, "col_rowversion", AllScalarTypesRow::colRowversion, null, null, { row, value -> row.copy(colRowversion = value) }, SqlServerTypes.rowversion)
+  fun colRowversion(): Field<ByteArray, AllScalarTypesRow> = Field<ByteArray, AllScalarTypesRow>(_path, "col_rowversion", AllScalarTypesRow::colRowversion, null, null, { row, value -> row.copy(colRowversion = value) }, SqlServerTypes.rowversion.underlying)
 
-  fun colSmalldatetime(): OptField<LocalDateTime, AllScalarTypesRow> = OptField<LocalDateTime, AllScalarTypesRow>(_path, "col_smalldatetime", AllScalarTypesRow::colSmalldatetime, null, null, { row, value -> row.copy(colSmalldatetime = value) }, SqlServerTypes.smalldatetime)
+  fun colSmalldatetime(): OptField<LocalDateTime, AllScalarTypesRow> = OptField<LocalDateTime, AllScalarTypesRow>(_path, "col_smalldatetime", AllScalarTypesRow::colSmalldatetime, null, null, { row, value -> row.copy(colSmalldatetime = value) }, SqlServerTypes.smalldatetime.underlying)
 
-  fun colSmallint(): OptField<Short, AllScalarTypesRow> = OptField<Short, AllScalarTypesRow>(_path, "col_smallint", AllScalarTypesRow::colSmallint, null, null, { row, value -> row.copy(colSmallint = value) }, KotlinDbTypes.SqlServerTypes.smallint)
+  fun colSmallint(): OptField<kotlin.Short, AllScalarTypesRow> = OptField<kotlin.Short, AllScalarTypesRow>(_path, "col_smallint", AllScalarTypesRow::colSmallint, null, null, { row, value -> row.copy(colSmallint = value) }, SqlServerTypes.smallint.underlying)
 
-  fun colSmallmoney(): OptField<BigDecimal, AllScalarTypesRow> = OptField<BigDecimal, AllScalarTypesRow>(_path, "col_smallmoney", AllScalarTypesRow::colSmallmoney, null, null, { row, value -> row.copy(colSmallmoney = value) }, KotlinDbTypes.SqlServerTypes.smallmoney)
+  fun colSmallmoney(): OptField<BigDecimal, AllScalarTypesRow> = OptField<BigDecimal, AllScalarTypesRow>(_path, "col_smallmoney", AllScalarTypesRow::colSmallmoney, null, null, { row, value -> row.copy(colSmallmoney = value) }, SqlServerTypes.smallmoney.underlying)
 
-  fun colText(): OptField<String, AllScalarTypesRow> = OptField<String, AllScalarTypesRow>(_path, "col_text", AllScalarTypesRow::colText, null, null, { row, value -> row.copy(colText = value) }, SqlServerTypes.text)
+  fun colText(): OptField<kotlin.String, AllScalarTypesRow> = OptField<kotlin.String, AllScalarTypesRow>(_path, "col_text", AllScalarTypesRow::colText, null, null, { row, value -> row.copy(colText = value) }, SqlServerTypes.text.underlying)
 
-  fun colTime(): OptField<LocalTime, AllScalarTypesRow> = OptField<LocalTime, AllScalarTypesRow>(_path, "col_time", AllScalarTypesRow::colTime, null, null, { row, value -> row.copy(colTime = value) }, SqlServerTypes.time)
+  fun colTime(): OptField<LocalTime, AllScalarTypesRow> = OptField<LocalTime, AllScalarTypesRow>(_path, "col_time", AllScalarTypesRow::colTime, null, null, { row, value -> row.copy(colTime = value) }, SqlServerTypes.time.underlying)
 
-  fun colTinyint(): OptField<Uint1, AllScalarTypesRow> = OptField<Uint1, AllScalarTypesRow>(_path, "col_tinyint", AllScalarTypesRow::colTinyint, null, null, { row, value -> row.copy(colTinyint = value) }, SqlServerTypes.tinyint)
+  fun colTinyint(): OptField<Uint1, AllScalarTypesRow> = OptField<Uint1, AllScalarTypesRow>(_path, "col_tinyint", AllScalarTypesRow::colTinyint, null, null, { row, value -> row.copy(colTinyint = value) }, SqlServerTypes.tinyint.underlying)
 
-  fun colUniqueidentifier(): OptField<UUID, AllScalarTypesRow> = OptField<UUID, AllScalarTypesRow>(_path, "col_uniqueidentifier", AllScalarTypesRow::colUniqueidentifier, null, null, { row, value -> row.copy(colUniqueidentifier = value) }, SqlServerTypes.uniqueidentifier)
+  fun colUniqueidentifier(): OptField<UUID, AllScalarTypesRow> = OptField<UUID, AllScalarTypesRow>(_path, "col_uniqueidentifier", AllScalarTypesRow::colUniqueidentifier, null, null, { row, value -> row.copy(colUniqueidentifier = value) }, SqlServerTypes.uniqueidentifier.underlying)
 
-  fun colVarbinary(): OptField<ByteArray, AllScalarTypesRow> = OptField<ByteArray, AllScalarTypesRow>(_path, "col_varbinary", AllScalarTypesRow::colVarbinary, null, null, { row, value -> row.copy(colVarbinary = value) }, SqlServerTypes.varbinary)
+  fun colVarbinary(): OptField<ByteArray, AllScalarTypesRow> = OptField<ByteArray, AllScalarTypesRow>(_path, "col_varbinary", AllScalarTypesRow::colVarbinary, null, null, { row, value -> row.copy(colVarbinary = value) }, SqlServerTypes.varbinary.underlying)
 
-  fun colVarbinaryMax(): OptField<ByteArray, AllScalarTypesRow> = OptField<ByteArray, AllScalarTypesRow>(_path, "col_varbinary_max", AllScalarTypesRow::colVarbinaryMax, null, null, { row, value -> row.copy(colVarbinaryMax = value) }, SqlServerTypes.varbinary)
+  fun colVarbinaryMax(): OptField<ByteArray, AllScalarTypesRow> = OptField<ByteArray, AllScalarTypesRow>(_path, "col_varbinary_max", AllScalarTypesRow::colVarbinaryMax, null, null, { row, value -> row.copy(colVarbinaryMax = value) }, SqlServerTypes.varbinary.underlying)
 
-  fun colVarchar(): OptField<String, AllScalarTypesRow> = OptField<String, AllScalarTypesRow>(_path, "col_varchar", AllScalarTypesRow::colVarchar, null, null, { row, value -> row.copy(colVarchar = value) }, SqlServerTypes.varchar)
+  fun colVarchar(): OptField<kotlin.String, AllScalarTypesRow> = OptField<kotlin.String, AllScalarTypesRow>(_path, "col_varchar", AllScalarTypesRow::colVarchar, null, null, { row, value -> row.copy(colVarchar = value) }, SqlServerTypes.varchar.underlying)
 
-  fun colVarcharMax(): OptField<String, AllScalarTypesRow> = OptField<String, AllScalarTypesRow>(_path, "col_varchar_max", AllScalarTypesRow::colVarcharMax, null, null, { row, value -> row.copy(colVarcharMax = value) }, SqlServerTypes.varchar)
+  fun colVarcharMax(): OptField<kotlin.String, AllScalarTypesRow> = OptField<kotlin.String, AllScalarTypesRow>(_path, "col_varchar_max", AllScalarTypesRow::colVarcharMax, null, null, { row, value -> row.copy(colVarcharMax = value) }, SqlServerTypes.varchar.underlying)
 
-  fun colXml(): OptField<Xml, AllScalarTypesRow> = OptField<Xml, AllScalarTypesRow>(_path, "col_xml", AllScalarTypesRow::colXml, null, null, { row, value -> row.copy(colXml = value) }, SqlServerTypes.xml)
+  fun colXml(): OptField<Xml, AllScalarTypesRow> = OptField<Xml, AllScalarTypesRow>(_path, "col_xml", AllScalarTypesRow::colXml, null, null, { row, value -> row.copy(colXml = value) }, SqlServerTypes.xml.underlying)
 
   override fun columns(): List<FieldLike<*, AllScalarTypesRow>> = listOf(this.id().underlying, this.colTinyint().underlying, this.colSmallint().underlying, this.colInt().underlying, this.colBigint().underlying, this.colDecimal().underlying, this.colNumeric().underlying, this.colMoney().underlying, this.colSmallmoney().underlying, this.colReal().underlying, this.colFloat().underlying, this.colBit().underlying, this.colChar().underlying, this.colVarchar().underlying, this.colVarcharMax().underlying, this.colText().underlying, this.colNchar().underlying, this.colNvarchar().underlying, this.colNvarcharMax().underlying, this.colNtext().underlying, this.colBinary().underlying, this.colVarbinary().underlying, this.colVarbinaryMax().underlying, this.colImage().underlying, this.colDate().underlying, this.colTime().underlying, this.colDatetime().underlying, this.colSmalldatetime().underlying, this.colDatetime2().underlying, this.colDatetimeoffset().underlying, this.colUniqueidentifier().underlying, this.colXml().underlying, this.colJson().underlying, this.colRowversion().underlying, this.colHierarchyid().underlying, this.colGeography().underlying, this.colGeometry().underlying, this.colNotNull().underlying)
 
-  fun id(): IdField<AllScalarTypesId, AllScalarTypesRow> = IdField<AllScalarTypesId, AllScalarTypesRow>(_path, "id", AllScalarTypesRow::id, null, null, { row, value -> row.copy(id = value) }, AllScalarTypesId.sqlServerType)
+  fun id(): IdField<AllScalarTypesId, AllScalarTypesRow> = IdField<AllScalarTypesId, AllScalarTypesRow>(_path, "id", AllScalarTypesRow::id, null, null, { row, value -> row.copy(id = value) }, AllScalarTypesId.sqlServerType.underlying)
 
-  override fun rowParser(): RowParser<AllScalarTypesRow> = AllScalarTypesRow._rowParser.underlying
+  override fun rowCodec(): RowCodec<AllScalarTypesRow> = AllScalarTypesRow.rowCodec.underlying
 
   override fun withPaths(_path: List<Path>): RelationStructure<AllScalarTypesFields, AllScalarTypesRow> = AllScalarTypesFields(_path)
 

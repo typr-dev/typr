@@ -5,17 +5,18 @@
  */
 package testdb.test_connection
 
-import dev.typr.foundations.scala.DeleteBuilder
-import dev.typr.foundations.scala.SelectBuilder
-import dev.typr.foundations.scala.UpdateBuilder
-import java.sql.Connection
+import dev.typr.dslsc.DeleteBuilder
+import dev.typr.dslsc.SelectBuilder
+import dev.typr.dslsc.UpdateBuilder
+import dev.typr.foundationssc.Connection
+import dev.typr.foundationssc.ConnectionRead
 
 trait TestConnectionRepo {
   def delete: DeleteBuilder[TestConnectionFields, TestConnectionRow]
 
   def deleteById(id: TestConnectionId)(using c: Connection): Boolean
 
-  def deleteByIds(ids: Array[TestConnectionId])(using c: Connection): Int
+  def deleteByIds(ids: List[TestConnectionId])(using c: Connection): Int
 
   def insert(unsaved: TestConnectionRow)(using c: Connection): TestConnectionRow
 
@@ -23,13 +24,13 @@ trait TestConnectionRepo {
 
   def select: SelectBuilder[TestConnectionFields, TestConnectionRow]
 
-  def selectAll(using c: Connection): List[TestConnectionRow]
+  def selectAll(using c: ConnectionRead): List[TestConnectionRow]
 
-  def selectById(id: TestConnectionId)(using c: Connection): Option[TestConnectionRow]
+  def selectById(id: TestConnectionId)(using c: ConnectionRead): Option[TestConnectionRow]
 
-  def selectByIds(ids: Array[TestConnectionId])(using c: Connection): List[TestConnectionRow]
+  def selectByIds(ids: List[TestConnectionId])(using c: ConnectionRead): List[TestConnectionRow]
 
-  def selectByIdsTracked(ids: Array[TestConnectionId])(using c: Connection): Map[TestConnectionId, TestConnectionRow]
+  def selectByIdsTracked(ids: List[TestConnectionId])(using c: ConnectionRead): Map[TestConnectionId, TestConnectionRow]
 
   def update: UpdateBuilder[TestConnectionFields, TestConnectionRow]
 

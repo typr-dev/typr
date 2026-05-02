@@ -6,9 +6,9 @@
 package oracledb.customer_search
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import dev.typr.dsl.RowCodecs
 import dev.typr.foundations.OracleTypes
-import dev.typr.foundations.RowParser
-import dev.typr.foundations.RowParsers
+import dev.typr.foundations.RowCodec
 import dev.typr.foundations.Tuple.Tuple5
 import java.time.LocalDateTime
 import java.util.Optional
@@ -41,5 +41,5 @@ case class CustomerSearchSqlRow(
 }
 
 object CustomerSearchSqlRow {
-  val `_rowParser`: RowParser[CustomerSearchSqlRow] = RowParsers.of(CustomersId.oracleType, OracleTypes.varchar2, AddressT.oracleType, MoneyT.oracleType.opt(), OracleTypes.timestamp, CustomerSearchSqlRow.apply, row => Array[Any](row.customerId, row.name, row.billingAddress, row.creditLimit, row.createdAt))
+  val rowCodec: RowCodec[CustomerSearchSqlRow] = RowCodecs.of(CustomersId.oracleType, OracleTypes.varchar2, AddressT.oracleType, MoneyT.oracleType.opt, OracleTypes.timestamp, CustomerSearchSqlRow.apply, row => Array[Any](row.customerId, row.name, row.billingAddress, row.creditLimit, row.createdAt))
 }

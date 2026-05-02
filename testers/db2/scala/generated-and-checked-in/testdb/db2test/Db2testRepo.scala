@@ -5,29 +5,30 @@
  */
 package testdb.db2test
 
-import dev.typr.foundations.scala.DeleteBuilder
-import dev.typr.foundations.scala.SelectBuilder
-import dev.typr.foundations.scala.UpdateBuilder
-import java.sql.Connection
+import dev.typr.dslsc.DeleteBuilder
+import dev.typr.dslsc.SelectBuilder
+import dev.typr.dslsc.UpdateBuilder
+import dev.typr.foundationssc.Connection
+import dev.typr.foundationssc.ConnectionRead
 
 trait Db2testRepo {
   def delete: DeleteBuilder[Db2testFields, Db2testRow]
 
   def deleteById(intCol: Db2testId)(using c: Connection): Boolean
 
-  def deleteByIds(intCols: Array[Db2testId])(using c: Connection): Int
+  def deleteByIds(intCols: List[Db2testId])(using c: Connection): Int
 
   def insert(unsaved: Db2testRow)(using c: Connection): Db2testRow
 
   def select: SelectBuilder[Db2testFields, Db2testRow]
 
-  def selectAll(using c: Connection): List[Db2testRow]
+  def selectAll(using c: ConnectionRead): List[Db2testRow]
 
-  def selectById(intCol: Db2testId)(using c: Connection): Option[Db2testRow]
+  def selectById(intCol: Db2testId)(using c: ConnectionRead): Option[Db2testRow]
 
-  def selectByIds(intCols: Array[Db2testId])(using c: Connection): List[Db2testRow]
+  def selectByIds(intCols: List[Db2testId])(using c: ConnectionRead): List[Db2testRow]
 
-  def selectByIdsTracked(intCols: Array[Db2testId])(using c: Connection): Map[Db2testId, Db2testRow]
+  def selectByIdsTracked(intCols: List[Db2testId])(using c: ConnectionRead): Map[Db2testId, Db2testRow]
 
   def update: UpdateBuilder[Db2testFields, Db2testRow]
 

@@ -5,43 +5,42 @@
  */
 package testdb.check_constraint_test
 
-import dev.typr.foundations.Db2Types
-import dev.typr.foundations.RowParser
-import dev.typr.foundations.dsl.FieldsBase
-import dev.typr.foundations.dsl.Path
-import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.kotlin.KotlinDbTypes
-import dev.typr.foundations.kotlin.RelationStructure
-import dev.typr.foundations.kotlin.SqlExpr
-import dev.typr.foundations.kotlin.SqlExpr.Field
-import dev.typr.foundations.kotlin.SqlExpr.IdField
-import dev.typr.foundations.kotlin.SqlExpr.OptField
-import dev.typr.foundations.kotlin.TupleExpr4
+import dev.typr.dsl.FieldsBase
+import dev.typr.dsl.Path
+import dev.typr.dsl.SqlExpr.FieldLike
+import dev.typr.dslkt.RelationStructure
+import dev.typr.dslkt.SqlExpr
+import dev.typr.dslkt.SqlExpr.Field
+import dev.typr.dslkt.SqlExpr.IdField
+import dev.typr.dslkt.SqlExpr.OptField
+import dev.typr.dslkt.TupleExpr4
+import dev.typr.foundations.RowCodec
+import dev.typr.foundationskt.Db2Types
 import java.math.BigDecimal
 import kotlin.collections.List
 
-data class CheckConstraintTestFields(val _path: List<Path>) : TupleExpr4<CheckConstraintTestId, Int, String, BigDecimal>, RelationStructure<CheckConstraintTestFields, CheckConstraintTestRow>, FieldsBase<CheckConstraintTestRow> {
+data class CheckConstraintTestFields(val _path: List<Path>) : TupleExpr4<CheckConstraintTestId, Int, kotlin.String, BigDecimal>, RelationStructure<CheckConstraintTestFields, CheckConstraintTestRow>, FieldsBase<CheckConstraintTestRow> {
   override fun _1(): SqlExpr<CheckConstraintTestId> = id()
 
   override fun _2(): SqlExpr<Int> = age()
 
-  override fun _3(): SqlExpr<String> = status()
+  override fun _3(): SqlExpr<kotlin.String> = status()
 
   override fun _4(): SqlExpr<BigDecimal> = price()
 
   override fun _path(): List<Path> = _path
 
-  fun age(): Field<Int, CheckConstraintTestRow> = Field<Int, CheckConstraintTestRow>(_path, "AGE", CheckConstraintTestRow::age, null, null, { row, value -> row.copy(age = value) }, KotlinDbTypes.Db2Types.integer)
+  fun age(): Field<Int, CheckConstraintTestRow> = Field<Int, CheckConstraintTestRow>(_path, "AGE", CheckConstraintTestRow::age, null, null, { row, value -> row.copy(age = value) }, Db2Types.integer.underlying)
 
   override fun columns(): List<FieldLike<*, CheckConstraintTestRow>> = listOf(this.id().underlying, this.age().underlying, this.status().underlying, this.price().underlying)
 
-  fun id(): IdField<CheckConstraintTestId, CheckConstraintTestRow> = IdField<CheckConstraintTestId, CheckConstraintTestRow>(_path, "ID", CheckConstraintTestRow::id, null, null, { row, value -> row.copy(id = value) }, CheckConstraintTestId.db2Type)
+  fun id(): IdField<CheckConstraintTestId, CheckConstraintTestRow> = IdField<CheckConstraintTestId, CheckConstraintTestRow>(_path, "ID", CheckConstraintTestRow::id, null, null, { row, value -> row.copy(id = value) }, CheckConstraintTestId.db2Type.underlying)
 
-  fun price(): OptField<BigDecimal, CheckConstraintTestRow> = OptField<BigDecimal, CheckConstraintTestRow>(_path, "PRICE", CheckConstraintTestRow::price, null, null, { row, value -> row.copy(price = value) }, KotlinDbTypes.Db2Types.decimal)
+  fun price(): OptField<BigDecimal, CheckConstraintTestRow> = OptField<BigDecimal, CheckConstraintTestRow>(_path, "PRICE", CheckConstraintTestRow::price, null, null, { row, value -> row.copy(price = value) }, Db2Types.decimal.underlying)
 
-  override fun rowParser(): RowParser<CheckConstraintTestRow> = CheckConstraintTestRow._rowParser.underlying
+  override fun rowCodec(): RowCodec<CheckConstraintTestRow> = CheckConstraintTestRow.rowCodec.underlying
 
-  fun status(): Field<String, CheckConstraintTestRow> = Field<String, CheckConstraintTestRow>(_path, "STATUS", CheckConstraintTestRow::status, null, null, { row, value -> row.copy(status = value) }, Db2Types.varchar)
+  fun status(): Field<kotlin.String, CheckConstraintTestRow> = Field<kotlin.String, CheckConstraintTestRow>(_path, "STATUS", CheckConstraintTestRow::status, null, null, { row, value -> row.copy(status = value) }, Db2Types.varchar.underlying)
 
   override fun withPaths(_path: List<Path>): RelationStructure<CheckConstraintTestFields, CheckConstraintTestRow> = CheckConstraintTestFields(_path)
 

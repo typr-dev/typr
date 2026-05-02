@@ -5,58 +5,57 @@
  */
 package testdb.employees
 
-import dev.typr.foundations.DuckDbTypes
-import dev.typr.foundations.scala.DbTypeOps
-import dev.typr.foundations.scala.DeleteBuilder
-import dev.typr.foundations.scala.Dialect
-import dev.typr.foundations.scala.Fragment
-import dev.typr.foundations.scala.ScalaDbTypes
-import dev.typr.foundations.scala.SelectBuilder
-import dev.typr.foundations.scala.UpdateBuilder
-import java.sql.Connection
+import dev.typr.dslsc.DeleteBuilder
+import dev.typr.dslsc.Dialect
+import dev.typr.dslsc.SelectBuilder
+import dev.typr.dslsc.UpdateBuilder
+import dev.typr.foundationssc.Connection
+import dev.typr.foundationssc.ConnectionRead
+import dev.typr.foundationssc.DuckDbTypes
+import dev.typr.foundationssc.Fragment
 import scala.collection.mutable.ListBuffer
-import dev.typr.foundations.scala.Fragment.sql
+import dev.typr.foundationssc.Fragment.sql
 
 class EmployeesRepoImpl extends EmployeesRepo {
   override def delete: DeleteBuilder[EmployeesFields, EmployeesRow] = DeleteBuilder.of(""""employees"""", EmployeesFields.structure, Dialect.DUCKDB)
 
-  override def deleteById(compositeId: EmployeesId)(using c: Connection): Boolean = sql"""delete from "employees" where "emp_number" = ${Fragment.encode(ScalaDbTypes.DuckDbTypes.integer, compositeId.empNumber)} AND "emp_suffix" = ${Fragment.encode(DuckDbTypes.varchar, compositeId.empSuffix)}""".update().runUnchecked(c) > 0
+  override def deleteById(compositeId: EmployeesId)(using c: Connection): Boolean = sql"""delete from "employees" where "emp_number" = ${Fragment.encode(DuckDbTypes.integer, compositeId.empNumber)} AND "emp_suffix" = ${Fragment.encode(DuckDbTypes.varchar, compositeId.empSuffix)}""".update().run(using c) > 0
 
-  override def deleteByIds(compositeIds: Array[EmployeesId])(using c: Connection): Int = {
+  override def deleteByIds(compositeIds: List[EmployeesId])(using c: Connection): Int = {
     val orClauses: ListBuffer[Fragment] = ListBuffer()
-    compositeIds.foreach { id => orClauses.addOne(Fragment.interpolate(Fragment.lit("("), Fragment.lit(""""emp_number" = """), Fragment.encode(ScalaDbTypes.DuckDbTypes.integer, id.empNumber), Fragment.lit(" AND "), Fragment.lit(""""emp_suffix" = """), Fragment.encode(DuckDbTypes.varchar, id.empSuffix), Fragment.lit(")"))): @scala.annotation.nowarn }
-    return Fragment.interpolate(Fragment.lit("""delete
+    compositeIds.foreach { id => orClauses.addOne(Fragment.concat(Fragment.of("("), Fragment.of(""""emp_number" = """), Fragment.encode(DuckDbTypes.integer, id.empNumber), Fragment.of(" AND "), Fragment.of(""""emp_suffix" = """), Fragment.encode(DuckDbTypes.varchar, id.empSuffix), Fragment.of(")"))): @scala.annotation.nowarn }
+    return Fragment.concat(Fragment.of("""delete
     from "employees"
-    where """), Fragment.or(orClauses.toList), Fragment.lit("""
-    """)).update().runUnchecked(c)
+    where """), Fragment.or(orClauses.toList), Fragment.of("""
+    """)).update().run(using c)
   }
 
   override def insert(unsaved: EmployeesRow)(using c: Connection): EmployeesRow = {
   sql"""insert into "employees"("emp_number", "emp_suffix", "dept_code", "dept_region", "emp_name", "salary", "hire_date")
-    values (${Fragment.encode(ScalaDbTypes.DuckDbTypes.integer, unsaved.empNumber)}, ${Fragment.encode(DuckDbTypes.varchar, unsaved.empSuffix)}, ${Fragment.encode(DuckDbTypes.varchar, unsaved.deptCode)}, ${Fragment.encode(DuckDbTypes.varchar, unsaved.deptRegion)}, ${Fragment.encode(DuckDbTypes.varchar, unsaved.empName)}, ${Fragment.encode(ScalaDbTypes.DuckDbTypes.numeric.nullable, unsaved.salary)}, ${Fragment.encode(DuckDbTypes.date, unsaved.hireDate)})
+    values (${Fragment.encode(DuckDbTypes.integer, unsaved.empNumber)}, ${Fragment.encode(DuckDbTypes.varchar, unsaved.empSuffix)}, ${Fragment.encode(DuckDbTypes.varchar, unsaved.deptCode)}, ${Fragment.encode(DuckDbTypes.varchar, unsaved.deptRegion)}, ${Fragment.encode(DuckDbTypes.varchar, unsaved.empName)}, ${Fragment.encode(DuckDbTypes.numeric.opt, unsaved.salary)}, ${Fragment.encode(DuckDbTypes.date, unsaved.hireDate)})
     RETURNING "emp_number", "emp_suffix", "dept_code", "dept_region", "emp_name", "salary", "hire_date"
     """
-    .updateReturning(EmployeesRow.`_rowParser`.exactlyOne()).runUnchecked(c)
+    .updateReturning(EmployeesRow.rowCodec.exactlyOne()).run(using c)
   }
 
   override def insert(unsaved: EmployeesRowUnsaved)(using c: Connection): EmployeesRow = {
     val columns: ListBuffer[Fragment] = ListBuffer()
     val values: ListBuffer[Fragment] = ListBuffer()
-    columns.addOne(Fragment.lit(""""emp_number"""")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(ScalaDbTypes.DuckDbTypes.integer, unsaved.empNumber)}"): @scala.annotation.nowarn
-    columns.addOne(Fragment.lit(""""emp_suffix"""")): @scala.annotation.nowarn
+    columns.addOne(Fragment.of(""""emp_number"""")): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(DuckDbTypes.integer, unsaved.empNumber)}"): @scala.annotation.nowarn
+    columns.addOne(Fragment.of(""""emp_suffix"""")): @scala.annotation.nowarn
     values.addOne(sql"${Fragment.encode(DuckDbTypes.varchar, unsaved.empSuffix)}"): @scala.annotation.nowarn
-    columns.addOne(Fragment.lit(""""dept_code"""")): @scala.annotation.nowarn
+    columns.addOne(Fragment.of(""""dept_code"""")): @scala.annotation.nowarn
     values.addOne(sql"${Fragment.encode(DuckDbTypes.varchar, unsaved.deptCode)}"): @scala.annotation.nowarn
-    columns.addOne(Fragment.lit(""""dept_region"""")): @scala.annotation.nowarn
+    columns.addOne(Fragment.of(""""dept_region"""")): @scala.annotation.nowarn
     values.addOne(sql"${Fragment.encode(DuckDbTypes.varchar, unsaved.deptRegion)}"): @scala.annotation.nowarn
-    columns.addOne(Fragment.lit(""""emp_name"""")): @scala.annotation.nowarn
+    columns.addOne(Fragment.of(""""emp_name"""")): @scala.annotation.nowarn
     values.addOne(sql"${Fragment.encode(DuckDbTypes.varchar, unsaved.empName)}"): @scala.annotation.nowarn
-    columns.addOne(Fragment.lit(""""salary"""")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(ScalaDbTypes.DuckDbTypes.numeric.nullable, unsaved.salary)}"): @scala.annotation.nowarn
+    columns.addOne(Fragment.of(""""salary"""")): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(DuckDbTypes.numeric.opt, unsaved.salary)}"): @scala.annotation.nowarn
     unsaved.hireDate.visit(
       {  },
-      value => { columns.addOne(Fragment.lit(""""hire_date"""")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(DuckDbTypes.date, value)}"): @scala.annotation.nowarn }
+      value => { columns.addOne(Fragment.of(""""hire_date"""")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(DuckDbTypes.date, value)}"): @scala.annotation.nowarn }
     );
     val q: Fragment = {
       sql"""insert into "employees"(${Fragment.comma(columns)})
@@ -64,39 +63,39 @@ class EmployeesRepoImpl extends EmployeesRepo {
       RETURNING "emp_number", "emp_suffix", "dept_code", "dept_region", "emp_name", "salary", "hire_date"
       """
     }
-    return q.updateReturning(EmployeesRow.`_rowParser`.exactlyOne()).runUnchecked(c)
+    return q.updateReturning(EmployeesRow.rowCodec.exactlyOne()).run(using c)
   }
 
-  override def select: SelectBuilder[EmployeesFields, EmployeesRow] = SelectBuilder.of(""""employees"""", EmployeesFields.structure, EmployeesRow.`_rowParser`, Dialect.DUCKDB)
+  override def select: SelectBuilder[EmployeesFields, EmployeesRow] = SelectBuilder.of(""""employees"""", EmployeesFields.structure, EmployeesRow.rowCodec, Dialect.DUCKDB)
 
-  override def selectAll(using c: Connection): List[EmployeesRow] = {
+  override def selectAll(using c: ConnectionRead): List[EmployeesRow] = {
     sql"""select "emp_number", "emp_suffix", "dept_code", "dept_region", "emp_name", "salary", "hire_date"
     from "employees"
-    """.query(EmployeesRow.`_rowParser`.all()).runUnchecked(c)
+    """.query(EmployeesRow.rowCodec.all()).run(using c)
   }
 
-  override def selectById(compositeId: EmployeesId)(using c: Connection): Option[EmployeesRow] = {
+  override def selectById(compositeId: EmployeesId)(using c: ConnectionRead): Option[EmployeesRow] = {
     sql"""select "emp_number", "emp_suffix", "dept_code", "dept_region", "emp_name", "salary", "hire_date"
     from "employees"
-    where "emp_number" = ${Fragment.encode(ScalaDbTypes.DuckDbTypes.integer, compositeId.empNumber)} AND "emp_suffix" = ${Fragment.encode(DuckDbTypes.varchar, compositeId.empSuffix)}""".query(EmployeesRow.`_rowParser`.first()).runUnchecked(c)
+    where "emp_number" = ${Fragment.encode(DuckDbTypes.integer, compositeId.empNumber)} AND "emp_suffix" = ${Fragment.encode(DuckDbTypes.varchar, compositeId.empSuffix)}""".query(EmployeesRow.rowCodec.first()).run(using c)
   }
 
-  override def selectByIds(compositeIds: Array[EmployeesId])(using c: Connection): List[EmployeesRow] = {
+  override def selectByIds(compositeIds: List[EmployeesId])(using c: ConnectionRead): List[EmployeesRow] = {
     val orClauses: ListBuffer[Fragment] = ListBuffer()
-    compositeIds.foreach { id => orClauses.addOne(Fragment.interpolate(Fragment.lit("("), Fragment.lit(""""emp_number" = """), Fragment.encode(ScalaDbTypes.DuckDbTypes.integer, id.empNumber), Fragment.lit(" AND "), Fragment.lit(""""emp_suffix" = """), Fragment.encode(DuckDbTypes.varchar, id.empSuffix), Fragment.lit(")"))): @scala.annotation.nowarn }
-    return Fragment.interpolate(Fragment.lit("""select "emp_number", "emp_suffix", "dept_code", "dept_region", "emp_name", "salary", "hire_date"
+    compositeIds.foreach { id => orClauses.addOne(Fragment.concat(Fragment.of("("), Fragment.of(""""emp_number" = """), Fragment.encode(DuckDbTypes.integer, id.empNumber), Fragment.of(" AND "), Fragment.of(""""emp_suffix" = """), Fragment.encode(DuckDbTypes.varchar, id.empSuffix), Fragment.of(")"))): @scala.annotation.nowarn }
+    return Fragment.concat(Fragment.of("""select "emp_number", "emp_suffix", "dept_code", "dept_region", "emp_name", "salary", "hire_date"
     from "employees"
-    where """), Fragment.or(orClauses.toList), Fragment.lit("""
-    """)).query(EmployeesRow.`_rowParser`.all()).runUnchecked(c)
+    where """), Fragment.or(orClauses.toList), Fragment.of("""
+    """)).query(EmployeesRow.rowCodec.all()).run(using c)
   }
 
-  override def selectByIdsTracked(compositeIds: Array[EmployeesId])(using c: Connection): Map[EmployeesId, EmployeesRow] = {
+  override def selectByIdsTracked(compositeIds: List[EmployeesId])(using c: ConnectionRead): Map[EmployeesId, EmployeesRow] = {
     val ret: scala.collection.mutable.Map[EmployeesId, EmployeesRow] = scala.collection.mutable.Map.empty[EmployeesId, EmployeesRow]
     selectByIds(compositeIds)(using c).foreach(row => ret.put(row.compositeId, row): @scala.annotation.nowarn)
     return ret.toMap
   }
 
-  override def update: UpdateBuilder[EmployeesFields, EmployeesRow] = UpdateBuilder.of(""""employees"""", EmployeesFields.structure, EmployeesRow.`_rowParser`, Dialect.DUCKDB)
+  override def update: UpdateBuilder[EmployeesFields, EmployeesRow] = UpdateBuilder.of(""""employees"""", EmployeesFields.structure, EmployeesRow.rowCodec, Dialect.DUCKDB)
 
   override def update(row: EmployeesRow)(using c: Connection): Boolean = {
     val compositeId: EmployeesId = row.compositeId
@@ -104,14 +103,14 @@ class EmployeesRepoImpl extends EmployeesRepo {
     set "dept_code" = ${Fragment.encode(DuckDbTypes.varchar, row.deptCode)},
     "dept_region" = ${Fragment.encode(DuckDbTypes.varchar, row.deptRegion)},
     "emp_name" = ${Fragment.encode(DuckDbTypes.varchar, row.empName)},
-    "salary" = ${Fragment.encode(ScalaDbTypes.DuckDbTypes.numeric.nullable, row.salary)},
+    "salary" = ${Fragment.encode(DuckDbTypes.numeric.opt, row.salary)},
     "hire_date" = ${Fragment.encode(DuckDbTypes.date, row.hireDate)}
-    where "emp_number" = ${Fragment.encode(ScalaDbTypes.DuckDbTypes.integer, compositeId.empNumber)} AND "emp_suffix" = ${Fragment.encode(DuckDbTypes.varchar, compositeId.empSuffix)}""".update().runUnchecked(c) > 0
+    where "emp_number" = ${Fragment.encode(DuckDbTypes.integer, compositeId.empNumber)} AND "emp_suffix" = ${Fragment.encode(DuckDbTypes.varchar, compositeId.empSuffix)}""".update().run(using c) > 0
   }
 
   override def upsert(unsaved: EmployeesRow)(using c: Connection): EmployeesRow = {
   sql"""INSERT INTO "employees"("emp_number", "emp_suffix", "dept_code", "dept_region", "emp_name", "salary", "hire_date")
-    VALUES (${Fragment.encode(ScalaDbTypes.DuckDbTypes.integer, unsaved.empNumber)}, ${Fragment.encode(DuckDbTypes.varchar, unsaved.empSuffix)}, ${Fragment.encode(DuckDbTypes.varchar, unsaved.deptCode)}, ${Fragment.encode(DuckDbTypes.varchar, unsaved.deptRegion)}, ${Fragment.encode(DuckDbTypes.varchar, unsaved.empName)}, ${Fragment.encode(ScalaDbTypes.DuckDbTypes.numeric.nullable, unsaved.salary)}, ${Fragment.encode(DuckDbTypes.date, unsaved.hireDate)})
+    VALUES (${Fragment.encode(DuckDbTypes.integer, unsaved.empNumber)}, ${Fragment.encode(DuckDbTypes.varchar, unsaved.empSuffix)}, ${Fragment.encode(DuckDbTypes.varchar, unsaved.deptCode)}, ${Fragment.encode(DuckDbTypes.varchar, unsaved.deptRegion)}, ${Fragment.encode(DuckDbTypes.varchar, unsaved.empName)}, ${Fragment.encode(DuckDbTypes.numeric.opt, unsaved.salary)}, ${Fragment.encode(DuckDbTypes.date, unsaved.hireDate)})
     ON CONFLICT ("emp_number", "emp_suffix")
     DO UPDATE SET
       "dept_code" = EXCLUDED."dept_code",
@@ -120,8 +119,8 @@ class EmployeesRepoImpl extends EmployeesRepo {
     "salary" = EXCLUDED."salary",
     "hire_date" = EXCLUDED."hire_date"
     RETURNING "emp_number", "emp_suffix", "dept_code", "dept_region", "emp_name", "salary", "hire_date""""
-    .updateReturning(EmployeesRow.`_rowParser`.exactlyOne())
-    .runUnchecked(c)
+    .updateReturning(EmployeesRow.rowCodec.exactlyOne())
+    .run(using c)
   }
 
   override def upsertBatch(unsaved: Iterator[EmployeesRow])(using c: Connection): List[EmployeesRow] = {
@@ -135,7 +134,7 @@ class EmployeesRepoImpl extends EmployeesRepo {
     "salary" = EXCLUDED."salary",
     "hire_date" = EXCLUDED."hire_date"
     RETURNING "emp_number", "emp_suffix", "dept_code", "dept_region", "emp_name", "salary", "hire_date""""
-      .updateReturningEach(EmployeesRow.`_rowParser`, unsaved)
-    .runUnchecked(c)
+      .updateReturningEach(EmployeesRow.rowCodec, unsaved)
+    .run(using c)
   }
 }

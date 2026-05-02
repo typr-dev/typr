@@ -5,16 +5,15 @@
  */
 package testdb.customer_order_summary
 
-import dev.typr.foundations.Db2Types
-import dev.typr.foundations.RowParser
-import dev.typr.foundations.dsl.FieldsBase
-import dev.typr.foundations.dsl.Path
-import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.scala.RelationStructure
-import dev.typr.foundations.scala.ScalaDbTypes
-import dev.typr.foundations.scala.SqlExpr
-import dev.typr.foundations.scala.SqlExpr.Field
-import dev.typr.foundations.scala.TupleExpr4
+import dev.typr.dsl.FieldsBase
+import dev.typr.dsl.Path
+import dev.typr.dsl.SqlExpr.FieldLike
+import dev.typr.dslsc.RelationStructure
+import dev.typr.dslsc.SqlExpr
+import dev.typr.dslsc.SqlExpr.Field
+import dev.typr.dslsc.TupleExpr4
+import dev.typr.foundations.RowCodec
+import dev.typr.foundationssc.Db2Types
 
 class CustomerOrderSummaryViewFields(val `_path`: java.util.List[Path]) extends TupleExpr4[Int, String, Int, BigDecimal] with RelationStructure[CustomerOrderSummaryViewFields, CustomerOrderSummaryViewRow]  with FieldsBase[CustomerOrderSummaryViewRow] {
   def customerId: Field[Int, CustomerOrderSummaryViewRow] = {
@@ -25,7 +24,7 @@ class CustomerOrderSummaryViewFields(val `_path`: java.util.List[Path]) extends 
       None,
       None,
       (row, value) => row.copy(customerId = value),
-      ScalaDbTypes.Db2Types.integer
+      Db2Types.integer.underlying
     )
   }
 
@@ -37,7 +36,7 @@ class CustomerOrderSummaryViewFields(val `_path`: java.util.List[Path]) extends 
       None,
       None,
       (row, value) => row.copy(name = value),
-      Db2Types.varchar
+      Db2Types.varchar.underlying
     )
   }
 
@@ -49,7 +48,7 @@ class CustomerOrderSummaryViewFields(val `_path`: java.util.List[Path]) extends 
       None,
       None,
       (row, value) => row.copy(orderCount = value),
-      ScalaDbTypes.Db2Types.integer
+      Db2Types.integer.underlying
     )
   }
 
@@ -61,13 +60,13 @@ class CustomerOrderSummaryViewFields(val `_path`: java.util.List[Path]) extends 
       None,
       None,
       (row, value) => row.copy(totalSpent = value),
-      ScalaDbTypes.Db2Types.decimal
+      Db2Types.decimal.underlying
     )
   }
 
   override def columns: java.util.List[FieldLike[?, CustomerOrderSummaryViewRow]] = java.util.List.of(this.customerId.underlying, this.name.underlying, this.orderCount.underlying, this.totalSpent.underlying)
 
-  override def rowParser: RowParser[CustomerOrderSummaryViewRow] = CustomerOrderSummaryViewRow._rowParser.underlying
+  override def rowCodec: RowCodec[CustomerOrderSummaryViewRow] = CustomerOrderSummaryViewRow.rowCodec.underlying
 
   override def withPaths(`_path`: java.util.List[Path]): RelationStructure[CustomerOrderSummaryViewFields, CustomerOrderSummaryViewRow] = new CustomerOrderSummaryViewFields(`_path`)
 

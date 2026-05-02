@@ -6,9 +6,9 @@
 package testdb
 
 import com.fasterxml.jackson.annotation.JsonValue
-import dev.typr.foundations.Db2Type
-import dev.typr.foundations.kotlin.Bijection
-import dev.typr.foundations.kotlin.KotlinDbTypes
+import dev.typr.foundationskt.Bijection
+import dev.typr.foundationskt.Db2Type
+import dev.typr.foundationskt.Db2Types
 import java.math.BigDecimal
 
 /** Domain `MONEY_AMOUNT`
@@ -20,6 +20,6 @@ data class MoneyAmount(@field:JsonValue val value: BigDecimal) {
       Bijection.of(MoneyAmount::value, ::MoneyAmount)
 
     val db2Type: Db2Type<MoneyAmount> =
-      KotlinDbTypes.Db2Types.decimal.bimap(::MoneyAmount, MoneyAmount::value).renamed("\"MONEY_AMOUNT\"")
+      Db2Type(Db2Types.decimal.to(Bijection.of(::MoneyAmount, MoneyAmount::value)).underlying.renamed("\"MONEY_AMOUNT\""))
   }
 }

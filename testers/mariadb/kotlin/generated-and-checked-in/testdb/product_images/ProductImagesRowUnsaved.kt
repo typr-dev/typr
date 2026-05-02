@@ -19,15 +19,15 @@ data class ProductImagesRowUnsaved(
     */
   @field:JsonProperty("product_id") val productId: ProductsId,
   /**  */
-  @field:JsonProperty("image_url") val imageUrl: String,
+  @field:JsonProperty("image_url") val imageUrl: kotlin.String,
   /** Default: NULL
 
     */
-  @field:JsonProperty("thumbnail_url") val thumbnailUrl: Defaulted<String?> = UseDefault(),
+  @field:JsonProperty("thumbnail_url") val thumbnailUrl: Defaulted<kotlin.String?> = UseDefault(),
   /** Default: NULL
 
     */
-  @field:JsonProperty("alt_text") val altText: Defaulted<String?> = UseDefault(),
+  @field:JsonProperty("alt_text") val altText: Defaulted<kotlin.String?> = UseDefault(),
   /** Default: 0
 
     */
@@ -42,8 +42,8 @@ data class ProductImagesRowUnsaved(
   @field:JsonProperty("image_data") val imageData: Defaulted<ByteArray?> = UseDefault()
 ) {
   fun toRow(
-    thumbnailUrlDefault: () -> String?,
-    altTextDefault: () -> String?,
+    thumbnailUrlDefault: () -> kotlin.String?,
+    altTextDefault: () -> kotlin.String?,
     sortOrderDefault: () -> Uint1,
     isPrimaryDefault: () -> /* user-picked */ IsPrimary,
     imageDataDefault: () -> ByteArray?,

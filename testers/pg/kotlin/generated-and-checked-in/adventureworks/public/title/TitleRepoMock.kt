@@ -5,17 +5,18 @@
  */
 package adventureworks.public.title
 
-import dev.typr.foundations.kotlin.DeleteBuilder
-import dev.typr.foundations.kotlin.DeleteBuilderMock
-import dev.typr.foundations.kotlin.DeleteParams
-import dev.typr.foundations.kotlin.SelectBuilder
-import dev.typr.foundations.kotlin.SelectBuilderMock
-import dev.typr.foundations.kotlin.SelectParams
-import dev.typr.foundations.kotlin.UpdateBuilder
-import dev.typr.foundations.kotlin.UpdateBuilderMock
-import dev.typr.foundations.kotlin.UpdateParams
+import dev.typr.dslkt.DeleteBuilder
+import dev.typr.dslkt.DeleteBuilderMock
+import dev.typr.dslkt.DeleteParams
+import dev.typr.dslkt.SelectBuilder
+import dev.typr.dslkt.SelectBuilderMock
+import dev.typr.dslkt.SelectParams
+import dev.typr.dslkt.UpdateBuilder
+import dev.typr.dslkt.UpdateBuilderMock
+import dev.typr.dslkt.UpdateParams
+import dev.typr.foundationskt.Connection
+import dev.typr.foundationskt.ConnectionRead
 import java.lang.RuntimeException
-import java.sql.Connection
 import java.util.ArrayList
 import kotlin.collections.Iterator
 import kotlin.collections.List
@@ -28,10 +29,10 @@ data class TitleRepoMock(val map: MutableMap<TitleId, TitleRow> = mutableMapOf<T
   override fun deleteById(
     code: TitleId,
     c: Connection
-  ): Boolean = map.remove(code) != null
+  ): kotlin.Boolean = map.remove(code) != null
 
   override fun deleteByIds(
-    codes: Array<TitleId>,
+    codes: List<TitleId>,
     c: Connection
   ): Int {
     var count = 0
@@ -58,7 +59,7 @@ data class TitleRepoMock(val map: MutableMap<TitleId, TitleRow> = mutableMapOf<T
     unsaved: Iterator<TitleRow>,
     batchSize: Int,
     c: Connection
-  ): Long {
+  ): kotlin.Long {
     var count = 0L
     while (unsaved.hasNext()) {
       val row = unsaved.next()
@@ -70,16 +71,16 @@ data class TitleRepoMock(val map: MutableMap<TitleId, TitleRow> = mutableMapOf<T
 
   override fun select(): SelectBuilder<TitleFields, TitleRow> = SelectBuilderMock(TitleFields.structure, { map.values.toList() }, SelectParams.empty())
 
-  override fun selectAll(c: Connection): List<TitleRow> = map.values.toList()
+  override fun selectAll(c: ConnectionRead): List<TitleRow> = map.values.toList()
 
   override fun selectById(
     code: TitleId,
-    c: Connection
+    c: ConnectionRead
   ): TitleRow? = map[code]
 
   override fun selectByIds(
-    codes: Array<TitleId>,
-    c: Connection
+    codes: List<TitleId>,
+    c: ConnectionRead
   ): List<TitleRow> {
     val result = ArrayList<TitleRow>()
     for (id in codes) {
@@ -92,8 +93,8 @@ data class TitleRepoMock(val map: MutableMap<TitleId, TitleRow> = mutableMapOf<T
   }
 
   override fun selectByIdsTracked(
-    codes: Array<TitleId>,
-    c: Connection
+    codes: List<TitleId>,
+    c: ConnectionRead
   ): Map<TitleId, TitleRow> = selectByIds(codes, c).associateBy({ row: TitleRow -> row.code })
 
   override fun update(): UpdateBuilder<TitleFields, TitleRow> = UpdateBuilderMock(TitleFields.structure, { map.values.toList() }, UpdateParams.empty(), { row -> row })

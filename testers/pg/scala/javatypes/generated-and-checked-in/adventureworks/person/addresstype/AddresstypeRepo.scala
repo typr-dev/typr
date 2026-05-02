@@ -5,10 +5,11 @@
  */
 package adventureworks.person.addresstype
 
-import dev.typr.foundations.dsl.DeleteBuilder
-import dev.typr.foundations.dsl.SelectBuilder
-import dev.typr.foundations.dsl.UpdateBuilder
-import java.sql.Connection
+import dev.typr.dsl.DeleteBuilder
+import dev.typr.dsl.SelectBuilder
+import dev.typr.dsl.UpdateBuilder
+import dev.typr.foundations.Connection
+import dev.typr.foundations.ConnectionRead
 import java.util.Optional
 
 trait AddresstypeRepo {
@@ -16,7 +17,7 @@ trait AddresstypeRepo {
 
   def deleteById(addresstypeid: AddresstypeId)(using c: Connection): java.lang.Boolean
 
-  def deleteByIds(addresstypeids: Array[AddresstypeId])(using c: Connection): Integer
+  def deleteByIds(addresstypeids: java.util.List[AddresstypeId])(using c: Connection): Integer
 
   def insert(unsaved: AddresstypeRow)(using c: Connection): AddresstypeRow
 
@@ -35,13 +36,13 @@ trait AddresstypeRepo {
 
   def select: SelectBuilder[AddresstypeFields, AddresstypeRow]
 
-  def selectAll(using c: Connection): java.util.List[AddresstypeRow]
+  def selectAll(using c: ConnectionRead): java.util.List[AddresstypeRow]
 
-  def selectById(addresstypeid: AddresstypeId)(using c: Connection): Optional[AddresstypeRow]
+  def selectById(addresstypeid: AddresstypeId)(using c: ConnectionRead): Optional[AddresstypeRow]
 
-  def selectByIds(addresstypeids: Array[AddresstypeId])(using c: Connection): java.util.List[AddresstypeRow]
+  def selectByIds(addresstypeids: java.util.List[AddresstypeId])(using c: ConnectionRead): java.util.List[AddresstypeRow]
 
-  def selectByIdsTracked(addresstypeids: Array[AddresstypeId])(using c: Connection): java.util.Map[AddresstypeId, AddresstypeRow]
+  def selectByIdsTracked(addresstypeids: java.util.List[AddresstypeId])(using c: ConnectionRead): java.util.Map[AddresstypeId, AddresstypeRow]
 
   def update: UpdateBuilder[AddresstypeFields, AddresstypeRow]
 

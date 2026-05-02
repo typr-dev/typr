@@ -7,13 +7,11 @@ package adventureworks.public.flaff
 
 import adventureworks.public.ShortText
 import com.fasterxml.jackson.annotation.JsonProperty
+import dev.typr.dslsc.RowCodecs
 import dev.typr.foundations.PgText
-import dev.typr.foundations.PgTypes
 import dev.typr.foundations.Tuple.Tuple5
-import dev.typr.foundations.scala.DbTypeOps
-import dev.typr.foundations.scala.RowParser
-import dev.typr.foundations.scala.RowParsers
-import dev.typr.foundations.scala.ScalaDbTypes
+import dev.typr.foundationssc.PgTypes
+import dev.typr.foundationssc.RowCodec
 
 /** Table: public.flaff
  * Composite primary key: code, another_code, some_number, specifier
@@ -52,8 +50,6 @@ case class FlaffRow(
 }
 
 object FlaffRow {
-  val `_rowParser`: RowParser[FlaffRow] = RowParsers.of(ShortText.pgType, PgTypes.text, ScalaDbTypes.PgTypes.int4, ShortText.pgType, ShortText.pgType.nullable)(FlaffRow.apply)(row => Array[Any](row.code, row.anotherCode, row.someNumber, row.specifier, row.parentspecifier))
-
   def apply(
     compositeId: FlaffId,
     parentspecifier: Option[ShortText]
@@ -67,5 +63,7 @@ object FlaffRow {
     )
   }
 
-  given pgText: PgText[FlaffRow] = PgText.from(`_rowParser`.underlying)
+  given pgText: PgText[FlaffRow] = PgText.from(rowCodec.underlying)
+
+  val rowCodec: RowCodec[FlaffRow] = RowCodecs.of(ShortText.pgType, PgTypes.text, PgTypes.int4, ShortText.pgType, ShortText.pgType.opt)(FlaffRow.apply)(row => Array[Any](row.code, row.anotherCode, row.someNumber, row.specifier, row.parentspecifier))
 }

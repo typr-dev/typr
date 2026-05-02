@@ -5,7 +5,7 @@
  */
 package testdb.insert_order_with_items
 
-import java.sql.Connection
+import dev.typr.foundationssc.ConnectionRead
 import java.time.LocalDate
 import testdb.customers.CustomersId
 
@@ -16,5 +16,5 @@ trait InsertOrderWithItemsSqlRepo {
     orderDate: Option[LocalDate],
     totalAmount: Option[BigDecimal],
     status: Option[String]
-  )(using c: Connection): List[InsertOrderWithItemsSqlRow]
+  )(using c: ConnectionRead): List[InsertOrderWithItemsSqlRow]
 }

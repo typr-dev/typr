@@ -5,10 +5,11 @@
  */
 package adventureworks.humanresources.employeedepartmenthistory
 
-import dev.typr.foundations.kotlin.DeleteBuilder
-import dev.typr.foundations.kotlin.SelectBuilder
-import dev.typr.foundations.kotlin.UpdateBuilder
-import java.sql.Connection
+import dev.typr.dslkt.DeleteBuilder
+import dev.typr.dslkt.SelectBuilder
+import dev.typr.dslkt.UpdateBuilder
+import dev.typr.foundationskt.Connection
+import dev.typr.foundationskt.ConnectionRead
 import kotlin.collections.Iterator
 import kotlin.collections.List
 import kotlin.collections.Map
@@ -19,10 +20,10 @@ interface EmployeedepartmenthistoryRepo {
   abstract fun deleteById(
     compositeId: EmployeedepartmenthistoryId,
     c: Connection
-  ): Boolean
+  ): kotlin.Boolean
 
   abstract fun deleteByIds(
-    compositeIds: Array<EmployeedepartmenthistoryId>,
+    compositeIds: List<EmployeedepartmenthistoryId>,
     c: Connection
   ): Int
 
@@ -40,32 +41,32 @@ interface EmployeedepartmenthistoryRepo {
     unsaved: Iterator<EmployeedepartmenthistoryRow>,
     batchSize: Int = 10000,
     c: Connection
-  ): Long
+  ): kotlin.Long
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
   abstract fun insertUnsavedStreaming(
     unsaved: Iterator<EmployeedepartmenthistoryRowUnsaved>,
     batchSize: Int = 10000,
     c: Connection
-  ): Long
+  ): kotlin.Long
 
   abstract fun select(): SelectBuilder<EmployeedepartmenthistoryFields, EmployeedepartmenthistoryRow>
 
-  abstract fun selectAll(c: Connection): List<EmployeedepartmenthistoryRow>
+  abstract fun selectAll(c: ConnectionRead): List<EmployeedepartmenthistoryRow>
 
   abstract fun selectById(
     compositeId: EmployeedepartmenthistoryId,
-    c: Connection
+    c: ConnectionRead
   ): EmployeedepartmenthistoryRow?
 
   abstract fun selectByIds(
-    compositeIds: Array<EmployeedepartmenthistoryId>,
-    c: Connection
+    compositeIds: List<EmployeedepartmenthistoryId>,
+    c: ConnectionRead
   ): List<EmployeedepartmenthistoryRow>
 
   abstract fun selectByIdsTracked(
-    compositeIds: Array<EmployeedepartmenthistoryId>,
-    c: Connection
+    compositeIds: List<EmployeedepartmenthistoryId>,
+    c: ConnectionRead
   ): Map<EmployeedepartmenthistoryId, EmployeedepartmenthistoryRow>
 
   abstract fun update(): UpdateBuilder<EmployeedepartmenthistoryFields, EmployeedepartmenthistoryRow>
@@ -73,7 +74,7 @@ interface EmployeedepartmenthistoryRepo {
   abstract fun update(
     row: EmployeedepartmenthistoryRow,
     c: Connection
-  ): Boolean
+  ): kotlin.Boolean
 
   abstract fun upsert(
     unsaved: EmployeedepartmenthistoryRow,

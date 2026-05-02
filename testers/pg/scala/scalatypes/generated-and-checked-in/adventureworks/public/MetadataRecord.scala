@@ -5,13 +5,11 @@
  */
 package adventureworks.public
 
-import dev.typr.foundations.PgRead
-import dev.typr.foundations.PgStruct
-import dev.typr.foundations.PgType
-import dev.typr.foundations.PgTypes
 import dev.typr.foundations.data.Jsonb
+import dev.typr.foundationssc.PgType
+import dev.typr.foundationssc.PgTypes
+import dev.typr.foundationssc.RowCodec
 import java.time.Instant
-import scala.jdk.OptionConverters.RichOption
 
 /** PostgreSQL composite type: public.metadata_record */
 case class MetadataRecord(
@@ -21,9 +19,7 @@ case class MetadataRecord(
 )
 
 object MetadataRecord {
-  given pgStruct: PgStruct[MetadataRecord] = PgStruct.builder[MetadataRecord]("public.metadata_record").optField("key", PgTypes.text, (v: MetadataRecord) => v.key.asJava).optField("value", PgTypes.jsonb, (v: MetadataRecord) => v.value.asJava).optField("createdAt", PgTypes.timestamptz, (v: MetadataRecord) => v.createdAt.asJava).build(arr => MetadataRecord(key = Option(arr(0).asInstanceOf[String]), value = Option(arr(1).asInstanceOf[Jsonb]), createdAt = Option(arr(2).asInstanceOf[Instant])))
+  given pgType: PgType[MetadataRecord] = PgTypes.compositeOf("public.metadata_record", RowCodec.namedBuilder[MetadataRecord]().field("key", PgTypes.text.opt)((v: MetadataRecord) => v.key).field("value", PgTypes.jsonb.opt)((v: MetadataRecord) => v.value).field("createdAt", PgTypes.timestamptz.opt)((v: MetadataRecord) => v.createdAt).build((t0, t1, t2) => MetadataRecord(key = t0, value = t1, createdAt = t2)))
 
-  given pgType: PgType[MetadataRecord] = pgStruct.asType()
-
-  given pgTypeArray: PgType[Array[MetadataRecord]] = pgType.array(PgRead.readCompositeArray(pgType.pgCompositeText(), n => new Array[MetadataRecord](n)), n => new Array[MetadataRecord](n))
+  given pgTypeArray: PgType[scala.collection.immutable.List[MetadataRecord]] = pgType.array
 }

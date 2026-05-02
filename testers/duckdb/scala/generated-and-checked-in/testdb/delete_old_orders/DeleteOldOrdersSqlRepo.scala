@@ -5,12 +5,12 @@
  */
 package testdb.delete_old_orders
 
-import java.sql.Connection
+import dev.typr.foundationssc.ConnectionRead
 import java.time.LocalDate
 
 trait DeleteOldOrdersSqlRepo {
   def apply(
     cutoffDate: LocalDate,
     status: Option[String]
-  )(using c: Connection): List[DeleteOldOrdersSqlRow]
+  )(using c: ConnectionRead): List[DeleteOldOrdersSqlRow]
 }

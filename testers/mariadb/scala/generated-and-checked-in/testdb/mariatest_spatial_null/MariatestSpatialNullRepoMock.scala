@@ -5,17 +5,18 @@
  */
 package testdb.mariatest_spatial_null
 
-import dev.typr.foundations.scala.DeleteBuilder
-import dev.typr.foundations.scala.DeleteBuilderMock
-import dev.typr.foundations.scala.DeleteParams
-import dev.typr.foundations.scala.SelectBuilder
-import dev.typr.foundations.scala.SelectBuilderMock
-import dev.typr.foundations.scala.SelectParams
-import dev.typr.foundations.scala.UpdateBuilder
-import dev.typr.foundations.scala.UpdateBuilderMock
-import dev.typr.foundations.scala.UpdateParams
+import dev.typr.dslsc.DeleteBuilder
+import dev.typr.dslsc.DeleteBuilderMock
+import dev.typr.dslsc.DeleteParams
+import dev.typr.dslsc.SelectBuilder
+import dev.typr.dslsc.SelectBuilderMock
+import dev.typr.dslsc.SelectParams
+import dev.typr.dslsc.UpdateBuilder
+import dev.typr.dslsc.UpdateBuilderMock
+import dev.typr.dslsc.UpdateParams
+import dev.typr.foundationssc.Connection
+import dev.typr.foundationssc.ConnectionRead
 import java.lang.RuntimeException
-import java.sql.Connection
 
 case class MariatestSpatialNullRepoMock(
   toRow: MariatestSpatialNullRowUnsaved => MariatestSpatialNullRow,
@@ -25,7 +26,7 @@ case class MariatestSpatialNullRepoMock(
 
   override def deleteById(id: MariatestSpatialNullId)(using c: Connection): Boolean = map.remove(id).isDefined
 
-  override def deleteByIds(ids: Array[MariatestSpatialNullId])(using c: Connection): Int = {
+  override def deleteByIds(ids: List[MariatestSpatialNullId])(using c: Connection): Int = {
     var count = 0
     ids.foreach { id => if (map.remove(id).isDefined) {
       count = count + 1
@@ -45,13 +46,13 @@ case class MariatestSpatialNullRepoMock(
 
   override def select: SelectBuilder[MariatestSpatialNullFields, MariatestSpatialNullRow] = SelectBuilderMock(MariatestSpatialNullFields.structure, () => map.values.toList, SelectParams.empty())
 
-  override def selectAll(using c: Connection): List[MariatestSpatialNullRow] = map.values.toList
+  override def selectAll(using c: ConnectionRead): List[MariatestSpatialNullRow] = map.values.toList
 
-  override def selectById(id: MariatestSpatialNullId)(using c: Connection): Option[MariatestSpatialNullRow] = map.get(id)
+  override def selectById(id: MariatestSpatialNullId)(using c: ConnectionRead): Option[MariatestSpatialNullRow] = map.get(id)
 
-  override def selectByIds(ids: Array[MariatestSpatialNullId])(using c: Connection): List[MariatestSpatialNullRow] = ids.flatMap(map.get(_)).toList
+  override def selectByIds(ids: List[MariatestSpatialNullId])(using c: ConnectionRead): List[MariatestSpatialNullRow] = ids.flatMap(map.get(_)).toList
 
-  override def selectByIdsTracked(ids: Array[MariatestSpatialNullId])(using c: Connection): Map[MariatestSpatialNullId, MariatestSpatialNullRow] = selectByIds(ids)(using c).map(x => (((row: MariatestSpatialNullRow) => row.id).apply(x), x)).toMap
+  override def selectByIdsTracked(ids: List[MariatestSpatialNullId])(using c: ConnectionRead): Map[MariatestSpatialNullId, MariatestSpatialNullRow] = selectByIds(ids)(using c).map(x => (((row: MariatestSpatialNullRow) => row.id).apply(x), x)).toMap
 
   override def update: UpdateBuilder[MariatestSpatialNullFields, MariatestSpatialNullRow] = UpdateBuilderMock(MariatestSpatialNullFields.structure, () => map.values.toList, UpdateParams.empty(), row => row)
 

@@ -6,7 +6,7 @@
 package testdb
 
 import dev.typr.foundations.data.Xml
-import java.sql.Connection
+import dev.typr.foundationssc.Connection
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime

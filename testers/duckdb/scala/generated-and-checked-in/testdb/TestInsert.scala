@@ -10,15 +10,14 @@ import dev.typr.foundations.data.Uint1
 import dev.typr.foundations.data.Uint2
 import dev.typr.foundations.data.Uint4
 import dev.typr.foundations.data.Uint8
+import dev.typr.foundationssc.Connection
 import java.lang.Math
 import java.math.BigInteger
-import java.sql.Connection
 import java.time.Duration
+import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
-import java.time.OffsetDateTime
-import java.time.ZoneOffset
 import java.util.UUID
 import scala.util.Random
 import testdb.all_scalar_types.AllScalarTypesId
@@ -82,7 +81,7 @@ case class TestInsert(random: Random) {
     colDate: Option[LocalDate] = (if (random.nextBoolean()) None else Some(LocalDate.ofEpochDay(random.nextInt(30000).toLong))),
     colTime: Option[LocalTime] = (if (random.nextBoolean()) None else Some(LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong))),
     colTimestamp: Option[LocalDateTime] = (if (random.nextBoolean()) None else Some(LocalDateTime.of(LocalDate.ofEpochDay(random.nextInt(30000).toLong), LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong)))),
-    colTimestamptz: Option[OffsetDateTime] = (if (random.nextBoolean()) None else Some(OffsetDateTime.of(LocalDateTime.of(LocalDate.ofEpochDay(random.nextInt(30000).toLong), LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong)), ZoneOffset.ofHours(random.nextInt(24) - 12)))),
+    colTimestamptz: Option[Instant] = (if (random.nextBoolean()) None else Some(Instant.ofEpochMilli(1000000000000L + random.nextLong(1000000000000L)))),
     colInterval: Option[Duration] = None,
     colUuid: Option[UUID] = (if (random.nextBoolean()) None else Some(UUID.nameUUIDFromBytes{val bs = Array.ofDim[Byte](16); random.nextBytes(bs); bs})),
     colJson: Option[Json] = (if (random.nextBoolean()) None else Some(new Json("{}"))),

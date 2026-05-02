@@ -27,7 +27,7 @@ object LastName {
 
   given arraySetter: Setter[Array[LastName]] = Name.arraySetter.contramap(_.map(_.value))
 
-  given bijection: Bijection[LastName, Name] = Bijection.apply[LastName, Name](_.value)(LastName.apply)
+  given bijection: Bijection[LastName, Name] = Bijection[LastName, Name](_.value)(LastName.apply)
 
   given jdbcDecoder: JdbcDecoder[LastName] = Name.jdbcDecoder.map(LastName.apply)
 

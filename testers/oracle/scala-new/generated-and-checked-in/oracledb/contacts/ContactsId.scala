@@ -6,19 +6,19 @@
 package oracledb.contacts
 
 import com.fasterxml.jackson.annotation.JsonValue
-import dev.typr.foundations.OracleType
-import dev.typr.foundations.scala.Bijection
-import dev.typr.foundations.scala.RowParser
-import dev.typr.foundations.scala.RowParsers
-import dev.typr.foundations.scala.ScalaDbTypes
+import dev.typr.dslsc.Bijection
+import dev.typr.dslsc.RowCodecs
+import dev.typr.foundationssc.OracleType
+import dev.typr.foundationssc.OracleTypes
+import dev.typr.foundationssc.RowCodec
 
 /** Type for the primary key of table `CONTACTS` */
 case class ContactsId(@JsonValue value: BigDecimal) extends scala.AnyVal
 
 object ContactsId {
-  given `_rowParser`: RowParser[ContactsId] = RowParsers.of(ScalaDbTypes.OracleTypes.number.bimap(ContactsId.apply, _.value))(x => x)(id => Array[Any](id))
+  given bijection: Bijection[ContactsId, BigDecimal] = Bijection.of[ContactsId, BigDecimal](_.value, ContactsId.apply)
 
-  given bijection: Bijection[ContactsId, BigDecimal] = Bijection.apply[ContactsId, BigDecimal](_.value)(ContactsId.apply)
+  given oracleType: OracleType[ContactsId] = OracleTypes.number.to(Bijection.of(ContactsId.apply, _.value))
 
-  given oracleType: OracleType[ContactsId] = ScalaDbTypes.OracleTypes.number.bimap(ContactsId.apply, _.value)
+  given rowCodec: RowCodec[ContactsId] = RowCodecs.of(OracleTypes.number.to(Bijection.of(ContactsId.apply, _.value)))(x => x)(id => Array[Any](id))
 }

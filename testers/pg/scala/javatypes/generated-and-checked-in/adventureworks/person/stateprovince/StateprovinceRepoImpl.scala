@@ -9,131 +9,132 @@ import adventureworks.person.countryregion.CountryregionId
 import adventureworks.public.Flag
 import adventureworks.public.Name
 import adventureworks.sales.salesterritory.SalesterritoryId
+import dev.typr.dsl.DeleteBuilder
+import dev.typr.dsl.Dialect
+import dev.typr.dsl.SelectBuilder
+import dev.typr.dsl.UpdateBuilder
+import dev.typr.foundations.Connection
+import dev.typr.foundations.ConnectionRead
 import dev.typr.foundations.Fragment
 import dev.typr.foundations.PgTypes
-import dev.typr.foundations.dsl.DeleteBuilder
-import dev.typr.foundations.dsl.Dialect
-import dev.typr.foundations.dsl.SelectBuilder
-import dev.typr.foundations.dsl.UpdateBuilder
-import dev.typr.foundations.streamingInsert
-import java.sql.Connection
+import dev.typr.foundations.StreamingInsert
 import java.util.ArrayList
 import java.util.HashMap
 import java.util.Optional
-import dev.typr.foundations.Fragment.interpolate
+import dev.typr.foundations.Fragment.concat
 
 class StateprovinceRepoImpl extends StateprovinceRepo {
   override def delete: DeleteBuilder[StateprovinceFields, StateprovinceRow] = DeleteBuilder.of(""""person"."stateprovince"""", StateprovinceFields.structure, Dialect.POSTGRESQL)
 
-  override def deleteById(stateprovinceid: StateprovinceId)(using c: Connection): java.lang.Boolean = interpolate(Fragment.lit("""delete from "person"."stateprovince" where "stateprovinceid" = """), Fragment.encode(StateprovinceId.pgType, stateprovinceid), Fragment.lit("")).update().runUnchecked(c) > 0
+  override def deleteById(stateprovinceid: StateprovinceId)(using c: Connection): java.lang.Boolean = concat(Fragment.of("""delete from "person"."stateprovince" where "stateprovinceid" = """), Fragment.encode(StateprovinceId.pgType, stateprovinceid), Fragment.of("")).update().run(c) > 0
 
-  override def deleteByIds(stateprovinceids: Array[StateprovinceId])(using c: Connection): Integer = {
-    interpolate(Fragment.lit("""delete
+  override def deleteByIds(stateprovinceids: java.util.List[StateprovinceId])(using c: Connection): Integer = {
+    concat(Fragment.of("""delete
     from "person"."stateprovince"
-    where "stateprovinceid" = ANY("""), Fragment.encode(StateprovinceId.pgTypeArray, stateprovinceids), Fragment.lit(")"))
+    where "stateprovinceid" = ANY("""), Fragment.encode(StateprovinceId.pgType.array(), stateprovinceids), Fragment.of(")"))
       .update()
-      .runUnchecked(c)
+      .run(c)
   }
 
   override def insert(unsaved: StateprovinceRow)(using c: Connection): StateprovinceRow = {
-  interpolate(Fragment.lit("""insert into "person"."stateprovince"("stateprovinceid", "stateprovincecode", "countryregioncode", "isonlystateprovinceflag", "name", "territoryid", "rowguid", "modifieddate")
-    values ("""), Fragment.encode(StateprovinceId.pgType, unsaved.stateprovinceid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.bpchar, unsaved.stateprovincecode), Fragment.lit("::bpchar, "), Fragment.encode(CountryregionId.pgType, unsaved.countryregioncode), Fragment.lit(", "), Fragment.encode(Flag.pgType, unsaved.isonlystateprovinceflag), Fragment.lit("::bool, "), Fragment.encode(Name.pgType, unsaved.name), Fragment.lit("::varchar, "), Fragment.encode(SalesterritoryId.pgType, unsaved.territoryid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.uuid, unsaved.rowguid), Fragment.lit("::uuid, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("""::timestamp)
+  concat(Fragment.of("""insert into "person"."stateprovince"("stateprovinceid", "stateprovincecode", "countryregioncode", "isonlystateprovinceflag", "name", "territoryid", "rowguid", "modifieddate")
+    values ("""), Fragment.encode(StateprovinceId.pgType, unsaved.stateprovinceid), Fragment.of("::int4, "), Fragment.encode(PgTypes.bpchar, unsaved.stateprovincecode), Fragment.of("::bpchar, "), Fragment.encode(CountryregionId.pgType, unsaved.countryregioncode), Fragment.of(", "), Fragment.encode(Flag.pgType, unsaved.isonlystateprovinceflag), Fragment.of("::bool, "), Fragment.encode(Name.pgType, unsaved.name), Fragment.of("::varchar, "), Fragment.encode(SalesterritoryId.pgType, unsaved.territoryid), Fragment.of("::int4, "), Fragment.encode(PgTypes.uuid, unsaved.rowguid), Fragment.of("::uuid, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.of("""::timestamp)
     RETURNING "stateprovinceid", "stateprovincecode", "countryregioncode", "isonlystateprovinceflag", "name", "territoryid", "rowguid", "modifieddate"
     """))
-    .updateReturning(StateprovinceRow.`_rowParser`.exactlyOne()).runUnchecked(c)
+    .updateReturning(StateprovinceRow.rowCodec.exactlyOne()).run(c)
   }
 
   override def insert(unsaved: StateprovinceRowUnsaved)(using c: Connection): StateprovinceRow = {
     val columns: ArrayList[Fragment] = new ArrayList()
     val values: ArrayList[Fragment] = new ArrayList()
-    columns.add(Fragment.lit(""""stateprovincecode"""")): @scala.annotation.nowarn
-    values.add(interpolate(Fragment.encode(PgTypes.bpchar, unsaved.stateprovincecode), Fragment.lit("::bpchar"))): @scala.annotation.nowarn
-    columns.add(Fragment.lit(""""countryregioncode"""")): @scala.annotation.nowarn
-    values.add(interpolate(Fragment.encode(CountryregionId.pgType, unsaved.countryregioncode), Fragment.lit(""))): @scala.annotation.nowarn
-    columns.add(Fragment.lit(""""name"""")): @scala.annotation.nowarn
-    values.add(interpolate(Fragment.encode(Name.pgType, unsaved.name), Fragment.lit("::varchar"))): @scala.annotation.nowarn
-    columns.add(Fragment.lit(""""territoryid"""")): @scala.annotation.nowarn
-    values.add(interpolate(Fragment.encode(SalesterritoryId.pgType, unsaved.territoryid), Fragment.lit("::int4"))): @scala.annotation.nowarn
+    columns.add(Fragment.of(""""stateprovincecode"""")): @scala.annotation.nowarn
+    values.add(concat(Fragment.encode(PgTypes.bpchar, unsaved.stateprovincecode), Fragment.of("::bpchar"))): @scala.annotation.nowarn
+    columns.add(Fragment.of(""""countryregioncode"""")): @scala.annotation.nowarn
+    values.add(concat(Fragment.encode(CountryregionId.pgType, unsaved.countryregioncode), Fragment.of(""))): @scala.annotation.nowarn
+    columns.add(Fragment.of(""""name"""")): @scala.annotation.nowarn
+    values.add(concat(Fragment.encode(Name.pgType, unsaved.name), Fragment.of("::varchar"))): @scala.annotation.nowarn
+    columns.add(Fragment.of(""""territoryid"""")): @scala.annotation.nowarn
+    values.add(concat(Fragment.encode(SalesterritoryId.pgType, unsaved.territoryid), Fragment.of("::int4"))): @scala.annotation.nowarn
     unsaved.stateprovinceid.visit(
       {  },
-      value => { columns.add(Fragment.lit(""""stateprovinceid"""")): @scala.annotation.nowarn; values.add(interpolate(Fragment.encode(StateprovinceId.pgType, value), Fragment.lit("::int4"))): @scala.annotation.nowarn }
+      value => { columns.add(Fragment.of(""""stateprovinceid"""")): @scala.annotation.nowarn; values.add(concat(Fragment.encode(StateprovinceId.pgType, value), Fragment.of("::int4"))): @scala.annotation.nowarn }
     );
     unsaved.isonlystateprovinceflag.visit(
       {  },
-      value => { columns.add(Fragment.lit(""""isonlystateprovinceflag"""")): @scala.annotation.nowarn; values.add(interpolate(Fragment.encode(Flag.pgType, value), Fragment.lit("::bool"))): @scala.annotation.nowarn }
+      value => { columns.add(Fragment.of(""""isonlystateprovinceflag"""")): @scala.annotation.nowarn; values.add(concat(Fragment.encode(Flag.pgType, value), Fragment.of("::bool"))): @scala.annotation.nowarn }
     );
     unsaved.rowguid.visit(
       {  },
-      value => { columns.add(Fragment.lit(""""rowguid"""")): @scala.annotation.nowarn; values.add(interpolate(Fragment.encode(PgTypes.uuid, value), Fragment.lit("::uuid"))): @scala.annotation.nowarn }
+      value => { columns.add(Fragment.of(""""rowguid"""")): @scala.annotation.nowarn; values.add(concat(Fragment.encode(PgTypes.uuid, value), Fragment.of("::uuid"))): @scala.annotation.nowarn }
     );
     unsaved.modifieddate.visit(
       {  },
-      value => { columns.add(Fragment.lit(""""modifieddate"""")): @scala.annotation.nowarn; values.add(interpolate(Fragment.encode(PgTypes.timestamp, value), Fragment.lit("::timestamp"))): @scala.annotation.nowarn }
+      value => { columns.add(Fragment.of(""""modifieddate"""")): @scala.annotation.nowarn; values.add(concat(Fragment.encode(PgTypes.timestamp, value), Fragment.of("::timestamp"))): @scala.annotation.nowarn }
     );
     val q: Fragment = {
-      interpolate(Fragment.lit("""insert into "person"."stateprovince"("""), Fragment.comma(columns), Fragment.lit(""")
-      values ("""), Fragment.comma(values), Fragment.lit(""")
+      concat(Fragment.of("""insert into "person"."stateprovince"("""), Fragment.comma(columns), Fragment.of(""")
+      values ("""), Fragment.comma(values), Fragment.of(""")
       RETURNING "stateprovinceid", "stateprovincecode", "countryregioncode", "isonlystateprovinceflag", "name", "territoryid", "rowguid", "modifieddate"
       """))
     }
-    return q.updateReturning(StateprovinceRow.`_rowParser`.exactlyOne()).runUnchecked(c)
+    return q.updateReturning(StateprovinceRow.rowCodec.exactlyOne()).run(c)
   }
 
   override def insertStreaming(
     unsaved: java.util.Iterator[StateprovinceRow],
     batchSize: Integer = 10000
-  )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "person"."stateprovince"("stateprovinceid", "stateprovincecode", "countryregioncode", "isonlystateprovinceflag", "name", "territoryid", "rowguid", "modifieddate") FROM STDIN""", batchSize, unsaved, c, StateprovinceRow.pgText)
+  )(using c: Connection): java.lang.Long = StreamingInsert.of(s"""COPY "person"."stateprovince"("stateprovinceid", "stateprovincecode", "countryregioncode", "isonlystateprovinceflag", "name", "territoryid", "rowguid", "modifieddate") FROM STDIN""", batchSize, unsaved, StateprovinceRow.pgText).run(c)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
   override def insertUnsavedStreaming(
     unsaved: java.util.Iterator[StateprovinceRowUnsaved],
     batchSize: Integer = 10000
-  )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "person"."stateprovince"("stateprovincecode", "countryregioncode", "name", "territoryid", "stateprovinceid", "isonlystateprovinceflag", "rowguid", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved, c, StateprovinceRowUnsaved.pgText)
+  )(using c: Connection): java.lang.Long = StreamingInsert.of(s"""COPY "person"."stateprovince"("stateprovincecode", "countryregioncode", "name", "territoryid", "stateprovinceid", "isonlystateprovinceflag", "rowguid", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved, StateprovinceRowUnsaved.pgText).run(c)
 
-  override def select: SelectBuilder[StateprovinceFields, StateprovinceRow] = SelectBuilder.of(""""person"."stateprovince"""", StateprovinceFields.structure, StateprovinceRow.`_rowParser`, Dialect.POSTGRESQL)
+  override def select: SelectBuilder[StateprovinceFields, StateprovinceRow] = SelectBuilder.of(""""person"."stateprovince"""", StateprovinceFields.structure, StateprovinceRow.rowCodec, Dialect.POSTGRESQL)
 
-  override def selectAll(using c: Connection): java.util.List[StateprovinceRow] = {
-    interpolate(Fragment.lit("""select "stateprovinceid", "stateprovincecode", "countryregioncode", "isonlystateprovinceflag", "name", "territoryid", "rowguid", "modifieddate"
+  override def selectAll(using c: ConnectionRead): java.util.List[StateprovinceRow] = {
+    concat(Fragment.of("""select "stateprovinceid", "stateprovincecode", "countryregioncode", "isonlystateprovinceflag", "name", "territoryid", "rowguid", "modifieddate"
     from "person"."stateprovince"
-    """)).query(StateprovinceRow.`_rowParser`.all()).runUnchecked(c)
+    """)).query(StateprovinceRow.rowCodec.all()).run(c)
   }
 
-  override def selectById(stateprovinceid: StateprovinceId)(using c: Connection): Optional[StateprovinceRow] = {
-    interpolate(Fragment.lit("""select "stateprovinceid", "stateprovincecode", "countryregioncode", "isonlystateprovinceflag", "name", "territoryid", "rowguid", "modifieddate"
+  override def selectById(stateprovinceid: StateprovinceId)(using c: ConnectionRead): Optional[StateprovinceRow] = {
+    concat(Fragment.of("""select "stateprovinceid", "stateprovincecode", "countryregioncode", "isonlystateprovinceflag", "name", "territoryid", "rowguid", "modifieddate"
     from "person"."stateprovince"
-    where "stateprovinceid" = """), Fragment.encode(StateprovinceId.pgType, stateprovinceid), Fragment.lit("")).query(StateprovinceRow.`_rowParser`.first()).runUnchecked(c)
+    where "stateprovinceid" = """), Fragment.encode(StateprovinceId.pgType, stateprovinceid), Fragment.of("")).query(StateprovinceRow.rowCodec.first()).run(c)
   }
 
-  override def selectByIds(stateprovinceids: Array[StateprovinceId])(using c: Connection): java.util.List[StateprovinceRow] = {
-    interpolate(Fragment.lit("""select "stateprovinceid", "stateprovincecode", "countryregioncode", "isonlystateprovinceflag", "name", "territoryid", "rowguid", "modifieddate"
+  override def selectByIds(stateprovinceids: java.util.List[StateprovinceId])(using c: ConnectionRead): java.util.List[StateprovinceRow] = {
+    concat(Fragment.of("""select "stateprovinceid", "stateprovincecode", "countryregioncode", "isonlystateprovinceflag", "name", "territoryid", "rowguid", "modifieddate"
     from "person"."stateprovince"
-    where "stateprovinceid" = ANY("""), Fragment.encode(StateprovinceId.pgTypeArray, stateprovinceids), Fragment.lit(")")).query(StateprovinceRow.`_rowParser`.all()).runUnchecked(c)
+    where "stateprovinceid" = ANY("""), Fragment.encode(StateprovinceId.pgType.array(), stateprovinceids), Fragment.of(")")).query(StateprovinceRow.rowCodec.all()).run(c)
   }
 
-  override def selectByIdsTracked(stateprovinceids: Array[StateprovinceId])(using c: Connection): java.util.Map[StateprovinceId, StateprovinceRow] = {
+  override def selectByIdsTracked(stateprovinceids: java.util.List[StateprovinceId])(using c: ConnectionRead): java.util.Map[StateprovinceId, StateprovinceRow] = {
     val ret: HashMap[StateprovinceId, StateprovinceRow] = new HashMap[StateprovinceId, StateprovinceRow]()
     selectByIds(stateprovinceids)(using c).forEach(row => ret.put(row.stateprovinceid, row): @scala.annotation.nowarn)
     return ret
   }
 
-  override def update: UpdateBuilder[StateprovinceFields, StateprovinceRow] = UpdateBuilder.of(""""person"."stateprovince"""", StateprovinceFields.structure, StateprovinceRow.`_rowParser`, Dialect.POSTGRESQL)
+  override def update: UpdateBuilder[StateprovinceFields, StateprovinceRow] = UpdateBuilder.of(""""person"."stateprovince"""", StateprovinceFields.structure, StateprovinceRow.rowCodec, Dialect.POSTGRESQL)
 
   override def update(row: StateprovinceRow)(using c: Connection): java.lang.Boolean = {
     val stateprovinceid: StateprovinceId = row.stateprovinceid
-    return interpolate(Fragment.lit("""update "person"."stateprovince"
-    set "stateprovincecode" = """), Fragment.encode(PgTypes.bpchar, row.stateprovincecode), Fragment.lit("""::bpchar,
-    "countryregioncode" = """), Fragment.encode(CountryregionId.pgType, row.countryregioncode), Fragment.lit(""",
-    "isonlystateprovinceflag" = """), Fragment.encode(Flag.pgType, row.isonlystateprovinceflag), Fragment.lit("""::bool,
-    "name" = """), Fragment.encode(Name.pgType, row.name), Fragment.lit("""::varchar,
-    "territoryid" = """), Fragment.encode(SalesterritoryId.pgType, row.territoryid), Fragment.lit("""::int4,
-    "rowguid" = """), Fragment.encode(PgTypes.uuid, row.rowguid), Fragment.lit("""::uuid,
-    "modifieddate" = """), Fragment.encode(PgTypes.timestamp, row.modifieddate), Fragment.lit("""::timestamp
-    where "stateprovinceid" = """), Fragment.encode(StateprovinceId.pgType, stateprovinceid), Fragment.lit("")).update().runUnchecked(c) > 0
+    return concat(Fragment.of("""update "person"."stateprovince"
+    set "stateprovincecode" = """), Fragment.encode(PgTypes.bpchar, row.stateprovincecode), Fragment.of("""::bpchar,
+    "countryregioncode" = """), Fragment.encode(CountryregionId.pgType, row.countryregioncode), Fragment.of(""",
+    "isonlystateprovinceflag" = """), Fragment.encode(Flag.pgType, row.isonlystateprovinceflag), Fragment.of("""::bool,
+    "name" = """), Fragment.encode(Name.pgType, row.name), Fragment.of("""::varchar,
+    "territoryid" = """), Fragment.encode(SalesterritoryId.pgType, row.territoryid), Fragment.of("""::int4,
+    "rowguid" = """), Fragment.encode(PgTypes.uuid, row.rowguid), Fragment.of("""::uuid,
+    "modifieddate" = """), Fragment.encode(PgTypes.timestamp, row.modifieddate), Fragment.of("""::timestamp
+    where "stateprovinceid" = """), Fragment.encode(StateprovinceId.pgType, stateprovinceid), Fragment.of("")).update().run(c) > 0
   }
 
   override def upsert(unsaved: StateprovinceRow)(using c: Connection): StateprovinceRow = {
-  interpolate(Fragment.lit("""insert into "person"."stateprovince"("stateprovinceid", "stateprovincecode", "countryregioncode", "isonlystateprovinceflag", "name", "territoryid", "rowguid", "modifieddate")
-    values ("""), Fragment.encode(StateprovinceId.pgType, unsaved.stateprovinceid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.bpchar, unsaved.stateprovincecode), Fragment.lit("::bpchar, "), Fragment.encode(CountryregionId.pgType, unsaved.countryregioncode), Fragment.lit(", "), Fragment.encode(Flag.pgType, unsaved.isonlystateprovinceflag), Fragment.lit("::bool, "), Fragment.encode(Name.pgType, unsaved.name), Fragment.lit("::varchar, "), Fragment.encode(SalesterritoryId.pgType, unsaved.territoryid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.uuid, unsaved.rowguid), Fragment.lit("::uuid, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("""::timestamp)
+  concat(Fragment.of("""insert into "person"."stateprovince"("stateprovinceid", "stateprovincecode", "countryregioncode", "isonlystateprovinceflag", "name", "territoryid", "rowguid", "modifieddate")
+    values ("""), Fragment.encode(StateprovinceId.pgType, unsaved.stateprovinceid), Fragment.of("::int4, "), Fragment.encode(PgTypes.bpchar, unsaved.stateprovincecode), Fragment.of("::bpchar, "), Fragment.encode(CountryregionId.pgType, unsaved.countryregioncode), Fragment.of(", "), Fragment.encode(Flag.pgType, unsaved.isonlystateprovinceflag), Fragment.of("::bool, "), Fragment.encode(Name.pgType, unsaved.name), Fragment.of("::varchar, "), Fragment.encode(SalesterritoryId.pgType, unsaved.territoryid), Fragment.of("::int4, "), Fragment.encode(PgTypes.uuid, unsaved.rowguid), Fragment.of("::uuid, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.of("""::timestamp)
     on conflict ("stateprovinceid")
     do update set
       "stateprovincecode" = EXCLUDED."stateprovincecode",
@@ -144,12 +145,12 @@ class StateprovinceRepoImpl extends StateprovinceRepo {
     "rowguid" = EXCLUDED."rowguid",
     "modifieddate" = EXCLUDED."modifieddate"
     returning "stateprovinceid", "stateprovincecode", "countryregioncode", "isonlystateprovinceflag", "name", "territoryid", "rowguid", "modifieddate""""))
-    .updateReturning(StateprovinceRow.`_rowParser`.exactlyOne())
-    .runUnchecked(c)
+    .updateReturning(StateprovinceRow.rowCodec.exactlyOne())
+    .run(c)
   }
 
   override def upsertBatch(unsaved: java.util.Iterator[StateprovinceRow])(using c: Connection): java.util.List[StateprovinceRow] = {
-    interpolate(Fragment.lit("""insert into "person"."stateprovince"("stateprovinceid", "stateprovincecode", "countryregioncode", "isonlystateprovinceflag", "name", "territoryid", "rowguid", "modifieddate")
+    concat(Fragment.of("""insert into "person"."stateprovince"("stateprovinceid", "stateprovincecode", "countryregioncode", "isonlystateprovinceflag", "name", "territoryid", "rowguid", "modifieddate")
     values (?::int4, ?::bpchar, ?, ?::bool, ?::varchar, ?::int4, ?::uuid, ?::timestamp)
     on conflict ("stateprovinceid")
     do update set
@@ -161,8 +162,8 @@ class StateprovinceRepoImpl extends StateprovinceRepo {
     "rowguid" = EXCLUDED."rowguid",
     "modifieddate" = EXCLUDED."modifieddate"
     returning "stateprovinceid", "stateprovincecode", "countryregioncode", "isonlystateprovinceflag", "name", "territoryid", "rowguid", "modifieddate""""))
-      .updateManyReturning(StateprovinceRow.`_rowParser`, unsaved)
-    .runUnchecked(c)
+      .updateManyReturning(StateprovinceRow.rowCodec, unsaved)
+    .run(c)
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
@@ -170,9 +171,9 @@ class StateprovinceRepoImpl extends StateprovinceRepo {
     unsaved: java.util.Iterator[StateprovinceRow],
     batchSize: Integer = 10000
   )(using c: Connection): Integer = {
-    interpolate(Fragment.lit("""create temporary table stateprovince_TEMP (like "person"."stateprovince") on commit drop""")).update().runUnchecked(c): @scala.annotation.nowarn
-    streamingInsert.insertUnchecked(s"""copy stateprovince_TEMP("stateprovinceid", "stateprovincecode", "countryregioncode", "isonlystateprovinceflag", "name", "territoryid", "rowguid", "modifieddate") from stdin""", batchSize, unsaved, c, StateprovinceRow.pgText): @scala.annotation.nowarn
-    return interpolate(Fragment.lit("""insert into "person"."stateprovince"("stateprovinceid", "stateprovincecode", "countryregioncode", "isonlystateprovinceflag", "name", "territoryid", "rowguid", "modifieddate")
+    concat(Fragment.of("""create temporary table stateprovince_TEMP (like "person"."stateprovince") on commit drop""")).update().run(c): @scala.annotation.nowarn
+    StreamingInsert.of(s"""copy stateprovince_TEMP("stateprovinceid", "stateprovincecode", "countryregioncode", "isonlystateprovinceflag", "name", "territoryid", "rowguid", "modifieddate") from stdin""", batchSize, unsaved, StateprovinceRow.pgText).run(c): @scala.annotation.nowarn
+    return concat(Fragment.of("""insert into "person"."stateprovince"("stateprovinceid", "stateprovincecode", "countryregioncode", "isonlystateprovinceflag", "name", "territoryid", "rowguid", "modifieddate")
     select * from stateprovince_TEMP
     on conflict ("stateprovinceid")
     do update set
@@ -184,6 +185,6 @@ class StateprovinceRepoImpl extends StateprovinceRepo {
     "rowguid" = EXCLUDED."rowguid",
     "modifieddate" = EXCLUDED."modifieddate"
     ;
-    drop table stateprovince_TEMP;""")).update().runUnchecked(c)
+    drop table stateprovince_TEMP;""")).update().run(c)
   }
 }

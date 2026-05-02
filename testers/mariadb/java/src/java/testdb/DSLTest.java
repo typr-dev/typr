@@ -2,9 +2,9 @@ package testdb;
 
 import static org.junit.Assert.*;
 
+import dev.typr.foundations.Bijection;
 import dev.typr.foundations.data.maria.Inet4;
 import dev.typr.foundations.data.maria.Inet6;
-import dev.typr.foundations.dsl.Bijection;
 import java.math.BigDecimal;
 import java.time.Year;
 import java.util.Random;
@@ -16,7 +16,7 @@ import testdb.mariatest_identity.*;
 public class DSLTest {
   private final MariatestRepoImpl mariatestRepo = new MariatestRepoImpl();
   private final MariatestIdentityRepoImpl identityRepo = new MariatestIdentityRepoImpl();
-  private final TestInsert testInsert = new TestInsert(new Random(42));
+  private final TestInsert testInsert = new TestInsert(new Random(141839624));
 
   @Test
   public void testSelectWithWhere() {
@@ -73,10 +73,10 @@ public class DSLTest {
                               .isEqual("Zulu")
                               .or(
                                   m.name().isEqual("Alpha"),
-                                  dev.typr.foundations.dsl.Bijection.asBool())
+                                  dev.typr.foundations.Bijection.asBool())
                               .or(
                                   m.name().isEqual("Mike"),
-                                  dev.typr.foundations.dsl.Bijection.asBool()))
+                                  dev.typr.foundations.Bijection.asBool()))
                   .orderBy(m -> m.name().asc());
 
           var results = query.toList(c);

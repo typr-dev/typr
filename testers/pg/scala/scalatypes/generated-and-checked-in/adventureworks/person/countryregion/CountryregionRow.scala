@@ -7,11 +7,11 @@ package adventureworks.person.countryregion
 
 import adventureworks.customtypes.Defaulted
 import adventureworks.public.Name
+import dev.typr.dslsc.RowCodecs
 import dev.typr.foundations.PgText
-import dev.typr.foundations.PgTypes
 import dev.typr.foundations.Tuple.Tuple3
-import dev.typr.foundations.scala.RowParser
-import dev.typr.foundations.scala.RowParsers
+import dev.typr.foundationssc.PgTypes
+import dev.typr.foundationssc.RowCodec
 import java.time.LocalDateTime
 
 /** Table: person.countryregion
@@ -38,7 +38,7 @@ case class CountryregionRow(
 }
 
 object CountryregionRow {
-  val `_rowParser`: RowParser[CountryregionRow] = RowParsers.of(CountryregionId.pgType, Name.pgType, PgTypes.timestamp)(CountryregionRow.apply)(row => Array[Any](row.countryregioncode, row.name, row.modifieddate))
+  given pgText: PgText[CountryregionRow] = PgText.from(rowCodec.underlying)
 
-  given pgText: PgText[CountryregionRow] = PgText.from(`_rowParser`.underlying)
+  val rowCodec: RowCodec[CountryregionRow] = RowCodecs.of(CountryregionId.pgType, Name.pgType, PgTypes.timestamp)(CountryregionRow.apply)(row => Array[Any](row.countryregioncode, row.name, row.modifieddate))
 }

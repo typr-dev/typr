@@ -5,12 +5,12 @@
  */
 package testdb.update_order_status
 
-import java.sql.Connection
+import dev.typr.foundationskt.Connection
 import testdb.orders.OrdersId
 
 interface UpdateOrderStatusSqlRepo {
   abstract fun apply(
-    newStatus: String,
+    newStatus: kotlin.String,
     orderId: /* user-picked */ OrdersId,
     c: Connection
   ): Int

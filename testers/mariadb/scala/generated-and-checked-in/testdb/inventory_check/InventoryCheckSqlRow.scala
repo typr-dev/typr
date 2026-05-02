@@ -6,12 +6,10 @@
 package testdb.inventory_check
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import dev.typr.foundations.MariaTypes
+import dev.typr.dslsc.RowCodecs
 import dev.typr.foundations.Tuple.Tuple12
-import dev.typr.foundations.scala.DbTypeOps
-import dev.typr.foundations.scala.RowParser
-import dev.typr.foundations.scala.RowParsers
-import dev.typr.foundations.scala.ScalaDbTypes
+import dev.typr.foundationssc.MariaTypes
+import dev.typr.foundationssc.RowCodec
 import testdb.inventory.InventoryId
 import testdb.products.ProductsId
 import testdb.warehouses.WarehousesId
@@ -36,7 +34,7 @@ case class InventoryCheckSqlRow(
   @JsonProperty("quantity_on_hand") quantityOnHand: Int,
   /** Points to [[testdb.inventory.InventoryRow.quantityReserved]] */
   @JsonProperty("quantity_reserved") quantityReserved: Int,
-  /** Points to [[testdb.inventory.InventoryRow.quantityReserved]] */
+  /** Points to [[testdb.inventory.InventoryRow.quantityOnHand]] */
   available: Int,
   /** Points to [[testdb.inventory.InventoryRow.reorderPoint]] */
   @JsonProperty("reorder_point") reorderPoint: Int,
@@ -69,5 +67,5 @@ case class InventoryCheckSqlRow(
 }
 
 object InventoryCheckSqlRow {
-  val `_rowParser`: RowParser[InventoryCheckSqlRow] = RowParsers.of(InventoryId.mariaType, ProductsId.mariaType, MariaTypes.varchar, MariaTypes.varchar, WarehousesId.mariaType, MariaTypes.char_, MariaTypes.varchar, ScalaDbTypes.MariaTypes.int_, ScalaDbTypes.MariaTypes.int_, ScalaDbTypes.MariaTypes.int_, ScalaDbTypes.MariaTypes.int_, MariaTypes.varchar.nullable)(InventoryCheckSqlRow.apply)(row => Array[Any](row.inventoryId, row.productId, row.sku, row.productName, row.warehouseId, row.warehouseCode, row.warehouseName, row.quantityOnHand, row.quantityReserved, row.available, row.reorderPoint, row.binLocation))
+  val rowCodec: RowCodec[InventoryCheckSqlRow] = RowCodecs.of(InventoryId.mariaType, ProductsId.mariaType, MariaTypes.varchar, MariaTypes.varchar, WarehousesId.mariaType, MariaTypes.char_, MariaTypes.varchar, MariaTypes.int_, MariaTypes.int_, MariaTypes.int_, MariaTypes.int_, MariaTypes.varchar.opt)(InventoryCheckSqlRow.apply)(row => Array[Any](row.inventoryId, row.productId, row.sku, row.productName, row.warehouseId, row.warehouseCode, row.warehouseName, row.quantityOnHand, row.quantityReserved, row.available, row.reorderPoint, row.binLocation))
 }

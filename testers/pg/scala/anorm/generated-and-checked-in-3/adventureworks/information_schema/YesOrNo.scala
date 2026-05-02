@@ -24,7 +24,7 @@ object YesOrNo {
 
   given arrayToStatement: ToStatement[Array[YesOrNo]] = ToStatement.arrayToParameter(using ParameterMetaData.StringParameterMetaData).contramap(_.map(_.value))
 
-  given bijection: Bijection[YesOrNo, String] = Bijection.apply[YesOrNo, String](_.value)(YesOrNo.apply)
+  given bijection: Bijection[YesOrNo, String] = Bijection[YesOrNo, String](_.value)(YesOrNo.apply)
 
   given column: Column[YesOrNo] = Column.columnToString.map(YesOrNo.apply)
 

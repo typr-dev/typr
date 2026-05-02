@@ -5,13 +5,14 @@
  */
 package testdb.db2test_unique
 
-import dev.typr.foundations.Db2Types
-import dev.typr.foundations.kotlin.DeleteBuilder
-import dev.typr.foundations.kotlin.Dialect
-import dev.typr.foundations.kotlin.Fragment
-import dev.typr.foundations.kotlin.SelectBuilder
-import dev.typr.foundations.kotlin.UpdateBuilder
-import java.sql.Connection
+import dev.typr.dslkt.DeleteBuilder
+import dev.typr.dslkt.Dialect
+import dev.typr.dslkt.SelectBuilder
+import dev.typr.dslkt.UpdateBuilder
+import dev.typr.foundationskt.Connection
+import dev.typr.foundationskt.ConnectionRead
+import dev.typr.foundationskt.Db2Types
+import dev.typr.foundationskt.Fragment
 import java.util.ArrayList
 import kotlin.collections.Iterator
 import kotlin.collections.List
@@ -24,22 +25,22 @@ class Db2testUniqueRepoImpl() : Db2testUniqueRepo {
   override fun deleteById(
     id: Db2testUniqueId,
     c: Connection
-  ): Boolean = Fragment.interpolate(Fragment.lit("delete from \"DB2TEST_UNIQUE\" where \"ID\" = "), Fragment.encode(Db2testUniqueId.db2Type, id), Fragment.lit("")).update().runUnchecked(c) > 0
+  ): kotlin.Boolean = Fragment.concat(Fragment.of("delete from \"DB2TEST_UNIQUE\" where \"ID\" = "), Fragment.encode(Db2testUniqueId.db2Type, id), Fragment.of("")).update().run(c) > 0
 
   override fun deleteByIds(
-    ids: Array<Db2testUniqueId>,
+    ids: List<Db2testUniqueId>,
     c: Connection
   ): Int {
     val fragments: ArrayList<Fragment> = ArrayList()
     for (id in ids) { fragments.add(Fragment.encode(Db2testUniqueId.db2Type, id)) }
-    return Fragment.interpolate(Fragment.lit("delete from \"DB2TEST_UNIQUE\" where \"ID\" in ("), Fragment.comma(fragments.toMutableList()), Fragment.lit(")")).update().runUnchecked(c)
+    return Fragment.concat(Fragment.of("delete from \"DB2TEST_UNIQUE\" where \"ID\" in ("), Fragment.comma(fragments.toMutableList()), Fragment.of(")")).update().run(c)
   }
 
   override fun insert(
     unsaved: Db2testUniqueRow,
     c: Connection
-  ): Db2testUniqueRow = Fragment.interpolate(Fragment.lit("SELECT \"ID\", \"EMAIL\", \"CODE\", \"CATEGORY\" FROM FINAL TABLE (INSERT INTO \"DB2TEST_UNIQUE\"(\"EMAIL\", \"CODE\", \"CATEGORY\")\nVALUES ("), Fragment.encode(Db2Types.varchar, unsaved.email), Fragment.lit(", "), Fragment.encode(Db2Types.varchar, unsaved.code), Fragment.lit(", "), Fragment.encode(Db2Types.varchar, unsaved.category), Fragment.lit("))\n"))
-    .updateReturning(Db2testUniqueRow._rowParser.exactlyOne()).runUnchecked(c)
+  ): Db2testUniqueRow = Fragment.concat(Fragment.of("SELECT \"ID\", \"EMAIL\", \"CODE\", \"CATEGORY\" FROM FINAL TABLE (INSERT INTO \"DB2TEST_UNIQUE\"(\"EMAIL\", \"CODE\", \"CATEGORY\")\nVALUES ("), Fragment.encode(Db2Types.varchar, unsaved.email), Fragment.of(", "), Fragment.encode(Db2Types.varchar, unsaved.code), Fragment.of(", "), Fragment.encode(Db2Types.varchar, unsaved.category), Fragment.of("))\n"))
+    .updateReturning(Db2testUniqueRow.rowCodec.exactlyOne()).run(c)
 
   override fun insert(
     unsaved: Db2testUniqueRowUnsaved,
@@ -47,37 +48,37 @@ class Db2testUniqueRepoImpl() : Db2testUniqueRepo {
   ): Db2testUniqueRow {
     val columns: ArrayList<Fragment> = ArrayList()
     val values: ArrayList<Fragment> = ArrayList()
-    columns.add(Fragment.lit("\"EMAIL\""))
-    values.add(Fragment.interpolate(Fragment.encode(Db2Types.varchar, unsaved.email), Fragment.lit("")))
-    columns.add(Fragment.lit("\"CODE\""))
-    values.add(Fragment.interpolate(Fragment.encode(Db2Types.varchar, unsaved.code), Fragment.lit("")))
-    columns.add(Fragment.lit("\"CATEGORY\""))
-    values.add(Fragment.interpolate(Fragment.encode(Db2Types.varchar, unsaved.category), Fragment.lit("")))
-    val q: Fragment = Fragment.interpolate(Fragment.lit("SELECT \"ID\", \"EMAIL\", \"CODE\", \"CATEGORY\" FROM FINAL TABLE (INSERT INTO \"DB2TEST_UNIQUE\"("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nVALUES ("), Fragment.comma(values.toMutableList()), Fragment.lit("))\n"))
-    return q.updateReturning(Db2testUniqueRow._rowParser.exactlyOne()).runUnchecked(c)
+    columns.add(Fragment.of("\"EMAIL\""))
+    values.add(Fragment.concat(Fragment.encode(Db2Types.varchar, unsaved.email), Fragment.of("")))
+    columns.add(Fragment.of("\"CODE\""))
+    values.add(Fragment.concat(Fragment.encode(Db2Types.varchar, unsaved.code), Fragment.of("")))
+    columns.add(Fragment.of("\"CATEGORY\""))
+    values.add(Fragment.concat(Fragment.encode(Db2Types.varchar, unsaved.category), Fragment.of("")))
+    val q: Fragment = Fragment.concat(Fragment.of("SELECT \"ID\", \"EMAIL\", \"CODE\", \"CATEGORY\" FROM FINAL TABLE (INSERT INTO \"DB2TEST_UNIQUE\"("), Fragment.comma(columns.toMutableList()), Fragment.of(")\nVALUES ("), Fragment.comma(values.toMutableList()), Fragment.of("))\n"))
+    return q.updateReturning(Db2testUniqueRow.rowCodec.exactlyOne()).run(c)
   }
 
-  override fun select(): SelectBuilder<Db2testUniqueFields, Db2testUniqueRow> = SelectBuilder.of("\"DB2TEST_UNIQUE\"", Db2testUniqueFields.structure, Db2testUniqueRow._rowParser, Dialect.DB2)
+  override fun select(): SelectBuilder<Db2testUniqueFields, Db2testUniqueRow> = SelectBuilder.of("\"DB2TEST_UNIQUE\"", Db2testUniqueFields.structure, Db2testUniqueRow.rowCodec, Dialect.DB2)
 
-  override fun selectAll(c: Connection): List<Db2testUniqueRow> = Fragment.interpolate(Fragment.lit("select \"ID\", \"EMAIL\", \"CODE\", \"CATEGORY\"\nfrom \"DB2TEST_UNIQUE\"\n")).query(Db2testUniqueRow._rowParser.all()).runUnchecked(c)
+  override fun selectAll(c: ConnectionRead): List<Db2testUniqueRow> = Fragment.concat(Fragment.of("select \"ID\", \"EMAIL\", \"CODE\", \"CATEGORY\"\nfrom \"DB2TEST_UNIQUE\"\n")).query(Db2testUniqueRow.rowCodec.all()).run(c)
 
   override fun selectById(
     id: Db2testUniqueId,
-    c: Connection
-  ): Db2testUniqueRow? = Fragment.interpolate(Fragment.lit("select \"ID\", \"EMAIL\", \"CODE\", \"CATEGORY\"\nfrom \"DB2TEST_UNIQUE\"\nwhere \"ID\" = "), Fragment.encode(Db2testUniqueId.db2Type, id), Fragment.lit("")).query(Db2testUniqueRow._rowParser.first()).runUnchecked(c)
+    c: ConnectionRead
+  ): Db2testUniqueRow? = Fragment.concat(Fragment.of("select \"ID\", \"EMAIL\", \"CODE\", \"CATEGORY\"\nfrom \"DB2TEST_UNIQUE\"\nwhere \"ID\" = "), Fragment.encode(Db2testUniqueId.db2Type, id), Fragment.of("")).query(Db2testUniqueRow.rowCodec.first()).run(c)
 
   override fun selectByIds(
-    ids: Array<Db2testUniqueId>,
-    c: Connection
+    ids: List<Db2testUniqueId>,
+    c: ConnectionRead
   ): List<Db2testUniqueRow> {
     val fragments: ArrayList<Fragment> = ArrayList()
     for (id in ids) { fragments.add(Fragment.encode(Db2testUniqueId.db2Type, id)) }
-    return Fragment.interpolate(Fragment.lit("select \"ID\", \"EMAIL\", \"CODE\", \"CATEGORY\" from \"DB2TEST_UNIQUE\" where \"ID\" in ("), Fragment.comma(fragments.toMutableList()), Fragment.lit(")")).query(Db2testUniqueRow._rowParser.all()).runUnchecked(c)
+    return Fragment.concat(Fragment.of("select \"ID\", \"EMAIL\", \"CODE\", \"CATEGORY\" from \"DB2TEST_UNIQUE\" where \"ID\" in ("), Fragment.comma(fragments.toMutableList()), Fragment.of(")")).query(Db2testUniqueRow.rowCodec.all()).run(c)
   }
 
   override fun selectByIdsTracked(
-    ids: Array<Db2testUniqueId>,
-    c: Connection
+    ids: List<Db2testUniqueId>,
+    c: ConnectionRead
   ): Map<Db2testUniqueId, Db2testUniqueRow> {
     val ret: MutableMap<Db2testUniqueId, Db2testUniqueRow> = mutableMapOf<Db2testUniqueId, Db2testUniqueRow>()
     selectByIds(ids, c).forEach({ row -> ret.put(row.id, row) })
@@ -85,41 +86,41 @@ class Db2testUniqueRepoImpl() : Db2testUniqueRepo {
   }
 
   override fun selectByUniqueCodeAndCategory(
-    code: String,
-    category: String,
-    c: Connection
-  ): Db2testUniqueRow? = Fragment.interpolate(Fragment.lit("select \"ID\", \"EMAIL\", \"CODE\", \"CATEGORY\"\nfrom \"DB2TEST_UNIQUE\"\nwhere \"CODE\" = "), Fragment.encode(Db2Types.varchar, code), Fragment.lit(" AND \"CATEGORY\" = "), Fragment.encode(Db2Types.varchar, category), Fragment.lit("\n")).query(Db2testUniqueRow._rowParser.first()).runUnchecked(c)
+    code: kotlin.String,
+    category: kotlin.String,
+    c: ConnectionRead
+  ): Db2testUniqueRow? = Fragment.concat(Fragment.of("select \"ID\", \"EMAIL\", \"CODE\", \"CATEGORY\"\nfrom \"DB2TEST_UNIQUE\"\nwhere \"CODE\" = "), Fragment.encode(Db2Types.varchar, code), Fragment.of(" AND \"CATEGORY\" = "), Fragment.encode(Db2Types.varchar, category), Fragment.of("\n")).query(Db2testUniqueRow.rowCodec.first()).run(c)
 
   override fun selectByUniqueEmail(
-    email: String,
-    c: Connection
-  ): Db2testUniqueRow? = Fragment.interpolate(Fragment.lit("select \"ID\", \"EMAIL\", \"CODE\", \"CATEGORY\"\nfrom \"DB2TEST_UNIQUE\"\nwhere \"EMAIL\" = "), Fragment.encode(Db2Types.varchar, email), Fragment.lit("\n")).query(Db2testUniqueRow._rowParser.first()).runUnchecked(c)
+    email: kotlin.String,
+    c: ConnectionRead
+  ): Db2testUniqueRow? = Fragment.concat(Fragment.of("select \"ID\", \"EMAIL\", \"CODE\", \"CATEGORY\"\nfrom \"DB2TEST_UNIQUE\"\nwhere \"EMAIL\" = "), Fragment.encode(Db2Types.varchar, email), Fragment.of("\n")).query(Db2testUniqueRow.rowCodec.first()).run(c)
 
-  override fun update(): UpdateBuilder<Db2testUniqueFields, Db2testUniqueRow> = UpdateBuilder.of("\"DB2TEST_UNIQUE\"", Db2testUniqueFields.structure, Db2testUniqueRow._rowParser, Dialect.DB2)
+  override fun update(): UpdateBuilder<Db2testUniqueFields, Db2testUniqueRow> = UpdateBuilder.of("\"DB2TEST_UNIQUE\"", Db2testUniqueFields.structure, Db2testUniqueRow.rowCodec, Dialect.DB2)
 
   override fun update(
     row: Db2testUniqueRow,
     c: Connection
-  ): Boolean {
+  ): kotlin.Boolean {
     val id: Db2testUniqueId = row.id
-    return Fragment.interpolate(Fragment.lit("update \"DB2TEST_UNIQUE\"\nset \"EMAIL\" = "), Fragment.encode(Db2Types.varchar, row.email), Fragment.lit(",\n\"CODE\" = "), Fragment.encode(Db2Types.varchar, row.code), Fragment.lit(",\n\"CATEGORY\" = "), Fragment.encode(Db2Types.varchar, row.category), Fragment.lit("\nwhere \"ID\" = "), Fragment.encode(Db2testUniqueId.db2Type, id), Fragment.lit("")).update().runUnchecked(c) > 0
+    return Fragment.concat(Fragment.of("update \"DB2TEST_UNIQUE\"\nset \"EMAIL\" = "), Fragment.encode(Db2Types.varchar, row.email), Fragment.of(",\n\"CODE\" = "), Fragment.encode(Db2Types.varchar, row.code), Fragment.of(",\n\"CATEGORY\" = "), Fragment.encode(Db2Types.varchar, row.category), Fragment.of("\nwhere \"ID\" = "), Fragment.encode(Db2testUniqueId.db2Type, id), Fragment.of("")).update().run(c) > 0
   }
 
   override fun upsert(
     unsaved: Db2testUniqueRow,
     c: Connection
   ) {
-    Fragment.interpolate(Fragment.lit("MERGE INTO \"DB2TEST_UNIQUE\" AS t\nUSING (VALUES ("), Fragment.encode(Db2testUniqueId.db2Type, unsaved.id), Fragment.lit(", "), Fragment.encode(Db2Types.varchar, unsaved.email), Fragment.lit(", "), Fragment.encode(Db2Types.varchar, unsaved.code), Fragment.lit(", "), Fragment.encode(Db2Types.varchar, unsaved.category), Fragment.lit(")) AS s(\"ID\", \"EMAIL\", \"CODE\", \"CATEGORY\")\nON t.\"ID\" = s.\"ID\"\nWHEN MATCHED THEN UPDATE SET \"EMAIL\" = s.\"EMAIL\",\n\"CODE\" = s.\"CODE\",\n\"CATEGORY\" = s.\"CATEGORY\"\nWHEN NOT MATCHED THEN INSERT (\"ID\", \"EMAIL\", \"CODE\", \"CATEGORY\") VALUES ("), Fragment.encode(Db2testUniqueId.db2Type, unsaved.id), Fragment.lit(", "), Fragment.encode(Db2Types.varchar, unsaved.email), Fragment.lit(", "), Fragment.encode(Db2Types.varchar, unsaved.code), Fragment.lit(", "), Fragment.encode(Db2Types.varchar, unsaved.category), Fragment.lit(")"))
+    Fragment.concat(Fragment.of("MERGE INTO \"DB2TEST_UNIQUE\" AS t\nUSING (VALUES ("), Fragment.encode(Db2testUniqueId.db2Type, unsaved.id), Fragment.of(", "), Fragment.encode(Db2Types.varchar, unsaved.email), Fragment.of(", "), Fragment.encode(Db2Types.varchar, unsaved.code), Fragment.of(", "), Fragment.encode(Db2Types.varchar, unsaved.category), Fragment.of(")) AS s(\"ID\", \"EMAIL\", \"CODE\", \"CATEGORY\")\nON t.\"ID\" = s.\"ID\"\nWHEN MATCHED THEN UPDATE SET \"EMAIL\" = s.\"EMAIL\",\n\"CODE\" = s.\"CODE\",\n\"CATEGORY\" = s.\"CATEGORY\"\nWHEN NOT MATCHED THEN INSERT (\"ID\", \"EMAIL\", \"CODE\", \"CATEGORY\") VALUES ("), Fragment.encode(Db2testUniqueId.db2Type, unsaved.id), Fragment.of(", "), Fragment.encode(Db2Types.varchar, unsaved.email), Fragment.of(", "), Fragment.encode(Db2Types.varchar, unsaved.code), Fragment.of(", "), Fragment.encode(Db2Types.varchar, unsaved.category), Fragment.of(")"))
       .update()
-      .runUnchecked(c)
+      .run(c)
   }
 
   override fun upsertBatch(
     unsaved: Iterator<Db2testUniqueRow>,
     c: Connection
   ) {
-    Fragment.interpolate(Fragment.lit("MERGE INTO \"DB2TEST_UNIQUE\" AS t\nUSING (VALUES (?, ?, ?, ?)) AS s(\"ID\", \"EMAIL\", \"CODE\", \"CATEGORY\")\nON t.\"ID\" = s.\"ID\"\nWHEN MATCHED THEN UPDATE SET \"EMAIL\" = s.\"EMAIL\",\n\"CODE\" = s.\"CODE\",\n\"CATEGORY\" = s.\"CATEGORY\"\nWHEN NOT MATCHED THEN INSERT (\"ID\", \"EMAIL\", \"CODE\", \"CATEGORY\") VALUES (?, ?, ?, ?)"))
-      .updateMany(Db2testUniqueRow._rowParser, unsaved)
-      .runUnchecked(c)
+    Fragment.concat(Fragment.of("MERGE INTO \"DB2TEST_UNIQUE\" AS t\nUSING (VALUES (?, ?, ?, ?)) AS s(\"ID\", \"EMAIL\", \"CODE\", \"CATEGORY\")\nON t.\"ID\" = s.\"ID\"\nWHEN MATCHED THEN UPDATE SET \"EMAIL\" = s.\"EMAIL\",\n\"CODE\" = s.\"CODE\",\n\"CATEGORY\" = s.\"CATEGORY\"\nWHEN NOT MATCHED THEN INSERT (\"ID\", \"EMAIL\", \"CODE\", \"CATEGORY\") VALUES (?, ?, ?, ?)"))
+      .updateMany(Db2testUniqueRow.rowCodec, unsaved)
+      .run(c)
   }
 }

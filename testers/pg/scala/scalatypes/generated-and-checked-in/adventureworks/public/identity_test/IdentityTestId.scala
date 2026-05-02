@@ -6,17 +6,17 @@
 package adventureworks.public.identity_test
 
 import com.fasterxml.jackson.annotation.JsonValue
-import dev.typr.foundations.PgType
-import dev.typr.foundations.PgTypes
-import dev.typr.foundations.scala.Bijection
+import dev.typr.dslsc.Bijection
+import dev.typr.foundationssc.PgType
+import dev.typr.foundationssc.PgTypes
 
 /** Type for the primary key of table `public.identity-test` */
 case class IdentityTestId(@JsonValue value: String) extends scala.AnyVal
 
 object IdentityTestId {
-  given bijection: Bijection[IdentityTestId, String] = Bijection.apply[IdentityTestId, String](_.value)(IdentityTestId.apply)
+  given bijection: Bijection[IdentityTestId, String] = Bijection.of[IdentityTestId, String](_.value, IdentityTestId.apply)
 
-  given pgType: PgType[IdentityTestId] = PgTypes.text.bimap(IdentityTestId.apply, _.value)
+  given pgType: PgType[IdentityTestId] = PgTypes.text.to(Bijection.of(IdentityTestId.apply, _.value))
 
-  given pgTypeArray: PgType[Array[IdentityTestId]] = PgTypes.textArray.bimap(xs => xs.map(IdentityTestId.apply), xs => xs.map(_.value))
+  given pgTypeArray: PgType[List[IdentityTestId]] = pgType.array
 }

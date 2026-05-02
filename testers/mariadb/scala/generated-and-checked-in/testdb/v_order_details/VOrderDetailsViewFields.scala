@@ -5,17 +5,16 @@
  */
 package testdb.v_order_details
 
-import dev.typr.foundations.MariaTypes
-import dev.typr.foundations.RowParser
-import dev.typr.foundations.dsl.FieldsBase
-import dev.typr.foundations.dsl.Path
-import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.scala.RelationStructure
-import dev.typr.foundations.scala.ScalaDbTypes
-import dev.typr.foundations.scala.SqlExpr
-import dev.typr.foundations.scala.SqlExpr.Field
-import dev.typr.foundations.scala.SqlExpr.OptField
-import dev.typr.foundations.scala.TupleExpr14
+import dev.typr.dsl.FieldsBase
+import dev.typr.dsl.Path
+import dev.typr.dsl.SqlExpr.FieldLike
+import dev.typr.dslsc.RelationStructure
+import dev.typr.dslsc.SqlExpr
+import dev.typr.dslsc.SqlExpr.Field
+import dev.typr.dslsc.SqlExpr.OptField
+import dev.typr.dslsc.TupleExpr14
+import dev.typr.foundations.RowCodec
+import dev.typr.foundationssc.MariaTypes
 import java.time.LocalDateTime
 import testdb.orders.OrdersId
 import testdb.userdefined.Email
@@ -29,7 +28,7 @@ class VOrderDetailsViewFields(val `_path`: java.util.List[Path]) extends TupleEx
       None,
       None,
       (row, value) => row.copy(orderId = value),
-      OrdersId.mariaType
+      OrdersId.mariaType.underlying
     )
   }
 
@@ -41,7 +40,7 @@ class VOrderDetailsViewFields(val `_path`: java.util.List[Path]) extends TupleEx
       None,
       None,
       (row, value) => row.copy(orderNumber = value),
-      MariaTypes.varchar
+      MariaTypes.varchar.underlying
     )
   }
 
@@ -53,7 +52,7 @@ class VOrderDetailsViewFields(val `_path`: java.util.List[Path]) extends TupleEx
       None,
       None,
       (row, value) => row.copy(orderStatus = value),
-      MariaTypes.text
+      MariaTypes.text.underlying
     )
   }
 
@@ -65,7 +64,7 @@ class VOrderDetailsViewFields(val `_path`: java.util.List[Path]) extends TupleEx
       None,
       None,
       (row, value) => row.copy(paymentStatus = value),
-      MariaTypes.text
+      MariaTypes.text.underlying
     )
   }
 
@@ -77,7 +76,7 @@ class VOrderDetailsViewFields(val `_path`: java.util.List[Path]) extends TupleEx
       None,
       None,
       (row, value) => row.copy(totalAmount = value),
-      ScalaDbTypes.MariaTypes.numeric
+      MariaTypes.numeric.underlying
     )
   }
 
@@ -89,7 +88,7 @@ class VOrderDetailsViewFields(val `_path`: java.util.List[Path]) extends TupleEx
       None,
       None,
       (row, value) => row.copy(currencyCode = value),
-      MariaTypes.char_
+      MariaTypes.char_.underlying
     )
   }
 
@@ -101,7 +100,7 @@ class VOrderDetailsViewFields(val `_path`: java.util.List[Path]) extends TupleEx
       None,
       None,
       (row, value) => row.copy(orderedAt = value),
-      MariaTypes.datetime
+      MariaTypes.datetime.underlying
     )
   }
 
@@ -113,7 +112,7 @@ class VOrderDetailsViewFields(val `_path`: java.util.List[Path]) extends TupleEx
       None,
       None,
       (row, value) => row.copy(customerEmail = value),
-      Email.mariaType
+      Email.mariaType.underlying
     )
   }
 
@@ -125,7 +124,7 @@ class VOrderDetailsViewFields(val `_path`: java.util.List[Path]) extends TupleEx
       None,
       None,
       (row, value) => row.copy(customerName = value),
-      MariaTypes.varchar
+      MariaTypes.varchar.underlying
     )
   }
 
@@ -137,7 +136,7 @@ class VOrderDetailsViewFields(val `_path`: java.util.List[Path]) extends TupleEx
       None,
       None,
       (row, value) => row.copy(itemCount = value),
-      ScalaDbTypes.MariaTypes.bigint
+      MariaTypes.bigint.underlying
     )
   }
 
@@ -149,7 +148,7 @@ class VOrderDetailsViewFields(val `_path`: java.util.List[Path]) extends TupleEx
       None,
       None,
       (row, value) => row.copy(totalQuantity = value),
-      ScalaDbTypes.MariaTypes.numeric
+      MariaTypes.numeric.underlying
     )
   }
 
@@ -161,7 +160,7 @@ class VOrderDetailsViewFields(val `_path`: java.util.List[Path]) extends TupleEx
       None,
       None,
       (row, value) => row.copy(trackingNumber = value),
-      MariaTypes.varchar
+      MariaTypes.varchar.underlying
     )
   }
 
@@ -173,7 +172,7 @@ class VOrderDetailsViewFields(val `_path`: java.util.List[Path]) extends TupleEx
       None,
       None,
       (row, value) => row.copy(shippingStatus = value),
-      MariaTypes.text
+      MariaTypes.text.underlying
     )
   }
 
@@ -185,13 +184,13 @@ class VOrderDetailsViewFields(val `_path`: java.util.List[Path]) extends TupleEx
       None,
       None,
       (row, value) => row.copy(carrierName = value),
-      MariaTypes.varchar
+      MariaTypes.varchar.underlying
     )
   }
 
   override def columns: java.util.List[FieldLike[?, VOrderDetailsViewRow]] = java.util.List.of(this.orderId.underlying, this.orderNumber.underlying, this.orderStatus.underlying, this.paymentStatus.underlying, this.totalAmount.underlying, this.currencyCode.underlying, this.orderedAt.underlying, this.customerEmail.underlying, this.customerName.underlying, this.itemCount.underlying, this.totalQuantity.underlying, this.trackingNumber.underlying, this.shippingStatus.underlying, this.carrierName.underlying)
 
-  override def rowParser: RowParser[VOrderDetailsViewRow] = VOrderDetailsViewRow._rowParser.underlying
+  override def rowCodec: RowCodec[VOrderDetailsViewRow] = VOrderDetailsViewRow.rowCodec.underlying
 
   override def withPaths(`_path`: java.util.List[Path]): RelationStructure[VOrderDetailsViewFields, VOrderDetailsViewRow] = new VOrderDetailsViewFields(`_path`)
 

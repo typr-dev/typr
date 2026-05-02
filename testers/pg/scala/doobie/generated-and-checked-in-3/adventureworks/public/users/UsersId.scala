@@ -21,7 +21,7 @@ object UsersId {
 
   given arrayPut: Put[Array[UsersId]] = TypoUUID.arrayPut.contramap(_.map(_.value))
 
-  given bijection: Bijection[UsersId, TypoUUID] = Bijection.apply[UsersId, TypoUUID](_.value)(UsersId.apply)
+  given bijection: Bijection[UsersId, TypoUUID] = Bijection[UsersId, TypoUUID](_.value)(UsersId.apply)
 
   given decoder: Decoder[UsersId] = TypoUUID.decoder.map(UsersId.apply)
 

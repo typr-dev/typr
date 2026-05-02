@@ -6,29 +6,29 @@
 package adventureworks.person.password
 
 import adventureworks.person.businessentity.BusinessentityId
-import dev.typr.foundations.PgTypes
-import dev.typr.foundations.scala.DeleteBuilder
-import dev.typr.foundations.scala.Dialect
-import dev.typr.foundations.scala.Fragment
-import dev.typr.foundations.scala.ScalaIteratorOps
-import dev.typr.foundations.scala.SelectBuilder
-import dev.typr.foundations.scala.UpdateBuilder
-import dev.typr.foundations.streamingInsert
-import java.sql.Connection
+import dev.typr.dslsc.DeleteBuilder
+import dev.typr.dslsc.Dialect
+import dev.typr.dslsc.SelectBuilder
+import dev.typr.dslsc.UpdateBuilder
+import dev.typr.foundationssc.Connection
+import dev.typr.foundationssc.ConnectionRead
+import dev.typr.foundationssc.Fragment
+import dev.typr.foundationssc.PgTypes
+import dev.typr.foundationssc.StreamingInsert
 import scala.collection.mutable.ListBuffer
-import dev.typr.foundations.scala.Fragment.sql
+import dev.typr.foundationssc.Fragment.sql
 
 class PasswordRepoImpl extends PasswordRepo {
   override def delete: DeleteBuilder[PasswordFields, PasswordRow] = DeleteBuilder.of(""""person"."password"""", PasswordFields.structure, Dialect.POSTGRESQL)
 
-  override def deleteById(businessentityid: BusinessentityId)(using c: Connection): Boolean = sql"""delete from "person"."password" where "businessentityid" = ${Fragment.encode(BusinessentityId.pgType, businessentityid)}""".update().runUnchecked(c) > 0
+  override def deleteById(businessentityid: BusinessentityId)(using c: Connection): Boolean = sql"""delete from "person"."password" where "businessentityid" = ${Fragment.encode(BusinessentityId.pgType, businessentityid)}""".update().run(using c) > 0
 
-  override def deleteByIds(businessentityids: Array[BusinessentityId])(using c: Connection): Int = {
+  override def deleteByIds(businessentityids: List[BusinessentityId])(using c: Connection): Int = {
     sql"""delete
     from "person"."password"
-    where "businessentityid" = ANY(${Fragment.encode(BusinessentityId.pgTypeArray, businessentityids)})"""
+    where "businessentityid" = ANY(${Fragment.encode(BusinessentityId.pgType.array, businessentityids)})"""
       .update()
-      .runUnchecked(c)
+      .run(using c)
   }
 
   override def insert(unsaved: PasswordRow)(using c: Connection): PasswordRow = {
@@ -36,25 +36,25 @@ class PasswordRepoImpl extends PasswordRepo {
     values (${Fragment.encode(BusinessentityId.pgType, unsaved.businessentityid)}::int4, ${Fragment.encode(PgTypes.text, unsaved.passwordhash)}, ${Fragment.encode(PgTypes.text, unsaved.passwordsalt)}, ${Fragment.encode(PgTypes.uuid, unsaved.rowguid)}::uuid, ${Fragment.encode(PgTypes.timestamp, unsaved.modifieddate)}::timestamp)
     RETURNING "businessentityid", "passwordhash", "passwordsalt", "rowguid", "modifieddate"
     """
-    .updateReturning(PasswordRow.`_rowParser`.exactlyOne()).runUnchecked(c)
+    .updateReturning(PasswordRow.rowCodec.exactlyOne()).run(using c)
   }
 
   override def insert(unsaved: PasswordRowUnsaved)(using c: Connection): PasswordRow = {
     val columns: ListBuffer[Fragment] = ListBuffer()
     val values: ListBuffer[Fragment] = ListBuffer()
-    columns.addOne(Fragment.lit(""""businessentityid"""")): @scala.annotation.nowarn
+    columns.addOne(Fragment.of(""""businessentityid"""")): @scala.annotation.nowarn
     values.addOne(sql"${Fragment.encode(BusinessentityId.pgType, unsaved.businessentityid)}::int4"): @scala.annotation.nowarn
-    columns.addOne(Fragment.lit(""""passwordhash"""")): @scala.annotation.nowarn
+    columns.addOne(Fragment.of(""""passwordhash"""")): @scala.annotation.nowarn
     values.addOne(sql"${Fragment.encode(PgTypes.text, unsaved.passwordhash)}"): @scala.annotation.nowarn
-    columns.addOne(Fragment.lit(""""passwordsalt"""")): @scala.annotation.nowarn
+    columns.addOne(Fragment.of(""""passwordsalt"""")): @scala.annotation.nowarn
     values.addOne(sql"${Fragment.encode(PgTypes.text, unsaved.passwordsalt)}"): @scala.annotation.nowarn
     unsaved.rowguid.visit(
       {  },
-      value => { columns.addOne(Fragment.lit(""""rowguid"""")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(PgTypes.uuid, value)}::uuid"): @scala.annotation.nowarn }
+      value => { columns.addOne(Fragment.of(""""rowguid"""")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(PgTypes.uuid, value)}::uuid"): @scala.annotation.nowarn }
     );
     unsaved.modifieddate.visit(
       {  },
-      value => { columns.addOne(Fragment.lit(""""modifieddate"""")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(PgTypes.timestamp, value)}::timestamp"): @scala.annotation.nowarn }
+      value => { columns.addOne(Fragment.of(""""modifieddate"""")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(PgTypes.timestamp, value)}::timestamp"): @scala.annotation.nowarn }
     );
     val q: Fragment = {
       sql"""insert into "person"."password"(${Fragment.comma(columns)})
@@ -62,47 +62,47 @@ class PasswordRepoImpl extends PasswordRepo {
       RETURNING "businessentityid", "passwordhash", "passwordsalt", "rowguid", "modifieddate"
       """
     }
-    return q.updateReturning(PasswordRow.`_rowParser`.exactlyOne()).runUnchecked(c)
+    return q.updateReturning(PasswordRow.rowCodec.exactlyOne()).run(using c)
   }
 
   override def insertStreaming(
     unsaved: Iterator[PasswordRow],
     batchSize: Int = 10000
-  )(using c: Connection): Long = streamingInsert.insertUnchecked(s"""COPY "person"."password"("businessentityid", "passwordhash", "passwordsalt", "rowguid", "modifieddate") FROM STDIN""", batchSize, unsaved.toJavaIterator, c, PasswordRow.pgText)
+  )(using c: Connection): Long = StreamingInsert.of(s"""COPY "person"."password"("businessentityid", "passwordhash", "passwordsalt", "rowguid", "modifieddate") FROM STDIN""", batchSize, unsaved, PasswordRow.pgText).run(using c)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
   override def insertUnsavedStreaming(
     unsaved: Iterator[PasswordRowUnsaved],
     batchSize: Int = 10000
-  )(using c: Connection): Long = streamingInsert.insertUnchecked(s"""COPY "person"."password"("businessentityid", "passwordhash", "passwordsalt", "rowguid", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved.toJavaIterator, c, PasswordRowUnsaved.pgText)
+  )(using c: Connection): Long = StreamingInsert.of(s"""COPY "person"."password"("businessentityid", "passwordhash", "passwordsalt", "rowguid", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved, PasswordRowUnsaved.pgText).run(using c)
 
-  override def select: SelectBuilder[PasswordFields, PasswordRow] = SelectBuilder.of(""""person"."password"""", PasswordFields.structure, PasswordRow.`_rowParser`, Dialect.POSTGRESQL)
+  override def select: SelectBuilder[PasswordFields, PasswordRow] = SelectBuilder.of(""""person"."password"""", PasswordFields.structure, PasswordRow.rowCodec, Dialect.POSTGRESQL)
 
-  override def selectAll(using c: Connection): List[PasswordRow] = {
+  override def selectAll(using c: ConnectionRead): List[PasswordRow] = {
     sql"""select "businessentityid", "passwordhash", "passwordsalt", "rowguid", "modifieddate"
     from "person"."password"
-    """.query(PasswordRow.`_rowParser`.all()).runUnchecked(c)
+    """.query(PasswordRow.rowCodec.all()).run(using c)
   }
 
-  override def selectById(businessentityid: BusinessentityId)(using c: Connection): Option[PasswordRow] = {
+  override def selectById(businessentityid: BusinessentityId)(using c: ConnectionRead): Option[PasswordRow] = {
     sql"""select "businessentityid", "passwordhash", "passwordsalt", "rowguid", "modifieddate"
     from "person"."password"
-    where "businessentityid" = ${Fragment.encode(BusinessentityId.pgType, businessentityid)}""".query(PasswordRow.`_rowParser`.first()).runUnchecked(c)
+    where "businessentityid" = ${Fragment.encode(BusinessentityId.pgType, businessentityid)}""".query(PasswordRow.rowCodec.first()).run(using c)
   }
 
-  override def selectByIds(businessentityids: Array[BusinessentityId])(using c: Connection): List[PasswordRow] = {
+  override def selectByIds(businessentityids: List[BusinessentityId])(using c: ConnectionRead): List[PasswordRow] = {
     sql"""select "businessentityid", "passwordhash", "passwordsalt", "rowguid", "modifieddate"
     from "person"."password"
-    where "businessentityid" = ANY(${Fragment.encode(BusinessentityId.pgTypeArray, businessentityids)})""".query(PasswordRow.`_rowParser`.all()).runUnchecked(c)
+    where "businessentityid" = ANY(${Fragment.encode(BusinessentityId.pgType.array, businessentityids)})""".query(PasswordRow.rowCodec.all()).run(using c)
   }
 
-  override def selectByIdsTracked(businessentityids: Array[BusinessentityId])(using c: Connection): Map[BusinessentityId, PasswordRow] = {
+  override def selectByIdsTracked(businessentityids: List[BusinessentityId])(using c: ConnectionRead): Map[BusinessentityId, PasswordRow] = {
     val ret: scala.collection.mutable.Map[BusinessentityId, PasswordRow] = scala.collection.mutable.Map.empty[BusinessentityId, PasswordRow]
     selectByIds(businessentityids)(using c).foreach(row => ret.put(row.businessentityid, row): @scala.annotation.nowarn)
     return ret.toMap
   }
 
-  override def update: UpdateBuilder[PasswordFields, PasswordRow] = UpdateBuilder.of(""""person"."password"""", PasswordFields.structure, PasswordRow.`_rowParser`, Dialect.POSTGRESQL)
+  override def update: UpdateBuilder[PasswordFields, PasswordRow] = UpdateBuilder.of(""""person"."password"""", PasswordFields.structure, PasswordRow.rowCodec, Dialect.POSTGRESQL)
 
   override def update(row: PasswordRow)(using c: Connection): Boolean = {
     val businessentityid: BusinessentityId = row.businessentityid
@@ -111,7 +111,7 @@ class PasswordRepoImpl extends PasswordRepo {
     "passwordsalt" = ${Fragment.encode(PgTypes.text, row.passwordsalt)},
     "rowguid" = ${Fragment.encode(PgTypes.uuid, row.rowguid)}::uuid,
     "modifieddate" = ${Fragment.encode(PgTypes.timestamp, row.modifieddate)}::timestamp
-    where "businessentityid" = ${Fragment.encode(BusinessentityId.pgType, businessentityid)}""".update().runUnchecked(c) > 0
+    where "businessentityid" = ${Fragment.encode(BusinessentityId.pgType, businessentityid)}""".update().run(using c) > 0
   }
 
   override def upsert(unsaved: PasswordRow)(using c: Connection): PasswordRow = {
@@ -124,8 +124,8 @@ class PasswordRepoImpl extends PasswordRepo {
     "rowguid" = EXCLUDED."rowguid",
     "modifieddate" = EXCLUDED."modifieddate"
     returning "businessentityid", "passwordhash", "passwordsalt", "rowguid", "modifieddate""""
-    .updateReturning(PasswordRow.`_rowParser`.exactlyOne())
-    .runUnchecked(c)
+    .updateReturning(PasswordRow.rowCodec.exactlyOne())
+    .run(using c)
   }
 
   override def upsertBatch(unsaved: Iterator[PasswordRow])(using c: Connection): List[PasswordRow] = {
@@ -138,8 +138,8 @@ class PasswordRepoImpl extends PasswordRepo {
     "rowguid" = EXCLUDED."rowguid",
     "modifieddate" = EXCLUDED."modifieddate"
     returning "businessentityid", "passwordhash", "passwordsalt", "rowguid", "modifieddate""""
-      .updateManyReturning(PasswordRow.`_rowParser`, unsaved)
-    .runUnchecked(c)
+      .updateManyReturning(PasswordRow.rowCodec, unsaved)
+    .run(using c)
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
@@ -147,8 +147,8 @@ class PasswordRepoImpl extends PasswordRepo {
     unsaved: Iterator[PasswordRow],
     batchSize: Int = 10000
   )(using c: Connection): Int = {
-    sql"""create temporary table password_TEMP (like "person"."password") on commit drop""".update().runUnchecked(c): @scala.annotation.nowarn
-    streamingInsert.insertUnchecked(s"""copy password_TEMP("businessentityid", "passwordhash", "passwordsalt", "rowguid", "modifieddate") from stdin""", batchSize, unsaved.toJavaIterator, c, PasswordRow.pgText): @scala.annotation.nowarn
+    sql"""create temporary table password_TEMP (like "person"."password") on commit drop""".update().run(using c): @scala.annotation.nowarn
+    StreamingInsert.of(s"""copy password_TEMP("businessentityid", "passwordhash", "passwordsalt", "rowguid", "modifieddate") from stdin""", batchSize, unsaved, PasswordRow.pgText).run(using c): @scala.annotation.nowarn
     return sql"""insert into "person"."password"("businessentityid", "passwordhash", "passwordsalt", "rowguid", "modifieddate")
     select * from password_TEMP
     on conflict ("businessentityid")
@@ -158,6 +158,6 @@ class PasswordRepoImpl extends PasswordRepo {
     "rowguid" = EXCLUDED."rowguid",
     "modifieddate" = EXCLUDED."modifieddate"
     ;
-    drop table password_TEMP;""".update().runUnchecked(c)
+    drop table password_TEMP;""".update().run(using c)
   }
 }

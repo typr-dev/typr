@@ -5,17 +5,18 @@
  */
 package testdb.categories
 
-import dev.typr.foundations.scala.DeleteBuilder
-import dev.typr.foundations.scala.SelectBuilder
-import dev.typr.foundations.scala.UpdateBuilder
-import java.sql.Connection
+import dev.typr.dslsc.DeleteBuilder
+import dev.typr.dslsc.SelectBuilder
+import dev.typr.dslsc.UpdateBuilder
+import dev.typr.foundationssc.Connection
+import dev.typr.foundationssc.ConnectionRead
 
 trait CategoriesRepo {
   def delete: DeleteBuilder[CategoriesFields, CategoriesRow]
 
   def deleteById(categoryId: CategoriesId)(using c: Connection): Boolean
 
-  def deleteByIds(categoryIds: Array[CategoriesId])(using c: Connection): Int
+  def deleteByIds(categoryIds: List[CategoriesId])(using c: Connection): Int
 
   def insert(unsaved: CategoriesRow)(using c: Connection): CategoriesRow
 
@@ -23,15 +24,15 @@ trait CategoriesRepo {
 
   def select: SelectBuilder[CategoriesFields, CategoriesRow]
 
-  def selectAll(using c: Connection): List[CategoriesRow]
+  def selectAll(using c: ConnectionRead): List[CategoriesRow]
 
-  def selectById(categoryId: CategoriesId)(using c: Connection): Option[CategoriesRow]
+  def selectById(categoryId: CategoriesId)(using c: ConnectionRead): Option[CategoriesRow]
 
-  def selectByIds(categoryIds: Array[CategoriesId])(using c: Connection): List[CategoriesRow]
+  def selectByIds(categoryIds: List[CategoriesId])(using c: ConnectionRead): List[CategoriesRow]
 
-  def selectByIdsTracked(categoryIds: Array[CategoriesId])(using c: Connection): Map[CategoriesId, CategoriesRow]
+  def selectByIdsTracked(categoryIds: List[CategoriesId])(using c: ConnectionRead): Map[CategoriesId, CategoriesRow]
 
-  def selectByUniqueSlug(slug: String)(using c: Connection): Option[CategoriesRow]
+  def selectByUniqueSlug(slug: String)(using c: ConnectionRead): Option[CategoriesRow]
 
   def update: UpdateBuilder[CategoriesFields, CategoriesRow]
 

@@ -5,16 +5,16 @@
  */
 package testdb.precision_types
 
-import dev.typr.foundations.MariaTypes
-import dev.typr.foundations.RowParser
-import dev.typr.foundations.dsl.FieldsBase
-import dev.typr.foundations.dsl.Path
-import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.scala.RelationStructure
-import dev.typr.foundations.scala.SqlExpr
-import dev.typr.foundations.scala.SqlExpr.Field
-import dev.typr.foundations.scala.SqlExpr.IdField
-import dev.typr.foundations.scala.TupleExpr24
+import dev.typr.dsl.FieldsBase
+import dev.typr.dsl.Path
+import dev.typr.dsl.SqlExpr.FieldLike
+import dev.typr.dslsc.RelationStructure
+import dev.typr.dslsc.SqlExpr
+import dev.typr.dslsc.SqlExpr.Field
+import dev.typr.dslsc.SqlExpr.IdField
+import dev.typr.dslsc.TupleExpr24
+import dev.typr.foundations.RowCodec
+import dev.typr.foundationssc.MariaTypes
 import java.time.LocalDateTime
 import java.time.LocalTime
 import testdb.precisetypes.Binary16
@@ -45,7 +45,7 @@ class PrecisionTypesFields(val `_path`: java.util.List[Path]) extends TupleExpr2
       None,
       None,
       (row, value) => row.copy(id = value),
-      PrecisionTypesId.mariaType
+      PrecisionTypesId.mariaType.underlying
     )
   }
 
@@ -57,7 +57,7 @@ class PrecisionTypesFields(val `_path`: java.util.List[Path]) extends TupleExpr2
       None,
       None,
       (row, value) => row.copy(string10 = value),
-      String10.mariaType
+      String10.mariaType.underlying
     )
   }
 
@@ -69,7 +69,7 @@ class PrecisionTypesFields(val `_path`: java.util.List[Path]) extends TupleExpr2
       None,
       None,
       (row, value) => row.copy(string20 = value),
-      String20.mariaType
+      String20.mariaType.underlying
     )
   }
 
@@ -81,7 +81,7 @@ class PrecisionTypesFields(val `_path`: java.util.List[Path]) extends TupleExpr2
       None,
       None,
       (row, value) => row.copy(string50 = value),
-      String50.mariaType
+      String50.mariaType.underlying
     )
   }
 
@@ -93,7 +93,7 @@ class PrecisionTypesFields(val `_path`: java.util.List[Path]) extends TupleExpr2
       None,
       None,
       (row, value) => row.copy(string100 = value),
-      String100.mariaType
+      String100.mariaType.underlying
     )
   }
 
@@ -105,7 +105,7 @@ class PrecisionTypesFields(val `_path`: java.util.List[Path]) extends TupleExpr2
       None,
       None,
       (row, value) => row.copy(string255 = value),
-      String255.mariaType
+      String255.mariaType.underlying
     )
   }
 
@@ -117,7 +117,7 @@ class PrecisionTypesFields(val `_path`: java.util.List[Path]) extends TupleExpr2
       None,
       None,
       (row, value) => row.copy(char10 = value),
-      PaddedString10.mariaType
+      PaddedString10.mariaType.underlying
     )
   }
 
@@ -129,7 +129,7 @@ class PrecisionTypesFields(val `_path`: java.util.List[Path]) extends TupleExpr2
       None,
       None,
       (row, value) => row.copy(decimal52 = value),
-      Decimal5_2.mariaType
+      Decimal5_2.mariaType.underlying
     )
   }
 
@@ -141,7 +141,7 @@ class PrecisionTypesFields(val `_path`: java.util.List[Path]) extends TupleExpr2
       None,
       None,
       (row, value) => row.copy(decimal102 = value),
-      Decimal10_2.mariaType
+      Decimal10_2.mariaType.underlying
     )
   }
 
@@ -153,7 +153,7 @@ class PrecisionTypesFields(val `_path`: java.util.List[Path]) extends TupleExpr2
       None,
       None,
       (row, value) => row.copy(decimal184 = value),
-      Decimal18_4.mariaType
+      Decimal18_4.mariaType.underlying
     )
   }
 
@@ -165,7 +165,7 @@ class PrecisionTypesFields(val `_path`: java.util.List[Path]) extends TupleExpr2
       None,
       None,
       (row, value) => row.copy(numeric82 = value),
-      Decimal8_2.mariaType
+      Decimal8_2.mariaType.underlying
     )
   }
 
@@ -177,7 +177,7 @@ class PrecisionTypesFields(val `_path`: java.util.List[Path]) extends TupleExpr2
       None,
       None,
       (row, value) => row.copy(numeric124 = value),
-      Decimal12_4.mariaType
+      Decimal12_4.mariaType.underlying
     )
   }
 
@@ -189,7 +189,7 @@ class PrecisionTypesFields(val `_path`: java.util.List[Path]) extends TupleExpr2
       None,
       None,
       (row, value) => row.copy(binary16 = value),
-      Binary16.mariaType
+      Binary16.mariaType.underlying
     )
   }
 
@@ -201,7 +201,7 @@ class PrecisionTypesFields(val `_path`: java.util.List[Path]) extends TupleExpr2
       None,
       None,
       (row, value) => row.copy(binary32 = value),
-      Binary32.mariaType
+      Binary32.mariaType.underlying
     )
   }
 
@@ -213,7 +213,7 @@ class PrecisionTypesFields(val `_path`: java.util.List[Path]) extends TupleExpr2
       None,
       None,
       (row, value) => row.copy(binary64 = value),
-      Binary64.mariaType
+      Binary64.mariaType.underlying
     )
   }
 
@@ -225,7 +225,7 @@ class PrecisionTypesFields(val `_path`: java.util.List[Path]) extends TupleExpr2
       None,
       None,
       (row, value) => row.copy(time0 = value),
-      MariaTypes.time
+      MariaTypes.time.underlying
     )
   }
 
@@ -237,7 +237,7 @@ class PrecisionTypesFields(val `_path`: java.util.List[Path]) extends TupleExpr2
       None,
       None,
       (row, value) => row.copy(time3 = value),
-      LocalTime3.mariaType
+      LocalTime3.mariaType.underlying
     )
   }
 
@@ -249,7 +249,7 @@ class PrecisionTypesFields(val `_path`: java.util.List[Path]) extends TupleExpr2
       None,
       None,
       (row, value) => row.copy(time6 = value),
-      LocalTime6.mariaType
+      LocalTime6.mariaType.underlying
     )
   }
 
@@ -261,7 +261,7 @@ class PrecisionTypesFields(val `_path`: java.util.List[Path]) extends TupleExpr2
       None,
       None,
       (row, value) => row.copy(datetime0 = value),
-      MariaTypes.datetime
+      MariaTypes.datetime.underlying
     )
   }
 
@@ -273,7 +273,7 @@ class PrecisionTypesFields(val `_path`: java.util.List[Path]) extends TupleExpr2
       None,
       None,
       (row, value) => row.copy(datetime3 = value),
-      LocalDateTime3.mariaType
+      LocalDateTime3.mariaType.underlying
     )
   }
 
@@ -285,7 +285,7 @@ class PrecisionTypesFields(val `_path`: java.util.List[Path]) extends TupleExpr2
       None,
       None,
       (row, value) => row.copy(datetime6 = value),
-      LocalDateTime6.mariaType
+      LocalDateTime6.mariaType.underlying
     )
   }
 
@@ -297,7 +297,7 @@ class PrecisionTypesFields(val `_path`: java.util.List[Path]) extends TupleExpr2
       None,
       None,
       (row, value) => row.copy(ts0 = value),
-      MariaTypes.timestamp
+      MariaTypes.timestamp.underlying
     )
   }
 
@@ -309,7 +309,7 @@ class PrecisionTypesFields(val `_path`: java.util.List[Path]) extends TupleExpr2
       None,
       None,
       (row, value) => row.copy(ts3 = value),
-      LocalDateTime3.mariaType
+      LocalDateTime3.mariaType.underlying
     )
   }
 
@@ -321,13 +321,13 @@ class PrecisionTypesFields(val `_path`: java.util.List[Path]) extends TupleExpr2
       None,
       None,
       (row, value) => row.copy(ts6 = value),
-      LocalDateTime6.mariaType
+      LocalDateTime6.mariaType.underlying
     )
   }
 
   override def columns: java.util.List[FieldLike[?, PrecisionTypesRow]] = java.util.List.of(this.id.underlying, this.string10.underlying, this.string20.underlying, this.string50.underlying, this.string100.underlying, this.string255.underlying, this.char10.underlying, this.decimal52.underlying, this.decimal102.underlying, this.decimal184.underlying, this.numeric82.underlying, this.numeric124.underlying, this.binary16.underlying, this.binary32.underlying, this.binary64.underlying, this.time0.underlying, this.time3.underlying, this.time6.underlying, this.datetime0.underlying, this.datetime3.underlying, this.datetime6.underlying, this.ts0.underlying, this.ts3.underlying, this.ts6.underlying)
 
-  override def rowParser: RowParser[PrecisionTypesRow] = PrecisionTypesRow._rowParser.underlying
+  override def rowCodec: RowCodec[PrecisionTypesRow] = PrecisionTypesRow.rowCodec.underlying
 
   override def withPaths(`_path`: java.util.List[Path]): RelationStructure[PrecisionTypesFields, PrecisionTypesRow] = new PrecisionTypesFields(`_path`)
 

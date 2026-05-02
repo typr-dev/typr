@@ -47,7 +47,7 @@ object TypoMoney {
     )
   }
 
-  implicit lazy val bijection: Bijection[TypoMoney, BigDecimal] = Bijection.apply[TypoMoney, BigDecimal](_.value)(TypoMoney.apply)
+  implicit lazy val bijection: Bijection[TypoMoney, BigDecimal] = Bijection[TypoMoney, BigDecimal](_.value)(TypoMoney.apply)
 
   implicit lazy val jdbcDecoder: JdbcDecoder[TypoMoney] = {
     JdbcDecoder[TypoMoney](

@@ -6,10 +6,10 @@
 package testdb.precisetypes
 
 import com.fasterxml.jackson.annotation.JsonValue
-import dev.typr.foundations.MariaType
+import dev.typr.dslsc.Bijection
 import dev.typr.foundations.data.precise.DecimalN
-import dev.typr.foundations.scala.Bijection
-import dev.typr.foundations.scala.ScalaDbTypes
+import dev.typr.foundationssc.MariaType
+import dev.typr.foundationssc.MariaTypes
 import java.lang.IllegalArgumentException
 
 case class Decimal18_4 private(@JsonValue value: BigDecimal) extends DecimalN {
@@ -31,13 +31,13 @@ case class Decimal18_4 private(@JsonValue value: BigDecimal) extends DecimalN {
 object Decimal18_4 {
   given Zero: Decimal18_4 = new Decimal18_4(BigDecimal(0))
 
-  given bijection: Bijection[Decimal18_4, BigDecimal] = Bijection.apply[Decimal18_4, BigDecimal](_.value)(Decimal18_4.apply)
+  given bijection: Bijection[Decimal18_4, BigDecimal] = Bijection.of[Decimal18_4, BigDecimal](_.value, Decimal18_4.apply)
 
-  given mariaType: MariaType[Decimal18_4] = ScalaDbTypes.MariaTypes.numeric.bimap(Decimal18_4.apply, _.value)
+  given mariaType: MariaType[Decimal18_4] = MariaTypes.numeric.to(Bijection.of(Decimal18_4.apply, _.value))
 
   def of(value: BigDecimal): Option[Decimal18_4] = { val scaled = value.setScale(4, BigDecimal.RoundingMode.HALF_UP); if (scaled.precision <= 18) Some(new Decimal18_4(scaled)) else None }
 
-  def of(value: Int): Decimal18_4 = new Decimal18_4(BigDecimal(value))
+  def of(value: Int): Decimal18_4 = new Decimal18_4(BigDecimal(value.toLong))
 
   def of(value: Long): Option[Decimal18_4] = Decimal18_4.of(BigDecimal(value))
 

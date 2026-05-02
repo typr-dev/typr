@@ -19,7 +19,7 @@ import java.util.Random
  * generated from SQL files in sql-scripts/duckdb/.
  */
 class SqlScriptTest {
-    private val testInsert = TestInsert(Random(42))
+    private val testInsert = TestInsert(Random(412910256))
     private val customerSearchRepo = CustomerSearchSqlRepoImpl()
     private val orderSummaryRepo = OrderSummaryByCustomerSqlRepoImpl()
     private val productSummaryRepo = ProductSummarySqlRepoImpl()
@@ -162,7 +162,7 @@ class SqlScriptTest {
             testInsert.Orders(customerId = customer1.customerId.value, c = c)
             testInsert.Orders(customerId = customer2.customerId.value, c = c)
 
-            val ids = arrayOf(customer1.customerId.value, customer2.customerId.value)
+            val ids = listOf(customer1.customerId.value, customer2.customerId.value)
             val results = orderSummaryRepo.apply(
                 customerIds = ids,
                 minTotal = null,

@@ -6,13 +6,11 @@
 package testdb.categories
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import dev.typr.foundations.MariaTypes
+import dev.typr.dslsc.RowCodecs
 import dev.typr.foundations.Tuple.Tuple9
 import dev.typr.foundations.data.Json
-import dev.typr.foundations.scala.DbTypeOps
-import dev.typr.foundations.scala.RowParser
-import dev.typr.foundations.scala.RowParsers
-import dev.typr.foundations.scala.ScalaDbTypes
+import dev.typr.foundationssc.MariaTypes
+import dev.typr.foundationssc.RowCodec
 import testdb.customtypes.Defaulted
 
 /** Table: categories
@@ -95,5 +93,5 @@ case class CategoriesRow(
 }
 
 object CategoriesRow {
-  val `_rowParser`: RowParser[CategoriesRow] = RowParsers.of(CategoriesId.mariaType, CategoriesId.mariaType.nullable, MariaTypes.varchar, MariaTypes.varchar, MariaTypes.mediumtext.nullable, MariaTypes.varchar.nullable, ScalaDbTypes.MariaTypes.smallint, ScalaDbTypes.MariaTypes.bool, MariaTypes.json.nullable)(CategoriesRow.apply)(row => Array[Any](row.categoryId, row.parentId, row.name, row.slug, row.description, row.imageUrl, row.sortOrder, row.isVisible, row.metadata))
+  val rowCodec: RowCodec[CategoriesRow] = RowCodecs.of(CategoriesId.mariaType, CategoriesId.mariaType.opt, MariaTypes.varchar, MariaTypes.varchar, MariaTypes.mediumtext.opt, MariaTypes.varchar.opt, MariaTypes.smallint, MariaTypes.bool, MariaTypes.json.opt)(CategoriesRow.apply)(row => Array[Any](row.categoryId, row.parentId, row.name, row.slug, row.description, row.imageUrl, row.sortOrder, row.isVisible, row.metadata))
 }

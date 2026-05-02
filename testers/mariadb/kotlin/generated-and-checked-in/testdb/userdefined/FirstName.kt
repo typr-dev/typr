@@ -6,23 +6,23 @@
 package testdb.userdefined
 
 import com.fasterxml.jackson.annotation.JsonValue
-import dev.typr.foundations.MariaType
-import dev.typr.foundations.MariaTypes
-import dev.typr.foundations.kotlin.Bijection
+import dev.typr.foundationskt.Bijection
+import dev.typr.foundationskt.MariaType
+import dev.typr.foundationskt.MariaTypes
 
 /** Shared type `FirstName`
   * Generated from TypeDefinitions matching
   */
-data class FirstName(@field:JsonValue val value: String) {
+data class FirstName(@field:JsonValue val value: kotlin.String) {
   override fun toString(): kotlin.String {
-    return value.toString()
+    return value
   }
 
   companion object {
-    val bijection: Bijection<FirstName, String> =
+    val bijection: Bijection<FirstName, kotlin.String> =
       Bijection.of(FirstName::value, ::FirstName)
 
     val mariaType: MariaType<FirstName> =
-      MariaTypes.varchar.bimap(::FirstName, FirstName::value)
+      MariaTypes.varchar.to(Bijection.of(::FirstName, FirstName::value))
   }
 }

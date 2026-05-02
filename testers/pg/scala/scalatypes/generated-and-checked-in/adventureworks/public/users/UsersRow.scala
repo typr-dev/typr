@@ -7,13 +7,12 @@ package adventureworks.public.users
 
 import adventureworks.customtypes.Defaulted
 import com.fasterxml.jackson.annotation.JsonProperty
+import dev.typr.dslsc.RowCodecs
 import dev.typr.foundations.PgText
-import dev.typr.foundations.PgTypes
 import dev.typr.foundations.Tuple.Tuple7
 import dev.typr.foundations.data.Unknown
-import dev.typr.foundations.scala.DbTypeOps
-import dev.typr.foundations.scala.RowParser
-import dev.typr.foundations.scala.RowParsers
+import dev.typr.foundationssc.PgTypes
+import dev.typr.foundationssc.RowCodec
 import java.time.Instant
 
 /** Table: public.users
@@ -59,7 +58,7 @@ case class UsersRow(
 }
 
 object UsersRow {
-  val `_rowParser`: RowParser[UsersRow] = RowParsers.of(UsersId.pgType, PgTypes.text, PgTypes.text.nullable, PgTypes.unknown, PgTypes.text, PgTypes.timestamptz, PgTypes.timestamptz.nullable)(UsersRow.apply)(row => Array[Any](row.userId, row.name, row.lastName, row.email, row.password, row.createdAt, row.verifiedOn))
+  given pgText: PgText[UsersRow] = PgText.from(rowCodec.underlying)
 
-  given pgText: PgText[UsersRow] = PgText.from(`_rowParser`.underlying)
+  val rowCodec: RowCodec[UsersRow] = RowCodecs.of(UsersId.pgType, PgTypes.text, PgTypes.text.opt, PgTypes.unknown, PgTypes.text, PgTypes.timestamptz, PgTypes.timestamptz.opt)(UsersRow.apply)(row => Array[Any](row.userId, row.name, row.lastName, row.email, row.password, row.createdAt, row.verifiedOn))
 }

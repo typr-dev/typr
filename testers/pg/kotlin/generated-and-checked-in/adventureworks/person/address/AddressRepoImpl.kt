@@ -6,15 +6,15 @@
 package adventureworks.person.address
 
 import adventureworks.person.stateprovince.StateprovinceId
-import dev.typr.foundations.PgTypes
-import dev.typr.foundations.kotlin.DeleteBuilder
-import dev.typr.foundations.kotlin.Dialect
-import dev.typr.foundations.kotlin.Fragment
-import dev.typr.foundations.kotlin.SelectBuilder
-import dev.typr.foundations.kotlin.UpdateBuilder
-import dev.typr.foundations.kotlin.nullable
-import dev.typr.foundations.streamingInsert
-import java.sql.Connection
+import dev.typr.dslkt.DeleteBuilder
+import dev.typr.dslkt.Dialect
+import dev.typr.dslkt.SelectBuilder
+import dev.typr.dslkt.UpdateBuilder
+import dev.typr.foundationskt.Connection
+import dev.typr.foundationskt.ConnectionRead
+import dev.typr.foundationskt.Fragment
+import dev.typr.foundationskt.PgTypes
+import dev.typr.foundationskt.StreamingInsert
 import java.util.ArrayList
 import kotlin.collections.Iterator
 import kotlin.collections.List
@@ -27,20 +27,20 @@ class AddressRepoImpl() : AddressRepo {
   override fun deleteById(
     addressid: AddressId,
     c: Connection
-  ): Boolean = Fragment.interpolate(Fragment.lit("delete from \"person\".\"address\" where \"addressid\" = "), Fragment.encode(AddressId.pgType, addressid), Fragment.lit("")).update().runUnchecked(c) > 0
+  ): kotlin.Boolean = Fragment.concat(Fragment.of("delete from \"person\".\"address\" where \"addressid\" = "), Fragment.encode(AddressId.pgType, addressid), Fragment.of("")).update().run(c) > 0
 
   override fun deleteByIds(
-    addressids: Array<AddressId>,
+    addressids: List<AddressId>,
     c: Connection
-  ): Int = Fragment.interpolate(Fragment.lit("delete\nfrom \"person\".\"address\"\nwhere \"addressid\" = ANY("), Fragment.encode(AddressId.pgTypeArray, addressids), Fragment.lit(")"))
+  ): Int = Fragment.concat(Fragment.of("delete\nfrom \"person\".\"address\"\nwhere \"addressid\" = ANY("), Fragment.encode(AddressId.pgType.array(), addressids), Fragment.of(")"))
     .update()
-    .runUnchecked(c)
+    .run(c)
 
   override fun insert(
     unsaved: AddressRow,
     c: Connection
-  ): AddressRow = Fragment.interpolate(Fragment.lit("insert into \"person\".\"address\"(\"addressid\", \"addressline1\", \"addressline2\", \"city\", \"stateprovinceid\", \"postalcode\", \"spatiallocation\", \"rowguid\", \"modifieddate\")\nvalues ("), Fragment.encode(AddressId.pgType, unsaved.addressid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.text, unsaved.addressline1), Fragment.lit(", "), Fragment.encode(PgTypes.text.nullable(), unsaved.addressline2), Fragment.lit(", "), Fragment.encode(PgTypes.text, unsaved.city), Fragment.lit(", "), Fragment.encode(StateprovinceId.pgType, unsaved.stateprovinceid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.text, unsaved.postalcode), Fragment.lit(", "), Fragment.encode(PgTypes.bytea.nullable(), unsaved.spatiallocation), Fragment.lit("::bytea, "), Fragment.encode(PgTypes.uuid, unsaved.rowguid), Fragment.lit("::uuid, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\nRETURNING \"addressid\", \"addressline1\", \"addressline2\", \"city\", \"stateprovinceid\", \"postalcode\", \"spatiallocation\", \"rowguid\", \"modifieddate\"\n"))
-    .updateReturning(AddressRow._rowParser.exactlyOne()).runUnchecked(c)
+  ): AddressRow = Fragment.concat(Fragment.of("insert into \"person\".\"address\"(\"addressid\", \"addressline1\", \"addressline2\", \"city\", \"stateprovinceid\", \"postalcode\", \"spatiallocation\", \"rowguid\", \"modifieddate\")\nvalues ("), Fragment.encode(AddressId.pgType, unsaved.addressid), Fragment.of("::int4, "), Fragment.encode(PgTypes.text, unsaved.addressline1), Fragment.of(", "), Fragment.encode(PgTypes.text.opt(), unsaved.addressline2), Fragment.of(", "), Fragment.encode(PgTypes.text, unsaved.city), Fragment.of(", "), Fragment.encode(StateprovinceId.pgType, unsaved.stateprovinceid), Fragment.of("::int4, "), Fragment.encode(PgTypes.text, unsaved.postalcode), Fragment.of(", "), Fragment.encode(PgTypes.bytea.opt(), unsaved.spatiallocation), Fragment.of("::bytea, "), Fragment.encode(PgTypes.uuid, unsaved.rowguid), Fragment.of("::uuid, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.of("::timestamp)\nRETURNING \"addressid\", \"addressline1\", \"addressline2\", \"city\", \"stateprovinceid\", \"postalcode\", \"spatiallocation\", \"rowguid\", \"modifieddate\"\n"))
+    .updateReturning(AddressRow.rowCodec.exactlyOne()).run(c)
 
   override fun insert(
     unsaved: AddressRowUnsaved,
@@ -48,96 +48,96 @@ class AddressRepoImpl() : AddressRepo {
   ): AddressRow {
     val columns: ArrayList<Fragment> = ArrayList()
     val values: ArrayList<Fragment> = ArrayList()
-    columns.add(Fragment.lit("\"addressline1\""))
-    values.add(Fragment.interpolate(Fragment.encode(PgTypes.text, unsaved.addressline1), Fragment.lit("")))
-    columns.add(Fragment.lit("\"addressline2\""))
-    values.add(Fragment.interpolate(Fragment.encode(PgTypes.text.nullable(), unsaved.addressline2), Fragment.lit("")))
-    columns.add(Fragment.lit("\"city\""))
-    values.add(Fragment.interpolate(Fragment.encode(PgTypes.text, unsaved.city), Fragment.lit("")))
-    columns.add(Fragment.lit("\"stateprovinceid\""))
-    values.add(Fragment.interpolate(Fragment.encode(StateprovinceId.pgType, unsaved.stateprovinceid), Fragment.lit("::int4")))
-    columns.add(Fragment.lit("\"postalcode\""))
-    values.add(Fragment.interpolate(Fragment.encode(PgTypes.text, unsaved.postalcode), Fragment.lit("")))
-    columns.add(Fragment.lit("\"spatiallocation\""))
-    values.add(Fragment.interpolate(Fragment.encode(PgTypes.bytea.nullable(), unsaved.spatiallocation), Fragment.lit("::bytea")))
+    columns.add(Fragment.of("\"addressline1\""))
+    values.add(Fragment.concat(Fragment.encode(PgTypes.text, unsaved.addressline1), Fragment.of("")))
+    columns.add(Fragment.of("\"addressline2\""))
+    values.add(Fragment.concat(Fragment.encode(PgTypes.text.opt(), unsaved.addressline2), Fragment.of("")))
+    columns.add(Fragment.of("\"city\""))
+    values.add(Fragment.concat(Fragment.encode(PgTypes.text, unsaved.city), Fragment.of("")))
+    columns.add(Fragment.of("\"stateprovinceid\""))
+    values.add(Fragment.concat(Fragment.encode(StateprovinceId.pgType, unsaved.stateprovinceid), Fragment.of("::int4")))
+    columns.add(Fragment.of("\"postalcode\""))
+    values.add(Fragment.concat(Fragment.encode(PgTypes.text, unsaved.postalcode), Fragment.of("")))
+    columns.add(Fragment.of("\"spatiallocation\""))
+    values.add(Fragment.concat(Fragment.encode(PgTypes.bytea.opt(), unsaved.spatiallocation), Fragment.of("::bytea")))
     unsaved.addressid.visit(
       {  },
-      { value -> columns.add(Fragment.lit("\"addressid\""))
-      values.add(Fragment.interpolate(Fragment.encode(AddressId.pgType, value), Fragment.lit("::int4"))) }
+      { value -> columns.add(Fragment.of("\"addressid\""))
+      values.add(Fragment.concat(Fragment.encode(AddressId.pgType, value), Fragment.of("::int4"))) }
     );
     unsaved.rowguid.visit(
       {  },
-      { value -> columns.add(Fragment.lit("\"rowguid\""))
-      values.add(Fragment.interpolate(Fragment.encode(PgTypes.uuid, value), Fragment.lit("::uuid"))) }
+      { value -> columns.add(Fragment.of("\"rowguid\""))
+      values.add(Fragment.concat(Fragment.encode(PgTypes.uuid, value), Fragment.of("::uuid"))) }
     );
     unsaved.modifieddate.visit(
       {  },
-      { value -> columns.add(Fragment.lit("\"modifieddate\""))
-      values.add(Fragment.interpolate(Fragment.encode(PgTypes.timestamp, value), Fragment.lit("::timestamp"))) }
+      { value -> columns.add(Fragment.of("\"modifieddate\""))
+      values.add(Fragment.concat(Fragment.encode(PgTypes.timestamp, value), Fragment.of("::timestamp"))) }
     );
-    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into \"person\".\"address\"("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nRETURNING \"addressid\", \"addressline1\", \"addressline2\", \"city\", \"stateprovinceid\", \"postalcode\", \"spatiallocation\", \"rowguid\", \"modifieddate\"\n"))
-    return q.updateReturning(AddressRow._rowParser.exactlyOne()).runUnchecked(c)
+    val q: Fragment = Fragment.concat(Fragment.of("insert into \"person\".\"address\"("), Fragment.comma(columns.toMutableList()), Fragment.of(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.of(")\nRETURNING \"addressid\", \"addressline1\", \"addressline2\", \"city\", \"stateprovinceid\", \"postalcode\", \"spatiallocation\", \"rowguid\", \"modifieddate\"\n"))
+    return q.updateReturning(AddressRow.rowCodec.exactlyOne()).run(c)
   }
 
   override fun insertStreaming(
     unsaved: Iterator<AddressRow>,
     batchSize: Int,
     c: Connection
-  ): Long = streamingInsert.insertUnchecked("COPY \"person\".\"address\"(\"addressid\", \"addressline1\", \"addressline2\", \"city\", \"stateprovinceid\", \"postalcode\", \"spatiallocation\", \"rowguid\", \"modifieddate\") FROM STDIN", batchSize, unsaved, c, AddressRow.pgText)
+  ): kotlin.Long = StreamingInsert.of("COPY \"person\".\"address\"(\"addressid\", \"addressline1\", \"addressline2\", \"city\", \"stateprovinceid\", \"postalcode\", \"spatiallocation\", \"rowguid\", \"modifieddate\") FROM STDIN", batchSize, unsaved, AddressRow.pgText).run(c)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
   override fun insertUnsavedStreaming(
     unsaved: Iterator<AddressRowUnsaved>,
     batchSize: Int,
     c: Connection
-  ): Long = streamingInsert.insertUnchecked("COPY \"person\".\"address\"(\"addressline1\", \"addressline2\", \"city\", \"stateprovinceid\", \"postalcode\", \"spatiallocation\", \"addressid\", \"rowguid\", \"modifieddate\") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')", batchSize, unsaved, c, AddressRowUnsaved.pgText)
+  ): kotlin.Long = StreamingInsert.of("COPY \"person\".\"address\"(\"addressline1\", \"addressline2\", \"city\", \"stateprovinceid\", \"postalcode\", \"spatiallocation\", \"addressid\", \"rowguid\", \"modifieddate\") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')", batchSize, unsaved, AddressRowUnsaved.pgText).run(c)
 
-  override fun select(): SelectBuilder<AddressFields, AddressRow> = SelectBuilder.of("\"person\".\"address\"", AddressFields.structure, AddressRow._rowParser, Dialect.POSTGRESQL)
+  override fun select(): SelectBuilder<AddressFields, AddressRow> = SelectBuilder.of("\"person\".\"address\"", AddressFields.structure, AddressRow.rowCodec, Dialect.POSTGRESQL)
 
-  override fun selectAll(c: Connection): List<AddressRow> = Fragment.interpolate(Fragment.lit("select \"addressid\", \"addressline1\", \"addressline2\", \"city\", \"stateprovinceid\", \"postalcode\", \"spatiallocation\", \"rowguid\", \"modifieddate\"\nfrom \"person\".\"address\"\n")).query(AddressRow._rowParser.all()).runUnchecked(c)
+  override fun selectAll(c: ConnectionRead): List<AddressRow> = Fragment.concat(Fragment.of("select \"addressid\", \"addressline1\", \"addressline2\", \"city\", \"stateprovinceid\", \"postalcode\", \"spatiallocation\", \"rowguid\", \"modifieddate\"\nfrom \"person\".\"address\"\n")).query(AddressRow.rowCodec.all()).run(c)
 
   override fun selectById(
     addressid: AddressId,
-    c: Connection
-  ): AddressRow? = Fragment.interpolate(Fragment.lit("select \"addressid\", \"addressline1\", \"addressline2\", \"city\", \"stateprovinceid\", \"postalcode\", \"spatiallocation\", \"rowguid\", \"modifieddate\"\nfrom \"person\".\"address\"\nwhere \"addressid\" = "), Fragment.encode(AddressId.pgType, addressid), Fragment.lit("")).query(AddressRow._rowParser.first()).runUnchecked(c)
+    c: ConnectionRead
+  ): AddressRow? = Fragment.concat(Fragment.of("select \"addressid\", \"addressline1\", \"addressline2\", \"city\", \"stateprovinceid\", \"postalcode\", \"spatiallocation\", \"rowguid\", \"modifieddate\"\nfrom \"person\".\"address\"\nwhere \"addressid\" = "), Fragment.encode(AddressId.pgType, addressid), Fragment.of("")).query(AddressRow.rowCodec.first()).run(c)
 
   override fun selectByIds(
-    addressids: Array<AddressId>,
-    c: Connection
-  ): List<AddressRow> = Fragment.interpolate(Fragment.lit("select \"addressid\", \"addressline1\", \"addressline2\", \"city\", \"stateprovinceid\", \"postalcode\", \"spatiallocation\", \"rowguid\", \"modifieddate\"\nfrom \"person\".\"address\"\nwhere \"addressid\" = ANY("), Fragment.encode(AddressId.pgTypeArray, addressids), Fragment.lit(")")).query(AddressRow._rowParser.all()).runUnchecked(c)
+    addressids: List<AddressId>,
+    c: ConnectionRead
+  ): List<AddressRow> = Fragment.concat(Fragment.of("select \"addressid\", \"addressline1\", \"addressline2\", \"city\", \"stateprovinceid\", \"postalcode\", \"spatiallocation\", \"rowguid\", \"modifieddate\"\nfrom \"person\".\"address\"\nwhere \"addressid\" = ANY("), Fragment.encode(AddressId.pgType.array(), addressids), Fragment.of(")")).query(AddressRow.rowCodec.all()).run(c)
 
   override fun selectByIdsTracked(
-    addressids: Array<AddressId>,
-    c: Connection
+    addressids: List<AddressId>,
+    c: ConnectionRead
   ): Map<AddressId, AddressRow> {
     val ret: MutableMap<AddressId, AddressRow> = mutableMapOf<AddressId, AddressRow>()
     selectByIds(addressids, c).forEach({ row -> ret.put(row.addressid, row) })
     return ret.toMap()
   }
 
-  override fun update(): UpdateBuilder<AddressFields, AddressRow> = UpdateBuilder.of("\"person\".\"address\"", AddressFields.structure, AddressRow._rowParser, Dialect.POSTGRESQL)
+  override fun update(): UpdateBuilder<AddressFields, AddressRow> = UpdateBuilder.of("\"person\".\"address\"", AddressFields.structure, AddressRow.rowCodec, Dialect.POSTGRESQL)
 
   override fun update(
     row: AddressRow,
     c: Connection
-  ): Boolean {
+  ): kotlin.Boolean {
     val addressid: AddressId = row.addressid
-    return Fragment.interpolate(Fragment.lit("update \"person\".\"address\"\nset \"addressline1\" = "), Fragment.encode(PgTypes.text, row.addressline1), Fragment.lit(",\n\"addressline2\" = "), Fragment.encode(PgTypes.text.nullable(), row.addressline2), Fragment.lit(",\n\"city\" = "), Fragment.encode(PgTypes.text, row.city), Fragment.lit(",\n\"stateprovinceid\" = "), Fragment.encode(StateprovinceId.pgType, row.stateprovinceid), Fragment.lit("::int4,\n\"postalcode\" = "), Fragment.encode(PgTypes.text, row.postalcode), Fragment.lit(",\n\"spatiallocation\" = "), Fragment.encode(PgTypes.bytea.nullable(), row.spatiallocation), Fragment.lit("::bytea,\n\"rowguid\" = "), Fragment.encode(PgTypes.uuid, row.rowguid), Fragment.lit("::uuid,\n\"modifieddate\" = "), Fragment.encode(PgTypes.timestamp, row.modifieddate), Fragment.lit("::timestamp\nwhere \"addressid\" = "), Fragment.encode(AddressId.pgType, addressid), Fragment.lit("")).update().runUnchecked(c) > 0
+    return Fragment.concat(Fragment.of("update \"person\".\"address\"\nset \"addressline1\" = "), Fragment.encode(PgTypes.text, row.addressline1), Fragment.of(",\n\"addressline2\" = "), Fragment.encode(PgTypes.text.opt(), row.addressline2), Fragment.of(",\n\"city\" = "), Fragment.encode(PgTypes.text, row.city), Fragment.of(",\n\"stateprovinceid\" = "), Fragment.encode(StateprovinceId.pgType, row.stateprovinceid), Fragment.of("::int4,\n\"postalcode\" = "), Fragment.encode(PgTypes.text, row.postalcode), Fragment.of(",\n\"spatiallocation\" = "), Fragment.encode(PgTypes.bytea.opt(), row.spatiallocation), Fragment.of("::bytea,\n\"rowguid\" = "), Fragment.encode(PgTypes.uuid, row.rowguid), Fragment.of("::uuid,\n\"modifieddate\" = "), Fragment.encode(PgTypes.timestamp, row.modifieddate), Fragment.of("::timestamp\nwhere \"addressid\" = "), Fragment.encode(AddressId.pgType, addressid), Fragment.of("")).update().run(c) > 0
   }
 
   override fun upsert(
     unsaved: AddressRow,
     c: Connection
-  ): AddressRow = Fragment.interpolate(Fragment.lit("insert into \"person\".\"address\"(\"addressid\", \"addressline1\", \"addressline2\", \"city\", \"stateprovinceid\", \"postalcode\", \"spatiallocation\", \"rowguid\", \"modifieddate\")\nvalues ("), Fragment.encode(AddressId.pgType, unsaved.addressid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.text, unsaved.addressline1), Fragment.lit(", "), Fragment.encode(PgTypes.text.nullable(), unsaved.addressline2), Fragment.lit(", "), Fragment.encode(PgTypes.text, unsaved.city), Fragment.lit(", "), Fragment.encode(StateprovinceId.pgType, unsaved.stateprovinceid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.text, unsaved.postalcode), Fragment.lit(", "), Fragment.encode(PgTypes.bytea.nullable(), unsaved.spatiallocation), Fragment.lit("::bytea, "), Fragment.encode(PgTypes.uuid, unsaved.rowguid), Fragment.lit("::uuid, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\non conflict (\"addressid\")\ndo update set\n  \"addressline1\" = EXCLUDED.\"addressline1\",\n\"addressline2\" = EXCLUDED.\"addressline2\",\n\"city\" = EXCLUDED.\"city\",\n\"stateprovinceid\" = EXCLUDED.\"stateprovinceid\",\n\"postalcode\" = EXCLUDED.\"postalcode\",\n\"spatiallocation\" = EXCLUDED.\"spatiallocation\",\n\"rowguid\" = EXCLUDED.\"rowguid\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\nreturning \"addressid\", \"addressline1\", \"addressline2\", \"city\", \"stateprovinceid\", \"postalcode\", \"spatiallocation\", \"rowguid\", \"modifieddate\""))
-    .updateReturning(AddressRow._rowParser.exactlyOne())
-    .runUnchecked(c)
+  ): AddressRow = Fragment.concat(Fragment.of("insert into \"person\".\"address\"(\"addressid\", \"addressline1\", \"addressline2\", \"city\", \"stateprovinceid\", \"postalcode\", \"spatiallocation\", \"rowguid\", \"modifieddate\")\nvalues ("), Fragment.encode(AddressId.pgType, unsaved.addressid), Fragment.of("::int4, "), Fragment.encode(PgTypes.text, unsaved.addressline1), Fragment.of(", "), Fragment.encode(PgTypes.text.opt(), unsaved.addressline2), Fragment.of(", "), Fragment.encode(PgTypes.text, unsaved.city), Fragment.of(", "), Fragment.encode(StateprovinceId.pgType, unsaved.stateprovinceid), Fragment.of("::int4, "), Fragment.encode(PgTypes.text, unsaved.postalcode), Fragment.of(", "), Fragment.encode(PgTypes.bytea.opt(), unsaved.spatiallocation), Fragment.of("::bytea, "), Fragment.encode(PgTypes.uuid, unsaved.rowguid), Fragment.of("::uuid, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.of("::timestamp)\non conflict (\"addressid\")\ndo update set\n  \"addressline1\" = EXCLUDED.\"addressline1\",\n\"addressline2\" = EXCLUDED.\"addressline2\",\n\"city\" = EXCLUDED.\"city\",\n\"stateprovinceid\" = EXCLUDED.\"stateprovinceid\",\n\"postalcode\" = EXCLUDED.\"postalcode\",\n\"spatiallocation\" = EXCLUDED.\"spatiallocation\",\n\"rowguid\" = EXCLUDED.\"rowguid\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\nreturning \"addressid\", \"addressline1\", \"addressline2\", \"city\", \"stateprovinceid\", \"postalcode\", \"spatiallocation\", \"rowguid\", \"modifieddate\""))
+    .updateReturning(AddressRow.rowCodec.exactlyOne())
+    .run(c)
 
   override fun upsertBatch(
     unsaved: Iterator<AddressRow>,
     c: Connection
-  ): List<AddressRow> = Fragment.interpolate(Fragment.lit("insert into \"person\".\"address\"(\"addressid\", \"addressline1\", \"addressline2\", \"city\", \"stateprovinceid\", \"postalcode\", \"spatiallocation\", \"rowguid\", \"modifieddate\")\nvalues (?::int4, ?, ?, ?, ?::int4, ?, ?::bytea, ?::uuid, ?::timestamp)\non conflict (\"addressid\")\ndo update set\n  \"addressline1\" = EXCLUDED.\"addressline1\",\n\"addressline2\" = EXCLUDED.\"addressline2\",\n\"city\" = EXCLUDED.\"city\",\n\"stateprovinceid\" = EXCLUDED.\"stateprovinceid\",\n\"postalcode\" = EXCLUDED.\"postalcode\",\n\"spatiallocation\" = EXCLUDED.\"spatiallocation\",\n\"rowguid\" = EXCLUDED.\"rowguid\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\nreturning \"addressid\", \"addressline1\", \"addressline2\", \"city\", \"stateprovinceid\", \"postalcode\", \"spatiallocation\", \"rowguid\", \"modifieddate\""))
-    .updateManyReturning(AddressRow._rowParser, unsaved)
-  .runUnchecked(c)
+  ): List<AddressRow> = Fragment.concat(Fragment.of("insert into \"person\".\"address\"(\"addressid\", \"addressline1\", \"addressline2\", \"city\", \"stateprovinceid\", \"postalcode\", \"spatiallocation\", \"rowguid\", \"modifieddate\")\nvalues (?::int4, ?, ?, ?, ?::int4, ?, ?::bytea, ?::uuid, ?::timestamp)\non conflict (\"addressid\")\ndo update set\n  \"addressline1\" = EXCLUDED.\"addressline1\",\n\"addressline2\" = EXCLUDED.\"addressline2\",\n\"city\" = EXCLUDED.\"city\",\n\"stateprovinceid\" = EXCLUDED.\"stateprovinceid\",\n\"postalcode\" = EXCLUDED.\"postalcode\",\n\"spatiallocation\" = EXCLUDED.\"spatiallocation\",\n\"rowguid\" = EXCLUDED.\"rowguid\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\nreturning \"addressid\", \"addressline1\", \"addressline2\", \"city\", \"stateprovinceid\", \"postalcode\", \"spatiallocation\", \"rowguid\", \"modifieddate\""))
+    .updateManyReturning(AddressRow.rowCodec, unsaved)
+  .run(c)
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
   override fun upsertStreaming(
@@ -145,8 +145,8 @@ class AddressRepoImpl() : AddressRepo {
     batchSize: Int,
     c: Connection
   ): Int {
-    Fragment.interpolate(Fragment.lit("create temporary table address_TEMP (like \"person\".\"address\") on commit drop")).update().runUnchecked(c)
-    streamingInsert.insertUnchecked("copy address_TEMP(\"addressid\", \"addressline1\", \"addressline2\", \"city\", \"stateprovinceid\", \"postalcode\", \"spatiallocation\", \"rowguid\", \"modifieddate\") from stdin", batchSize, unsaved, c, AddressRow.pgText)
-    return Fragment.interpolate(Fragment.lit("insert into \"person\".\"address\"(\"addressid\", \"addressline1\", \"addressline2\", \"city\", \"stateprovinceid\", \"postalcode\", \"spatiallocation\", \"rowguid\", \"modifieddate\")\nselect * from address_TEMP\non conflict (\"addressid\")\ndo update set\n  \"addressline1\" = EXCLUDED.\"addressline1\",\n\"addressline2\" = EXCLUDED.\"addressline2\",\n\"city\" = EXCLUDED.\"city\",\n\"stateprovinceid\" = EXCLUDED.\"stateprovinceid\",\n\"postalcode\" = EXCLUDED.\"postalcode\",\n\"spatiallocation\" = EXCLUDED.\"spatiallocation\",\n\"rowguid\" = EXCLUDED.\"rowguid\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\n;\ndrop table address_TEMP;")).update().runUnchecked(c)
+    Fragment.concat(Fragment.of("create temporary table address_TEMP (like \"person\".\"address\") on commit drop")).update().run(c)
+    StreamingInsert.of("copy address_TEMP(\"addressid\", \"addressline1\", \"addressline2\", \"city\", \"stateprovinceid\", \"postalcode\", \"spatiallocation\", \"rowguid\", \"modifieddate\") from stdin", batchSize, unsaved, AddressRow.pgText).run(c)
+    return Fragment.concat(Fragment.of("insert into \"person\".\"address\"(\"addressid\", \"addressline1\", \"addressline2\", \"city\", \"stateprovinceid\", \"postalcode\", \"spatiallocation\", \"rowguid\", \"modifieddate\")\nselect * from address_TEMP\non conflict (\"addressid\")\ndo update set\n  \"addressline1\" = EXCLUDED.\"addressline1\",\n\"addressline2\" = EXCLUDED.\"addressline2\",\n\"city\" = EXCLUDED.\"city\",\n\"stateprovinceid\" = EXCLUDED.\"stateprovinceid\",\n\"postalcode\" = EXCLUDED.\"postalcode\",\n\"spatiallocation\" = EXCLUDED.\"spatiallocation\",\n\"rowguid\" = EXCLUDED.\"rowguid\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\n;\ndrop table address_TEMP;")).update().run(c)
   }
 }

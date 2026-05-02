@@ -24,7 +24,7 @@ object YesOrNo {
 
   implicit lazy val arrayToStatement: ToStatement[Array[YesOrNo]] = ToStatement.arrayToParameter(ParameterMetaData.StringParameterMetaData).contramap(_.map(_.value))
 
-  implicit lazy val bijection: Bijection[YesOrNo, String] = Bijection.apply[YesOrNo, String](_.value)(YesOrNo.apply)
+  implicit lazy val bijection: Bijection[YesOrNo, String] = Bijection[YesOrNo, String](_.value)(YesOrNo.apply)
 
   implicit lazy val column: Column[YesOrNo] = Column.columnToString.map(YesOrNo.apply)
 

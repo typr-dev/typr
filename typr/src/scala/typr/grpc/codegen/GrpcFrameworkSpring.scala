@@ -1,5 +1,6 @@
 package typr.grpc.codegen
 
+import typr.boundaries.framework.SpringFramework
 import typr.jvm
 
 /** Spring gRPC framework integration.
@@ -10,15 +11,17 @@ object GrpcFrameworkSpring extends GrpcFramework {
 
   // Spring gRPC annotations
   private val GrpcService: jvm.Type.Qualified = jvm.Type.Qualified(jvm.QIdent("org.springframework.grpc.server.service.GrpcService"))
-  private val Service: jvm.Type.Qualified = jvm.Type.Qualified(jvm.QIdent("org.springframework.stereotype.Service"))
+
+  // Delegate to SpringFramework base
+  override def name: String = SpringFramework.name
+  override def serviceAnnotation: jvm.Annotation = SpringFramework.serviceAnnotation
+  override def constructorAnnotations: List[jvm.Annotation] = SpringFramework.constructorAnnotations
 
   override def serverAnnotations: List[jvm.Annotation] =
     List(
       jvm.Annotation(GrpcService, Nil),
-      jvm.Annotation(Service, Nil)
+      serviceAnnotation
     )
 
   override def clientFieldAnnotations(serviceName: String): List[jvm.Annotation] = Nil
-
-  override def constructorAnnotations: List[jvm.Annotation] = Nil
 }

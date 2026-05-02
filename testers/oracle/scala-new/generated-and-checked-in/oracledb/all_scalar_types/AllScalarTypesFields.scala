@@ -5,18 +5,17 @@
  */
 package oracledb.all_scalar_types
 
-import dev.typr.foundations.OracleTypes
-import dev.typr.foundations.RowParser
-import dev.typr.foundations.dsl.FieldsBase
-import dev.typr.foundations.dsl.Path
-import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.scala.RelationStructure
-import dev.typr.foundations.scala.ScalaDbTypes
-import dev.typr.foundations.scala.SqlExpr
-import dev.typr.foundations.scala.SqlExpr.Field
-import dev.typr.foundations.scala.SqlExpr.IdField
-import dev.typr.foundations.scala.SqlExpr.OptField
-import dev.typr.foundations.scala.TupleExpr7
+import dev.typr.dsl.FieldsBase
+import dev.typr.dsl.Path
+import dev.typr.dsl.SqlExpr.FieldLike
+import dev.typr.dslsc.RelationStructure
+import dev.typr.dslsc.SqlExpr
+import dev.typr.dslsc.SqlExpr.Field
+import dev.typr.dslsc.SqlExpr.IdField
+import dev.typr.dslsc.SqlExpr.OptField
+import dev.typr.dslsc.TupleExpr7
+import dev.typr.foundations.RowCodec
+import dev.typr.foundationssc.OracleTypes
 import java.time.LocalDateTime
 
 class AllScalarTypesFields(val `_path`: java.util.List[Path]) extends TupleExpr7[AllScalarTypesId, String, BigDecimal, LocalDateTime, LocalDateTime, String, String] with RelationStructure[AllScalarTypesFields, AllScalarTypesRow]  with FieldsBase[AllScalarTypesRow] {
@@ -28,7 +27,7 @@ class AllScalarTypesFields(val `_path`: java.util.List[Path]) extends TupleExpr7
       None,
       None,
       (row, value) => row.copy(id = value),
-      AllScalarTypesId.oracleType
+      AllScalarTypesId.oracleType.underlying
     )
   }
 
@@ -40,7 +39,7 @@ class AllScalarTypesFields(val `_path`: java.util.List[Path]) extends TupleExpr7
       None,
       None,
       (row, value) => row.copy(colVarchar2 = value),
-      OracleTypes.varchar2
+      OracleTypes.varchar2.underlying
     )
   }
 
@@ -52,7 +51,7 @@ class AllScalarTypesFields(val `_path`: java.util.List[Path]) extends TupleExpr7
       None,
       None,
       (row, value) => row.copy(colNumber = value),
-      ScalaDbTypes.OracleTypes.number
+      OracleTypes.number.underlying
     )
   }
 
@@ -64,7 +63,7 @@ class AllScalarTypesFields(val `_path`: java.util.List[Path]) extends TupleExpr7
       None,
       None,
       (row, value) => row.copy(colDate = value),
-      OracleTypes.date
+      OracleTypes.date.underlying
     )
   }
 
@@ -76,7 +75,7 @@ class AllScalarTypesFields(val `_path`: java.util.List[Path]) extends TupleExpr7
       None,
       None,
       (row, value) => row.copy(colTimestamp = value),
-      OracleTypes.timestamp
+      OracleTypes.timestamp.underlying
     )
   }
 
@@ -88,7 +87,7 @@ class AllScalarTypesFields(val `_path`: java.util.List[Path]) extends TupleExpr7
       None,
       None,
       (row, value) => row.copy(colClob = value),
-      OracleTypes.clob
+      OracleTypes.clob.underlying
     )
   }
 
@@ -100,13 +99,13 @@ class AllScalarTypesFields(val `_path`: java.util.List[Path]) extends TupleExpr7
       None,
       None,
       (row, value) => row.copy(colNotNull = value),
-      OracleTypes.varchar2
+      OracleTypes.varchar2.underlying
     )
   }
 
   override def columns: java.util.List[FieldLike[?, AllScalarTypesRow]] = java.util.List.of(this.id.underlying, this.colVarchar2.underlying, this.colNumber.underlying, this.colDate.underlying, this.colTimestamp.underlying, this.colClob.underlying, this.colNotNull.underlying)
 
-  override def rowParser: RowParser[AllScalarTypesRow] = AllScalarTypesRow._rowParser.underlying
+  override def rowCodec: RowCodec[AllScalarTypesRow] = AllScalarTypesRow.rowCodec.underlying
 
   override def withPaths(`_path`: java.util.List[Path]): RelationStructure[AllScalarTypesFields, AllScalarTypesRow] = new AllScalarTypesFields(`_path`)
 

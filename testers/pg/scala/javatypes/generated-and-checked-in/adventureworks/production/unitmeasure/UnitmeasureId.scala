@@ -6,17 +6,17 @@
 package adventureworks.production.unitmeasure
 
 import com.fasterxml.jackson.annotation.JsonValue
+import dev.typr.foundations.Bijection
 import dev.typr.foundations.PgType
 import dev.typr.foundations.PgTypes
-import dev.typr.foundations.dsl.Bijection
 
 /** Type for the primary key of table `production.unitmeasure` */
 case class UnitmeasureId(@JsonValue value: String) extends scala.AnyVal
 
 object UnitmeasureId {
-  given bijection: Bijection[UnitmeasureId, String] = Bijection.apply[UnitmeasureId, String](_.value)(UnitmeasureId.apply)
+  given bijection: Bijection[UnitmeasureId, String] = Bijection.of[UnitmeasureId, String](_.value, UnitmeasureId.apply)
 
-  given pgType: PgType[UnitmeasureId] = PgTypes.bpchar.bimap(UnitmeasureId.apply, _.value)
+  given pgType: PgType[UnitmeasureId] = PgTypes.bpchar.to(Bijection.of(UnitmeasureId.apply, _.value))
 
-  given pgTypeArray: PgType[Array[UnitmeasureId]] = PgTypes.bpcharArray.bimap(xs => xs.map(UnitmeasureId.apply), xs => xs.map(_.value))
+  given pgTypeArray: PgType[java.util.List[UnitmeasureId]] = pgType.array
 }

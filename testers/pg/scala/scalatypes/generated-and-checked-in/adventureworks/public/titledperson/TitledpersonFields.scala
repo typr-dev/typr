@@ -11,16 +11,16 @@ import adventureworks.public.title.TitleRow
 import adventureworks.public.title_domain.TitleDomainFields
 import adventureworks.public.title_domain.TitleDomainId
 import adventureworks.public.title_domain.TitleDomainRow
-import dev.typr.foundations.PgTypes
-import dev.typr.foundations.RowParser
-import dev.typr.foundations.dsl.FieldsBase
-import dev.typr.foundations.dsl.Path
-import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.scala.ForeignKey
-import dev.typr.foundations.scala.RelationStructure
-import dev.typr.foundations.scala.SqlExpr
-import dev.typr.foundations.scala.SqlExpr.Field
-import dev.typr.foundations.scala.TupleExpr3
+import dev.typr.dsl.FieldsBase
+import dev.typr.dsl.Path
+import dev.typr.dsl.SqlExpr.FieldLike
+import dev.typr.dslsc.ForeignKey
+import dev.typr.dslsc.RelationStructure
+import dev.typr.dslsc.SqlExpr
+import dev.typr.dslsc.SqlExpr.Field
+import dev.typr.dslsc.TupleExpr3
+import dev.typr.foundations.RowCodec
+import dev.typr.foundationssc.PgTypes
 
 class TitledpersonFields(val `_path`: java.util.List[Path]) extends TupleExpr3[TitleDomainId, TitleId, String] with RelationStructure[TitledpersonFields, TitledpersonRow]  with FieldsBase[TitledpersonRow] {
   def titleShort: Field[TitleDomainId, TitledpersonRow] = {
@@ -31,7 +31,7 @@ class TitledpersonFields(val `_path`: java.util.List[Path]) extends TupleExpr3[T
       None,
       Some("text"),
       (row, value) => row.copy(titleShort = value),
-      TitleDomainId.pgType
+      TitleDomainId.pgType.underlying
     )
   }
 
@@ -43,7 +43,7 @@ class TitledpersonFields(val `_path`: java.util.List[Path]) extends TupleExpr3[T
       None,
       None,
       (row, value) => row.copy(title = value),
-      TitleId.pgType
+      TitleId.pgType.underlying
     )
   }
 
@@ -55,7 +55,7 @@ class TitledpersonFields(val `_path`: java.util.List[Path]) extends TupleExpr3[T
       None,
       None,
       (row, value) => row.copy(name = value),
-      PgTypes.text
+      PgTypes.text.underlying
     )
   }
 
@@ -65,7 +65,7 @@ class TitledpersonFields(val `_path`: java.util.List[Path]) extends TupleExpr3[T
 
   override def columns: java.util.List[FieldLike[?, TitledpersonRow]] = java.util.List.of(this.titleShort.underlying, this.title.underlying, this.name.underlying)
 
-  override def rowParser: RowParser[TitledpersonRow] = TitledpersonRow._rowParser.underlying
+  override def rowCodec: RowCodec[TitledpersonRow] = TitledpersonRow.rowCodec.underlying
 
   override def withPaths(`_path`: java.util.List[Path]): RelationStructure[TitledpersonFields, TitledpersonRow] = new TitledpersonFields(`_path`)
 

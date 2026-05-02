@@ -3,10 +3,10 @@ package adventureworks
 import adventureworks.person.businessentity.*
 import org.junit.Assert.*
 import org.junit.Test
-import dev.typr.foundations.dsl.SqlExpr
+import dev.typr.dsl.SqlExpr
 import dev.typr.foundations.PgTypes
 
-import java.sql.Connection
+import dev.typr.foundations.Connection
 import java.time.LocalDateTime
 import java.util.UUID
 import scala.jdk.CollectionConverters.*

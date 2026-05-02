@@ -24,7 +24,7 @@ object CardinalNumber {
 
   given arrayToStatement: ToStatement[Array[CardinalNumber]] = adventureworks.IntArrayToStatement.contramap(_.map(_.value))
 
-  given bijection: Bijection[CardinalNumber, Int] = Bijection.apply[CardinalNumber, Int](_.value)(CardinalNumber.apply)
+  given bijection: Bijection[CardinalNumber, Int] = Bijection[CardinalNumber, Int](_.value)(CardinalNumber.apply)
 
   given column: Column[CardinalNumber] = Column.columnToInt.map(CardinalNumber.apply)
 

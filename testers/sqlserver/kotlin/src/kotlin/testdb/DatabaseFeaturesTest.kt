@@ -20,7 +20,7 @@ import java.util.UUID
  * DATETIMEOFFSET, HIERARCHYID, and Views.
  */
 class DatabaseFeaturesTest {
-    private val testInsert = TestInsert(Random(42))
+    private val testInsert = TestInsert(Random(799276809))
     private val allTypesRepo = AllScalarTypesRepoImpl()
     private val customersRepo = CustomersRepoImpl()
     private val customerOrdersViewRepo = CustomerOrdersViewViewRepoImpl()

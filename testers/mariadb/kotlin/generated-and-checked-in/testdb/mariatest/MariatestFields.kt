@@ -5,8 +5,15 @@
  */
 package testdb.mariatest
 
-import dev.typr.foundations.MariaTypes
-import dev.typr.foundations.RowParser
+import dev.typr.dsl.FieldsBase
+import dev.typr.dsl.Path
+import dev.typr.dsl.SqlExpr.FieldLike
+import dev.typr.dslkt.RelationStructure
+import dev.typr.dslkt.SqlExpr
+import dev.typr.dslkt.SqlExpr.Field
+import dev.typr.dslkt.SqlExpr.IdField
+import dev.typr.dslkt.TupleExpr41
+import dev.typr.foundations.RowCodec
 import dev.typr.foundations.data.Json
 import dev.typr.foundations.data.Uint1
 import dev.typr.foundations.data.Uint2
@@ -14,15 +21,7 @@ import dev.typr.foundations.data.Uint4
 import dev.typr.foundations.data.Uint8
 import dev.typr.foundations.data.maria.Inet4
 import dev.typr.foundations.data.maria.Inet6
-import dev.typr.foundations.dsl.FieldsBase
-import dev.typr.foundations.dsl.Path
-import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.kotlin.KotlinDbTypes
-import dev.typr.foundations.kotlin.RelationStructure
-import dev.typr.foundations.kotlin.SqlExpr
-import dev.typr.foundations.kotlin.SqlExpr.Field
-import dev.typr.foundations.kotlin.SqlExpr.IdField
-import dev.typr.foundations.kotlin.TupleExpr41
+import dev.typr.foundationskt.MariaTypes
 import java.math.BigDecimal
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -31,8 +30,8 @@ import java.time.Year
 import kotlin.collections.List
 import testdb.XYZSet
 
-data class MariatestFields(val _path: List<Path>) : TupleExpr41<Byte, Short, Int, MariatestId, Long, Uint1, Uint2, Uint4, Uint4, Uint8, BigDecimal, BigDecimal, Float, Double, Boolean, ByteArray, ByteArray, String, String, String, String, String, String, ByteArray, ByteArray, ByteArray, ByteArray, ByteArray, ByteArray, LocalDate, LocalTime, LocalTime, LocalDateTime, LocalDateTime, LocalDateTime, LocalDateTime, Year, XYZSet, Json, Inet4, Inet6>, RelationStructure<MariatestFields, MariatestRow>, FieldsBase<MariatestRow> {
-  override fun _1(): SqlExpr<Byte> = tinyintCol()
+data class MariatestFields(val _path: List<Path>) : TupleExpr41<kotlin.Byte, kotlin.Short, Int, MariatestId, kotlin.Long, Uint1, Uint2, Uint4, Uint4, Uint8, BigDecimal, BigDecimal, kotlin.Float, kotlin.Double, kotlin.Boolean, ByteArray, ByteArray, kotlin.String, kotlin.String, kotlin.String, kotlin.String, kotlin.String, kotlin.String, ByteArray, ByteArray, ByteArray, ByteArray, ByteArray, ByteArray, LocalDate, LocalTime, LocalTime, LocalDateTime, LocalDateTime, LocalDateTime, LocalDateTime, Year, XYZSet, Json, Inet4, Inet6>, RelationStructure<MariatestFields, MariatestRow>, FieldsBase<MariatestRow> {
+  override fun _1(): SqlExpr<kotlin.Byte> = tinyintCol()
 
   override fun _10(): SqlExpr<Uint8> = bigintUCol()
 
@@ -40,29 +39,29 @@ data class MariatestFields(val _path: List<Path>) : TupleExpr41<Byte, Short, Int
 
   override fun _12(): SqlExpr<BigDecimal> = numericCol()
 
-  override fun _13(): SqlExpr<Float> = floatCol()
+  override fun _13(): SqlExpr<kotlin.Float> = floatCol()
 
-  override fun _14(): SqlExpr<Double> = doubleCol()
+  override fun _14(): SqlExpr<kotlin.Double> = doubleCol()
 
-  override fun _15(): SqlExpr<Boolean> = boolCol()
+  override fun _15(): SqlExpr<kotlin.Boolean> = boolCol()
 
   override fun _16(): SqlExpr<ByteArray> = bitCol()
 
   override fun _17(): SqlExpr<ByteArray> = bit1Col()
 
-  override fun _18(): SqlExpr<String> = charCol()
+  override fun _18(): SqlExpr<kotlin.String> = charCol()
 
-  override fun _19(): SqlExpr<String> = varcharCol()
+  override fun _19(): SqlExpr<kotlin.String> = varcharCol()
 
-  override fun _2(): SqlExpr<Short> = smallintCol()
+  override fun _2(): SqlExpr<kotlin.Short> = smallintCol()
 
-  override fun _20(): SqlExpr<String> = tinytextCol()
+  override fun _20(): SqlExpr<kotlin.String> = tinytextCol()
 
-  override fun _21(): SqlExpr<String> = textCol()
+  override fun _21(): SqlExpr<kotlin.String> = textCol()
 
-  override fun _22(): SqlExpr<String> = mediumtextCol()
+  override fun _22(): SqlExpr<kotlin.String> = mediumtextCol()
 
-  override fun _23(): SqlExpr<String> = longtextCol()
+  override fun _23(): SqlExpr<kotlin.String> = longtextCol()
 
   override fun _24(): SqlExpr<ByteArray> = binaryCol()
 
@@ -104,7 +103,7 @@ data class MariatestFields(val _path: List<Path>) : TupleExpr41<Byte, Short, Int
 
   override fun _41(): SqlExpr<Inet6> = inet6Col()
 
-  override fun _5(): SqlExpr<Long> = bigintCol()
+  override fun _5(): SqlExpr<kotlin.Long> = bigintCol()
 
   override fun _6(): SqlExpr<Uint1> = tinyintUCol()
 
@@ -116,93 +115,93 @@ data class MariatestFields(val _path: List<Path>) : TupleExpr41<Byte, Short, Int
 
   override fun _path(): List<Path> = _path
 
-  fun bigintCol(): Field<Long, MariatestRow> = Field<Long, MariatestRow>(_path, "bigint_col", MariatestRow::bigintCol, null, null, { row, value -> row.copy(bigintCol = value) }, KotlinDbTypes.MariaTypes.bigint)
+  fun bigintCol(): Field<kotlin.Long, MariatestRow> = Field<kotlin.Long, MariatestRow>(_path, "bigint_col", MariatestRow::bigintCol, null, null, { row, value -> row.copy(bigintCol = value) }, MariaTypes.bigint.underlying)
 
-  fun bigintUCol(): Field<Uint8, MariatestRow> = Field<Uint8, MariatestRow>(_path, "bigint_u_col", MariatestRow::bigintUCol, null, null, { row, value -> row.copy(bigintUCol = value) }, MariaTypes.bigintUnsigned)
+  fun bigintUCol(): Field<Uint8, MariatestRow> = Field<Uint8, MariatestRow>(_path, "bigint_u_col", MariatestRow::bigintUCol, null, null, { row, value -> row.copy(bigintUCol = value) }, MariaTypes.bigintUnsigned.underlying)
 
-  fun binaryCol(): Field<ByteArray, MariatestRow> = Field<ByteArray, MariatestRow>(_path, "binary_col", MariatestRow::binaryCol, null, null, { row, value -> row.copy(binaryCol = value) }, MariaTypes.binary)
+  fun binaryCol(): Field<ByteArray, MariatestRow> = Field<ByteArray, MariatestRow>(_path, "binary_col", MariatestRow::binaryCol, null, null, { row, value -> row.copy(binaryCol = value) }, MariaTypes.binary.underlying)
 
-  fun bit1Col(): Field<ByteArray, MariatestRow> = Field<ByteArray, MariatestRow>(_path, "bit1_col", MariatestRow::bit1Col, null, null, { row, value -> row.copy(bit1Col = value) }, MariaTypes.bit)
+  fun bit1Col(): Field<ByteArray, MariatestRow> = Field<ByteArray, MariatestRow>(_path, "bit1_col", MariatestRow::bit1Col, null, null, { row, value -> row.copy(bit1Col = value) }, MariaTypes.bit.underlying)
 
-  fun bitCol(): Field<ByteArray, MariatestRow> = Field<ByteArray, MariatestRow>(_path, "bit_col", MariatestRow::bitCol, null, null, { row, value -> row.copy(bitCol = value) }, MariaTypes.bit)
+  fun bitCol(): Field<ByteArray, MariatestRow> = Field<ByteArray, MariatestRow>(_path, "bit_col", MariatestRow::bitCol, null, null, { row, value -> row.copy(bitCol = value) }, MariaTypes.bit.underlying)
 
-  fun blobCol(): Field<ByteArray, MariatestRow> = Field<ByteArray, MariatestRow>(_path, "blob_col", MariatestRow::blobCol, null, null, { row, value -> row.copy(blobCol = value) }, MariaTypes.blob)
+  fun blobCol(): Field<ByteArray, MariatestRow> = Field<ByteArray, MariatestRow>(_path, "blob_col", MariatestRow::blobCol, null, null, { row, value -> row.copy(blobCol = value) }, MariaTypes.blob.underlying)
 
-  fun boolCol(): Field<Boolean, MariatestRow> = Field<Boolean, MariatestRow>(_path, "bool_col", MariatestRow::boolCol, null, null, { row, value -> row.copy(boolCol = value) }, KotlinDbTypes.MariaTypes.bool)
+  fun boolCol(): Field<kotlin.Boolean, MariatestRow> = Field<kotlin.Boolean, MariatestRow>(_path, "bool_col", MariatestRow::boolCol, null, null, { row, value -> row.copy(boolCol = value) }, MariaTypes.bool.underlying)
 
-  fun charCol(): Field<String, MariatestRow> = Field<String, MariatestRow>(_path, "char_col", MariatestRow::charCol, null, null, { row, value -> row.copy(charCol = value) }, MariaTypes.char_)
+  fun charCol(): Field<kotlin.String, MariatestRow> = Field<kotlin.String, MariatestRow>(_path, "char_col", MariatestRow::charCol, null, null, { row, value -> row.copy(charCol = value) }, MariaTypes.char_.underlying)
 
   override fun columns(): List<FieldLike<*, MariatestRow>> = listOf(this.tinyintCol().underlying, this.smallintCol().underlying, this.mediumintCol().underlying, this.intCol().underlying, this.bigintCol().underlying, this.tinyintUCol().underlying, this.smallintUCol().underlying, this.mediumintUCol().underlying, this.intUCol().underlying, this.bigintUCol().underlying, this.decimalCol().underlying, this.numericCol().underlying, this.floatCol().underlying, this.doubleCol().underlying, this.boolCol().underlying, this.bitCol().underlying, this.bit1Col().underlying, this.charCol().underlying, this.varcharCol().underlying, this.tinytextCol().underlying, this.textCol().underlying, this.mediumtextCol().underlying, this.longtextCol().underlying, this.binaryCol().underlying, this.varbinaryCol().underlying, this.tinyblobCol().underlying, this.blobCol().underlying, this.mediumblobCol().underlying, this.longblobCol().underlying, this.dateCol().underlying, this.timeCol().underlying, this.timeFspCol().underlying, this.datetimeCol().underlying, this.datetimeFspCol().underlying, this.timestampCol().underlying, this.timestampFspCol().underlying, this.yearCol().underlying, this.setCol().underlying, this.jsonCol().underlying, this.inet4Col().underlying, this.inet6Col().underlying)
 
-  fun dateCol(): Field<LocalDate, MariatestRow> = Field<LocalDate, MariatestRow>(_path, "date_col", MariatestRow::dateCol, null, null, { row, value -> row.copy(dateCol = value) }, MariaTypes.date)
+  fun dateCol(): Field<LocalDate, MariatestRow> = Field<LocalDate, MariatestRow>(_path, "date_col", MariatestRow::dateCol, null, null, { row, value -> row.copy(dateCol = value) }, MariaTypes.date.underlying)
 
-  fun datetimeCol(): Field<LocalDateTime, MariatestRow> = Field<LocalDateTime, MariatestRow>(_path, "datetime_col", MariatestRow::datetimeCol, null, null, { row, value -> row.copy(datetimeCol = value) }, MariaTypes.datetime)
+  fun datetimeCol(): Field<LocalDateTime, MariatestRow> = Field<LocalDateTime, MariatestRow>(_path, "datetime_col", MariatestRow::datetimeCol, null, null, { row, value -> row.copy(datetimeCol = value) }, MariaTypes.datetime.underlying)
 
-  fun datetimeFspCol(): Field<LocalDateTime, MariatestRow> = Field<LocalDateTime, MariatestRow>(_path, "datetime_fsp_col", MariatestRow::datetimeFspCol, null, null, { row, value -> row.copy(datetimeFspCol = value) }, MariaTypes.datetime)
+  fun datetimeFspCol(): Field<LocalDateTime, MariatestRow> = Field<LocalDateTime, MariatestRow>(_path, "datetime_fsp_col", MariatestRow::datetimeFspCol, null, null, { row, value -> row.copy(datetimeFspCol = value) }, MariaTypes.datetime.underlying)
 
-  fun decimalCol(): Field<BigDecimal, MariatestRow> = Field<BigDecimal, MariatestRow>(_path, "decimal_col", MariatestRow::decimalCol, null, null, { row, value -> row.copy(decimalCol = value) }, KotlinDbTypes.MariaTypes.numeric)
+  fun decimalCol(): Field<BigDecimal, MariatestRow> = Field<BigDecimal, MariatestRow>(_path, "decimal_col", MariatestRow::decimalCol, null, null, { row, value -> row.copy(decimalCol = value) }, MariaTypes.numeric.underlying)
 
-  fun doubleCol(): Field<Double, MariatestRow> = Field<Double, MariatestRow>(_path, "double_col", MariatestRow::doubleCol, null, null, { row, value -> row.copy(doubleCol = value) }, KotlinDbTypes.MariaTypes.double_)
+  fun doubleCol(): Field<kotlin.Double, MariatestRow> = Field<kotlin.Double, MariatestRow>(_path, "double_col", MariatestRow::doubleCol, null, null, { row, value -> row.copy(doubleCol = value) }, MariaTypes.double_.underlying)
 
-  fun floatCol(): Field<Float, MariatestRow> = Field<Float, MariatestRow>(_path, "float_col", MariatestRow::floatCol, null, null, { row, value -> row.copy(floatCol = value) }, KotlinDbTypes.MariaTypes.float_)
+  fun floatCol(): Field<kotlin.Float, MariatestRow> = Field<kotlin.Float, MariatestRow>(_path, "float_col", MariatestRow::floatCol, null, null, { row, value -> row.copy(floatCol = value) }, MariaTypes.float_.underlying)
 
-  fun inet4Col(): Field<Inet4, MariatestRow> = Field<Inet4, MariatestRow>(_path, "inet4_col", MariatestRow::inet4Col, null, null, { row, value -> row.copy(inet4Col = value) }, MariaTypes.inet4)
+  fun inet4Col(): Field<Inet4, MariatestRow> = Field<Inet4, MariatestRow>(_path, "inet4_col", MariatestRow::inet4Col, null, null, { row, value -> row.copy(inet4Col = value) }, MariaTypes.inet4.underlying)
 
-  fun inet6Col(): Field<Inet6, MariatestRow> = Field<Inet6, MariatestRow>(_path, "inet6_col", MariatestRow::inet6Col, null, null, { row, value -> row.copy(inet6Col = value) }, MariaTypes.inet6)
+  fun inet6Col(): Field<Inet6, MariatestRow> = Field<Inet6, MariatestRow>(_path, "inet6_col", MariatestRow::inet6Col, null, null, { row, value -> row.copy(inet6Col = value) }, MariaTypes.inet6.underlying)
 
-  fun intCol(): IdField<MariatestId, MariatestRow> = IdField<MariatestId, MariatestRow>(_path, "int_col", MariatestRow::intCol, null, null, { row, value -> row.copy(intCol = value) }, MariatestId.mariaType)
+  fun intCol(): IdField<MariatestId, MariatestRow> = IdField<MariatestId, MariatestRow>(_path, "int_col", MariatestRow::intCol, null, null, { row, value -> row.copy(intCol = value) }, MariatestId.mariaType.underlying)
 
-  fun intUCol(): Field<Uint4, MariatestRow> = Field<Uint4, MariatestRow>(_path, "int_u_col", MariatestRow::intUCol, null, null, { row, value -> row.copy(intUCol = value) }, MariaTypes.intUnsigned)
+  fun intUCol(): Field<Uint4, MariatestRow> = Field<Uint4, MariatestRow>(_path, "int_u_col", MariatestRow::intUCol, null, null, { row, value -> row.copy(intUCol = value) }, MariaTypes.intUnsigned.underlying)
 
-  fun jsonCol(): Field<Json, MariatestRow> = Field<Json, MariatestRow>(_path, "json_col", MariatestRow::jsonCol, null, null, { row, value -> row.copy(jsonCol = value) }, MariaTypes.json)
+  fun jsonCol(): Field<Json, MariatestRow> = Field<Json, MariatestRow>(_path, "json_col", MariatestRow::jsonCol, null, null, { row, value -> row.copy(jsonCol = value) }, MariaTypes.json.underlying)
 
-  fun longblobCol(): Field<ByteArray, MariatestRow> = Field<ByteArray, MariatestRow>(_path, "longblob_col", MariatestRow::longblobCol, null, null, { row, value -> row.copy(longblobCol = value) }, MariaTypes.longblob)
+  fun longblobCol(): Field<ByteArray, MariatestRow> = Field<ByteArray, MariatestRow>(_path, "longblob_col", MariatestRow::longblobCol, null, null, { row, value -> row.copy(longblobCol = value) }, MariaTypes.longblob.underlying)
 
-  fun longtextCol(): Field<String, MariatestRow> = Field<String, MariatestRow>(_path, "longtext_col", MariatestRow::longtextCol, null, null, { row, value -> row.copy(longtextCol = value) }, MariaTypes.longtext)
+  fun longtextCol(): Field<kotlin.String, MariatestRow> = Field<kotlin.String, MariatestRow>(_path, "longtext_col", MariatestRow::longtextCol, null, null, { row, value -> row.copy(longtextCol = value) }, MariaTypes.longtext.underlying)
 
-  fun mediumblobCol(): Field<ByteArray, MariatestRow> = Field<ByteArray, MariatestRow>(_path, "mediumblob_col", MariatestRow::mediumblobCol, null, null, { row, value -> row.copy(mediumblobCol = value) }, MariaTypes.mediumblob)
+  fun mediumblobCol(): Field<ByteArray, MariatestRow> = Field<ByteArray, MariatestRow>(_path, "mediumblob_col", MariatestRow::mediumblobCol, null, null, { row, value -> row.copy(mediumblobCol = value) }, MariaTypes.mediumblob.underlying)
 
-  fun mediumintCol(): Field<Int, MariatestRow> = Field<Int, MariatestRow>(_path, "mediumint_col", MariatestRow::mediumintCol, null, null, { row, value -> row.copy(mediumintCol = value) }, KotlinDbTypes.MariaTypes.mediumint)
+  fun mediumintCol(): Field<Int, MariatestRow> = Field<Int, MariatestRow>(_path, "mediumint_col", MariatestRow::mediumintCol, null, null, { row, value -> row.copy(mediumintCol = value) }, MariaTypes.mediumint.underlying)
 
-  fun mediumintUCol(): Field<Uint4, MariatestRow> = Field<Uint4, MariatestRow>(_path, "mediumint_u_col", MariatestRow::mediumintUCol, null, null, { row, value -> row.copy(mediumintUCol = value) }, MariaTypes.mediumintUnsigned)
+  fun mediumintUCol(): Field<Uint4, MariatestRow> = Field<Uint4, MariatestRow>(_path, "mediumint_u_col", MariatestRow::mediumintUCol, null, null, { row, value -> row.copy(mediumintUCol = value) }, MariaTypes.mediumintUnsigned.underlying)
 
-  fun mediumtextCol(): Field<String, MariatestRow> = Field<String, MariatestRow>(_path, "mediumtext_col", MariatestRow::mediumtextCol, null, null, { row, value -> row.copy(mediumtextCol = value) }, MariaTypes.mediumtext)
+  fun mediumtextCol(): Field<kotlin.String, MariatestRow> = Field<kotlin.String, MariatestRow>(_path, "mediumtext_col", MariatestRow::mediumtextCol, null, null, { row, value -> row.copy(mediumtextCol = value) }, MariaTypes.mediumtext.underlying)
 
-  fun numericCol(): Field<BigDecimal, MariatestRow> = Field<BigDecimal, MariatestRow>(_path, "numeric_col", MariatestRow::numericCol, null, null, { row, value -> row.copy(numericCol = value) }, KotlinDbTypes.MariaTypes.numeric)
+  fun numericCol(): Field<BigDecimal, MariatestRow> = Field<BigDecimal, MariatestRow>(_path, "numeric_col", MariatestRow::numericCol, null, null, { row, value -> row.copy(numericCol = value) }, MariaTypes.numeric.underlying)
 
-  override fun rowParser(): RowParser<MariatestRow> = MariatestRow._rowParser.underlying
+  override fun rowCodec(): RowCodec<MariatestRow> = MariatestRow.rowCodec.underlying
 
-  fun setCol(): Field<XYZSet, MariatestRow> = Field<XYZSet, MariatestRow>(_path, "set_col", MariatestRow::setCol, null, null, { row, value -> row.copy(setCol = value) }, XYZSet.mariaType)
+  fun setCol(): Field<XYZSet, MariatestRow> = Field<XYZSet, MariatestRow>(_path, "set_col", MariatestRow::setCol, null, null, { row, value -> row.copy(setCol = value) }, XYZSet.mariaType.underlying)
 
-  fun smallintCol(): Field<Short, MariatestRow> = Field<Short, MariatestRow>(_path, "smallint_col", MariatestRow::smallintCol, null, null, { row, value -> row.copy(smallintCol = value) }, KotlinDbTypes.MariaTypes.smallint)
+  fun smallintCol(): Field<kotlin.Short, MariatestRow> = Field<kotlin.Short, MariatestRow>(_path, "smallint_col", MariatestRow::smallintCol, null, null, { row, value -> row.copy(smallintCol = value) }, MariaTypes.smallint.underlying)
 
-  fun smallintUCol(): Field<Uint2, MariatestRow> = Field<Uint2, MariatestRow>(_path, "smallint_u_col", MariatestRow::smallintUCol, null, null, { row, value -> row.copy(smallintUCol = value) }, MariaTypes.smallintUnsigned)
+  fun smallintUCol(): Field<Uint2, MariatestRow> = Field<Uint2, MariatestRow>(_path, "smallint_u_col", MariatestRow::smallintUCol, null, null, { row, value -> row.copy(smallintUCol = value) }, MariaTypes.smallintUnsigned.underlying)
 
-  fun textCol(): Field<String, MariatestRow> = Field<String, MariatestRow>(_path, "text_col", MariatestRow::textCol, null, null, { row, value -> row.copy(textCol = value) }, MariaTypes.text)
+  fun textCol(): Field<kotlin.String, MariatestRow> = Field<kotlin.String, MariatestRow>(_path, "text_col", MariatestRow::textCol, null, null, { row, value -> row.copy(textCol = value) }, MariaTypes.text.underlying)
 
-  fun timeCol(): Field<LocalTime, MariatestRow> = Field<LocalTime, MariatestRow>(_path, "time_col", MariatestRow::timeCol, null, null, { row, value -> row.copy(timeCol = value) }, MariaTypes.time)
+  fun timeCol(): Field<LocalTime, MariatestRow> = Field<LocalTime, MariatestRow>(_path, "time_col", MariatestRow::timeCol, null, null, { row, value -> row.copy(timeCol = value) }, MariaTypes.time.underlying)
 
-  fun timeFspCol(): Field<LocalTime, MariatestRow> = Field<LocalTime, MariatestRow>(_path, "time_fsp_col", MariatestRow::timeFspCol, null, null, { row, value -> row.copy(timeFspCol = value) }, MariaTypes.time)
+  fun timeFspCol(): Field<LocalTime, MariatestRow> = Field<LocalTime, MariatestRow>(_path, "time_fsp_col", MariatestRow::timeFspCol, null, null, { row, value -> row.copy(timeFspCol = value) }, MariaTypes.time.underlying)
 
-  fun timestampCol(): Field<LocalDateTime, MariatestRow> = Field<LocalDateTime, MariatestRow>(_path, "timestamp_col", MariatestRow::timestampCol, null, null, { row, value -> row.copy(timestampCol = value) }, MariaTypes.timestamp)
+  fun timestampCol(): Field<LocalDateTime, MariatestRow> = Field<LocalDateTime, MariatestRow>(_path, "timestamp_col", MariatestRow::timestampCol, null, null, { row, value -> row.copy(timestampCol = value) }, MariaTypes.timestamp.underlying)
 
-  fun timestampFspCol(): Field<LocalDateTime, MariatestRow> = Field<LocalDateTime, MariatestRow>(_path, "timestamp_fsp_col", MariatestRow::timestampFspCol, null, null, { row, value -> row.copy(timestampFspCol = value) }, MariaTypes.timestamp)
+  fun timestampFspCol(): Field<LocalDateTime, MariatestRow> = Field<LocalDateTime, MariatestRow>(_path, "timestamp_fsp_col", MariatestRow::timestampFspCol, null, null, { row, value -> row.copy(timestampFspCol = value) }, MariaTypes.timestamp.underlying)
 
-  fun tinyblobCol(): Field<ByteArray, MariatestRow> = Field<ByteArray, MariatestRow>(_path, "tinyblob_col", MariatestRow::tinyblobCol, null, null, { row, value -> row.copy(tinyblobCol = value) }, MariaTypes.tinyblob)
+  fun tinyblobCol(): Field<ByteArray, MariatestRow> = Field<ByteArray, MariatestRow>(_path, "tinyblob_col", MariatestRow::tinyblobCol, null, null, { row, value -> row.copy(tinyblobCol = value) }, MariaTypes.tinyblob.underlying)
 
-  fun tinyintCol(): Field<Byte, MariatestRow> = Field<Byte, MariatestRow>(_path, "tinyint_col", MariatestRow::tinyintCol, null, null, { row, value -> row.copy(tinyintCol = value) }, KotlinDbTypes.MariaTypes.tinyint)
+  fun tinyintCol(): Field<kotlin.Byte, MariatestRow> = Field<kotlin.Byte, MariatestRow>(_path, "tinyint_col", MariatestRow::tinyintCol, null, null, { row, value -> row.copy(tinyintCol = value) }, MariaTypes.tinyint.underlying)
 
-  fun tinyintUCol(): Field<Uint1, MariatestRow> = Field<Uint1, MariatestRow>(_path, "tinyint_u_col", MariatestRow::tinyintUCol, null, null, { row, value -> row.copy(tinyintUCol = value) }, MariaTypes.tinyintUnsigned)
+  fun tinyintUCol(): Field<Uint1, MariatestRow> = Field<Uint1, MariatestRow>(_path, "tinyint_u_col", MariatestRow::tinyintUCol, null, null, { row, value -> row.copy(tinyintUCol = value) }, MariaTypes.tinyintUnsigned.underlying)
 
-  fun tinytextCol(): Field<String, MariatestRow> = Field<String, MariatestRow>(_path, "tinytext_col", MariatestRow::tinytextCol, null, null, { row, value -> row.copy(tinytextCol = value) }, MariaTypes.tinytext)
+  fun tinytextCol(): Field<kotlin.String, MariatestRow> = Field<kotlin.String, MariatestRow>(_path, "tinytext_col", MariatestRow::tinytextCol, null, null, { row, value -> row.copy(tinytextCol = value) }, MariaTypes.tinytext.underlying)
 
-  fun varbinaryCol(): Field<ByteArray, MariatestRow> = Field<ByteArray, MariatestRow>(_path, "varbinary_col", MariatestRow::varbinaryCol, null, null, { row, value -> row.copy(varbinaryCol = value) }, MariaTypes.varbinary)
+  fun varbinaryCol(): Field<ByteArray, MariatestRow> = Field<ByteArray, MariatestRow>(_path, "varbinary_col", MariatestRow::varbinaryCol, null, null, { row, value -> row.copy(varbinaryCol = value) }, MariaTypes.varbinary.underlying)
 
-  fun varcharCol(): Field<String, MariatestRow> = Field<String, MariatestRow>(_path, "varchar_col", MariatestRow::varcharCol, null, null, { row, value -> row.copy(varcharCol = value) }, MariaTypes.varchar)
+  fun varcharCol(): Field<kotlin.String, MariatestRow> = Field<kotlin.String, MariatestRow>(_path, "varchar_col", MariatestRow::varcharCol, null, null, { row, value -> row.copy(varcharCol = value) }, MariaTypes.varchar.underlying)
 
   override fun withPaths(_path: List<Path>): RelationStructure<MariatestFields, MariatestRow> = MariatestFields(_path)
 
-  fun yearCol(): Field<Year, MariatestRow> = Field<Year, MariatestRow>(_path, "year_col", MariatestRow::yearCol, null, null, { row, value -> row.copy(yearCol = value) }, MariaTypes.year)
+  fun yearCol(): Field<Year, MariatestRow> = Field<Year, MariatestRow>(_path, "year_col", MariatestRow::yearCol, null, null, { row, value -> row.copy(yearCol = value) }, MariaTypes.year.underlying)
 
   companion object {
     val structure: MariatestFields = MariatestFields(emptyList<Path>())

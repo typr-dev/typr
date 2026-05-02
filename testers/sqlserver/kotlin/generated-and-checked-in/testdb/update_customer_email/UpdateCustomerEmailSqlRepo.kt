@@ -5,11 +5,11 @@
  */
 package testdb.update_customer_email
 
-import java.sql.Connection
+import dev.typr.foundationskt.Connection
 
 interface UpdateCustomerEmailSqlRepo {
   abstract fun apply(
-    newEmail: String,
+    newEmail: kotlin.String,
     customerId: Int,
     c: Connection
   ): Int

@@ -5,10 +5,10 @@
  */
 package testdb.mariatest_unique
 
-import dev.typr.foundations.MariaTypes
+import dev.typr.dslkt.RowCodecs
 import dev.typr.foundations.Tuple.Tuple4
-import dev.typr.foundations.kotlin.RowParser
-import dev.typr.foundations.kotlin.RowParsers
+import dev.typr.foundationskt.MariaTypes
+import dev.typr.foundationskt.RowCodec
 import testdb.userdefined.Email
 
 /** Table: mariatest_unique
@@ -22,21 +22,21 @@ data class MariatestUniqueRow(
   /**  */
   val email: /* user-picked */ Email,
   /**  */
-  val code: String,
+  val code: kotlin.String,
   /**  */
-  val category: String
-) : Tuple4<MariatestUniqueId, /* user-picked */ Email, String, String> {
+  val category: kotlin.String
+) : Tuple4<MariatestUniqueId, /* user-picked */ Email, kotlin.String, kotlin.String> {
   override fun _1(): MariatestUniqueId = id
 
   override fun _2(): /* user-picked */ Email = email
 
-  override fun _3(): String = code
+  override fun _3(): kotlin.String = code
 
-  override fun _4(): String = category
+  override fun _4(): kotlin.String = category
 
   fun toUnsavedRow(): MariatestUniqueRowUnsaved = MariatestUniqueRowUnsaved(email, code, category)
 
   companion object {
-    val _rowParser: RowParser<MariatestUniqueRow> = RowParsers.of(MariatestUniqueId.mariaType, Email.mariaType, MariaTypes.varchar, MariaTypes.varchar, { t0, t1, t2, t3 -> MariatestUniqueRow(t0, t1, t2, t3) }, { row -> arrayOf<Any?>(row.id, row.email, row.code, row.category) })
+    val rowCodec: RowCodec<MariatestUniqueRow> = RowCodecs.of(MariatestUniqueId.mariaType, Email.mariaType, MariaTypes.varchar, MariaTypes.varchar, { t0: MariatestUniqueId, t1: /* user-picked */ Email, t2: kotlin.String, t3: kotlin.String -> MariatestUniqueRow(t0, t1, t2, t3) }, { row: MariatestUniqueRow -> arrayOf<Any?>(row.id, row.email, row.code, row.category) })
   }
 }

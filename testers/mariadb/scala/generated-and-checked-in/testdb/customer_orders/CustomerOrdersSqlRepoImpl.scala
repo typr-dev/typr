@@ -5,18 +5,17 @@
  */
 package testdb.customer_orders
 
-import dev.typr.foundations.MariaTypes
-import dev.typr.foundations.scala.DbTypeOps
-import dev.typr.foundations.scala.Fragment
-import java.sql.Connection
+import dev.typr.foundationssc.ConnectionRead
+import dev.typr.foundationssc.Fragment
+import dev.typr.foundationssc.MariaTypes
 import testdb.customers.CustomersId
-import dev.typr.foundations.scala.Fragment.sql
+import dev.typr.foundationssc.Fragment.sql
 
 class CustomerOrdersSqlRepoImpl extends CustomerOrdersSqlRepo {
   override def apply(
     customerId: /* user-picked */ CustomersId,
     orderStatus: Option[String]
-  )(using c: Connection): List[CustomerOrdersSqlRow] = {
+  )(using c: ConnectionRead): List[CustomerOrdersSqlRow] = {
     sql"""-- Query customers with their orders
     SELECT c.customer_id,
            c.email,
@@ -31,7 +30,7 @@ class CustomerOrdersSqlRepoImpl extends CustomerOrdersSqlRepo {
     FROM customers c
     LEFT JOIN orders o ON c.customer_id = o.customer_id
     WHERE c.customer_id = ${Fragment.encode(CustomersId.mariaType, customerId)}
-      AND (${Fragment.encode(MariaTypes.text.nullable, orderStatus)} IS NULL OR o.order_status = ${Fragment.encode(MariaTypes.text.nullable, orderStatus)})
-    """.query(CustomerOrdersSqlRow.`_rowParser`.all()).runUnchecked(c)
+      AND (${Fragment.encode(MariaTypes.text.opt, orderStatus)} IS NULL OR o.order_status = ${Fragment.encode(MariaTypes.text.opt, orderStatus)})
+    """.query(CustomerOrdersSqlRow.rowCodec.all()).run(using c)
   }
 }

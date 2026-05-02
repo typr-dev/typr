@@ -6,9 +6,9 @@
 package testdb.userdefined
 
 import com.fasterxml.jackson.annotation.JsonValue
-import dev.typr.foundations.MariaType
-import dev.typr.foundations.scala.Bijection
-import dev.typr.foundations.scala.ScalaDbTypes
+import dev.typr.dslsc.Bijection
+import dev.typr.foundationssc.MariaType
+import dev.typr.foundationssc.MariaTypes
 
 /** Shared type `IsDefault`
  * Generated from TypeDefinitions matching
@@ -16,7 +16,7 @@ import dev.typr.foundations.scala.ScalaDbTypes
 case class IsDefault(@JsonValue value: Boolean) extends scala.AnyVal
 
 object IsDefault {
-  given bijection: Bijection[IsDefault, Boolean] = Bijection.apply[IsDefault, Boolean](_.value)(IsDefault.apply)
+  given bijection: Bijection[IsDefault, Boolean] = Bijection.of[IsDefault, Boolean](_.value, IsDefault.apply)
 
-  given mariaType: MariaType[IsDefault] = ScalaDbTypes.MariaTypes.bool.bimap(IsDefault.apply, _.value)
+  given mariaType: MariaType[IsDefault] = MariaTypes.bool.to(Bijection.of(IsDefault.apply, _.value))
 }

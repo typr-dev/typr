@@ -6,8 +6,8 @@
 package testdb
 
 import dev.typr.foundations.data.Xml
+import dev.typr.foundationskt.Connection
 import java.math.BigDecimal
-import java.sql.Connection
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
@@ -56,39 +56,39 @@ import testdb.orders.OrdersRowUnsaved
 data class TestInsert(val random: Random) {
   fun CheckConstraintTest(
     age: Int,
-    status: String,
+    status: kotlin.String,
     id: CheckConstraintTestId = CheckConstraintTestId(random.nextInt()),
     price: BigDecimal? = null,
     c: Connection
   ): CheckConstraintTestRow = (CheckConstraintTestRepoImpl()).insert(CheckConstraintTestRow(id = id, age = age, status = status, price = price), c)
 
   fun Customers(
-    name: String,
-    email: String,
+    name: kotlin.String,
+    email: kotlin.String,
     customerId: Defaulted<CustomersId> = UseDefault(),
     createdAt: Defaulted<LocalDateTime?> = UseDefault(),
     c: Connection
   ): CustomersRow = (CustomersRepoImpl()).insert(CustomersRowUnsaved(name = name, email = email, customerId = customerId, createdAt = createdAt), c)
 
   fun Db2test(
-    charCol: String,
-    varcharCol: String,
-    clobCol: String,
-    graphicCol: String,
-    vargraphicCol: String,
+    charCol: kotlin.String,
+    varcharCol: kotlin.String,
+    clobCol: kotlin.String,
+    graphicCol: kotlin.String,
+    vargraphicCol: kotlin.String,
     binaryCol: ByteArray,
     varbinaryCol: ByteArray,
     blobCol: ByteArray,
-    smallintCol: Short = random.nextInt(Short.MAX_VALUE.toInt()).toShort(),
+    smallintCol: kotlin.Short = random.nextInt(kotlin.Short.MAX_VALUE.toInt()).toShort(),
     intCol: Db2testId = Db2testId(random.nextInt()),
-    bigintCol: Long = random.nextLong(),
+    bigintCol: kotlin.Long = random.nextLong(),
     decimalCol: BigDecimal = BigDecimal.valueOf(random.nextDouble()),
     numericCol: BigDecimal = BigDecimal.valueOf(random.nextDouble()),
     decfloat16Col: BigDecimal = BigDecimal.valueOf(random.nextDouble()),
     decfloat34Col: BigDecimal = BigDecimal.valueOf(random.nextDouble()),
-    realCol: Float = random.nextFloat(),
-    doubleCol: Double = random.nextDouble(),
-    boolCol: Boolean = random.nextBoolean(),
+    realCol: kotlin.Float = random.nextFloat(),
+    doubleCol: kotlin.Double = random.nextDouble(),
+    boolCol: kotlin.Boolean = random.nextBoolean(),
     dateCol: LocalDate = LocalDate.ofEpochDay(random.nextInt(30000).toLong()),
     timeCol: LocalTime = LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong()),
     timestampCol: LocalDateTime = LocalDateTime.of(LocalDate.ofEpochDay(random.nextInt(30000).toLong()), LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong())),
@@ -99,39 +99,39 @@ data class TestInsert(val random: Random) {
   ): Db2testRow = (Db2testRepoImpl()).insert(Db2testRow(smallintCol = smallintCol, intCol = intCol, bigintCol = bigintCol, decimalCol = decimalCol, numericCol = numericCol, decfloat16Col = decfloat16Col, decfloat34Col = decfloat34Col, realCol = realCol, doubleCol = doubleCol, boolCol = boolCol, charCol = charCol, varcharCol = varcharCol, clobCol = clobCol, graphicCol = graphicCol, vargraphicCol = vargraphicCol, binaryCol = binaryCol, varbinaryCol = varbinaryCol, blobCol = blobCol, dateCol = dateCol, timeCol = timeCol, timestampCol = timestampCol, timestamp6Col = timestamp6Col, timestamp12Col = timestamp12Col, xmlCol = xmlCol), c)
 
   fun Db2testIdentityAlways(
-    name: String,
+    name: kotlin.String,
     c: Connection
   ): Db2testIdentityAlwaysRow = (Db2testIdentityAlwaysRepoImpl()).insert(Db2testIdentityAlwaysRowUnsaved(name = name), c)
 
   fun Db2testIdentityDefault(
-    name: String,
+    name: kotlin.String,
     id: Defaulted<Db2testIdentityDefaultId> = UseDefault(),
     c: Connection
   ): Db2testIdentityDefaultRow = (Db2testIdentityDefaultRepoImpl()).insert(Db2testIdentityDefaultRowUnsaved(name = name, id = id), c)
 
   fun Db2testUnique(
-    email: String,
-    code: String,
-    category: String,
+    email: kotlin.String,
+    code: kotlin.String,
+    category: kotlin.String,
     c: Connection
   ): Db2testUniqueRow = (Db2testUniqueRepoImpl()).insert(Db2testUniqueRowUnsaved(email = email, code = code, category = category), c)
 
   fun Db2testnull(
-    smallintCol: Short? = if (random.nextBoolean()) null else random.nextInt(Short.MAX_VALUE.toInt()).toShort(),
+    smallintCol: kotlin.Short? = if (random.nextBoolean()) null else random.nextInt(kotlin.Short.MAX_VALUE.toInt()).toShort(),
     intCol: Int? = if (random.nextBoolean()) null else random.nextInt(),
-    bigintCol: Long? = if (random.nextBoolean()) null else random.nextLong(),
+    bigintCol: kotlin.Long? = if (random.nextBoolean()) null else random.nextLong(),
     decimalCol: BigDecimal? = if (random.nextBoolean()) null else BigDecimal.valueOf(random.nextDouble()),
     numericCol: BigDecimal? = if (random.nextBoolean()) null else BigDecimal.valueOf(random.nextDouble()),
     decfloat16Col: BigDecimal? = if (random.nextBoolean()) null else BigDecimal.valueOf(random.nextDouble()),
     decfloat34Col: BigDecimal? = if (random.nextBoolean()) null else BigDecimal.valueOf(random.nextDouble()),
-    realCol: Float? = if (random.nextBoolean()) null else random.nextFloat(),
-    doubleCol: Double? = if (random.nextBoolean()) null else random.nextDouble(),
-    boolCol: Boolean? = if (random.nextBoolean()) null else random.nextBoolean(),
-    charCol: String? = null,
-    varcharCol: String? = null,
-    clobCol: String? = null,
-    graphicCol: String? = null,
-    vargraphicCol: String? = null,
+    realCol: kotlin.Float? = if (random.nextBoolean()) null else random.nextFloat(),
+    doubleCol: kotlin.Double? = if (random.nextBoolean()) null else random.nextDouble(),
+    boolCol: kotlin.Boolean? = if (random.nextBoolean()) null else random.nextBoolean(),
+    charCol: kotlin.String? = null,
+    varcharCol: kotlin.String? = null,
+    clobCol: kotlin.String? = null,
+    graphicCol: kotlin.String? = null,
+    vargraphicCol: kotlin.String? = null,
     binaryCol: ByteArray? = null,
     varbinaryCol: ByteArray? = null,
     blobCol: ByteArray? = null,
@@ -151,21 +151,21 @@ data class TestInsert(val random: Random) {
   ): DistinctTypeTestRow = (DistinctTypeTestRepoImpl()).insert(DistinctTypeTestRowUnsaved(email = email, balance = balance), c)
 
   fun IdentityParamsTest(
-    name: String,
+    name: kotlin.String,
     c: Connection
   ): IdentityParamsTestRow = (IdentityParamsTestRepoImpl()).insert(IdentityParamsTestRowUnsaved(name = name), c)
 
   fun NullabilityTest(
-    requiredCol: String,
+    requiredCol: kotlin.String,
     id: Int = random.nextInt(),
-    optionalCol: String? = null,
-    defaultedCol: Defaulted<String?> = UseDefault(),
+    optionalCol: kotlin.String? = null,
+    defaultedCol: Defaulted<kotlin.String?> = UseDefault(),
     c: Connection
   ): NullabilityTestRow = (NullabilityTestRepoImpl()).insert(NullabilityTestRowUnsaved(id = id, requiredCol = requiredCol, optionalCol = optionalCol, defaultedCol = defaultedCol), c)
 
   fun OrderItems(
     orderId: OrdersId,
-    productName: String,
+    productName: kotlin.String,
     itemNumber: Int = random.nextInt(),
     quantity: Int = random.nextInt(),
     unitPrice: BigDecimal = BigDecimal.valueOf(random.nextDouble()),
@@ -176,7 +176,7 @@ data class TestInsert(val random: Random) {
     customerId: CustomersId,
     totalAmount: BigDecimal? = if (random.nextBoolean()) null else BigDecimal.valueOf(random.nextDouble()),
     orderDate: Defaulted<LocalDate> = UseDefault(),
-    status: Defaulted<String?> = UseDefault(),
+    status: Defaulted<kotlin.String?> = UseDefault(),
     c: Connection
   ): OrdersRow = (OrdersRepoImpl()).insert(OrdersRowUnsaved(customerId = customerId, totalAmount = totalAmount, orderDate = orderDate, status = status), c)
 }

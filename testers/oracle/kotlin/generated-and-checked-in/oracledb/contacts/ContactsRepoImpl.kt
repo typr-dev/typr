@@ -5,21 +5,21 @@
  */
 package oracledb.contacts
 
-import dev.typr.foundations.OracleTypes
-import dev.typr.foundations.kotlin.DeleteBuilder
-import dev.typr.foundations.kotlin.Dialect
-import dev.typr.foundations.kotlin.Fragment
-import dev.typr.foundations.kotlin.SelectBuilder
-import dev.typr.foundations.kotlin.UpdateBuilder
-import dev.typr.foundations.kotlin.nullable
-import java.sql.Connection
+import dev.typr.dslkt.DeleteBuilder
+import dev.typr.dslkt.Dialect
+import dev.typr.dslkt.SelectBuilder
+import dev.typr.dslkt.UpdateBuilder
+import dev.typr.foundationskt.Connection
+import dev.typr.foundationskt.ConnectionRead
+import dev.typr.foundationskt.Fragment
+import dev.typr.foundationskt.OracleTypes
 import java.util.ArrayList
 import kotlin.collections.Iterator
 import kotlin.collections.List
 import kotlin.collections.Map
 import kotlin.collections.MutableMap
+import oracledb.EmailTableT
 import oracledb.TagVarrayT
-import oracledb.userdefined.Email
 
 class ContactsRepoImpl() : ContactsRepo {
   override fun delete(): DeleteBuilder<ContactsFields, ContactsRow> = DeleteBuilder.of("\"CONTACTS\"", ContactsFields.structure, Dialect.ORACLE)
@@ -27,22 +27,22 @@ class ContactsRepoImpl() : ContactsRepo {
   override fun deleteById(
     contactId: ContactsId,
     c: Connection
-  ): Boolean = Fragment.interpolate(Fragment.lit("delete from \"CONTACTS\" where \"CONTACT_ID\" = "), Fragment.encode(ContactsId.oracleType, contactId), Fragment.lit("")).update().runUnchecked(c) > 0
+  ): kotlin.Boolean = Fragment.concat(Fragment.of("delete from \"CONTACTS\" where \"CONTACT_ID\" = "), Fragment.encode(ContactsId.oracleType, contactId), Fragment.of("")).update().run(c) > 0
 
   override fun deleteByIds(
-    contactIds: Array<ContactsId>,
+    contactIds: List<ContactsId>,
     c: Connection
   ): Int {
     val fragments: ArrayList<Fragment> = ArrayList()
     for (id in contactIds) { fragments.add(Fragment.encode(ContactsId.oracleType, id)) }
-    return Fragment.interpolate(Fragment.lit("delete from \"CONTACTS\" where \"CONTACT_ID\" in ("), Fragment.comma(fragments.toMutableList()), Fragment.lit(")")).update().runUnchecked(c)
+    return Fragment.concat(Fragment.of("delete from \"CONTACTS\" where \"CONTACT_ID\" in ("), Fragment.comma(fragments.toMutableList()), Fragment.of(")")).update().run(c)
   }
 
   override fun insert(
     unsaved: ContactsRow,
     c: Connection
-  ): ContactsId = Fragment.interpolate(Fragment.lit("insert into \"CONTACTS\"(\"CONTACT_ID\", \"NAME\", \"EMAILS\", \"TAGS\")\nvalues ("), Fragment.encode(ContactsId.oracleType, unsaved.contactId), Fragment.lit(", "), Fragment.encode(OracleTypes.varchar2, unsaved.name), Fragment.lit(", "), Fragment.encode(Email.oracleType.nullable(), unsaved.emails), Fragment.lit(", "), Fragment.encode(TagVarrayT.oracleType.nullable(), unsaved.tags), Fragment.lit(")\n"))
-    .updateReturningGeneratedKeys(arrayOf<String>("CONTACT_ID"), ContactsId._rowParser.exactlyOne()).runUnchecked(c)
+  ): ContactsId = Fragment.concat(Fragment.of("insert into \"CONTACTS\"(\"CONTACT_ID\", \"NAME\", \"EMAILS\", \"TAGS\")\nvalues ("), Fragment.encode(ContactsId.oracleType, unsaved.contactId), Fragment.of(", "), Fragment.encode(OracleTypes.varchar2, unsaved.name), Fragment.of(", "), Fragment.encode(EmailTableT.oracleType.opt(), unsaved.emails), Fragment.of(", "), Fragment.encode(TagVarrayT.oracleType.opt(), unsaved.tags), Fragment.of(")\n"))
+    .updateReturningGeneratedKeys(arrayOf<kotlin.String>("CONTACT_ID"), ContactsId.rowCodec.exactlyOne()).run(c)
 
   override fun insert(
     unsaved: ContactsRowUnsaved,
@@ -50,73 +50,73 @@ class ContactsRepoImpl() : ContactsRepo {
   ): ContactsId {
     val columns: ArrayList<Fragment> = ArrayList()
     val values: ArrayList<Fragment> = ArrayList()
-    columns.add(Fragment.lit("\"NAME\""))
-    values.add(Fragment.interpolate(Fragment.encode(OracleTypes.varchar2, unsaved.name), Fragment.lit("")))
-    columns.add(Fragment.lit("\"EMAILS\""))
-    values.add(Fragment.interpolate(Fragment.encode(Email.oracleType.nullable(), unsaved.emails), Fragment.lit("")))
-    columns.add(Fragment.lit("\"TAGS\""))
-    values.add(Fragment.interpolate(Fragment.encode(TagVarrayT.oracleType.nullable(), unsaved.tags), Fragment.lit("")))
+    columns.add(Fragment.of("\"NAME\""))
+    values.add(Fragment.concat(Fragment.encode(OracleTypes.varchar2, unsaved.name), Fragment.of("")))
+    columns.add(Fragment.of("\"EMAILS\""))
+    values.add(Fragment.concat(Fragment.encode(EmailTableT.oracleType.opt(), unsaved.emails), Fragment.of("")))
+    columns.add(Fragment.of("\"TAGS\""))
+    values.add(Fragment.concat(Fragment.encode(TagVarrayT.oracleType.opt(), unsaved.tags), Fragment.of("")))
     unsaved.contactId.visit(
       {  },
-      { value -> columns.add(Fragment.lit("\"CONTACT_ID\""))
-      values.add(Fragment.interpolate(Fragment.encode(ContactsId.oracleType, value), Fragment.lit(""))) }
+      { value -> columns.add(Fragment.of("\"CONTACT_ID\""))
+      values.add(Fragment.concat(Fragment.encode(ContactsId.oracleType, value), Fragment.of(""))) }
     );
-    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into \"CONTACTS\"("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\n"))
-    return q.updateReturningGeneratedKeys(arrayOf<String>("CONTACT_ID"), ContactsId._rowParser.exactlyOne()).runUnchecked(c)
+    val q: Fragment = Fragment.concat(Fragment.of("insert into \"CONTACTS\"("), Fragment.comma(columns.toMutableList()), Fragment.of(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.of(")\n"))
+    return q.updateReturningGeneratedKeys(arrayOf<kotlin.String>("CONTACT_ID"), ContactsId.rowCodec.exactlyOne()).run(c)
   }
 
-  override fun select(): SelectBuilder<ContactsFields, ContactsRow> = SelectBuilder.of("\"CONTACTS\"", ContactsFields.structure, ContactsRow._rowParser, Dialect.ORACLE)
+  override fun select(): SelectBuilder<ContactsFields, ContactsRow> = SelectBuilder.of("\"CONTACTS\"", ContactsFields.structure, ContactsRow.rowCodec, Dialect.ORACLE)
 
-  override fun selectAll(c: Connection): List<ContactsRow> = Fragment.interpolate(Fragment.lit("select \"CONTACT_ID\", \"NAME\", \"EMAILS\", \"TAGS\"\nfrom \"CONTACTS\"\n")).query(ContactsRow._rowParser.all()).runUnchecked(c)
+  override fun selectAll(c: ConnectionRead): List<ContactsRow> = Fragment.concat(Fragment.of("select \"CONTACT_ID\", \"NAME\", \"EMAILS\", \"TAGS\"\nfrom \"CONTACTS\"\n")).query(ContactsRow.rowCodec.all()).run(c)
 
   override fun selectById(
     contactId: ContactsId,
-    c: Connection
-  ): ContactsRow? = Fragment.interpolate(Fragment.lit("select \"CONTACT_ID\", \"NAME\", \"EMAILS\", \"TAGS\"\nfrom \"CONTACTS\"\nwhere \"CONTACT_ID\" = "), Fragment.encode(ContactsId.oracleType, contactId), Fragment.lit("")).query(ContactsRow._rowParser.first()).runUnchecked(c)
+    c: ConnectionRead
+  ): ContactsRow? = Fragment.concat(Fragment.of("select \"CONTACT_ID\", \"NAME\", \"EMAILS\", \"TAGS\"\nfrom \"CONTACTS\"\nwhere \"CONTACT_ID\" = "), Fragment.encode(ContactsId.oracleType, contactId), Fragment.of("")).query(ContactsRow.rowCodec.first()).run(c)
 
   override fun selectByIds(
-    contactIds: Array<ContactsId>,
-    c: Connection
+    contactIds: List<ContactsId>,
+    c: ConnectionRead
   ): List<ContactsRow> {
     val fragments: ArrayList<Fragment> = ArrayList()
     for (id in contactIds) { fragments.add(Fragment.encode(ContactsId.oracleType, id)) }
-    return Fragment.interpolate(Fragment.lit("select \"CONTACT_ID\", \"NAME\", \"EMAILS\", \"TAGS\" from \"CONTACTS\" where \"CONTACT_ID\" in ("), Fragment.comma(fragments.toMutableList()), Fragment.lit(")")).query(ContactsRow._rowParser.all()).runUnchecked(c)
+    return Fragment.concat(Fragment.of("select \"CONTACT_ID\", \"NAME\", \"EMAILS\", \"TAGS\" from \"CONTACTS\" where \"CONTACT_ID\" in ("), Fragment.comma(fragments.toMutableList()), Fragment.of(")")).query(ContactsRow.rowCodec.all()).run(c)
   }
 
   override fun selectByIdsTracked(
-    contactIds: Array<ContactsId>,
-    c: Connection
+    contactIds: List<ContactsId>,
+    c: ConnectionRead
   ): Map<ContactsId, ContactsRow> {
     val ret: MutableMap<ContactsId, ContactsRow> = mutableMapOf<ContactsId, ContactsRow>()
     selectByIds(contactIds, c).forEach({ row -> ret.put(row.contactId, row) })
     return ret.toMap()
   }
 
-  override fun update(): UpdateBuilder<ContactsFields, ContactsRow> = UpdateBuilder.of("\"CONTACTS\"", ContactsFields.structure, ContactsRow._rowParser, Dialect.ORACLE)
+  override fun update(): UpdateBuilder<ContactsFields, ContactsRow> = UpdateBuilder.of("\"CONTACTS\"", ContactsFields.structure, ContactsRow.rowCodec, Dialect.ORACLE)
 
   override fun update(
     row: ContactsRow,
     c: Connection
-  ): Boolean {
+  ): kotlin.Boolean {
     val contactId: ContactsId = row.contactId
-    return Fragment.interpolate(Fragment.lit("update \"CONTACTS\"\nset \"NAME\" = "), Fragment.encode(OracleTypes.varchar2, row.name), Fragment.lit(",\n\"EMAILS\" = "), Fragment.encode(Email.oracleType.nullable(), row.emails), Fragment.lit(",\n\"TAGS\" = "), Fragment.encode(TagVarrayT.oracleType.nullable(), row.tags), Fragment.lit("\nwhere \"CONTACT_ID\" = "), Fragment.encode(ContactsId.oracleType, contactId), Fragment.lit("")).update().runUnchecked(c) > 0
+    return Fragment.concat(Fragment.of("update \"CONTACTS\"\nset \"NAME\" = "), Fragment.encode(OracleTypes.varchar2, row.name), Fragment.of(",\n\"EMAILS\" = "), Fragment.encode(EmailTableT.oracleType.opt(), row.emails), Fragment.of(",\n\"TAGS\" = "), Fragment.encode(TagVarrayT.oracleType.opt(), row.tags), Fragment.of("\nwhere \"CONTACT_ID\" = "), Fragment.encode(ContactsId.oracleType, contactId), Fragment.of("")).update().run(c) > 0
   }
 
   override fun upsert(
     unsaved: ContactsRow,
     c: Connection
   ) {
-    Fragment.interpolate(Fragment.lit("MERGE INTO \"CONTACTS\" t\nUSING (SELECT "), Fragment.encode(ContactsId.oracleType, unsaved.contactId), Fragment.lit(", "), Fragment.encode(OracleTypes.varchar2, unsaved.name), Fragment.lit(", "), Fragment.encode(Email.oracleType.nullable(), unsaved.emails), Fragment.lit(", "), Fragment.encode(TagVarrayT.oracleType.nullable(), unsaved.tags), Fragment.lit(" FROM DUAL) s\nON (t.\"CONTACT_ID\" = s.\"CONTACT_ID\")\nWHEN MATCHED THEN UPDATE SET t.\"NAME\" = s.\"NAME\",\nt.\"EMAILS\" = s.\"EMAILS\",\nt.\"TAGS\" = s.\"TAGS\"\nWHEN NOT MATCHED THEN INSERT (\"CONTACT_ID\", \"NAME\", \"EMAILS\", \"TAGS\") VALUES ("), Fragment.encode(ContactsId.oracleType, unsaved.contactId), Fragment.lit(", "), Fragment.encode(OracleTypes.varchar2, unsaved.name), Fragment.lit(", "), Fragment.encode(Email.oracleType.nullable(), unsaved.emails), Fragment.lit(", "), Fragment.encode(TagVarrayT.oracleType.nullable(), unsaved.tags), Fragment.lit(")"))
+    Fragment.concat(Fragment.of("MERGE INTO \"CONTACTS\" t\nUSING (SELECT "), Fragment.encode(ContactsId.oracleType, unsaved.contactId), Fragment.of(", "), Fragment.encode(OracleTypes.varchar2, unsaved.name), Fragment.of(", "), Fragment.encode(EmailTableT.oracleType.opt(), unsaved.emails), Fragment.of(", "), Fragment.encode(TagVarrayT.oracleType.opt(), unsaved.tags), Fragment.of(" FROM DUAL) s\nON (t.\"CONTACT_ID\" = s.\"CONTACT_ID\")\nWHEN MATCHED THEN UPDATE SET t.\"NAME\" = s.\"NAME\",\nt.\"EMAILS\" = s.\"EMAILS\",\nt.\"TAGS\" = s.\"TAGS\"\nWHEN NOT MATCHED THEN INSERT (\"CONTACT_ID\", \"NAME\", \"EMAILS\", \"TAGS\") VALUES ("), Fragment.encode(ContactsId.oracleType, unsaved.contactId), Fragment.of(", "), Fragment.encode(OracleTypes.varchar2, unsaved.name), Fragment.of(", "), Fragment.encode(EmailTableT.oracleType.opt(), unsaved.emails), Fragment.of(", "), Fragment.encode(TagVarrayT.oracleType.opt(), unsaved.tags), Fragment.of(")"))
       .update()
-      .runUnchecked(c)
+      .run(c)
   }
 
   override fun upsertBatch(
     unsaved: Iterator<ContactsRow>,
     c: Connection
   ) {
-    Fragment.interpolate(Fragment.lit("MERGE INTO \"CONTACTS\" t\nUSING (SELECT ?, ?, ?, ? FROM DUAL) s\nON (t.\"CONTACT_ID\" = s.\"CONTACT_ID\")\nWHEN MATCHED THEN UPDATE SET t.\"NAME\" = s.\"NAME\",\nt.\"EMAILS\" = s.\"EMAILS\",\nt.\"TAGS\" = s.\"TAGS\"\nWHEN NOT MATCHED THEN INSERT (\"CONTACT_ID\", \"NAME\", \"EMAILS\", \"TAGS\") VALUES (?, ?, ?, ?)"))
-      .updateMany(ContactsRow._rowParser, unsaved)
-      .runUnchecked(c)
+    Fragment.concat(Fragment.of("MERGE INTO \"CONTACTS\" t\nUSING (SELECT ?, ?, ?, ? FROM DUAL) s\nON (t.\"CONTACT_ID\" = s.\"CONTACT_ID\")\nWHEN MATCHED THEN UPDATE SET t.\"NAME\" = s.\"NAME\",\nt.\"EMAILS\" = s.\"EMAILS\",\nt.\"TAGS\" = s.\"TAGS\"\nWHEN NOT MATCHED THEN INSERT (\"CONTACT_ID\", \"NAME\", \"EMAILS\", \"TAGS\") VALUES (?, ?, ?, ?)"))
+      .updateMany(ContactsRow.rowCodec, unsaved)
+      .run(c)
   }
 }
