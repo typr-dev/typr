@@ -23,7 +23,7 @@ jobs:
     if: "!contains(github.event.head_commit.message, 'ci skip')"
     steps:
       - uses: actions/checkout@v4
-      - uses: bleep-build/bleep-setup-action@0.0.3
+      - uses: bleep-build/bleep-setup-action@v0.0.3
       - uses: coursier/cache-action@v6
         with:
           extraFiles: bleep.yaml
