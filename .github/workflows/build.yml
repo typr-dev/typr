@@ -326,9 +326,18 @@ jobs:
     if: "!contains(github.event.head_commit.message, 'ci skip')"
     steps:
       - uses: actions/checkout@v4
+      - uses: bleep-build/bleep-setup-action@0.0.1
+      - uses: coursier/cache-action@v6
+        with:
+          extraFiles: bleep.yaml
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: site/package-lock.json
+
+      - name: Generate showcase code (no DB connections needed)
+        run: bleep generate-showcase
 
       - name: Install site dependencies
         working-directory: site
