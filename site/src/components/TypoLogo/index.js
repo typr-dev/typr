@@ -15,7 +15,7 @@ export default function TypoLogo({ size = 100, animated = true }) {
                         <stop offset="100%" stopColor="#7c3aed" />
                     </linearGradient>
                 </defs>
-                
+
                 <g transform="translate(100, 100)">
                     {/* Simple abstract shape - made bigger */}
                     <path
