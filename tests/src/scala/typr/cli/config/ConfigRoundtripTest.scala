@@ -34,7 +34,7 @@ class ConfigRoundtripTest extends AnyFunSuite with TypeCheckedTripleEquals {
         )
       ),
       types = None,
-      outputs = None,
+      outputs = None
     )
 
     val yaml = ConfigWriter.toYaml(original)
@@ -97,7 +97,7 @@ class ConfigRoundtripTest extends AnyFunSuite with TypeCheckedTripleEquals {
             sources = Some(StringOrArrayString("postgres"))
           )
         )
-      ),
+      )
     )
 
     val yaml = ConfigWriter.toYaml(original)
@@ -149,7 +149,7 @@ class ConfigRoundtripTest extends AnyFunSuite with TypeCheckedTripleEquals {
           )
         )
       ),
-      outputs = None,
+      outputs = None
     )
 
     val yaml = ConfigWriter.toYaml(original)
@@ -217,7 +217,7 @@ class ConfigRoundtripTest extends AnyFunSuite with TypeCheckedTripleEquals {
             sources = Some(StringOrArrayString("postgres"))
           )
         )
-      ),
+      )
     )
 
     val yaml = ConfigWriter.toYaml(original)

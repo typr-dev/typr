@@ -965,14 +965,6 @@ projects:
     - com.ibm.db2:jcc:11.5.9.0
     dependsOn: typr-codegen
     extends: template-scala-3
-  typr-scripts-doc:
-    dependencies:
-    - build.bleep::bleep-plugin-dynver:${BLEEP_VERSION}
-    - build.bleep::bleep-plugin-mdoc:${BLEEP_VERSION}
-    dependsOn:
-    - testers/pg/scala/anorm
-    - typr-codegen
-    extends: template-scala-3
   typr-scripts-sourcegen:
     dependencies: build.bleep::bleep-core:${BLEEP_VERSION}
     extends: template-scala-3
@@ -980,9 +972,6 @@ scripts:
   compile-benchmarks:
     main: scripts.CompileBenchmark
     project: typr-scripts
-  generate-docs:
-    main: scripts.GenDocumentation
-    project: typr-scripts-doc
   generate-showcase:
     main: scripts.GeneratedShowcase
     project: typr-scripts

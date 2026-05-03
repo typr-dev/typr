@@ -41,8 +41,8 @@ bleep sourcegen
 # Typr's internal generated code
 bleep generate-sources
 
-# Documentation
-bleep generate-docs              # Generate documentation with mdoc
+# Documentation site (Docusaurus, runs from site/)
+cd site && npm install && npm run build
 ```
 
 ### Typr CLI for Code Generation
@@ -452,7 +452,6 @@ bleep test foundations-jdbc-test --only DuckDbTypeTest
 
 ### Building Documentation
 ```bash
-bleep generate-docs
 cd site && npm install && npm run build
 ```
 

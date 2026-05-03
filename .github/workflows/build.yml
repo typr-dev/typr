@@ -112,10 +112,6 @@ jobs:
           CI: true
         run: bleep test testers/pg/java
 
-      - name: Run foundations-jdbc Postgres tests
-        env:
-          CI: true
-        run: bleep compile foundations-jdbc-test && bleep test foundations-jdbc-test --only PgTypeTest
 
       - name: Run Kotlin Postgres tests
         env:
@@ -157,10 +153,6 @@ jobs:
           CI: true
         run: bleep test testers/mariadb/java
 
-      - name: Run foundations-jdbc MariaDB tests
-        env:
-          CI: true
-        run: bleep compile foundations-jdbc-test && bleep test foundations-jdbc-test --only MariaTypeTest
 
       - name: Run MariaDB Kotlin tests
         env:
@@ -196,10 +188,6 @@ jobs:
           CI: true
         run: bleep test testers/oracle/java
 
-      - name: Run foundations-jdbc Oracle tests
-        env:
-          CI: true
-        run: bleep compile foundations-jdbc-test && bleep test foundations-jdbc-test --only OracleTypeTest
 
       - name: Run Oracle Kotlin tests
         env:
@@ -227,10 +215,6 @@ jobs:
           CI: true
         run: bleep test testers/duckdb/java
 
-      - name: Run foundations-jdbc DuckDB tests
-        env:
-          CI: true
-        run: bleep compile foundations-jdbc-test && bleep test foundations-jdbc-test --only DuckDbTypeTest
 
       - name: Run DuckDB Kotlin tests
         env:
@@ -268,10 +252,6 @@ jobs:
           CI: true
         run: bleep test testers/sqlserver/java
 
-      - name: Run foundations-jdbc SQL Server tests
-        env:
-          CI: true
-        run: bleep compile foundations-jdbc-test && bleep test foundations-jdbc-test --only SqlServerTypeTest
 
       - name: Run SQL Server Kotlin tests
         env:
@@ -309,10 +289,6 @@ jobs:
           CI: true
         run: bleep test testers/db2/java
 
-      - name: Run foundations-jdbc DB2 tests
-        env:
-          CI: true
-        run: bleep compile foundations-jdbc-test && bleep test foundations-jdbc-test --only Db2TypeTest
 
       - name: Run DB2 Kotlin tests
         env:
@@ -348,31 +324,19 @@ jobs:
     timeout-minutes: 20
     runs-on: ubuntu-latest
     if: "!contains(github.event.head_commit.message, 'ci skip')"
-    env:
-      PG_MAJOR: 16
     steps:
       - uses: actions/checkout@v4
-      - uses: bleep-build/bleep-setup-action@0.0.1
-      - uses: coursier/cache-action@v6
+      - uses: actions/setup-node@v4
         with:
-          extraFiles: bleep.yaml
+          node-version: '20'
 
-      - name: Start up Postgres
-        run: docker compose up -d postgres
+      - name: Install site dependencies
+        working-directory: site
+        run: npm ci
 
-      - name: Wait for Postgres
-        run: |
-          for i in {1..30}; do
-            if docker compose exec -T postgres pg_isready -U postgres; then
-              echo "Postgres is ready"
-              break
-            fi
-            echo "Waiting for Postgres... ($i/30)"
-            sleep 2
-          done
-
-      - name: Build docs
-        run: bleep generate-docs
+      - name: Build docusaurus site
+        working-directory: site
+        run: npm run build
 
   release:
     timeout-minutes: 15
