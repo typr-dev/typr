@@ -78,7 +78,7 @@
 }
 
 /* Dark mode with elegant contrast */
-[data-theme="dark"] {
+html[data-theme="dark"] {
   /* Primary colors - Lighter purple for dark mode */
   --ifm-color-primary: #a78bfa;
   --ifm-color-primary-dark: #9333ea;
@@ -445,7 +445,7 @@ table thead {
   --ifm-footer-link-hover-color: var(--ifm-color-primary);
 }
 
-[data-theme="dark"] {
+html[data-theme="dark"] {
   --ifm-footer-background-color: #1a1a1a;
   --ifm-footer-color: #9ca3af;
   --ifm-footer-title-color: #f3f4f6;
@@ -607,7 +607,7 @@ table thead {
   --ifm-footer-title-color:            var(--typr-paper);
 }
 
-[data-theme="dark"] {
+html[data-theme="dark"] {
   --typr-paper:           #0c1019;
   --typr-paper-2:         #131829;
   --typr-paper-warm:      #131727;

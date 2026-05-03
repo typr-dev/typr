@@ -79,11 +79,16 @@ const config = {
   themeConfig:
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
     ({
+      colorMode: {
+        defaultMode: 'light',
+        disableSwitch: false,
+        respectPrefersColorScheme: true,
+      },
       announcementBar: {
         id: 'under_development',
         content: '🚧 <strong>Under Development</strong> — This site and product are launching early 2026.',
-        backgroundColor: '#7c3aed',
-        textColor: '#ffffff',
+        backgroundColor: '#0c1a2b',
+        textColor: '#f4f0e6',
         isCloseable: false,
       },
       navbar: {
