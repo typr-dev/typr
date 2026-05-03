@@ -5,21 +5,21 @@
  */
 package testdb.reviews
 
-import dev.typr.foundations.MariaTypes
-import dev.typr.foundations.RowParser
+import dev.typr.dsl.FieldsBase
+import dev.typr.dsl.Path
+import dev.typr.dsl.SqlExpr.FieldLike
+import dev.typr.dslkt.ForeignKey
+import dev.typr.dslkt.RelationStructure
+import dev.typr.dslkt.SqlExpr
+import dev.typr.dslkt.SqlExpr.Field
+import dev.typr.dslkt.SqlExpr.IdField
+import dev.typr.dslkt.SqlExpr.OptField
+import dev.typr.dslkt.TupleExpr18
+import dev.typr.foundations.RowCodec
 import dev.typr.foundations.data.Json
 import dev.typr.foundations.data.Uint1
 import dev.typr.foundations.data.Uint4
-import dev.typr.foundations.dsl.FieldsBase
-import dev.typr.foundations.dsl.Path
-import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.kotlin.ForeignKey
-import dev.typr.foundations.kotlin.RelationStructure
-import dev.typr.foundations.kotlin.SqlExpr
-import dev.typr.foundations.kotlin.SqlExpr.Field
-import dev.typr.foundations.kotlin.SqlExpr.IdField
-import dev.typr.foundations.kotlin.SqlExpr.OptField
-import dev.typr.foundations.kotlin.TupleExpr18
+import dev.typr.foundationskt.MariaTypes
 import java.time.LocalDateTime
 import kotlin.collections.List
 import testdb.customers.CustomersFields
@@ -34,7 +34,7 @@ import testdb.products.ProductsRow
 import testdb.userdefined.IsApproved
 import testdb.userdefined.IsVerifiedPurchase
 
-data class ReviewsFields(val _path: List<Path>) : TupleExpr18<ReviewsId, ProductsId, CustomersId, OrderItemsId, Uint1, String, String, Json, Json, Json, /* user-picked */ IsVerifiedPurchase, /* user-picked */ IsApproved, Uint4, Uint4, String, LocalDateTime, LocalDateTime, LocalDateTime>, RelationStructure<ReviewsFields, ReviewsRow>, FieldsBase<ReviewsRow> {
+data class ReviewsFields(val _path: List<Path>) : TupleExpr18<ReviewsId, ProductsId, CustomersId, OrderItemsId, Uint1, kotlin.String, kotlin.String, Json, Json, Json, /* user-picked */ IsVerifiedPurchase, /* user-picked */ IsApproved, Uint4, Uint4, kotlin.String, LocalDateTime, LocalDateTime, LocalDateTime>, RelationStructure<ReviewsFields, ReviewsRow>, FieldsBase<ReviewsRow> {
   override fun _1(): SqlExpr<ReviewsId> = reviewId()
 
   override fun _10(): SqlExpr<Json> = images()
@@ -47,7 +47,7 @@ data class ReviewsFields(val _path: List<Path>) : TupleExpr18<ReviewsId, Product
 
   override fun _14(): SqlExpr<Uint4> = unhelpfulVotes()
 
-  override fun _15(): SqlExpr<String> = adminResponse()
+  override fun _15(): SqlExpr<kotlin.String> = adminResponse()
 
   override fun _16(): SqlExpr<LocalDateTime> = respondedAt()
 
@@ -63,9 +63,9 @@ data class ReviewsFields(val _path: List<Path>) : TupleExpr18<ReviewsId, Product
 
   override fun _5(): SqlExpr<Uint1> = rating()
 
-  override fun _6(): SqlExpr<String> = title()
+  override fun _6(): SqlExpr<kotlin.String> = title()
 
-  override fun _7(): SqlExpr<String> = content()
+  override fun _7(): SqlExpr<kotlin.String> = content()
 
   override fun _8(): SqlExpr<Json> = pros()
 
@@ -73,17 +73,17 @@ data class ReviewsFields(val _path: List<Path>) : TupleExpr18<ReviewsId, Product
 
   override fun _path(): List<Path> = _path
 
-  fun adminResponse(): OptField<String, ReviewsRow> = OptField<String, ReviewsRow>(_path, "admin_response", ReviewsRow::adminResponse, null, null, { row, value -> row.copy(adminResponse = value) }, MariaTypes.text)
+  fun adminResponse(): OptField<kotlin.String, ReviewsRow> = OptField<kotlin.String, ReviewsRow>(_path, "admin_response", ReviewsRow::adminResponse, null, null, { row, value -> row.copy(adminResponse = value) }, MariaTypes.text.underlying)
 
   override fun columns(): List<FieldLike<*, ReviewsRow>> = listOf(this.reviewId().underlying, this.productId().underlying, this.customerId().underlying, this.orderItemId().underlying, this.rating().underlying, this.title().underlying, this.content().underlying, this.pros().underlying, this.cons().underlying, this.images().underlying, this.isVerifiedPurchase().underlying, this.isApproved().underlying, this.helpfulVotes().underlying, this.unhelpfulVotes().underlying, this.adminResponse().underlying, this.respondedAt().underlying, this.createdAt().underlying, this.updatedAt().underlying)
 
-  fun cons(): OptField<Json, ReviewsRow> = OptField<Json, ReviewsRow>(_path, "cons", ReviewsRow::cons, null, null, { row, value -> row.copy(cons = value) }, MariaTypes.json)
+  fun cons(): OptField<Json, ReviewsRow> = OptField<Json, ReviewsRow>(_path, "cons", ReviewsRow::cons, null, null, { row, value -> row.copy(cons = value) }, MariaTypes.json.underlying)
 
-  fun content(): OptField<String, ReviewsRow> = OptField<String, ReviewsRow>(_path, "content", ReviewsRow::content, null, null, { row, value -> row.copy(content = value) }, MariaTypes.text)
+  fun content(): OptField<kotlin.String, ReviewsRow> = OptField<kotlin.String, ReviewsRow>(_path, "content", ReviewsRow::content, null, null, { row, value -> row.copy(content = value) }, MariaTypes.text.underlying)
 
-  fun createdAt(): Field<LocalDateTime, ReviewsRow> = Field<LocalDateTime, ReviewsRow>(_path, "created_at", ReviewsRow::createdAt, null, null, { row, value -> row.copy(createdAt = value) }, MariaTypes.datetime)
+  fun createdAt(): Field<LocalDateTime, ReviewsRow> = Field<LocalDateTime, ReviewsRow>(_path, "created_at", ReviewsRow::createdAt, null, null, { row, value -> row.copy(createdAt = value) }, MariaTypes.datetime.underlying)
 
-  fun customerId(): Field<CustomersId, ReviewsRow> = Field<CustomersId, ReviewsRow>(_path, "customer_id", ReviewsRow::customerId, null, null, { row, value -> row.copy(customerId = value) }, CustomersId.mariaType)
+  fun customerId(): Field<CustomersId, ReviewsRow> = Field<CustomersId, ReviewsRow>(_path, "customer_id", ReviewsRow::customerId, null, null, { row, value -> row.copy(customerId = value) }, CustomersId.mariaType.underlying)
 
   fun fkCustomers(): ForeignKey<CustomersFields, CustomersRow> = ForeignKey.of<CustomersFields, CustomersRow>("fk_rev_customer").withColumnPair<CustomersId>(customerId(), CustomersFields::customerId)
 
@@ -91,33 +91,33 @@ data class ReviewsFields(val _path: List<Path>) : TupleExpr18<ReviewsId, Product
 
   fun fkProducts(): ForeignKey<ProductsFields, ProductsRow> = ForeignKey.of<ProductsFields, ProductsRow>("fk_rev_product").withColumnPair<ProductsId>(productId(), ProductsFields::productId)
 
-  fun helpfulVotes(): Field<Uint4, ReviewsRow> = Field<Uint4, ReviewsRow>(_path, "helpful_votes", ReviewsRow::helpfulVotes, null, null, { row, value -> row.copy(helpfulVotes = value) }, MariaTypes.intUnsigned)
+  fun helpfulVotes(): Field<Uint4, ReviewsRow> = Field<Uint4, ReviewsRow>(_path, "helpful_votes", ReviewsRow::helpfulVotes, null, null, { row, value -> row.copy(helpfulVotes = value) }, MariaTypes.intUnsigned.underlying)
 
-  fun images(): OptField<Json, ReviewsRow> = OptField<Json, ReviewsRow>(_path, "images", ReviewsRow::images, null, null, { row, value -> row.copy(images = value) }, MariaTypes.json)
+  fun images(): OptField<Json, ReviewsRow> = OptField<Json, ReviewsRow>(_path, "images", ReviewsRow::images, null, null, { row, value -> row.copy(images = value) }, MariaTypes.json.underlying)
 
-  fun isApproved(): Field</* user-picked */ IsApproved, ReviewsRow> = Field</* user-picked */ IsApproved, ReviewsRow>(_path, "is_approved", ReviewsRow::isApproved, null, null, { row, value -> row.copy(isApproved = value) }, IsApproved.mariaType)
+  fun isApproved(): Field</* user-picked */ IsApproved, ReviewsRow> = Field</* user-picked */ IsApproved, ReviewsRow>(_path, "is_approved", ReviewsRow::isApproved, null, null, { row, value -> row.copy(isApproved = value) }, IsApproved.mariaType.underlying)
 
-  fun isVerifiedPurchase(): Field</* user-picked */ IsVerifiedPurchase, ReviewsRow> = Field</* user-picked */ IsVerifiedPurchase, ReviewsRow>(_path, "is_verified_purchase", ReviewsRow::isVerifiedPurchase, null, null, { row, value -> row.copy(isVerifiedPurchase = value) }, IsVerifiedPurchase.mariaType)
+  fun isVerifiedPurchase(): Field</* user-picked */ IsVerifiedPurchase, ReviewsRow> = Field</* user-picked */ IsVerifiedPurchase, ReviewsRow>(_path, "is_verified_purchase", ReviewsRow::isVerifiedPurchase, null, null, { row, value -> row.copy(isVerifiedPurchase = value) }, IsVerifiedPurchase.mariaType.underlying)
 
-  fun orderItemId(): OptField<OrderItemsId, ReviewsRow> = OptField<OrderItemsId, ReviewsRow>(_path, "order_item_id", ReviewsRow::orderItemId, null, null, { row, value -> row.copy(orderItemId = value) }, OrderItemsId.mariaType)
+  fun orderItemId(): OptField<OrderItemsId, ReviewsRow> = OptField<OrderItemsId, ReviewsRow>(_path, "order_item_id", ReviewsRow::orderItemId, null, null, { row, value -> row.copy(orderItemId = value) }, OrderItemsId.mariaType.underlying)
 
-  fun productId(): Field<ProductsId, ReviewsRow> = Field<ProductsId, ReviewsRow>(_path, "product_id", ReviewsRow::productId, null, null, { row, value -> row.copy(productId = value) }, ProductsId.mariaType)
+  fun productId(): Field<ProductsId, ReviewsRow> = Field<ProductsId, ReviewsRow>(_path, "product_id", ReviewsRow::productId, null, null, { row, value -> row.copy(productId = value) }, ProductsId.mariaType.underlying)
 
-  fun pros(): OptField<Json, ReviewsRow> = OptField<Json, ReviewsRow>(_path, "pros", ReviewsRow::pros, null, null, { row, value -> row.copy(pros = value) }, MariaTypes.json)
+  fun pros(): OptField<Json, ReviewsRow> = OptField<Json, ReviewsRow>(_path, "pros", ReviewsRow::pros, null, null, { row, value -> row.copy(pros = value) }, MariaTypes.json.underlying)
 
-  fun rating(): Field<Uint1, ReviewsRow> = Field<Uint1, ReviewsRow>(_path, "rating", ReviewsRow::rating, null, null, { row, value -> row.copy(rating = value) }, MariaTypes.tinyintUnsigned)
+  fun rating(): Field<Uint1, ReviewsRow> = Field<Uint1, ReviewsRow>(_path, "rating", ReviewsRow::rating, null, null, { row, value -> row.copy(rating = value) }, MariaTypes.tinyintUnsigned.underlying)
 
-  fun respondedAt(): OptField<LocalDateTime, ReviewsRow> = OptField<LocalDateTime, ReviewsRow>(_path, "responded_at", ReviewsRow::respondedAt, null, null, { row, value -> row.copy(respondedAt = value) }, MariaTypes.datetime)
+  fun respondedAt(): OptField<LocalDateTime, ReviewsRow> = OptField<LocalDateTime, ReviewsRow>(_path, "responded_at", ReviewsRow::respondedAt, null, null, { row, value -> row.copy(respondedAt = value) }, MariaTypes.datetime.underlying)
 
-  fun reviewId(): IdField<ReviewsId, ReviewsRow> = IdField<ReviewsId, ReviewsRow>(_path, "review_id", ReviewsRow::reviewId, null, null, { row, value -> row.copy(reviewId = value) }, ReviewsId.mariaType)
+  fun reviewId(): IdField<ReviewsId, ReviewsRow> = IdField<ReviewsId, ReviewsRow>(_path, "review_id", ReviewsRow::reviewId, null, null, { row, value -> row.copy(reviewId = value) }, ReviewsId.mariaType.underlying)
 
-  override fun rowParser(): RowParser<ReviewsRow> = ReviewsRow._rowParser.underlying
+  override fun rowCodec(): RowCodec<ReviewsRow> = ReviewsRow.rowCodec.underlying
 
-  fun title(): OptField<String, ReviewsRow> = OptField<String, ReviewsRow>(_path, "title", ReviewsRow::title, null, null, { row, value -> row.copy(title = value) }, MariaTypes.varchar)
+  fun title(): OptField<kotlin.String, ReviewsRow> = OptField<kotlin.String, ReviewsRow>(_path, "title", ReviewsRow::title, null, null, { row, value -> row.copy(title = value) }, MariaTypes.varchar.underlying)
 
-  fun unhelpfulVotes(): Field<Uint4, ReviewsRow> = Field<Uint4, ReviewsRow>(_path, "unhelpful_votes", ReviewsRow::unhelpfulVotes, null, null, { row, value -> row.copy(unhelpfulVotes = value) }, MariaTypes.intUnsigned)
+  fun unhelpfulVotes(): Field<Uint4, ReviewsRow> = Field<Uint4, ReviewsRow>(_path, "unhelpful_votes", ReviewsRow::unhelpfulVotes, null, null, { row, value -> row.copy(unhelpfulVotes = value) }, MariaTypes.intUnsigned.underlying)
 
-  fun updatedAt(): Field<LocalDateTime, ReviewsRow> = Field<LocalDateTime, ReviewsRow>(_path, "updated_at", ReviewsRow::updatedAt, null, null, { row, value -> row.copy(updatedAt = value) }, MariaTypes.datetime)
+  fun updatedAt(): Field<LocalDateTime, ReviewsRow> = Field<LocalDateTime, ReviewsRow>(_path, "updated_at", ReviewsRow::updatedAt, null, null, { row, value -> row.copy(updatedAt = value) }, MariaTypes.datetime.underlying)
 
   override fun withPaths(_path: List<Path>): RelationStructure<ReviewsFields, ReviewsRow> = ReviewsFields(_path)
 

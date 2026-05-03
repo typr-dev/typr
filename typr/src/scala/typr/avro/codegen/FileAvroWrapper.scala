@@ -67,7 +67,7 @@ object FileAvroWrapper {
       isDefault = false
     )
 
-    val doc = wrapper.doc.getOrElse(s"Wrapper type for ${wrapper.underlyingJvmType.render}")
+    val doc = wrapper.doc.getOrElse(s"Wrapper type for ${wrapper.underlyingJvmType.code.render(lang).asString}")
     val staticMembers: List[jvm.ClassMember] =
       List(valueOfMethod) ++ wrapperStaticMembers ++ avroInstances.methods ++ avroInstances.fields ++ avroInstances.givens
 

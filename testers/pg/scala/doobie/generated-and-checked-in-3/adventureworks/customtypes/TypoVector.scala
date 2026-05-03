@@ -18,7 +18,7 @@ import typr.dsl.Bijection
 case class TypoVector(value: Array[Float])
 
 object TypoVector {
-  given bijection: Bijection[TypoVector, Array[Float]] = Bijection.apply[TypoVector, Array[Float]](_.value)(TypoVector.apply)
+  given bijection: Bijection[TypoVector, Array[Float]] = Bijection[TypoVector, Array[Float]](_.value)(TypoVector.apply)
 
   given decoder: Decoder[TypoVector] = Decoder.decodeArray[Float](using Decoder.decodeFloat, implicitly).map(TypoVector.apply)
 

@@ -5,19 +5,18 @@
  */
 package testdb.orders
 
-import dev.typr.foundations.Db2Types
-import dev.typr.foundations.RowParser
-import dev.typr.foundations.dsl.FieldsBase
-import dev.typr.foundations.dsl.Path
-import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.scala.ForeignKey
-import dev.typr.foundations.scala.RelationStructure
-import dev.typr.foundations.scala.ScalaDbTypes
-import dev.typr.foundations.scala.SqlExpr
-import dev.typr.foundations.scala.SqlExpr.Field
-import dev.typr.foundations.scala.SqlExpr.IdField
-import dev.typr.foundations.scala.SqlExpr.OptField
-import dev.typr.foundations.scala.TupleExpr5
+import dev.typr.dsl.FieldsBase
+import dev.typr.dsl.Path
+import dev.typr.dsl.SqlExpr.FieldLike
+import dev.typr.dslsc.ForeignKey
+import dev.typr.dslsc.RelationStructure
+import dev.typr.dslsc.SqlExpr
+import dev.typr.dslsc.SqlExpr.Field
+import dev.typr.dslsc.SqlExpr.IdField
+import dev.typr.dslsc.SqlExpr.OptField
+import dev.typr.dslsc.TupleExpr5
+import dev.typr.foundations.RowCodec
+import dev.typr.foundationssc.Db2Types
 import java.time.LocalDate
 import testdb.customers.CustomersFields
 import testdb.customers.CustomersId
@@ -32,7 +31,7 @@ class OrdersFields(val `_path`: java.util.List[Path]) extends TupleExpr5[OrdersI
       None,
       None,
       (row, value) => row.copy(orderId = value),
-      OrdersId.db2Type
+      OrdersId.db2Type.underlying
     )
   }
 
@@ -44,7 +43,7 @@ class OrdersFields(val `_path`: java.util.List[Path]) extends TupleExpr5[OrdersI
       None,
       None,
       (row, value) => row.copy(customerId = value),
-      CustomersId.db2Type
+      CustomersId.db2Type.underlying
     )
   }
 
@@ -56,7 +55,7 @@ class OrdersFields(val `_path`: java.util.List[Path]) extends TupleExpr5[OrdersI
       None,
       None,
       (row, value) => row.copy(orderDate = value),
-      Db2Types.date
+      Db2Types.date.underlying
     )
   }
 
@@ -68,7 +67,7 @@ class OrdersFields(val `_path`: java.util.List[Path]) extends TupleExpr5[OrdersI
       None,
       None,
       (row, value) => row.copy(totalAmount = value),
-      ScalaDbTypes.Db2Types.decimal
+      Db2Types.decimal.underlying
     )
   }
 
@@ -80,7 +79,7 @@ class OrdersFields(val `_path`: java.util.List[Path]) extends TupleExpr5[OrdersI
       None,
       None,
       (row, value) => row.copy(status = value),
-      Db2Types.varchar
+      Db2Types.varchar.underlying
     )
   }
 
@@ -88,7 +87,7 @@ class OrdersFields(val `_path`: java.util.List[Path]) extends TupleExpr5[OrdersI
 
   override def columns: java.util.List[FieldLike[?, OrdersRow]] = java.util.List.of(this.orderId.underlying, this.customerId.underlying, this.orderDate.underlying, this.totalAmount.underlying, this.status.underlying)
 
-  override def rowParser: RowParser[OrdersRow] = OrdersRow._rowParser.underlying
+  override def rowCodec: RowCodec[OrdersRow] = OrdersRow.rowCodec.underlying
 
   override def withPaths(`_path`: java.util.List[Path]): RelationStructure[OrdersFields, OrdersRow] = new OrdersFields(`_path`)
 

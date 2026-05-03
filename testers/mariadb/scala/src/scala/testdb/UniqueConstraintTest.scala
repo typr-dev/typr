@@ -9,8 +9,7 @@ class UniqueConstraintTest extends AnyFunSuite {
   val repo: MariatestUniqueRepoImpl = new MariatestUniqueRepoImpl
 
   test("insertWithUniqueEmail") {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       val row = MariatestUniqueRowUnsaved(Email("test@example.com"), "CODE001", "CategoryA")
       val inserted = repo.insert(row)
 
@@ -23,8 +22,7 @@ class UniqueConstraintTest extends AnyFunSuite {
   }
 
   test("uniqueEmailConstraint") {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       // Insert first row
       val row1 = MariatestUniqueRowUnsaved(Email("unique@example.com"), "CODE001", "CategoryA")
       val _ = repo.insert(row1)
@@ -42,8 +40,7 @@ class UniqueConstraintTest extends AnyFunSuite {
   }
 
   test("compositeUniqueConstraint") {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       // Insert first row
       val row1 = MariatestUniqueRowUnsaved(Email("email1@example.com"), "COMP001", "CategoryA")
       val _ = repo.insert(row1)
@@ -69,8 +66,7 @@ class UniqueConstraintTest extends AnyFunSuite {
   }
 
   test("upsertOnUniqueEmail") {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       // Insert initial row
       val row = MariatestUniqueRowUnsaved(Email("upsert@example.com"), "UPSERT001", "CategoryA")
       val inserted = repo.insert(row)
@@ -86,8 +82,7 @@ class UniqueConstraintTest extends AnyFunSuite {
   }
 
   test("selectByIdAfterUpdate") {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       val row = MariatestUniqueRowUnsaved(Email("select@example.com"), "SELECT001", "CategoryA")
       val inserted = repo.insert(row)
 
@@ -103,8 +98,7 @@ class UniqueConstraintTest extends AnyFunSuite {
   }
 
   test("deleteAndReuseUniqueValue") {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       // Insert
       val row = MariatestUniqueRowUnsaved(Email("reuse@example.com"), "REUSE001", "CategoryA")
       val inserted = repo.insert(row)
@@ -123,8 +117,7 @@ class UniqueConstraintTest extends AnyFunSuite {
   }
 
   test("selectAllWithUniqueRows") {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       // Insert multiple unique rows
       val _ = repo.insert(MariatestUniqueRowUnsaved(Email("all1@example.com"), "ALL001", "CatA"))
       val _ = repo.insert(MariatestUniqueRowUnsaved(Email("all2@example.com"), "ALL002", "CatB"))

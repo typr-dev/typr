@@ -6,12 +6,12 @@
 package oracledb.precisetypes
 
 import com.fasterxml.jackson.annotation.JsonValue
+import dev.typr.dsl.RowCodecs
+import dev.typr.foundations.Bijection
 import dev.typr.foundations.OracleType
 import dev.typr.foundations.OracleTypes
-import dev.typr.foundations.RowParser
-import dev.typr.foundations.RowParsers
+import dev.typr.foundations.RowCodec
 import dev.typr.foundations.data.precise.DecimalN
-import dev.typr.foundations.dsl.Bijection
 import java.lang.IllegalArgumentException
 import java.math.RoundingMode
 import java.util.Optional
@@ -35,9 +35,7 @@ case class Decimal18_4 private(@JsonValue value: java.math.BigDecimal) extends D
 object Decimal18_4 {
   given Zero: Decimal18_4 = new Decimal18_4(java.math.BigDecimal.ZERO)
 
-  given `_rowParser`: RowParser[Decimal18_4] = RowParsers.of(OracleTypes.number.bimap(Decimal18_4.apply, _.value), x => x, id => Array[Any](id))
-
-  given bijection: Bijection[Decimal18_4, java.math.BigDecimal] = Bijection.apply[Decimal18_4, java.math.BigDecimal](_.value)(Decimal18_4.apply)
+  given bijection: Bijection[Decimal18_4, java.math.BigDecimal] = Bijection.of[Decimal18_4, java.math.BigDecimal](_.value, Decimal18_4.apply)
 
   def of(value: java.math.BigDecimal): Optional[Decimal18_4] = { val scaled = value.setScale(4, RoundingMode.HALF_UP); if (scaled.precision <= 18) Optional.of(new Decimal18_4(scaled)) else Optional.empty() }
 
@@ -47,7 +45,9 @@ object Decimal18_4 {
 
   def of(value: java.lang.Double): Optional[Decimal18_4] = Decimal18_4.of(java.math.BigDecimal.valueOf(value))
 
-  given oracleType: OracleType[Decimal18_4] = OracleTypes.number.bimap(Decimal18_4.apply, _.value)
+  given oracleType: OracleType[Decimal18_4] = OracleTypes.number.to(Bijection.of(Decimal18_4.apply, _.value))
+
+  given rowCodec: RowCodec[Decimal18_4] = RowCodecs.of(OracleTypes.number.to(Bijection.of(Decimal18_4.apply, _.value)), x => x, id => Array[Any](id))
 
   def unsafeForce(value: java.math.BigDecimal): Decimal18_4 = { val scaled = value.setScale(4, RoundingMode.HALF_UP); if (scaled.precision > 18) throw new IllegalArgumentException("Value exceeds precision(18, 4)"); new Decimal18_4(scaled) }
 }

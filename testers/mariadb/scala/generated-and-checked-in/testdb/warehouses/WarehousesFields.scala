@@ -5,17 +5,17 @@
  */
 package testdb.warehouses
 
-import dev.typr.foundations.MariaTypes
-import dev.typr.foundations.RowParser
-import dev.typr.foundations.dsl.FieldsBase
-import dev.typr.foundations.dsl.Path
-import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.scala.RelationStructure
-import dev.typr.foundations.scala.SqlExpr
-import dev.typr.foundations.scala.SqlExpr.Field
-import dev.typr.foundations.scala.SqlExpr.IdField
-import dev.typr.foundations.scala.SqlExpr.OptField
-import dev.typr.foundations.scala.TupleExpr10
+import dev.typr.dsl.FieldsBase
+import dev.typr.dsl.Path
+import dev.typr.dsl.SqlExpr.FieldLike
+import dev.typr.dslsc.RelationStructure
+import dev.typr.dslsc.SqlExpr
+import dev.typr.dslsc.SqlExpr.Field
+import dev.typr.dslsc.SqlExpr.IdField
+import dev.typr.dslsc.SqlExpr.OptField
+import dev.typr.dslsc.TupleExpr10
+import dev.typr.foundations.RowCodec
+import dev.typr.foundationssc.MariaTypes
 import org.mariadb.jdbc.`type`.Point
 import org.mariadb.jdbc.`type`.Polygon
 import testdb.userdefined.Email
@@ -30,7 +30,7 @@ class WarehousesFields(val `_path`: java.util.List[Path]) extends TupleExpr10[Wa
       None,
       None,
       (row, value) => row.copy(warehouseId = value),
-      WarehousesId.mariaType
+      WarehousesId.mariaType.underlying
     )
   }
 
@@ -42,7 +42,7 @@ class WarehousesFields(val `_path`: java.util.List[Path]) extends TupleExpr10[Wa
       None,
       None,
       (row, value) => row.copy(code = value),
-      MariaTypes.char_
+      MariaTypes.char_.underlying
     )
   }
 
@@ -54,7 +54,7 @@ class WarehousesFields(val `_path`: java.util.List[Path]) extends TupleExpr10[Wa
       None,
       None,
       (row, value) => row.copy(name = value),
-      MariaTypes.varchar
+      MariaTypes.varchar.underlying
     )
   }
 
@@ -66,7 +66,7 @@ class WarehousesFields(val `_path`: java.util.List[Path]) extends TupleExpr10[Wa
       None,
       None,
       (row, value) => row.copy(address = value),
-      MariaTypes.varchar
+      MariaTypes.varchar.underlying
     )
   }
 
@@ -78,7 +78,7 @@ class WarehousesFields(val `_path`: java.util.List[Path]) extends TupleExpr10[Wa
       None,
       None,
       (row, value) => row.copy(location = value),
-      MariaTypes.point
+      MariaTypes.point.underlying
     )
   }
 
@@ -90,7 +90,7 @@ class WarehousesFields(val `_path`: java.util.List[Path]) extends TupleExpr10[Wa
       None,
       None,
       (row, value) => row.copy(serviceArea = value),
-      MariaTypes.polygon
+      MariaTypes.polygon.underlying
     )
   }
 
@@ -102,7 +102,7 @@ class WarehousesFields(val `_path`: java.util.List[Path]) extends TupleExpr10[Wa
       None,
       None,
       (row, value) => row.copy(timezone = value),
-      MariaTypes.varchar
+      MariaTypes.varchar.underlying
     )
   }
 
@@ -114,7 +114,7 @@ class WarehousesFields(val `_path`: java.util.List[Path]) extends TupleExpr10[Wa
       None,
       None,
       (row, value) => row.copy(isActive = value),
-      IsActive.mariaType
+      IsActive.mariaType.underlying
     )
   }
 
@@ -126,7 +126,7 @@ class WarehousesFields(val `_path`: java.util.List[Path]) extends TupleExpr10[Wa
       None,
       None,
       (row, value) => row.copy(contactEmail = value),
-      Email.mariaType
+      Email.mariaType.underlying
     )
   }
 
@@ -138,13 +138,13 @@ class WarehousesFields(val `_path`: java.util.List[Path]) extends TupleExpr10[Wa
       None,
       None,
       (row, value) => row.copy(contactPhone = value),
-      MariaTypes.varchar
+      MariaTypes.varchar.underlying
     )
   }
 
   override def columns: java.util.List[FieldLike[?, WarehousesRow]] = java.util.List.of(this.warehouseId.underlying, this.code.underlying, this.name.underlying, this.address.underlying, this.location.underlying, this.serviceArea.underlying, this.timezone.underlying, this.isActive.underlying, this.contactEmail.underlying, this.contactPhone.underlying)
 
-  override def rowParser: RowParser[WarehousesRow] = WarehousesRow._rowParser.underlying
+  override def rowCodec: RowCodec[WarehousesRow] = WarehousesRow.rowCodec.underlying
 
   override def withPaths(`_path`: java.util.List[Path]): RelationStructure[WarehousesFields, WarehousesRow] = new WarehousesFields(`_path`)
 

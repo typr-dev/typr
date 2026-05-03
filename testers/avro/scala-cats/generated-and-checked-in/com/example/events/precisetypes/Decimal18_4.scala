@@ -22,7 +22,7 @@ case class Decimal18_4 private(value: BigDecimal) extends DecimalN {
 object Decimal18_4 {
   def of(value: BigDecimal): Option[Decimal18_4] = { val scaled = value.setScale(4, BigDecimal.RoundingMode.HALF_UP); if (scaled.precision <= 18) Some(new Decimal18_4(scaled)) else None }
 
-  def of(value: Int): Decimal18_4 = new Decimal18_4(BigDecimal(value))
+  def of(value: Int): Decimal18_4 = new Decimal18_4(BigDecimal(value.toLong))
 
   def of(value: Long): Option[Decimal18_4] = Decimal18_4.of(BigDecimal(value))
 

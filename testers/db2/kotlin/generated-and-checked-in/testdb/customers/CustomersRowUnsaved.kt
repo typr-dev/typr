@@ -13,9 +13,9 @@ import testdb.customtypes.Defaulted.UseDefault
 /** This class corresponds to a row in table `CUSTOMERS` which has not been persisted yet */
 data class CustomersRowUnsaved(
   /** Full name of the customer */
-  @field:JsonProperty("NAME") val name: String,
+  @field:JsonProperty("NAME") val name: kotlin.String,
   /** Email address used for contact and login */
-  @field:JsonProperty("EMAIL") val email: String,
+  @field:JsonProperty("EMAIL") val email: kotlin.String,
   /** Identity BY DEFAULT
     * Unique identifier for the customer
     */

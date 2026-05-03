@@ -5,17 +5,17 @@
  */
 package oracledb.products
 
-import dev.typr.foundations.OracleTypes
-import dev.typr.foundations.RowParser
-import dev.typr.foundations.dsl.FieldsBase
-import dev.typr.foundations.dsl.Path
-import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.scala.RelationStructure
-import dev.typr.foundations.scala.SqlExpr
-import dev.typr.foundations.scala.SqlExpr.Field
-import dev.typr.foundations.scala.SqlExpr.IdField
-import dev.typr.foundations.scala.SqlExpr.OptField
-import dev.typr.foundations.scala.TupleExpr5
+import dev.typr.dsl.FieldsBase
+import dev.typr.dsl.Path
+import dev.typr.dsl.SqlExpr.FieldLike
+import dev.typr.dslsc.RelationStructure
+import dev.typr.dslsc.SqlExpr
+import dev.typr.dslsc.SqlExpr.Field
+import dev.typr.dslsc.SqlExpr.IdField
+import dev.typr.dslsc.SqlExpr.OptField
+import dev.typr.dslsc.TupleExpr5
+import dev.typr.foundations.RowCodec
+import dev.typr.foundationssc.OracleTypes
 import oracledb.MoneyT
 import oracledb.TagVarrayT
 
@@ -28,7 +28,7 @@ class ProductsFields(val `_path`: java.util.List[Path]) extends TupleExpr5[Produ
       None,
       None,
       (row, value) => row.copy(productId = value),
-      ProductsId.oracleType
+      ProductsId.oracleType.underlying
     )
   }
 
@@ -40,7 +40,7 @@ class ProductsFields(val `_path`: java.util.List[Path]) extends TupleExpr5[Produ
       None,
       None,
       (row, value) => row.copy(sku = value),
-      OracleTypes.varchar2
+      OracleTypes.varchar2.underlying
     )
   }
 
@@ -52,7 +52,7 @@ class ProductsFields(val `_path`: java.util.List[Path]) extends TupleExpr5[Produ
       None,
       None,
       (row, value) => row.copy(name = value),
-      OracleTypes.varchar2
+      OracleTypes.varchar2.underlying
     )
   }
 
@@ -64,7 +64,7 @@ class ProductsFields(val `_path`: java.util.List[Path]) extends TupleExpr5[Produ
       None,
       None,
       (row, value) => row.copy(price = value),
-      MoneyT.oracleType
+      MoneyT.oracleType.underlying
     )
   }
 
@@ -76,13 +76,13 @@ class ProductsFields(val `_path`: java.util.List[Path]) extends TupleExpr5[Produ
       None,
       None,
       (row, value) => row.copy(tags = value),
-      TagVarrayT.oracleType
+      TagVarrayT.oracleType.underlying
     )
   }
 
   override def columns: java.util.List[FieldLike[?, ProductsRow]] = java.util.List.of(this.productId.underlying, this.sku.underlying, this.name.underlying, this.price.underlying, this.tags.underlying)
 
-  override def rowParser: RowParser[ProductsRow] = ProductsRow._rowParser.underlying
+  override def rowCodec: RowCodec[ProductsRow] = ProductsRow.rowCodec.underlying
 
   override def withPaths(`_path`: java.util.List[Path]): RelationStructure[ProductsFields, ProductsRow] = new ProductsFields(`_path`)
 

@@ -5,27 +5,27 @@
  */
 package oracledb.products
 
-import dev.typr.foundations.OracleTypes
-import dev.typr.foundations.RowParser
-import dev.typr.foundations.dsl.FieldsBase
-import dev.typr.foundations.dsl.Path
-import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.kotlin.RelationStructure
-import dev.typr.foundations.kotlin.SqlExpr
-import dev.typr.foundations.kotlin.SqlExpr.Field
-import dev.typr.foundations.kotlin.SqlExpr.IdField
-import dev.typr.foundations.kotlin.SqlExpr.OptField
-import dev.typr.foundations.kotlin.TupleExpr5
+import dev.typr.dsl.FieldsBase
+import dev.typr.dsl.Path
+import dev.typr.dsl.SqlExpr.FieldLike
+import dev.typr.dslkt.RelationStructure
+import dev.typr.dslkt.SqlExpr
+import dev.typr.dslkt.SqlExpr.Field
+import dev.typr.dslkt.SqlExpr.IdField
+import dev.typr.dslkt.SqlExpr.OptField
+import dev.typr.dslkt.TupleExpr5
+import dev.typr.foundations.RowCodec
+import dev.typr.foundationskt.OracleTypes
 import kotlin.collections.List
 import oracledb.MoneyT
 import oracledb.TagVarrayT
 
-data class ProductsFields(val _path: List<Path>) : TupleExpr5<ProductsId, String, String, MoneyT, TagVarrayT>, RelationStructure<ProductsFields, ProductsRow>, FieldsBase<ProductsRow> {
+data class ProductsFields(val _path: List<Path>) : TupleExpr5<ProductsId, kotlin.String, kotlin.String, MoneyT, TagVarrayT>, RelationStructure<ProductsFields, ProductsRow>, FieldsBase<ProductsRow> {
   override fun _1(): SqlExpr<ProductsId> = productId()
 
-  override fun _2(): SqlExpr<String> = sku()
+  override fun _2(): SqlExpr<kotlin.String> = sku()
 
-  override fun _3(): SqlExpr<String> = name()
+  override fun _3(): SqlExpr<kotlin.String> = name()
 
   override fun _4(): SqlExpr<MoneyT> = price()
 
@@ -35,17 +35,17 @@ data class ProductsFields(val _path: List<Path>) : TupleExpr5<ProductsId, String
 
   override fun columns(): List<FieldLike<*, ProductsRow>> = listOf(this.productId().underlying, this.sku().underlying, this.name().underlying, this.price().underlying, this.tags().underlying)
 
-  fun name(): Field<String, ProductsRow> = Field<String, ProductsRow>(_path, "NAME", ProductsRow::name, null, null, { row, value -> row.copy(name = value) }, OracleTypes.varchar2)
+  fun name(): Field<kotlin.String, ProductsRow> = Field<kotlin.String, ProductsRow>(_path, "NAME", ProductsRow::name, null, null, { row, value -> row.copy(name = value) }, OracleTypes.varchar2.underlying)
 
-  fun price(): Field<MoneyT, ProductsRow> = Field<MoneyT, ProductsRow>(_path, "PRICE", ProductsRow::price, null, null, { row, value -> row.copy(price = value) }, MoneyT.oracleType)
+  fun price(): Field<MoneyT, ProductsRow> = Field<MoneyT, ProductsRow>(_path, "PRICE", ProductsRow::price, null, null, { row, value -> row.copy(price = value) }, MoneyT.oracleType.underlying)
 
-  fun productId(): IdField<ProductsId, ProductsRow> = IdField<ProductsId, ProductsRow>(_path, "PRODUCT_ID", ProductsRow::productId, null, null, { row, value -> row.copy(productId = value) }, ProductsId.oracleType)
+  fun productId(): IdField<ProductsId, ProductsRow> = IdField<ProductsId, ProductsRow>(_path, "PRODUCT_ID", ProductsRow::productId, null, null, { row, value -> row.copy(productId = value) }, ProductsId.oracleType.underlying)
 
-  override fun rowParser(): RowParser<ProductsRow> = ProductsRow._rowParser.underlying
+  override fun rowCodec(): RowCodec<ProductsRow> = ProductsRow.rowCodec.underlying
 
-  fun sku(): Field<String, ProductsRow> = Field<String, ProductsRow>(_path, "SKU", ProductsRow::sku, null, null, { row, value -> row.copy(sku = value) }, OracleTypes.varchar2)
+  fun sku(): Field<kotlin.String, ProductsRow> = Field<kotlin.String, ProductsRow>(_path, "SKU", ProductsRow::sku, null, null, { row, value -> row.copy(sku = value) }, OracleTypes.varchar2.underlying)
 
-  fun tags(): OptField<TagVarrayT, ProductsRow> = OptField<TagVarrayT, ProductsRow>(_path, "TAGS", ProductsRow::tags, null, null, { row, value -> row.copy(tags = value) }, TagVarrayT.oracleType)
+  fun tags(): OptField<TagVarrayT, ProductsRow> = OptField<TagVarrayT, ProductsRow>(_path, "TAGS", ProductsRow::tags, null, null, { row, value -> row.copy(tags = value) }, TagVarrayT.oracleType.underlying)
 
   override fun withPaths(_path: List<Path>): RelationStructure<ProductsFields, ProductsRow> = ProductsFields(_path)
 

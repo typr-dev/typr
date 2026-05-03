@@ -8,13 +8,11 @@ package adventureworks.sales.salesperson
 import adventureworks.customtypes.Defaulted
 import adventureworks.person.businessentity.BusinessentityId
 import adventureworks.sales.salesterritory.SalesterritoryId
+import dev.typr.dslsc.RowCodecs
 import dev.typr.foundations.PgText
-import dev.typr.foundations.PgTypes
 import dev.typr.foundations.Tuple.Tuple9
-import dev.typr.foundations.scala.DbTypeOps
-import dev.typr.foundations.scala.RowParser
-import dev.typr.foundations.scala.RowParsers
-import dev.typr.foundations.scala.ScalaDbTypes
+import dev.typr.foundationssc.PgTypes
+import dev.typr.foundationssc.RowCodec
 import java.time.LocalDateTime
 import java.util.UUID
 
@@ -103,7 +101,7 @@ case class SalespersonRow(
 }
 
 object SalespersonRow {
-  val `_rowParser`: RowParser[SalespersonRow] = RowParsers.of(BusinessentityId.pgType, SalesterritoryId.pgType.nullable, ScalaDbTypes.PgTypes.numeric.nullable, ScalaDbTypes.PgTypes.numeric, ScalaDbTypes.PgTypes.numeric, ScalaDbTypes.PgTypes.numeric, ScalaDbTypes.PgTypes.numeric, PgTypes.uuid, PgTypes.timestamp)(SalespersonRow.apply)(row => Array[Any](row.businessentityid, row.territoryid, row.salesquota, row.bonus, row.commissionpct, row.salesytd, row.saleslastyear, row.rowguid, row.modifieddate))
+  given pgText: PgText[SalespersonRow] = PgText.from(rowCodec.underlying)
 
-  given pgText: PgText[SalespersonRow] = PgText.from(`_rowParser`.underlying)
+  val rowCodec: RowCodec[SalespersonRow] = RowCodecs.of(BusinessentityId.pgType, SalesterritoryId.pgType.opt, PgTypes.numeric.opt, PgTypes.numeric, PgTypes.numeric, PgTypes.numeric, PgTypes.numeric, PgTypes.uuid, PgTypes.timestamp)(SalespersonRow.apply)(row => Array[Any](row.businessentityid, row.territoryid, row.salesquota, row.bonus, row.commissionpct, row.salesytd, row.saleslastyear, row.rowguid, row.modifieddate))
 }

@@ -9,9 +9,8 @@ import adventureworks.customtypes.Defaulted
 import adventureworks.customtypes.Defaulted.UseDefault
 import com.fasterxml.jackson.annotation.JsonProperty
 import dev.typr.foundations.PgText
-import dev.typr.foundations.PgTypes
 import dev.typr.foundations.data.Unknown
-import dev.typr.foundations.scala.DbTypeOps
+import dev.typr.foundationssc.PgTypes
 import java.time.Instant
 
 /** This class corresponds to a row in table `public.users` which has not been persisted yet */
@@ -39,5 +38,5 @@ case class UsersRowUnsaved(
 }
 
 object UsersRowUnsaved {
-  given pgText: PgText[UsersRowUnsaved] = PgText.instance((row, sb) => { UsersId.pgType.text.unsafeEncode(row.userId, sb); sb.append(PgText.DELIMETER); PgTypes.text.text.unsafeEncode(row.name, sb); sb.append(PgText.DELIMETER); PgTypes.text.nullable.text.unsafeEncode(row.lastName, sb); sb.append(PgText.DELIMETER); PgTypes.unknown.text.unsafeEncode(row.email, sb); sb.append(PgText.DELIMETER); PgTypes.text.text.unsafeEncode(row.password, sb); sb.append(PgText.DELIMETER); PgTypes.timestamptz.nullable.text.unsafeEncode(row.verifiedOn, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using PgTypes.timestamptz.text).unsafeEncode(row.createdAt, sb) })
+  given pgText: PgText[UsersRowUnsaved] = PgText.instance((row, sb) => { UsersId.pgType.pgText().unsafeEncode(row.userId, sb); sb.append(PgText.DELIMETER); PgTypes.text.pgText().unsafeEncode(row.name, sb); sb.append(PgText.DELIMETER); PgTypes.text.opt.pgText().unsafeEncode(row.lastName, sb); sb.append(PgText.DELIMETER); PgTypes.unknown.pgText().unsafeEncode(row.email, sb); sb.append(PgText.DELIMETER); PgTypes.text.pgText().unsafeEncode(row.password, sb); sb.append(PgText.DELIMETER); PgTypes.timestamptz.opt.pgText().unsafeEncode(row.verifiedOn, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using PgTypes.timestamptz.pgText()).unsafeEncode(row.createdAt, sb) })
 }

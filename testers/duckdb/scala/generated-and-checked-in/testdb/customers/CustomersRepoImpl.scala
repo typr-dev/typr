@@ -5,56 +5,56 @@
  */
 package testdb.customers
 
-import dev.typr.foundations.DuckDbTypes
-import dev.typr.foundations.scala.DbTypeOps
-import dev.typr.foundations.scala.DeleteBuilder
-import dev.typr.foundations.scala.Dialect
-import dev.typr.foundations.scala.Fragment
-import dev.typr.foundations.scala.SelectBuilder
-import dev.typr.foundations.scala.UpdateBuilder
-import java.sql.Connection
+import dev.typr.dslsc.DeleteBuilder
+import dev.typr.dslsc.Dialect
+import dev.typr.dslsc.SelectBuilder
+import dev.typr.dslsc.UpdateBuilder
+import dev.typr.foundationssc.Connection
+import dev.typr.foundationssc.ConnectionRead
+import dev.typr.foundationssc.DuckDbTypes
+import dev.typr.foundationssc.Fragment
 import scala.collection.mutable.ListBuffer
 import testdb.Priority
 import testdb.userdefined.Email
-import dev.typr.foundations.scala.Fragment.sql
+import dev.typr.foundationssc.Fragment.sql
 
 class CustomersRepoImpl extends CustomersRepo {
   override def delete: DeleteBuilder[CustomersFields, CustomersRow] = DeleteBuilder.of(""""customers"""", CustomersFields.structure, Dialect.DUCKDB)
 
-  override def deleteById(customerId: CustomersId)(using c: Connection): Boolean = sql"""delete from "customers" where "customer_id" = ${Fragment.encode(CustomersId.duckDbType, customerId)}""".update().runUnchecked(c) > 0
+  override def deleteById(customerId: CustomersId)(using c: Connection): Boolean = sql"""delete from "customers" where "customer_id" = ${Fragment.encode(CustomersId.duckDbType, customerId)}""".update().run(using c) > 0
 
-  override def deleteByIds(customerIds: Array[CustomersId])(using c: Connection): Int = {
+  override def deleteByIds(customerIds: List[CustomersId])(using c: Connection): Int = {
     sql"""delete
     from "customers"
     where "customer_id" = ANY(${Fragment.encode(CustomersId.duckDbTypeArray, customerIds)})"""
       .update()
-      .runUnchecked(c)
+      .run(using c)
   }
 
   override def insert(unsaved: CustomersRow)(using c: Connection): CustomersRow = {
   sql"""insert into "customers"("customer_id", "name", "email", "created_at", "priority")
-    values (${Fragment.encode(CustomersId.duckDbType, unsaved.customerId)}, ${Fragment.encode(DuckDbTypes.varchar, unsaved.name)}, ${Fragment.encode(Email.duckDbType.nullable, unsaved.email)}, ${Fragment.encode(DuckDbTypes.timestamp, unsaved.createdAt)}, ${Fragment.encode(Priority.duckDbType.nullable, unsaved.priority)})
+    values (${Fragment.encode(CustomersId.duckDbType, unsaved.customerId)}, ${Fragment.encode(DuckDbTypes.varchar, unsaved.name)}, ${Fragment.encode(Email.duckDbType.opt, unsaved.email)}, ${Fragment.encode(DuckDbTypes.timestamp, unsaved.createdAt)}, ${Fragment.encode(Priority.duckDbType.opt, unsaved.priority)})
     RETURNING "customer_id", "name", "email", "created_at", "priority"
     """
-    .updateReturning(CustomersRow.`_rowParser`.exactlyOne()).runUnchecked(c)
+    .updateReturning(CustomersRow.rowCodec.exactlyOne()).run(using c)
   }
 
   override def insert(unsaved: CustomersRowUnsaved)(using c: Connection): CustomersRow = {
     val columns: ListBuffer[Fragment] = ListBuffer()
     val values: ListBuffer[Fragment] = ListBuffer()
-    columns.addOne(Fragment.lit(""""customer_id"""")): @scala.annotation.nowarn
+    columns.addOne(Fragment.of(""""customer_id"""")): @scala.annotation.nowarn
     values.addOne(sql"${Fragment.encode(CustomersId.duckDbType, unsaved.customerId)}"): @scala.annotation.nowarn
-    columns.addOne(Fragment.lit(""""name"""")): @scala.annotation.nowarn
+    columns.addOne(Fragment.of(""""name"""")): @scala.annotation.nowarn
     values.addOne(sql"${Fragment.encode(DuckDbTypes.varchar, unsaved.name)}"): @scala.annotation.nowarn
-    columns.addOne(Fragment.lit(""""email"""")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(Email.duckDbType.nullable, unsaved.email)}"): @scala.annotation.nowarn
+    columns.addOne(Fragment.of(""""email"""")): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(Email.duckDbType.opt, unsaved.email)}"): @scala.annotation.nowarn
     unsaved.createdAt.visit(
       {  },
-      value => { columns.addOne(Fragment.lit(""""created_at"""")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(DuckDbTypes.timestamp, value)}"): @scala.annotation.nowarn }
+      value => { columns.addOne(Fragment.of(""""created_at"""")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(DuckDbTypes.timestamp, value)}"): @scala.annotation.nowarn }
     );
     unsaved.priority.visit(
       {  },
-      value => { columns.addOne(Fragment.lit(""""priority"""")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(Priority.duckDbType.nullable, value)}"): @scala.annotation.nowarn }
+      value => { columns.addOne(Fragment.of(""""priority"""")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(Priority.duckDbType.opt, value)}"): @scala.annotation.nowarn }
     );
     val q: Fragment = {
       sql"""insert into "customers"(${Fragment.comma(columns)})
@@ -62,50 +62,50 @@ class CustomersRepoImpl extends CustomersRepo {
       RETURNING "customer_id", "name", "email", "created_at", "priority"
       """
     }
-    return q.updateReturning(CustomersRow.`_rowParser`.exactlyOne()).runUnchecked(c)
+    return q.updateReturning(CustomersRow.rowCodec.exactlyOne()).run(using c)
   }
 
-  override def select: SelectBuilder[CustomersFields, CustomersRow] = SelectBuilder.of(""""customers"""", CustomersFields.structure, CustomersRow.`_rowParser`, Dialect.DUCKDB)
+  override def select: SelectBuilder[CustomersFields, CustomersRow] = SelectBuilder.of(""""customers"""", CustomersFields.structure, CustomersRow.rowCodec, Dialect.DUCKDB)
 
-  override def selectAll(using c: Connection): List[CustomersRow] = {
+  override def selectAll(using c: ConnectionRead): List[CustomersRow] = {
     sql"""select "customer_id", "name", "email", "created_at", "priority"
     from "customers"
-    """.query(CustomersRow.`_rowParser`.all()).runUnchecked(c)
+    """.query(CustomersRow.rowCodec.all()).run(using c)
   }
 
-  override def selectById(customerId: CustomersId)(using c: Connection): Option[CustomersRow] = {
+  override def selectById(customerId: CustomersId)(using c: ConnectionRead): Option[CustomersRow] = {
     sql"""select "customer_id", "name", "email", "created_at", "priority"
     from "customers"
-    where "customer_id" = ${Fragment.encode(CustomersId.duckDbType, customerId)}""".query(CustomersRow.`_rowParser`.first()).runUnchecked(c)
+    where "customer_id" = ${Fragment.encode(CustomersId.duckDbType, customerId)}""".query(CustomersRow.rowCodec.first()).run(using c)
   }
 
-  override def selectByIds(customerIds: Array[CustomersId])(using c: Connection): List[CustomersRow] = {
+  override def selectByIds(customerIds: List[CustomersId])(using c: ConnectionRead): List[CustomersRow] = {
     sql"""select "customer_id", "name", "email", "created_at", "priority"
     from "customers"
-    where "customer_id" = ANY(${Fragment.encode(CustomersId.duckDbTypeArray, customerIds)})""".query(CustomersRow.`_rowParser`.all()).runUnchecked(c)
+    where "customer_id" = ANY(${Fragment.encode(CustomersId.duckDbTypeArray, customerIds)})""".query(CustomersRow.rowCodec.all()).run(using c)
   }
 
-  override def selectByIdsTracked(customerIds: Array[CustomersId])(using c: Connection): Map[CustomersId, CustomersRow] = {
+  override def selectByIdsTracked(customerIds: List[CustomersId])(using c: ConnectionRead): Map[CustomersId, CustomersRow] = {
     val ret: scala.collection.mutable.Map[CustomersId, CustomersRow] = scala.collection.mutable.Map.empty[CustomersId, CustomersRow]
     selectByIds(customerIds)(using c).foreach(row => ret.put(row.customerId, row): @scala.annotation.nowarn)
     return ret.toMap
   }
 
-  override def update: UpdateBuilder[CustomersFields, CustomersRow] = UpdateBuilder.of(""""customers"""", CustomersFields.structure, CustomersRow.`_rowParser`, Dialect.DUCKDB)
+  override def update: UpdateBuilder[CustomersFields, CustomersRow] = UpdateBuilder.of(""""customers"""", CustomersFields.structure, CustomersRow.rowCodec, Dialect.DUCKDB)
 
   override def update(row: CustomersRow)(using c: Connection): Boolean = {
     val customerId: CustomersId = row.customerId
     return sql"""update "customers"
     set "name" = ${Fragment.encode(DuckDbTypes.varchar, row.name)},
-    "email" = ${Fragment.encode(Email.duckDbType.nullable, row.email)},
+    "email" = ${Fragment.encode(Email.duckDbType.opt, row.email)},
     "created_at" = ${Fragment.encode(DuckDbTypes.timestamp, row.createdAt)},
-    "priority" = ${Fragment.encode(Priority.duckDbType.nullable, row.priority)}
-    where "customer_id" = ${Fragment.encode(CustomersId.duckDbType, customerId)}""".update().runUnchecked(c) > 0
+    "priority" = ${Fragment.encode(Priority.duckDbType.opt, row.priority)}
+    where "customer_id" = ${Fragment.encode(CustomersId.duckDbType, customerId)}""".update().run(using c) > 0
   }
 
   override def upsert(unsaved: CustomersRow)(using c: Connection): CustomersRow = {
   sql"""INSERT INTO "customers"("customer_id", "name", "email", "created_at", "priority")
-    VALUES (${Fragment.encode(CustomersId.duckDbType, unsaved.customerId)}, ${Fragment.encode(DuckDbTypes.varchar, unsaved.name)}, ${Fragment.encode(Email.duckDbType.nullable, unsaved.email)}, ${Fragment.encode(DuckDbTypes.timestamp, unsaved.createdAt)}, ${Fragment.encode(Priority.duckDbType.nullable, unsaved.priority)})
+    VALUES (${Fragment.encode(CustomersId.duckDbType, unsaved.customerId)}, ${Fragment.encode(DuckDbTypes.varchar, unsaved.name)}, ${Fragment.encode(Email.duckDbType.opt, unsaved.email)}, ${Fragment.encode(DuckDbTypes.timestamp, unsaved.createdAt)}, ${Fragment.encode(Priority.duckDbType.opt, unsaved.priority)})
     ON CONFLICT ("customer_id")
     DO UPDATE SET
       "name" = EXCLUDED."name",
@@ -113,8 +113,8 @@ class CustomersRepoImpl extends CustomersRepo {
     "created_at" = EXCLUDED."created_at",
     "priority" = EXCLUDED."priority"
     RETURNING "customer_id", "name", "email", "created_at", "priority""""
-    .updateReturning(CustomersRow.`_rowParser`.exactlyOne())
-    .runUnchecked(c)
+    .updateReturning(CustomersRow.rowCodec.exactlyOne())
+    .run(using c)
   }
 
   override def upsertBatch(unsaved: Iterator[CustomersRow])(using c: Connection): List[CustomersRow] = {
@@ -127,7 +127,7 @@ class CustomersRepoImpl extends CustomersRepo {
     "created_at" = EXCLUDED."created_at",
     "priority" = EXCLUDED."priority"
     RETURNING "customer_id", "name", "email", "created_at", "priority""""
-      .updateReturningEach(CustomersRow.`_rowParser`, unsaved)
-    .runUnchecked(c)
+      .updateReturningEach(CustomersRow.rowCodec, unsaved)
+    .run(using c)
   }
 }

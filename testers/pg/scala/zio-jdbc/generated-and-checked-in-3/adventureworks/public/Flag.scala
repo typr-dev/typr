@@ -27,7 +27,7 @@ object Flag {
 
   given arraySetter: Setter[Array[Flag]] = adventureworks.BooleanArraySetter.contramap(_.map(_.value))
 
-  given bijection: Bijection[Flag, Boolean] = Bijection.apply[Flag, Boolean](_.value)(Flag.apply)
+  given bijection: Bijection[Flag, Boolean] = Bijection[Flag, Boolean](_.value)(Flag.apply)
 
   given jdbcDecoder: JdbcDecoder[Flag] = JdbcDecoder.booleanDecoder.map(Flag.apply)
 

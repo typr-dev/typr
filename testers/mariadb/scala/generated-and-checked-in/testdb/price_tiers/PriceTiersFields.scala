@@ -5,18 +5,17 @@
  */
 package testdb.price_tiers
 
-import dev.typr.foundations.MariaTypes
-import dev.typr.foundations.RowParser
+import dev.typr.dsl.FieldsBase
+import dev.typr.dsl.Path
+import dev.typr.dsl.SqlExpr.FieldLike
+import dev.typr.dslsc.RelationStructure
+import dev.typr.dslsc.SqlExpr
+import dev.typr.dslsc.SqlExpr.Field
+import dev.typr.dslsc.SqlExpr.IdField
+import dev.typr.dslsc.TupleExpr5
+import dev.typr.foundations.RowCodec
 import dev.typr.foundations.data.Uint4
-import dev.typr.foundations.dsl.FieldsBase
-import dev.typr.foundations.dsl.Path
-import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.scala.RelationStructure
-import dev.typr.foundations.scala.ScalaDbTypes
-import dev.typr.foundations.scala.SqlExpr
-import dev.typr.foundations.scala.SqlExpr.Field
-import dev.typr.foundations.scala.SqlExpr.IdField
-import dev.typr.foundations.scala.TupleExpr5
+import dev.typr.foundationssc.MariaTypes
 
 class PriceTiersFields(val `_path`: java.util.List[Path]) extends TupleExpr5[PriceTiersId, String, Uint4, String, BigDecimal] with RelationStructure[PriceTiersFields, PriceTiersRow]  with FieldsBase[PriceTiersRow] {
   def tierId: IdField[PriceTiersId, PriceTiersRow] = {
@@ -27,7 +26,7 @@ class PriceTiersFields(val `_path`: java.util.List[Path]) extends TupleExpr5[Pri
       None,
       None,
       (row, value) => row.copy(tierId = value),
-      PriceTiersId.mariaType
+      PriceTiersId.mariaType.underlying
     )
   }
 
@@ -39,7 +38,7 @@ class PriceTiersFields(val `_path`: java.util.List[Path]) extends TupleExpr5[Pri
       None,
       None,
       (row, value) => row.copy(name = value),
-      MariaTypes.varchar
+      MariaTypes.varchar.underlying
     )
   }
 
@@ -51,7 +50,7 @@ class PriceTiersFields(val `_path`: java.util.List[Path]) extends TupleExpr5[Pri
       None,
       None,
       (row, value) => row.copy(minQuantity = value),
-      MariaTypes.intUnsigned
+      MariaTypes.intUnsigned.underlying
     )
   }
 
@@ -63,7 +62,7 @@ class PriceTiersFields(val `_path`: java.util.List[Path]) extends TupleExpr5[Pri
       None,
       None,
       (row, value) => row.copy(discountType = value),
-      MariaTypes.text
+      MariaTypes.text.underlying
     )
   }
 
@@ -75,13 +74,13 @@ class PriceTiersFields(val `_path`: java.util.List[Path]) extends TupleExpr5[Pri
       None,
       None,
       (row, value) => row.copy(discountValue = value),
-      ScalaDbTypes.MariaTypes.numeric
+      MariaTypes.numeric.underlying
     )
   }
 
   override def columns: java.util.List[FieldLike[?, PriceTiersRow]] = java.util.List.of(this.tierId.underlying, this.name.underlying, this.minQuantity.underlying, this.discountType.underlying, this.discountValue.underlying)
 
-  override def rowParser: RowParser[PriceTiersRow] = PriceTiersRow._rowParser.underlying
+  override def rowCodec: RowCodec[PriceTiersRow] = PriceTiersRow.rowCodec.underlying
 
   override def withPaths(`_path`: java.util.List[Path]): RelationStructure[PriceTiersFields, PriceTiersRow] = new PriceTiersFields(`_path`)
 

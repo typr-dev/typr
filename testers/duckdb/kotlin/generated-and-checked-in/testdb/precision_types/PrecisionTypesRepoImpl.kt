@@ -5,13 +5,14 @@
  */
 package testdb.precision_types
 
-import dev.typr.foundations.DuckDbTypes
-import dev.typr.foundations.kotlin.DeleteBuilder
-import dev.typr.foundations.kotlin.Dialect
-import dev.typr.foundations.kotlin.Fragment
-import dev.typr.foundations.kotlin.SelectBuilder
-import dev.typr.foundations.kotlin.UpdateBuilder
-import java.sql.Connection
+import dev.typr.dslkt.DeleteBuilder
+import dev.typr.dslkt.Dialect
+import dev.typr.dslkt.SelectBuilder
+import dev.typr.dslkt.UpdateBuilder
+import dev.typr.foundationskt.Connection
+import dev.typr.foundationskt.ConnectionRead
+import dev.typr.foundationskt.DuckDbTypes
+import dev.typr.foundationskt.Fragment
 import kotlin.collections.Iterator
 import kotlin.collections.List
 import kotlin.collections.Map
@@ -29,65 +30,65 @@ class PrecisionTypesRepoImpl() : PrecisionTypesRepo {
   override fun deleteById(
     id: PrecisionTypesId,
     c: Connection
-  ): Boolean = Fragment.interpolate(Fragment.lit("delete from \"precision_types\" where \"id\" = "), Fragment.encode(PrecisionTypesId.duckDbType, id), Fragment.lit("")).update().runUnchecked(c) > 0
+  ): kotlin.Boolean = Fragment.concat(Fragment.of("delete from \"precision_types\" where \"id\" = "), Fragment.encode(PrecisionTypesId.duckDbType, id), Fragment.of("")).update().run(c) > 0
 
   override fun deleteByIds(
-    ids: Array<PrecisionTypesId>,
+    ids: List<PrecisionTypesId>,
     c: Connection
-  ): Int = Fragment.interpolate(Fragment.lit("delete\nfrom \"precision_types\"\nwhere \"id\" = ANY("), Fragment.encode(PrecisionTypesId.duckDbTypeArray, ids), Fragment.lit(")"))
+  ): Int = Fragment.concat(Fragment.of("delete\nfrom \"precision_types\"\nwhere \"id\" = ANY("), Fragment.encode(PrecisionTypesId.duckDbTypeArray, ids), Fragment.of(")"))
     .update()
-    .runUnchecked(c)
+    .run(c)
 
   override fun insert(
     unsaved: PrecisionTypesRow,
     c: Connection
-  ): PrecisionTypesRow = Fragment.interpolate(Fragment.lit("insert into \"precision_types\"(\"id\", \"string10\", \"string20\", \"string50\", \"string100\", \"string255\", \"decimal5_2\", \"decimal10_2\", \"decimal18_4\", \"decimal5_0\", \"decimal10_0\", \"decimal18_0\")\nvalues ("), Fragment.encode(PrecisionTypesId.duckDbType, unsaved.id), Fragment.lit(", "), Fragment.encode(DuckDbTypes.varchar, unsaved.string10), Fragment.lit(", "), Fragment.encode(DuckDbTypes.varchar, unsaved.string20), Fragment.lit(", "), Fragment.encode(DuckDbTypes.varchar, unsaved.string50), Fragment.lit(", "), Fragment.encode(DuckDbTypes.varchar, unsaved.string100), Fragment.lit(", "), Fragment.encode(DuckDbTypes.varchar, unsaved.string255), Fragment.lit(", "), Fragment.encode(Decimal5_2.duckDbType, unsaved.decimal52), Fragment.lit(", "), Fragment.encode(Decimal10_2.duckDbType, unsaved.decimal102), Fragment.lit(", "), Fragment.encode(Decimal18_4.duckDbType, unsaved.decimal184), Fragment.lit(", "), Fragment.encode(Int5.duckDbType, unsaved.decimal50), Fragment.lit(", "), Fragment.encode(Int10.duckDbType, unsaved.decimal100), Fragment.lit(", "), Fragment.encode(Int18.duckDbType, unsaved.decimal180), Fragment.lit(")\nRETURNING \"id\", \"string10\", \"string20\", \"string50\", \"string100\", \"string255\", \"decimal5_2\", \"decimal10_2\", \"decimal18_4\", \"decimal5_0\", \"decimal10_0\", \"decimal18_0\"\n"))
-    .updateReturning(PrecisionTypesRow._rowParser.exactlyOne()).runUnchecked(c)
+  ): PrecisionTypesRow = Fragment.concat(Fragment.of("insert into \"precision_types\"(\"id\", \"string10\", \"string20\", \"string50\", \"string100\", \"string255\", \"decimal5_2\", \"decimal10_2\", \"decimal18_4\", \"decimal5_0\", \"decimal10_0\", \"decimal18_0\")\nvalues ("), Fragment.encode(PrecisionTypesId.duckDbType, unsaved.id), Fragment.of(", "), Fragment.encode(DuckDbTypes.varchar, unsaved.string10), Fragment.of(", "), Fragment.encode(DuckDbTypes.varchar, unsaved.string20), Fragment.of(", "), Fragment.encode(DuckDbTypes.varchar, unsaved.string50), Fragment.of(", "), Fragment.encode(DuckDbTypes.varchar, unsaved.string100), Fragment.of(", "), Fragment.encode(DuckDbTypes.varchar, unsaved.string255), Fragment.of(", "), Fragment.encode(Decimal5_2.duckDbType, unsaved.decimal52), Fragment.of(", "), Fragment.encode(Decimal10_2.duckDbType, unsaved.decimal102), Fragment.of(", "), Fragment.encode(Decimal18_4.duckDbType, unsaved.decimal184), Fragment.of(", "), Fragment.encode(Int5.duckDbType, unsaved.decimal50), Fragment.of(", "), Fragment.encode(Int10.duckDbType, unsaved.decimal100), Fragment.of(", "), Fragment.encode(Int18.duckDbType, unsaved.decimal180), Fragment.of(")\nRETURNING \"id\", \"string10\", \"string20\", \"string50\", \"string100\", \"string255\", \"decimal5_2\", \"decimal10_2\", \"decimal18_4\", \"decimal5_0\", \"decimal10_0\", \"decimal18_0\"\n"))
+    .updateReturning(PrecisionTypesRow.rowCodec.exactlyOne()).run(c)
 
-  override fun select(): SelectBuilder<PrecisionTypesFields, PrecisionTypesRow> = SelectBuilder.of("\"precision_types\"", PrecisionTypesFields.structure, PrecisionTypesRow._rowParser, Dialect.DUCKDB)
+  override fun select(): SelectBuilder<PrecisionTypesFields, PrecisionTypesRow> = SelectBuilder.of("\"precision_types\"", PrecisionTypesFields.structure, PrecisionTypesRow.rowCodec, Dialect.DUCKDB)
 
-  override fun selectAll(c: Connection): List<PrecisionTypesRow> = Fragment.interpolate(Fragment.lit("select \"id\", \"string10\", \"string20\", \"string50\", \"string100\", \"string255\", \"decimal5_2\", \"decimal10_2\", \"decimal18_4\", \"decimal5_0\", \"decimal10_0\", \"decimal18_0\"\nfrom \"precision_types\"\n")).query(PrecisionTypesRow._rowParser.all()).runUnchecked(c)
+  override fun selectAll(c: ConnectionRead): List<PrecisionTypesRow> = Fragment.concat(Fragment.of("select \"id\", \"string10\", \"string20\", \"string50\", \"string100\", \"string255\", \"decimal5_2\", \"decimal10_2\", \"decimal18_4\", \"decimal5_0\", \"decimal10_0\", \"decimal18_0\"\nfrom \"precision_types\"\n")).query(PrecisionTypesRow.rowCodec.all()).run(c)
 
   override fun selectById(
     id: PrecisionTypesId,
-    c: Connection
-  ): PrecisionTypesRow? = Fragment.interpolate(Fragment.lit("select \"id\", \"string10\", \"string20\", \"string50\", \"string100\", \"string255\", \"decimal5_2\", \"decimal10_2\", \"decimal18_4\", \"decimal5_0\", \"decimal10_0\", \"decimal18_0\"\nfrom \"precision_types\"\nwhere \"id\" = "), Fragment.encode(PrecisionTypesId.duckDbType, id), Fragment.lit("")).query(PrecisionTypesRow._rowParser.first()).runUnchecked(c)
+    c: ConnectionRead
+  ): PrecisionTypesRow? = Fragment.concat(Fragment.of("select \"id\", \"string10\", \"string20\", \"string50\", \"string100\", \"string255\", \"decimal5_2\", \"decimal10_2\", \"decimal18_4\", \"decimal5_0\", \"decimal10_0\", \"decimal18_0\"\nfrom \"precision_types\"\nwhere \"id\" = "), Fragment.encode(PrecisionTypesId.duckDbType, id), Fragment.of("")).query(PrecisionTypesRow.rowCodec.first()).run(c)
 
   override fun selectByIds(
-    ids: Array<PrecisionTypesId>,
-    c: Connection
-  ): List<PrecisionTypesRow> = Fragment.interpolate(Fragment.lit("select \"id\", \"string10\", \"string20\", \"string50\", \"string100\", \"string255\", \"decimal5_2\", \"decimal10_2\", \"decimal18_4\", \"decimal5_0\", \"decimal10_0\", \"decimal18_0\"\nfrom \"precision_types\"\nwhere \"id\" = ANY("), Fragment.encode(PrecisionTypesId.duckDbTypeArray, ids), Fragment.lit(")")).query(PrecisionTypesRow._rowParser.all()).runUnchecked(c)
+    ids: List<PrecisionTypesId>,
+    c: ConnectionRead
+  ): List<PrecisionTypesRow> = Fragment.concat(Fragment.of("select \"id\", \"string10\", \"string20\", \"string50\", \"string100\", \"string255\", \"decimal5_2\", \"decimal10_2\", \"decimal18_4\", \"decimal5_0\", \"decimal10_0\", \"decimal18_0\"\nfrom \"precision_types\"\nwhere \"id\" = ANY("), Fragment.encode(PrecisionTypesId.duckDbTypeArray, ids), Fragment.of(")")).query(PrecisionTypesRow.rowCodec.all()).run(c)
 
   override fun selectByIdsTracked(
-    ids: Array<PrecisionTypesId>,
-    c: Connection
+    ids: List<PrecisionTypesId>,
+    c: ConnectionRead
   ): Map<PrecisionTypesId, PrecisionTypesRow> {
     val ret: MutableMap<PrecisionTypesId, PrecisionTypesRow> = mutableMapOf<PrecisionTypesId, PrecisionTypesRow>()
     selectByIds(ids, c).forEach({ row -> ret.put(row.id, row) })
     return ret.toMap()
   }
 
-  override fun update(): UpdateBuilder<PrecisionTypesFields, PrecisionTypesRow> = UpdateBuilder.of("\"precision_types\"", PrecisionTypesFields.structure, PrecisionTypesRow._rowParser, Dialect.DUCKDB)
+  override fun update(): UpdateBuilder<PrecisionTypesFields, PrecisionTypesRow> = UpdateBuilder.of("\"precision_types\"", PrecisionTypesFields.structure, PrecisionTypesRow.rowCodec, Dialect.DUCKDB)
 
   override fun update(
     row: PrecisionTypesRow,
     c: Connection
-  ): Boolean {
+  ): kotlin.Boolean {
     val id: PrecisionTypesId = row.id
-    return Fragment.interpolate(Fragment.lit("update \"precision_types\"\nset \"string10\" = "), Fragment.encode(DuckDbTypes.varchar, row.string10), Fragment.lit(",\n\"string20\" = "), Fragment.encode(DuckDbTypes.varchar, row.string20), Fragment.lit(",\n\"string50\" = "), Fragment.encode(DuckDbTypes.varchar, row.string50), Fragment.lit(",\n\"string100\" = "), Fragment.encode(DuckDbTypes.varchar, row.string100), Fragment.lit(",\n\"string255\" = "), Fragment.encode(DuckDbTypes.varchar, row.string255), Fragment.lit(",\n\"decimal5_2\" = "), Fragment.encode(Decimal5_2.duckDbType, row.decimal52), Fragment.lit(",\n\"decimal10_2\" = "), Fragment.encode(Decimal10_2.duckDbType, row.decimal102), Fragment.lit(",\n\"decimal18_4\" = "), Fragment.encode(Decimal18_4.duckDbType, row.decimal184), Fragment.lit(",\n\"decimal5_0\" = "), Fragment.encode(Int5.duckDbType, row.decimal50), Fragment.lit(",\n\"decimal10_0\" = "), Fragment.encode(Int10.duckDbType, row.decimal100), Fragment.lit(",\n\"decimal18_0\" = "), Fragment.encode(Int18.duckDbType, row.decimal180), Fragment.lit("\nwhere \"id\" = "), Fragment.encode(PrecisionTypesId.duckDbType, id), Fragment.lit("")).update().runUnchecked(c) > 0
+    return Fragment.concat(Fragment.of("update \"precision_types\"\nset \"string10\" = "), Fragment.encode(DuckDbTypes.varchar, row.string10), Fragment.of(",\n\"string20\" = "), Fragment.encode(DuckDbTypes.varchar, row.string20), Fragment.of(",\n\"string50\" = "), Fragment.encode(DuckDbTypes.varchar, row.string50), Fragment.of(",\n\"string100\" = "), Fragment.encode(DuckDbTypes.varchar, row.string100), Fragment.of(",\n\"string255\" = "), Fragment.encode(DuckDbTypes.varchar, row.string255), Fragment.of(",\n\"decimal5_2\" = "), Fragment.encode(Decimal5_2.duckDbType, row.decimal52), Fragment.of(",\n\"decimal10_2\" = "), Fragment.encode(Decimal10_2.duckDbType, row.decimal102), Fragment.of(",\n\"decimal18_4\" = "), Fragment.encode(Decimal18_4.duckDbType, row.decimal184), Fragment.of(",\n\"decimal5_0\" = "), Fragment.encode(Int5.duckDbType, row.decimal50), Fragment.of(",\n\"decimal10_0\" = "), Fragment.encode(Int10.duckDbType, row.decimal100), Fragment.of(",\n\"decimal18_0\" = "), Fragment.encode(Int18.duckDbType, row.decimal180), Fragment.of("\nwhere \"id\" = "), Fragment.encode(PrecisionTypesId.duckDbType, id), Fragment.of("")).update().run(c) > 0
   }
 
   override fun upsert(
     unsaved: PrecisionTypesRow,
     c: Connection
-  ): PrecisionTypesRow = Fragment.interpolate(Fragment.lit("INSERT INTO \"precision_types\"(\"id\", \"string10\", \"string20\", \"string50\", \"string100\", \"string255\", \"decimal5_2\", \"decimal10_2\", \"decimal18_4\", \"decimal5_0\", \"decimal10_0\", \"decimal18_0\")\nVALUES ("), Fragment.encode(PrecisionTypesId.duckDbType, unsaved.id), Fragment.lit(", "), Fragment.encode(DuckDbTypes.varchar, unsaved.string10), Fragment.lit(", "), Fragment.encode(DuckDbTypes.varchar, unsaved.string20), Fragment.lit(", "), Fragment.encode(DuckDbTypes.varchar, unsaved.string50), Fragment.lit(", "), Fragment.encode(DuckDbTypes.varchar, unsaved.string100), Fragment.lit(", "), Fragment.encode(DuckDbTypes.varchar, unsaved.string255), Fragment.lit(", "), Fragment.encode(Decimal5_2.duckDbType, unsaved.decimal52), Fragment.lit(", "), Fragment.encode(Decimal10_2.duckDbType, unsaved.decimal102), Fragment.lit(", "), Fragment.encode(Decimal18_4.duckDbType, unsaved.decimal184), Fragment.lit(", "), Fragment.encode(Int5.duckDbType, unsaved.decimal50), Fragment.lit(", "), Fragment.encode(Int10.duckDbType, unsaved.decimal100), Fragment.lit(", "), Fragment.encode(Int18.duckDbType, unsaved.decimal180), Fragment.lit(")\nON CONFLICT (\"id\")\nDO UPDATE SET\n  \"string10\" = EXCLUDED.\"string10\",\n\"string20\" = EXCLUDED.\"string20\",\n\"string50\" = EXCLUDED.\"string50\",\n\"string100\" = EXCLUDED.\"string100\",\n\"string255\" = EXCLUDED.\"string255\",\n\"decimal5_2\" = EXCLUDED.\"decimal5_2\",\n\"decimal10_2\" = EXCLUDED.\"decimal10_2\",\n\"decimal18_4\" = EXCLUDED.\"decimal18_4\",\n\"decimal5_0\" = EXCLUDED.\"decimal5_0\",\n\"decimal10_0\" = EXCLUDED.\"decimal10_0\",\n\"decimal18_0\" = EXCLUDED.\"decimal18_0\"\nRETURNING \"id\", \"string10\", \"string20\", \"string50\", \"string100\", \"string255\", \"decimal5_2\", \"decimal10_2\", \"decimal18_4\", \"decimal5_0\", \"decimal10_0\", \"decimal18_0\""))
-    .updateReturning(PrecisionTypesRow._rowParser.exactlyOne())
-    .runUnchecked(c)
+  ): PrecisionTypesRow = Fragment.concat(Fragment.of("INSERT INTO \"precision_types\"(\"id\", \"string10\", \"string20\", \"string50\", \"string100\", \"string255\", \"decimal5_2\", \"decimal10_2\", \"decimal18_4\", \"decimal5_0\", \"decimal10_0\", \"decimal18_0\")\nVALUES ("), Fragment.encode(PrecisionTypesId.duckDbType, unsaved.id), Fragment.of(", "), Fragment.encode(DuckDbTypes.varchar, unsaved.string10), Fragment.of(", "), Fragment.encode(DuckDbTypes.varchar, unsaved.string20), Fragment.of(", "), Fragment.encode(DuckDbTypes.varchar, unsaved.string50), Fragment.of(", "), Fragment.encode(DuckDbTypes.varchar, unsaved.string100), Fragment.of(", "), Fragment.encode(DuckDbTypes.varchar, unsaved.string255), Fragment.of(", "), Fragment.encode(Decimal5_2.duckDbType, unsaved.decimal52), Fragment.of(", "), Fragment.encode(Decimal10_2.duckDbType, unsaved.decimal102), Fragment.of(", "), Fragment.encode(Decimal18_4.duckDbType, unsaved.decimal184), Fragment.of(", "), Fragment.encode(Int5.duckDbType, unsaved.decimal50), Fragment.of(", "), Fragment.encode(Int10.duckDbType, unsaved.decimal100), Fragment.of(", "), Fragment.encode(Int18.duckDbType, unsaved.decimal180), Fragment.of(")\nON CONFLICT (\"id\")\nDO UPDATE SET\n  \"string10\" = EXCLUDED.\"string10\",\n\"string20\" = EXCLUDED.\"string20\",\n\"string50\" = EXCLUDED.\"string50\",\n\"string100\" = EXCLUDED.\"string100\",\n\"string255\" = EXCLUDED.\"string255\",\n\"decimal5_2\" = EXCLUDED.\"decimal5_2\",\n\"decimal10_2\" = EXCLUDED.\"decimal10_2\",\n\"decimal18_4\" = EXCLUDED.\"decimal18_4\",\n\"decimal5_0\" = EXCLUDED.\"decimal5_0\",\n\"decimal10_0\" = EXCLUDED.\"decimal10_0\",\n\"decimal18_0\" = EXCLUDED.\"decimal18_0\"\nRETURNING \"id\", \"string10\", \"string20\", \"string50\", \"string100\", \"string255\", \"decimal5_2\", \"decimal10_2\", \"decimal18_4\", \"decimal5_0\", \"decimal10_0\", \"decimal18_0\""))
+    .updateReturning(PrecisionTypesRow.rowCodec.exactlyOne())
+    .run(c)
 
   override fun upsertBatch(
     unsaved: Iterator<PrecisionTypesRow>,
     c: Connection
-  ): List<PrecisionTypesRow> = Fragment.interpolate(Fragment.lit("INSERT INTO \"precision_types\"(\"id\", \"string10\", \"string20\", \"string50\", \"string100\", \"string255\", \"decimal5_2\", \"decimal10_2\", \"decimal18_4\", \"decimal5_0\", \"decimal10_0\", \"decimal18_0\")\nVALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)\nON CONFLICT (\"id\")\nDO UPDATE SET\n  \"string10\" = EXCLUDED.\"string10\",\n\"string20\" = EXCLUDED.\"string20\",\n\"string50\" = EXCLUDED.\"string50\",\n\"string100\" = EXCLUDED.\"string100\",\n\"string255\" = EXCLUDED.\"string255\",\n\"decimal5_2\" = EXCLUDED.\"decimal5_2\",\n\"decimal10_2\" = EXCLUDED.\"decimal10_2\",\n\"decimal18_4\" = EXCLUDED.\"decimal18_4\",\n\"decimal5_0\" = EXCLUDED.\"decimal5_0\",\n\"decimal10_0\" = EXCLUDED.\"decimal10_0\",\n\"decimal18_0\" = EXCLUDED.\"decimal18_0\"\nRETURNING \"id\", \"string10\", \"string20\", \"string50\", \"string100\", \"string255\", \"decimal5_2\", \"decimal10_2\", \"decimal18_4\", \"decimal5_0\", \"decimal10_0\", \"decimal18_0\""))
-    .updateReturningEach(PrecisionTypesRow._rowParser, unsaved)
-  .runUnchecked(c)
+  ): List<PrecisionTypesRow> = Fragment.concat(Fragment.of("INSERT INTO \"precision_types\"(\"id\", \"string10\", \"string20\", \"string50\", \"string100\", \"string255\", \"decimal5_2\", \"decimal10_2\", \"decimal18_4\", \"decimal5_0\", \"decimal10_0\", \"decimal18_0\")\nVALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)\nON CONFLICT (\"id\")\nDO UPDATE SET\n  \"string10\" = EXCLUDED.\"string10\",\n\"string20\" = EXCLUDED.\"string20\",\n\"string50\" = EXCLUDED.\"string50\",\n\"string100\" = EXCLUDED.\"string100\",\n\"string255\" = EXCLUDED.\"string255\",\n\"decimal5_2\" = EXCLUDED.\"decimal5_2\",\n\"decimal10_2\" = EXCLUDED.\"decimal10_2\",\n\"decimal18_4\" = EXCLUDED.\"decimal18_4\",\n\"decimal5_0\" = EXCLUDED.\"decimal5_0\",\n\"decimal10_0\" = EXCLUDED.\"decimal10_0\",\n\"decimal18_0\" = EXCLUDED.\"decimal18_0\"\nRETURNING \"id\", \"string10\", \"string20\", \"string50\", \"string100\", \"string255\", \"decimal5_2\", \"decimal10_2\", \"decimal18_4\", \"decimal5_0\", \"decimal10_0\", \"decimal18_0\""))
+    .updateReturningEach(PrecisionTypesRow.rowCodec, unsaved)
+  .run(c)
 }

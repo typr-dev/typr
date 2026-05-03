@@ -6,11 +6,9 @@
 package testdb.precision_types_null
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import dev.typr.foundations.MariaTypes
 import dev.typr.foundations.Tuple.Tuple24
-import dev.typr.foundations.kotlin.RowParser
-import dev.typr.foundations.kotlin.RowParsers
-import dev.typr.foundations.kotlin.nullable
+import dev.typr.foundationskt.MariaTypes
+import dev.typr.foundationskt.RowCodec
 import java.time.LocalDateTime
 import java.time.LocalTime
 import testdb.customtypes.Defaulted
@@ -209,6 +207,6 @@ data class PrecisionTypesNullRow(
   ): PrecisionTypesNullRowUnsaved = PrecisionTypesNullRowUnsaved(string10, string20, string50, string100, string255, char10, decimal52, decimal102, decimal184, numeric82, numeric124, binary16, binary32, binary64, time0, time3, time6, datetime0, datetime3, datetime6, ts0, ts3, ts6)
 
   companion object {
-    val _rowParser: RowParser<PrecisionTypesNullRow> = RowParsers.of(PrecisionTypesNullId.mariaType, String10.mariaType.nullable(), String20.mariaType.nullable(), String50.mariaType.nullable(), String100.mariaType.nullable(), String255.mariaType.nullable(), PaddedString10.mariaType.nullable(), Decimal5_2.mariaType.nullable(), Decimal10_2.mariaType.nullable(), Decimal18_4.mariaType.nullable(), Decimal8_2.mariaType.nullable(), Decimal12_4.mariaType.nullable(), Binary16.mariaType.nullable(), Binary32.mariaType.nullable(), Binary64.mariaType.nullable(), MariaTypes.time.nullable(), LocalTime3.mariaType.nullable(), LocalTime6.mariaType.nullable(), MariaTypes.datetime.nullable(), LocalDateTime3.mariaType.nullable(), LocalDateTime6.mariaType.nullable(), MariaTypes.timestamp.nullable(), LocalDateTime3.mariaType.nullable(), LocalDateTime6.mariaType.nullable(), { t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15, t16, t17, t18, t19, t20, t21, t22, t23 -> PrecisionTypesNullRow(t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15, t16, t17, t18, t19, t20, t21, t22, t23) }, { row -> arrayOf<Any?>(row.id, row.string10, row.string20, row.string50, row.string100, row.string255, row.char10, row.decimal52, row.decimal102, row.decimal184, row.numeric82, row.numeric124, row.binary16, row.binary32, row.binary64, row.time0, row.time3, row.time6, row.datetime0, row.datetime3, row.datetime6, row.ts0, row.ts3, row.ts6) })
+    val rowCodec: RowCodec<PrecisionTypesNullRow> = RowCodec(dev.typr.foundations.RowCodec.create(listOf(PrecisionTypesNullId.mariaType.underlying, String10.mariaType.opt().underlying, String20.mariaType.opt().underlying, String50.mariaType.opt().underlying, String100.mariaType.opt().underlying, String255.mariaType.opt().underlying, PaddedString10.mariaType.opt().underlying, Decimal5_2.mariaType.opt().underlying, Decimal10_2.mariaType.opt().underlying, Decimal18_4.mariaType.opt().underlying, Decimal8_2.mariaType.opt().underlying, Decimal12_4.mariaType.opt().underlying, Binary16.mariaType.opt().underlying, Binary32.mariaType.opt().underlying, Binary64.mariaType.opt().underlying, MariaTypes.time.opt().underlying, LocalTime3.mariaType.opt().underlying, LocalTime6.mariaType.opt().underlying, MariaTypes.datetime.opt().underlying, LocalDateTime3.mariaType.opt().underlying, LocalDateTime6.mariaType.opt().underlying, MariaTypes.timestamp.opt().underlying, LocalDateTime3.mariaType.opt().underlying, LocalDateTime6.mariaType.opt().underlying), { a -> PrecisionTypesNullRow(a[0] as PrecisionTypesNullId, a[1] as String10?, a[2] as String20?, a[3] as String50?, a[4] as String100?, a[5] as String255?, a[6] as PaddedString10?, a[7] as Decimal5_2?, a[8] as Decimal10_2?, a[9] as Decimal18_4?, a[10] as Decimal8_2?, a[11] as Decimal12_4?, a[12] as Binary16?, a[13] as Binary32?, a[14] as Binary64?, a[15] as LocalTime?, a[16] as LocalTime3?, a[17] as LocalTime6?, a[18] as LocalDateTime?, a[19] as LocalDateTime3?, a[20] as LocalDateTime6?, a[21] as LocalDateTime?, a[22] as LocalDateTime3?, a[23] as LocalDateTime6?) }, { row: PrecisionTypesNullRow -> arrayOf<Any?>(row.id, row.string10, row.string20, row.string50, row.string100, row.string255, row.char10, row.decimal52, row.decimal102, row.decimal184, row.numeric82, row.numeric124, row.binary16, row.binary32, row.binary64, row.time0, row.time3, row.time6, row.datetime0, row.datetime3, row.datetime6, row.ts0, row.ts3, row.ts6) }))
   }
 }

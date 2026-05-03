@@ -18,11 +18,10 @@ class ForeignKeyTest extends AnyFunSuite {
   val customerStatusRepo: CustomerStatusRepoImpl = new CustomerStatusRepoImpl
   val customersRepo: CustomersRepoImpl = new CustomersRepoImpl
   val ordersRepo: OrdersRepoImpl = new OrdersRepoImpl
-  val testInsert: TestInsert = new TestInsert(new Random(42))
+  val testInsert: TestInsert = new TestInsert(new Random(1814998810))
 
   test("customerStatusInsert") {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       val status = CustomerStatusRowUnsaved(
         CustomerStatusId("active_test"),
         "Active Test Status",
@@ -37,8 +36,7 @@ class ForeignKeyTest extends AnyFunSuite {
   }
 
   test("customerWithForeignKeyToStatus") {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       // First create a customer status
       val _ = customerStatusRepo.insert(
         CustomerStatusRowUnsaved(
@@ -67,8 +65,7 @@ class ForeignKeyTest extends AnyFunSuite {
   }
 
   test("orderWithForeignKeyToCustomer") {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       // Create customer status first
       val _ = testInsert.CustomerStatus()
 
@@ -93,8 +90,7 @@ class ForeignKeyTest extends AnyFunSuite {
   }
 
   test("orderLookupByCustomer") {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       // Create dependencies
       val _ = testInsert.CustomerStatus()
       val customer = testInsert.Customers(passwordHash = Array[Byte](1, 2, 3))
@@ -115,8 +111,7 @@ class ForeignKeyTest extends AnyFunSuite {
   }
 
   test("typeSafeForeignKeyIds") {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       // Demonstrate that IDs are type-safe
       val _ = testInsert.CustomerStatus()
       val customer = testInsert.Customers(passwordHash = Array[Byte](1, 2, 3))
@@ -138,8 +133,7 @@ class ForeignKeyTest extends AnyFunSuite {
   }
 
   test("customerUpdateStatus") {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       // Create initial customer
       val _ = testInsert.CustomerStatus()
       val customer = testInsert.Customers(passwordHash = Array[Byte](1, 2, 3))
@@ -164,8 +158,7 @@ class ForeignKeyTest extends AnyFunSuite {
   }
 
   test("optionalFieldsOnCustomer") {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       val _ = testInsert.CustomerStatus()
       val customer = testInsert.Customers(passwordHash = Array[Byte](1, 2, 3))
 

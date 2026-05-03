@@ -46,7 +46,7 @@ object TypoInstant {
 
   given arrayToStatement: ToStatement[Array[TypoInstant]] = ToStatement[Array[TypoInstant]]((s, index, v) => s.setArray(index, s.getConnection.createArrayOf("timestamptz", v.map(v => v.value.toString()))))
 
-  given bijection: Bijection[TypoInstant, Instant] = Bijection.apply[TypoInstant, Instant](_.value)(TypoInstant.apply)
+  given bijection: Bijection[TypoInstant, Instant] = Bijection[TypoInstant, Instant](_.value)(TypoInstant.apply)
 
   given column: Column[TypoInstant] = {
     Column.nonNull[TypoInstant]((v1: Any, _) =>

@@ -5,18 +5,18 @@
  */
 package adventureworks.public.users
 
+import dev.typr.dsl.FieldsBase
+import dev.typr.dsl.Path
+import dev.typr.dsl.RelationStructure
+import dev.typr.dsl.SqlExpr
+import dev.typr.dsl.SqlExpr.Field
+import dev.typr.dsl.SqlExpr.FieldLike
+import dev.typr.dsl.SqlExpr.IdField
+import dev.typr.dsl.SqlExpr.OptField
+import dev.typr.dsl.TupleExpr.TupleExpr7
 import dev.typr.foundations.PgTypes
-import dev.typr.foundations.RowParser
+import dev.typr.foundations.RowCodec
 import dev.typr.foundations.data.Unknown
-import dev.typr.foundations.dsl.FieldsBase
-import dev.typr.foundations.dsl.Path
-import dev.typr.foundations.dsl.RelationStructure
-import dev.typr.foundations.dsl.SqlExpr
-import dev.typr.foundations.dsl.SqlExpr.Field
-import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.dsl.SqlExpr.IdField
-import dev.typr.foundations.dsl.SqlExpr.OptField
-import dev.typr.foundations.dsl.TupleExpr.TupleExpr7
 import java.time.Instant
 import java.util.Optional
 
@@ -107,7 +107,7 @@ class UsersFields(val `_path`: java.util.List[Path]) extends TupleExpr7[UsersId,
 
   override def columns: java.util.List[FieldLike[?, UsersRow]] = java.util.List.of(this.userId, this.name, this.lastName, this.email, this.password, this.createdAt, this.verifiedOn)
 
-  override def rowParser: RowParser[UsersRow] = UsersRow._rowParser
+  override def rowCodec: RowCodec[UsersRow] = UsersRow.rowCodec
 
   override def withPaths(`_path`: java.util.List[Path]): RelationStructure[UsersFields, UsersRow] = new UsersFields(`_path`)
 

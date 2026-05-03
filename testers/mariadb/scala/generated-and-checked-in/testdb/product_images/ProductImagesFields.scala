@@ -5,19 +5,19 @@
  */
 package testdb.product_images
 
-import dev.typr.foundations.MariaTypes
-import dev.typr.foundations.RowParser
+import dev.typr.dsl.FieldsBase
+import dev.typr.dsl.Path
+import dev.typr.dsl.SqlExpr.FieldLike
+import dev.typr.dslsc.ForeignKey
+import dev.typr.dslsc.RelationStructure
+import dev.typr.dslsc.SqlExpr
+import dev.typr.dslsc.SqlExpr.Field
+import dev.typr.dslsc.SqlExpr.IdField
+import dev.typr.dslsc.SqlExpr.OptField
+import dev.typr.dslsc.TupleExpr8
+import dev.typr.foundations.RowCodec
 import dev.typr.foundations.data.Uint1
-import dev.typr.foundations.dsl.FieldsBase
-import dev.typr.foundations.dsl.Path
-import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.scala.ForeignKey
-import dev.typr.foundations.scala.RelationStructure
-import dev.typr.foundations.scala.SqlExpr
-import dev.typr.foundations.scala.SqlExpr.Field
-import dev.typr.foundations.scala.SqlExpr.IdField
-import dev.typr.foundations.scala.SqlExpr.OptField
-import dev.typr.foundations.scala.TupleExpr8
+import dev.typr.foundationssc.MariaTypes
 import testdb.products.ProductsFields
 import testdb.products.ProductsId
 import testdb.products.ProductsRow
@@ -32,7 +32,7 @@ class ProductImagesFields(val `_path`: java.util.List[Path]) extends TupleExpr8[
       None,
       None,
       (row, value) => row.copy(imageId = value),
-      ProductImagesId.mariaType
+      ProductImagesId.mariaType.underlying
     )
   }
 
@@ -44,7 +44,7 @@ class ProductImagesFields(val `_path`: java.util.List[Path]) extends TupleExpr8[
       None,
       None,
       (row, value) => row.copy(productId = value),
-      ProductsId.mariaType
+      ProductsId.mariaType.underlying
     )
   }
 
@@ -56,7 +56,7 @@ class ProductImagesFields(val `_path`: java.util.List[Path]) extends TupleExpr8[
       None,
       None,
       (row, value) => row.copy(imageUrl = value),
-      MariaTypes.varchar
+      MariaTypes.varchar.underlying
     )
   }
 
@@ -68,7 +68,7 @@ class ProductImagesFields(val `_path`: java.util.List[Path]) extends TupleExpr8[
       None,
       None,
       (row, value) => row.copy(thumbnailUrl = value),
-      MariaTypes.varchar
+      MariaTypes.varchar.underlying
     )
   }
 
@@ -80,7 +80,7 @@ class ProductImagesFields(val `_path`: java.util.List[Path]) extends TupleExpr8[
       None,
       None,
       (row, value) => row.copy(altText = value),
-      MariaTypes.varchar
+      MariaTypes.varchar.underlying
     )
   }
 
@@ -92,7 +92,7 @@ class ProductImagesFields(val `_path`: java.util.List[Path]) extends TupleExpr8[
       None,
       None,
       (row, value) => row.copy(sortOrder = value),
-      MariaTypes.tinyintUnsigned
+      MariaTypes.tinyintUnsigned.underlying
     )
   }
 
@@ -104,7 +104,7 @@ class ProductImagesFields(val `_path`: java.util.List[Path]) extends TupleExpr8[
       None,
       None,
       (row, value) => row.copy(isPrimary = value),
-      IsPrimary.mariaType
+      IsPrimary.mariaType.underlying
     )
   }
 
@@ -116,7 +116,7 @@ class ProductImagesFields(val `_path`: java.util.List[Path]) extends TupleExpr8[
       None,
       None,
       (row, value) => row.copy(imageData = value),
-      MariaTypes.longblob
+      MariaTypes.longblob.underlying
     )
   }
 
@@ -124,7 +124,7 @@ class ProductImagesFields(val `_path`: java.util.List[Path]) extends TupleExpr8[
 
   override def columns: java.util.List[FieldLike[?, ProductImagesRow]] = java.util.List.of(this.imageId.underlying, this.productId.underlying, this.imageUrl.underlying, this.thumbnailUrl.underlying, this.altText.underlying, this.sortOrder.underlying, this.isPrimary.underlying, this.imageData.underlying)
 
-  override def rowParser: RowParser[ProductImagesRow] = ProductImagesRow._rowParser.underlying
+  override def rowCodec: RowCodec[ProductImagesRow] = ProductImagesRow.rowCodec.underlying
 
   override def withPaths(`_path`: java.util.List[Path]): RelationStructure[ProductImagesFields, ProductImagesRow] = new ProductImagesFields(`_path`)
 

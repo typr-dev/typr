@@ -5,10 +5,11 @@
  */
 package adventureworks.public.precision_types
 
-import dev.typr.foundations.dsl.DeleteBuilder
-import dev.typr.foundations.dsl.SelectBuilder
-import dev.typr.foundations.dsl.UpdateBuilder
-import java.sql.Connection
+import dev.typr.dsl.DeleteBuilder
+import dev.typr.dsl.SelectBuilder
+import dev.typr.dsl.UpdateBuilder
+import dev.typr.foundations.Connection
+import dev.typr.foundations.ConnectionRead
 import java.util.Optional
 
 trait PrecisionTypesRepo {
@@ -16,7 +17,7 @@ trait PrecisionTypesRepo {
 
   def deleteById(id: PrecisionTypesId)(using c: Connection): java.lang.Boolean
 
-  def deleteByIds(ids: Array[PrecisionTypesId])(using c: Connection): Integer
+  def deleteByIds(ids: java.util.List[PrecisionTypesId])(using c: Connection): Integer
 
   def insert(unsaved: PrecisionTypesRow)(using c: Connection): PrecisionTypesRow
 
@@ -35,13 +36,13 @@ trait PrecisionTypesRepo {
 
   def select: SelectBuilder[PrecisionTypesFields, PrecisionTypesRow]
 
-  def selectAll(using c: Connection): java.util.List[PrecisionTypesRow]
+  def selectAll(using c: ConnectionRead): java.util.List[PrecisionTypesRow]
 
-  def selectById(id: PrecisionTypesId)(using c: Connection): Optional[PrecisionTypesRow]
+  def selectById(id: PrecisionTypesId)(using c: ConnectionRead): Optional[PrecisionTypesRow]
 
-  def selectByIds(ids: Array[PrecisionTypesId])(using c: Connection): java.util.List[PrecisionTypesRow]
+  def selectByIds(ids: java.util.List[PrecisionTypesId])(using c: ConnectionRead): java.util.List[PrecisionTypesRow]
 
-  def selectByIdsTracked(ids: Array[PrecisionTypesId])(using c: Connection): java.util.Map[PrecisionTypesId, PrecisionTypesRow]
+  def selectByIdsTracked(ids: java.util.List[PrecisionTypesId])(using c: ConnectionRead): java.util.Map[PrecisionTypesId, PrecisionTypesRow]
 
   def update: UpdateBuilder[PrecisionTypesFields, PrecisionTypesRow]
 

@@ -27,7 +27,7 @@ object TypoShort {
       .contramap(_.map(v => v.value: java.lang.Short))
   }
 
-  implicit lazy val bijection: Bijection[TypoShort, Short] = Bijection.apply[TypoShort, Short](_.value)(TypoShort.apply)
+  implicit lazy val bijection: Bijection[TypoShort, Short] = Bijection[TypoShort, Short](_.value)(TypoShort.apply)
 
   implicit lazy val decoder: Decoder[TypoShort] = Decoder[Short].map(TypoShort.apply)
 

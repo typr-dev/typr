@@ -6,27 +6,26 @@
 package oracledb.departments
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import dev.typr.foundations.OracleTypes
+import dev.typr.dslkt.RowCodecs
 import dev.typr.foundations.Tuple.Tuple4
-import dev.typr.foundations.kotlin.RowParser
-import dev.typr.foundations.kotlin.RowParsers
-import dev.typr.foundations.kotlin.nullable
+import dev.typr.foundationskt.OracleTypes
+import dev.typr.foundationskt.RowCodec
 import oracledb.MoneyT
 
 /** Table: DEPARTMENTS
   * Composite primary key: DEPT_CODE, DEPT_REGION
   */
 data class DepartmentsRow(
-  @field:JsonProperty("DEPT_CODE") val deptCode: String,
-  @field:JsonProperty("DEPT_REGION") val deptRegion: String,
-  @field:JsonProperty("DEPT_NAME") val deptName: String,
+  @field:JsonProperty("DEPT_CODE") val deptCode: kotlin.String,
+  @field:JsonProperty("DEPT_REGION") val deptRegion: kotlin.String,
+  @field:JsonProperty("DEPT_NAME") val deptName: kotlin.String,
   @field:JsonProperty("BUDGET") val budget: MoneyT?
-) : Tuple4<String, String, String, MoneyT?> {
-  override fun _1(): String = deptCode
+) : Tuple4<kotlin.String, kotlin.String, kotlin.String, MoneyT?> {
+  override fun _1(): kotlin.String = deptCode
 
-  override fun _2(): String = deptRegion
+  override fun _2(): kotlin.String = deptRegion
 
-  override fun _3(): String = deptName
+  override fun _3(): kotlin.String = deptName
 
   override fun _4(): MoneyT? = budget
 
@@ -35,11 +34,11 @@ data class DepartmentsRow(
   fun id(): DepartmentsId = this.compositeId()
 
   companion object {
-    val _rowParser: RowParser<DepartmentsRow> = RowParsers.of(OracleTypes.varchar2, OracleTypes.varchar2, OracleTypes.varchar2, MoneyT.oracleType.nullable(), { t0, t1, t2, t3 -> DepartmentsRow(t0, t1, t2, t3) }, { row -> arrayOf<Any?>(row.deptCode, row.deptRegion, row.deptName, row.budget) })
+    val rowCodec: RowCodec<DepartmentsRow> = RowCodecs.of(OracleTypes.varchar2, OracleTypes.varchar2, OracleTypes.varchar2, MoneyT.oracleType.opt(), { t0: kotlin.String, t1: kotlin.String, t2: kotlin.String, t3: MoneyT? -> DepartmentsRow(t0, t1, t2, t3) }, { row: DepartmentsRow -> arrayOf<Any?>(row.deptCode, row.deptRegion, row.deptName, row.budget) })
 
     fun apply(
       compositeId: DepartmentsId,
-      deptName: String,
+      deptName: kotlin.String,
       budget: MoneyT?
     ): DepartmentsRow = DepartmentsRow(compositeId.deptCode, compositeId.deptRegion, deptName, budget)
   }

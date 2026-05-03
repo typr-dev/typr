@@ -5,15 +5,14 @@
  */
 package testdb.orders
 
-import dev.typr.foundations.DuckDbTypes
-import dev.typr.foundations.kotlin.DeleteBuilder
-import dev.typr.foundations.kotlin.Dialect
-import dev.typr.foundations.kotlin.Fragment
-import dev.typr.foundations.kotlin.KotlinDbTypes
-import dev.typr.foundations.kotlin.SelectBuilder
-import dev.typr.foundations.kotlin.UpdateBuilder
-import dev.typr.foundations.kotlin.nullable
-import java.sql.Connection
+import dev.typr.dslkt.DeleteBuilder
+import dev.typr.dslkt.Dialect
+import dev.typr.dslkt.SelectBuilder
+import dev.typr.dslkt.UpdateBuilder
+import dev.typr.foundationskt.Connection
+import dev.typr.foundationskt.ConnectionRead
+import dev.typr.foundationskt.DuckDbTypes
+import dev.typr.foundationskt.Fragment
 import java.util.ArrayList
 import kotlin.collections.Iterator
 import kotlin.collections.List
@@ -26,20 +25,20 @@ class OrdersRepoImpl() : OrdersRepo {
   override fun deleteById(
     orderId: OrdersId,
     c: Connection
-  ): Boolean = Fragment.interpolate(Fragment.lit("delete from \"orders\" where \"order_id\" = "), Fragment.encode(OrdersId.duckDbType, orderId), Fragment.lit("")).update().runUnchecked(c) > 0
+  ): kotlin.Boolean = Fragment.concat(Fragment.of("delete from \"orders\" where \"order_id\" = "), Fragment.encode(OrdersId.duckDbType, orderId), Fragment.of("")).update().run(c) > 0
 
   override fun deleteByIds(
-    orderIds: Array<OrdersId>,
+    orderIds: List<OrdersId>,
     c: Connection
-  ): Int = Fragment.interpolate(Fragment.lit("delete\nfrom \"orders\"\nwhere \"order_id\" = ANY("), Fragment.encode(OrdersId.duckDbTypeArray, orderIds), Fragment.lit(")"))
+  ): Int = Fragment.concat(Fragment.of("delete\nfrom \"orders\"\nwhere \"order_id\" = ANY("), Fragment.encode(OrdersId.duckDbTypeArray, orderIds), Fragment.of(")"))
     .update()
-    .runUnchecked(c)
+    .run(c)
 
   override fun insert(
     unsaved: OrdersRow,
     c: Connection
-  ): OrdersRow = Fragment.interpolate(Fragment.lit("insert into \"orders\"(\"order_id\", \"customer_id\", \"order_date\", \"total_amount\", \"status\")\nvalues ("), Fragment.encode(OrdersId.duckDbType, unsaved.orderId), Fragment.lit(", "), Fragment.encode(KotlinDbTypes.DuckDbTypes.integer, unsaved.customerId), Fragment.lit(", "), Fragment.encode(DuckDbTypes.date, unsaved.orderDate), Fragment.lit(", "), Fragment.encode(DuckDbTypes.numeric.nullable(), unsaved.totalAmount), Fragment.lit(", "), Fragment.encode(DuckDbTypes.varchar.nullable(), unsaved.status), Fragment.lit(")\nRETURNING \"order_id\", \"customer_id\", \"order_date\", \"total_amount\", \"status\"\n"))
-    .updateReturning(OrdersRow._rowParser.exactlyOne()).runUnchecked(c)
+  ): OrdersRow = Fragment.concat(Fragment.of("insert into \"orders\"(\"order_id\", \"customer_id\", \"order_date\", \"total_amount\", \"status\")\nvalues ("), Fragment.encode(OrdersId.duckDbType, unsaved.orderId), Fragment.of(", "), Fragment.encode(DuckDbTypes.integer, unsaved.customerId), Fragment.of(", "), Fragment.encode(DuckDbTypes.date, unsaved.orderDate), Fragment.of(", "), Fragment.encode(DuckDbTypes.numeric.opt(), unsaved.totalAmount), Fragment.of(", "), Fragment.encode(DuckDbTypes.varchar.opt(), unsaved.status), Fragment.of(")\nRETURNING \"order_id\", \"customer_id\", \"order_date\", \"total_amount\", \"status\"\n"))
+    .updateReturning(OrdersRow.rowCodec.exactlyOne()).run(c)
 
   override fun insert(
     unsaved: OrdersRowUnsaved,
@@ -47,70 +46,70 @@ class OrdersRepoImpl() : OrdersRepo {
   ): OrdersRow {
     val columns: ArrayList<Fragment> = ArrayList()
     val values: ArrayList<Fragment> = ArrayList()
-    columns.add(Fragment.lit("\"order_id\""))
-    values.add(Fragment.interpolate(Fragment.encode(OrdersId.duckDbType, unsaved.orderId), Fragment.lit("")))
-    columns.add(Fragment.lit("\"customer_id\""))
-    values.add(Fragment.interpolate(Fragment.encode(KotlinDbTypes.DuckDbTypes.integer, unsaved.customerId), Fragment.lit("")))
-    columns.add(Fragment.lit("\"total_amount\""))
-    values.add(Fragment.interpolate(Fragment.encode(DuckDbTypes.numeric.nullable(), unsaved.totalAmount), Fragment.lit("")))
+    columns.add(Fragment.of("\"order_id\""))
+    values.add(Fragment.concat(Fragment.encode(OrdersId.duckDbType, unsaved.orderId), Fragment.of("")))
+    columns.add(Fragment.of("\"customer_id\""))
+    values.add(Fragment.concat(Fragment.encode(DuckDbTypes.integer, unsaved.customerId), Fragment.of("")))
+    columns.add(Fragment.of("\"total_amount\""))
+    values.add(Fragment.concat(Fragment.encode(DuckDbTypes.numeric.opt(), unsaved.totalAmount), Fragment.of("")))
     unsaved.orderDate.visit(
       {  },
-      { value -> columns.add(Fragment.lit("\"order_date\""))
-      values.add(Fragment.interpolate(Fragment.encode(DuckDbTypes.date, value), Fragment.lit(""))) }
+      { value -> columns.add(Fragment.of("\"order_date\""))
+      values.add(Fragment.concat(Fragment.encode(DuckDbTypes.date, value), Fragment.of(""))) }
     );
     unsaved.status.visit(
       {  },
-      { value -> columns.add(Fragment.lit("\"status\""))
-      values.add(Fragment.interpolate(Fragment.encode(DuckDbTypes.varchar.nullable(), value), Fragment.lit(""))) }
+      { value -> columns.add(Fragment.of("\"status\""))
+      values.add(Fragment.concat(Fragment.encode(DuckDbTypes.varchar.opt(), value), Fragment.of(""))) }
     );
-    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into \"orders\"("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nRETURNING \"order_id\", \"customer_id\", \"order_date\", \"total_amount\", \"status\"\n"))
-    return q.updateReturning(OrdersRow._rowParser.exactlyOne()).runUnchecked(c)
+    val q: Fragment = Fragment.concat(Fragment.of("insert into \"orders\"("), Fragment.comma(columns.toMutableList()), Fragment.of(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.of(")\nRETURNING \"order_id\", \"customer_id\", \"order_date\", \"total_amount\", \"status\"\n"))
+    return q.updateReturning(OrdersRow.rowCodec.exactlyOne()).run(c)
   }
 
-  override fun select(): SelectBuilder<OrdersFields, OrdersRow> = SelectBuilder.of("\"orders\"", OrdersFields.structure, OrdersRow._rowParser, Dialect.DUCKDB)
+  override fun select(): SelectBuilder<OrdersFields, OrdersRow> = SelectBuilder.of("\"orders\"", OrdersFields.structure, OrdersRow.rowCodec, Dialect.DUCKDB)
 
-  override fun selectAll(c: Connection): List<OrdersRow> = Fragment.interpolate(Fragment.lit("select \"order_id\", \"customer_id\", \"order_date\", \"total_amount\", \"status\"\nfrom \"orders\"\n")).query(OrdersRow._rowParser.all()).runUnchecked(c)
+  override fun selectAll(c: ConnectionRead): List<OrdersRow> = Fragment.concat(Fragment.of("select \"order_id\", \"customer_id\", \"order_date\", \"total_amount\", \"status\"\nfrom \"orders\"\n")).query(OrdersRow.rowCodec.all()).run(c)
 
   override fun selectById(
     orderId: OrdersId,
-    c: Connection
-  ): OrdersRow? = Fragment.interpolate(Fragment.lit("select \"order_id\", \"customer_id\", \"order_date\", \"total_amount\", \"status\"\nfrom \"orders\"\nwhere \"order_id\" = "), Fragment.encode(OrdersId.duckDbType, orderId), Fragment.lit("")).query(OrdersRow._rowParser.first()).runUnchecked(c)
+    c: ConnectionRead
+  ): OrdersRow? = Fragment.concat(Fragment.of("select \"order_id\", \"customer_id\", \"order_date\", \"total_amount\", \"status\"\nfrom \"orders\"\nwhere \"order_id\" = "), Fragment.encode(OrdersId.duckDbType, orderId), Fragment.of("")).query(OrdersRow.rowCodec.first()).run(c)
 
   override fun selectByIds(
-    orderIds: Array<OrdersId>,
-    c: Connection
-  ): List<OrdersRow> = Fragment.interpolate(Fragment.lit("select \"order_id\", \"customer_id\", \"order_date\", \"total_amount\", \"status\"\nfrom \"orders\"\nwhere \"order_id\" = ANY("), Fragment.encode(OrdersId.duckDbTypeArray, orderIds), Fragment.lit(")")).query(OrdersRow._rowParser.all()).runUnchecked(c)
+    orderIds: List<OrdersId>,
+    c: ConnectionRead
+  ): List<OrdersRow> = Fragment.concat(Fragment.of("select \"order_id\", \"customer_id\", \"order_date\", \"total_amount\", \"status\"\nfrom \"orders\"\nwhere \"order_id\" = ANY("), Fragment.encode(OrdersId.duckDbTypeArray, orderIds), Fragment.of(")")).query(OrdersRow.rowCodec.all()).run(c)
 
   override fun selectByIdsTracked(
-    orderIds: Array<OrdersId>,
-    c: Connection
+    orderIds: List<OrdersId>,
+    c: ConnectionRead
   ): Map<OrdersId, OrdersRow> {
     val ret: MutableMap<OrdersId, OrdersRow> = mutableMapOf<OrdersId, OrdersRow>()
     selectByIds(orderIds, c).forEach({ row -> ret.put(row.orderId, row) })
     return ret.toMap()
   }
 
-  override fun update(): UpdateBuilder<OrdersFields, OrdersRow> = UpdateBuilder.of("\"orders\"", OrdersFields.structure, OrdersRow._rowParser, Dialect.DUCKDB)
+  override fun update(): UpdateBuilder<OrdersFields, OrdersRow> = UpdateBuilder.of("\"orders\"", OrdersFields.structure, OrdersRow.rowCodec, Dialect.DUCKDB)
 
   override fun update(
     row: OrdersRow,
     c: Connection
-  ): Boolean {
+  ): kotlin.Boolean {
     val orderId: OrdersId = row.orderId
-    return Fragment.interpolate(Fragment.lit("update \"orders\"\nset \"customer_id\" = "), Fragment.encode(KotlinDbTypes.DuckDbTypes.integer, row.customerId), Fragment.lit(",\n\"order_date\" = "), Fragment.encode(DuckDbTypes.date, row.orderDate), Fragment.lit(",\n\"total_amount\" = "), Fragment.encode(DuckDbTypes.numeric.nullable(), row.totalAmount), Fragment.lit(",\n\"status\" = "), Fragment.encode(DuckDbTypes.varchar.nullable(), row.status), Fragment.lit("\nwhere \"order_id\" = "), Fragment.encode(OrdersId.duckDbType, orderId), Fragment.lit("")).update().runUnchecked(c) > 0
+    return Fragment.concat(Fragment.of("update \"orders\"\nset \"customer_id\" = "), Fragment.encode(DuckDbTypes.integer, row.customerId), Fragment.of(",\n\"order_date\" = "), Fragment.encode(DuckDbTypes.date, row.orderDate), Fragment.of(",\n\"total_amount\" = "), Fragment.encode(DuckDbTypes.numeric.opt(), row.totalAmount), Fragment.of(",\n\"status\" = "), Fragment.encode(DuckDbTypes.varchar.opt(), row.status), Fragment.of("\nwhere \"order_id\" = "), Fragment.encode(OrdersId.duckDbType, orderId), Fragment.of("")).update().run(c) > 0
   }
 
   override fun upsert(
     unsaved: OrdersRow,
     c: Connection
-  ): OrdersRow = Fragment.interpolate(Fragment.lit("INSERT INTO \"orders\"(\"order_id\", \"customer_id\", \"order_date\", \"total_amount\", \"status\")\nVALUES ("), Fragment.encode(OrdersId.duckDbType, unsaved.orderId), Fragment.lit(", "), Fragment.encode(KotlinDbTypes.DuckDbTypes.integer, unsaved.customerId), Fragment.lit(", "), Fragment.encode(DuckDbTypes.date, unsaved.orderDate), Fragment.lit(", "), Fragment.encode(DuckDbTypes.numeric.nullable(), unsaved.totalAmount), Fragment.lit(", "), Fragment.encode(DuckDbTypes.varchar.nullable(), unsaved.status), Fragment.lit(")\nON CONFLICT (\"order_id\")\nDO UPDATE SET\n  \"customer_id\" = EXCLUDED.\"customer_id\",\n\"order_date\" = EXCLUDED.\"order_date\",\n\"total_amount\" = EXCLUDED.\"total_amount\",\n\"status\" = EXCLUDED.\"status\"\nRETURNING \"order_id\", \"customer_id\", \"order_date\", \"total_amount\", \"status\""))
-    .updateReturning(OrdersRow._rowParser.exactlyOne())
-    .runUnchecked(c)
+  ): OrdersRow = Fragment.concat(Fragment.of("INSERT INTO \"orders\"(\"order_id\", \"customer_id\", \"order_date\", \"total_amount\", \"status\")\nVALUES ("), Fragment.encode(OrdersId.duckDbType, unsaved.orderId), Fragment.of(", "), Fragment.encode(DuckDbTypes.integer, unsaved.customerId), Fragment.of(", "), Fragment.encode(DuckDbTypes.date, unsaved.orderDate), Fragment.of(", "), Fragment.encode(DuckDbTypes.numeric.opt(), unsaved.totalAmount), Fragment.of(", "), Fragment.encode(DuckDbTypes.varchar.opt(), unsaved.status), Fragment.of(")\nON CONFLICT (\"order_id\")\nDO UPDATE SET\n  \"customer_id\" = EXCLUDED.\"customer_id\",\n\"order_date\" = EXCLUDED.\"order_date\",\n\"total_amount\" = EXCLUDED.\"total_amount\",\n\"status\" = EXCLUDED.\"status\"\nRETURNING \"order_id\", \"customer_id\", \"order_date\", \"total_amount\", \"status\""))
+    .updateReturning(OrdersRow.rowCodec.exactlyOne())
+    .run(c)
 
   override fun upsertBatch(
     unsaved: Iterator<OrdersRow>,
     c: Connection
-  ): List<OrdersRow> = Fragment.interpolate(Fragment.lit("INSERT INTO \"orders\"(\"order_id\", \"customer_id\", \"order_date\", \"total_amount\", \"status\")\nVALUES (?, ?, ?, ?, ?)\nON CONFLICT (\"order_id\")\nDO UPDATE SET\n  \"customer_id\" = EXCLUDED.\"customer_id\",\n\"order_date\" = EXCLUDED.\"order_date\",\n\"total_amount\" = EXCLUDED.\"total_amount\",\n\"status\" = EXCLUDED.\"status\"\nRETURNING \"order_id\", \"customer_id\", \"order_date\", \"total_amount\", \"status\""))
-    .updateReturningEach(OrdersRow._rowParser, unsaved)
-  .runUnchecked(c)
+  ): List<OrdersRow> = Fragment.concat(Fragment.of("INSERT INTO \"orders\"(\"order_id\", \"customer_id\", \"order_date\", \"total_amount\", \"status\")\nVALUES (?, ?, ?, ?, ?)\nON CONFLICT (\"order_id\")\nDO UPDATE SET\n  \"customer_id\" = EXCLUDED.\"customer_id\",\n\"order_date\" = EXCLUDED.\"order_date\",\n\"total_amount\" = EXCLUDED.\"total_amount\",\n\"status\" = EXCLUDED.\"status\"\nRETURNING \"order_id\", \"customer_id\", \"order_date\", \"total_amount\", \"status\""))
+    .updateReturningEach(OrdersRow.rowCodec, unsaved)
+  .run(c)
 }

@@ -27,7 +27,7 @@ object TypoShort {
       .contramap(_.map(v => v.value: java.lang.Short))
   }
 
-  given bijection: Bijection[TypoShort, Short] = Bijection.apply[TypoShort, Short](_.value)(TypoShort.apply)
+  given bijection: Bijection[TypoShort, Short] = Bijection[TypoShort, Short](_.value)(TypoShort.apply)
 
   given decoder: Decoder[TypoShort] = Decoder[Short].map(TypoShort.apply)
 

@@ -9,7 +9,7 @@ import adventureworks.customtypes.Defaulted
 import adventureworks.customtypes.Defaulted.UseDefault
 import adventureworks.public.Name
 import dev.typr.foundations.PgText
-import dev.typr.foundations.PgTypes
+import dev.typr.foundationskt.PgTypes
 import java.time.LocalDateTime
 
 /** This class corresponds to a row in table `person.countryregion` which has not been persisted yet */
@@ -25,10 +25,10 @@ data class CountryregionRowUnsaved(
 
   companion object {
     val pgText: PgText<CountryregionRowUnsaved> =
-      PgText.instance({ row, sb -> CountryregionId.pgType.text().unsafeEncode(row.countryregioncode, sb)
+      PgText.instance({ row, sb -> CountryregionId.pgType.pgText().unsafeEncode(row.countryregioncode, sb)
       sb.append(PgText.DELIMETER)
-      Name.pgType.text().unsafeEncode(row.name, sb)
+      Name.pgType.pgText().unsafeEncode(row.name, sb)
       sb.append(PgText.DELIMETER)
-      Defaulted.pgText(PgTypes.timestamp.text()).unsafeEncode(row.modifieddate, sb) })
+      Defaulted.pgText(PgTypes.timestamp.pgText()).unsafeEncode(row.modifieddate, sb) })
   }
 }

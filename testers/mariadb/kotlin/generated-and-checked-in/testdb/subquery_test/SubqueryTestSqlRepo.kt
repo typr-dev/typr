@@ -5,9 +5,9 @@
  */
 package testdb.subquery_test
 
-import java.sql.Connection
+import dev.typr.foundationskt.ConnectionRead
 import kotlin.collections.List
 
 interface SubqueryTestSqlRepo {
-  abstract fun apply(c: Connection): List<SubqueryTestSqlRow>
+  abstract fun apply(c: ConnectionRead): List<SubqueryTestSqlRow>
 }

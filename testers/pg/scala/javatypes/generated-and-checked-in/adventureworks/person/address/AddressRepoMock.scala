@@ -5,17 +5,18 @@
  */
 package adventureworks.person.address
 
-import dev.typr.foundations.dsl.DeleteBuilder
-import dev.typr.foundations.dsl.DeleteBuilderMock
-import dev.typr.foundations.dsl.DeleteParams
-import dev.typr.foundations.dsl.SelectBuilder
-import dev.typr.foundations.dsl.SelectBuilderMock
-import dev.typr.foundations.dsl.SelectParams
-import dev.typr.foundations.dsl.UpdateBuilder
-import dev.typr.foundations.dsl.UpdateBuilderMock
-import dev.typr.foundations.dsl.UpdateParams
+import dev.typr.dsl.DeleteBuilder
+import dev.typr.dsl.DeleteBuilderMock
+import dev.typr.dsl.DeleteParams
+import dev.typr.dsl.SelectBuilder
+import dev.typr.dsl.SelectBuilderMock
+import dev.typr.dsl.SelectParams
+import dev.typr.dsl.UpdateBuilder
+import dev.typr.dsl.UpdateBuilderMock
+import dev.typr.dsl.UpdateParams
+import dev.typr.foundations.Connection
+import dev.typr.foundations.ConnectionRead
 import java.lang.RuntimeException
-import java.sql.Connection
 import java.util.ArrayList
 import java.util.HashMap
 import java.util.Optional
@@ -30,9 +31,9 @@ case class AddressRepoMock(
 
   override def deleteById(addressid: AddressId)(using c: Connection): java.lang.Boolean = Optional.ofNullable(map.remove(addressid)).isPresent()
 
-  override def deleteByIds(addressids: Array[AddressId])(using c: Connection): Integer = {
+  override def deleteByIds(addressids: java.util.List[AddressId])(using c: Connection): Integer = {
     var count = 0
-    addressids.foreach { id => if (Optional.ofNullable(map.remove(id)).isPresent()) {
+    addressids.forEach { id => if (Optional.ofNullable(map.remove(id)).isPresent()) {
       count = count + 1
     } }
     return count
@@ -78,19 +79,19 @@ case class AddressRepoMock(
 
   override def select: SelectBuilder[AddressFields, AddressRow] = SelectBuilderMock(AddressFields.structure, () => new ArrayList(map.values()), SelectParams.empty())
 
-  override def selectAll(using c: Connection): java.util.List[AddressRow] = new ArrayList(map.values())
+  override def selectAll(using c: ConnectionRead): java.util.List[AddressRow] = new ArrayList(map.values())
 
-  override def selectById(addressid: AddressId)(using c: Connection): Optional[AddressRow] = Optional.ofNullable(map.get(addressid))
+  override def selectById(addressid: AddressId)(using c: ConnectionRead): Optional[AddressRow] = Optional.ofNullable(map.get(addressid))
 
-  override def selectByIds(addressids: Array[AddressId])(using c: Connection): java.util.List[AddressRow] = {
+  override def selectByIds(addressids: java.util.List[AddressId])(using c: ConnectionRead): java.util.List[AddressRow] = {
     val result = new ArrayList[AddressRow]()
-    addressids.foreach { id => val opt = Optional.ofNullable(map.get(id)); if (opt.isPresent()) {
+    addressids.forEach { id => val opt = Optional.ofNullable(map.get(id)); if (opt.isPresent()) {
       result.add(opt.get()): @scala.annotation.nowarn
     } }
     return result
   }
 
-  override def selectByIdsTracked(addressids: Array[AddressId])(using c: Connection): java.util.Map[AddressId, AddressRow] = selectByIds(addressids)(using c).stream().collect(Collectors.toMap((row: AddressRow) => row.addressid, Function.identity()))
+  override def selectByIdsTracked(addressids: java.util.List[AddressId])(using c: ConnectionRead): java.util.Map[AddressId, AddressRow] = selectByIds(addressids)(using c).stream().collect(Collectors.toMap((row: AddressRow) => row.addressid, Function.identity()))
 
   override def update: UpdateBuilder[AddressFields, AddressRow] = UpdateBuilderMock(AddressFields.structure, () => new ArrayList(map.values()), UpdateParams.empty(), row => row)
 

@@ -6,12 +6,10 @@
 package testdb.orders
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import dev.typr.foundations.Db2Types
+import dev.typr.dslsc.RowCodecs
 import dev.typr.foundations.Tuple.Tuple5
-import dev.typr.foundations.scala.DbTypeOps
-import dev.typr.foundations.scala.RowParser
-import dev.typr.foundations.scala.RowParsers
-import dev.typr.foundations.scala.ScalaDbTypes
+import dev.typr.foundationssc.Db2Types
+import dev.typr.foundationssc.RowCodec
 import java.time.LocalDate
 import testdb.customers.CustomersId
 import testdb.customtypes.Defaulted
@@ -60,5 +58,5 @@ case class OrdersRow(
 }
 
 object OrdersRow {
-  val `_rowParser`: RowParser[OrdersRow] = RowParsers.of(OrdersId.db2Type, CustomersId.db2Type, Db2Types.date, ScalaDbTypes.Db2Types.decimal.nullable, Db2Types.varchar.nullable)(OrdersRow.apply)(row => Array[Any](row.orderId, row.customerId, row.orderDate, row.totalAmount, row.status))
+  val rowCodec: RowCodec[OrdersRow] = RowCodecs.of(OrdersId.db2Type, CustomersId.db2Type, Db2Types.date, Db2Types.decimal.opt, Db2Types.varchar.opt)(OrdersRow.apply)(row => Array[Any](row.orderId, row.customerId, row.orderDate, row.totalAmount, row.status))
 }

@@ -9,7 +9,7 @@ import adventureworks.customtypes.Defaulted
 import adventureworks.customtypes.Defaulted.UseDefault
 import adventureworks.person.businessentity.BusinessentityId
 import dev.typr.foundations.PgText
-import dev.typr.foundations.PgTypes
+import dev.typr.foundationssc.PgTypes
 import java.time.LocalDateTime
 import java.util.UUID
 
@@ -41,5 +41,5 @@ case class PasswordRowUnsaved(
 }
 
 object PasswordRowUnsaved {
-  given pgText: PgText[PasswordRowUnsaved] = PgText.instance((row, sb) => { BusinessentityId.pgType.text.unsafeEncode(row.businessentityid, sb); sb.append(PgText.DELIMETER); PgTypes.text.text.unsafeEncode(row.passwordhash, sb); sb.append(PgText.DELIMETER); PgTypes.text.text.unsafeEncode(row.passwordsalt, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using PgTypes.uuid.text).unsafeEncode(row.rowguid, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using PgTypes.timestamp.text).unsafeEncode(row.modifieddate, sb) })
+  given pgText: PgText[PasswordRowUnsaved] = PgText.instance((row, sb) => { BusinessentityId.pgType.pgText().unsafeEncode(row.businessentityid, sb); sb.append(PgText.DELIMETER); PgTypes.text.pgText().unsafeEncode(row.passwordhash, sb); sb.append(PgText.DELIMETER); PgTypes.text.pgText().unsafeEncode(row.passwordsalt, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using PgTypes.uuid.pgText()).unsafeEncode(row.rowguid, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using PgTypes.timestamp.pgText()).unsafeEncode(row.modifieddate, sb) })
 }

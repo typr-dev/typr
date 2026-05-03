@@ -1,10 +1,9 @@
 package com.example.grpc;
 
+
+
 /** OneOf type for method */
-public sealed interface PaymentMethodMethod
-    permits PaymentMethodMethod.CreditCardValue,
-        PaymentMethodMethod.BankTransferValue,
-        PaymentMethodMethod.WalletValue {
+public sealed interface PaymentMethodMethod permits PaymentMethodMethod.CreditCardValue, PaymentMethodMethod.BankTransferValue, PaymentMethodMethod.WalletValue {
   record BankTransferValue(BankTransfer bankTransfer) implements PaymentMethodMethod {
     public BankTransferValue withBankTransfer(BankTransfer bankTransfer) {
       return new BankTransferValue(bankTransfer);

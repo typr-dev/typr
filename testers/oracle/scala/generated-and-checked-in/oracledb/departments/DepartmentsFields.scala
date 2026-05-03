@@ -5,18 +5,18 @@
  */
 package oracledb.departments
 
+import dev.typr.dsl.FieldsBase
+import dev.typr.dsl.Path
+import dev.typr.dsl.RelationStructure
+import dev.typr.dsl.SqlExpr
+import dev.typr.dsl.SqlExpr.Field
+import dev.typr.dsl.SqlExpr.FieldLike
+import dev.typr.dsl.SqlExpr.IdField
+import dev.typr.dsl.SqlExpr.OptField
+import dev.typr.dsl.TupleExpr
+import dev.typr.dsl.TupleExpr.TupleExpr4
 import dev.typr.foundations.OracleTypes
-import dev.typr.foundations.RowParser
-import dev.typr.foundations.dsl.FieldsBase
-import dev.typr.foundations.dsl.Path
-import dev.typr.foundations.dsl.RelationStructure
-import dev.typr.foundations.dsl.SqlExpr
-import dev.typr.foundations.dsl.SqlExpr.Field
-import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.dsl.SqlExpr.IdField
-import dev.typr.foundations.dsl.SqlExpr.OptField
-import dev.typr.foundations.dsl.TupleExpr
-import dev.typr.foundations.dsl.TupleExpr.TupleExpr4
+import dev.typr.foundations.RowCodec
 import java.util.Optional
 import oracledb.MoneyT
 
@@ -75,7 +75,7 @@ class DepartmentsFields(val `_path`: java.util.List[Path]) extends TupleExpr4[St
 
   override def columns: java.util.List[FieldLike[?, DepartmentsRow]] = java.util.List.of(this.deptCode, this.deptRegion, this.deptName, this.budget)
 
-  override def rowParser: RowParser[DepartmentsRow] = DepartmentsRow._rowParser
+  override def rowCodec: RowCodec[DepartmentsRow] = DepartmentsRow.rowCodec
 
   override def withPaths(`_path`: java.util.List[Path]): RelationStructure[DepartmentsFields, DepartmentsRow] = new DepartmentsFields(`_path`)
 

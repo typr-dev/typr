@@ -6,9 +6,9 @@
 package oracledb.all_types_test
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import dev.typr.dsl.RowCodecs
 import dev.typr.foundations.OracleTypes
-import dev.typr.foundations.RowParser
-import dev.typr.foundations.RowParsers
+import dev.typr.foundations.RowCodec
 import dev.typr.foundations.Tuple.Tuple4
 import java.util.Optional
 import oracledb.AllTypesStructNoLobs
@@ -19,7 +19,7 @@ import oracledb.customtypes.Defaulted
  * Primary key: ID
  */
 case class AllTypesTestRow(
-  /** Default: "TYPR"."ISEQ$$_72879".nextval */
+  /** Default: "TYPR"."ISEQ$$_72869".nextval */
   @JsonProperty("ID") id: AllTypesTestId,
   @JsonProperty("NAME") name: String,
   @JsonProperty("DATA") data: Optional[AllTypesStructNoLobs],
@@ -44,5 +44,5 @@ case class AllTypesTestRow(
 }
 
 object AllTypesTestRow {
-  val `_rowParser`: RowParser[AllTypesTestRow] = RowParsers.of(AllTypesTestId.oracleType, OracleTypes.varchar2, AllTypesStructNoLobs.oracleType.opt(), AllTypesStructNoLobsArray.oracleType.opt(), AllTypesTestRow.apply, row => Array[Any](row.id, row.name, row.data, row.dataArray))
+  val rowCodec: RowCodec[AllTypesTestRow] = RowCodecs.of(AllTypesTestId.oracleType, OracleTypes.varchar2, AllTypesStructNoLobs.oracleType.opt, AllTypesStructNoLobsArray.oracleType.opt, AllTypesTestRow.apply, row => Array[Any](row.id, row.name, row.data, row.dataArray))
 }

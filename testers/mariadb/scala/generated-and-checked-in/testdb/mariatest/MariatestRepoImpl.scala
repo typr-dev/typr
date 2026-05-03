@@ -5,125 +5,125 @@
  */
 package testdb.mariatest
 
-import dev.typr.foundations.MariaTypes
-import dev.typr.foundations.scala.DeleteBuilder
-import dev.typr.foundations.scala.Dialect
-import dev.typr.foundations.scala.Fragment
-import dev.typr.foundations.scala.ScalaDbTypes
-import dev.typr.foundations.scala.SelectBuilder
-import dev.typr.foundations.scala.UpdateBuilder
-import java.sql.Connection
+import dev.typr.dslsc.DeleteBuilder
+import dev.typr.dslsc.Dialect
+import dev.typr.dslsc.SelectBuilder
+import dev.typr.dslsc.UpdateBuilder
+import dev.typr.foundationssc.Connection
+import dev.typr.foundationssc.ConnectionRead
+import dev.typr.foundationssc.Fragment
+import dev.typr.foundationssc.MariaTypes
 import scala.collection.mutable.ListBuffer
 import testdb.XYZSet
-import dev.typr.foundations.scala.Fragment.sql
+import dev.typr.foundationssc.Fragment.sql
 
 class MariatestRepoImpl extends MariatestRepo {
   override def delete: DeleteBuilder[MariatestFields, MariatestRow] = DeleteBuilder.of("`mariatest`", MariatestFields.structure, Dialect.MARIADB)
 
-  override def deleteById(intCol: MariatestId)(using c: Connection): Boolean = sql"delete from `mariatest` where `int_col` = ${Fragment.encode(MariatestId.mariaType, intCol)}".update().runUnchecked(c) > 0
+  override def deleteById(intCol: MariatestId)(using c: Connection): Boolean = sql"delete from `mariatest` where `int_col` = ${Fragment.encode(MariatestId.mariaType, intCol)}".update().run(using c) > 0
 
-  override def deleteByIds(intCols: Array[MariatestId])(using c: Connection): Int = {
+  override def deleteByIds(intCols: List[MariatestId])(using c: Connection): Int = {
     val fragments: ListBuffer[Fragment] = ListBuffer()
     intCols.foreach { id => fragments.addOne(Fragment.encode(MariatestId.mariaType, id)): @scala.annotation.nowarn }
-    return Fragment.interpolate(Fragment.lit("delete from `mariatest` where `int_col` in ("), Fragment.comma(fragments), Fragment.lit(")")).update().runUnchecked(c)
+    return Fragment.concat(Fragment.of("delete from `mariatest` where `int_col` in ("), Fragment.comma(fragments), Fragment.of(")")).update().run(using c)
   }
 
   override def insert(unsaved: MariatestRow)(using c: Connection): MariatestRow = {
   sql"""insert into `mariatest`(`tinyint_col`, `smallint_col`, `mediumint_col`, `int_col`, `bigint_col`, `tinyint_u_col`, `smallint_u_col`, `mediumint_u_col`, `int_u_col`, `bigint_u_col`, `decimal_col`, `numeric_col`, `float_col`, `double_col`, `bool_col`, `bit_col`, `bit1_col`, `char_col`, `varchar_col`, `tinytext_col`, `text_col`, `mediumtext_col`, `longtext_col`, `binary_col`, `varbinary_col`, `tinyblob_col`, `blob_col`, `mediumblob_col`, `longblob_col`, `date_col`, `time_col`, `time_fsp_col`, `datetime_col`, `datetime_fsp_col`, `timestamp_col`, `timestamp_fsp_col`, `year_col`, `set_col`, `json_col`, `inet4_col`, `inet6_col`)
-    values (${Fragment.encode(ScalaDbTypes.MariaTypes.tinyint, unsaved.tinyintCol)}, ${Fragment.encode(ScalaDbTypes.MariaTypes.smallint, unsaved.smallintCol)}, ${Fragment.encode(ScalaDbTypes.MariaTypes.mediumint, unsaved.mediumintCol)}, ${Fragment.encode(MariatestId.mariaType, unsaved.intCol)}, ${Fragment.encode(ScalaDbTypes.MariaTypes.bigint, unsaved.bigintCol)}, ${Fragment.encode(MariaTypes.tinyintUnsigned, unsaved.tinyintUCol)}, ${Fragment.encode(MariaTypes.smallintUnsigned, unsaved.smallintUCol)}, ${Fragment.encode(MariaTypes.mediumintUnsigned, unsaved.mediumintUCol)}, ${Fragment.encode(MariaTypes.intUnsigned, unsaved.intUCol)}, ${Fragment.encode(MariaTypes.bigintUnsigned, unsaved.bigintUCol)}, ${Fragment.encode(ScalaDbTypes.MariaTypes.numeric, unsaved.decimalCol)}, ${Fragment.encode(ScalaDbTypes.MariaTypes.numeric, unsaved.numericCol)}, ${Fragment.encode(ScalaDbTypes.MariaTypes.float_, unsaved.floatCol)}, ${Fragment.encode(ScalaDbTypes.MariaTypes.double_, unsaved.doubleCol)}, ${Fragment.encode(ScalaDbTypes.MariaTypes.bool, unsaved.boolCol)}, ${Fragment.encode(MariaTypes.bit, unsaved.bitCol)}, ${Fragment.encode(MariaTypes.bit, unsaved.bit1Col)}, ${Fragment.encode(MariaTypes.char_, unsaved.charCol)}, ${Fragment.encode(MariaTypes.varchar, unsaved.varcharCol)}, ${Fragment.encode(MariaTypes.tinytext, unsaved.tinytextCol)}, ${Fragment.encode(MariaTypes.text, unsaved.textCol)}, ${Fragment.encode(MariaTypes.mediumtext, unsaved.mediumtextCol)}, ${Fragment.encode(MariaTypes.longtext, unsaved.longtextCol)}, ${Fragment.encode(MariaTypes.binary, unsaved.binaryCol)}, ${Fragment.encode(MariaTypes.varbinary, unsaved.varbinaryCol)}, ${Fragment.encode(MariaTypes.tinyblob, unsaved.tinyblobCol)}, ${Fragment.encode(MariaTypes.blob, unsaved.blobCol)}, ${Fragment.encode(MariaTypes.mediumblob, unsaved.mediumblobCol)}, ${Fragment.encode(MariaTypes.longblob, unsaved.longblobCol)}, ${Fragment.encode(MariaTypes.date, unsaved.dateCol)}, ${Fragment.encode(MariaTypes.time, unsaved.timeCol)}, ${Fragment.encode(MariaTypes.time, unsaved.timeFspCol)}, ${Fragment.encode(MariaTypes.datetime, unsaved.datetimeCol)}, ${Fragment.encode(MariaTypes.datetime, unsaved.datetimeFspCol)}, ${Fragment.encode(MariaTypes.timestamp, unsaved.timestampCol)}, ${Fragment.encode(MariaTypes.timestamp, unsaved.timestampFspCol)}, ${Fragment.encode(MariaTypes.year, unsaved.yearCol)}, ${Fragment.encode(XYZSet.mariaType, unsaved.setCol)}, ${Fragment.encode(MariaTypes.json, unsaved.jsonCol)}, ${Fragment.encode(MariaTypes.inet4, unsaved.inet4Col)}, ${Fragment.encode(MariaTypes.inet6, unsaved.inet6Col)})
+    values (${Fragment.encode(MariaTypes.tinyint, unsaved.tinyintCol)}, ${Fragment.encode(MariaTypes.smallint, unsaved.smallintCol)}, ${Fragment.encode(MariaTypes.mediumint, unsaved.mediumintCol)}, ${Fragment.encode(MariatestId.mariaType, unsaved.intCol)}, ${Fragment.encode(MariaTypes.bigint, unsaved.bigintCol)}, ${Fragment.encode(MariaTypes.tinyintUnsigned, unsaved.tinyintUCol)}, ${Fragment.encode(MariaTypes.smallintUnsigned, unsaved.smallintUCol)}, ${Fragment.encode(MariaTypes.mediumintUnsigned, unsaved.mediumintUCol)}, ${Fragment.encode(MariaTypes.intUnsigned, unsaved.intUCol)}, ${Fragment.encode(MariaTypes.bigintUnsigned, unsaved.bigintUCol)}, ${Fragment.encode(MariaTypes.numeric, unsaved.decimalCol)}, ${Fragment.encode(MariaTypes.numeric, unsaved.numericCol)}, ${Fragment.encode(MariaTypes.float_, unsaved.floatCol)}, ${Fragment.encode(MariaTypes.double_, unsaved.doubleCol)}, ${Fragment.encode(MariaTypes.bool, unsaved.boolCol)}, ${Fragment.encode(MariaTypes.bit, unsaved.bitCol)}, ${Fragment.encode(MariaTypes.bit, unsaved.bit1Col)}, ${Fragment.encode(MariaTypes.char_, unsaved.charCol)}, ${Fragment.encode(MariaTypes.varchar, unsaved.varcharCol)}, ${Fragment.encode(MariaTypes.tinytext, unsaved.tinytextCol)}, ${Fragment.encode(MariaTypes.text, unsaved.textCol)}, ${Fragment.encode(MariaTypes.mediumtext, unsaved.mediumtextCol)}, ${Fragment.encode(MariaTypes.longtext, unsaved.longtextCol)}, ${Fragment.encode(MariaTypes.binary, unsaved.binaryCol)}, ${Fragment.encode(MariaTypes.varbinary, unsaved.varbinaryCol)}, ${Fragment.encode(MariaTypes.tinyblob, unsaved.tinyblobCol)}, ${Fragment.encode(MariaTypes.blob, unsaved.blobCol)}, ${Fragment.encode(MariaTypes.mediumblob, unsaved.mediumblobCol)}, ${Fragment.encode(MariaTypes.longblob, unsaved.longblobCol)}, ${Fragment.encode(MariaTypes.date, unsaved.dateCol)}, ${Fragment.encode(MariaTypes.time, unsaved.timeCol)}, ${Fragment.encode(MariaTypes.time, unsaved.timeFspCol)}, ${Fragment.encode(MariaTypes.datetime, unsaved.datetimeCol)}, ${Fragment.encode(MariaTypes.datetime, unsaved.datetimeFspCol)}, ${Fragment.encode(MariaTypes.timestamp, unsaved.timestampCol)}, ${Fragment.encode(MariaTypes.timestamp, unsaved.timestampFspCol)}, ${Fragment.encode(MariaTypes.year, unsaved.yearCol)}, ${Fragment.encode(XYZSet.mariaType, unsaved.setCol)}, ${Fragment.encode(MariaTypes.json, unsaved.jsonCol)}, ${Fragment.encode(MariaTypes.inet4, unsaved.inet4Col)}, ${Fragment.encode(MariaTypes.inet6, unsaved.inet6Col)})
     RETURNING `tinyint_col`, `smallint_col`, `mediumint_col`, `int_col`, `bigint_col`, `tinyint_u_col`, `smallint_u_col`, `mediumint_u_col`, `int_u_col`, `bigint_u_col`, `decimal_col`, `numeric_col`, `float_col`, `double_col`, `bool_col`, `bit_col`, `bit1_col`, `char_col`, `varchar_col`, `tinytext_col`, `text_col`, `mediumtext_col`, `longtext_col`, `binary_col`, `varbinary_col`, `tinyblob_col`, `blob_col`, `mediumblob_col`, `longblob_col`, `date_col`, `time_col`, `time_fsp_col`, `datetime_col`, `datetime_fsp_col`, `timestamp_col`, `timestamp_fsp_col`, `year_col`, `set_col`, `json_col`, `inet4_col`, `inet6_col`
     """
-    .updateReturning(MariatestRow.`_rowParser`.exactlyOne()).runUnchecked(c)
+    .updateReturning(MariatestRow.rowCodec.exactlyOne()).run(using c)
   }
 
   override def insert(unsaved: MariatestRowUnsaved)(using c: Connection): MariatestRow = {
     val columns: ListBuffer[Fragment] = ListBuffer()
     val values: ListBuffer[Fragment] = ListBuffer()
-    columns.addOne(Fragment.lit("`tinyint_col`")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(ScalaDbTypes.MariaTypes.tinyint, unsaved.tinyintCol)}"): @scala.annotation.nowarn
-    columns.addOne(Fragment.lit("`smallint_col`")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(ScalaDbTypes.MariaTypes.smallint, unsaved.smallintCol)}"): @scala.annotation.nowarn
-    columns.addOne(Fragment.lit("`mediumint_col`")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(ScalaDbTypes.MariaTypes.mediumint, unsaved.mediumintCol)}"): @scala.annotation.nowarn
-    columns.addOne(Fragment.lit("`int_col`")): @scala.annotation.nowarn
+    columns.addOne(Fragment.of("`tinyint_col`")): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(MariaTypes.tinyint, unsaved.tinyintCol)}"): @scala.annotation.nowarn
+    columns.addOne(Fragment.of("`smallint_col`")): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(MariaTypes.smallint, unsaved.smallintCol)}"): @scala.annotation.nowarn
+    columns.addOne(Fragment.of("`mediumint_col`")): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(MariaTypes.mediumint, unsaved.mediumintCol)}"): @scala.annotation.nowarn
+    columns.addOne(Fragment.of("`int_col`")): @scala.annotation.nowarn
     values.addOne(sql"${Fragment.encode(MariatestId.mariaType, unsaved.intCol)}"): @scala.annotation.nowarn
-    columns.addOne(Fragment.lit("`bigint_col`")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(ScalaDbTypes.MariaTypes.bigint, unsaved.bigintCol)}"): @scala.annotation.nowarn
-    columns.addOne(Fragment.lit("`tinyint_u_col`")): @scala.annotation.nowarn
+    columns.addOne(Fragment.of("`bigint_col`")): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(MariaTypes.bigint, unsaved.bigintCol)}"): @scala.annotation.nowarn
+    columns.addOne(Fragment.of("`tinyint_u_col`")): @scala.annotation.nowarn
     values.addOne(sql"${Fragment.encode(MariaTypes.tinyintUnsigned, unsaved.tinyintUCol)}"): @scala.annotation.nowarn
-    columns.addOne(Fragment.lit("`smallint_u_col`")): @scala.annotation.nowarn
+    columns.addOne(Fragment.of("`smallint_u_col`")): @scala.annotation.nowarn
     values.addOne(sql"${Fragment.encode(MariaTypes.smallintUnsigned, unsaved.smallintUCol)}"): @scala.annotation.nowarn
-    columns.addOne(Fragment.lit("`mediumint_u_col`")): @scala.annotation.nowarn
+    columns.addOne(Fragment.of("`mediumint_u_col`")): @scala.annotation.nowarn
     values.addOne(sql"${Fragment.encode(MariaTypes.mediumintUnsigned, unsaved.mediumintUCol)}"): @scala.annotation.nowarn
-    columns.addOne(Fragment.lit("`int_u_col`")): @scala.annotation.nowarn
+    columns.addOne(Fragment.of("`int_u_col`")): @scala.annotation.nowarn
     values.addOne(sql"${Fragment.encode(MariaTypes.intUnsigned, unsaved.intUCol)}"): @scala.annotation.nowarn
-    columns.addOne(Fragment.lit("`bigint_u_col`")): @scala.annotation.nowarn
+    columns.addOne(Fragment.of("`bigint_u_col`")): @scala.annotation.nowarn
     values.addOne(sql"${Fragment.encode(MariaTypes.bigintUnsigned, unsaved.bigintUCol)}"): @scala.annotation.nowarn
-    columns.addOne(Fragment.lit("`decimal_col`")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(ScalaDbTypes.MariaTypes.numeric, unsaved.decimalCol)}"): @scala.annotation.nowarn
-    columns.addOne(Fragment.lit("`numeric_col`")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(ScalaDbTypes.MariaTypes.numeric, unsaved.numericCol)}"): @scala.annotation.nowarn
-    columns.addOne(Fragment.lit("`float_col`")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(ScalaDbTypes.MariaTypes.float_, unsaved.floatCol)}"): @scala.annotation.nowarn
-    columns.addOne(Fragment.lit("`double_col`")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(ScalaDbTypes.MariaTypes.double_, unsaved.doubleCol)}"): @scala.annotation.nowarn
-    columns.addOne(Fragment.lit("`bool_col`")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(ScalaDbTypes.MariaTypes.bool, unsaved.boolCol)}"): @scala.annotation.nowarn
-    columns.addOne(Fragment.lit("`bit_col`")): @scala.annotation.nowarn
+    columns.addOne(Fragment.of("`decimal_col`")): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(MariaTypes.numeric, unsaved.decimalCol)}"): @scala.annotation.nowarn
+    columns.addOne(Fragment.of("`numeric_col`")): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(MariaTypes.numeric, unsaved.numericCol)}"): @scala.annotation.nowarn
+    columns.addOne(Fragment.of("`float_col`")): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(MariaTypes.float_, unsaved.floatCol)}"): @scala.annotation.nowarn
+    columns.addOne(Fragment.of("`double_col`")): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(MariaTypes.double_, unsaved.doubleCol)}"): @scala.annotation.nowarn
+    columns.addOne(Fragment.of("`bool_col`")): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(MariaTypes.bool, unsaved.boolCol)}"): @scala.annotation.nowarn
+    columns.addOne(Fragment.of("`bit_col`")): @scala.annotation.nowarn
     values.addOne(sql"${Fragment.encode(MariaTypes.bit, unsaved.bitCol)}"): @scala.annotation.nowarn
-    columns.addOne(Fragment.lit("`bit1_col`")): @scala.annotation.nowarn
+    columns.addOne(Fragment.of("`bit1_col`")): @scala.annotation.nowarn
     values.addOne(sql"${Fragment.encode(MariaTypes.bit, unsaved.bit1Col)}"): @scala.annotation.nowarn
-    columns.addOne(Fragment.lit("`char_col`")): @scala.annotation.nowarn
+    columns.addOne(Fragment.of("`char_col`")): @scala.annotation.nowarn
     values.addOne(sql"${Fragment.encode(MariaTypes.char_, unsaved.charCol)}"): @scala.annotation.nowarn
-    columns.addOne(Fragment.lit("`varchar_col`")): @scala.annotation.nowarn
+    columns.addOne(Fragment.of("`varchar_col`")): @scala.annotation.nowarn
     values.addOne(sql"${Fragment.encode(MariaTypes.varchar, unsaved.varcharCol)}"): @scala.annotation.nowarn
-    columns.addOne(Fragment.lit("`tinytext_col`")): @scala.annotation.nowarn
+    columns.addOne(Fragment.of("`tinytext_col`")): @scala.annotation.nowarn
     values.addOne(sql"${Fragment.encode(MariaTypes.tinytext, unsaved.tinytextCol)}"): @scala.annotation.nowarn
-    columns.addOne(Fragment.lit("`text_col`")): @scala.annotation.nowarn
+    columns.addOne(Fragment.of("`text_col`")): @scala.annotation.nowarn
     values.addOne(sql"${Fragment.encode(MariaTypes.text, unsaved.textCol)}"): @scala.annotation.nowarn
-    columns.addOne(Fragment.lit("`mediumtext_col`")): @scala.annotation.nowarn
+    columns.addOne(Fragment.of("`mediumtext_col`")): @scala.annotation.nowarn
     values.addOne(sql"${Fragment.encode(MariaTypes.mediumtext, unsaved.mediumtextCol)}"): @scala.annotation.nowarn
-    columns.addOne(Fragment.lit("`longtext_col`")): @scala.annotation.nowarn
+    columns.addOne(Fragment.of("`longtext_col`")): @scala.annotation.nowarn
     values.addOne(sql"${Fragment.encode(MariaTypes.longtext, unsaved.longtextCol)}"): @scala.annotation.nowarn
-    columns.addOne(Fragment.lit("`binary_col`")): @scala.annotation.nowarn
+    columns.addOne(Fragment.of("`binary_col`")): @scala.annotation.nowarn
     values.addOne(sql"${Fragment.encode(MariaTypes.binary, unsaved.binaryCol)}"): @scala.annotation.nowarn
-    columns.addOne(Fragment.lit("`varbinary_col`")): @scala.annotation.nowarn
+    columns.addOne(Fragment.of("`varbinary_col`")): @scala.annotation.nowarn
     values.addOne(sql"${Fragment.encode(MariaTypes.varbinary, unsaved.varbinaryCol)}"): @scala.annotation.nowarn
-    columns.addOne(Fragment.lit("`tinyblob_col`")): @scala.annotation.nowarn
+    columns.addOne(Fragment.of("`tinyblob_col`")): @scala.annotation.nowarn
     values.addOne(sql"${Fragment.encode(MariaTypes.tinyblob, unsaved.tinyblobCol)}"): @scala.annotation.nowarn
-    columns.addOne(Fragment.lit("`blob_col`")): @scala.annotation.nowarn
+    columns.addOne(Fragment.of("`blob_col`")): @scala.annotation.nowarn
     values.addOne(sql"${Fragment.encode(MariaTypes.blob, unsaved.blobCol)}"): @scala.annotation.nowarn
-    columns.addOne(Fragment.lit("`mediumblob_col`")): @scala.annotation.nowarn
+    columns.addOne(Fragment.of("`mediumblob_col`")): @scala.annotation.nowarn
     values.addOne(sql"${Fragment.encode(MariaTypes.mediumblob, unsaved.mediumblobCol)}"): @scala.annotation.nowarn
-    columns.addOne(Fragment.lit("`longblob_col`")): @scala.annotation.nowarn
+    columns.addOne(Fragment.of("`longblob_col`")): @scala.annotation.nowarn
     values.addOne(sql"${Fragment.encode(MariaTypes.longblob, unsaved.longblobCol)}"): @scala.annotation.nowarn
-    columns.addOne(Fragment.lit("`date_col`")): @scala.annotation.nowarn
+    columns.addOne(Fragment.of("`date_col`")): @scala.annotation.nowarn
     values.addOne(sql"${Fragment.encode(MariaTypes.date, unsaved.dateCol)}"): @scala.annotation.nowarn
-    columns.addOne(Fragment.lit("`time_col`")): @scala.annotation.nowarn
+    columns.addOne(Fragment.of("`time_col`")): @scala.annotation.nowarn
     values.addOne(sql"${Fragment.encode(MariaTypes.time, unsaved.timeCol)}"): @scala.annotation.nowarn
-    columns.addOne(Fragment.lit("`time_fsp_col`")): @scala.annotation.nowarn
+    columns.addOne(Fragment.of("`time_fsp_col`")): @scala.annotation.nowarn
     values.addOne(sql"${Fragment.encode(MariaTypes.time, unsaved.timeFspCol)}"): @scala.annotation.nowarn
-    columns.addOne(Fragment.lit("`datetime_col`")): @scala.annotation.nowarn
+    columns.addOne(Fragment.of("`datetime_col`")): @scala.annotation.nowarn
     values.addOne(sql"${Fragment.encode(MariaTypes.datetime, unsaved.datetimeCol)}"): @scala.annotation.nowarn
-    columns.addOne(Fragment.lit("`datetime_fsp_col`")): @scala.annotation.nowarn
+    columns.addOne(Fragment.of("`datetime_fsp_col`")): @scala.annotation.nowarn
     values.addOne(sql"${Fragment.encode(MariaTypes.datetime, unsaved.datetimeFspCol)}"): @scala.annotation.nowarn
-    columns.addOne(Fragment.lit("`year_col`")): @scala.annotation.nowarn
+    columns.addOne(Fragment.of("`year_col`")): @scala.annotation.nowarn
     values.addOne(sql"${Fragment.encode(MariaTypes.year, unsaved.yearCol)}"): @scala.annotation.nowarn
-    columns.addOne(Fragment.lit("`set_col`")): @scala.annotation.nowarn
+    columns.addOne(Fragment.of("`set_col`")): @scala.annotation.nowarn
     values.addOne(sql"${Fragment.encode(XYZSet.mariaType, unsaved.setCol)}"): @scala.annotation.nowarn
-    columns.addOne(Fragment.lit("`json_col`")): @scala.annotation.nowarn
+    columns.addOne(Fragment.of("`json_col`")): @scala.annotation.nowarn
     values.addOne(sql"${Fragment.encode(MariaTypes.json, unsaved.jsonCol)}"): @scala.annotation.nowarn
-    columns.addOne(Fragment.lit("`inet4_col`")): @scala.annotation.nowarn
+    columns.addOne(Fragment.of("`inet4_col`")): @scala.annotation.nowarn
     values.addOne(sql"${Fragment.encode(MariaTypes.inet4, unsaved.inet4Col)}"): @scala.annotation.nowarn
-    columns.addOne(Fragment.lit("`inet6_col`")): @scala.annotation.nowarn
+    columns.addOne(Fragment.of("`inet6_col`")): @scala.annotation.nowarn
     values.addOne(sql"${Fragment.encode(MariaTypes.inet6, unsaved.inet6Col)}"): @scala.annotation.nowarn
     unsaved.timestampCol.visit(
       {  },
-      value => { columns.addOne(Fragment.lit("`timestamp_col`")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(MariaTypes.timestamp, value)}"): @scala.annotation.nowarn }
+      value => { columns.addOne(Fragment.of("`timestamp_col`")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(MariaTypes.timestamp, value)}"): @scala.annotation.nowarn }
     );
     unsaved.timestampFspCol.visit(
       {  },
-      value => { columns.addOne(Fragment.lit("`timestamp_fsp_col`")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(MariaTypes.timestamp, value)}"): @scala.annotation.nowarn }
+      value => { columns.addOne(Fragment.of("`timestamp_fsp_col`")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(MariaTypes.timestamp, value)}"): @scala.annotation.nowarn }
     );
     val q: Fragment = {
       sql"""insert into `mariatest`(${Fragment.comma(columns)})
@@ -131,54 +131,54 @@ class MariatestRepoImpl extends MariatestRepo {
       RETURNING `tinyint_col`, `smallint_col`, `mediumint_col`, `int_col`, `bigint_col`, `tinyint_u_col`, `smallint_u_col`, `mediumint_u_col`, `int_u_col`, `bigint_u_col`, `decimal_col`, `numeric_col`, `float_col`, `double_col`, `bool_col`, `bit_col`, `bit1_col`, `char_col`, `varchar_col`, `tinytext_col`, `text_col`, `mediumtext_col`, `longtext_col`, `binary_col`, `varbinary_col`, `tinyblob_col`, `blob_col`, `mediumblob_col`, `longblob_col`, `date_col`, `time_col`, `time_fsp_col`, `datetime_col`, `datetime_fsp_col`, `timestamp_col`, `timestamp_fsp_col`, `year_col`, `set_col`, `json_col`, `inet4_col`, `inet6_col`
       """
     }
-    return q.updateReturning(MariatestRow.`_rowParser`.exactlyOne()).runUnchecked(c)
+    return q.updateReturning(MariatestRow.rowCodec.exactlyOne()).run(using c)
   }
 
-  override def select: SelectBuilder[MariatestFields, MariatestRow] = SelectBuilder.of("`mariatest`", MariatestFields.structure, MariatestRow.`_rowParser`, Dialect.MARIADB)
+  override def select: SelectBuilder[MariatestFields, MariatestRow] = SelectBuilder.of("`mariatest`", MariatestFields.structure, MariatestRow.rowCodec, Dialect.MARIADB)
 
-  override def selectAll(using c: Connection): List[MariatestRow] = {
+  override def selectAll(using c: ConnectionRead): List[MariatestRow] = {
     sql"""select `tinyint_col`, `smallint_col`, `mediumint_col`, `int_col`, `bigint_col`, `tinyint_u_col`, `smallint_u_col`, `mediumint_u_col`, `int_u_col`, `bigint_u_col`, `decimal_col`, `numeric_col`, `float_col`, `double_col`, `bool_col`, `bit_col`, `bit1_col`, `char_col`, `varchar_col`, `tinytext_col`, `text_col`, `mediumtext_col`, `longtext_col`, `binary_col`, `varbinary_col`, `tinyblob_col`, `blob_col`, `mediumblob_col`, `longblob_col`, `date_col`, `time_col`, `time_fsp_col`, `datetime_col`, `datetime_fsp_col`, `timestamp_col`, `timestamp_fsp_col`, `year_col`, `set_col`, `json_col`, `inet4_col`, `inet6_col`
     from `mariatest`
-    """.query(MariatestRow.`_rowParser`.all()).runUnchecked(c)
+    """.query(MariatestRow.rowCodec.all()).run(using c)
   }
 
-  override def selectById(intCol: MariatestId)(using c: Connection): Option[MariatestRow] = {
+  override def selectById(intCol: MariatestId)(using c: ConnectionRead): Option[MariatestRow] = {
     sql"""select `tinyint_col`, `smallint_col`, `mediumint_col`, `int_col`, `bigint_col`, `tinyint_u_col`, `smallint_u_col`, `mediumint_u_col`, `int_u_col`, `bigint_u_col`, `decimal_col`, `numeric_col`, `float_col`, `double_col`, `bool_col`, `bit_col`, `bit1_col`, `char_col`, `varchar_col`, `tinytext_col`, `text_col`, `mediumtext_col`, `longtext_col`, `binary_col`, `varbinary_col`, `tinyblob_col`, `blob_col`, `mediumblob_col`, `longblob_col`, `date_col`, `time_col`, `time_fsp_col`, `datetime_col`, `datetime_fsp_col`, `timestamp_col`, `timestamp_fsp_col`, `year_col`, `set_col`, `json_col`, `inet4_col`, `inet6_col`
     from `mariatest`
-    where `int_col` = ${Fragment.encode(MariatestId.mariaType, intCol)}""".query(MariatestRow.`_rowParser`.first()).runUnchecked(c)
+    where `int_col` = ${Fragment.encode(MariatestId.mariaType, intCol)}""".query(MariatestRow.rowCodec.first()).run(using c)
   }
 
-  override def selectByIds(intCols: Array[MariatestId])(using c: Connection): List[MariatestRow] = {
+  override def selectByIds(intCols: List[MariatestId])(using c: ConnectionRead): List[MariatestRow] = {
     val fragments: ListBuffer[Fragment] = ListBuffer()
     intCols.foreach { id => fragments.addOne(Fragment.encode(MariatestId.mariaType, id)): @scala.annotation.nowarn }
-    return Fragment.interpolate(Fragment.lit("select `tinyint_col`, `smallint_col`, `mediumint_col`, `int_col`, `bigint_col`, `tinyint_u_col`, `smallint_u_col`, `mediumint_u_col`, `int_u_col`, `bigint_u_col`, `decimal_col`, `numeric_col`, `float_col`, `double_col`, `bool_col`, `bit_col`, `bit1_col`, `char_col`, `varchar_col`, `tinytext_col`, `text_col`, `mediumtext_col`, `longtext_col`, `binary_col`, `varbinary_col`, `tinyblob_col`, `blob_col`, `mediumblob_col`, `longblob_col`, `date_col`, `time_col`, `time_fsp_col`, `datetime_col`, `datetime_fsp_col`, `timestamp_col`, `timestamp_fsp_col`, `year_col`, `set_col`, `json_col`, `inet4_col`, `inet6_col` from `mariatest` where `int_col` in ("), Fragment.comma(fragments), Fragment.lit(")")).query(MariatestRow.`_rowParser`.all()).runUnchecked(c)
+    return Fragment.concat(Fragment.of("select `tinyint_col`, `smallint_col`, `mediumint_col`, `int_col`, `bigint_col`, `tinyint_u_col`, `smallint_u_col`, `mediumint_u_col`, `int_u_col`, `bigint_u_col`, `decimal_col`, `numeric_col`, `float_col`, `double_col`, `bool_col`, `bit_col`, `bit1_col`, `char_col`, `varchar_col`, `tinytext_col`, `text_col`, `mediumtext_col`, `longtext_col`, `binary_col`, `varbinary_col`, `tinyblob_col`, `blob_col`, `mediumblob_col`, `longblob_col`, `date_col`, `time_col`, `time_fsp_col`, `datetime_col`, `datetime_fsp_col`, `timestamp_col`, `timestamp_fsp_col`, `year_col`, `set_col`, `json_col`, `inet4_col`, `inet6_col` from `mariatest` where `int_col` in ("), Fragment.comma(fragments), Fragment.of(")")).query(MariatestRow.rowCodec.all()).run(using c)
   }
 
-  override def selectByIdsTracked(intCols: Array[MariatestId])(using c: Connection): Map[MariatestId, MariatestRow] = {
+  override def selectByIdsTracked(intCols: List[MariatestId])(using c: ConnectionRead): Map[MariatestId, MariatestRow] = {
     val ret: scala.collection.mutable.Map[MariatestId, MariatestRow] = scala.collection.mutable.Map.empty[MariatestId, MariatestRow]
     selectByIds(intCols)(using c).foreach(row => ret.put(row.intCol, row): @scala.annotation.nowarn)
     return ret.toMap
   }
 
-  override def update: UpdateBuilder[MariatestFields, MariatestRow] = UpdateBuilder.of("`mariatest`", MariatestFields.structure, MariatestRow.`_rowParser`, Dialect.MARIADB)
+  override def update: UpdateBuilder[MariatestFields, MariatestRow] = UpdateBuilder.of("`mariatest`", MariatestFields.structure, MariatestRow.rowCodec, Dialect.MARIADB)
 
   override def update(row: MariatestRow)(using c: Connection): Boolean = {
     val intCol: MariatestId = row.intCol
     return sql"""update `mariatest`
-    set `tinyint_col` = ${Fragment.encode(ScalaDbTypes.MariaTypes.tinyint, row.tinyintCol)},
-    `smallint_col` = ${Fragment.encode(ScalaDbTypes.MariaTypes.smallint, row.smallintCol)},
-    `mediumint_col` = ${Fragment.encode(ScalaDbTypes.MariaTypes.mediumint, row.mediumintCol)},
-    `bigint_col` = ${Fragment.encode(ScalaDbTypes.MariaTypes.bigint, row.bigintCol)},
+    set `tinyint_col` = ${Fragment.encode(MariaTypes.tinyint, row.tinyintCol)},
+    `smallint_col` = ${Fragment.encode(MariaTypes.smallint, row.smallintCol)},
+    `mediumint_col` = ${Fragment.encode(MariaTypes.mediumint, row.mediumintCol)},
+    `bigint_col` = ${Fragment.encode(MariaTypes.bigint, row.bigintCol)},
     `tinyint_u_col` = ${Fragment.encode(MariaTypes.tinyintUnsigned, row.tinyintUCol)},
     `smallint_u_col` = ${Fragment.encode(MariaTypes.smallintUnsigned, row.smallintUCol)},
     `mediumint_u_col` = ${Fragment.encode(MariaTypes.mediumintUnsigned, row.mediumintUCol)},
     `int_u_col` = ${Fragment.encode(MariaTypes.intUnsigned, row.intUCol)},
     `bigint_u_col` = ${Fragment.encode(MariaTypes.bigintUnsigned, row.bigintUCol)},
-    `decimal_col` = ${Fragment.encode(ScalaDbTypes.MariaTypes.numeric, row.decimalCol)},
-    `numeric_col` = ${Fragment.encode(ScalaDbTypes.MariaTypes.numeric, row.numericCol)},
-    `float_col` = ${Fragment.encode(ScalaDbTypes.MariaTypes.float_, row.floatCol)},
-    `double_col` = ${Fragment.encode(ScalaDbTypes.MariaTypes.double_, row.doubleCol)},
-    `bool_col` = ${Fragment.encode(ScalaDbTypes.MariaTypes.bool, row.boolCol)},
+    `decimal_col` = ${Fragment.encode(MariaTypes.numeric, row.decimalCol)},
+    `numeric_col` = ${Fragment.encode(MariaTypes.numeric, row.numericCol)},
+    `float_col` = ${Fragment.encode(MariaTypes.float_, row.floatCol)},
+    `double_col` = ${Fragment.encode(MariaTypes.double_, row.doubleCol)},
+    `bool_col` = ${Fragment.encode(MariaTypes.bool, row.boolCol)},
     `bit_col` = ${Fragment.encode(MariaTypes.bit, row.bitCol)},
     `bit1_col` = ${Fragment.encode(MariaTypes.bit, row.bit1Col)},
     `char_col` = ${Fragment.encode(MariaTypes.char_, row.charCol)},
@@ -205,12 +205,12 @@ class MariatestRepoImpl extends MariatestRepo {
     `json_col` = ${Fragment.encode(MariaTypes.json, row.jsonCol)},
     `inet4_col` = ${Fragment.encode(MariaTypes.inet4, row.inet4Col)},
     `inet6_col` = ${Fragment.encode(MariaTypes.inet6, row.inet6Col)}
-    where `int_col` = ${Fragment.encode(MariatestId.mariaType, intCol)}""".update().runUnchecked(c) > 0
+    where `int_col` = ${Fragment.encode(MariatestId.mariaType, intCol)}""".update().run(using c) > 0
   }
 
   override def upsert(unsaved: MariatestRow)(using c: Connection): MariatestRow = {
   sql"""INSERT INTO `mariatest`(`tinyint_col`, `smallint_col`, `mediumint_col`, `int_col`, `bigint_col`, `tinyint_u_col`, `smallint_u_col`, `mediumint_u_col`, `int_u_col`, `bigint_u_col`, `decimal_col`, `numeric_col`, `float_col`, `double_col`, `bool_col`, `bit_col`, `bit1_col`, `char_col`, `varchar_col`, `tinytext_col`, `text_col`, `mediumtext_col`, `longtext_col`, `binary_col`, `varbinary_col`, `tinyblob_col`, `blob_col`, `mediumblob_col`, `longblob_col`, `date_col`, `time_col`, `time_fsp_col`, `datetime_col`, `datetime_fsp_col`, `timestamp_col`, `timestamp_fsp_col`, `year_col`, `set_col`, `json_col`, `inet4_col`, `inet6_col`)
-    VALUES (${Fragment.encode(ScalaDbTypes.MariaTypes.tinyint, unsaved.tinyintCol)}, ${Fragment.encode(ScalaDbTypes.MariaTypes.smallint, unsaved.smallintCol)}, ${Fragment.encode(ScalaDbTypes.MariaTypes.mediumint, unsaved.mediumintCol)}, ${Fragment.encode(MariatestId.mariaType, unsaved.intCol)}, ${Fragment.encode(ScalaDbTypes.MariaTypes.bigint, unsaved.bigintCol)}, ${Fragment.encode(MariaTypes.tinyintUnsigned, unsaved.tinyintUCol)}, ${Fragment.encode(MariaTypes.smallintUnsigned, unsaved.smallintUCol)}, ${Fragment.encode(MariaTypes.mediumintUnsigned, unsaved.mediumintUCol)}, ${Fragment.encode(MariaTypes.intUnsigned, unsaved.intUCol)}, ${Fragment.encode(MariaTypes.bigintUnsigned, unsaved.bigintUCol)}, ${Fragment.encode(ScalaDbTypes.MariaTypes.numeric, unsaved.decimalCol)}, ${Fragment.encode(ScalaDbTypes.MariaTypes.numeric, unsaved.numericCol)}, ${Fragment.encode(ScalaDbTypes.MariaTypes.float_, unsaved.floatCol)}, ${Fragment.encode(ScalaDbTypes.MariaTypes.double_, unsaved.doubleCol)}, ${Fragment.encode(ScalaDbTypes.MariaTypes.bool, unsaved.boolCol)}, ${Fragment.encode(MariaTypes.bit, unsaved.bitCol)}, ${Fragment.encode(MariaTypes.bit, unsaved.bit1Col)}, ${Fragment.encode(MariaTypes.char_, unsaved.charCol)}, ${Fragment.encode(MariaTypes.varchar, unsaved.varcharCol)}, ${Fragment.encode(MariaTypes.tinytext, unsaved.tinytextCol)}, ${Fragment.encode(MariaTypes.text, unsaved.textCol)}, ${Fragment.encode(MariaTypes.mediumtext, unsaved.mediumtextCol)}, ${Fragment.encode(MariaTypes.longtext, unsaved.longtextCol)}, ${Fragment.encode(MariaTypes.binary, unsaved.binaryCol)}, ${Fragment.encode(MariaTypes.varbinary, unsaved.varbinaryCol)}, ${Fragment.encode(MariaTypes.tinyblob, unsaved.tinyblobCol)}, ${Fragment.encode(MariaTypes.blob, unsaved.blobCol)}, ${Fragment.encode(MariaTypes.mediumblob, unsaved.mediumblobCol)}, ${Fragment.encode(MariaTypes.longblob, unsaved.longblobCol)}, ${Fragment.encode(MariaTypes.date, unsaved.dateCol)}, ${Fragment.encode(MariaTypes.time, unsaved.timeCol)}, ${Fragment.encode(MariaTypes.time, unsaved.timeFspCol)}, ${Fragment.encode(MariaTypes.datetime, unsaved.datetimeCol)}, ${Fragment.encode(MariaTypes.datetime, unsaved.datetimeFspCol)}, ${Fragment.encode(MariaTypes.timestamp, unsaved.timestampCol)}, ${Fragment.encode(MariaTypes.timestamp, unsaved.timestampFspCol)}, ${Fragment.encode(MariaTypes.year, unsaved.yearCol)}, ${Fragment.encode(XYZSet.mariaType, unsaved.setCol)}, ${Fragment.encode(MariaTypes.json, unsaved.jsonCol)}, ${Fragment.encode(MariaTypes.inet4, unsaved.inet4Col)}, ${Fragment.encode(MariaTypes.inet6, unsaved.inet6Col)})
+    VALUES (${Fragment.encode(MariaTypes.tinyint, unsaved.tinyintCol)}, ${Fragment.encode(MariaTypes.smallint, unsaved.smallintCol)}, ${Fragment.encode(MariaTypes.mediumint, unsaved.mediumintCol)}, ${Fragment.encode(MariatestId.mariaType, unsaved.intCol)}, ${Fragment.encode(MariaTypes.bigint, unsaved.bigintCol)}, ${Fragment.encode(MariaTypes.tinyintUnsigned, unsaved.tinyintUCol)}, ${Fragment.encode(MariaTypes.smallintUnsigned, unsaved.smallintUCol)}, ${Fragment.encode(MariaTypes.mediumintUnsigned, unsaved.mediumintUCol)}, ${Fragment.encode(MariaTypes.intUnsigned, unsaved.intUCol)}, ${Fragment.encode(MariaTypes.bigintUnsigned, unsaved.bigintUCol)}, ${Fragment.encode(MariaTypes.numeric, unsaved.decimalCol)}, ${Fragment.encode(MariaTypes.numeric, unsaved.numericCol)}, ${Fragment.encode(MariaTypes.float_, unsaved.floatCol)}, ${Fragment.encode(MariaTypes.double_, unsaved.doubleCol)}, ${Fragment.encode(MariaTypes.bool, unsaved.boolCol)}, ${Fragment.encode(MariaTypes.bit, unsaved.bitCol)}, ${Fragment.encode(MariaTypes.bit, unsaved.bit1Col)}, ${Fragment.encode(MariaTypes.char_, unsaved.charCol)}, ${Fragment.encode(MariaTypes.varchar, unsaved.varcharCol)}, ${Fragment.encode(MariaTypes.tinytext, unsaved.tinytextCol)}, ${Fragment.encode(MariaTypes.text, unsaved.textCol)}, ${Fragment.encode(MariaTypes.mediumtext, unsaved.mediumtextCol)}, ${Fragment.encode(MariaTypes.longtext, unsaved.longtextCol)}, ${Fragment.encode(MariaTypes.binary, unsaved.binaryCol)}, ${Fragment.encode(MariaTypes.varbinary, unsaved.varbinaryCol)}, ${Fragment.encode(MariaTypes.tinyblob, unsaved.tinyblobCol)}, ${Fragment.encode(MariaTypes.blob, unsaved.blobCol)}, ${Fragment.encode(MariaTypes.mediumblob, unsaved.mediumblobCol)}, ${Fragment.encode(MariaTypes.longblob, unsaved.longblobCol)}, ${Fragment.encode(MariaTypes.date, unsaved.dateCol)}, ${Fragment.encode(MariaTypes.time, unsaved.timeCol)}, ${Fragment.encode(MariaTypes.time, unsaved.timeFspCol)}, ${Fragment.encode(MariaTypes.datetime, unsaved.datetimeCol)}, ${Fragment.encode(MariaTypes.datetime, unsaved.datetimeFspCol)}, ${Fragment.encode(MariaTypes.timestamp, unsaved.timestampCol)}, ${Fragment.encode(MariaTypes.timestamp, unsaved.timestampFspCol)}, ${Fragment.encode(MariaTypes.year, unsaved.yearCol)}, ${Fragment.encode(XYZSet.mariaType, unsaved.setCol)}, ${Fragment.encode(MariaTypes.json, unsaved.jsonCol)}, ${Fragment.encode(MariaTypes.inet4, unsaved.inet4Col)}, ${Fragment.encode(MariaTypes.inet6, unsaved.inet6Col)})
     ON DUPLICATE KEY UPDATE `tinyint_col` = VALUES(`tinyint_col`),
     `smallint_col` = VALUES(`smallint_col`),
     `mediumint_col` = VALUES(`mediumint_col`),
@@ -252,8 +252,8 @@ class MariatestRepoImpl extends MariatestRepo {
     `inet4_col` = VALUES(`inet4_col`),
     `inet6_col` = VALUES(`inet6_col`)
     RETURNING `tinyint_col`, `smallint_col`, `mediumint_col`, `int_col`, `bigint_col`, `tinyint_u_col`, `smallint_u_col`, `mediumint_u_col`, `int_u_col`, `bigint_u_col`, `decimal_col`, `numeric_col`, `float_col`, `double_col`, `bool_col`, `bit_col`, `bit1_col`, `char_col`, `varchar_col`, `tinytext_col`, `text_col`, `mediumtext_col`, `longtext_col`, `binary_col`, `varbinary_col`, `tinyblob_col`, `blob_col`, `mediumblob_col`, `longblob_col`, `date_col`, `time_col`, `time_fsp_col`, `datetime_col`, `datetime_fsp_col`, `timestamp_col`, `timestamp_fsp_col`, `year_col`, `set_col`, `json_col`, `inet4_col`, `inet6_col`"""
-    .updateReturning(MariatestRow.`_rowParser`.exactlyOne())
-    .runUnchecked(c)
+    .updateReturning(MariatestRow.rowCodec.exactlyOne())
+    .run(using c)
   }
 
   override def upsertBatch(unsaved: Iterator[MariatestRow])(using c: Connection): List[MariatestRow] = {
@@ -300,7 +300,7 @@ class MariatestRepoImpl extends MariatestRepo {
     `inet4_col` = VALUES(`inet4_col`),
     `inet6_col` = VALUES(`inet6_col`)
     RETURNING `tinyint_col`, `smallint_col`, `mediumint_col`, `int_col`, `bigint_col`, `tinyint_u_col`, `smallint_u_col`, `mediumint_u_col`, `int_u_col`, `bigint_u_col`, `decimal_col`, `numeric_col`, `float_col`, `double_col`, `bool_col`, `bit_col`, `bit1_col`, `char_col`, `varchar_col`, `tinytext_col`, `text_col`, `mediumtext_col`, `longtext_col`, `binary_col`, `varbinary_col`, `tinyblob_col`, `blob_col`, `mediumblob_col`, `longblob_col`, `date_col`, `time_col`, `time_fsp_col`, `datetime_col`, `datetime_fsp_col`, `timestamp_col`, `timestamp_fsp_col`, `year_col`, `set_col`, `json_col`, `inet4_col`, `inet6_col`"""
-      .updateReturningEach(MariatestRow.`_rowParser`, unsaved)
-    .runUnchecked(c)
+      .updateReturningEach(MariatestRow.rowCodec, unsaved)
+    .run(using c)
   }
 }

@@ -6,10 +6,10 @@
 package adventureworks.precisetypes
 
 import com.fasterxml.jackson.annotation.JsonValue
+import dev.typr.foundations.Bijection
 import dev.typr.foundations.PgType
 import dev.typr.foundations.PgTypes
 import dev.typr.foundations.data.precise.PaddedStringN
-import dev.typr.foundations.dsl.Bijection
 import java.lang.IllegalArgumentException
 import java.util.Optional
 
@@ -20,7 +20,7 @@ case class PaddedString10 private(@JsonValue value: String) extends PaddedString
 
   override def trimmed: String = value.stripTrailing()
 
-  override def semanticEquals(other: PaddedStringN): scala.Boolean = (if (other == null) false else trimmed() == other.trimmed())
+  override def semanticEquals(other: PaddedStringN): scala.Boolean = (if (other == null) false else (trimmed() == other.trimmed()))
 
   override def semanticHashCode: scala.Int = trimmed().hashCode()
 
@@ -30,13 +30,13 @@ case class PaddedString10 private(@JsonValue value: String) extends PaddedString
 }
 
 object PaddedString10 {
-  given bijection: Bijection[PaddedString10, String] = Bijection.apply[PaddedString10, String](_.value)(PaddedString10.apply)
+  given bijection: Bijection[PaddedString10, String] = Bijection.of[PaddedString10, String](_.value, PaddedString10.apply)
 
   def of(value: String): Optional[PaddedString10] = (if (value.length <= 10) Optional.of(new PaddedString10(String.format("%-10s", value))) else Optional.empty())
 
-  given pgType: PgType[PaddedString10] = PgTypes.bpchar.bimap(PaddedString10.apply, _.value)
+  given pgType: PgType[PaddedString10] = PgTypes.bpchar.to(Bijection.of(PaddedString10.apply, _.value))
 
-  given pgTypeArray: PgType[Array[PaddedString10]] = PgTypes.bpcharArray.bimap(xs => xs.map(PaddedString10.apply), xs => xs.map(_.value))
+  given pgTypeArray: PgType[java.util.List[PaddedString10]] = pgType.array
 
   def unsafeForce(value: String): PaddedString10 = {
     if (value.length > 10) {

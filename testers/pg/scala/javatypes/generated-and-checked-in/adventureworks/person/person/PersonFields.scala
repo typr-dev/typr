@@ -12,19 +12,19 @@ import adventureworks.public.NameStyle
 import adventureworks.userdefined.FirstName
 import adventureworks.userdefined.LastName
 import adventureworks.userdefined.MiddleName
+import dev.typr.dsl.FieldsBase
+import dev.typr.dsl.ForeignKey
+import dev.typr.dsl.Path
+import dev.typr.dsl.RelationStructure
+import dev.typr.dsl.SqlExpr
+import dev.typr.dsl.SqlExpr.Field
+import dev.typr.dsl.SqlExpr.FieldLike
+import dev.typr.dsl.SqlExpr.IdField
+import dev.typr.dsl.SqlExpr.OptField
+import dev.typr.dsl.TupleExpr.TupleExpr13
 import dev.typr.foundations.PgTypes
-import dev.typr.foundations.RowParser
+import dev.typr.foundations.RowCodec
 import dev.typr.foundations.data.Xml
-import dev.typr.foundations.dsl.FieldsBase
-import dev.typr.foundations.dsl.ForeignKey
-import dev.typr.foundations.dsl.Path
-import dev.typr.foundations.dsl.RelationStructure
-import dev.typr.foundations.dsl.SqlExpr
-import dev.typr.foundations.dsl.SqlExpr.Field
-import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.dsl.SqlExpr.IdField
-import dev.typr.foundations.dsl.SqlExpr.OptField
-import dev.typr.foundations.dsl.TupleExpr.TupleExpr13
 import java.time.LocalDateTime
 import java.util.Optional
 import java.util.UUID
@@ -190,7 +190,7 @@ class PersonFields(val `_path`: java.util.List[Path]) extends TupleExpr13[Busine
 
   override def columns: java.util.List[FieldLike[?, PersonRow]] = java.util.List.of(this.businessentityid, this.persontype, this.namestyle, this.title, this.firstname, this.middlename, this.lastname, this.suffix, this.emailpromotion, this.additionalcontactinfo, this.demographics, this.rowguid, this.modifieddate)
 
-  override def rowParser: RowParser[PersonRow] = PersonRow._rowParser
+  override def rowCodec: RowCodec[PersonRow] = PersonRow.rowCodec
 
   override def withPaths(`_path`: java.util.List[Path]): RelationStructure[PersonFields, PersonRow] = new PersonFields(`_path`)
 

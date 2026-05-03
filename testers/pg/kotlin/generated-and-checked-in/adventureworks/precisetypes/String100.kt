@@ -6,16 +6,16 @@
 package adventureworks.precisetypes
 
 import com.fasterxml.jackson.annotation.JsonValue
-import dev.typr.foundations.PgType
-import dev.typr.foundations.PgTypes
 import dev.typr.foundations.data.precise.StringN
-import dev.typr.foundations.internal.arrayMap
-import dev.typr.foundations.kotlin.Bijection
+import dev.typr.foundationskt.Bijection
+import dev.typr.foundationskt.PgType
+import dev.typr.foundationskt.PgTypes
 import java.lang.IllegalArgumentException
+import kotlin.collections.List
 
 @kotlin.ConsistentCopyVisibility
-data class String100 private constructor(@field:JsonValue val value: String) : StringN {
-  override fun equals(other: Any?): Boolean {
+data class String100 private constructor(@field:JsonValue val value: kotlin.String) : StringN {
+  override fun equals(other: Any?): kotlin.Boolean {
     if (this === other) return true
     if (other !is StringN) return false
     return value == other.rawValue()
@@ -25,35 +25,35 @@ data class String100 private constructor(@field:JsonValue val value: String) : S
 
   override fun maxLength(): Int = 100
 
-  override fun rawValue(): String = value
+  override fun rawValue(): kotlin.String = value
 
-  override fun semanticEquals(other: StringN): Boolean = if (other == null) false else value == other.rawValue()
+  override fun semanticEquals(other: StringN): kotlin.Boolean = if (other == null) false else (value == other.rawValue())
 
   override fun semanticHashCode(): Int = value.hashCode()
 
   override fun toString(): kotlin.String {
-    return value.toString()
+    return value
   }
 
   companion object {
-    val bijection: Bijection<String100, String> =
-      Bijection.of(String100::value, ::String100)
+    fun of(value: kotlin.String): String100? = if (value.length <= 100) String100(value) else null
 
-    fun of(value: String): String100? = if (value.length <= 100) String100(value) else null
-
-    val pgType: PgType<String100> =
-      PgTypes.text.bimap(::String100, String100::value)
-
-    val pgTypeArray: PgType<Array<String100>> =
-      PgTypes.textArray.bimap({ xs -> arrayMap.map(xs, ::String100, String100::class.java) }, { xs -> arrayMap.map(xs, String100::value, String::class.java) })
-
-    fun truncate(value: String): String100 = String100(if (value.length <= 100) value else value.substring(0, 100))
-
-    fun unsafeForce(value: String): String100 {
+    fun unsafeForce(value: kotlin.String): String100 {
       if (value.length > 100) {
         throw IllegalArgumentException("Value length ${value.length} exceeds maximum 100")
       }
       return String100(value)
     }
+
+    fun truncate(value: kotlin.String): String100 = String100(if (value.length <= 100) value else value.substring(0, 100))
+
+    val bijection: Bijection<String100, kotlin.String> =
+      Bijection.of(String100::value, ::String100)
+
+    val pgType: PgType<String100> =
+      PgTypes.text.to(Bijection.of(::String100, String100::value))
+
+    val pgTypeArray: PgType<List<String100>> =
+      pgType.array()
   }
 }

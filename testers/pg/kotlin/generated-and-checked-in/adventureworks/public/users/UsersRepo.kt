@@ -5,11 +5,12 @@
  */
 package adventureworks.public.users
 
+import dev.typr.dslkt.DeleteBuilder
+import dev.typr.dslkt.SelectBuilder
+import dev.typr.dslkt.UpdateBuilder
 import dev.typr.foundations.data.Unknown
-import dev.typr.foundations.kotlin.DeleteBuilder
-import dev.typr.foundations.kotlin.SelectBuilder
-import dev.typr.foundations.kotlin.UpdateBuilder
-import java.sql.Connection
+import dev.typr.foundationskt.Connection
+import dev.typr.foundationskt.ConnectionRead
 import kotlin.collections.Iterator
 import kotlin.collections.List
 import kotlin.collections.Map
@@ -20,10 +21,10 @@ interface UsersRepo {
   abstract fun deleteById(
     userId: UsersId,
     c: Connection
-  ): Boolean
+  ): kotlin.Boolean
 
   abstract fun deleteByIds(
-    userIds: Array<UsersId>,
+    userIds: List<UsersId>,
     c: Connection
   ): Int
 
@@ -41,37 +42,37 @@ interface UsersRepo {
     unsaved: Iterator<UsersRow>,
     batchSize: Int = 10000,
     c: Connection
-  ): Long
+  ): kotlin.Long
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
   abstract fun insertUnsavedStreaming(
     unsaved: Iterator<UsersRowUnsaved>,
     batchSize: Int = 10000,
     c: Connection
-  ): Long
+  ): kotlin.Long
 
   abstract fun select(): SelectBuilder<UsersFields, UsersRow>
 
-  abstract fun selectAll(c: Connection): List<UsersRow>
+  abstract fun selectAll(c: ConnectionRead): List<UsersRow>
 
   abstract fun selectById(
     userId: UsersId,
-    c: Connection
+    c: ConnectionRead
   ): UsersRow?
 
   abstract fun selectByIds(
-    userIds: Array<UsersId>,
-    c: Connection
+    userIds: List<UsersId>,
+    c: ConnectionRead
   ): List<UsersRow>
 
   abstract fun selectByIdsTracked(
-    userIds: Array<UsersId>,
-    c: Connection
+    userIds: List<UsersId>,
+    c: ConnectionRead
   ): Map<UsersId, UsersRow>
 
   abstract fun selectByUniqueEmail(
     email: Unknown,
-    c: Connection
+    c: ConnectionRead
   ): UsersRow?
 
   abstract fun update(): UpdateBuilder<UsersFields, UsersRow>
@@ -79,7 +80,7 @@ interface UsersRepo {
   abstract fun update(
     row: UsersRow,
     c: Connection
-  ): Boolean
+  ): kotlin.Boolean
 
   abstract fun upsert(
     unsaved: UsersRow,

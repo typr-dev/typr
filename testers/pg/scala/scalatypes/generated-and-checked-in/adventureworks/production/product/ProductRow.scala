@@ -11,13 +11,11 @@ import adventureworks.production.productsubcategory.ProductsubcategoryId
 import adventureworks.production.unitmeasure.UnitmeasureId
 import adventureworks.public.Flag
 import adventureworks.public.Name
+import dev.typr.dslsc.RowCodecs
 import dev.typr.foundations.PgText
-import dev.typr.foundations.PgTypes
 import dev.typr.foundations.Tuple.Tuple25
-import dev.typr.foundations.scala.DbTypeOps
-import dev.typr.foundations.scala.RowParser
-import dev.typr.foundations.scala.RowParsers
-import dev.typr.foundations.scala.ScalaDbTypes
+import dev.typr.foundationssc.PgTypes
+import dev.typr.foundationssc.RowCodec
 import java.time.LocalDateTime
 import java.util.UUID
 
@@ -203,7 +201,7 @@ case class ProductRow(
 }
 
 object ProductRow {
-  val `_rowParser`: RowParser[ProductRow] = RowParsers.of(ProductId.pgType, Name.pgType, PgTypes.text, Flag.pgType, Flag.pgType, PgTypes.text.nullable, ScalaDbTypes.PgTypes.int2, ScalaDbTypes.PgTypes.int2, ScalaDbTypes.PgTypes.numeric, ScalaDbTypes.PgTypes.numeric, PgTypes.text.nullable, UnitmeasureId.pgType.nullable, UnitmeasureId.pgType.nullable, ScalaDbTypes.PgTypes.numeric.nullable, ScalaDbTypes.PgTypes.int4, PgTypes.bpchar.nullable, PgTypes.bpchar.nullable, PgTypes.bpchar.nullable, ProductsubcategoryId.pgType.nullable, ProductmodelId.pgType.nullable, PgTypes.timestamp, PgTypes.timestamp.nullable, PgTypes.timestamp.nullable, PgTypes.uuid, PgTypes.timestamp)(ProductRow.apply)(row => Array[Any](row.productid, row.name, row.productnumber, row.makeflag, row.finishedgoodsflag, row.color, row.safetystocklevel, row.reorderpoint, row.standardcost, row.listprice, row.size, row.sizeunitmeasurecode, row.weightunitmeasurecode, row.weight, row.daystomanufacture, row.productline, row.`class`, row.style, row.productsubcategoryid, row.productmodelid, row.sellstartdate, row.sellenddate, row.discontinueddate, row.rowguid, row.modifieddate))
+  given pgText: PgText[ProductRow] = PgText.from(rowCodec.underlying)
 
-  given pgText: PgText[ProductRow] = PgText.from(`_rowParser`.underlying)
+  val rowCodec: RowCodec[ProductRow] = RowCodecs.of(ProductId.pgType, Name.pgType, PgTypes.text, Flag.pgType, Flag.pgType, PgTypes.text.opt, PgTypes.int2, PgTypes.int2, PgTypes.numeric, PgTypes.numeric, PgTypes.text.opt, UnitmeasureId.pgType.opt, UnitmeasureId.pgType.opt, PgTypes.numeric.opt, PgTypes.int4, PgTypes.bpchar.opt, PgTypes.bpchar.opt, PgTypes.bpchar.opt, ProductsubcategoryId.pgType.opt, ProductmodelId.pgType.opt, PgTypes.timestamp, PgTypes.timestamp.opt, PgTypes.timestamp.opt, PgTypes.uuid, PgTypes.timestamp)(ProductRow.apply)(row => Array[Any](row.productid, row.name, row.productnumber, row.makeflag, row.finishedgoodsflag, row.color, row.safetystocklevel, row.reorderpoint, row.standardcost, row.listprice, row.size, row.sizeunitmeasurecode, row.weightunitmeasurecode, row.weight, row.daystomanufacture, row.productline, row.`class`, row.style, row.productsubcategoryid, row.productmodelid, row.sellstartdate, row.sellenddate, row.discontinueddate, row.rowguid, row.modifieddate))
 }

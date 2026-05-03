@@ -1,6 +1,6 @@
 package testdb
 
-import dev.typr.foundations.scala.{TupleExpr2, Tuples}
+import dev.typr.dslsc.{TupleExpr2, Tuples}
 import org.junit.Assert.*
 import org.junit.{Ignore, Test}
 import testdb.products.*
@@ -14,8 +14,7 @@ class TupleInTest {
 
   @Test
   def tupleInWithMultipleTuples(): Unit = {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       val ts = nextId()
       val _ = productsRepo.insert(ProductsRow(ProductsId(ts), s"SKU${ts}_1", "Widget", BigDecimal("19.99"), None))
       val _ = productsRepo.insert(ProductsRow(ProductsId(ts + 1), s"SKU${ts}_2", "Gadget", BigDecimal("29.99"), None))
@@ -44,8 +43,7 @@ class TupleInTest {
 
   @Test
   def tupleInWithSingleTuple(): Unit = {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       val ts = nextId()
       val _ = productsRepo.insert(ProductsRow(ProductsId(ts), s"SKU${ts}_1", "SingleItem", BigDecimal("99.99"), None))
       val _ = productsRepo.insert(ProductsRow(ProductsId(ts + 1), s"SKU${ts}_2", "OtherItem", BigDecimal("88.88"), None))
@@ -70,8 +68,7 @@ class TupleInTest {
 
   @Test
   def tupleInWithEmptyList(): Unit = {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       val ts = nextId()
       val _ = productsRepo.insert(ProductsRow(ProductsId(ts), s"SKU${ts}", "TestProduct", BigDecimal("50.00"), None))
 
@@ -85,8 +82,7 @@ class TupleInTest {
 
   @Test
   def tupleInCombinedWithOtherConditions(): Unit = {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       val ts = nextId()
       val _ = productsRepo.insert(ProductsRow(ProductsId(ts), s"SKU${ts}_1", "Alpha", BigDecimal("10.00"), Some(dev.typr.foundations.data.Json("{}"))))
       val _ = productsRepo.insert(ProductsRow(ProductsId(ts + 1), s"SKU${ts}_2", "Beta", BigDecimal("20.00"), Some(dev.typr.foundations.data.Json("{}"))))
@@ -116,8 +112,7 @@ class TupleInTest {
 
   @Test
   def tupleInWithNonExistentTuples(): Unit = {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       val ts = nextId()
       val _ = productsRepo.insert(ProductsRow(ProductsId(ts), s"SKU${ts}", "Existing", BigDecimal("100.00"), None))
 
@@ -145,8 +140,7 @@ class TupleInTest {
 
   @Test
   def tupleInSubqueryBasic(): Unit = {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       import TupleExpr2.bijection
       val ts = nextId()
       val _ = productsRepo.insert(ProductsRow(ProductsId(ts), s"SKU_${ts}_1", s"Cheap1_$ts", BigDecimal("10.00"), None))
@@ -174,8 +168,7 @@ class TupleInTest {
 
   @Test
   def tupleInSubqueryWithNoMatches(): Unit = {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       import TupleExpr2.bijection
       val ts = nextId()
       val _ = productsRepo.insert(ProductsRow(ProductsId(ts), s"SKU_${ts}_1", "Prod1", BigDecimal("100.00"), None))
@@ -200,8 +193,7 @@ class TupleInTest {
 
   @Test
   def tupleInSubqueryCombinedWithOtherConditions(): Unit = {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       import TupleExpr2.bijection
       val ts = nextId()
       val _ = productsRepo.insert(ProductsRow(ProductsId(ts), s"SKU_${ts}_A", s"ItemA_$ts", BigDecimal("50.00"), Some(dev.typr.foundations.data.Json("{}"))))
@@ -233,8 +225,7 @@ class TupleInTest {
   @Ignore("Nullable values in tuple IN not supported")
   @Test
   def tupleInWithNullableColumn(): Unit = {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       val ts = nextId()
       // Create products - some with metadata (nullable), some without
       val _ = productsRepo.insert(ProductsRow(ProductsId(ts), s"SKU_${ts}_N1", s"NullMeta1_$ts", BigDecimal("100.00"), None))
@@ -264,8 +255,7 @@ class TupleInTest {
   @Ignore("Nested tuples not supported")
   @Test
   def nestedTupleIn(): Unit = {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       val ts = nextId()
       val _ = productsRepo.insert(ProductsRow(ProductsId(ts), s"SKU_${ts}_1", s"Nested1_$ts", BigDecimal("10.00"), None))
       val _ = productsRepo.insert(ProductsRow(ProductsId(ts + 1), s"SKU_${ts}_2", s"Nested2_$ts", BigDecimal("20.00"), None))
@@ -310,8 +300,7 @@ class TupleInTest {
 
   @Test
   def readNestedTupleFromDatabase(): Unit = {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       val ts = nextId()
       // Insert test data
       val _ = productsRepo.insert(ProductsRow(ProductsId(ts), s"SKU_${ts}_R1", s"ReadProd1_$ts", BigDecimal("100.00"), None))

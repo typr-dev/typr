@@ -9,9 +9,9 @@ import adventureworks.person.businessentity.BusinessentityId
 import adventureworks.userdefined.FirstName
 import adventureworks.userdefined.LastName
 import adventureworks.userdefined.MiddleName
+import dev.typr.dsl.RowCodecs
 import dev.typr.foundations.PgTypes
-import dev.typr.foundations.RowParser
-import dev.typr.foundations.RowParsers
+import dev.typr.foundations.RowCodec
 import dev.typr.foundations.Tuple.Tuple10
 import java.util.Optional
 import java.util.UUID
@@ -61,5 +61,5 @@ case class PersonDetailSqlRow(
 }
 
 object PersonDetailSqlRow {
-  val `_rowParser`: RowParser[PersonDetailSqlRow] = RowParsers.of(BusinessentityId.pgType, PgTypes.text.opt(), FirstName.pgType, MiddleName.pgType.opt(), LastName.pgType, PgTypes.text, PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.text.opt(), PgTypes.uuid.opt(), PersonDetailSqlRow.apply, row => Array[Any](row.businessentityid, row.title, row.firstname, row.middlename, row.lastname, row.jobtitle, row.addressline1, row.city, row.postalcode, row.rowguid))
+  val rowCodec: RowCodec[PersonDetailSqlRow] = RowCodecs.of(BusinessentityId.pgType, PgTypes.text.opt, FirstName.pgType, MiddleName.pgType.opt, LastName.pgType, PgTypes.text, PgTypes.text.opt, PgTypes.text.opt, PgTypes.text.opt, PgTypes.uuid.opt, PersonDetailSqlRow.apply, row => Array[Any](row.businessentityid, row.title, row.firstname, row.middlename, row.lastname, row.jobtitle, row.addressline1, row.city, row.postalcode, row.rowguid))
 }

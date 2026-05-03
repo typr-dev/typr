@@ -37,28 +37,6 @@ data class Order(
   }
 
   companion object {
-    val MARSHALLER: Marshaller<Order> =
-      object : Marshaller<Order> {
-        override fun stream(value: Order): InputStream {
-          val bytes = ByteArray(value.getSerializedSize())
-          val cos = CodedOutputStream.newInstance(bytes)
-          try {
-            value.writeTo(cos)
-            cos.flush()
-          } catch (e: IOException) {
-            throw RuntimeException(e)
-          } 
-          return ByteArrayInputStream(bytes)
-        }
-        override fun parse(stream: InputStream): Order {
-          try {
-            return Order.parseFrom(CodedInputStream.newInstance(stream))
-          } catch (e: IOException) {
-            throw RuntimeException(e)
-          } 
-        }
-      }
-
     @Throws(IOException::class)
     fun parseFrom(input: CodedInputStream): Order {
       var orderId: OrderId = OrderId.valueOf("")
@@ -86,5 +64,27 @@ data class Order(
       }
       return Order(orderId, customerId, amountCents, createdAt)
     }
+
+    val MARSHALLER: Marshaller<Order> =
+      object : Marshaller<Order> {
+        override fun stream(value: Order): InputStream {
+          val bytes = ByteArray(value.getSerializedSize())
+          val cos = CodedOutputStream.newInstance(bytes)
+          try {
+            value.writeTo(cos)
+            cos.flush()
+          } catch (e: IOException) {
+            throw RuntimeException(e)
+          } 
+          return ByteArrayInputStream(bytes)
+        }
+        override fun parse(stream: InputStream): Order {
+          try {
+            return Order.parseFrom(CodedInputStream.newInstance(stream))
+          } catch (e: IOException) {
+            throw RuntimeException(e)
+          } 
+        }
+      }
   }
 }

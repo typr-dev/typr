@@ -6,38 +6,37 @@
 package oracledb.department_summary
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import dev.typr.foundations.OracleTypes
+import dev.typr.dslkt.RowCodecs
 import dev.typr.foundations.Tuple.Tuple5
 import dev.typr.foundations.data.Unknown
-import dev.typr.foundations.kotlin.RowParser
-import dev.typr.foundations.kotlin.RowParsers
-import dev.typr.foundations.kotlin.nullable
+import dev.typr.foundationskt.OracleTypes
+import dev.typr.foundationskt.RowCodec
 import oracledb.MoneyT
 
 /** SQL file: department_summary.sql */
 data class DepartmentSummarySqlRow(
   /** Points to [oracledb.departments.DepartmentsRow.deptCode] */
-  @field:JsonProperty("DEPT_CODE") val deptCode: String,
+  @field:JsonProperty("DEPT_CODE") val deptCode: kotlin.String,
   /** Points to [oracledb.departments.DepartmentsRow.deptRegion] */
-  @field:JsonProperty("DEPT_REGION") val deptRegion: String,
+  @field:JsonProperty("DEPT_REGION") val deptRegion: kotlin.String,
   /** Points to [oracledb.departments.DepartmentsRow.deptName] */
-  @field:JsonProperty("DEPT_NAME") val deptName: String,
+  @field:JsonProperty("DEPT_NAME") val deptName: kotlin.String,
   /** Points to [oracledb.departments.DepartmentsRow.budget] */
   @field:JsonProperty("BUDGET") val budget: MoneyT?,
   /** Points to [oracledb.employees.EmployeesRow.empNumber] */
   @field:JsonProperty("EMPLOYEE_COUNT") val employeeCount: Unknown?
-) : Tuple5<String, String, String, MoneyT?, Unknown?> {
-  override fun _1(): String = deptCode
+) : Tuple5<kotlin.String, kotlin.String, kotlin.String, MoneyT?, Unknown?> {
+  override fun _1(): kotlin.String = deptCode
 
-  override fun _2(): String = deptRegion
+  override fun _2(): kotlin.String = deptRegion
 
-  override fun _3(): String = deptName
+  override fun _3(): kotlin.String = deptName
 
   override fun _4(): MoneyT? = budget
 
   override fun _5(): Unknown? = employeeCount
 
   companion object {
-    val _rowParser: RowParser<DepartmentSummarySqlRow> = RowParsers.of(OracleTypes.varchar2, OracleTypes.varchar2, OracleTypes.varchar2, MoneyT.oracleType.nullable(), OracleTypes.unknown.nullable(), { t0, t1, t2, t3, t4 -> DepartmentSummarySqlRow(t0, t1, t2, t3, t4) }, { row -> arrayOf<Any?>(row.deptCode, row.deptRegion, row.deptName, row.budget, row.employeeCount) })
+    val rowCodec: RowCodec<DepartmentSummarySqlRow> = RowCodecs.of(OracleTypes.varchar2, OracleTypes.varchar2, OracleTypes.varchar2, MoneyT.oracleType.opt(), OracleTypes.unknown.opt(), { t0: kotlin.String, t1: kotlin.String, t2: kotlin.String, t3: MoneyT?, t4: Unknown? -> DepartmentSummarySqlRow(t0, t1, t2, t3, t4) }, { row: DepartmentSummarySqlRow -> arrayOf<Any?>(row.deptCode, row.deptRegion, row.deptName, row.budget, row.employeeCount) })
   }
 }

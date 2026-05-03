@@ -12,9 +12,9 @@ data class MariatestUniqueRowUnsaved(
   /**  */
   val email: /* user-picked */ Email,
   /**  */
-  val code: String,
+  val code: kotlin.String,
   /**  */
-  val category: String
+  val category: kotlin.String
 ) {
   fun toRow(idDefault: () -> MariatestUniqueId): MariatestUniqueRow = MariatestUniqueRow(id = idDefault(), email = email, code = code, category = category)
 }

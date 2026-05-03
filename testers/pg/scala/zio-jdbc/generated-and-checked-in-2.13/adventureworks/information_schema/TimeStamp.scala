@@ -28,7 +28,7 @@ object TimeStamp {
 
   implicit lazy val arraySetter: Setter[Array[TimeStamp]] = TypoInstant.arraySetter.contramap(_.map(_.value))
 
-  implicit lazy val bijection: Bijection[TimeStamp, TypoInstant] = Bijection.apply[TimeStamp, TypoInstant](_.value)(TimeStamp.apply)
+  implicit lazy val bijection: Bijection[TimeStamp, TypoInstant] = Bijection[TimeStamp, TypoInstant](_.value)(TimeStamp.apply)
 
   implicit lazy val jdbcDecoder: JdbcDecoder[TimeStamp] = TypoInstant.jdbcDecoder.map(TimeStamp.apply)
 

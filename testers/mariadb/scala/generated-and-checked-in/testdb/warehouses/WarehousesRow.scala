@@ -6,11 +6,10 @@
 package testdb.warehouses
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import dev.typr.foundations.MariaTypes
+import dev.typr.dslsc.RowCodecs
 import dev.typr.foundations.Tuple.Tuple10
-import dev.typr.foundations.scala.DbTypeOps
-import dev.typr.foundations.scala.RowParser
-import dev.typr.foundations.scala.RowParsers
+import dev.typr.foundationssc.MariaTypes
+import dev.typr.foundationssc.RowCodec
 import org.mariadb.jdbc.`type`.Point
 import org.mariadb.jdbc.`type`.Polygon
 import testdb.customtypes.Defaulted
@@ -98,5 +97,5 @@ case class WarehousesRow(
 }
 
 object WarehousesRow {
-  val `_rowParser`: RowParser[WarehousesRow] = RowParsers.of(WarehousesId.mariaType, MariaTypes.char_, MariaTypes.varchar, MariaTypes.varchar, MariaTypes.point, MariaTypes.polygon.nullable, MariaTypes.varchar, IsActive.mariaType, Email.mariaType.nullable, MariaTypes.varchar.nullable)(WarehousesRow.apply)(row => Array[Any](row.warehouseId, row.code, row.name, row.address, row.location, row.serviceArea, row.timezone, row.isActive, row.contactEmail, row.contactPhone))
+  val rowCodec: RowCodec[WarehousesRow] = RowCodecs.of(WarehousesId.mariaType, MariaTypes.char_, MariaTypes.varchar, MariaTypes.varchar, MariaTypes.point, MariaTypes.polygon.opt, MariaTypes.varchar, IsActive.mariaType, Email.mariaType.opt, MariaTypes.varchar.opt)(WarehousesRow.apply)(row => Array[Any](row.warehouseId, row.code, row.name, row.address, row.location, row.serviceArea, row.timezone, row.isActive, row.contactEmail, row.contactPhone))
 }

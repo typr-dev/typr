@@ -23,7 +23,7 @@ object NameStyle {
 
   given arrayPut: Put[Array[NameStyle]] = adventureworks.BooleanArrayMeta.put.contramap(_.map(_.value))
 
-  given bijection: Bijection[NameStyle, Boolean] = Bijection.apply[NameStyle, Boolean](_.value)(NameStyle.apply)
+  given bijection: Bijection[NameStyle, Boolean] = Bijection[NameStyle, Boolean](_.value)(NameStyle.apply)
 
   given decoder: Decoder[NameStyle] = Decoder.decodeBoolean.map(NameStyle.apply)
 

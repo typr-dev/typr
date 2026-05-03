@@ -6,123 +6,124 @@
 package adventureworks.production.productmodel
 
 import adventureworks.public.Name
+import dev.typr.dsl.DeleteBuilder
+import dev.typr.dsl.Dialect
+import dev.typr.dsl.SelectBuilder
+import dev.typr.dsl.UpdateBuilder
+import dev.typr.foundations.Connection
+import dev.typr.foundations.ConnectionRead
 import dev.typr.foundations.Fragment
 import dev.typr.foundations.PgTypes
-import dev.typr.foundations.dsl.DeleteBuilder
-import dev.typr.foundations.dsl.Dialect
-import dev.typr.foundations.dsl.SelectBuilder
-import dev.typr.foundations.dsl.UpdateBuilder
-import dev.typr.foundations.streamingInsert
-import java.sql.Connection
+import dev.typr.foundations.StreamingInsert
 import java.util.ArrayList
 import java.util.HashMap
 import java.util.Optional
-import dev.typr.foundations.Fragment.interpolate
+import dev.typr.foundations.Fragment.concat
 
 class ProductmodelRepoImpl extends ProductmodelRepo {
   override def delete: DeleteBuilder[ProductmodelFields, ProductmodelRow] = DeleteBuilder.of(""""production"."productmodel"""", ProductmodelFields.structure, Dialect.POSTGRESQL)
 
-  override def deleteById(productmodelid: ProductmodelId)(using c: Connection): java.lang.Boolean = interpolate(Fragment.lit("""delete from "production"."productmodel" where "productmodelid" = """), Fragment.encode(ProductmodelId.pgType, productmodelid), Fragment.lit("")).update().runUnchecked(c) > 0
+  override def deleteById(productmodelid: ProductmodelId)(using c: Connection): java.lang.Boolean = concat(Fragment.of("""delete from "production"."productmodel" where "productmodelid" = """), Fragment.encode(ProductmodelId.pgType, productmodelid), Fragment.of("")).update().run(c) > 0
 
-  override def deleteByIds(productmodelids: Array[ProductmodelId])(using c: Connection): Integer = {
-    interpolate(Fragment.lit("""delete
+  override def deleteByIds(productmodelids: java.util.List[ProductmodelId])(using c: Connection): Integer = {
+    concat(Fragment.of("""delete
     from "production"."productmodel"
-    where "productmodelid" = ANY("""), Fragment.encode(ProductmodelId.pgTypeArray, productmodelids), Fragment.lit(")"))
+    where "productmodelid" = ANY("""), Fragment.encode(ProductmodelId.pgType.array(), productmodelids), Fragment.of(")"))
       .update()
-      .runUnchecked(c)
+      .run(c)
   }
 
   override def insert(unsaved: ProductmodelRow)(using c: Connection): ProductmodelRow = {
-  interpolate(Fragment.lit("""insert into "production"."productmodel"("productmodelid", "name", "catalogdescription", "instructions", "rowguid", "modifieddate")
-    values ("""), Fragment.encode(ProductmodelId.pgType, unsaved.productmodelid), Fragment.lit("::int4, "), Fragment.encode(Name.pgType, unsaved.name), Fragment.lit("::varchar, "), Fragment.encode(PgTypes.xml.opt(), unsaved.catalogdescription), Fragment.lit("::xml, "), Fragment.encode(PgTypes.xml.opt(), unsaved.instructions), Fragment.lit("::xml, "), Fragment.encode(PgTypes.uuid, unsaved.rowguid), Fragment.lit("::uuid, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("""::timestamp)
+  concat(Fragment.of("""insert into "production"."productmodel"("productmodelid", "name", "catalogdescription", "instructions", "rowguid", "modifieddate")
+    values ("""), Fragment.encode(ProductmodelId.pgType, unsaved.productmodelid), Fragment.of("::int4, "), Fragment.encode(Name.pgType, unsaved.name), Fragment.of("::varchar, "), Fragment.encode(PgTypes.xml.opt, unsaved.catalogdescription), Fragment.of("::xml, "), Fragment.encode(PgTypes.xml.opt, unsaved.instructions), Fragment.of("::xml, "), Fragment.encode(PgTypes.uuid, unsaved.rowguid), Fragment.of("::uuid, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.of("""::timestamp)
     RETURNING "productmodelid", "name", "catalogdescription", "instructions", "rowguid", "modifieddate"
     """))
-    .updateReturning(ProductmodelRow.`_rowParser`.exactlyOne()).runUnchecked(c)
+    .updateReturning(ProductmodelRow.rowCodec.exactlyOne()).run(c)
   }
 
   override def insert(unsaved: ProductmodelRowUnsaved)(using c: Connection): ProductmodelRow = {
     val columns: ArrayList[Fragment] = new ArrayList()
     val values: ArrayList[Fragment] = new ArrayList()
-    columns.add(Fragment.lit(""""name"""")): @scala.annotation.nowarn
-    values.add(interpolate(Fragment.encode(Name.pgType, unsaved.name), Fragment.lit("::varchar"))): @scala.annotation.nowarn
-    columns.add(Fragment.lit(""""catalogdescription"""")): @scala.annotation.nowarn
-    values.add(interpolate(Fragment.encode(PgTypes.xml.opt(), unsaved.catalogdescription), Fragment.lit("::xml"))): @scala.annotation.nowarn
-    columns.add(Fragment.lit(""""instructions"""")): @scala.annotation.nowarn
-    values.add(interpolate(Fragment.encode(PgTypes.xml.opt(), unsaved.instructions), Fragment.lit("::xml"))): @scala.annotation.nowarn
+    columns.add(Fragment.of(""""name"""")): @scala.annotation.nowarn
+    values.add(concat(Fragment.encode(Name.pgType, unsaved.name), Fragment.of("::varchar"))): @scala.annotation.nowarn
+    columns.add(Fragment.of(""""catalogdescription"""")): @scala.annotation.nowarn
+    values.add(concat(Fragment.encode(PgTypes.xml.opt, unsaved.catalogdescription), Fragment.of("::xml"))): @scala.annotation.nowarn
+    columns.add(Fragment.of(""""instructions"""")): @scala.annotation.nowarn
+    values.add(concat(Fragment.encode(PgTypes.xml.opt, unsaved.instructions), Fragment.of("::xml"))): @scala.annotation.nowarn
     unsaved.productmodelid.visit(
       {  },
-      value => { columns.add(Fragment.lit(""""productmodelid"""")): @scala.annotation.nowarn; values.add(interpolate(Fragment.encode(ProductmodelId.pgType, value), Fragment.lit("::int4"))): @scala.annotation.nowarn }
+      value => { columns.add(Fragment.of(""""productmodelid"""")): @scala.annotation.nowarn; values.add(concat(Fragment.encode(ProductmodelId.pgType, value), Fragment.of("::int4"))): @scala.annotation.nowarn }
     );
     unsaved.rowguid.visit(
       {  },
-      value => { columns.add(Fragment.lit(""""rowguid"""")): @scala.annotation.nowarn; values.add(interpolate(Fragment.encode(PgTypes.uuid, value), Fragment.lit("::uuid"))): @scala.annotation.nowarn }
+      value => { columns.add(Fragment.of(""""rowguid"""")): @scala.annotation.nowarn; values.add(concat(Fragment.encode(PgTypes.uuid, value), Fragment.of("::uuid"))): @scala.annotation.nowarn }
     );
     unsaved.modifieddate.visit(
       {  },
-      value => { columns.add(Fragment.lit(""""modifieddate"""")): @scala.annotation.nowarn; values.add(interpolate(Fragment.encode(PgTypes.timestamp, value), Fragment.lit("::timestamp"))): @scala.annotation.nowarn }
+      value => { columns.add(Fragment.of(""""modifieddate"""")): @scala.annotation.nowarn; values.add(concat(Fragment.encode(PgTypes.timestamp, value), Fragment.of("::timestamp"))): @scala.annotation.nowarn }
     );
     val q: Fragment = {
-      interpolate(Fragment.lit("""insert into "production"."productmodel"("""), Fragment.comma(columns), Fragment.lit(""")
-      values ("""), Fragment.comma(values), Fragment.lit(""")
+      concat(Fragment.of("""insert into "production"."productmodel"("""), Fragment.comma(columns), Fragment.of(""")
+      values ("""), Fragment.comma(values), Fragment.of(""")
       RETURNING "productmodelid", "name", "catalogdescription", "instructions", "rowguid", "modifieddate"
       """))
     }
-    return q.updateReturning(ProductmodelRow.`_rowParser`.exactlyOne()).runUnchecked(c)
+    return q.updateReturning(ProductmodelRow.rowCodec.exactlyOne()).run(c)
   }
 
   override def insertStreaming(
     unsaved: java.util.Iterator[ProductmodelRow],
     batchSize: Integer = 10000
-  )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "production"."productmodel"("productmodelid", "name", "catalogdescription", "instructions", "rowguid", "modifieddate") FROM STDIN""", batchSize, unsaved, c, ProductmodelRow.pgText)
+  )(using c: Connection): java.lang.Long = StreamingInsert.of(s"""COPY "production"."productmodel"("productmodelid", "name", "catalogdescription", "instructions", "rowguid", "modifieddate") FROM STDIN""", batchSize, unsaved, ProductmodelRow.pgText).run(c)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
   override def insertUnsavedStreaming(
     unsaved: java.util.Iterator[ProductmodelRowUnsaved],
     batchSize: Integer = 10000
-  )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "production"."productmodel"("name", "catalogdescription", "instructions", "productmodelid", "rowguid", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved, c, ProductmodelRowUnsaved.pgText)
+  )(using c: Connection): java.lang.Long = StreamingInsert.of(s"""COPY "production"."productmodel"("name", "catalogdescription", "instructions", "productmodelid", "rowguid", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved, ProductmodelRowUnsaved.pgText).run(c)
 
-  override def select: SelectBuilder[ProductmodelFields, ProductmodelRow] = SelectBuilder.of(""""production"."productmodel"""", ProductmodelFields.structure, ProductmodelRow.`_rowParser`, Dialect.POSTGRESQL)
+  override def select: SelectBuilder[ProductmodelFields, ProductmodelRow] = SelectBuilder.of(""""production"."productmodel"""", ProductmodelFields.structure, ProductmodelRow.rowCodec, Dialect.POSTGRESQL)
 
-  override def selectAll(using c: Connection): java.util.List[ProductmodelRow] = {
-    interpolate(Fragment.lit("""select "productmodelid", "name", "catalogdescription", "instructions", "rowguid", "modifieddate"
+  override def selectAll(using c: ConnectionRead): java.util.List[ProductmodelRow] = {
+    concat(Fragment.of("""select "productmodelid", "name", "catalogdescription", "instructions", "rowguid", "modifieddate"
     from "production"."productmodel"
-    """)).query(ProductmodelRow.`_rowParser`.all()).runUnchecked(c)
+    """)).query(ProductmodelRow.rowCodec.all()).run(c)
   }
 
-  override def selectById(productmodelid: ProductmodelId)(using c: Connection): Optional[ProductmodelRow] = {
-    interpolate(Fragment.lit("""select "productmodelid", "name", "catalogdescription", "instructions", "rowguid", "modifieddate"
+  override def selectById(productmodelid: ProductmodelId)(using c: ConnectionRead): Optional[ProductmodelRow] = {
+    concat(Fragment.of("""select "productmodelid", "name", "catalogdescription", "instructions", "rowguid", "modifieddate"
     from "production"."productmodel"
-    where "productmodelid" = """), Fragment.encode(ProductmodelId.pgType, productmodelid), Fragment.lit("")).query(ProductmodelRow.`_rowParser`.first()).runUnchecked(c)
+    where "productmodelid" = """), Fragment.encode(ProductmodelId.pgType, productmodelid), Fragment.of("")).query(ProductmodelRow.rowCodec.first()).run(c)
   }
 
-  override def selectByIds(productmodelids: Array[ProductmodelId])(using c: Connection): java.util.List[ProductmodelRow] = {
-    interpolate(Fragment.lit("""select "productmodelid", "name", "catalogdescription", "instructions", "rowguid", "modifieddate"
+  override def selectByIds(productmodelids: java.util.List[ProductmodelId])(using c: ConnectionRead): java.util.List[ProductmodelRow] = {
+    concat(Fragment.of("""select "productmodelid", "name", "catalogdescription", "instructions", "rowguid", "modifieddate"
     from "production"."productmodel"
-    where "productmodelid" = ANY("""), Fragment.encode(ProductmodelId.pgTypeArray, productmodelids), Fragment.lit(")")).query(ProductmodelRow.`_rowParser`.all()).runUnchecked(c)
+    where "productmodelid" = ANY("""), Fragment.encode(ProductmodelId.pgType.array(), productmodelids), Fragment.of(")")).query(ProductmodelRow.rowCodec.all()).run(c)
   }
 
-  override def selectByIdsTracked(productmodelids: Array[ProductmodelId])(using c: Connection): java.util.Map[ProductmodelId, ProductmodelRow] = {
+  override def selectByIdsTracked(productmodelids: java.util.List[ProductmodelId])(using c: ConnectionRead): java.util.Map[ProductmodelId, ProductmodelRow] = {
     val ret: HashMap[ProductmodelId, ProductmodelRow] = new HashMap[ProductmodelId, ProductmodelRow]()
     selectByIds(productmodelids)(using c).forEach(row => ret.put(row.productmodelid, row): @scala.annotation.nowarn)
     return ret
   }
 
-  override def update: UpdateBuilder[ProductmodelFields, ProductmodelRow] = UpdateBuilder.of(""""production"."productmodel"""", ProductmodelFields.structure, ProductmodelRow.`_rowParser`, Dialect.POSTGRESQL)
+  override def update: UpdateBuilder[ProductmodelFields, ProductmodelRow] = UpdateBuilder.of(""""production"."productmodel"""", ProductmodelFields.structure, ProductmodelRow.rowCodec, Dialect.POSTGRESQL)
 
   override def update(row: ProductmodelRow)(using c: Connection): java.lang.Boolean = {
     val productmodelid: ProductmodelId = row.productmodelid
-    return interpolate(Fragment.lit("""update "production"."productmodel"
-    set "name" = """), Fragment.encode(Name.pgType, row.name), Fragment.lit("""::varchar,
-    "catalogdescription" = """), Fragment.encode(PgTypes.xml.opt(), row.catalogdescription), Fragment.lit("""::xml,
-    "instructions" = """), Fragment.encode(PgTypes.xml.opt(), row.instructions), Fragment.lit("""::xml,
-    "rowguid" = """), Fragment.encode(PgTypes.uuid, row.rowguid), Fragment.lit("""::uuid,
-    "modifieddate" = """), Fragment.encode(PgTypes.timestamp, row.modifieddate), Fragment.lit("""::timestamp
-    where "productmodelid" = """), Fragment.encode(ProductmodelId.pgType, productmodelid), Fragment.lit("")).update().runUnchecked(c) > 0
+    return concat(Fragment.of("""update "production"."productmodel"
+    set "name" = """), Fragment.encode(Name.pgType, row.name), Fragment.of("""::varchar,
+    "catalogdescription" = """), Fragment.encode(PgTypes.xml.opt, row.catalogdescription), Fragment.of("""::xml,
+    "instructions" = """), Fragment.encode(PgTypes.xml.opt, row.instructions), Fragment.of("""::xml,
+    "rowguid" = """), Fragment.encode(PgTypes.uuid, row.rowguid), Fragment.of("""::uuid,
+    "modifieddate" = """), Fragment.encode(PgTypes.timestamp, row.modifieddate), Fragment.of("""::timestamp
+    where "productmodelid" = """), Fragment.encode(ProductmodelId.pgType, productmodelid), Fragment.of("")).update().run(c) > 0
   }
 
   override def upsert(unsaved: ProductmodelRow)(using c: Connection): ProductmodelRow = {
-  interpolate(Fragment.lit("""insert into "production"."productmodel"("productmodelid", "name", "catalogdescription", "instructions", "rowguid", "modifieddate")
-    values ("""), Fragment.encode(ProductmodelId.pgType, unsaved.productmodelid), Fragment.lit("::int4, "), Fragment.encode(Name.pgType, unsaved.name), Fragment.lit("::varchar, "), Fragment.encode(PgTypes.xml.opt(), unsaved.catalogdescription), Fragment.lit("::xml, "), Fragment.encode(PgTypes.xml.opt(), unsaved.instructions), Fragment.lit("::xml, "), Fragment.encode(PgTypes.uuid, unsaved.rowguid), Fragment.lit("::uuid, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("""::timestamp)
+  concat(Fragment.of("""insert into "production"."productmodel"("productmodelid", "name", "catalogdescription", "instructions", "rowguid", "modifieddate")
+    values ("""), Fragment.encode(ProductmodelId.pgType, unsaved.productmodelid), Fragment.of("::int4, "), Fragment.encode(Name.pgType, unsaved.name), Fragment.of("::varchar, "), Fragment.encode(PgTypes.xml.opt, unsaved.catalogdescription), Fragment.of("::xml, "), Fragment.encode(PgTypes.xml.opt, unsaved.instructions), Fragment.of("::xml, "), Fragment.encode(PgTypes.uuid, unsaved.rowguid), Fragment.of("::uuid, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.of("""::timestamp)
     on conflict ("productmodelid")
     do update set
       "name" = EXCLUDED."name",
@@ -131,12 +132,12 @@ class ProductmodelRepoImpl extends ProductmodelRepo {
     "rowguid" = EXCLUDED."rowguid",
     "modifieddate" = EXCLUDED."modifieddate"
     returning "productmodelid", "name", "catalogdescription", "instructions", "rowguid", "modifieddate""""))
-    .updateReturning(ProductmodelRow.`_rowParser`.exactlyOne())
-    .runUnchecked(c)
+    .updateReturning(ProductmodelRow.rowCodec.exactlyOne())
+    .run(c)
   }
 
   override def upsertBatch(unsaved: java.util.Iterator[ProductmodelRow])(using c: Connection): java.util.List[ProductmodelRow] = {
-    interpolate(Fragment.lit("""insert into "production"."productmodel"("productmodelid", "name", "catalogdescription", "instructions", "rowguid", "modifieddate")
+    concat(Fragment.of("""insert into "production"."productmodel"("productmodelid", "name", "catalogdescription", "instructions", "rowguid", "modifieddate")
     values (?::int4, ?::varchar, ?::xml, ?::xml, ?::uuid, ?::timestamp)
     on conflict ("productmodelid")
     do update set
@@ -146,8 +147,8 @@ class ProductmodelRepoImpl extends ProductmodelRepo {
     "rowguid" = EXCLUDED."rowguid",
     "modifieddate" = EXCLUDED."modifieddate"
     returning "productmodelid", "name", "catalogdescription", "instructions", "rowguid", "modifieddate""""))
-      .updateManyReturning(ProductmodelRow.`_rowParser`, unsaved)
-    .runUnchecked(c)
+      .updateManyReturning(ProductmodelRow.rowCodec, unsaved)
+    .run(c)
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
@@ -155,9 +156,9 @@ class ProductmodelRepoImpl extends ProductmodelRepo {
     unsaved: java.util.Iterator[ProductmodelRow],
     batchSize: Integer = 10000
   )(using c: Connection): Integer = {
-    interpolate(Fragment.lit("""create temporary table productmodel_TEMP (like "production"."productmodel") on commit drop""")).update().runUnchecked(c): @scala.annotation.nowarn
-    streamingInsert.insertUnchecked(s"""copy productmodel_TEMP("productmodelid", "name", "catalogdescription", "instructions", "rowguid", "modifieddate") from stdin""", batchSize, unsaved, c, ProductmodelRow.pgText): @scala.annotation.nowarn
-    return interpolate(Fragment.lit("""insert into "production"."productmodel"("productmodelid", "name", "catalogdescription", "instructions", "rowguid", "modifieddate")
+    concat(Fragment.of("""create temporary table productmodel_TEMP (like "production"."productmodel") on commit drop""")).update().run(c): @scala.annotation.nowarn
+    StreamingInsert.of(s"""copy productmodel_TEMP("productmodelid", "name", "catalogdescription", "instructions", "rowguid", "modifieddate") from stdin""", batchSize, unsaved, ProductmodelRow.pgText).run(c): @scala.annotation.nowarn
+    return concat(Fragment.of("""insert into "production"."productmodel"("productmodelid", "name", "catalogdescription", "instructions", "rowguid", "modifieddate")
     select * from productmodel_TEMP
     on conflict ("productmodelid")
     do update set
@@ -167,6 +168,6 @@ class ProductmodelRepoImpl extends ProductmodelRepo {
     "rowguid" = EXCLUDED."rowguid",
     "modifieddate" = EXCLUDED."modifieddate"
     ;
-    drop table productmodel_TEMP;""")).update().runUnchecked(c)
+    drop table productmodel_TEMP;""")).update().run(c)
   }
 }

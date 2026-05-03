@@ -37,11 +37,11 @@ data class ReviewsRowUnsaved(
   /** Default: NULL
 
     */
-  val title: Defaulted<String?> = UseDefault(),
+  val title: Defaulted<kotlin.String?> = UseDefault(),
   /** Default: NULL
 
     */
-  val content: Defaulted<String?> = UseDefault(),
+  val content: Defaulted<kotlin.String?> = UseDefault(),
   /** Default: NULL
 
     */
@@ -73,7 +73,7 @@ data class ReviewsRowUnsaved(
   /** Default: NULL
 
     */
-  @field:JsonProperty("admin_response") val adminResponse: Defaulted<String?> = UseDefault(),
+  @field:JsonProperty("admin_response") val adminResponse: Defaulted<kotlin.String?> = UseDefault(),
   /** Default: NULL
 
     */
@@ -89,8 +89,8 @@ data class ReviewsRowUnsaved(
 ) {
   fun toRow(
     orderItemIdDefault: () -> OrderItemsId?,
-    titleDefault: () -> String?,
-    contentDefault: () -> String?,
+    titleDefault: () -> kotlin.String?,
+    contentDefault: () -> kotlin.String?,
     prosDefault: () -> Json?,
     consDefault: () -> Json?,
     imagesDefault: () -> Json?,
@@ -98,7 +98,7 @@ data class ReviewsRowUnsaved(
     isApprovedDefault: () -> /* user-picked */ IsApproved,
     helpfulVotesDefault: () -> Uint4,
     unhelpfulVotesDefault: () -> Uint4,
-    adminResponseDefault: () -> String?,
+    adminResponseDefault: () -> kotlin.String?,
     respondedAtDefault: () -> LocalDateTime?,
     createdAtDefault: () -> LocalDateTime,
     updatedAtDefault: () -> LocalDateTime,

@@ -6,23 +6,23 @@
 package adventureworks.information_schema
 
 import com.fasterxml.jackson.annotation.JsonValue
-import dev.typr.foundations.PgType
-import dev.typr.foundations.PgTypes
-import dev.typr.foundations.internal.arrayMap
-import dev.typr.foundations.kotlin.Bijection
+import dev.typr.foundationskt.Bijection
+import dev.typr.foundationskt.PgType
+import dev.typr.foundationskt.PgTypes
+import kotlin.collections.List
 
 /** Domain `information_schema.character_data`
   * No constraint
   */
-data class CharacterData(@field:JsonValue val value: String) {
+data class CharacterData(@field:JsonValue val value: kotlin.String) {
   companion object {
-    val bijection: Bijection<CharacterData, String> =
+    val bijection: Bijection<CharacterData, kotlin.String> =
       Bijection.of(CharacterData::value, ::CharacterData)
 
     val pgType: PgType<CharacterData> =
-      PgTypes.text.bimap(::CharacterData, CharacterData::value).renamed("\"information_schema\".\"character_data\"")
+      PgType(PgTypes.text.to(Bijection.of(::CharacterData, CharacterData::value)).underlying.renamed("\"information_schema\".\"character_data\""))
 
-    val pgTypeArray: PgType<Array<CharacterData>> =
-      PgTypes.textArray.bimap({ xs -> arrayMap.map(xs, ::CharacterData, CharacterData::class.java) }, { xs -> arrayMap.map(xs, CharacterData::value, String::class.java) }).renamed("\"information_schema\".\"character_data\"[]")
+    val pgTypeArray: PgType<List<CharacterData>> =
+      pgType.array()
   }
 }

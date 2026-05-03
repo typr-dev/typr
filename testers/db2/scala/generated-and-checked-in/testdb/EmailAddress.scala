@@ -6,9 +6,9 @@
 package testdb
 
 import com.fasterxml.jackson.annotation.JsonValue
-import dev.typr.foundations.Db2Type
-import dev.typr.foundations.Db2Types
-import dev.typr.foundations.scala.Bijection
+import dev.typr.dslsc.Bijection
+import dev.typr.foundationssc.Db2Type
+import dev.typr.foundationssc.Db2Types
 
 /** Domain `EMAIL_ADDRESS`
  * No constraint
@@ -16,7 +16,7 @@ import dev.typr.foundations.scala.Bijection
 case class EmailAddress(@JsonValue value: String)
 
 object EmailAddress {
-  given bijection: Bijection[EmailAddress, String] = Bijection.apply[EmailAddress, String](_.value)(EmailAddress.apply)
+  given bijection: Bijection[EmailAddress, String] = Bijection.of[EmailAddress, String](_.value, EmailAddress.apply)
 
-  given db2Type: Db2Type[EmailAddress] = Db2Types.varchar.bimap(EmailAddress.apply, _.value).renamed(""""EMAIL_ADDRESS"""")
+  given db2Type: Db2Type[EmailAddress] = Db2Type(Db2Types.varchar.to(Bijection.of(EmailAddress.apply, _.value)).underlying.renamed(""""EMAIL_ADDRESS""""))
 }

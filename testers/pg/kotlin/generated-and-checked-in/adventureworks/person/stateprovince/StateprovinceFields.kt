@@ -13,25 +13,25 @@ import adventureworks.public.Name
 import adventureworks.sales.salesterritory.SalesterritoryFields
 import adventureworks.sales.salesterritory.SalesterritoryId
 import adventureworks.sales.salesterritory.SalesterritoryRow
-import dev.typr.foundations.PgTypes
-import dev.typr.foundations.RowParser
-import dev.typr.foundations.dsl.FieldsBase
-import dev.typr.foundations.dsl.Path
-import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.kotlin.ForeignKey
-import dev.typr.foundations.kotlin.RelationStructure
-import dev.typr.foundations.kotlin.SqlExpr
-import dev.typr.foundations.kotlin.SqlExpr.Field
-import dev.typr.foundations.kotlin.SqlExpr.IdField
-import dev.typr.foundations.kotlin.TupleExpr8
+import dev.typr.dsl.FieldsBase
+import dev.typr.dsl.Path
+import dev.typr.dsl.SqlExpr.FieldLike
+import dev.typr.dslkt.ForeignKey
+import dev.typr.dslkt.RelationStructure
+import dev.typr.dslkt.SqlExpr
+import dev.typr.dslkt.SqlExpr.Field
+import dev.typr.dslkt.SqlExpr.IdField
+import dev.typr.dslkt.TupleExpr8
+import dev.typr.foundations.RowCodec
+import dev.typr.foundationskt.PgTypes
 import java.time.LocalDateTime
 import java.util.UUID
 import kotlin.collections.List
 
-data class StateprovinceFields(val _path: List<Path>) : TupleExpr8<StateprovinceId, String, CountryregionId, Flag, Name, SalesterritoryId, UUID, LocalDateTime>, RelationStructure<StateprovinceFields, StateprovinceRow>, FieldsBase<StateprovinceRow> {
+data class StateprovinceFields(val _path: List<Path>) : TupleExpr8<StateprovinceId, kotlin.String, CountryregionId, Flag, Name, SalesterritoryId, UUID, LocalDateTime>, RelationStructure<StateprovinceFields, StateprovinceRow>, FieldsBase<StateprovinceRow> {
   override fun _1(): SqlExpr<StateprovinceId> = stateprovinceid()
 
-  override fun _2(): SqlExpr<String> = stateprovincecode()
+  override fun _2(): SqlExpr<kotlin.String> = stateprovincecode()
 
   override fun _3(): SqlExpr<CountryregionId> = countryregioncode()
 
@@ -49,27 +49,27 @@ data class StateprovinceFields(val _path: List<Path>) : TupleExpr8<Stateprovince
 
   override fun columns(): List<FieldLike<*, StateprovinceRow>> = listOf(this.stateprovinceid().underlying, this.stateprovincecode().underlying, this.countryregioncode().underlying, this.isonlystateprovinceflag().underlying, this.name().underlying, this.territoryid().underlying, this.rowguid().underlying, this.modifieddate().underlying)
 
-  fun countryregioncode(): Field<CountryregionId, StateprovinceRow> = Field<CountryregionId, StateprovinceRow>(_path, "countryregioncode", StateprovinceRow::countryregioncode, null, null, { row, value -> row.copy(countryregioncode = value) }, CountryregionId.pgType)
+  fun countryregioncode(): Field<CountryregionId, StateprovinceRow> = Field<CountryregionId, StateprovinceRow>(_path, "countryregioncode", StateprovinceRow::countryregioncode, null, null, { row, value -> row.copy(countryregioncode = value) }, CountryregionId.pgType.underlying)
 
   fun fkCountryregion(): ForeignKey<CountryregionFields, CountryregionRow> = ForeignKey.of<CountryregionFields, CountryregionRow>("person.FK_StateProvince_CountryRegion_CountryRegionCode").withColumnPair<CountryregionId>(countryregioncode(), CountryregionFields::countryregioncode)
 
   fun fkSalesSalesterritory(): ForeignKey<SalesterritoryFields, SalesterritoryRow> = ForeignKey.of<SalesterritoryFields, SalesterritoryRow>("person.FK_StateProvince_SalesTerritory_TerritoryID").withColumnPair<SalesterritoryId>(territoryid(), SalesterritoryFields::territoryid)
 
-  fun isonlystateprovinceflag(): Field<Flag, StateprovinceRow> = Field<Flag, StateprovinceRow>(_path, "isonlystateprovinceflag", StateprovinceRow::isonlystateprovinceflag, null, "bool", { row, value -> row.copy(isonlystateprovinceflag = value) }, Flag.pgType)
+  fun isonlystateprovinceflag(): Field<Flag, StateprovinceRow> = Field<Flag, StateprovinceRow>(_path, "isonlystateprovinceflag", StateprovinceRow::isonlystateprovinceflag, null, "bool", { row, value -> row.copy(isonlystateprovinceflag = value) }, Flag.pgType.underlying)
 
-  fun modifieddate(): Field<LocalDateTime, StateprovinceRow> = Field<LocalDateTime, StateprovinceRow>(_path, "modifieddate", StateprovinceRow::modifieddate, null, "timestamp", { row, value -> row.copy(modifieddate = value) }, PgTypes.timestamp)
+  fun modifieddate(): Field<LocalDateTime, StateprovinceRow> = Field<LocalDateTime, StateprovinceRow>(_path, "modifieddate", StateprovinceRow::modifieddate, null, "timestamp", { row, value -> row.copy(modifieddate = value) }, PgTypes.timestamp.underlying)
 
-  fun name(): Field<Name, StateprovinceRow> = Field<Name, StateprovinceRow>(_path, "name", StateprovinceRow::name, null, "varchar", { row, value -> row.copy(name = value) }, Name.pgType)
+  fun name(): Field<Name, StateprovinceRow> = Field<Name, StateprovinceRow>(_path, "name", StateprovinceRow::name, null, "varchar", { row, value -> row.copy(name = value) }, Name.pgType.underlying)
 
-  override fun rowParser(): RowParser<StateprovinceRow> = StateprovinceRow._rowParser.underlying
+  override fun rowCodec(): RowCodec<StateprovinceRow> = StateprovinceRow.rowCodec.underlying
 
-  fun rowguid(): Field<UUID, StateprovinceRow> = Field<UUID, StateprovinceRow>(_path, "rowguid", StateprovinceRow::rowguid, null, "uuid", { row, value -> row.copy(rowguid = value) }, PgTypes.uuid)
+  fun rowguid(): Field<UUID, StateprovinceRow> = Field<UUID, StateprovinceRow>(_path, "rowguid", StateprovinceRow::rowguid, null, "uuid", { row, value -> row.copy(rowguid = value) }, PgTypes.uuid.underlying)
 
-  fun stateprovincecode(): Field<String, StateprovinceRow> = Field<String, StateprovinceRow>(_path, "stateprovincecode", StateprovinceRow::stateprovincecode, null, "bpchar", { row, value -> row.copy(stateprovincecode = value) }, PgTypes.bpchar)
+  fun stateprovincecode(): Field<kotlin.String, StateprovinceRow> = Field<kotlin.String, StateprovinceRow>(_path, "stateprovincecode", StateprovinceRow::stateprovincecode, null, "bpchar", { row, value -> row.copy(stateprovincecode = value) }, PgTypes.bpchar.underlying)
 
-  fun stateprovinceid(): IdField<StateprovinceId, StateprovinceRow> = IdField<StateprovinceId, StateprovinceRow>(_path, "stateprovinceid", StateprovinceRow::stateprovinceid, null, "int4", { row, value -> row.copy(stateprovinceid = value) }, StateprovinceId.pgType)
+  fun stateprovinceid(): IdField<StateprovinceId, StateprovinceRow> = IdField<StateprovinceId, StateprovinceRow>(_path, "stateprovinceid", StateprovinceRow::stateprovinceid, null, "int4", { row, value -> row.copy(stateprovinceid = value) }, StateprovinceId.pgType.underlying)
 
-  fun territoryid(): Field<SalesterritoryId, StateprovinceRow> = Field<SalesterritoryId, StateprovinceRow>(_path, "territoryid", StateprovinceRow::territoryid, null, "int4", { row, value -> row.copy(territoryid = value) }, SalesterritoryId.pgType)
+  fun territoryid(): Field<SalesterritoryId, StateprovinceRow> = Field<SalesterritoryId, StateprovinceRow>(_path, "territoryid", StateprovinceRow::territoryid, null, "int4", { row, value -> row.copy(territoryid = value) }, SalesterritoryId.pgType.underlying)
 
   override fun withPaths(_path: List<Path>): RelationStructure<StateprovinceFields, StateprovinceRow> = StateprovinceFields(_path)
 

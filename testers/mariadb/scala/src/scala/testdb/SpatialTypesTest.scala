@@ -58,8 +58,7 @@ class SpatialTypesTest extends AnyFunSuite {
   }
 
   test("pointInsertAndSelect") {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       val unsaved = MariatestSpatialRowUnsaved(
         createPoint(1, 2), // geometry_col (Point is a subtype of Geometry)
         createPoint(3, 4), // point_col
@@ -90,8 +89,7 @@ class SpatialTypesTest extends AnyFunSuite {
   }
 
   test("lineStringInsertAndSelect") {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       val linestring = createLineString()
 
       val unsaved = MariatestSpatialRowUnsaved(
@@ -118,8 +116,7 @@ class SpatialTypesTest extends AnyFunSuite {
   }
 
   test("polygonInsertAndSelect") {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       val polygon = createPolygon()
 
       val unsaved = MariatestSpatialRowUnsaved(
@@ -144,8 +141,7 @@ class SpatialTypesTest extends AnyFunSuite {
   }
 
   test("multiPointInsertAndSelect") {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       val multipoint = createMultiPoint()
 
       val unsaved = MariatestSpatialRowUnsaved(
@@ -170,8 +166,7 @@ class SpatialTypesTest extends AnyFunSuite {
   }
 
   test("geometryCollectionInsertAndSelect") {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       val collection = createGeometryCollection()
 
       val unsaved = MariatestSpatialRowUnsaved(
@@ -196,8 +191,7 @@ class SpatialTypesTest extends AnyFunSuite {
   }
 
   test("nullableSpatialWithAllNulls") {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       // Use short constructor that sets all fields to UseDefault
       val unsaved = MariatestSpatialNullRowUnsaved()
 
@@ -219,8 +213,7 @@ class SpatialTypesTest extends AnyFunSuite {
   }
 
   test("nullableSpatialWithValues") {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       val point = createPoint(10, 20)
 
       // Use short constructor and chain copy methods
@@ -241,8 +234,7 @@ class SpatialTypesTest extends AnyFunSuite {
   }
 
   test("spatialUpdate") {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       val unsaved = MariatestSpatialRowUnsaved(
         createPoint(0, 0),
         createPoint(1, 1),
@@ -269,8 +261,7 @@ class SpatialTypesTest extends AnyFunSuite {
   }
 
   test("spatialDelete") {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       val unsaved = MariatestSpatialRowUnsaved(
         createPoint(0, 0),
         createPoint(1, 1),

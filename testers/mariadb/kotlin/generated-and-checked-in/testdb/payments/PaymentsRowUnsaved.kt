@@ -30,15 +30,15 @@ data class PaymentsRowUnsaved(
   /** Default: NULL
 
     */
-  @field:JsonProperty("transaction_id") val transactionId: Defaulted<String?> = UseDefault(),
+  @field:JsonProperty("transaction_id") val transactionId: Defaulted<kotlin.String?> = UseDefault(),
   /** Default: 'USD'
 
     */
-  @field:JsonProperty("currency_code") val currencyCode: Defaulted<String> = UseDefault(),
+  @field:JsonProperty("currency_code") val currencyCode: Defaulted<kotlin.String> = UseDefault(),
   /** Default: 'pending'
 
     */
-  val status: Defaulted<String> = UseDefault(),
+  val status: Defaulted<kotlin.String> = UseDefault(),
   /** Default: NULL
 
     */
@@ -46,7 +46,7 @@ data class PaymentsRowUnsaved(
   /** Default: NULL
 
     */
-  @field:JsonProperty("error_message") val errorMessage: Defaulted<String?> = UseDefault(),
+  @field:JsonProperty("error_message") val errorMessage: Defaulted<kotlin.String?> = UseDefault(),
   /** Default: NULL
 
     */
@@ -61,11 +61,11 @@ data class PaymentsRowUnsaved(
   @field:JsonProperty("processed_at") val processedAt: Defaulted<LocalDateTime?> = UseDefault()
 ) {
   fun toRow(
-    transactionIdDefault: () -> String?,
-    currencyCodeDefault: () -> String,
-    statusDefault: () -> String,
+    transactionIdDefault: () -> kotlin.String?,
+    currencyCodeDefault: () -> kotlin.String,
+    statusDefault: () -> kotlin.String,
     processorResponseDefault: () -> Json?,
-    errorMessageDefault: () -> String?,
+    errorMessageDefault: () -> kotlin.String?,
     ipAddressDefault: () -> Inet6?,
     createdAtDefault: () -> LocalDateTime,
     processedAtDefault: () -> LocalDateTime?,

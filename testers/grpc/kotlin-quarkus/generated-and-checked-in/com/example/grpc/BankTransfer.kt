@@ -27,6 +27,19 @@ data class BankTransfer(
   }
 
   companion object {
+    @Throws(IOException::class)
+    fun parseFrom(input: CodedInputStream): BankTransfer {
+      var accountNumber: kotlin.String = ""
+      var routingNumber: kotlin.String = ""
+      while (!input.isAtEnd()) {
+        val tag = input.readTag()
+        if (WireFormat.getTagFieldNumber(tag) == 1) { accountNumber = input.readString() }
+        else if (WireFormat.getTagFieldNumber(tag) == 2) { routingNumber = input.readString() }
+        else { input.skipField(tag) }
+      }
+      return BankTransfer(accountNumber, routingNumber)
+    }
+
     val MARSHALLER: Marshaller<BankTransfer> =
       object : Marshaller<BankTransfer> {
         override fun stream(value: BankTransfer): InputStream {
@@ -48,18 +61,5 @@ data class BankTransfer(
           } 
         }
       }
-
-    @Throws(IOException::class)
-    fun parseFrom(input: CodedInputStream): BankTransfer {
-      var accountNumber: kotlin.String = ""
-      var routingNumber: kotlin.String = ""
-      while (!input.isAtEnd()) {
-        val tag = input.readTag()
-        if (WireFormat.getTagFieldNumber(tag) == 1) { accountNumber = input.readString() }
-        else if (WireFormat.getTagFieldNumber(tag) == 2) { routingNumber = input.readString() }
-        else { input.skipField(tag) }
-      }
-      return BankTransfer(accountNumber, routingNumber)
-    }
   }
 }

@@ -30,7 +30,7 @@ object TypoUUID {
       .contramap(_.map(v => v.value))
   }
 
-  implicit lazy val bijection: Bijection[TypoUUID, UUID] = Bijection.apply[TypoUUID, UUID](_.value)(TypoUUID.apply)
+  implicit lazy val bijection: Bijection[TypoUUID, UUID] = Bijection[TypoUUID, UUID](_.value)(TypoUUID.apply)
 
   implicit lazy val decoder: Decoder[TypoUUID] = Decoder.decodeUUID.map(TypoUUID.apply)
 

@@ -9,10 +9,10 @@ import adventureworks.customtypes.Defaulted
 import adventureworks.person.businessentity.BusinessentityId
 import adventureworks.userdefined.CurrentFlag
 import adventureworks.userdefined.SalariedFlag
+import dev.typr.dsl.RowCodecs
 import dev.typr.foundations.PgText
 import dev.typr.foundations.PgTypes
-import dev.typr.foundations.RowParser
-import dev.typr.foundations.RowParsers
+import dev.typr.foundations.RowCodec
 import dev.typr.foundations.Tuple.Tuple15
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -139,7 +139,7 @@ case class EmployeeRow(
 }
 
 object EmployeeRow {
-  val `_rowParser`: RowParser[EmployeeRow] = RowParsers.of(BusinessentityId.pgType, PgTypes.text, PgTypes.text, PgTypes.text, PgTypes.date, PgTypes.bpchar, PgTypes.bpchar, PgTypes.date, SalariedFlag.pgType, PgTypes.int2, PgTypes.int2, CurrentFlag.pgType, PgTypes.uuid, PgTypes.timestamp, PgTypes.text.opt(), EmployeeRow.apply, row => Array[Any](row.businessentityid, row.nationalidnumber, row.loginid, row.jobtitle, row.birthdate, row.maritalstatus, row.gender, row.hiredate, row.salariedflag, row.vacationhours, row.sickleavehours, row.currentflag, row.rowguid, row.modifieddate, row.organizationnode))
+  given pgText: PgText[EmployeeRow] = PgText.from(rowCodec)
 
-  given pgText: PgText[EmployeeRow] = PgText.from(`_rowParser`)
+  val rowCodec: RowCodec[EmployeeRow] = RowCodecs.of(BusinessentityId.pgType, PgTypes.text, PgTypes.text, PgTypes.text, PgTypes.date, PgTypes.bpchar, PgTypes.bpchar, PgTypes.date, SalariedFlag.pgType, PgTypes.int2, PgTypes.int2, CurrentFlag.pgType, PgTypes.uuid, PgTypes.timestamp, PgTypes.text.opt, EmployeeRow.apply, row => Array[Any](row.businessentityid, row.nationalidnumber, row.loginid, row.jobtitle, row.birthdate, row.maritalstatus, row.gender, row.hiredate, row.salariedflag, row.vacationhours, row.sickleavehours, row.currentflag, row.rowguid, row.modifieddate, row.organizationnode))
 }

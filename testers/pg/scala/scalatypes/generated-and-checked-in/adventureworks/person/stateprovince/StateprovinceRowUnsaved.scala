@@ -12,7 +12,7 @@ import adventureworks.public.Flag
 import adventureworks.public.Name
 import adventureworks.sales.salesterritory.SalesterritoryId
 import dev.typr.foundations.PgText
-import dev.typr.foundations.PgTypes
+import dev.typr.foundationssc.PgTypes
 import java.time.LocalDateTime
 import java.util.UUID
 
@@ -63,5 +63,5 @@ case class StateprovinceRowUnsaved(
 }
 
 object StateprovinceRowUnsaved {
-  given pgText: PgText[StateprovinceRowUnsaved] = PgText.instance((row, sb) => { PgTypes.bpchar.text.unsafeEncode(row.stateprovincecode, sb); sb.append(PgText.DELIMETER); CountryregionId.pgType.text.unsafeEncode(row.countryregioncode, sb); sb.append(PgText.DELIMETER); Name.pgType.text.unsafeEncode(row.name, sb); sb.append(PgText.DELIMETER); SalesterritoryId.pgType.text.unsafeEncode(row.territoryid, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using StateprovinceId.pgType.text).unsafeEncode(row.stateprovinceid, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using Flag.pgType.text).unsafeEncode(row.isonlystateprovinceflag, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using PgTypes.uuid.text).unsafeEncode(row.rowguid, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using PgTypes.timestamp.text).unsafeEncode(row.modifieddate, sb) })
+  given pgText: PgText[StateprovinceRowUnsaved] = PgText.instance((row, sb) => { PgTypes.bpchar.pgText().unsafeEncode(row.stateprovincecode, sb); sb.append(PgText.DELIMETER); CountryregionId.pgType.pgText().unsafeEncode(row.countryregioncode, sb); sb.append(PgText.DELIMETER); Name.pgType.pgText().unsafeEncode(row.name, sb); sb.append(PgText.DELIMETER); SalesterritoryId.pgType.pgText().unsafeEncode(row.territoryid, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using StateprovinceId.pgType.pgText()).unsafeEncode(row.stateprovinceid, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using Flag.pgType.pgText()).unsafeEncode(row.isonlystateprovinceflag, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using PgTypes.uuid.pgText()).unsafeEncode(row.rowguid, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using PgTypes.timestamp.pgText()).unsafeEncode(row.modifieddate, sb) })
 }

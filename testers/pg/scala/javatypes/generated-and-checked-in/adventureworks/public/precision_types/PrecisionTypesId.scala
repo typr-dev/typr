@@ -6,17 +6,17 @@
 package adventureworks.public.precision_types
 
 import com.fasterxml.jackson.annotation.JsonValue
+import dev.typr.foundations.Bijection
 import dev.typr.foundations.PgType
 import dev.typr.foundations.PgTypes
-import dev.typr.foundations.dsl.Bijection
 
 /** Type for the primary key of table `public.precision_types` */
 case class PrecisionTypesId(@JsonValue value: Integer) extends scala.AnyVal
 
 object PrecisionTypesId {
-  given bijection: Bijection[PrecisionTypesId, Integer] = Bijection.apply[PrecisionTypesId, Integer](_.value)(PrecisionTypesId.apply)
+  given bijection: Bijection[PrecisionTypesId, Integer] = Bijection.of[PrecisionTypesId, Integer](_.value, PrecisionTypesId.apply)
 
-  given pgType: PgType[PrecisionTypesId] = PgTypes.int4.bimap(PrecisionTypesId.apply, _.value)
+  given pgType: PgType[PrecisionTypesId] = PgTypes.int4.to(Bijection.of(PrecisionTypesId.apply, _.value))
 
-  given pgTypeArray: PgType[Array[PrecisionTypesId]] = PgTypes.int4Array.bimap(xs => xs.map(PrecisionTypesId.apply), xs => xs.map(_.value))
+  given pgTypeArray: PgType[java.util.List[PrecisionTypesId]] = pgType.array
 }

@@ -5,10 +5,10 @@
  */
 package testdb.product_summary
 
-import dev.typr.foundations.kotlin.Fragment
-import java.sql.Connection
+import dev.typr.foundationskt.ConnectionRead
+import dev.typr.foundationskt.Fragment
 import kotlin.collections.List
 
 class ProductSummarySqlRepoImpl() : ProductSummarySqlRepo {
-  override fun apply(c: Connection): List<ProductSummarySqlRow> = Fragment.interpolate(Fragment.lit("-- Product Summary View\n-- Shows product details with aggregated information\n-- This tests DuckDB SQL file processing and view generation\n\nSELECT\n  p.product_id,\n  p.name as product_name,\n  p.sku,\n  p.price,\n  COUNT(*) as order_count,\n  COALESCE(SUM(oi.quantity), 0) as total_quantity,\n  COALESCE(SUM(oi.quantity * oi.unit_price), 0) as total_revenue\nFROM products p\nLEFT JOIN order_items oi ON p.product_id = oi.product_id\nGROUP BY p.product_id, p.name, p.sku, p.price\n")).query(ProductSummarySqlRow._rowParser.all()).runUnchecked(c)
+  override fun apply(c: ConnectionRead): List<ProductSummarySqlRow> = Fragment.concat(Fragment.of("-- Product Summary View\n-- Shows product details with aggregated information\n-- This tests DuckDB SQL file processing and view generation\n\nSELECT\n  p.product_id,\n  p.name as product_name,\n  p.sku,\n  p.price,\n  COUNT(*) as order_count,\n  COALESCE(SUM(oi.quantity), 0) as total_quantity,\n  COALESCE(SUM(oi.quantity * oi.unit_price), 0) as total_revenue\nFROM products p\nLEFT JOIN order_items oi ON p.product_id = oi.product_id\nGROUP BY p.product_id, p.name, p.sku, p.price\n")).query(ProductSummarySqlRow.rowCodec.all()).run(c)
 }

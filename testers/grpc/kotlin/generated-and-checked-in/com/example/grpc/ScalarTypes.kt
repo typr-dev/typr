@@ -67,28 +67,6 @@ data class ScalarTypes(
   }
 
   companion object {
-    val MARSHALLER: Marshaller<ScalarTypes> =
-      object : Marshaller<ScalarTypes> {
-        override fun stream(value: ScalarTypes): InputStream {
-          val bytes = ByteArray(value.getSerializedSize())
-          val cos = CodedOutputStream.newInstance(bytes)
-          try {
-            value.writeTo(cos)
-            cos.flush()
-          } catch (e: IOException) {
-            throw RuntimeException(e)
-          } 
-          return ByteArrayInputStream(bytes)
-        }
-        override fun parse(stream: InputStream): ScalarTypes {
-          try {
-            return ScalarTypes.parseFrom(CodedInputStream.newInstance(stream))
-          } catch (e: IOException) {
-            throw RuntimeException(e)
-          } 
-        }
-      }
-
     @Throws(IOException::class)
     fun parseFrom(input: CodedInputStream): ScalarTypes {
       var doubleVal: kotlin.Double = 0.0
@@ -127,5 +105,27 @@ data class ScalarTypes(
       }
       return ScalarTypes(doubleVal, floatVal, int32Val, int64Val, uint32Val, uint64Val, sint32Val, sint64Val, fixed32Val, fixed64Val, sfixed32Val, sfixed64Val, boolVal, stringVal, bytesVal)
     }
+
+    val MARSHALLER: Marshaller<ScalarTypes> =
+      object : Marshaller<ScalarTypes> {
+        override fun stream(value: ScalarTypes): InputStream {
+          val bytes = ByteArray(value.getSerializedSize())
+          val cos = CodedOutputStream.newInstance(bytes)
+          try {
+            value.writeTo(cos)
+            cos.flush()
+          } catch (e: IOException) {
+            throw RuntimeException(e)
+          } 
+          return ByteArrayInputStream(bytes)
+        }
+        override fun parse(stream: InputStream): ScalarTypes {
+          try {
+            return ScalarTypes.parseFrom(CodedInputStream.newInstance(stream))
+          } catch (e: IOException) {
+            throw RuntimeException(e)
+          } 
+        }
+      }
   }
 }

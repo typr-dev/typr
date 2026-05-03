@@ -11,11 +11,11 @@ import adventureworks.production.productsubcategory.ProductsubcategoryId
 import adventureworks.production.unitmeasure.UnitmeasureId
 import adventureworks.public.Flag
 import adventureworks.public.Name
+import dev.typr.dsl.RowCodecs
+import dev.typr.dsl.RowCodecs.Function25
 import dev.typr.foundations.PgText
 import dev.typr.foundations.PgTypes
-import dev.typr.foundations.RowParser
-import dev.typr.foundations.RowParsers
-import dev.typr.foundations.RowParsers.Function25
+import dev.typr.foundations.RowCodec
 import dev.typr.foundations.Tuple.Tuple25
 import java.time.LocalDateTime
 import java.util.Optional
@@ -203,8 +203,10 @@ case class ProductRow(
 }
 
 object ProductRow {
-  val `_rowParser`: RowParser[ProductRow] = {
-    RowParsers.of(ProductId.pgType, Name.pgType, PgTypes.text, Flag.pgType, Flag.pgType, PgTypes.text.opt(), PgTypes.int2, PgTypes.int2, PgTypes.numeric, PgTypes.numeric, PgTypes.text.opt(), UnitmeasureId.pgType.opt(), UnitmeasureId.pgType.opt(), PgTypes.numeric.opt(), PgTypes.int4, PgTypes.bpchar.opt(), PgTypes.bpchar.opt(), PgTypes.bpchar.opt(), ProductsubcategoryId.pgType.opt(), ProductmodelId.pgType.opt(), PgTypes.timestamp, PgTypes.timestamp.opt(), PgTypes.timestamp.opt(), PgTypes.uuid, PgTypes.timestamp, new Function25[ProductId, Name, String, Flag, Flag, Optional[/* max 15 chars */ String], java.lang.Short, java.lang.Short, java.math.BigDecimal, java.math.BigDecimal, Optional[/* max 5 chars */ String], Optional[UnitmeasureId], Optional[UnitmeasureId], Optional[java.math.BigDecimal], Integer, Optional[/* bpchar, max 2 chars */ String], Optional[/* bpchar, max 2 chars */ String], Optional[/* bpchar, max 2 chars */ String], Optional[ProductsubcategoryId], Optional[ProductmodelId], LocalDateTime, Optional[LocalDateTime], Optional[LocalDateTime], UUID, LocalDateTime, ProductRow] {
+  given pgText: PgText[ProductRow] = PgText.from(rowCodec)
+
+  val rowCodec: RowCodec[ProductRow] = {
+    RowCodecs.of(ProductId.pgType, Name.pgType, PgTypes.text, Flag.pgType, Flag.pgType, PgTypes.text.opt, PgTypes.int2, PgTypes.int2, PgTypes.numeric, PgTypes.numeric, PgTypes.text.opt, UnitmeasureId.pgType.opt, UnitmeasureId.pgType.opt, PgTypes.numeric.opt, PgTypes.int4, PgTypes.bpchar.opt, PgTypes.bpchar.opt, PgTypes.bpchar.opt, ProductsubcategoryId.pgType.opt, ProductmodelId.pgType.opt, PgTypes.timestamp, PgTypes.timestamp.opt, PgTypes.timestamp.opt, PgTypes.uuid, PgTypes.timestamp, new Function25[ProductId, Name, String, Flag, Flag, Optional[/* max 15 chars */ String], java.lang.Short, java.lang.Short, java.math.BigDecimal, java.math.BigDecimal, Optional[/* max 5 chars */ String], Optional[UnitmeasureId], Optional[UnitmeasureId], Optional[java.math.BigDecimal], Integer, Optional[/* bpchar, max 2 chars */ String], Optional[/* bpchar, max 2 chars */ String], Optional[/* bpchar, max 2 chars */ String], Optional[ProductsubcategoryId], Optional[ProductmodelId], LocalDateTime, Optional[LocalDateTime], Optional[LocalDateTime], UUID, LocalDateTime, ProductRow] {
       override def apply(
         t0: ProductId,
         t1: Name,
@@ -262,6 +264,4 @@ object ProductRow {
       }
     }, row => Array[Any](row.productid, row.name, row.productnumber, row.makeflag, row.finishedgoodsflag, row.color, row.safetystocklevel, row.reorderpoint, row.standardcost, row.listprice, row.size, row.sizeunitmeasurecode, row.weightunitmeasurecode, row.weight, row.daystomanufacture, row.productline, row.`class`, row.style, row.productsubcategoryid, row.productmodelid, row.sellstartdate, row.sellenddate, row.discontinueddate, row.rowguid, row.modifieddate))
   }
-
-  given pgText: PgText[ProductRow] = PgText.from(`_rowParser`)
 }

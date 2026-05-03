@@ -45,7 +45,7 @@ object TypoOffsetTime {
 
   given arrayToStatement: ToStatement[Array[TypoOffsetTime]] = ToStatement[Array[TypoOffsetTime]]((s, index, v) => s.setArray(index, s.getConnection.createArrayOf("timetz", v.map(v => v.value.toString()))))
 
-  given bijection: Bijection[TypoOffsetTime, OffsetTime] = Bijection.apply[TypoOffsetTime, OffsetTime](_.value)(TypoOffsetTime.apply)
+  given bijection: Bijection[TypoOffsetTime, OffsetTime] = Bijection[TypoOffsetTime, OffsetTime](_.value)(TypoOffsetTime.apply)
 
   given column: Column[TypoOffsetTime] = {
     Column.nonNull[TypoOffsetTime]((v1: Any, _) =>

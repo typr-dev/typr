@@ -24,7 +24,7 @@ object CardinalNumber {
 
   implicit lazy val arrayToStatement: ToStatement[Array[CardinalNumber]] = adventureworks.IntArrayToStatement.contramap(_.map(_.value))
 
-  implicit lazy val bijection: Bijection[CardinalNumber, Int] = Bijection.apply[CardinalNumber, Int](_.value)(CardinalNumber.apply)
+  implicit lazy val bijection: Bijection[CardinalNumber, Int] = Bijection[CardinalNumber, Int](_.value)(CardinalNumber.apply)
 
   implicit lazy val column: Column[CardinalNumber] = Column.columnToInt.map(CardinalNumber.apply)
 

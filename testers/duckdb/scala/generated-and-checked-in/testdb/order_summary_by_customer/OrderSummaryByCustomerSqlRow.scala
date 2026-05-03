@@ -6,12 +6,10 @@
 package testdb.order_summary_by_customer
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import dev.typr.foundations.DuckDbTypes
+import dev.typr.dslsc.RowCodecs
 import dev.typr.foundations.Tuple.Tuple9
-import dev.typr.foundations.scala.DbTypeOps
-import dev.typr.foundations.scala.RowParser
-import dev.typr.foundations.scala.RowParsers
-import dev.typr.foundations.scala.ScalaDbTypes
+import dev.typr.foundationssc.DuckDbTypes
+import dev.typr.foundationssc.RowCodec
 import java.time.LocalDate
 import testdb.Priority
 import testdb.customers.CustomersId
@@ -58,5 +56,5 @@ case class OrderSummaryByCustomerSqlRow(
 }
 
 object OrderSummaryByCustomerSqlRow {
-  val `_rowParser`: RowParser[OrderSummaryByCustomerSqlRow] = RowParsers.of(CustomersId.duckDbType, DuckDbTypes.varchar, Email.duckDbType.nullable, Priority.duckDbType.nullable, ScalaDbTypes.DuckDbTypes.bigint.nullable, ScalaDbTypes.DuckDbTypes.numeric.nullable, DuckDbTypes.date.nullable, DuckDbTypes.date.nullable, ScalaDbTypes.DuckDbTypes.double_.nullable)(OrderSummaryByCustomerSqlRow.apply)(row => Array[Any](row.customerId, row.customerName, row.email, row.priority, row.orderCount, row.totalSpent, row.lastOrderDate, row.firstOrderDate, row.avgOrderAmount))
+  val rowCodec: RowCodec[OrderSummaryByCustomerSqlRow] = RowCodecs.of(CustomersId.duckDbType, DuckDbTypes.varchar, Email.duckDbType.opt, Priority.duckDbType.opt, DuckDbTypes.bigint.opt, DuckDbTypes.numeric.opt, DuckDbTypes.date.opt, DuckDbTypes.date.opt, DuckDbTypes.double_.opt)(OrderSummaryByCustomerSqlRow.apply)(row => Array[Any](row.customerId, row.customerName, row.email, row.priority, row.orderCount, row.totalSpent, row.lastOrderDate, row.firstOrderDate, row.avgOrderAmount))
 }

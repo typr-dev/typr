@@ -5,12 +5,10 @@
  */
 package testdb.all_scalar_types_search
 
-import dev.typr.foundations.DuckDbTypes
-import dev.typr.foundations.kotlin.Fragment
-import dev.typr.foundations.kotlin.KotlinDbTypes
-import dev.typr.foundations.kotlin.nullable
+import dev.typr.foundationskt.ConnectionRead
+import dev.typr.foundationskt.DuckDbTypes
+import dev.typr.foundationskt.Fragment
 import java.math.BigDecimal
-import java.sql.Connection
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.UUID
@@ -21,15 +19,15 @@ class AllScalarTypesSearchSqlRepoImpl() : AllScalarTypesSearchSqlRepo {
   override fun apply(
     id: Int?,
     minInteger: Int?,
-    maxBigint: Long?,
-    booleanValue: Boolean?,
-    varcharPattern: String?,
+    maxBigint: kotlin.Long?,
+    booleanValue: kotlin.Boolean?,
+    varcharPattern: kotlin.String?,
     minDate: LocalDate?,
     maxDate: LocalDate?,
     afterTimestamp: LocalDateTime?,
     uuidValue: UUID?,
     moodValue: /* user-picked */ Mood?,
     minDecimal: BigDecimal?,
-    c: Connection
-  ): List<AllScalarTypesSearchSqlRow> = Fragment.interpolate(Fragment.lit("-- Complex query testing all scalar types with various comparisons\n-- Tests: all DuckDB scalar types, optional parameters, range queries, UUID, JSON\n\nSELECT\n    id,\n    col_tinyint,\n    col_smallint,\n    col_integer,\n    col_bigint,\n    col_hugeint,\n    col_utinyint,\n    col_usmallint,\n    col_uinteger,\n    col_ubigint,\n    col_float,\n    col_double,\n    col_decimal,\n    col_boolean,\n    col_varchar,\n    col_text,\n    col_blob,\n    col_date,\n    col_time,\n    col_timestamp,\n    col_timestamptz,\n    col_interval,\n    col_uuid,\n    col_json,\n    col_mood,\n    col_not_null\nFROM all_scalar_types\nWHERE\n    ("), Fragment.encode(KotlinDbTypes.DuckDbTypes.integer.nullable(), id), Fragment.lit(" IS NULL OR id = "), Fragment.encode(KotlinDbTypes.DuckDbTypes.integer.nullable(), id), Fragment.lit(")\n    AND ("), Fragment.encode(KotlinDbTypes.DuckDbTypes.integer.nullable(), minInteger), Fragment.lit(" IS NULL OR col_integer >= "), Fragment.encode(KotlinDbTypes.DuckDbTypes.integer.nullable(), minInteger), Fragment.lit(")\n    AND ("), Fragment.encode(KotlinDbTypes.DuckDbTypes.bigint.nullable(), maxBigint), Fragment.lit(" IS NULL OR col_bigint <= "), Fragment.encode(KotlinDbTypes.DuckDbTypes.bigint.nullable(), maxBigint), Fragment.lit(")\n    AND ("), Fragment.encode(KotlinDbTypes.DuckDbTypes.boolean_.nullable(), booleanValue), Fragment.lit(" IS NULL OR col_boolean = "), Fragment.encode(KotlinDbTypes.DuckDbTypes.boolean_.nullable(), booleanValue), Fragment.lit(")\n    AND ("), Fragment.encode(DuckDbTypes.varchar.nullable(), varcharPattern), Fragment.lit(" IS NULL OR col_varchar LIKE "), Fragment.encode(DuckDbTypes.varchar.nullable(), varcharPattern), Fragment.lit(")\n    AND ("), Fragment.encode(DuckDbTypes.date.nullable(), minDate), Fragment.lit(" IS NULL OR col_date >= "), Fragment.encode(DuckDbTypes.date.nullable(), minDate), Fragment.lit(")\n    AND ("), Fragment.encode(DuckDbTypes.date.nullable(), maxDate), Fragment.lit(" IS NULL OR col_date <= "), Fragment.encode(DuckDbTypes.date.nullable(), maxDate), Fragment.lit(")\n    AND ("), Fragment.encode(DuckDbTypes.timestamp.nullable(), afterTimestamp), Fragment.lit(" IS NULL OR col_timestamp >= "), Fragment.encode(DuckDbTypes.timestamp.nullable(), afterTimestamp), Fragment.lit(")\n    AND ("), Fragment.encode(DuckDbTypes.uuid.nullable(), uuidValue), Fragment.lit(" IS NULL OR col_uuid = "), Fragment.encode(DuckDbTypes.uuid.nullable(), uuidValue), Fragment.lit(")\n    AND ("), Fragment.encode(Mood.duckDbType.nullable(), moodValue), Fragment.lit(" IS NULL OR col_mood = "), Fragment.encode(Mood.duckDbType.nullable(), moodValue), Fragment.lit(")\n    AND ("), Fragment.encode(DuckDbTypes.numeric.nullable(), minDecimal), Fragment.lit(" IS NULL OR col_decimal >= "), Fragment.encode(DuckDbTypes.numeric.nullable(), minDecimal), Fragment.lit(")\nORDER BY id")).query(AllScalarTypesSearchSqlRow._rowParser.all()).runUnchecked(c)
+    c: ConnectionRead
+  ): List<AllScalarTypesSearchSqlRow> = Fragment.concat(Fragment.of("-- Complex query testing all scalar types with various comparisons\n-- Tests: all DuckDB scalar types, optional parameters, range queries, UUID, JSON\n\nSELECT\n    id,\n    col_tinyint,\n    col_smallint,\n    col_integer,\n    col_bigint,\n    col_hugeint,\n    col_utinyint,\n    col_usmallint,\n    col_uinteger,\n    col_ubigint,\n    col_float,\n    col_double,\n    col_decimal,\n    col_boolean,\n    col_varchar,\n    col_text,\n    col_blob,\n    col_date,\n    col_time,\n    col_timestamp,\n    col_timestamptz,\n    col_interval,\n    col_uuid,\n    col_json,\n    col_mood,\n    col_not_null\nFROM all_scalar_types\nWHERE\n    ("), Fragment.encode(DuckDbTypes.integer.opt(), id), Fragment.of(" IS NULL OR id = "), Fragment.encode(DuckDbTypes.integer.opt(), id), Fragment.of(")\n    AND ("), Fragment.encode(DuckDbTypes.integer.opt(), minInteger), Fragment.of(" IS NULL OR col_integer >= "), Fragment.encode(DuckDbTypes.integer.opt(), minInteger), Fragment.of(")\n    AND ("), Fragment.encode(DuckDbTypes.bigint.opt(), maxBigint), Fragment.of(" IS NULL OR col_bigint <= "), Fragment.encode(DuckDbTypes.bigint.opt(), maxBigint), Fragment.of(")\n    AND ("), Fragment.encode(DuckDbTypes.boolean_.opt(), booleanValue), Fragment.of(" IS NULL OR col_boolean = "), Fragment.encode(DuckDbTypes.boolean_.opt(), booleanValue), Fragment.of(")\n    AND ("), Fragment.encode(DuckDbTypes.varchar.opt(), varcharPattern), Fragment.of(" IS NULL OR col_varchar LIKE "), Fragment.encode(DuckDbTypes.varchar.opt(), varcharPattern), Fragment.of(")\n    AND ("), Fragment.encode(DuckDbTypes.date.opt(), minDate), Fragment.of(" IS NULL OR col_date >= "), Fragment.encode(DuckDbTypes.date.opt(), minDate), Fragment.of(")\n    AND ("), Fragment.encode(DuckDbTypes.date.opt(), maxDate), Fragment.of(" IS NULL OR col_date <= "), Fragment.encode(DuckDbTypes.date.opt(), maxDate), Fragment.of(")\n    AND ("), Fragment.encode(DuckDbTypes.timestamp.opt(), afterTimestamp), Fragment.of(" IS NULL OR col_timestamp >= "), Fragment.encode(DuckDbTypes.timestamp.opt(), afterTimestamp), Fragment.of(")\n    AND ("), Fragment.encode(DuckDbTypes.uuid.opt(), uuidValue), Fragment.of(" IS NULL OR col_uuid = "), Fragment.encode(DuckDbTypes.uuid.opt(), uuidValue), Fragment.of(")\n    AND ("), Fragment.encode(Mood.duckDbType.opt(), moodValue), Fragment.of(" IS NULL OR col_mood = "), Fragment.encode(Mood.duckDbType.opt(), moodValue), Fragment.of(")\n    AND ("), Fragment.encode(DuckDbTypes.numeric.opt(), minDecimal), Fragment.of(" IS NULL OR col_decimal >= "), Fragment.encode(DuckDbTypes.numeric.opt(), minDecimal), Fragment.of(")\nORDER BY id")).query(AllScalarTypesSearchSqlRow.rowCodec.all()).run(c)
 }

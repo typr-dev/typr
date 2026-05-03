@@ -13,7 +13,7 @@ import java.util.Random
 
 /** Tests for TestInsert functionality - automatic random data generation for testing. */
 class TestInsertTest {
-    private val testInsert = TestInsert(Random(42))
+    private val testInsert = TestInsert(Random(1165220417))
 
     @Test
     fun testMariatestIdentityInsert() {

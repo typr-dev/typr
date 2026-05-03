@@ -5,18 +5,18 @@
  */
 package testdb.customer_addresses
 
-import dev.typr.foundations.MariaTypes
-import dev.typr.foundations.RowParser
-import dev.typr.foundations.dsl.FieldsBase
-import dev.typr.foundations.dsl.Path
-import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.kotlin.ForeignKey
-import dev.typr.foundations.kotlin.RelationStructure
-import dev.typr.foundations.kotlin.SqlExpr
-import dev.typr.foundations.kotlin.SqlExpr.Field
-import dev.typr.foundations.kotlin.SqlExpr.IdField
-import dev.typr.foundations.kotlin.SqlExpr.OptField
-import dev.typr.foundations.kotlin.TupleExpr14
+import dev.typr.dsl.FieldsBase
+import dev.typr.dsl.Path
+import dev.typr.dsl.SqlExpr.FieldLike
+import dev.typr.dslkt.ForeignKey
+import dev.typr.dslkt.RelationStructure
+import dev.typr.dslkt.SqlExpr
+import dev.typr.dslkt.SqlExpr.Field
+import dev.typr.dslkt.SqlExpr.IdField
+import dev.typr.dslkt.SqlExpr.OptField
+import dev.typr.dslkt.TupleExpr14
+import dev.typr.foundations.RowCodec
+import dev.typr.foundationskt.MariaTypes
 import java.time.LocalDateTime
 import kotlin.collections.List
 import org.mariadb.jdbc.type.Point
@@ -25,70 +25,70 @@ import testdb.customers.CustomersId
 import testdb.customers.CustomersRow
 import testdb.userdefined.IsDefault
 
-data class CustomerAddressesFields(val _path: List<Path>) : TupleExpr14<CustomerAddressesId, CustomersId, String, /* user-picked */ IsDefault, String, String, String, String, String, String, String, Point, String, LocalDateTime>, RelationStructure<CustomerAddressesFields, CustomerAddressesRow>, FieldsBase<CustomerAddressesRow> {
+data class CustomerAddressesFields(val _path: List<Path>) : TupleExpr14<CustomerAddressesId, CustomersId, kotlin.String, /* user-picked */ IsDefault, kotlin.String, kotlin.String, kotlin.String, kotlin.String, kotlin.String, kotlin.String, kotlin.String, Point, kotlin.String, LocalDateTime>, RelationStructure<CustomerAddressesFields, CustomerAddressesRow>, FieldsBase<CustomerAddressesRow> {
   override fun _1(): SqlExpr<CustomerAddressesId> = addressId()
 
-  override fun _10(): SqlExpr<String> = postalCode()
+  override fun _10(): SqlExpr<kotlin.String> = postalCode()
 
-  override fun _11(): SqlExpr<String> = countryCode()
+  override fun _11(): SqlExpr<kotlin.String> = countryCode()
 
   override fun _12(): SqlExpr<Point> = location()
 
-  override fun _13(): SqlExpr<String> = deliveryNotes()
+  override fun _13(): SqlExpr<kotlin.String> = deliveryNotes()
 
   override fun _14(): SqlExpr<LocalDateTime> = createdAt()
 
   override fun _2(): SqlExpr<CustomersId> = customerId()
 
-  override fun _3(): SqlExpr<String> = addressType()
+  override fun _3(): SqlExpr<kotlin.String> = addressType()
 
   override fun _4(): SqlExpr</* user-picked */ IsDefault> = isDefault()
 
-  override fun _5(): SqlExpr<String> = recipientName()
+  override fun _5(): SqlExpr<kotlin.String> = recipientName()
 
-  override fun _6(): SqlExpr<String> = streetLine1()
+  override fun _6(): SqlExpr<kotlin.String> = streetLine1()
 
-  override fun _7(): SqlExpr<String> = streetLine2()
+  override fun _7(): SqlExpr<kotlin.String> = streetLine2()
 
-  override fun _8(): SqlExpr<String> = city()
+  override fun _8(): SqlExpr<kotlin.String> = city()
 
-  override fun _9(): SqlExpr<String> = stateProvince()
+  override fun _9(): SqlExpr<kotlin.String> = stateProvince()
 
   override fun _path(): List<Path> = _path
 
-  fun addressId(): IdField<CustomerAddressesId, CustomerAddressesRow> = IdField<CustomerAddressesId, CustomerAddressesRow>(_path, "address_id", CustomerAddressesRow::addressId, null, null, { row, value -> row.copy(addressId = value) }, CustomerAddressesId.mariaType)
+  fun addressId(): IdField<CustomerAddressesId, CustomerAddressesRow> = IdField<CustomerAddressesId, CustomerAddressesRow>(_path, "address_id", CustomerAddressesRow::addressId, null, null, { row, value -> row.copy(addressId = value) }, CustomerAddressesId.mariaType.underlying)
 
-  fun addressType(): Field<String, CustomerAddressesRow> = Field<String, CustomerAddressesRow>(_path, "address_type", CustomerAddressesRow::addressType, null, null, { row, value -> row.copy(addressType = value) }, MariaTypes.text)
+  fun addressType(): Field<kotlin.String, CustomerAddressesRow> = Field<kotlin.String, CustomerAddressesRow>(_path, "address_type", CustomerAddressesRow::addressType, null, null, { row, value -> row.copy(addressType = value) }, MariaTypes.text.underlying)
 
-  fun city(): Field<String, CustomerAddressesRow> = Field<String, CustomerAddressesRow>(_path, "city", CustomerAddressesRow::city, null, null, { row, value -> row.copy(city = value) }, MariaTypes.varchar)
+  fun city(): Field<kotlin.String, CustomerAddressesRow> = Field<kotlin.String, CustomerAddressesRow>(_path, "city", CustomerAddressesRow::city, null, null, { row, value -> row.copy(city = value) }, MariaTypes.varchar.underlying)
 
   override fun columns(): List<FieldLike<*, CustomerAddressesRow>> = listOf(this.addressId().underlying, this.customerId().underlying, this.addressType().underlying, this.isDefault().underlying, this.recipientName().underlying, this.streetLine1().underlying, this.streetLine2().underlying, this.city().underlying, this.stateProvince().underlying, this.postalCode().underlying, this.countryCode().underlying, this.location().underlying, this.deliveryNotes().underlying, this.createdAt().underlying)
 
-  fun countryCode(): Field<String, CustomerAddressesRow> = Field<String, CustomerAddressesRow>(_path, "country_code", CustomerAddressesRow::countryCode, null, null, { row, value -> row.copy(countryCode = value) }, MariaTypes.char_)
+  fun countryCode(): Field<kotlin.String, CustomerAddressesRow> = Field<kotlin.String, CustomerAddressesRow>(_path, "country_code", CustomerAddressesRow::countryCode, null, null, { row, value -> row.copy(countryCode = value) }, MariaTypes.char_.underlying)
 
-  fun createdAt(): Field<LocalDateTime, CustomerAddressesRow> = Field<LocalDateTime, CustomerAddressesRow>(_path, "created_at", CustomerAddressesRow::createdAt, null, null, { row, value -> row.copy(createdAt = value) }, MariaTypes.datetime)
+  fun createdAt(): Field<LocalDateTime, CustomerAddressesRow> = Field<LocalDateTime, CustomerAddressesRow>(_path, "created_at", CustomerAddressesRow::createdAt, null, null, { row, value -> row.copy(createdAt = value) }, MariaTypes.datetime.underlying)
 
-  fun customerId(): Field<CustomersId, CustomerAddressesRow> = Field<CustomersId, CustomerAddressesRow>(_path, "customer_id", CustomerAddressesRow::customerId, null, null, { row, value -> row.copy(customerId = value) }, CustomersId.mariaType)
+  fun customerId(): Field<CustomersId, CustomerAddressesRow> = Field<CustomersId, CustomerAddressesRow>(_path, "customer_id", CustomerAddressesRow::customerId, null, null, { row, value -> row.copy(customerId = value) }, CustomersId.mariaType.underlying)
 
-  fun deliveryNotes(): OptField<String, CustomerAddressesRow> = OptField<String, CustomerAddressesRow>(_path, "delivery_notes", CustomerAddressesRow::deliveryNotes, null, null, { row, value -> row.copy(deliveryNotes = value) }, MariaTypes.tinytext)
+  fun deliveryNotes(): OptField<kotlin.String, CustomerAddressesRow> = OptField<kotlin.String, CustomerAddressesRow>(_path, "delivery_notes", CustomerAddressesRow::deliveryNotes, null, null, { row, value -> row.copy(deliveryNotes = value) }, MariaTypes.tinytext.underlying)
 
   fun fkCustomers(): ForeignKey<CustomersFields, CustomersRow> = ForeignKey.of<CustomersFields, CustomersRow>("fk_address_customer").withColumnPair<CustomersId>(customerId(), CustomersFields::customerId)
 
-  fun isDefault(): Field</* user-picked */ IsDefault, CustomerAddressesRow> = Field</* user-picked */ IsDefault, CustomerAddressesRow>(_path, "is_default", CustomerAddressesRow::isDefault, null, null, { row, value -> row.copy(isDefault = value) }, IsDefault.mariaType)
+  fun isDefault(): Field</* user-picked */ IsDefault, CustomerAddressesRow> = Field</* user-picked */ IsDefault, CustomerAddressesRow>(_path, "is_default", CustomerAddressesRow::isDefault, null, null, { row, value -> row.copy(isDefault = value) }, IsDefault.mariaType.underlying)
 
-  fun location(): OptField<Point, CustomerAddressesRow> = OptField<Point, CustomerAddressesRow>(_path, "location", CustomerAddressesRow::location, null, null, { row, value -> row.copy(location = value) }, MariaTypes.point)
+  fun location(): OptField<Point, CustomerAddressesRow> = OptField<Point, CustomerAddressesRow>(_path, "location", CustomerAddressesRow::location, null, null, { row, value -> row.copy(location = value) }, MariaTypes.point.underlying)
 
-  fun postalCode(): Field<String, CustomerAddressesRow> = Field<String, CustomerAddressesRow>(_path, "postal_code", CustomerAddressesRow::postalCode, null, null, { row, value -> row.copy(postalCode = value) }, MariaTypes.varchar)
+  fun postalCode(): Field<kotlin.String, CustomerAddressesRow> = Field<kotlin.String, CustomerAddressesRow>(_path, "postal_code", CustomerAddressesRow::postalCode, null, null, { row, value -> row.copy(postalCode = value) }, MariaTypes.varchar.underlying)
 
-  fun recipientName(): Field<String, CustomerAddressesRow> = Field<String, CustomerAddressesRow>(_path, "recipient_name", CustomerAddressesRow::recipientName, null, null, { row, value -> row.copy(recipientName = value) }, MariaTypes.varchar)
+  fun recipientName(): Field<kotlin.String, CustomerAddressesRow> = Field<kotlin.String, CustomerAddressesRow>(_path, "recipient_name", CustomerAddressesRow::recipientName, null, null, { row, value -> row.copy(recipientName = value) }, MariaTypes.varchar.underlying)
 
-  override fun rowParser(): RowParser<CustomerAddressesRow> = CustomerAddressesRow._rowParser.underlying
+  override fun rowCodec(): RowCodec<CustomerAddressesRow> = CustomerAddressesRow.rowCodec.underlying
 
-  fun stateProvince(): OptField<String, CustomerAddressesRow> = OptField<String, CustomerAddressesRow>(_path, "state_province", CustomerAddressesRow::stateProvince, null, null, { row, value -> row.copy(stateProvince = value) }, MariaTypes.varchar)
+  fun stateProvince(): OptField<kotlin.String, CustomerAddressesRow> = OptField<kotlin.String, CustomerAddressesRow>(_path, "state_province", CustomerAddressesRow::stateProvince, null, null, { row, value -> row.copy(stateProvince = value) }, MariaTypes.varchar.underlying)
 
-  fun streetLine1(): Field<String, CustomerAddressesRow> = Field<String, CustomerAddressesRow>(_path, "street_line1", CustomerAddressesRow::streetLine1, null, null, { row, value -> row.copy(streetLine1 = value) }, MariaTypes.varchar)
+  fun streetLine1(): Field<kotlin.String, CustomerAddressesRow> = Field<kotlin.String, CustomerAddressesRow>(_path, "street_line1", CustomerAddressesRow::streetLine1, null, null, { row, value -> row.copy(streetLine1 = value) }, MariaTypes.varchar.underlying)
 
-  fun streetLine2(): OptField<String, CustomerAddressesRow> = OptField<String, CustomerAddressesRow>(_path, "street_line2", CustomerAddressesRow::streetLine2, null, null, { row, value -> row.copy(streetLine2 = value) }, MariaTypes.varchar)
+  fun streetLine2(): OptField<kotlin.String, CustomerAddressesRow> = OptField<kotlin.String, CustomerAddressesRow>(_path, "street_line2", CustomerAddressesRow::streetLine2, null, null, { row, value -> row.copy(streetLine2 = value) }, MariaTypes.varchar.underlying)
 
   override fun withPaths(_path: List<Path>): RelationStructure<CustomerAddressesFields, CustomerAddressesRow> = CustomerAddressesFields(_path)
 

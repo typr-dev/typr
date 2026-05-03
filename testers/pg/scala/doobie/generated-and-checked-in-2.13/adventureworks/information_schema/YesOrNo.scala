@@ -23,7 +23,7 @@ object YesOrNo {
 
   implicit lazy val arrayPut: Put[Array[YesOrNo]] = adventureworks.StringArrayMeta.put.contramap(_.map(_.value))
 
-  implicit lazy val bijection: Bijection[YesOrNo, String] = Bijection.apply[YesOrNo, String](_.value)(YesOrNo.apply)
+  implicit lazy val bijection: Bijection[YesOrNo, String] = Bijection[YesOrNo, String](_.value)(YesOrNo.apply)
 
   implicit lazy val decoder: Decoder[YesOrNo] = Decoder.decodeString.map(YesOrNo.apply)
 

@@ -12,8 +12,8 @@ import dev.typr.foundations.data.Json
 import dev.typr.foundations.data.Uint1
 import dev.typr.foundations.data.Xml
 import dev.typr.foundations.internal.RandomHelper
+import dev.typr.foundationskt.Connection
 import java.math.BigDecimal
-import java.sql.Connection
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
@@ -75,24 +75,24 @@ import testdb.userdefined.Email
 data class TestInsert(val random: Random) {
   fun AllScalarTypes(
     colTinyint: Uint1? = if (random.nextBoolean()) null else Uint1.of(random.nextInt(256)),
-    colSmallint: Short? = if (random.nextBoolean()) null else random.nextInt(Short.MAX_VALUE.toInt()).toShort(),
+    colSmallint: kotlin.Short? = if (random.nextBoolean()) null else random.nextInt(kotlin.Short.MAX_VALUE.toInt()).toShort(),
     colInt: Int? = if (random.nextBoolean()) null else random.nextInt(),
-    colBigint: Long? = if (random.nextBoolean()) null else random.nextLong(),
+    colBigint: kotlin.Long? = if (random.nextBoolean()) null else random.nextLong(),
     colDecimal: BigDecimal? = if (random.nextBoolean()) null else BigDecimal.valueOf(random.nextDouble()),
     colNumeric: BigDecimal? = if (random.nextBoolean()) null else BigDecimal.valueOf(random.nextDouble()),
     colMoney: BigDecimal? = if (random.nextBoolean()) null else BigDecimal.valueOf(random.nextDouble()),
     colSmallmoney: BigDecimal? = if (random.nextBoolean()) null else BigDecimal.valueOf(random.nextDouble()),
-    colReal: Float? = if (random.nextBoolean()) null else random.nextFloat(),
-    colFloat: Double? = if (random.nextBoolean()) null else random.nextDouble(),
-    colBit: Boolean? = if (random.nextBoolean()) null else random.nextBoolean(),
-    colChar: String? = null,
-    colVarchar: String? = null,
-    colVarcharMax: String? = null,
-    colText: String? = null,
-    colNchar: String? = null,
-    colNvarchar: String? = null,
-    colNvarcharMax: String? = null,
-    colNtext: String? = null,
+    colReal: kotlin.Float? = if (random.nextBoolean()) null else random.nextFloat(),
+    colFloat: kotlin.Double? = if (random.nextBoolean()) null else random.nextDouble(),
+    colBit: kotlin.Boolean? = if (random.nextBoolean()) null else random.nextBoolean(),
+    colChar: kotlin.String? = null,
+    colVarchar: kotlin.String? = null,
+    colVarcharMax: kotlin.String? = null,
+    colText: kotlin.String? = null,
+    colNchar: kotlin.String? = null,
+    colNvarchar: kotlin.String? = null,
+    colNvarcharMax: kotlin.String? = null,
+    colNtext: kotlin.String? = null,
     colBinary: ByteArray? = null,
     colVarbinary: ByteArray? = null,
     colVarbinaryMax: ByteArray? = null,
@@ -109,12 +109,12 @@ data class TestInsert(val random: Random) {
     colHierarchyid: HierarchyId? = null,
     colGeography: Geography? = null,
     colGeometry: Geometry? = null,
-    colNotNull: Defaulted<String> = UseDefault(),
+    colNotNull: Defaulted<kotlin.String> = UseDefault(),
     c: Connection
   ): AllScalarTypesRow = (AllScalarTypesRepoImpl()).insert(AllScalarTypesRowUnsaved(colTinyint = colTinyint, colSmallint = colSmallint, colInt = colInt, colBigint = colBigint, colDecimal = colDecimal, colNumeric = colNumeric, colMoney = colMoney, colSmallmoney = colSmallmoney, colReal = colReal, colFloat = colFloat, colBit = colBit, colChar = colChar, colVarchar = colVarchar, colVarcharMax = colVarcharMax, colText = colText, colNchar = colNchar, colNvarchar = colNvarchar, colNvarcharMax = colNvarcharMax, colNtext = colNtext, colBinary = colBinary, colVarbinary = colVarbinary, colVarbinaryMax = colVarbinaryMax, colImage = colImage, colDate = colDate, colTime = colTime, colDatetime = colDatetime, colSmalldatetime = colSmalldatetime, colDatetime2 = colDatetime2, colDatetimeoffset = colDatetimeoffset, colUniqueidentifier = colUniqueidentifier, colXml = colXml, colJson = colJson, colHierarchyid = colHierarchyid, colGeography = colGeography, colGeometry = colGeometry, colNotNull = colNotNull), c)
 
   fun Customers(
-    name: String,
+    name: kotlin.String,
     email: /* user-picked */ Email,
     createdAt: Defaulted<LocalDateTime?> = UseDefault(),
     c: Connection
@@ -196,14 +196,14 @@ data class TestInsert(val random: Random) {
   ): PrecisionTypesNullRow = (PrecisionTypesNullRepoImpl()).insert(PrecisionTypesNullRowUnsaved(string10 = string10, string20 = string20, string50 = string50, string100 = string100, string255 = string255, nstring10 = nstring10, nstring50 = nstring50, nstring255 = nstring255, char10 = char10, nchar10 = nchar10, decimal52 = decimal52, decimal102 = decimal102, decimal184 = decimal184, numeric82 = numeric82, numeric124 = numeric124, binary10 = binary10, binary32 = binary32, time0 = time0, time3 = time3, time7 = time7, datetime20 = datetime20, datetime23 = datetime23, datetime27 = datetime27, dto0 = dto0, dto3 = dto3, dto7 = dto7), c)
 
   fun Products(
-    name: String,
+    name: kotlin.String,
     price: BigDecimal = BigDecimal.valueOf(random.nextDouble()),
-    description: String? = null,
+    description: kotlin.String? = null,
     c: Connection
   ): ProductsRow = (ProductsRepoImpl()).insert(ProductsRowUnsaved(name = name, price = price, description = description), c)
 
   fun TestConnection(
-    message: String,
+    message: kotlin.String,
     createdAt: Defaulted<LocalDateTime?> = UseDefault(),
     c: Connection
   ): TestConnectionRow = (TestConnectionRepoImpl()).insert(TestConnectionRowUnsaved(message = message, createdAt = createdAt), c)

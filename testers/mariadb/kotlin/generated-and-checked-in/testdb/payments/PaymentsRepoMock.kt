@@ -5,17 +5,18 @@
  */
 package testdb.payments
 
-import dev.typr.foundations.kotlin.DeleteBuilder
-import dev.typr.foundations.kotlin.DeleteBuilderMock
-import dev.typr.foundations.kotlin.DeleteParams
-import dev.typr.foundations.kotlin.SelectBuilder
-import dev.typr.foundations.kotlin.SelectBuilderMock
-import dev.typr.foundations.kotlin.SelectParams
-import dev.typr.foundations.kotlin.UpdateBuilder
-import dev.typr.foundations.kotlin.UpdateBuilderMock
-import dev.typr.foundations.kotlin.UpdateParams
+import dev.typr.dslkt.DeleteBuilder
+import dev.typr.dslkt.DeleteBuilderMock
+import dev.typr.dslkt.DeleteParams
+import dev.typr.dslkt.SelectBuilder
+import dev.typr.dslkt.SelectBuilderMock
+import dev.typr.dslkt.SelectParams
+import dev.typr.dslkt.UpdateBuilder
+import dev.typr.dslkt.UpdateBuilderMock
+import dev.typr.dslkt.UpdateParams
+import dev.typr.foundationskt.Connection
+import dev.typr.foundationskt.ConnectionRead
 import java.lang.RuntimeException
-import java.sql.Connection
 import java.util.ArrayList
 import kotlin.collections.Iterator
 import kotlin.collections.List
@@ -31,10 +32,10 @@ data class PaymentsRepoMock(
   override fun deleteById(
     paymentId: PaymentsId,
     c: Connection
-  ): Boolean = map.remove(paymentId) != null
+  ): kotlin.Boolean = map.remove(paymentId) != null
 
   override fun deleteByIds(
-    paymentIds: Array<PaymentsId>,
+    paymentIds: List<PaymentsId>,
     c: Connection
   ): Int {
     var count = 0
@@ -64,16 +65,16 @@ data class PaymentsRepoMock(
 
   override fun select(): SelectBuilder<PaymentsFields, PaymentsRow> = SelectBuilderMock(PaymentsFields.structure, { map.values.toList() }, SelectParams.empty())
 
-  override fun selectAll(c: Connection): List<PaymentsRow> = map.values.toList()
+  override fun selectAll(c: ConnectionRead): List<PaymentsRow> = map.values.toList()
 
   override fun selectById(
     paymentId: PaymentsId,
-    c: Connection
+    c: ConnectionRead
   ): PaymentsRow? = map[paymentId]
 
   override fun selectByIds(
-    paymentIds: Array<PaymentsId>,
-    c: Connection
+    paymentIds: List<PaymentsId>,
+    c: ConnectionRead
   ): List<PaymentsRow> {
     val result = ArrayList<PaymentsRow>()
     for (id in paymentIds) {
@@ -86,8 +87,8 @@ data class PaymentsRepoMock(
   }
 
   override fun selectByIdsTracked(
-    paymentIds: Array<PaymentsId>,
-    c: Connection
+    paymentIds: List<PaymentsId>,
+    c: ConnectionRead
   ): Map<PaymentsId, PaymentsRow> = selectByIds(paymentIds, c).associateBy({ row: PaymentsRow -> row.paymentId })
 
   override fun update(): UpdateBuilder<PaymentsFields, PaymentsRow> = UpdateBuilderMock(PaymentsFields.structure, { map.values.toList() }, UpdateParams.empty(), { row -> row })
@@ -95,7 +96,7 @@ data class PaymentsRepoMock(
   override fun update(
     row: PaymentsRow,
     c: Connection
-  ): Boolean {
+  ): kotlin.Boolean {
     val shouldUpdate = map[row.paymentId]?.takeIf({ oldRow -> (oldRow != row) }) != null
     if (shouldUpdate) {
       map[row.paymentId] = row

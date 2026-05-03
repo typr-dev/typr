@@ -6,10 +6,10 @@
 package oracledb.precisetypes
 
 import com.fasterxml.jackson.annotation.JsonValue
-import dev.typr.foundations.OracleType
+import dev.typr.dslsc.Bijection
 import dev.typr.foundations.data.precise.DecimalN
-import dev.typr.foundations.scala.Bijection
-import dev.typr.foundations.scala.ScalaDbTypes
+import dev.typr.foundationssc.OracleType
+import dev.typr.foundationssc.OracleTypes
 import java.lang.IllegalArgumentException
 
 case class Decimal18_4 private(@JsonValue value: BigDecimal) extends DecimalN {
@@ -31,17 +31,17 @@ case class Decimal18_4 private(@JsonValue value: BigDecimal) extends DecimalN {
 object Decimal18_4 {
   given Zero: Decimal18_4 = new Decimal18_4(BigDecimal(0))
 
-  given bijection: Bijection[Decimal18_4, BigDecimal] = Bijection.apply[Decimal18_4, BigDecimal](_.value)(Decimal18_4.apply)
+  given bijection: Bijection[Decimal18_4, BigDecimal] = Bijection.of[Decimal18_4, BigDecimal](_.value, Decimal18_4.apply)
 
   def of(value: BigDecimal): Option[Decimal18_4] = { val scaled = value.setScale(4, BigDecimal.RoundingMode.HALF_UP); if (scaled.precision <= 18) Some(new Decimal18_4(scaled)) else None }
 
-  def of(value: Int): Decimal18_4 = new Decimal18_4(BigDecimal(value))
+  def of(value: Int): Decimal18_4 = new Decimal18_4(BigDecimal(value.toLong))
 
   def of(value: Long): Option[Decimal18_4] = Decimal18_4.of(BigDecimal(value))
 
   def of(value: Double): Option[Decimal18_4] = Decimal18_4.of(BigDecimal(value))
 
-  given oracleType: OracleType[Decimal18_4] = ScalaDbTypes.OracleTypes.number.bimap(Decimal18_4.apply, _.value)
+  given oracleType: OracleType[Decimal18_4] = OracleTypes.number.to(Bijection.of(Decimal18_4.apply, _.value))
 
   def unsafeForce(value: BigDecimal): Decimal18_4 = { val scaled = value.setScale(4, BigDecimal.RoundingMode.HALF_UP); if (scaled.precision > 18) throw new IllegalArgumentException("Value exceeds precision(18, 4)"); new Decimal18_4(scaled) }
 }

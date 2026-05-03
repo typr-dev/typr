@@ -2,12 +2,12 @@ package testdb;
 
 import static org.junit.Assert.*;
 
+import dev.typr.dsl.MockConnection;
+import dev.typr.dsl.SqlExpr;
+import dev.typr.foundations.Connection;
 import dev.typr.foundations.data.Uint4;
 import dev.typr.foundations.data.Uint8;
-import dev.typr.foundations.dsl.MockConnection;
-import dev.typr.foundations.dsl.SqlExpr;
 import java.math.BigDecimal;
-import java.sql.Connection;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;

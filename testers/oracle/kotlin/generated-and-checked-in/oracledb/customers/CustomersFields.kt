@@ -5,26 +5,26 @@
  */
 package oracledb.customers
 
-import dev.typr.foundations.OracleTypes
-import dev.typr.foundations.RowParser
-import dev.typr.foundations.dsl.FieldsBase
-import dev.typr.foundations.dsl.Path
-import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.kotlin.RelationStructure
-import dev.typr.foundations.kotlin.SqlExpr
-import dev.typr.foundations.kotlin.SqlExpr.Field
-import dev.typr.foundations.kotlin.SqlExpr.IdField
-import dev.typr.foundations.kotlin.SqlExpr.OptField
-import dev.typr.foundations.kotlin.TupleExpr5
+import dev.typr.dsl.FieldsBase
+import dev.typr.dsl.Path
+import dev.typr.dsl.SqlExpr.FieldLike
+import dev.typr.dslkt.RelationStructure
+import dev.typr.dslkt.SqlExpr
+import dev.typr.dslkt.SqlExpr.Field
+import dev.typr.dslkt.SqlExpr.IdField
+import dev.typr.dslkt.SqlExpr.OptField
+import dev.typr.dslkt.TupleExpr5
+import dev.typr.foundations.RowCodec
+import dev.typr.foundationskt.OracleTypes
 import java.time.LocalDateTime
 import kotlin.collections.List
 import oracledb.AddressT
 import oracledb.MoneyT
 
-data class CustomersFields(val _path: List<Path>) : TupleExpr5<CustomersId, String, AddressT, MoneyT, LocalDateTime>, RelationStructure<CustomersFields, CustomersRow>, FieldsBase<CustomersRow> {
+data class CustomersFields(val _path: List<Path>) : TupleExpr5<CustomersId, kotlin.String, AddressT, MoneyT, LocalDateTime>, RelationStructure<CustomersFields, CustomersRow>, FieldsBase<CustomersRow> {
   override fun _1(): SqlExpr<CustomersId> = customerId()
 
-  override fun _2(): SqlExpr<String> = name()
+  override fun _2(): SqlExpr<kotlin.String> = name()
 
   override fun _3(): SqlExpr<AddressT> = billingAddress()
 
@@ -34,19 +34,19 @@ data class CustomersFields(val _path: List<Path>) : TupleExpr5<CustomersId, Stri
 
   override fun _path(): List<Path> = _path
 
-  fun billingAddress(): Field<AddressT, CustomersRow> = Field<AddressT, CustomersRow>(_path, "BILLING_ADDRESS", CustomersRow::billingAddress, null, null, { row, value -> row.copy(billingAddress = value) }, AddressT.oracleType)
+  fun billingAddress(): Field<AddressT, CustomersRow> = Field<AddressT, CustomersRow>(_path, "BILLING_ADDRESS", CustomersRow::billingAddress, null, null, { row, value -> row.copy(billingAddress = value) }, AddressT.oracleType.underlying)
 
   override fun columns(): List<FieldLike<*, CustomersRow>> = listOf(this.customerId().underlying, this.name().underlying, this.billingAddress().underlying, this.creditLimit().underlying, this.createdAt().underlying)
 
-  fun createdAt(): Field<LocalDateTime, CustomersRow> = Field<LocalDateTime, CustomersRow>(_path, "CREATED_AT", CustomersRow::createdAt, null, null, { row, value -> row.copy(createdAt = value) }, OracleTypes.timestamp)
+  fun createdAt(): Field<LocalDateTime, CustomersRow> = Field<LocalDateTime, CustomersRow>(_path, "CREATED_AT", CustomersRow::createdAt, null, null, { row, value -> row.copy(createdAt = value) }, OracleTypes.timestamp.underlying)
 
-  fun creditLimit(): OptField<MoneyT, CustomersRow> = OptField<MoneyT, CustomersRow>(_path, "CREDIT_LIMIT", CustomersRow::creditLimit, null, null, { row, value -> row.copy(creditLimit = value) }, MoneyT.oracleType)
+  fun creditLimit(): OptField<MoneyT, CustomersRow> = OptField<MoneyT, CustomersRow>(_path, "CREDIT_LIMIT", CustomersRow::creditLimit, null, null, { row, value -> row.copy(creditLimit = value) }, MoneyT.oracleType.underlying)
 
-  fun customerId(): IdField<CustomersId, CustomersRow> = IdField<CustomersId, CustomersRow>(_path, "CUSTOMER_ID", CustomersRow::customerId, null, null, { row, value -> row.copy(customerId = value) }, CustomersId.oracleType)
+  fun customerId(): IdField<CustomersId, CustomersRow> = IdField<CustomersId, CustomersRow>(_path, "CUSTOMER_ID", CustomersRow::customerId, null, null, { row, value -> row.copy(customerId = value) }, CustomersId.oracleType.underlying)
 
-  fun name(): Field<String, CustomersRow> = Field<String, CustomersRow>(_path, "NAME", CustomersRow::name, null, null, { row, value -> row.copy(name = value) }, OracleTypes.varchar2)
+  fun name(): Field<kotlin.String, CustomersRow> = Field<kotlin.String, CustomersRow>(_path, "NAME", CustomersRow::name, null, null, { row, value -> row.copy(name = value) }, OracleTypes.varchar2.underlying)
 
-  override fun rowParser(): RowParser<CustomersRow> = CustomersRow._rowParser.underlying
+  override fun rowCodec(): RowCodec<CustomersRow> = CustomersRow.rowCodec.underlying
 
   override fun withPaths(_path: List<Path>): RelationStructure<CustomersFields, CustomersRow> = CustomersFields(_path)
 

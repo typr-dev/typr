@@ -27,11 +27,11 @@ data class MariatestnullRowUnsaved(
   /** Default: NULL
 
     */
-  @field:JsonProperty("tinyint_col") val tinyintCol: Defaulted<Byte?> = UseDefault(),
+  @field:JsonProperty("tinyint_col") val tinyintCol: Defaulted<kotlin.Byte?> = UseDefault(),
   /** Default: NULL
 
     */
-  @field:JsonProperty("smallint_col") val smallintCol: Defaulted<Short?> = UseDefault(),
+  @field:JsonProperty("smallint_col") val smallintCol: Defaulted<kotlin.Short?> = UseDefault(),
   /** Default: NULL
 
     */
@@ -43,7 +43,7 @@ data class MariatestnullRowUnsaved(
   /** Default: NULL
 
     */
-  @field:JsonProperty("bigint_col") val bigintCol: Defaulted<Long?> = UseDefault(),
+  @field:JsonProperty("bigint_col") val bigintCol: Defaulted<kotlin.Long?> = UseDefault(),
   /** Default: NULL
 
     */
@@ -75,15 +75,15 @@ data class MariatestnullRowUnsaved(
   /** Default: NULL
 
     */
-  @field:JsonProperty("float_col") val floatCol: Defaulted<Float?> = UseDefault(),
+  @field:JsonProperty("float_col") val floatCol: Defaulted<kotlin.Float?> = UseDefault(),
   /** Default: NULL
 
     */
-  @field:JsonProperty("double_col") val doubleCol: Defaulted<Double?> = UseDefault(),
+  @field:JsonProperty("double_col") val doubleCol: Defaulted<kotlin.Double?> = UseDefault(),
   /** Default: NULL
 
     */
-  @field:JsonProperty("bool_col") val boolCol: Defaulted<Boolean?> = UseDefault(),
+  @field:JsonProperty("bool_col") val boolCol: Defaulted<kotlin.Boolean?> = UseDefault(),
   /** Default: NULL
 
     */
@@ -95,27 +95,27 @@ data class MariatestnullRowUnsaved(
   /** Default: NULL
 
     */
-  @field:JsonProperty("char_col") val charCol: Defaulted<String?> = UseDefault(),
+  @field:JsonProperty("char_col") val charCol: Defaulted<kotlin.String?> = UseDefault(),
   /** Default: NULL
 
     */
-  @field:JsonProperty("varchar_col") val varcharCol: Defaulted<String?> = UseDefault(),
+  @field:JsonProperty("varchar_col") val varcharCol: Defaulted<kotlin.String?> = UseDefault(),
   /** Default: NULL
 
     */
-  @field:JsonProperty("tinytext_col") val tinytextCol: Defaulted<String?> = UseDefault(),
+  @field:JsonProperty("tinytext_col") val tinytextCol: Defaulted<kotlin.String?> = UseDefault(),
   /** Default: NULL
 
     */
-  @field:JsonProperty("text_col") val textCol: Defaulted<String?> = UseDefault(),
+  @field:JsonProperty("text_col") val textCol: Defaulted<kotlin.String?> = UseDefault(),
   /** Default: NULL
 
     */
-  @field:JsonProperty("mediumtext_col") val mediumtextCol: Defaulted<String?> = UseDefault(),
+  @field:JsonProperty("mediumtext_col") val mediumtextCol: Defaulted<kotlin.String?> = UseDefault(),
   /** Default: NULL
 
     */
-  @field:JsonProperty("longtext_col") val longtextCol: Defaulted<String?> = UseDefault(),
+  @field:JsonProperty("longtext_col") val longtextCol: Defaulted<kotlin.String?> = UseDefault(),
   /** Default: NULL
 
     */
@@ -190,11 +190,11 @@ data class MariatestnullRowUnsaved(
   @field:JsonProperty("inet6_col") val inet6Col: Defaulted<Inet6?> = UseDefault()
 ) {
   fun toRow(
-    tinyintColDefault: () -> Byte?,
-    smallintColDefault: () -> Short?,
+    tinyintColDefault: () -> kotlin.Byte?,
+    smallintColDefault: () -> kotlin.Short?,
     mediumintColDefault: () -> Int?,
     intColDefault: () -> Int?,
-    bigintColDefault: () -> Long?,
+    bigintColDefault: () -> kotlin.Long?,
     tinyintUColDefault: () -> Uint1?,
     smallintUColDefault: () -> Uint2?,
     mediumintUColDefault: () -> Uint4?,
@@ -202,17 +202,17 @@ data class MariatestnullRowUnsaved(
     bigintUColDefault: () -> Uint8?,
     decimalColDefault: () -> BigDecimal?,
     numericColDefault: () -> BigDecimal?,
-    floatColDefault: () -> Float?,
-    doubleColDefault: () -> Double?,
-    boolColDefault: () -> Boolean?,
+    floatColDefault: () -> kotlin.Float?,
+    doubleColDefault: () -> kotlin.Double?,
+    boolColDefault: () -> kotlin.Boolean?,
     bitColDefault: () -> ByteArray?,
     bit1ColDefault: () -> ByteArray?,
-    charColDefault: () -> String?,
-    varcharColDefault: () -> String?,
-    tinytextColDefault: () -> String?,
-    textColDefault: () -> String?,
-    mediumtextColDefault: () -> String?,
-    longtextColDefault: () -> String?,
+    charColDefault: () -> kotlin.String?,
+    varcharColDefault: () -> kotlin.String?,
+    tinytextColDefault: () -> kotlin.String?,
+    textColDefault: () -> kotlin.String?,
+    mediumtextColDefault: () -> kotlin.String?,
+    longtextColDefault: () -> kotlin.String?,
     binaryColDefault: () -> ByteArray?,
     varbinaryColDefault: () -> ByteArray?,
     tinyblobColDefault: () -> ByteArray?,

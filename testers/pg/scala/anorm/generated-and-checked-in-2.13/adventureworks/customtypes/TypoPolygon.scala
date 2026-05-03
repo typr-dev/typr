@@ -38,7 +38,7 @@ object TypoPolygon {
 
   implicit lazy val arrayToStatement: ToStatement[Array[TypoPolygon]] = ToStatement[Array[TypoPolygon]]((s, index, v) => s.setArray(index, s.getConnection.createArrayOf("polygon", v.map(v => new PGpolygon(v.points.map(p => new PGpoint(p.x, p.y)).toArray)))))
 
-  implicit lazy val bijection: Bijection[TypoPolygon, List[TypoPoint]] = Bijection.apply[TypoPolygon, List[TypoPoint]](_.points)(TypoPolygon.apply)
+  implicit lazy val bijection: Bijection[TypoPolygon, List[TypoPoint]] = Bijection[TypoPolygon, List[TypoPoint]](_.points)(TypoPolygon.apply)
 
   implicit lazy val column: Column[TypoPolygon] = {
     Column.nonNull[TypoPolygon]((v1: Any, _) =>

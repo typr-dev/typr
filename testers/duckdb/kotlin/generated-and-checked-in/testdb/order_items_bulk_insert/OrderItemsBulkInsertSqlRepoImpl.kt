@@ -5,11 +5,10 @@
  */
 package testdb.order_items_bulk_insert
 
-import dev.typr.foundations.DuckDbTypes
-import dev.typr.foundations.kotlin.Fragment
-import dev.typr.foundations.kotlin.KotlinDbTypes
+import dev.typr.foundationskt.ConnectionRead
+import dev.typr.foundationskt.DuckDbTypes
+import dev.typr.foundationskt.Fragment
 import java.math.BigDecimal
-import java.sql.Connection
 import kotlin.collections.List
 import testdb.orders.OrdersId
 import testdb.products.ProductsId
@@ -20,6 +19,6 @@ class OrderItemsBulkInsertSqlRepoImpl() : OrderItemsBulkInsertSqlRepo {
     productId: /* user-picked */ ProductsId,
     quantity: Int,
     unitPrice: BigDecimal,
-    c: Connection
-  ): List<OrderItemsBulkInsertSqlRow> = Fragment.interpolate(Fragment.lit("-- Insert order items with composite key handling\n-- Tests: composite primary key in INSERT, foreign key types, RETURNING with composite key\n\nINSERT INTO order_items (order_id, product_id, quantity, unit_price)\nVALUES (\n    CAST("), Fragment.encode(OrdersId.duckDbType, orderId), Fragment.lit(" AS INTEGER),\n    CAST("), Fragment.encode(ProductsId.duckDbType, productId), Fragment.lit(" AS INTEGER),\n    CAST("), Fragment.encode(KotlinDbTypes.DuckDbTypes.integer, quantity), Fragment.lit(" AS INTEGER),\n    CAST("), Fragment.encode(DuckDbTypes.numeric, unitPrice), Fragment.lit(" AS DECIMAL)\n)\nRETURNING\n    order_id,\n    product_id,\n    quantity,\n    unit_price")).query(OrderItemsBulkInsertSqlRow._rowParser.all()).runUnchecked(c)
+    c: ConnectionRead
+  ): List<OrderItemsBulkInsertSqlRow> = Fragment.concat(Fragment.of("-- Insert order items with composite key handling\n-- Tests: composite primary key in INSERT, foreign key types, RETURNING with composite key\n\nINSERT INTO order_items (order_id, product_id, quantity, unit_price)\nVALUES (\n    CAST("), Fragment.encode(OrdersId.duckDbType, orderId), Fragment.of(" AS INTEGER),\n    CAST("), Fragment.encode(ProductsId.duckDbType, productId), Fragment.of(" AS INTEGER),\n    CAST("), Fragment.encode(DuckDbTypes.integer, quantity), Fragment.of(" AS INTEGER),\n    CAST("), Fragment.encode(DuckDbTypes.numeric, unitPrice), Fragment.of(" AS DECIMAL)\n)\nRETURNING\n    order_id,\n    product_id,\n    quantity,\n    unit_price")).query(OrderItemsBulkInsertSqlRow.rowCodec.all()).run(c)
 }

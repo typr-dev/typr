@@ -11,8 +11,7 @@ import adventureworks.humanresources.department.DepartmentId
 import adventureworks.humanresources.shift.ShiftId
 import adventureworks.person.businessentity.BusinessentityId
 import dev.typr.foundations.PgText
-import dev.typr.foundations.PgTypes
-import dev.typr.foundations.kotlin.nullable
+import dev.typr.foundationskt.PgTypes
 import java.time.LocalDate
 import java.time.LocalDateTime
 
@@ -45,16 +44,16 @@ data class EmployeedepartmenthistoryRowUnsaved(
 
   companion object {
     val pgText: PgText<EmployeedepartmenthistoryRowUnsaved> =
-      PgText.instance({ row, sb -> BusinessentityId.pgType.text().unsafeEncode(row.businessentityid, sb)
+      PgText.instance({ row, sb -> BusinessentityId.pgType.pgText().unsafeEncode(row.businessentityid, sb)
       sb.append(PgText.DELIMETER)
-      DepartmentId.pgType.text().unsafeEncode(row.departmentid, sb)
+      DepartmentId.pgType.pgText().unsafeEncode(row.departmentid, sb)
       sb.append(PgText.DELIMETER)
-      ShiftId.pgType.text().unsafeEncode(row.shiftid, sb)
+      ShiftId.pgType.pgText().unsafeEncode(row.shiftid, sb)
       sb.append(PgText.DELIMETER)
-      PgTypes.date.text().unsafeEncode(row.startdate, sb)
+      PgTypes.date.pgText().unsafeEncode(row.startdate, sb)
       sb.append(PgText.DELIMETER)
-      PgTypes.date.nullable().text().unsafeEncode(row.enddate, sb)
+      PgTypes.date.opt().pgText().unsafeEncode(row.enddate, sb)
       sb.append(PgText.DELIMETER)
-      Defaulted.pgText(PgTypes.timestamp.text()).unsafeEncode(row.modifieddate, sb) })
+      Defaulted.pgText(PgTypes.timestamp.pgText()).unsafeEncode(row.modifieddate, sb) })
   }
 }

@@ -6,17 +6,17 @@
 package adventureworks.sales.salesterritory
 
 import com.fasterxml.jackson.annotation.JsonValue
+import dev.typr.foundations.Bijection
 import dev.typr.foundations.PgType
 import dev.typr.foundations.PgTypes
-import dev.typr.foundations.dsl.Bijection
 
 /** Type for the primary key of table `sales.salesterritory` */
 case class SalesterritoryId(@JsonValue value: Integer) extends scala.AnyVal
 
 object SalesterritoryId {
-  given bijection: Bijection[SalesterritoryId, Integer] = Bijection.apply[SalesterritoryId, Integer](_.value)(SalesterritoryId.apply)
+  given bijection: Bijection[SalesterritoryId, Integer] = Bijection.of[SalesterritoryId, Integer](_.value, SalesterritoryId.apply)
 
-  given pgType: PgType[SalesterritoryId] = PgTypes.int4.bimap(SalesterritoryId.apply, _.value)
+  given pgType: PgType[SalesterritoryId] = PgTypes.int4.to(Bijection.of(SalesterritoryId.apply, _.value))
 
-  given pgTypeArray: PgType[Array[SalesterritoryId]] = PgTypes.int4Array.bimap(xs => xs.map(SalesterritoryId.apply), xs => xs.map(_.value))
+  given pgTypeArray: PgType[java.util.List[SalesterritoryId]] = pgType.array
 }

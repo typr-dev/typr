@@ -54,5 +54,5 @@ case class EmployeedepartmenthistoryRowUnsaved(
 }
 
 object EmployeedepartmenthistoryRowUnsaved {
-  given pgText: PgText[EmployeedepartmenthistoryRowUnsaved] = PgText.instance((row, sb) => { BusinessentityId.pgType.text.unsafeEncode(row.businessentityid, sb); sb.append(PgText.DELIMETER); DepartmentId.pgType.text.unsafeEncode(row.departmentid, sb); sb.append(PgText.DELIMETER); ShiftId.pgType.text.unsafeEncode(row.shiftid, sb); sb.append(PgText.DELIMETER); PgTypes.date.text.unsafeEncode(row.startdate, sb); sb.append(PgText.DELIMETER); PgTypes.date.opt().text.unsafeEncode(row.enddate, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using PgTypes.timestamp.text).unsafeEncode(row.modifieddate, sb) })
+  given pgText: PgText[EmployeedepartmenthistoryRowUnsaved] = PgText.instance((row, sb) => { BusinessentityId.pgType.pgText().unsafeEncode(row.businessentityid, sb); sb.append(PgText.DELIMETER); DepartmentId.pgType.pgText().unsafeEncode(row.departmentid, sb); sb.append(PgText.DELIMETER); ShiftId.pgType.pgText().unsafeEncode(row.shiftid, sb); sb.append(PgText.DELIMETER); PgTypes.date.pgText().unsafeEncode(row.startdate, sb); sb.append(PgText.DELIMETER); PgTypes.date.opt.pgText().unsafeEncode(row.enddate, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using PgTypes.timestamp.pgText()).unsafeEncode(row.modifieddate, sb) })
 }

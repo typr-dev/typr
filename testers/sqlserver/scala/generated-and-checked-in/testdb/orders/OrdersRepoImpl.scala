@@ -5,48 +5,47 @@
  */
 package testdb.orders
 
-import dev.typr.foundations.SqlServerTypes
-import dev.typr.foundations.scala.DbTypeOps
-import dev.typr.foundations.scala.DeleteBuilder
-import dev.typr.foundations.scala.Dialect
-import dev.typr.foundations.scala.Fragment
-import dev.typr.foundations.scala.ScalaDbTypes
-import dev.typr.foundations.scala.SelectBuilder
-import dev.typr.foundations.scala.UpdateBuilder
-import java.sql.Connection
+import dev.typr.dslsc.DeleteBuilder
+import dev.typr.dslsc.Dialect
+import dev.typr.dslsc.SelectBuilder
+import dev.typr.dslsc.UpdateBuilder
+import dev.typr.foundationssc.Connection
+import dev.typr.foundationssc.ConnectionRead
+import dev.typr.foundationssc.Fragment
+import dev.typr.foundationssc.SqlServerTypes
 import scala.collection.mutable.ListBuffer
 import testdb.customers.CustomersId
-import dev.typr.foundations.scala.Fragment.sql
+import dev.typr.foundationssc.Fragment.sql
 
 class OrdersRepoImpl extends OrdersRepo {
   override def delete: DeleteBuilder[OrdersFields, OrdersRow] = DeleteBuilder.of("[orders]", OrdersFields.structure, Dialect.SQLSERVER)
 
-  override def deleteById(orderId: OrdersId)(using c: Connection): Boolean = sql"delete from [orders] where [order_id] = ${Fragment.encode(OrdersId.sqlServerType, orderId)}".update().runUnchecked(c) > 0
+  override def deleteById(orderId: OrdersId)(using c: Connection): Boolean = sql"delete from [orders] where [order_id] = ${Fragment.encode(OrdersId.sqlServerType, orderId)}".update().run(using c) > 0
 
-  override def deleteByIds(orderIds: Array[OrdersId])(using c: Connection): Int = {
+  override def deleteByIds(orderIds: List[OrdersId])(using c: Connection): Int = {
     val fragments: ListBuffer[Fragment] = ListBuffer()
     orderIds.foreach { id => fragments.addOne(Fragment.encode(OrdersId.sqlServerType, id)): @scala.annotation.nowarn }
-    return Fragment.interpolate(Fragment.lit("delete from [orders] where [order_id] in ("), Fragment.comma(fragments), Fragment.lit(")")).update().runUnchecked(c)
+    return Fragment.concat(Fragment.of("delete from [orders] where [order_id] in ("), Fragment.comma(fragments), Fragment.of(")")).update().run(using c)
   }
 
   override def insert(unsaved: OrdersRow)(using c: Connection): OrdersRow = {
   sql"""insert into [orders]([customer_id], [order_date], [total_amount])
     OUTPUT INSERTED.[order_id], INSERTED.[customer_id], INSERTED.[order_date], INSERTED.[total_amount]
-    values (${Fragment.encode(CustomersId.sqlServerType, unsaved.customerId)}, ${Fragment.encode(SqlServerTypes.datetime2.nullable, unsaved.orderDate)}, ${Fragment.encode(ScalaDbTypes.SqlServerTypes.money, unsaved.totalAmount)})
+    values (${Fragment.encode(CustomersId.sqlServerType, unsaved.customerId)}, ${Fragment.encode(SqlServerTypes.datetime2.opt, unsaved.orderDate)}, ${Fragment.encode(SqlServerTypes.money, unsaved.totalAmount)})
     """
-    .updateReturning(OrdersRow.`_rowParser`.exactlyOne()).runUnchecked(c)
+    .updateReturning(OrdersRow.rowCodec.exactlyOne()).run(using c)
   }
 
   override def insert(unsaved: OrdersRowUnsaved)(using c: Connection): OrdersRow = {
     val columns: ListBuffer[Fragment] = ListBuffer()
     val values: ListBuffer[Fragment] = ListBuffer()
-    columns.addOne(Fragment.lit("[customer_id]")): @scala.annotation.nowarn
+    columns.addOne(Fragment.of("[customer_id]")): @scala.annotation.nowarn
     values.addOne(sql"${Fragment.encode(CustomersId.sqlServerType, unsaved.customerId)}"): @scala.annotation.nowarn
-    columns.addOne(Fragment.lit("[total_amount]")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(ScalaDbTypes.SqlServerTypes.money, unsaved.totalAmount)}"): @scala.annotation.nowarn
+    columns.addOne(Fragment.of("[total_amount]")): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(SqlServerTypes.money, unsaved.totalAmount)}"): @scala.annotation.nowarn
     unsaved.orderDate.visit(
       {  },
-      value => { columns.addOne(Fragment.lit("[order_date]")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(SqlServerTypes.datetime2.nullable, value)}"): @scala.annotation.nowarn }
+      value => { columns.addOne(Fragment.of("[order_date]")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(SqlServerTypes.datetime2.opt, value)}"): @scala.annotation.nowarn }
     );
     val q: Fragment = {
       sql"""insert into [orders](${Fragment.comma(columns)})
@@ -54,57 +53,57 @@ class OrdersRepoImpl extends OrdersRepo {
       values (${Fragment.comma(values)})
       """
     }
-    return q.updateReturning(OrdersRow.`_rowParser`.exactlyOne()).runUnchecked(c)
+    return q.updateReturning(OrdersRow.rowCodec.exactlyOne()).run(using c)
   }
 
-  override def select: SelectBuilder[OrdersFields, OrdersRow] = SelectBuilder.of("[orders]", OrdersFields.structure, OrdersRow.`_rowParser`, Dialect.SQLSERVER)
+  override def select: SelectBuilder[OrdersFields, OrdersRow] = SelectBuilder.of("[orders]", OrdersFields.structure, OrdersRow.rowCodec, Dialect.SQLSERVER)
 
-  override def selectAll(using c: Connection): List[OrdersRow] = {
+  override def selectAll(using c: ConnectionRead): List[OrdersRow] = {
     sql"""select [order_id], [customer_id], [order_date], [total_amount]
     from [orders]
-    """.query(OrdersRow.`_rowParser`.all()).runUnchecked(c)
+    """.query(OrdersRow.rowCodec.all()).run(using c)
   }
 
-  override def selectById(orderId: OrdersId)(using c: Connection): Option[OrdersRow] = {
+  override def selectById(orderId: OrdersId)(using c: ConnectionRead): Option[OrdersRow] = {
     sql"""select [order_id], [customer_id], [order_date], [total_amount]
     from [orders]
-    where [order_id] = ${Fragment.encode(OrdersId.sqlServerType, orderId)}""".query(OrdersRow.`_rowParser`.first()).runUnchecked(c)
+    where [order_id] = ${Fragment.encode(OrdersId.sqlServerType, orderId)}""".query(OrdersRow.rowCodec.first()).run(using c)
   }
 
-  override def selectByIds(orderIds: Array[OrdersId])(using c: Connection): List[OrdersRow] = {
+  override def selectByIds(orderIds: List[OrdersId])(using c: ConnectionRead): List[OrdersRow] = {
     val fragments: ListBuffer[Fragment] = ListBuffer()
     orderIds.foreach { id => fragments.addOne(Fragment.encode(OrdersId.sqlServerType, id)): @scala.annotation.nowarn }
-    return Fragment.interpolate(Fragment.lit("select [order_id], [customer_id], [order_date], [total_amount] from [orders] where [order_id] in ("), Fragment.comma(fragments), Fragment.lit(")")).query(OrdersRow.`_rowParser`.all()).runUnchecked(c)
+    return Fragment.concat(Fragment.of("select [order_id], [customer_id], [order_date], [total_amount] from [orders] where [order_id] in ("), Fragment.comma(fragments), Fragment.of(")")).query(OrdersRow.rowCodec.all()).run(using c)
   }
 
-  override def selectByIdsTracked(orderIds: Array[OrdersId])(using c: Connection): Map[OrdersId, OrdersRow] = {
+  override def selectByIdsTracked(orderIds: List[OrdersId])(using c: ConnectionRead): Map[OrdersId, OrdersRow] = {
     val ret: scala.collection.mutable.Map[OrdersId, OrdersRow] = scala.collection.mutable.Map.empty[OrdersId, OrdersRow]
     selectByIds(orderIds)(using c).foreach(row => ret.put(row.orderId, row): @scala.annotation.nowarn)
     return ret.toMap
   }
 
-  override def update: UpdateBuilder[OrdersFields, OrdersRow] = UpdateBuilder.of("[orders]", OrdersFields.structure, OrdersRow.`_rowParser`, Dialect.SQLSERVER)
+  override def update: UpdateBuilder[OrdersFields, OrdersRow] = UpdateBuilder.of("[orders]", OrdersFields.structure, OrdersRow.rowCodec, Dialect.SQLSERVER)
 
   override def update(row: OrdersRow)(using c: Connection): Boolean = {
     val orderId: OrdersId = row.orderId
     return sql"""update [orders]
     set [customer_id] = ${Fragment.encode(CustomersId.sqlServerType, row.customerId)},
-    [order_date] = ${Fragment.encode(SqlServerTypes.datetime2.nullable, row.orderDate)},
-    [total_amount] = ${Fragment.encode(ScalaDbTypes.SqlServerTypes.money, row.totalAmount)}
-    where [order_id] = ${Fragment.encode(OrdersId.sqlServerType, orderId)}""".update().runUnchecked(c) > 0
+    [order_date] = ${Fragment.encode(SqlServerTypes.datetime2.opt, row.orderDate)},
+    [total_amount] = ${Fragment.encode(SqlServerTypes.money, row.totalAmount)}
+    where [order_id] = ${Fragment.encode(OrdersId.sqlServerType, orderId)}""".update().run(using c) > 0
   }
 
   override def upsert(unsaved: OrdersRow)(using c: Connection): OrdersRow = {
   sql"""MERGE INTO [orders] AS target
-    USING (VALUES (${Fragment.encode(OrdersId.sqlServerType, unsaved.orderId)}, ${Fragment.encode(CustomersId.sqlServerType, unsaved.customerId)}, ${Fragment.encode(SqlServerTypes.datetime2.nullable, unsaved.orderDate)}, ${Fragment.encode(ScalaDbTypes.SqlServerTypes.money, unsaved.totalAmount)})) AS source([order_id], [customer_id], [order_date], [total_amount])
+    USING (VALUES (${Fragment.encode(OrdersId.sqlServerType, unsaved.orderId)}, ${Fragment.encode(CustomersId.sqlServerType, unsaved.customerId)}, ${Fragment.encode(SqlServerTypes.datetime2.opt, unsaved.orderDate)}, ${Fragment.encode(SqlServerTypes.money, unsaved.totalAmount)})) AS source([order_id], [customer_id], [order_date], [total_amount])
     ON target.[order_id] = source.[order_id]
     WHEN MATCHED THEN UPDATE SET [customer_id] = source.[customer_id],
     [order_date] = source.[order_date],
     [total_amount] = source.[total_amount]
-    WHEN NOT MATCHED THEN INSERT ([order_id], [customer_id], [order_date], [total_amount]) VALUES (${Fragment.encode(OrdersId.sqlServerType, unsaved.orderId)}, ${Fragment.encode(CustomersId.sqlServerType, unsaved.customerId)}, ${Fragment.encode(SqlServerTypes.datetime2.nullable, unsaved.orderDate)}, ${Fragment.encode(ScalaDbTypes.SqlServerTypes.money, unsaved.totalAmount)})
+    WHEN NOT MATCHED THEN INSERT ([order_id], [customer_id], [order_date], [total_amount]) VALUES (${Fragment.encode(OrdersId.sqlServerType, unsaved.orderId)}, ${Fragment.encode(CustomersId.sqlServerType, unsaved.customerId)}, ${Fragment.encode(SqlServerTypes.datetime2.opt, unsaved.orderDate)}, ${Fragment.encode(SqlServerTypes.money, unsaved.totalAmount)})
     OUTPUT INSERTED.[order_id], INSERTED.[customer_id], INSERTED.[order_date], INSERTED.[total_amount];"""
-    .updateReturning(OrdersRow.`_rowParser`.exactlyOne())
-    .runUnchecked(c)
+    .updateReturning(OrdersRow.rowCodec.exactlyOne())
+    .run(using c)
   }
 
   override def upsertBatch(unsaved: Iterator[OrdersRow])(using c: Connection): List[OrdersRow] = {
@@ -116,7 +115,7 @@ class OrdersRepoImpl extends OrdersRepo {
     [total_amount] = source.[total_amount]
     WHEN NOT MATCHED THEN INSERT ([order_id], [customer_id], [order_date], [total_amount]) VALUES (?, ?, ?, ?)
     OUTPUT INSERTED.[order_id], INSERTED.[customer_id], INSERTED.[order_date], INSERTED.[total_amount];"""
-      .updateReturningEach(OrdersRow.`_rowParser`, unsaved)
-    .runUnchecked(c)
+      .updateReturningEach(OrdersRow.rowCodec, unsaved)
+    .run(using c)
   }
 }

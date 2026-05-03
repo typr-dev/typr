@@ -5,10 +5,11 @@
  */
 package testdb.promotions
 
-import dev.typr.foundations.kotlin.DeleteBuilder
-import dev.typr.foundations.kotlin.SelectBuilder
-import dev.typr.foundations.kotlin.UpdateBuilder
-import java.sql.Connection
+import dev.typr.dslkt.DeleteBuilder
+import dev.typr.dslkt.SelectBuilder
+import dev.typr.dslkt.UpdateBuilder
+import dev.typr.foundationskt.Connection
+import dev.typr.foundationskt.ConnectionRead
 import kotlin.collections.Iterator
 import kotlin.collections.List
 import kotlin.collections.Map
@@ -19,10 +20,10 @@ interface PromotionsRepo {
   abstract fun deleteById(
     promotionId: PromotionsId,
     c: Connection
-  ): Boolean
+  ): kotlin.Boolean
 
   abstract fun deleteByIds(
-    promotionIds: Array<PromotionsId>,
+    promotionIds: List<PromotionsId>,
     c: Connection
   ): Int
 
@@ -38,26 +39,26 @@ interface PromotionsRepo {
 
   abstract fun select(): SelectBuilder<PromotionsFields, PromotionsRow>
 
-  abstract fun selectAll(c: Connection): List<PromotionsRow>
+  abstract fun selectAll(c: ConnectionRead): List<PromotionsRow>
 
   abstract fun selectById(
     promotionId: PromotionsId,
-    c: Connection
+    c: ConnectionRead
   ): PromotionsRow?
 
   abstract fun selectByIds(
-    promotionIds: Array<PromotionsId>,
-    c: Connection
+    promotionIds: List<PromotionsId>,
+    c: ConnectionRead
   ): List<PromotionsRow>
 
   abstract fun selectByIdsTracked(
-    promotionIds: Array<PromotionsId>,
-    c: Connection
+    promotionIds: List<PromotionsId>,
+    c: ConnectionRead
   ): Map<PromotionsId, PromotionsRow>
 
   abstract fun selectByUniqueCode(
-    code: String,
-    c: Connection
+    code: kotlin.String,
+    c: ConnectionRead
   ): PromotionsRow?
 
   abstract fun update(): UpdateBuilder<PromotionsFields, PromotionsRow>
@@ -65,7 +66,7 @@ interface PromotionsRepo {
   abstract fun update(
     row: PromotionsRow,
     c: Connection
-  ): Boolean
+  ): kotlin.Boolean
 
   abstract fun upsert(
     unsaved: PromotionsRow,

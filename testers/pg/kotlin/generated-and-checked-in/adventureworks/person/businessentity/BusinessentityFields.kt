@@ -5,16 +5,16 @@
  */
 package adventureworks.person.businessentity
 
-import dev.typr.foundations.PgTypes
-import dev.typr.foundations.RowParser
-import dev.typr.foundations.dsl.FieldsBase
-import dev.typr.foundations.dsl.Path
-import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.kotlin.RelationStructure
-import dev.typr.foundations.kotlin.SqlExpr
-import dev.typr.foundations.kotlin.SqlExpr.Field
-import dev.typr.foundations.kotlin.SqlExpr.IdField
-import dev.typr.foundations.kotlin.TupleExpr3
+import dev.typr.dsl.FieldsBase
+import dev.typr.dsl.Path
+import dev.typr.dsl.SqlExpr.FieldLike
+import dev.typr.dslkt.RelationStructure
+import dev.typr.dslkt.SqlExpr
+import dev.typr.dslkt.SqlExpr.Field
+import dev.typr.dslkt.SqlExpr.IdField
+import dev.typr.dslkt.TupleExpr3
+import dev.typr.foundations.RowCodec
+import dev.typr.foundationskt.PgTypes
 import java.time.LocalDateTime
 import java.util.UUID
 import kotlin.collections.List
@@ -28,15 +28,15 @@ data class BusinessentityFields(val _path: List<Path>) : TupleExpr3<Businessenti
 
   override fun _path(): List<Path> = _path
 
-  fun businessentityid(): IdField<BusinessentityId, BusinessentityRow> = IdField<BusinessentityId, BusinessentityRow>(_path, "businessentityid", BusinessentityRow::businessentityid, null, "int4", { row, value -> row.copy(businessentityid = value) }, BusinessentityId.pgType)
+  fun businessentityid(): IdField<BusinessentityId, BusinessentityRow> = IdField<BusinessentityId, BusinessentityRow>(_path, "businessentityid", BusinessentityRow::businessentityid, null, "int4", { row, value -> row.copy(businessentityid = value) }, BusinessentityId.pgType.underlying)
 
   override fun columns(): List<FieldLike<*, BusinessentityRow>> = listOf(this.businessentityid().underlying, this.rowguid().underlying, this.modifieddate().underlying)
 
-  fun modifieddate(): Field<LocalDateTime, BusinessentityRow> = Field<LocalDateTime, BusinessentityRow>(_path, "modifieddate", BusinessentityRow::modifieddate, null, "timestamp", { row, value -> row.copy(modifieddate = value) }, PgTypes.timestamp)
+  fun modifieddate(): Field<LocalDateTime, BusinessentityRow> = Field<LocalDateTime, BusinessentityRow>(_path, "modifieddate", BusinessentityRow::modifieddate, null, "timestamp", { row, value -> row.copy(modifieddate = value) }, PgTypes.timestamp.underlying)
 
-  override fun rowParser(): RowParser<BusinessentityRow> = BusinessentityRow._rowParser.underlying
+  override fun rowCodec(): RowCodec<BusinessentityRow> = BusinessentityRow.rowCodec.underlying
 
-  fun rowguid(): Field<UUID, BusinessentityRow> = Field<UUID, BusinessentityRow>(_path, "rowguid", BusinessentityRow::rowguid, null, "uuid", { row, value -> row.copy(rowguid = value) }, PgTypes.uuid)
+  fun rowguid(): Field<UUID, BusinessentityRow> = Field<UUID, BusinessentityRow>(_path, "rowguid", BusinessentityRow::rowguid, null, "uuid", { row, value -> row.copy(rowguid = value) }, PgTypes.uuid.underlying)
 
   override fun withPaths(_path: List<Path>): RelationStructure<BusinessentityFields, BusinessentityRow> = BusinessentityFields(_path)
 

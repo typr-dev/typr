@@ -9,7 +9,7 @@ import adventureworks.customtypes.Defaulted
 import adventureworks.customtypes.Defaulted.UseDefault
 import com.fasterxml.jackson.annotation.JsonProperty
 import dev.typr.foundations.PgText
-import dev.typr.foundations.kotlin.KotlinDbTypes
+import dev.typr.foundationskt.PgTypes
 
 /** This class corresponds to a row in table `public.identity-test` which has not been persisted yet */
 data class IdentityTestRowUnsaved(
@@ -24,8 +24,8 @@ data class IdentityTestRowUnsaved(
 
   companion object {
     val pgText: PgText<IdentityTestRowUnsaved> =
-      PgText.instance({ row, sb -> IdentityTestId.pgType.text().unsafeEncode(row.name, sb)
+      PgText.instance({ row, sb -> IdentityTestId.pgType.pgText().unsafeEncode(row.name, sb)
       sb.append(PgText.DELIMETER)
-      Defaulted.pgText(KotlinDbTypes.PgTypes.int4.text()).unsafeEncode(row.defaultGenerated, sb) })
+      Defaulted.pgText(PgTypes.int4.pgText()).unsafeEncode(row.defaultGenerated, sb) })
   }
 }

@@ -6,16 +6,16 @@
 package adventureworks.humanresources.department
 
 import adventureworks.public.Name
+import dev.typr.dsl.FieldsBase
+import dev.typr.dsl.Path
+import dev.typr.dsl.RelationStructure
+import dev.typr.dsl.SqlExpr
+import dev.typr.dsl.SqlExpr.Field
+import dev.typr.dsl.SqlExpr.FieldLike
+import dev.typr.dsl.SqlExpr.IdField
+import dev.typr.dsl.TupleExpr.TupleExpr4
 import dev.typr.foundations.PgTypes
-import dev.typr.foundations.RowParser
-import dev.typr.foundations.dsl.FieldsBase
-import dev.typr.foundations.dsl.Path
-import dev.typr.foundations.dsl.RelationStructure
-import dev.typr.foundations.dsl.SqlExpr
-import dev.typr.foundations.dsl.SqlExpr.Field
-import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.dsl.SqlExpr.IdField
-import dev.typr.foundations.dsl.TupleExpr.TupleExpr4
+import dev.typr.foundations.RowCodec
 import java.time.LocalDateTime
 import java.util.Optional
 
@@ -70,7 +70,7 @@ class DepartmentFields(val `_path`: java.util.List[Path]) extends TupleExpr4[Dep
 
   override def columns: java.util.List[FieldLike[?, DepartmentRow]] = java.util.List.of(this.departmentid, this.name, this.groupname, this.modifieddate)
 
-  override def rowParser: RowParser[DepartmentRow] = DepartmentRow._rowParser
+  override def rowCodec: RowCodec[DepartmentRow] = DepartmentRow.rowCodec
 
   override def withPaths(`_path`: java.util.List[Path]): RelationStructure[DepartmentFields, DepartmentRow] = new DepartmentFields(`_path`)
 

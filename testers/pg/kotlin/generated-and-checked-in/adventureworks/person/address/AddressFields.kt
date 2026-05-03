@@ -8,34 +8,34 @@ package adventureworks.person.address
 import adventureworks.person.stateprovince.StateprovinceFields
 import adventureworks.person.stateprovince.StateprovinceId
 import adventureworks.person.stateprovince.StateprovinceRow
-import dev.typr.foundations.PgTypes
-import dev.typr.foundations.RowParser
-import dev.typr.foundations.dsl.FieldsBase
-import dev.typr.foundations.dsl.Path
-import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.kotlin.ForeignKey
-import dev.typr.foundations.kotlin.RelationStructure
-import dev.typr.foundations.kotlin.SqlExpr
-import dev.typr.foundations.kotlin.SqlExpr.Field
-import dev.typr.foundations.kotlin.SqlExpr.IdField
-import dev.typr.foundations.kotlin.SqlExpr.OptField
-import dev.typr.foundations.kotlin.TupleExpr9
+import dev.typr.dsl.FieldsBase
+import dev.typr.dsl.Path
+import dev.typr.dsl.SqlExpr.FieldLike
+import dev.typr.dslkt.ForeignKey
+import dev.typr.dslkt.RelationStructure
+import dev.typr.dslkt.SqlExpr
+import dev.typr.dslkt.SqlExpr.Field
+import dev.typr.dslkt.SqlExpr.IdField
+import dev.typr.dslkt.SqlExpr.OptField
+import dev.typr.dslkt.TupleExpr9
+import dev.typr.foundations.RowCodec
+import dev.typr.foundationskt.PgTypes
 import java.time.LocalDateTime
 import java.util.UUID
 import kotlin.collections.List
 
-data class AddressFields(val _path: List<Path>) : TupleExpr9<AddressId, String, /* max 60 chars */ String, String, StateprovinceId, String, ByteArray, UUID, LocalDateTime>, RelationStructure<AddressFields, AddressRow>, FieldsBase<AddressRow> {
+data class AddressFields(val _path: List<Path>) : TupleExpr9<AddressId, kotlin.String, /* max 60 chars */ kotlin.String, kotlin.String, StateprovinceId, kotlin.String, ByteArray, UUID, LocalDateTime>, RelationStructure<AddressFields, AddressRow>, FieldsBase<AddressRow> {
   override fun _1(): SqlExpr<AddressId> = addressid()
 
-  override fun _2(): SqlExpr<String> = addressline1()
+  override fun _2(): SqlExpr<kotlin.String> = addressline1()
 
-  override fun _3(): SqlExpr</* max 60 chars */ String> = addressline2()
+  override fun _3(): SqlExpr</* max 60 chars */ kotlin.String> = addressline2()
 
-  override fun _4(): SqlExpr<String> = city()
+  override fun _4(): SqlExpr<kotlin.String> = city()
 
   override fun _5(): SqlExpr<StateprovinceId> = stateprovinceid()
 
-  override fun _6(): SqlExpr<String> = postalcode()
+  override fun _6(): SqlExpr<kotlin.String> = postalcode()
 
   override fun _7(): SqlExpr<ByteArray> = spatiallocation()
 
@@ -45,29 +45,29 @@ data class AddressFields(val _path: List<Path>) : TupleExpr9<AddressId, String, 
 
   override fun _path(): List<Path> = _path
 
-  fun addressid(): IdField<AddressId, AddressRow> = IdField<AddressId, AddressRow>(_path, "addressid", AddressRow::addressid, null, "int4", { row, value -> row.copy(addressid = value) }, AddressId.pgType)
+  fun addressid(): IdField<AddressId, AddressRow> = IdField<AddressId, AddressRow>(_path, "addressid", AddressRow::addressid, null, "int4", { row, value -> row.copy(addressid = value) }, AddressId.pgType.underlying)
 
-  fun addressline1(): Field<String, AddressRow> = Field<String, AddressRow>(_path, "addressline1", AddressRow::addressline1, null, null, { row, value -> row.copy(addressline1 = value) }, PgTypes.text)
+  fun addressline1(): Field<kotlin.String, AddressRow> = Field<kotlin.String, AddressRow>(_path, "addressline1", AddressRow::addressline1, null, null, { row, value -> row.copy(addressline1 = value) }, PgTypes.text.underlying)
 
-  fun addressline2(): OptField<String, AddressRow> = OptField<String, AddressRow>(_path, "addressline2", AddressRow::addressline2, null, null, { row, value -> row.copy(addressline2 = value) }, PgTypes.text)
+  fun addressline2(): OptField<kotlin.String, AddressRow> = OptField<kotlin.String, AddressRow>(_path, "addressline2", AddressRow::addressline2, null, null, { row, value -> row.copy(addressline2 = value) }, PgTypes.text.underlying)
 
-  fun city(): Field<String, AddressRow> = Field<String, AddressRow>(_path, "city", AddressRow::city, null, null, { row, value -> row.copy(city = value) }, PgTypes.text)
+  fun city(): Field<kotlin.String, AddressRow> = Field<kotlin.String, AddressRow>(_path, "city", AddressRow::city, null, null, { row, value -> row.copy(city = value) }, PgTypes.text.underlying)
 
   override fun columns(): List<FieldLike<*, AddressRow>> = listOf(this.addressid().underlying, this.addressline1().underlying, this.addressline2().underlying, this.city().underlying, this.stateprovinceid().underlying, this.postalcode().underlying, this.spatiallocation().underlying, this.rowguid().underlying, this.modifieddate().underlying)
 
   fun fkStateprovince(): ForeignKey<StateprovinceFields, StateprovinceRow> = ForeignKey.of<StateprovinceFields, StateprovinceRow>("person.FK_Address_StateProvince_StateProvinceID").withColumnPair<StateprovinceId>(stateprovinceid(), StateprovinceFields::stateprovinceid)
 
-  fun modifieddate(): Field<LocalDateTime, AddressRow> = Field<LocalDateTime, AddressRow>(_path, "modifieddate", AddressRow::modifieddate, null, "timestamp", { row, value -> row.copy(modifieddate = value) }, PgTypes.timestamp)
+  fun modifieddate(): Field<LocalDateTime, AddressRow> = Field<LocalDateTime, AddressRow>(_path, "modifieddate", AddressRow::modifieddate, null, "timestamp", { row, value -> row.copy(modifieddate = value) }, PgTypes.timestamp.underlying)
 
-  fun postalcode(): Field<String, AddressRow> = Field<String, AddressRow>(_path, "postalcode", AddressRow::postalcode, null, null, { row, value -> row.copy(postalcode = value) }, PgTypes.text)
+  fun postalcode(): Field<kotlin.String, AddressRow> = Field<kotlin.String, AddressRow>(_path, "postalcode", AddressRow::postalcode, null, null, { row, value -> row.copy(postalcode = value) }, PgTypes.text.underlying)
 
-  override fun rowParser(): RowParser<AddressRow> = AddressRow._rowParser.underlying
+  override fun rowCodec(): RowCodec<AddressRow> = AddressRow.rowCodec.underlying
 
-  fun rowguid(): Field<UUID, AddressRow> = Field<UUID, AddressRow>(_path, "rowguid", AddressRow::rowguid, null, "uuid", { row, value -> row.copy(rowguid = value) }, PgTypes.uuid)
+  fun rowguid(): Field<UUID, AddressRow> = Field<UUID, AddressRow>(_path, "rowguid", AddressRow::rowguid, null, "uuid", { row, value -> row.copy(rowguid = value) }, PgTypes.uuid.underlying)
 
-  fun spatiallocation(): OptField<ByteArray, AddressRow> = OptField<ByteArray, AddressRow>(_path, "spatiallocation", AddressRow::spatiallocation, null, "bytea", { row, value -> row.copy(spatiallocation = value) }, PgTypes.bytea)
+  fun spatiallocation(): OptField<ByteArray, AddressRow> = OptField<ByteArray, AddressRow>(_path, "spatiallocation", AddressRow::spatiallocation, null, "bytea", { row, value -> row.copy(spatiallocation = value) }, PgTypes.bytea.underlying)
 
-  fun stateprovinceid(): Field<StateprovinceId, AddressRow> = Field<StateprovinceId, AddressRow>(_path, "stateprovinceid", AddressRow::stateprovinceid, null, "int4", { row, value -> row.copy(stateprovinceid = value) }, StateprovinceId.pgType)
+  fun stateprovinceid(): Field<StateprovinceId, AddressRow> = Field<StateprovinceId, AddressRow>(_path, "stateprovinceid", AddressRow::stateprovinceid, null, "int4", { row, value -> row.copy(stateprovinceid = value) }, StateprovinceId.pgType.underlying)
 
   override fun withPaths(_path: List<Path>): RelationStructure<AddressFields, AddressRow> = AddressFields(_path)
 

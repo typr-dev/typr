@@ -33,7 +33,7 @@ object TypoInet {
                             }))
   }
 
-  given bijection: Bijection[TypoInet, String] = Bijection.apply[TypoInet, String](_.value)(TypoInet.apply)
+  given bijection: Bijection[TypoInet, String] = Bijection[TypoInet, String](_.value)(TypoInet.apply)
 
   given decoder: Decoder[TypoInet] = Decoder.decodeString.map(TypoInet.apply)
 

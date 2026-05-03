@@ -5,16 +5,16 @@
  */
 package adventureworks.public.identity_test
 
-import dev.typr.foundations.RowParser
-import dev.typr.foundations.dsl.FieldsBase
-import dev.typr.foundations.dsl.Path
-import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.kotlin.KotlinDbTypes
-import dev.typr.foundations.kotlin.RelationStructure
-import dev.typr.foundations.kotlin.SqlExpr
-import dev.typr.foundations.kotlin.SqlExpr.Field
-import dev.typr.foundations.kotlin.SqlExpr.IdField
-import dev.typr.foundations.kotlin.TupleExpr3
+import dev.typr.dsl.FieldsBase
+import dev.typr.dsl.Path
+import dev.typr.dsl.SqlExpr.FieldLike
+import dev.typr.dslkt.RelationStructure
+import dev.typr.dslkt.SqlExpr
+import dev.typr.dslkt.SqlExpr.Field
+import dev.typr.dslkt.SqlExpr.IdField
+import dev.typr.dslkt.TupleExpr3
+import dev.typr.foundations.RowCodec
+import dev.typr.foundationskt.PgTypes
 import kotlin.collections.List
 
 data class IdentityTestFields(val _path: List<Path>) : TupleExpr3<Int, Int, IdentityTestId>, RelationStructure<IdentityTestFields, IdentityTestRow>, FieldsBase<IdentityTestRow> {
@@ -26,15 +26,15 @@ data class IdentityTestFields(val _path: List<Path>) : TupleExpr3<Int, Int, Iden
 
   override fun _path(): List<Path> = _path
 
-  fun alwaysGenerated(): Field<Int, IdentityTestRow> = Field<Int, IdentityTestRow>(_path, "always_generated", IdentityTestRow::alwaysGenerated, null, "int4", { row, value -> row.copy(alwaysGenerated = value) }, KotlinDbTypes.PgTypes.int4)
+  fun alwaysGenerated(): Field<Int, IdentityTestRow> = Field<Int, IdentityTestRow>(_path, "always_generated", IdentityTestRow::alwaysGenerated, null, "int4", { row, value -> row.copy(alwaysGenerated = value) }, PgTypes.int4.underlying)
 
   override fun columns(): List<FieldLike<*, IdentityTestRow>> = listOf(this.alwaysGenerated().underlying, this.defaultGenerated().underlying, this.name().underlying)
 
-  fun defaultGenerated(): Field<Int, IdentityTestRow> = Field<Int, IdentityTestRow>(_path, "default_generated", IdentityTestRow::defaultGenerated, null, "int4", { row, value -> row.copy(defaultGenerated = value) }, KotlinDbTypes.PgTypes.int4)
+  fun defaultGenerated(): Field<Int, IdentityTestRow> = Field<Int, IdentityTestRow>(_path, "default_generated", IdentityTestRow::defaultGenerated, null, "int4", { row, value -> row.copy(defaultGenerated = value) }, PgTypes.int4.underlying)
 
-  fun name(): IdField<IdentityTestId, IdentityTestRow> = IdField<IdentityTestId, IdentityTestRow>(_path, "name", IdentityTestRow::name, null, null, { row, value -> row.copy(name = value) }, IdentityTestId.pgType)
+  fun name(): IdField<IdentityTestId, IdentityTestRow> = IdField<IdentityTestId, IdentityTestRow>(_path, "name", IdentityTestRow::name, null, null, { row, value -> row.copy(name = value) }, IdentityTestId.pgType.underlying)
 
-  override fun rowParser(): RowParser<IdentityTestRow> = IdentityTestRow._rowParser.underlying
+  override fun rowCodec(): RowCodec<IdentityTestRow> = IdentityTestRow.rowCodec.underlying
 
   override fun withPaths(_path: List<Path>): RelationStructure<IdentityTestFields, IdentityTestRow> = IdentityTestFields(_path)
 

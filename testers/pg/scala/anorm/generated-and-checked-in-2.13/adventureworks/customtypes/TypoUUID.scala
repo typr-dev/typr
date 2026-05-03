@@ -39,7 +39,7 @@ object TypoUUID {
 
   implicit lazy val arrayToStatement: ToStatement[Array[TypoUUID]] = ToStatement[Array[TypoUUID]]((s, index, v) => s.setArray(index, s.getConnection.createArrayOf("uuid", v.map(v => v.value))))
 
-  implicit lazy val bijection: Bijection[TypoUUID, UUID] = Bijection.apply[TypoUUID, UUID](_.value)(TypoUUID.apply)
+  implicit lazy val bijection: Bijection[TypoUUID, UUID] = Bijection[TypoUUID, UUID](_.value)(TypoUUID.apply)
 
   implicit lazy val column: Column[TypoUUID] = {
     Column.nonNull[TypoUUID]((v1: Any, _) =>

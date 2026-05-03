@@ -5,10 +5,11 @@
  */
 package testdb.customer_addresses
 
-import dev.typr.foundations.kotlin.DeleteBuilder
-import dev.typr.foundations.kotlin.SelectBuilder
-import dev.typr.foundations.kotlin.UpdateBuilder
-import java.sql.Connection
+import dev.typr.dslkt.DeleteBuilder
+import dev.typr.dslkt.SelectBuilder
+import dev.typr.dslkt.UpdateBuilder
+import dev.typr.foundationskt.Connection
+import dev.typr.foundationskt.ConnectionRead
 import kotlin.collections.Iterator
 import kotlin.collections.List
 import kotlin.collections.Map
@@ -19,10 +20,10 @@ interface CustomerAddressesRepo {
   abstract fun deleteById(
     addressId: CustomerAddressesId,
     c: Connection
-  ): Boolean
+  ): kotlin.Boolean
 
   abstract fun deleteByIds(
-    addressIds: Array<CustomerAddressesId>,
+    addressIds: List<CustomerAddressesId>,
     c: Connection
   ): Int
 
@@ -38,21 +39,21 @@ interface CustomerAddressesRepo {
 
   abstract fun select(): SelectBuilder<CustomerAddressesFields, CustomerAddressesRow>
 
-  abstract fun selectAll(c: Connection): List<CustomerAddressesRow>
+  abstract fun selectAll(c: ConnectionRead): List<CustomerAddressesRow>
 
   abstract fun selectById(
     addressId: CustomerAddressesId,
-    c: Connection
+    c: ConnectionRead
   ): CustomerAddressesRow?
 
   abstract fun selectByIds(
-    addressIds: Array<CustomerAddressesId>,
-    c: Connection
+    addressIds: List<CustomerAddressesId>,
+    c: ConnectionRead
   ): List<CustomerAddressesRow>
 
   abstract fun selectByIdsTracked(
-    addressIds: Array<CustomerAddressesId>,
-    c: Connection
+    addressIds: List<CustomerAddressesId>,
+    c: ConnectionRead
   ): Map<CustomerAddressesId, CustomerAddressesRow>
 
   abstract fun update(): UpdateBuilder<CustomerAddressesFields, CustomerAddressesRow>
@@ -60,7 +61,7 @@ interface CustomerAddressesRepo {
   abstract fun update(
     row: CustomerAddressesRow,
     c: Connection
-  ): Boolean
+  ): kotlin.Boolean
 
   abstract fun upsert(
     unsaved: CustomerAddressesRow,

@@ -6,9 +6,9 @@
 package oracledb.departments
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import dev.typr.dsl.RowCodecs
 import dev.typr.foundations.OracleTypes
-import dev.typr.foundations.RowParser
-import dev.typr.foundations.RowParsers
+import dev.typr.foundations.RowCodec
 import dev.typr.foundations.Tuple.Tuple4
 import java.util.Optional
 import oracledb.MoneyT
@@ -36,8 +36,6 @@ case class DepartmentsRow(
 }
 
 object DepartmentsRow {
-  val `_rowParser`: RowParser[DepartmentsRow] = RowParsers.of(OracleTypes.varchar2, OracleTypes.varchar2, OracleTypes.varchar2, MoneyT.oracleType.opt(), DepartmentsRow.apply, row => Array[Any](row.deptCode, row.deptRegion, row.deptName, row.budget))
-
   def apply(
     compositeId: DepartmentsId,
     deptName: String,
@@ -50,4 +48,6 @@ object DepartmentsRow {
       budget
     )
   }
+
+  val rowCodec: RowCodec[DepartmentsRow] = RowCodecs.of(OracleTypes.varchar2, OracleTypes.varchar2, OracleTypes.varchar2, MoneyT.oracleType.opt, DepartmentsRow.apply, row => Array[Any](row.deptCode, row.deptRegion, row.deptName, row.budget))
 }

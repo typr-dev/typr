@@ -5,10 +5,11 @@
  */
 package testdb.mariatest_unique
 
-import dev.typr.foundations.kotlin.DeleteBuilder
-import dev.typr.foundations.kotlin.SelectBuilder
-import dev.typr.foundations.kotlin.UpdateBuilder
-import java.sql.Connection
+import dev.typr.dslkt.DeleteBuilder
+import dev.typr.dslkt.SelectBuilder
+import dev.typr.dslkt.UpdateBuilder
+import dev.typr.foundationskt.Connection
+import dev.typr.foundationskt.ConnectionRead
 import kotlin.collections.Iterator
 import kotlin.collections.List
 import kotlin.collections.Map
@@ -20,10 +21,10 @@ interface MariatestUniqueRepo {
   abstract fun deleteById(
     id: MariatestUniqueId,
     c: Connection
-  ): Boolean
+  ): kotlin.Boolean
 
   abstract fun deleteByIds(
-    ids: Array<MariatestUniqueId>,
+    ids: List<MariatestUniqueId>,
     c: Connection
   ): Int
 
@@ -39,32 +40,32 @@ interface MariatestUniqueRepo {
 
   abstract fun select(): SelectBuilder<MariatestUniqueFields, MariatestUniqueRow>
 
-  abstract fun selectAll(c: Connection): List<MariatestUniqueRow>
+  abstract fun selectAll(c: ConnectionRead): List<MariatestUniqueRow>
 
   abstract fun selectById(
     id: MariatestUniqueId,
-    c: Connection
+    c: ConnectionRead
   ): MariatestUniqueRow?
 
   abstract fun selectByIds(
-    ids: Array<MariatestUniqueId>,
-    c: Connection
+    ids: List<MariatestUniqueId>,
+    c: ConnectionRead
   ): List<MariatestUniqueRow>
 
   abstract fun selectByIdsTracked(
-    ids: Array<MariatestUniqueId>,
-    c: Connection
+    ids: List<MariatestUniqueId>,
+    c: ConnectionRead
   ): Map<MariatestUniqueId, MariatestUniqueRow>
 
   abstract fun selectByUniqueCodeAndCategory(
-    code: String,
-    category: String,
-    c: Connection
+    code: kotlin.String,
+    category: kotlin.String,
+    c: ConnectionRead
   ): MariatestUniqueRow?
 
   abstract fun selectByUniqueEmail(
     email: /* user-picked */ Email,
-    c: Connection
+    c: ConnectionRead
   ): MariatestUniqueRow?
 
   abstract fun update(): UpdateBuilder<MariatestUniqueFields, MariatestUniqueRow>
@@ -72,7 +73,7 @@ interface MariatestUniqueRepo {
   abstract fun update(
     row: MariatestUniqueRow,
     c: Connection
-  ): Boolean
+  ): kotlin.Boolean
 
   abstract fun upsert(
     unsaved: MariatestUniqueRow,

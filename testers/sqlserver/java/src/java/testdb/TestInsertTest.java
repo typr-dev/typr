@@ -11,7 +11,7 @@ import testdb.userdefined.Email;
  * customization, and foreign key handling.
  */
 public class TestInsertTest {
-  private final TestInsert testInsert = new TestInsert(new Random(42));
+  private final TestInsert testInsert = new TestInsert(new Random(569802546));
 
   @Test
   public void testCustomersInsert() {

@@ -8,19 +8,19 @@ package adventureworks.production.productcosthistory
 import adventureworks.production.product.ProductFields
 import adventureworks.production.product.ProductId
 import adventureworks.production.product.ProductRow
+import dev.typr.dsl.FieldsBase
+import dev.typr.dsl.ForeignKey
+import dev.typr.dsl.Path
+import dev.typr.dsl.RelationStructure
+import dev.typr.dsl.SqlExpr
+import dev.typr.dsl.SqlExpr.Field
+import dev.typr.dsl.SqlExpr.FieldLike
+import dev.typr.dsl.SqlExpr.IdField
+import dev.typr.dsl.SqlExpr.OptField
+import dev.typr.dsl.TupleExpr
+import dev.typr.dsl.TupleExpr.TupleExpr5
 import dev.typr.foundations.PgTypes
-import dev.typr.foundations.RowParser
-import dev.typr.foundations.dsl.FieldsBase
-import dev.typr.foundations.dsl.ForeignKey
-import dev.typr.foundations.dsl.Path
-import dev.typr.foundations.dsl.RelationStructure
-import dev.typr.foundations.dsl.SqlExpr
-import dev.typr.foundations.dsl.SqlExpr.Field
-import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.dsl.SqlExpr.IdField
-import dev.typr.foundations.dsl.SqlExpr.OptField
-import dev.typr.foundations.dsl.TupleExpr
-import dev.typr.foundations.dsl.TupleExpr.TupleExpr5
+import dev.typr.foundations.RowCodec
 import java.time.LocalDateTime
 import java.util.Optional
 
@@ -93,7 +93,7 @@ class ProductcosthistoryFields(val `_path`: java.util.List[Path]) extends TupleE
 
   override def columns: java.util.List[FieldLike[?, ProductcosthistoryRow]] = java.util.List.of(this.productid, this.startdate, this.enddate, this.standardcost, this.modifieddate)
 
-  override def rowParser: RowParser[ProductcosthistoryRow] = ProductcosthistoryRow._rowParser
+  override def rowCodec: RowCodec[ProductcosthistoryRow] = ProductcosthistoryRow.rowCodec
 
   override def withPaths(`_path`: java.util.List[Path]): RelationStructure[ProductcosthistoryFields, ProductcosthistoryRow] = new ProductcosthistoryFields(`_path`)
 

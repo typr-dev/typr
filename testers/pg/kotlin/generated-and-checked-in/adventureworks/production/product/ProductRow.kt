@@ -12,12 +12,9 @@ import adventureworks.production.unitmeasure.UnitmeasureId
 import adventureworks.public.Flag
 import adventureworks.public.Name
 import dev.typr.foundations.PgText
-import dev.typr.foundations.PgTypes
 import dev.typr.foundations.Tuple.Tuple25
-import dev.typr.foundations.kotlin.KotlinDbTypes
-import dev.typr.foundations.kotlin.RowParser
-import dev.typr.foundations.kotlin.RowParsers
-import dev.typr.foundations.kotlin.nullable
+import dev.typr.foundationskt.PgTypes
+import dev.typr.foundationskt.RowCodec
 import java.math.BigDecimal
 import java.time.LocalDateTime
 import java.util.UUID
@@ -34,7 +31,7 @@ data class ProductRow(
   /** Name of the product. */
   val name: Name,
   /** Unique product identification number. */
-  val productnumber: String,
+  val productnumber: kotlin.String,
   /** 0 = Product is purchased, 1 = Product is manufactured in-house.
     * Default: true
     */
@@ -44,15 +41,15 @@ data class ProductRow(
     */
   val finishedgoodsflag: Flag,
   /** Product color. */
-  val color: /* max 15 chars */ String?,
+  val color: /* max 15 chars */ kotlin.String?,
   /** Minimum inventory quantity.
     * Constraint CK_Product_SafetyStockLevel affecting columns safetystocklevel: ((safetystocklevel > 0))
     */
-  val safetystocklevel: Short,
+  val safetystocklevel: kotlin.Short,
   /** Inventory level that triggers a purchase order or work order.
     * Constraint CK_Product_ReorderPoint affecting columns reorderpoint: ((reorderpoint > 0))
     */
-  val reorderpoint: Short,
+  val reorderpoint: kotlin.Short,
   /** Standard cost of the product.
     * Constraint CK_Product_StandardCost affecting columns standardcost: ((standardcost >= 0.00))
     */
@@ -62,7 +59,7 @@ data class ProductRow(
     */
   val listprice: BigDecimal,
   /** Product size. */
-  val size: /* max 5 chars */ String?,
+  val size: /* max 5 chars */ kotlin.String?,
   /** Unit of measure for Size column.
     * Points to [adventureworks.production.unitmeasure.UnitmeasureRow.unitmeasurecode]
     */
@@ -82,15 +79,15 @@ data class ProductRow(
   /** R = Road, M = Mountain, T = Touring, S = Standard
     * Constraint CK_Product_ProductLine affecting columns productline: (((upper((productline)::text) = ANY (ARRAY['S'::text, 'T'::text, 'M'::text, 'R'::text])) OR (productline IS NULL)))
     */
-  val productline: /* bpchar, max 2 chars */ String?,
+  val productline: /* bpchar, max 2 chars */ kotlin.String?,
   /** H = High, M = Medium, L = Low
     * Constraint CK_Product_Class affecting columns class: (((upper((class)::text) = ANY (ARRAY['L'::text, 'M'::text, 'H'::text])) OR (class IS NULL)))
     */
-  val `class`: /* bpchar, max 2 chars */ String?,
+  val `class`: /* bpchar, max 2 chars */ kotlin.String?,
   /** W = Womens, M = Mens, U = Universal
     * Constraint CK_Product_Style affecting columns style: (((upper((style)::text) = ANY (ARRAY['W'::text, 'M'::text, 'U'::text])) OR (style IS NULL)))
     */
-  val style: /* bpchar, max 2 chars */ String?,
+  val style: /* bpchar, max 2 chars */ kotlin.String?,
   /** Product is a member of this product subcategory. Foreign key to ProductSubCategory.ProductSubCategoryID.
     * Points to [adventureworks.production.productsubcategory.ProductsubcategoryRow.productsubcategoryid]
     */
@@ -113,12 +110,12 @@ data class ProductRow(
   val rowguid: UUID,
   /** Default: now() */
   val modifieddate: LocalDateTime
-) : Tuple25<ProductId, Name, String, Flag, Flag, /* max 15 chars */ String?, Short, Short, BigDecimal, BigDecimal, /* max 5 chars */ String?, UnitmeasureId?, UnitmeasureId?, BigDecimal?, Int, /* bpchar, max 2 chars */ String?, /* bpchar, max 2 chars */ String?, /* bpchar, max 2 chars */ String?, ProductsubcategoryId?, ProductmodelId?, LocalDateTime, LocalDateTime?, LocalDateTime?, UUID, LocalDateTime> {
+) : Tuple25<ProductId, Name, kotlin.String, Flag, Flag, /* max 15 chars */ kotlin.String?, kotlin.Short, kotlin.Short, BigDecimal, BigDecimal, /* max 5 chars */ kotlin.String?, UnitmeasureId?, UnitmeasureId?, BigDecimal?, Int, /* bpchar, max 2 chars */ kotlin.String?, /* bpchar, max 2 chars */ kotlin.String?, /* bpchar, max 2 chars */ kotlin.String?, ProductsubcategoryId?, ProductmodelId?, LocalDateTime, LocalDateTime?, LocalDateTime?, UUID, LocalDateTime> {
   override fun _1(): ProductId = productid
 
   override fun _10(): BigDecimal = listprice
 
-  override fun _11(): /* max 5 chars */ String? = size
+  override fun _11(): /* max 5 chars */ kotlin.String? = size
 
   override fun _12(): UnitmeasureId? = sizeunitmeasurecode
 
@@ -128,11 +125,11 @@ data class ProductRow(
 
   override fun _15(): Int = daystomanufacture
 
-  override fun _16(): /* bpchar, max 2 chars */ String? = productline
+  override fun _16(): /* bpchar, max 2 chars */ kotlin.String? = productline
 
-  override fun _17(): /* bpchar, max 2 chars */ String? = `class`
+  override fun _17(): /* bpchar, max 2 chars */ kotlin.String? = `class`
 
-  override fun _18(): /* bpchar, max 2 chars */ String? = style
+  override fun _18(): /* bpchar, max 2 chars */ kotlin.String? = style
 
   override fun _19(): ProductsubcategoryId? = productsubcategoryid
 
@@ -150,17 +147,17 @@ data class ProductRow(
 
   override fun _25(): LocalDateTime = modifieddate
 
-  override fun _3(): String = productnumber
+  override fun _3(): kotlin.String = productnumber
 
   override fun _4(): Flag = makeflag
 
   override fun _5(): Flag = finishedgoodsflag
 
-  override fun _6(): /* max 15 chars */ String? = color
+  override fun _6(): /* max 15 chars */ kotlin.String? = color
 
-  override fun _7(): Short = safetystocklevel
+  override fun _7(): kotlin.Short = safetystocklevel
 
-  override fun _8(): Short = reorderpoint
+  override fun _8(): kotlin.Short = reorderpoint
 
   override fun _9(): BigDecimal = standardcost
 
@@ -175,9 +172,9 @@ data class ProductRow(
   ): ProductRowUnsaved = ProductRowUnsaved(name, productnumber, color, safetystocklevel, reorderpoint, standardcost, listprice, size, sizeunitmeasurecode, weightunitmeasurecode, weight, daystomanufacture, productline, `class`, style, productsubcategoryid, productmodelid, sellstartdate, sellenddate, discontinueddate, productid, makeflag, finishedgoodsflag, rowguid, modifieddate)
 
   companion object {
-    val _rowParser: RowParser<ProductRow> = RowParsers.of(ProductId.pgType, Name.pgType, PgTypes.text, Flag.pgType, Flag.pgType, PgTypes.text.nullable(), KotlinDbTypes.PgTypes.int2, KotlinDbTypes.PgTypes.int2, PgTypes.numeric, PgTypes.numeric, PgTypes.text.nullable(), UnitmeasureId.pgType.nullable(), UnitmeasureId.pgType.nullable(), PgTypes.numeric.nullable(), KotlinDbTypes.PgTypes.int4, PgTypes.bpchar.nullable(), PgTypes.bpchar.nullable(), PgTypes.bpchar.nullable(), ProductsubcategoryId.pgType.nullable(), ProductmodelId.pgType.nullable(), PgTypes.timestamp, PgTypes.timestamp.nullable(), PgTypes.timestamp.nullable(), PgTypes.uuid, PgTypes.timestamp, { t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15, t16, t17, t18, t19, t20, t21, t22, t23, t24 -> ProductRow(t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15, t16, t17, t18, t19, t20, t21, t22, t23, t24) }, { row -> arrayOf<Any?>(row.productid, row.name, row.productnumber, row.makeflag, row.finishedgoodsflag, row.color, row.safetystocklevel, row.reorderpoint, row.standardcost, row.listprice, row.size, row.sizeunitmeasurecode, row.weightunitmeasurecode, row.weight, row.daystomanufacture, row.productline, row.`class`, row.style, row.productsubcategoryid, row.productmodelid, row.sellstartdate, row.sellenddate, row.discontinueddate, row.rowguid, row.modifieddate) })
+    val rowCodec: RowCodec<ProductRow> = RowCodec(dev.typr.foundations.RowCodec.create(listOf(ProductId.pgType.underlying, Name.pgType.underlying, PgTypes.text.underlying, Flag.pgType.underlying, Flag.pgType.underlying, PgTypes.text.opt().underlying, PgTypes.int2.underlying, PgTypes.int2.underlying, PgTypes.numeric.underlying, PgTypes.numeric.underlying, PgTypes.text.opt().underlying, UnitmeasureId.pgType.opt().underlying, UnitmeasureId.pgType.opt().underlying, PgTypes.numeric.opt().underlying, PgTypes.int4.underlying, PgTypes.bpchar.opt().underlying, PgTypes.bpchar.opt().underlying, PgTypes.bpchar.opt().underlying, ProductsubcategoryId.pgType.opt().underlying, ProductmodelId.pgType.opt().underlying, PgTypes.timestamp.underlying, PgTypes.timestamp.opt().underlying, PgTypes.timestamp.opt().underlying, PgTypes.uuid.underlying, PgTypes.timestamp.underlying), { a -> ProductRow(a[0] as ProductId, a[1] as Name, a[2] as kotlin.String, a[3] as Flag, a[4] as Flag, a[5] as /* max 15 chars */ kotlin.String?, a[6] as kotlin.Short, a[7] as kotlin.Short, a[8] as BigDecimal, a[9] as BigDecimal, a[10] as /* max 5 chars */ kotlin.String?, a[11] as UnitmeasureId?, a[12] as UnitmeasureId?, a[13] as BigDecimal?, a[14] as Int, a[15] as /* bpchar, max 2 chars */ kotlin.String?, a[16] as /* bpchar, max 2 chars */ kotlin.String?, a[17] as /* bpchar, max 2 chars */ kotlin.String?, a[18] as ProductsubcategoryId?, a[19] as ProductmodelId?, a[20] as LocalDateTime, a[21] as LocalDateTime?, a[22] as LocalDateTime?, a[23] as UUID, a[24] as LocalDateTime) }, { row: ProductRow -> arrayOf<Any?>(row.productid, row.name, row.productnumber, row.makeflag, row.finishedgoodsflag, row.color, row.safetystocklevel, row.reorderpoint, row.standardcost, row.listprice, row.size, row.sizeunitmeasurecode, row.weightunitmeasurecode, row.weight, row.daystomanufacture, row.productline, row.`class`, row.style, row.productsubcategoryid, row.productmodelid, row.sellstartdate, row.sellenddate, row.discontinueddate, row.rowguid, row.modifieddate) }))
 
     val pgText: PgText<ProductRow> =
-      PgText.from(_rowParser.underlying)
+      PgText.from(rowCodec.underlying)
   }
 }

@@ -6,9 +6,9 @@
 package adventureworks.public
 
 import com.fasterxml.jackson.annotation.JsonValue
+import dev.typr.foundations.Bijection
 import dev.typr.foundations.PgType
 import dev.typr.foundations.PgTypes
-import dev.typr.foundations.dsl.Bijection
 
 /** Domain `public.Flag`
  * No constraint
@@ -16,9 +16,9 @@ import dev.typr.foundations.dsl.Bijection
 case class Flag(@JsonValue value: java.lang.Boolean)
 
 object Flag {
-  given bijection: Bijection[Flag, java.lang.Boolean] = Bijection.apply[Flag, java.lang.Boolean](_.value)(Flag.apply)
+  given bijection: Bijection[Flag, java.lang.Boolean] = Bijection.of[Flag, java.lang.Boolean](_.value, Flag.apply)
 
-  given pgType: PgType[Flag] = PgTypes.bool.bimap(Flag.apply, _.value).renamed(""""public"."Flag"""")
+  given pgType: PgType[Flag] = PgTypes.bool.to(Bijection.of(Flag.apply, _.value)).renamed(""""public"."Flag"""")
 
-  given pgTypeArray: PgType[Array[Flag]] = PgTypes.boolArray.bimap(xs => xs.map(Flag.apply), xs => xs.map(_.value)).renamed(""""public"."Flag"[]""")
+  given pgTypeArray: PgType[java.util.List[Flag]] = pgType.array
 }

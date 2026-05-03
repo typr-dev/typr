@@ -5,20 +5,19 @@
  */
 package testdb.shipments
 
-import dev.typr.foundations.MariaTypes
-import dev.typr.foundations.RowParser
+import dev.typr.dsl.FieldsBase
+import dev.typr.dsl.Path
+import dev.typr.dsl.SqlExpr.FieldLike
+import dev.typr.dslkt.ForeignKey
+import dev.typr.dslkt.RelationStructure
+import dev.typr.dslkt.SqlExpr
+import dev.typr.dslkt.SqlExpr.Field
+import dev.typr.dslkt.SqlExpr.IdField
+import dev.typr.dslkt.SqlExpr.OptField
+import dev.typr.dslkt.TupleExpr17
+import dev.typr.foundations.RowCodec
 import dev.typr.foundations.data.Json
-import dev.typr.foundations.dsl.FieldsBase
-import dev.typr.foundations.dsl.Path
-import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.kotlin.ForeignKey
-import dev.typr.foundations.kotlin.KotlinDbTypes
-import dev.typr.foundations.kotlin.RelationStructure
-import dev.typr.foundations.kotlin.SqlExpr
-import dev.typr.foundations.kotlin.SqlExpr.Field
-import dev.typr.foundations.kotlin.SqlExpr.IdField
-import dev.typr.foundations.kotlin.SqlExpr.OptField
-import dev.typr.foundations.kotlin.TupleExpr17
+import dev.typr.foundationskt.MariaTypes
 import java.math.BigDecimal
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -33,7 +32,7 @@ import testdb.warehouses.WarehousesFields
 import testdb.warehouses.WarehousesId
 import testdb.warehouses.WarehousesRow
 
-data class ShipmentsFields(val _path: List<Path>) : TupleExpr17<ShipmentsId, OrdersId, ShippingCarriersId, String, String, BigDecimal, Json, ByteArray, String, LocalDate, LocalDateTime, BigDecimal, BigDecimal, WarehousesId, LocalDateTime, LocalDateTime, LocalDateTime>, RelationStructure<ShipmentsFields, ShipmentsRow>, FieldsBase<ShipmentsRow> {
+data class ShipmentsFields(val _path: List<Path>) : TupleExpr17<ShipmentsId, OrdersId, ShippingCarriersId, kotlin.String, kotlin.String, BigDecimal, Json, ByteArray, kotlin.String, LocalDate, LocalDateTime, BigDecimal, BigDecimal, WarehousesId, LocalDateTime, LocalDateTime, LocalDateTime>, RelationStructure<ShipmentsFields, ShipmentsRow>, FieldsBase<ShipmentsRow> {
   override fun _1(): SqlExpr<ShipmentsId> = shipmentId()
 
   override fun _10(): SqlExpr<LocalDate> = estimatedDeliveryDate()
@@ -56,9 +55,9 @@ data class ShipmentsFields(val _path: List<Path>) : TupleExpr17<ShipmentsId, Ord
 
   override fun _3(): SqlExpr<ShippingCarriersId> = carrierId()
 
-  override fun _4(): SqlExpr<String> = trackingNumber()
+  override fun _4(): SqlExpr<kotlin.String> = trackingNumber()
 
-  override fun _5(): SqlExpr<String> = shippingMethod()
+  override fun _5(): SqlExpr<kotlin.String> = shippingMethod()
 
   override fun _6(): SqlExpr<BigDecimal> = weightKg()
 
@@ -66,21 +65,21 @@ data class ShipmentsFields(val _path: List<Path>) : TupleExpr17<ShipmentsId, Ord
 
   override fun _8(): SqlExpr<ByteArray> = labelData()
 
-  override fun _9(): SqlExpr<String> = status()
+  override fun _9(): SqlExpr<kotlin.String> = status()
 
   override fun _path(): List<Path> = _path
 
-  fun actualDeliveryAt(): OptField<LocalDateTime, ShipmentsRow> = OptField<LocalDateTime, ShipmentsRow>(_path, "actual_delivery_at", ShipmentsRow::actualDeliveryAt, null, null, { row, value -> row.copy(actualDeliveryAt = value) }, MariaTypes.datetime)
+  fun actualDeliveryAt(): OptField<LocalDateTime, ShipmentsRow> = OptField<LocalDateTime, ShipmentsRow>(_path, "actual_delivery_at", ShipmentsRow::actualDeliveryAt, null, null, { row, value -> row.copy(actualDeliveryAt = value) }, MariaTypes.datetime.underlying)
 
-  fun carrierId(): Field<ShippingCarriersId, ShipmentsRow> = Field<ShippingCarriersId, ShipmentsRow>(_path, "carrier_id", ShipmentsRow::carrierId, null, null, { row, value -> row.copy(carrierId = value) }, ShippingCarriersId.mariaType)
+  fun carrierId(): Field<ShippingCarriersId, ShipmentsRow> = Field<ShippingCarriersId, ShipmentsRow>(_path, "carrier_id", ShipmentsRow::carrierId, null, null, { row, value -> row.copy(carrierId = value) }, ShippingCarriersId.mariaType.underlying)
 
   override fun columns(): List<FieldLike<*, ShipmentsRow>> = listOf(this.shipmentId().underlying, this.orderId().underlying, this.carrierId().underlying, this.trackingNumber().underlying, this.shippingMethod().underlying, this.weightKg().underlying, this.dimensionsJson().underlying, this.labelData().underlying, this.status().underlying, this.estimatedDeliveryDate().underlying, this.actualDeliveryAt().underlying, this.shippingCost().underlying, this.insuranceAmount().underlying, this.originWarehouseId().underlying, this.shippedAt().underlying, this.createdAt().underlying, this.updatedAt().underlying)
 
-  fun createdAt(): Field<LocalDateTime, ShipmentsRow> = Field<LocalDateTime, ShipmentsRow>(_path, "created_at", ShipmentsRow::createdAt, null, null, { row, value -> row.copy(createdAt = value) }, MariaTypes.datetime)
+  fun createdAt(): Field<LocalDateTime, ShipmentsRow> = Field<LocalDateTime, ShipmentsRow>(_path, "created_at", ShipmentsRow::createdAt, null, null, { row, value -> row.copy(createdAt = value) }, MariaTypes.datetime.underlying)
 
-  fun dimensionsJson(): OptField<Json, ShipmentsRow> = OptField<Json, ShipmentsRow>(_path, "dimensions_json", ShipmentsRow::dimensionsJson, null, null, { row, value -> row.copy(dimensionsJson = value) }, MariaTypes.json)
+  fun dimensionsJson(): OptField<Json, ShipmentsRow> = OptField<Json, ShipmentsRow>(_path, "dimensions_json", ShipmentsRow::dimensionsJson, null, null, { row, value -> row.copy(dimensionsJson = value) }, MariaTypes.json.underlying)
 
-  fun estimatedDeliveryDate(): OptField<LocalDate, ShipmentsRow> = OptField<LocalDate, ShipmentsRow>(_path, "estimated_delivery_date", ShipmentsRow::estimatedDeliveryDate, null, null, { row, value -> row.copy(estimatedDeliveryDate = value) }, MariaTypes.date)
+  fun estimatedDeliveryDate(): OptField<LocalDate, ShipmentsRow> = OptField<LocalDate, ShipmentsRow>(_path, "estimated_delivery_date", ShipmentsRow::estimatedDeliveryDate, null, null, { row, value -> row.copy(estimatedDeliveryDate = value) }, MariaTypes.date.underlying)
 
   fun fkOrders(): ForeignKey<OrdersFields, OrdersRow> = ForeignKey.of<OrdersFields, OrdersRow>("fk_ship_order").withColumnPair<OrdersId>(orderId(), OrdersFields::orderId)
 
@@ -88,31 +87,31 @@ data class ShipmentsFields(val _path: List<Path>) : TupleExpr17<ShipmentsId, Ord
 
   fun fkWarehouses(): ForeignKey<WarehousesFields, WarehousesRow> = ForeignKey.of<WarehousesFields, WarehousesRow>("fk_ship_warehouse").withColumnPair<WarehousesId>(originWarehouseId(), WarehousesFields::warehouseId)
 
-  fun insuranceAmount(): OptField<BigDecimal, ShipmentsRow> = OptField<BigDecimal, ShipmentsRow>(_path, "insurance_amount", ShipmentsRow::insuranceAmount, null, null, { row, value -> row.copy(insuranceAmount = value) }, KotlinDbTypes.MariaTypes.numeric)
+  fun insuranceAmount(): OptField<BigDecimal, ShipmentsRow> = OptField<BigDecimal, ShipmentsRow>(_path, "insurance_amount", ShipmentsRow::insuranceAmount, null, null, { row, value -> row.copy(insuranceAmount = value) }, MariaTypes.numeric.underlying)
 
-  fun labelData(): OptField<ByteArray, ShipmentsRow> = OptField<ByteArray, ShipmentsRow>(_path, "label_data", ShipmentsRow::labelData, null, null, { row, value -> row.copy(labelData = value) }, MariaTypes.longblob)
+  fun labelData(): OptField<ByteArray, ShipmentsRow> = OptField<ByteArray, ShipmentsRow>(_path, "label_data", ShipmentsRow::labelData, null, null, { row, value -> row.copy(labelData = value) }, MariaTypes.longblob.underlying)
 
-  fun orderId(): Field<OrdersId, ShipmentsRow> = Field<OrdersId, ShipmentsRow>(_path, "order_id", ShipmentsRow::orderId, null, null, { row, value -> row.copy(orderId = value) }, OrdersId.mariaType)
+  fun orderId(): Field<OrdersId, ShipmentsRow> = Field<OrdersId, ShipmentsRow>(_path, "order_id", ShipmentsRow::orderId, null, null, { row, value -> row.copy(orderId = value) }, OrdersId.mariaType.underlying)
 
-  fun originWarehouseId(): OptField<WarehousesId, ShipmentsRow> = OptField<WarehousesId, ShipmentsRow>(_path, "origin_warehouse_id", ShipmentsRow::originWarehouseId, null, null, { row, value -> row.copy(originWarehouseId = value) }, WarehousesId.mariaType)
+  fun originWarehouseId(): OptField<WarehousesId, ShipmentsRow> = OptField<WarehousesId, ShipmentsRow>(_path, "origin_warehouse_id", ShipmentsRow::originWarehouseId, null, null, { row, value -> row.copy(originWarehouseId = value) }, WarehousesId.mariaType.underlying)
 
-  override fun rowParser(): RowParser<ShipmentsRow> = ShipmentsRow._rowParser.underlying
+  override fun rowCodec(): RowCodec<ShipmentsRow> = ShipmentsRow.rowCodec.underlying
 
-  fun shipmentId(): IdField<ShipmentsId, ShipmentsRow> = IdField<ShipmentsId, ShipmentsRow>(_path, "shipment_id", ShipmentsRow::shipmentId, null, null, { row, value -> row.copy(shipmentId = value) }, ShipmentsId.mariaType)
+  fun shipmentId(): IdField<ShipmentsId, ShipmentsRow> = IdField<ShipmentsId, ShipmentsRow>(_path, "shipment_id", ShipmentsRow::shipmentId, null, null, { row, value -> row.copy(shipmentId = value) }, ShipmentsId.mariaType.underlying)
 
-  fun shippedAt(): OptField<LocalDateTime, ShipmentsRow> = OptField<LocalDateTime, ShipmentsRow>(_path, "shipped_at", ShipmentsRow::shippedAt, null, null, { row, value -> row.copy(shippedAt = value) }, MariaTypes.datetime)
+  fun shippedAt(): OptField<LocalDateTime, ShipmentsRow> = OptField<LocalDateTime, ShipmentsRow>(_path, "shipped_at", ShipmentsRow::shippedAt, null, null, { row, value -> row.copy(shippedAt = value) }, MariaTypes.datetime.underlying)
 
-  fun shippingCost(): Field<BigDecimal, ShipmentsRow> = Field<BigDecimal, ShipmentsRow>(_path, "shipping_cost", ShipmentsRow::shippingCost, null, null, { row, value -> row.copy(shippingCost = value) }, KotlinDbTypes.MariaTypes.numeric)
+  fun shippingCost(): Field<BigDecimal, ShipmentsRow> = Field<BigDecimal, ShipmentsRow>(_path, "shipping_cost", ShipmentsRow::shippingCost, null, null, { row, value -> row.copy(shippingCost = value) }, MariaTypes.numeric.underlying)
 
-  fun shippingMethod(): Field<String, ShipmentsRow> = Field<String, ShipmentsRow>(_path, "shipping_method", ShipmentsRow::shippingMethod, null, null, { row, value -> row.copy(shippingMethod = value) }, MariaTypes.varchar)
+  fun shippingMethod(): Field<kotlin.String, ShipmentsRow> = Field<kotlin.String, ShipmentsRow>(_path, "shipping_method", ShipmentsRow::shippingMethod, null, null, { row, value -> row.copy(shippingMethod = value) }, MariaTypes.varchar.underlying)
 
-  fun status(): Field<String, ShipmentsRow> = Field<String, ShipmentsRow>(_path, "status", ShipmentsRow::status, null, null, { row, value -> row.copy(status = value) }, MariaTypes.text)
+  fun status(): Field<kotlin.String, ShipmentsRow> = Field<kotlin.String, ShipmentsRow>(_path, "status", ShipmentsRow::status, null, null, { row, value -> row.copy(status = value) }, MariaTypes.text.underlying)
 
-  fun trackingNumber(): OptField<String, ShipmentsRow> = OptField<String, ShipmentsRow>(_path, "tracking_number", ShipmentsRow::trackingNumber, null, null, { row, value -> row.copy(trackingNumber = value) }, MariaTypes.varchar)
+  fun trackingNumber(): OptField<kotlin.String, ShipmentsRow> = OptField<kotlin.String, ShipmentsRow>(_path, "tracking_number", ShipmentsRow::trackingNumber, null, null, { row, value -> row.copy(trackingNumber = value) }, MariaTypes.varchar.underlying)
 
-  fun updatedAt(): Field<LocalDateTime, ShipmentsRow> = Field<LocalDateTime, ShipmentsRow>(_path, "updated_at", ShipmentsRow::updatedAt, null, null, { row, value -> row.copy(updatedAt = value) }, MariaTypes.datetime)
+  fun updatedAt(): Field<LocalDateTime, ShipmentsRow> = Field<LocalDateTime, ShipmentsRow>(_path, "updated_at", ShipmentsRow::updatedAt, null, null, { row, value -> row.copy(updatedAt = value) }, MariaTypes.datetime.underlying)
 
-  fun weightKg(): OptField<BigDecimal, ShipmentsRow> = OptField<BigDecimal, ShipmentsRow>(_path, "weight_kg", ShipmentsRow::weightKg, null, null, { row, value -> row.copy(weightKg = value) }, KotlinDbTypes.MariaTypes.numeric)
+  fun weightKg(): OptField<BigDecimal, ShipmentsRow> = OptField<BigDecimal, ShipmentsRow>(_path, "weight_kg", ShipmentsRow::weightKg, null, null, { row, value -> row.copy(weightKg = value) }, MariaTypes.numeric.underlying)
 
   override fun withPaths(_path: List<Path>): RelationStructure<ShipmentsFields, ShipmentsRow> = ShipmentsFields(_path)
 

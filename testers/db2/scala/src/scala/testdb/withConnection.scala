@@ -1,13 +1,11 @@
 package testdb
 
-import dev.typr.foundations.{SqlFunction, Transactor}
-import dev.typr.foundations.connect.db2.Db2Config
+import dev.typr.foundationssc.*
+import dev.typr.foundationssc.connect.Db2Config
 
 object withConnection {
   private val config = Db2Config.builder("localhost", 50000, "typr", "db2inst1", "password").build()
-  private val transactor = config.transactor(Transactor.testStrategy())
+  private val transactor = Transactor.create(config).rollbackOnly()
 
-  def apply[T](f: java.sql.Connection => T): T = {
-    transactor.execute[T]((conn => f(conn)): SqlFunction[java.sql.Connection, T])
-  }
+  def apply[T](f: Connection ?=> T): T = transactor.transact(f)
 }

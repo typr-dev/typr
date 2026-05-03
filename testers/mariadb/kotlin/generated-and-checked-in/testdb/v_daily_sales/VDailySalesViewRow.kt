@@ -6,12 +6,10 @@
 package testdb.v_daily_sales
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import dev.typr.foundations.MariaTypes
+import dev.typr.dslkt.RowCodecs
 import dev.typr.foundations.Tuple.Tuple10
-import dev.typr.foundations.kotlin.KotlinDbTypes
-import dev.typr.foundations.kotlin.RowParser
-import dev.typr.foundations.kotlin.RowParsers
-import dev.typr.foundations.kotlin.nullable
+import dev.typr.foundationskt.MariaTypes
+import dev.typr.foundationskt.RowCodec
 import java.math.BigDecimal
 import java.time.LocalDate
 
@@ -26,11 +24,11 @@ data class VDailySalesViewRow(
   /** 
     * Default: 0
     */
-  @field:JsonProperty("order_count") val orderCount: Long,
+  @field:JsonProperty("order_count") val orderCount: kotlin.Long,
   /** 
     * Default: 0
     */
-  @field:JsonProperty("unique_customers") val uniqueCustomers: Long,
+  @field:JsonProperty("unique_customers") val uniqueCustomers: kotlin.Long,
   /** 
     * Default: NULL
     */
@@ -59,14 +57,14 @@ data class VDailySalesViewRow(
     * Default: NULL
     */
   @field:JsonProperty("avg_order_value") val avgOrderValue: BigDecimal?
-) : Tuple10<LocalDate?, Long, Long, BigDecimal?, BigDecimal?, BigDecimal?, BigDecimal?, BigDecimal?, BigDecimal?, BigDecimal?> {
+) : Tuple10<LocalDate?, kotlin.Long, kotlin.Long, BigDecimal?, BigDecimal?, BigDecimal?, BigDecimal?, BigDecimal?, BigDecimal?, BigDecimal?> {
   override fun _1(): LocalDate? = orderDate
 
   override fun _10(): BigDecimal? = avgOrderValue
 
-  override fun _2(): Long = orderCount
+  override fun _2(): kotlin.Long = orderCount
 
-  override fun _3(): Long = uniqueCustomers
+  override fun _3(): kotlin.Long = uniqueCustomers
 
   override fun _4(): BigDecimal? = itemsSold
 
@@ -81,6 +79,6 @@ data class VDailySalesViewRow(
   override fun _9(): BigDecimal? = netSales
 
   companion object {
-    val _rowParser: RowParser<VDailySalesViewRow> = RowParsers.of(MariaTypes.date.nullable(), KotlinDbTypes.MariaTypes.bigint, KotlinDbTypes.MariaTypes.bigint, KotlinDbTypes.MariaTypes.numeric.nullable(), KotlinDbTypes.MariaTypes.numeric.nullable(), KotlinDbTypes.MariaTypes.numeric.nullable(), KotlinDbTypes.MariaTypes.numeric.nullable(), KotlinDbTypes.MariaTypes.numeric.nullable(), KotlinDbTypes.MariaTypes.numeric.nullable(), KotlinDbTypes.MariaTypes.numeric.nullable(), { t0, t1, t2, t3, t4, t5, t6, t7, t8, t9 -> VDailySalesViewRow(t0, t1, t2, t3, t4, t5, t6, t7, t8, t9) }, { row -> arrayOf<Any?>(row.orderDate, row.orderCount, row.uniqueCustomers, row.itemsSold, row.grossSales, row.totalDiscounts, row.totalShipping, row.totalTax, row.netSales, row.avgOrderValue) })
+    val rowCodec: RowCodec<VDailySalesViewRow> = RowCodecs.of(MariaTypes.date.opt(), MariaTypes.bigint, MariaTypes.bigint, MariaTypes.numeric.opt(), MariaTypes.numeric.opt(), MariaTypes.numeric.opt(), MariaTypes.numeric.opt(), MariaTypes.numeric.opt(), MariaTypes.numeric.opt(), MariaTypes.numeric.opt(), { t0: LocalDate?, t1: kotlin.Long, t2: kotlin.Long, t3: BigDecimal?, t4: BigDecimal?, t5: BigDecimal?, t6: BigDecimal?, t7: BigDecimal?, t8: BigDecimal?, t9: BigDecimal? -> VDailySalesViewRow(t0, t1, t2, t3, t4, t5, t6, t7, t8, t9) }, { row: VDailySalesViewRow -> arrayOf<Any?>(row.orderDate, row.orderCount, row.uniqueCustomers, row.itemsSold, row.grossSales, row.totalDiscounts, row.totalShipping, row.totalTax, row.netSales, row.avgOrderValue) })
   }
 }

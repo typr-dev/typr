@@ -18,7 +18,7 @@ import typr.dsl.Bijection
 case class TypoHStore(value: Map[String, String])
 
 object TypoHStore {
-  implicit lazy val bijection: Bijection[TypoHStore, Map[String, String]] = Bijection.apply[TypoHStore, Map[String, String]](_.value)(TypoHStore.apply)
+  implicit lazy val bijection: Bijection[TypoHStore, Map[String, String]] = Bijection[TypoHStore, Map[String, String]](_.value)(TypoHStore.apply)
 
   implicit lazy val decoder: Decoder[TypoHStore] = Decoder[Map[String, String]].map(TypoHStore.apply)
 

@@ -6,10 +6,10 @@
 package testdb.precisetypes
 
 import com.fasterxml.jackson.annotation.JsonValue
-import dev.typr.foundations.SqlServerType
-import dev.typr.foundations.SqlServerTypes
+import dev.typr.dslsc.Bijection
 import dev.typr.foundations.data.precise.PaddedStringN
-import dev.typr.foundations.scala.Bijection
+import dev.typr.foundationssc.SqlServerType
+import dev.typr.foundationssc.SqlServerTypes
 import java.lang.IllegalArgumentException
 
 case class PaddedString10 private(@JsonValue value: String) extends PaddedStringN {
@@ -19,7 +19,7 @@ case class PaddedString10 private(@JsonValue value: String) extends PaddedString
 
   override def trimmed: String = value.stripTrailing()
 
-  override def semanticEquals(other: PaddedStringN): Boolean = (if (other == null) false else trimmed() == other.trimmed())
+  override def semanticEquals(other: PaddedStringN): Boolean = (if (other == null) false else (trimmed() == other.trimmed()))
 
   override def semanticHashCode: Int = trimmed().hashCode()
 
@@ -29,11 +29,11 @@ case class PaddedString10 private(@JsonValue value: String) extends PaddedString
 }
 
 object PaddedString10 {
-  given bijection: Bijection[PaddedString10, String] = Bijection.apply[PaddedString10, String](_.value)(PaddedString10.apply)
+  given bijection: Bijection[PaddedString10, String] = Bijection.of[PaddedString10, String](_.value, PaddedString10.apply)
 
   def of(value: String): Option[PaddedString10] = (if (value.length <= 10) Some(new PaddedString10(String.format("%-10s", value))) else None)
 
-  given sqlServerType: SqlServerType[PaddedString10] = SqlServerTypes.char_.bimap(PaddedString10.apply, _.value)
+  given sqlServerType: SqlServerType[PaddedString10] = SqlServerTypes.char_.to(Bijection.of(PaddedString10.apply, _.value))
 
   def unsafeForce(value: String): PaddedString10 = {
     if (value.length > 10) {

@@ -5,29 +5,30 @@
  */
 package testdb.precision_types
 
-import dev.typr.foundations.scala.DeleteBuilder
-import dev.typr.foundations.scala.SelectBuilder
-import dev.typr.foundations.scala.UpdateBuilder
-import java.sql.Connection
+import dev.typr.dslsc.DeleteBuilder
+import dev.typr.dslsc.SelectBuilder
+import dev.typr.dslsc.UpdateBuilder
+import dev.typr.foundationssc.Connection
+import dev.typr.foundationssc.ConnectionRead
 
 trait PrecisionTypesRepo {
   def delete: DeleteBuilder[PrecisionTypesFields, PrecisionTypesRow]
 
   def deleteById(id: PrecisionTypesId)(using c: Connection): Boolean
 
-  def deleteByIds(ids: Array[PrecisionTypesId])(using c: Connection): Int
+  def deleteByIds(ids: List[PrecisionTypesId])(using c: Connection): Int
 
   def insert(unsaved: PrecisionTypesRow)(using c: Connection): PrecisionTypesRow
 
   def select: SelectBuilder[PrecisionTypesFields, PrecisionTypesRow]
 
-  def selectAll(using c: Connection): List[PrecisionTypesRow]
+  def selectAll(using c: ConnectionRead): List[PrecisionTypesRow]
 
-  def selectById(id: PrecisionTypesId)(using c: Connection): Option[PrecisionTypesRow]
+  def selectById(id: PrecisionTypesId)(using c: ConnectionRead): Option[PrecisionTypesRow]
 
-  def selectByIds(ids: Array[PrecisionTypesId])(using c: Connection): List[PrecisionTypesRow]
+  def selectByIds(ids: List[PrecisionTypesId])(using c: ConnectionRead): List[PrecisionTypesRow]
 
-  def selectByIdsTracked(ids: Array[PrecisionTypesId])(using c: Connection): Map[PrecisionTypesId, PrecisionTypesRow]
+  def selectByIdsTracked(ids: List[PrecisionTypesId])(using c: ConnectionRead): Map[PrecisionTypesId, PrecisionTypesRow]
 
   def update: UpdateBuilder[PrecisionTypesFields, PrecisionTypesRow]
 

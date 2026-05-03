@@ -5,10 +5,11 @@
  */
 package testdb.db2testnull
 
-import dev.typr.foundations.kotlin.DeleteBuilder
-import dev.typr.foundations.kotlin.SelectBuilder
-import dev.typr.foundations.kotlin.UpdateBuilder
-import java.sql.Connection
+import dev.typr.dslkt.DeleteBuilder
+import dev.typr.dslkt.SelectBuilder
+import dev.typr.dslkt.UpdateBuilder
+import dev.typr.foundationskt.Connection
+import dev.typr.foundationskt.ConnectionRead
 import kotlin.collections.List
 
 interface Db2testnullRepo {
@@ -21,7 +22,7 @@ interface Db2testnullRepo {
 
   abstract fun select(): SelectBuilder<Db2testnullFields, Db2testnullRow>
 
-  abstract fun selectAll(c: Connection): List<Db2testnullRow>
+  abstract fun selectAll(c: ConnectionRead): List<Db2testnullRow>
 
   abstract fun update(): UpdateBuilder<Db2testnullFields, Db2testnullRow>
 }

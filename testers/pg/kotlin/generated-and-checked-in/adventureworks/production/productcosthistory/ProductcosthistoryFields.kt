@@ -8,19 +8,19 @@ package adventureworks.production.productcosthistory
 import adventureworks.production.product.ProductFields
 import adventureworks.production.product.ProductId
 import adventureworks.production.product.ProductRow
-import dev.typr.foundations.PgTypes
-import dev.typr.foundations.RowParser
-import dev.typr.foundations.dsl.FieldsBase
-import dev.typr.foundations.dsl.Path
-import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.kotlin.ForeignKey
-import dev.typr.foundations.kotlin.RelationStructure
-import dev.typr.foundations.kotlin.SqlExpr
-import dev.typr.foundations.kotlin.SqlExpr.Field
-import dev.typr.foundations.kotlin.SqlExpr.IdField
-import dev.typr.foundations.kotlin.SqlExpr.OptField
-import dev.typr.foundations.kotlin.TupleExpr
-import dev.typr.foundations.kotlin.TupleExpr5
+import dev.typr.dsl.FieldsBase
+import dev.typr.dsl.Path
+import dev.typr.dsl.SqlExpr.FieldLike
+import dev.typr.dslkt.ForeignKey
+import dev.typr.dslkt.RelationStructure
+import dev.typr.dslkt.SqlExpr
+import dev.typr.dslkt.SqlExpr.Field
+import dev.typr.dslkt.SqlExpr.IdField
+import dev.typr.dslkt.SqlExpr.OptField
+import dev.typr.dslkt.TupleExpr
+import dev.typr.dslkt.TupleExpr5
+import dev.typr.foundations.RowCodec
+import dev.typr.foundationskt.PgTypes
 import java.math.BigDecimal
 import java.time.LocalDateTime
 import kotlin.collections.List
@@ -40,23 +40,23 @@ data class ProductcosthistoryFields(val _path: List<Path>) : TupleExpr5<ProductI
 
   override fun columns(): List<FieldLike<*, ProductcosthistoryRow>> = listOf(this.productid().underlying, this.startdate().underlying, this.enddate().underlying, this.standardcost().underlying, this.modifieddate().underlying)
 
-  fun compositeIdIn(compositeIds: List<ProductcosthistoryId>): SqlExpr<Boolean> = TupleExpr.of(productid(), startdate()).among(compositeIds)
+  fun compositeIdIn(compositeIds: List<ProductcosthistoryId>): SqlExpr<kotlin.Boolean> = TupleExpr.of(productid(), startdate()).among(compositeIds)
 
-  fun compositeIdIs(compositeId: ProductcosthistoryId): SqlExpr<Boolean> = SqlExpr.all(productid().isEqual(compositeId.productid), startdate().isEqual(compositeId.startdate))
+  fun compositeIdIs(compositeId: ProductcosthistoryId): SqlExpr<kotlin.Boolean> = SqlExpr.all(productid().isEqual(compositeId.productid), startdate().isEqual(compositeId.startdate))
 
-  fun enddate(): OptField<LocalDateTime, ProductcosthistoryRow> = OptField<LocalDateTime, ProductcosthistoryRow>(_path, "enddate", ProductcosthistoryRow::enddate, null, "timestamp", { row, value -> row.copy(enddate = value) }, PgTypes.timestamp)
+  fun enddate(): OptField<LocalDateTime, ProductcosthistoryRow> = OptField<LocalDateTime, ProductcosthistoryRow>(_path, "enddate", ProductcosthistoryRow::enddate, null, "timestamp", { row, value -> row.copy(enddate = value) }, PgTypes.timestamp.underlying)
 
   fun fkProduct(): ForeignKey<ProductFields, ProductRow> = ForeignKey.of<ProductFields, ProductRow>("production.FK_ProductCostHistory_Product_ProductID").withColumnPair<ProductId>(productid(), ProductFields::productid)
 
-  fun modifieddate(): Field<LocalDateTime, ProductcosthistoryRow> = Field<LocalDateTime, ProductcosthistoryRow>(_path, "modifieddate", ProductcosthistoryRow::modifieddate, null, "timestamp", { row, value -> row.copy(modifieddate = value) }, PgTypes.timestamp)
+  fun modifieddate(): Field<LocalDateTime, ProductcosthistoryRow> = Field<LocalDateTime, ProductcosthistoryRow>(_path, "modifieddate", ProductcosthistoryRow::modifieddate, null, "timestamp", { row, value -> row.copy(modifieddate = value) }, PgTypes.timestamp.underlying)
 
-  fun productid(): IdField<ProductId, ProductcosthistoryRow> = IdField<ProductId, ProductcosthistoryRow>(_path, "productid", ProductcosthistoryRow::productid, null, "int4", { row, value -> row.copy(productid = value) }, ProductId.pgType)
+  fun productid(): IdField<ProductId, ProductcosthistoryRow> = IdField<ProductId, ProductcosthistoryRow>(_path, "productid", ProductcosthistoryRow::productid, null, "int4", { row, value -> row.copy(productid = value) }, ProductId.pgType.underlying)
 
-  override fun rowParser(): RowParser<ProductcosthistoryRow> = ProductcosthistoryRow._rowParser.underlying
+  override fun rowCodec(): RowCodec<ProductcosthistoryRow> = ProductcosthistoryRow.rowCodec.underlying
 
-  fun standardcost(): Field<BigDecimal, ProductcosthistoryRow> = Field<BigDecimal, ProductcosthistoryRow>(_path, "standardcost", ProductcosthistoryRow::standardcost, null, "numeric", { row, value -> row.copy(standardcost = value) }, PgTypes.numeric)
+  fun standardcost(): Field<BigDecimal, ProductcosthistoryRow> = Field<BigDecimal, ProductcosthistoryRow>(_path, "standardcost", ProductcosthistoryRow::standardcost, null, "numeric", { row, value -> row.copy(standardcost = value) }, PgTypes.numeric.underlying)
 
-  fun startdate(): IdField<LocalDateTime, ProductcosthistoryRow> = IdField<LocalDateTime, ProductcosthistoryRow>(_path, "startdate", ProductcosthistoryRow::startdate, null, "timestamp", { row, value -> row.copy(startdate = value) }, PgTypes.timestamp)
+  fun startdate(): IdField<LocalDateTime, ProductcosthistoryRow> = IdField<LocalDateTime, ProductcosthistoryRow>(_path, "startdate", ProductcosthistoryRow::startdate, null, "timestamp", { row, value -> row.copy(startdate = value) }, PgTypes.timestamp.underlying)
 
   override fun withPaths(_path: List<Path>): RelationStructure<ProductcosthistoryFields, ProductcosthistoryRow> = ProductcosthistoryFields(_path)
 

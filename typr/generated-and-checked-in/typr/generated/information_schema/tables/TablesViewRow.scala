@@ -27,7 +27,7 @@ case class TablesViewRow(
   tableSchema: Option[String],
   /** debug: {"name":"table_name","inferred_type":"\"information_schema\".\"sql_identifier\"","nullable_from_join":false,"nullable_in_schema":false,"is_expression":true,"source_table":"pg_class","source_column":"relname","source_type":"name","source_primary_key":false} */
   tableName: Option[String],
-  /** debug: {"name":"table_type","inferred_type":"\"information_schema\".\"character_data\"","nullable_from_join":false,"nullable_in_schema":false,"is_expression":true,"source_table":"pg_namespace","source_column":"oid","source_type":"oid","source_primary_key":false} */
+  /** debug: {"name":"table_type","inferred_type":"\"information_schema\".\"character_data\"","nullable_from_join":false,"nullable_in_schema":false,"is_expression":true,"source_table":"pg_class","source_column":"relkind","source_type":"char","source_primary_key":false} */
   tableType: Option[String],
   /** debug: {"name":"self_referencing_column_name","inferred_type":"\"information_schema\".\"sql_identifier\"","nullable_from_join":false,"nullable_in_schema":false,"is_expression":false,"source_primary_key":false} */
   selfReferencingColumnName: Option[String],

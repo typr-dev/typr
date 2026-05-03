@@ -24,7 +24,7 @@ object OnlineOrderFlag {
 
   given arrayToStatement: ToStatement[Array[OnlineOrderFlag]] = Flag.arrayToStatement.contramap(_.map(_.value))
 
-  given bijection: Bijection[OnlineOrderFlag, Flag] = Bijection.apply[OnlineOrderFlag, Flag](_.value)(OnlineOrderFlag.apply)
+  given bijection: Bijection[OnlineOrderFlag, Flag] = Bijection[OnlineOrderFlag, Flag](_.value)(OnlineOrderFlag.apply)
 
   given column: Column[OnlineOrderFlag] = Flag.column.map(OnlineOrderFlag.apply)
 

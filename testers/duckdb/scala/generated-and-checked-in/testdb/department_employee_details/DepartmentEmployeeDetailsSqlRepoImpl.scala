@@ -5,13 +5,11 @@
  */
 package testdb.department_employee_details
 
-import dev.typr.foundations.DuckDbTypes
-import dev.typr.foundations.scala.DbTypeOps
-import dev.typr.foundations.scala.Fragment
-import dev.typr.foundations.scala.ScalaDbTypes
-import java.sql.Connection
+import dev.typr.foundationssc.ConnectionRead
+import dev.typr.foundationssc.DuckDbTypes
+import dev.typr.foundationssc.Fragment
 import java.time.LocalDate
-import dev.typr.foundations.scala.Fragment.sql
+import dev.typr.foundationssc.Fragment.sql
 
 class DepartmentEmployeeDetailsSqlRepoImpl extends DepartmentEmployeeDetailsSqlRepo {
   override def apply(
@@ -19,7 +17,7 @@ class DepartmentEmployeeDetailsSqlRepoImpl extends DepartmentEmployeeDetailsSqlR
     deptRegion: Option[String],
     minSalary: Option[BigDecimal],
     hiredAfter: Option[LocalDate]
-  )(using c: Connection): List[DepartmentEmployeeDetailsSqlRow] = {
+  )(using c: ConnectionRead): List[DepartmentEmployeeDetailsSqlRow] = {
     sql"""-- Department and employee details with composite key handling
     -- Tests: composite primary keys, composite foreign keys, multiple table joins
   
@@ -38,10 +36,10 @@ class DepartmentEmployeeDetailsSqlRepoImpl extends DepartmentEmployeeDetailsSqlR
     FROM departments d
     LEFT JOIN employees e ON d.dept_code = e.dept_code AND d.dept_region = e.dept_region
     WHERE
-        (${Fragment.encode(DuckDbTypes.varchar.nullable, deptCode)} IS NULL OR d.dept_code = ${Fragment.encode(DuckDbTypes.varchar.nullable, deptCode)})
-        AND (${Fragment.encode(DuckDbTypes.varchar.nullable, deptRegion)} IS NULL OR d.dept_region = ${Fragment.encode(DuckDbTypes.varchar.nullable, deptRegion)})
-        AND (${Fragment.encode(ScalaDbTypes.DuckDbTypes.numeric.nullable, minSalary)} IS NULL OR e.salary >= ${Fragment.encode(ScalaDbTypes.DuckDbTypes.numeric.nullable, minSalary)})
-        AND (${Fragment.encode(DuckDbTypes.date.nullable, hiredAfter)} IS NULL OR e.hire_date >= ${Fragment.encode(DuckDbTypes.date.nullable, hiredAfter)})
-    ORDER BY d.dept_code, d.dept_region, e.emp_number""".query(DepartmentEmployeeDetailsSqlRow.`_rowParser`.all()).runUnchecked(c)
+        (${Fragment.encode(DuckDbTypes.varchar.opt, deptCode)} IS NULL OR d.dept_code = ${Fragment.encode(DuckDbTypes.varchar.opt, deptCode)})
+        AND (${Fragment.encode(DuckDbTypes.varchar.opt, deptRegion)} IS NULL OR d.dept_region = ${Fragment.encode(DuckDbTypes.varchar.opt, deptRegion)})
+        AND (${Fragment.encode(DuckDbTypes.numeric.opt, minSalary)} IS NULL OR e.salary >= ${Fragment.encode(DuckDbTypes.numeric.opt, minSalary)})
+        AND (${Fragment.encode(DuckDbTypes.date.opt, hiredAfter)} IS NULL OR e.hire_date >= ${Fragment.encode(DuckDbTypes.date.opt, hiredAfter)})
+    ORDER BY d.dept_code, d.dept_region, e.emp_number""".query(DepartmentEmployeeDetailsSqlRow.rowCodec.all()).run(using c)
   }
 }

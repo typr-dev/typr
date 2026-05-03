@@ -5,17 +5,18 @@
  */
 package testdb.payments
 
-import dev.typr.foundations.scala.DeleteBuilder
-import dev.typr.foundations.scala.SelectBuilder
-import dev.typr.foundations.scala.UpdateBuilder
-import java.sql.Connection
+import dev.typr.dslsc.DeleteBuilder
+import dev.typr.dslsc.SelectBuilder
+import dev.typr.dslsc.UpdateBuilder
+import dev.typr.foundationssc.Connection
+import dev.typr.foundationssc.ConnectionRead
 
 trait PaymentsRepo {
   def delete: DeleteBuilder[PaymentsFields, PaymentsRow]
 
   def deleteById(paymentId: PaymentsId)(using c: Connection): Boolean
 
-  def deleteByIds(paymentIds: Array[PaymentsId])(using c: Connection): Int
+  def deleteByIds(paymentIds: List[PaymentsId])(using c: Connection): Int
 
   def insert(unsaved: PaymentsRow)(using c: Connection): PaymentsRow
 
@@ -23,13 +24,13 @@ trait PaymentsRepo {
 
   def select: SelectBuilder[PaymentsFields, PaymentsRow]
 
-  def selectAll(using c: Connection): List[PaymentsRow]
+  def selectAll(using c: ConnectionRead): List[PaymentsRow]
 
-  def selectById(paymentId: PaymentsId)(using c: Connection): Option[PaymentsRow]
+  def selectById(paymentId: PaymentsId)(using c: ConnectionRead): Option[PaymentsRow]
 
-  def selectByIds(paymentIds: Array[PaymentsId])(using c: Connection): List[PaymentsRow]
+  def selectByIds(paymentIds: List[PaymentsId])(using c: ConnectionRead): List[PaymentsRow]
 
-  def selectByIdsTracked(paymentIds: Array[PaymentsId])(using c: Connection): Map[PaymentsId, PaymentsRow]
+  def selectByIdsTracked(paymentIds: List[PaymentsId])(using c: ConnectionRead): Map[PaymentsId, PaymentsRow]
 
   def update: UpdateBuilder[PaymentsFields, PaymentsRow]
 

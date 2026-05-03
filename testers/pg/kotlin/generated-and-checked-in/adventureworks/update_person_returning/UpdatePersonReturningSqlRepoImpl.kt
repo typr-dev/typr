@@ -5,17 +5,16 @@
  */
 package adventureworks.update_person_returning
 
-import dev.typr.foundations.PgTypes
-import dev.typr.foundations.kotlin.Fragment
-import dev.typr.foundations.kotlin.nullable
-import java.sql.Connection
+import dev.typr.foundationskt.ConnectionRead
+import dev.typr.foundationskt.Fragment
+import dev.typr.foundationskt.PgTypes
 import java.time.LocalDateTime
 import kotlin.collections.List
 
 class UpdatePersonReturningSqlRepoImpl() : UpdatePersonReturningSqlRepo {
   override fun apply(
-    suffix: /* nullability unknown */ String?,
+    suffix: /* nullability unknown */ kotlin.String?,
     cutoff: /* nullability unknown */ LocalDateTime?,
-    c: Connection
-  ): List<UpdatePersonReturningSqlRow> = Fragment.interpolate(Fragment.lit("update person.person\nset firstname = firstname || '-' || "), Fragment.encode(PgTypes.text.nullable(), suffix), Fragment.lit("\nwhere modifieddate < "), Fragment.encode(PgTypes.timestamp.nullable(), cutoff), Fragment.lit("::timestamp\nreturning firstname, modifieddate")).query(UpdatePersonReturningSqlRow._rowParser.all()).runUnchecked(c)
+    c: ConnectionRead
+  ): List<UpdatePersonReturningSqlRow> = Fragment.concat(Fragment.of("update person.person\nset firstname = firstname || '-' || "), Fragment.encode(PgTypes.text.opt(), suffix), Fragment.of("\nwhere modifieddate < "), Fragment.encode(PgTypes.timestamp.opt(), cutoff), Fragment.of("::timestamp\nreturning firstname, modifieddate")).query(UpdatePersonReturningSqlRow.rowCodec.all()).run(c)
 }

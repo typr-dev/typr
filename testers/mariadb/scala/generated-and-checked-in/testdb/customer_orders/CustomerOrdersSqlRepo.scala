@@ -5,12 +5,12 @@
  */
 package testdb.customer_orders
 
-import java.sql.Connection
+import dev.typr.foundationssc.ConnectionRead
 import testdb.customers.CustomersId
 
 trait CustomerOrdersSqlRepo {
   def apply(
     customerId: /* user-picked */ CustomersId,
     orderStatus: Option[String]
-  )(using c: Connection): List[CustomerOrdersSqlRow]
+  )(using c: ConnectionRead): List[CustomerOrdersSqlRow]
 }

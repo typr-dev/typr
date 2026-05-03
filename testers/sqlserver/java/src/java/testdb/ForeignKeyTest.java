@@ -15,7 +15,7 @@ import testdb.products.*;
  * orders/products relationships.
  */
 public class ForeignKeyTest {
-  private final TestInsert testInsert = new TestInsert(new Random(42));
+  private final TestInsert testInsert = new TestInsert(new Random(603425603));
   private final CustomersRepoImpl customersRepo = new CustomersRepoImpl();
   private final ProductsRepoImpl productsRepo = new ProductsRepoImpl();
   private final OrdersRepoImpl ordersRepo = new OrdersRepoImpl();

@@ -23,7 +23,7 @@ public class ForeignKeyTest {
   private final CustomerStatusRepoImpl customerStatusRepo = new CustomerStatusRepoImpl();
   private final CustomersRepoImpl customersRepo = new CustomersRepoImpl();
   private final OrdersRepoImpl ordersRepo = new OrdersRepoImpl();
-  private final TestInsert testInsert = new TestInsert(new Random(42));
+  private final TestInsert testInsert = new TestInsert(new Random(1584874665));
 
   @Test
   public void testCustomerStatusInsert() {

@@ -6,18 +6,17 @@
 package testdb.precision_types_null
 
 import com.fasterxml.jackson.annotation.JsonValue
-import dev.typr.foundations.DuckDbType
-import dev.typr.foundations.DuckDbTypes
-import dev.typr.foundations.scala.Bijection
-import dev.typr.foundations.scala.ScalaDbTypes
+import dev.typr.dslsc.Bijection
+import dev.typr.foundationssc.DuckDbType
+import dev.typr.foundationssc.DuckDbTypes
 
 /** Type for the primary key of table `precision_types_null` */
 case class PrecisionTypesNullId(@JsonValue value: Int) extends scala.AnyVal
 
 object PrecisionTypesNullId {
-  given bijection: Bijection[PrecisionTypesNullId, Int] = Bijection.apply[PrecisionTypesNullId, Int](_.value)(PrecisionTypesNullId.apply)
+  given bijection: Bijection[PrecisionTypesNullId, Int] = Bijection.of[PrecisionTypesNullId, Int](_.value, PrecisionTypesNullId.apply)
 
-  given duckDbType: DuckDbType[PrecisionTypesNullId] = ScalaDbTypes.DuckDbTypes.integer.bimap(PrecisionTypesNullId.apply, _.value)
+  given duckDbType: DuckDbType[PrecisionTypesNullId] = DuckDbTypes.integer.to(Bijection.of(PrecisionTypesNullId.apply, _.value))
 
-  given duckDbTypeArray: DuckDbType[Array[PrecisionTypesNullId]] = DuckDbTypes.integerArray.bimap(xs => xs.map(PrecisionTypesNullId.apply), xs => xs.map(_.value))
+  given duckDbTypeArray: DuckDbType[List[PrecisionTypesNullId]] = duckDbType.list
 }

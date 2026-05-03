@@ -7,11 +7,11 @@ package adventureworks.humanresources.department
 
 import adventureworks.customtypes.Defaulted
 import adventureworks.public.Name
+import dev.typr.dslkt.RowCodecs
 import dev.typr.foundations.PgText
-import dev.typr.foundations.PgTypes
 import dev.typr.foundations.Tuple.Tuple4
-import dev.typr.foundations.kotlin.RowParser
-import dev.typr.foundations.kotlin.RowParsers
+import dev.typr.foundationskt.PgTypes
+import dev.typr.foundationskt.RowCodec
 import java.time.LocalDateTime
 
 /** Table: humanresources.department
@@ -46,9 +46,9 @@ data class DepartmentRow(
   ): DepartmentRowUnsaved = DepartmentRowUnsaved(name, groupname, departmentid, modifieddate)
 
   companion object {
-    val _rowParser: RowParser<DepartmentRow> = RowParsers.of(DepartmentId.pgType, Name.pgType, Name.pgType, PgTypes.timestamp, { t0, t1, t2, t3 -> DepartmentRow(t0, t1, t2, t3) }, { row -> arrayOf<Any?>(row.departmentid, row.name, row.groupname, row.modifieddate) })
+    val rowCodec: RowCodec<DepartmentRow> = RowCodecs.of(DepartmentId.pgType, Name.pgType, Name.pgType, PgTypes.timestamp, { t0: DepartmentId, t1: Name, t2: Name, t3: LocalDateTime -> DepartmentRow(t0, t1, t2, t3) }, { row: DepartmentRow -> arrayOf<Any?>(row.departmentid, row.name, row.groupname, row.modifieddate) })
 
     val pgText: PgText<DepartmentRow> =
-      PgText.from(_rowParser.underlying)
+      PgText.from(rowCodec.underlying)
   }
 }

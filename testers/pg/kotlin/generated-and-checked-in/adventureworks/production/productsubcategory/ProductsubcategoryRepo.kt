@@ -5,10 +5,11 @@
  */
 package adventureworks.production.productsubcategory
 
-import dev.typr.foundations.kotlin.DeleteBuilder
-import dev.typr.foundations.kotlin.SelectBuilder
-import dev.typr.foundations.kotlin.UpdateBuilder
-import java.sql.Connection
+import dev.typr.dslkt.DeleteBuilder
+import dev.typr.dslkt.SelectBuilder
+import dev.typr.dslkt.UpdateBuilder
+import dev.typr.foundationskt.Connection
+import dev.typr.foundationskt.ConnectionRead
 import kotlin.collections.Iterator
 import kotlin.collections.List
 import kotlin.collections.Map
@@ -19,10 +20,10 @@ interface ProductsubcategoryRepo {
   abstract fun deleteById(
     productsubcategoryid: ProductsubcategoryId,
     c: Connection
-  ): Boolean
+  ): kotlin.Boolean
 
   abstract fun deleteByIds(
-    productsubcategoryids: Array<ProductsubcategoryId>,
+    productsubcategoryids: List<ProductsubcategoryId>,
     c: Connection
   ): Int
 
@@ -40,32 +41,32 @@ interface ProductsubcategoryRepo {
     unsaved: Iterator<ProductsubcategoryRow>,
     batchSize: Int = 10000,
     c: Connection
-  ): Long
+  ): kotlin.Long
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
   abstract fun insertUnsavedStreaming(
     unsaved: Iterator<ProductsubcategoryRowUnsaved>,
     batchSize: Int = 10000,
     c: Connection
-  ): Long
+  ): kotlin.Long
 
   abstract fun select(): SelectBuilder<ProductsubcategoryFields, ProductsubcategoryRow>
 
-  abstract fun selectAll(c: Connection): List<ProductsubcategoryRow>
+  abstract fun selectAll(c: ConnectionRead): List<ProductsubcategoryRow>
 
   abstract fun selectById(
     productsubcategoryid: ProductsubcategoryId,
-    c: Connection
+    c: ConnectionRead
   ): ProductsubcategoryRow?
 
   abstract fun selectByIds(
-    productsubcategoryids: Array<ProductsubcategoryId>,
-    c: Connection
+    productsubcategoryids: List<ProductsubcategoryId>,
+    c: ConnectionRead
   ): List<ProductsubcategoryRow>
 
   abstract fun selectByIdsTracked(
-    productsubcategoryids: Array<ProductsubcategoryId>,
-    c: Connection
+    productsubcategoryids: List<ProductsubcategoryId>,
+    c: ConnectionRead
   ): Map<ProductsubcategoryId, ProductsubcategoryRow>
 
   abstract fun update(): UpdateBuilder<ProductsubcategoryFields, ProductsubcategoryRow>
@@ -73,7 +74,7 @@ interface ProductsubcategoryRepo {
   abstract fun update(
     row: ProductsubcategoryRow,
     c: Connection
-  ): Boolean
+  ): kotlin.Boolean
 
   abstract fun upsert(
     unsaved: ProductsubcategoryRow,

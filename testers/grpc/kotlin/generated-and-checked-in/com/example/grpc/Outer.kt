@@ -33,6 +33,22 @@ data class Outer(
   }
 
   companion object {
+    @Throws(IOException::class)
+    fun parseFrom(input: CodedInputStream): Outer {
+      var name: kotlin.String = ""
+      var inner: Inner? = null
+      while (!input.isAtEnd()) {
+        val tag = input.readTag()
+        if (WireFormat.getTagFieldNumber(tag) == 1) { name = input.readString() }
+        else if (WireFormat.getTagFieldNumber(tag) == 2) { val _length = input.readRawVarint32();
+        val _oldLimit = input.pushLimit(_length);
+        inner = Inner.parseFrom(input);
+        input.popLimit(_oldLimit); }
+        else { input.skipField(tag) }
+      }
+      return Outer(name, inner)
+    }
+
     val MARSHALLER: Marshaller<Outer> =
       object : Marshaller<Outer> {
         override fun stream(value: Outer): InputStream {
@@ -54,21 +70,5 @@ data class Outer(
           } 
         }
       }
-
-    @Throws(IOException::class)
-    fun parseFrom(input: CodedInputStream): Outer {
-      var name: kotlin.String = ""
-      var inner: Inner? = null
-      while (!input.isAtEnd()) {
-        val tag = input.readTag()
-        if (WireFormat.getTagFieldNumber(tag) == 1) { name = input.readString() }
-        else if (WireFormat.getTagFieldNumber(tag) == 2) { val _length = input.readRawVarint32();
-        val _oldLimit = input.pushLimit(_length);
-        inner = Inner.parseFrom(input);
-        input.popLimit(_oldLimit); }
-        else { input.skipField(tag) }
-      }
-      return Outer(name, inner)
-    }
   }
 }

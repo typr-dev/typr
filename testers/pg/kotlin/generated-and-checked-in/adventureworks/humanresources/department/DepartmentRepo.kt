@@ -5,10 +5,11 @@
  */
 package adventureworks.humanresources.department
 
-import dev.typr.foundations.kotlin.DeleteBuilder
-import dev.typr.foundations.kotlin.SelectBuilder
-import dev.typr.foundations.kotlin.UpdateBuilder
-import java.sql.Connection
+import dev.typr.dslkt.DeleteBuilder
+import dev.typr.dslkt.SelectBuilder
+import dev.typr.dslkt.UpdateBuilder
+import dev.typr.foundationskt.Connection
+import dev.typr.foundationskt.ConnectionRead
 import kotlin.collections.Iterator
 import kotlin.collections.List
 import kotlin.collections.Map
@@ -19,10 +20,10 @@ interface DepartmentRepo {
   abstract fun deleteById(
     departmentid: DepartmentId,
     c: Connection
-  ): Boolean
+  ): kotlin.Boolean
 
   abstract fun deleteByIds(
-    departmentids: Array<DepartmentId>,
+    departmentids: List<DepartmentId>,
     c: Connection
   ): Int
 
@@ -40,32 +41,32 @@ interface DepartmentRepo {
     unsaved: Iterator<DepartmentRow>,
     batchSize: Int = 10000,
     c: Connection
-  ): Long
+  ): kotlin.Long
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
   abstract fun insertUnsavedStreaming(
     unsaved: Iterator<DepartmentRowUnsaved>,
     batchSize: Int = 10000,
     c: Connection
-  ): Long
+  ): kotlin.Long
 
   abstract fun select(): SelectBuilder<DepartmentFields, DepartmentRow>
 
-  abstract fun selectAll(c: Connection): List<DepartmentRow>
+  abstract fun selectAll(c: ConnectionRead): List<DepartmentRow>
 
   abstract fun selectById(
     departmentid: DepartmentId,
-    c: Connection
+    c: ConnectionRead
   ): DepartmentRow?
 
   abstract fun selectByIds(
-    departmentids: Array<DepartmentId>,
-    c: Connection
+    departmentids: List<DepartmentId>,
+    c: ConnectionRead
   ): List<DepartmentRow>
 
   abstract fun selectByIdsTracked(
-    departmentids: Array<DepartmentId>,
-    c: Connection
+    departmentids: List<DepartmentId>,
+    c: ConnectionRead
   ): Map<DepartmentId, DepartmentRow>
 
   abstract fun update(): UpdateBuilder<DepartmentFields, DepartmentRow>
@@ -73,7 +74,7 @@ interface DepartmentRepo {
   abstract fun update(
     row: DepartmentRow,
     c: Connection
-  ): Boolean
+  ): kotlin.Boolean
 
   abstract fun upsert(
     unsaved: DepartmentRow,

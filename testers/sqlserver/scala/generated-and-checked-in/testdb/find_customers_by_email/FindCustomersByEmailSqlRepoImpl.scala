@@ -5,13 +5,13 @@
  */
 package testdb.find_customers_by_email
 
-import dev.typr.foundations.SqlServerTypes
-import dev.typr.foundations.scala.Fragment
-import java.sql.Connection
-import dev.typr.foundations.scala.Fragment.sql
+import dev.typr.foundationssc.ConnectionRead
+import dev.typr.foundationssc.Fragment
+import dev.typr.foundationssc.SqlServerTypes
+import dev.typr.foundationssc.Fragment.sql
 
 class FindCustomersByEmailSqlRepoImpl extends FindCustomersByEmailSqlRepo {
-  override def apply(emailPattern: String)(using c: Connection): List[FindCustomersByEmailSqlRow] = {
+  override def apply(emailPattern: String)(using c: ConnectionRead): List[FindCustomersByEmailSqlRow] = {
     sql"""-- Find customers by email pattern
     SELECT
         customer_id,
@@ -21,6 +21,6 @@ class FindCustomersByEmailSqlRepoImpl extends FindCustomersByEmailSqlRepo {
     FROM customers
     WHERE email LIKE ${Fragment.encode(SqlServerTypes.nvarchar, emailPattern)}
     ORDER BY created_at DESC
-    """.query(FindCustomersByEmailSqlRow.`_rowParser`.all()).runUnchecked(c)
+    """.query(FindCustomersByEmailSqlRow.rowCodec.all()).run(using c)
   }
 }

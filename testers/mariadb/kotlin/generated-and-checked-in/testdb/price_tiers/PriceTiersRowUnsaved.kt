@@ -14,9 +14,9 @@ import testdb.customtypes.Defaulted.UseDefault
 /** This class corresponds to a row in table `price_tiers` which has not been persisted yet */
 data class PriceTiersRowUnsaved(
   /**  */
-  val name: String,
+  val name: kotlin.String,
   /**  */
-  @field:JsonProperty("discount_type") val discountType: String,
+  @field:JsonProperty("discount_type") val discountType: kotlin.String,
   /**  */
   @field:JsonProperty("discount_value") val discountValue: BigDecimal,
   /** Default: 1

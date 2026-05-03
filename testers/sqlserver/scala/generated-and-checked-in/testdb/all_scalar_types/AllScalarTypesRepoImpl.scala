@@ -5,113 +5,112 @@
  */
 package testdb.all_scalar_types
 
-import dev.typr.foundations.SqlServerTypes
-import dev.typr.foundations.scala.DbTypeOps
-import dev.typr.foundations.scala.DeleteBuilder
-import dev.typr.foundations.scala.Dialect
-import dev.typr.foundations.scala.Fragment
-import dev.typr.foundations.scala.ScalaDbTypes
-import dev.typr.foundations.scala.SelectBuilder
-import dev.typr.foundations.scala.UpdateBuilder
-import java.sql.Connection
+import dev.typr.dslsc.DeleteBuilder
+import dev.typr.dslsc.Dialect
+import dev.typr.dslsc.SelectBuilder
+import dev.typr.dslsc.UpdateBuilder
+import dev.typr.foundationssc.Connection
+import dev.typr.foundationssc.ConnectionRead
+import dev.typr.foundationssc.Fragment
+import dev.typr.foundationssc.SqlServerTypes
 import scala.collection.mutable.ListBuffer
-import dev.typr.foundations.scala.Fragment.sql
+import dev.typr.foundationssc.Fragment.sql
 
 class AllScalarTypesRepoImpl extends AllScalarTypesRepo {
   override def delete: DeleteBuilder[AllScalarTypesFields, AllScalarTypesRow] = DeleteBuilder.of("[all_scalar_types]", AllScalarTypesFields.structure, Dialect.SQLSERVER)
 
-  override def deleteById(id: AllScalarTypesId)(using c: Connection): Boolean = sql"delete from [all_scalar_types] where [id] = ${Fragment.encode(AllScalarTypesId.sqlServerType, id)}".update().runUnchecked(c) > 0
+  override def deleteById(id: AllScalarTypesId)(using c: Connection): Boolean = sql"delete from [all_scalar_types] where [id] = ${Fragment.encode(AllScalarTypesId.sqlServerType, id)}".update().run(using c) > 0
 
-  override def deleteByIds(ids: Array[AllScalarTypesId])(using c: Connection): Int = {
+  override def deleteByIds(ids: List[AllScalarTypesId])(using c: Connection): Int = {
     val fragments: ListBuffer[Fragment] = ListBuffer()
     ids.foreach { id => fragments.addOne(Fragment.encode(AllScalarTypesId.sqlServerType, id)): @scala.annotation.nowarn }
-    return Fragment.interpolate(Fragment.lit("delete from [all_scalar_types] where [id] in ("), Fragment.comma(fragments), Fragment.lit(")")).update().runUnchecked(c)
+    return Fragment.concat(Fragment.of("delete from [all_scalar_types] where [id] in ("), Fragment.comma(fragments), Fragment.of(")")).update().run(using c)
   }
 
   override def insert(unsaved: AllScalarTypesRow)(using c: Connection): AllScalarTypesRow = {
   sql"""insert into [all_scalar_types]([col_tinyint], [col_smallint], [col_int], [col_bigint], [col_decimal], [col_numeric], [col_money], [col_smallmoney], [col_real], [col_float], [col_bit], [col_char], [col_varchar], [col_varchar_max], [col_text], [col_nchar], [col_nvarchar], [col_nvarchar_max], [col_ntext], [col_binary], [col_varbinary], [col_varbinary_max], [col_image], [col_date], [col_time], [col_datetime], [col_smalldatetime], [col_datetime2], [col_datetimeoffset], [col_uniqueidentifier], [col_xml], [col_json], [col_hierarchyid], [col_geography], [col_geometry], [col_not_null])
     OUTPUT INSERTED.[id], INSERTED.[col_tinyint], INSERTED.[col_smallint], INSERTED.[col_int], INSERTED.[col_bigint], INSERTED.[col_decimal], INSERTED.[col_numeric], INSERTED.[col_money], INSERTED.[col_smallmoney], INSERTED.[col_real], INSERTED.[col_float], INSERTED.[col_bit], INSERTED.[col_char], INSERTED.[col_varchar], INSERTED.[col_varchar_max], INSERTED.[col_text], INSERTED.[col_nchar], INSERTED.[col_nvarchar], INSERTED.[col_nvarchar_max], INSERTED.[col_ntext], INSERTED.[col_binary], INSERTED.[col_varbinary], INSERTED.[col_varbinary_max], INSERTED.[col_image], INSERTED.[col_date], INSERTED.[col_time], INSERTED.[col_datetime], INSERTED.[col_smalldatetime], INSERTED.[col_datetime2], INSERTED.[col_datetimeoffset], INSERTED.[col_uniqueidentifier], INSERTED.[col_xml], INSERTED.[col_json], INSERTED.[col_rowversion], INSERTED.[col_hierarchyid], INSERTED.[col_geography], INSERTED.[col_geometry], INSERTED.[col_not_null]
-    values (${Fragment.encode(SqlServerTypes.tinyint.nullable, unsaved.colTinyint)}, ${Fragment.encode(ScalaDbTypes.SqlServerTypes.smallint.nullable, unsaved.colSmallint)}, ${Fragment.encode(ScalaDbTypes.SqlServerTypes.int_.nullable, unsaved.colInt)}, ${Fragment.encode(ScalaDbTypes.SqlServerTypes.bigint.nullable, unsaved.colBigint)}, ${Fragment.encode(ScalaDbTypes.SqlServerTypes.decimal.nullable, unsaved.colDecimal)}, ${Fragment.encode(ScalaDbTypes.SqlServerTypes.decimal.nullable, unsaved.colNumeric)}, ${Fragment.encode(ScalaDbTypes.SqlServerTypes.money.nullable, unsaved.colMoney)}, ${Fragment.encode(ScalaDbTypes.SqlServerTypes.smallmoney.nullable, unsaved.colSmallmoney)}, ${Fragment.encode(ScalaDbTypes.SqlServerTypes.real.nullable, unsaved.colReal)}, ${Fragment.encode(ScalaDbTypes.SqlServerTypes.float_.nullable, unsaved.colFloat)}, ${Fragment.encode(ScalaDbTypes.SqlServerTypes.bit.nullable, unsaved.colBit)}, ${Fragment.encode(SqlServerTypes.char_.nullable, unsaved.colChar)}, ${Fragment.encode(SqlServerTypes.varchar.nullable, unsaved.colVarchar)}, ${Fragment.encode(SqlServerTypes.varchar.nullable, unsaved.colVarcharMax)}, ${Fragment.encode(SqlServerTypes.text.nullable, unsaved.colText)}, ${Fragment.encode(SqlServerTypes.nchar.nullable, unsaved.colNchar)}, ${Fragment.encode(SqlServerTypes.nvarchar.nullable, unsaved.colNvarchar)}, ${Fragment.encode(SqlServerTypes.nvarchar.nullable, unsaved.colNvarcharMax)}, ${Fragment.encode(SqlServerTypes.ntext.nullable, unsaved.colNtext)}, ${Fragment.encode(SqlServerTypes.binary.nullable, unsaved.colBinary)}, ${Fragment.encode(SqlServerTypes.varbinary.nullable, unsaved.colVarbinary)}, ${Fragment.encode(SqlServerTypes.varbinary.nullable, unsaved.colVarbinaryMax)}, ${Fragment.encode(SqlServerTypes.image.nullable, unsaved.colImage)}, ${Fragment.encode(SqlServerTypes.date.nullable, unsaved.colDate)}, ${Fragment.encode(SqlServerTypes.time.nullable, unsaved.colTime)}, ${Fragment.encode(SqlServerTypes.datetime.nullable, unsaved.colDatetime)}, ${Fragment.encode(SqlServerTypes.smalldatetime.nullable, unsaved.colSmalldatetime)}, ${Fragment.encode(SqlServerTypes.datetime2.nullable, unsaved.colDatetime2)}, ${Fragment.encode(SqlServerTypes.datetimeoffset.nullable, unsaved.colDatetimeoffset)}, ${Fragment.encode(SqlServerTypes.uniqueidentifier.nullable, unsaved.colUniqueidentifier)}, ${Fragment.encode(SqlServerTypes.xml.nullable, unsaved.colXml)}, ${Fragment.encode(SqlServerTypes.json.nullable, unsaved.colJson)}, ${Fragment.encode(SqlServerTypes.hierarchyid.nullable, unsaved.colHierarchyid)}, ${Fragment.encode(SqlServerTypes.geography.nullable, unsaved.colGeography)}, ${Fragment.encode(SqlServerTypes.geometry.nullable, unsaved.colGeometry)}, ${Fragment.encode(SqlServerTypes.nvarchar, unsaved.colNotNull)})
+    values (${Fragment.encode(SqlServerTypes.tinyint.opt, unsaved.colTinyint)}, ${Fragment.encode(SqlServerTypes.smallint.opt, unsaved.colSmallint)}, ${Fragment.encode(SqlServerTypes.int_.opt, unsaved.colInt)}, ${Fragment.encode(SqlServerTypes.bigint.opt, unsaved.colBigint)}, ${Fragment.encode(SqlServerTypes.decimal.opt, unsaved.colDecimal)}, ${Fragment.encode(SqlServerTypes.decimal.opt, unsaved.colNumeric)}, ${Fragment.encode(SqlServerTypes.money.opt, unsaved.colMoney)}, ${Fragment.encode(SqlServerTypes.smallmoney.opt, unsaved.colSmallmoney)}, ${Fragment.encode(SqlServerTypes.real.opt, unsaved.colReal)}, ${Fragment.encode(SqlServerTypes.float_.opt, unsaved.colFloat)}, ${Fragment.encode(SqlServerTypes.bit.opt, unsaved.colBit)}, ${Fragment.encode(SqlServerTypes.char_.opt, unsaved.colChar)}, ${Fragment.encode(SqlServerTypes.varchar.opt, unsaved.colVarchar)}, ${Fragment.encode(SqlServerTypes.varchar.opt, unsaved.colVarcharMax)}, ${Fragment.encode(SqlServerTypes.text.opt, unsaved.colText)}, ${Fragment.encode(SqlServerTypes.nchar.opt, unsaved.colNchar)}, ${Fragment.encode(SqlServerTypes.nvarchar.opt, unsaved.colNvarchar)}, ${Fragment.encode(SqlServerTypes.nvarchar.opt, unsaved.colNvarcharMax)}, ${Fragment.encode(SqlServerTypes.ntext.opt, unsaved.colNtext)}, ${Fragment.encode(SqlServerTypes.binary.opt, unsaved.colBinary)}, ${Fragment.encode(SqlServerTypes.varbinary.opt, unsaved.colVarbinary)}, ${Fragment.encode(SqlServerTypes.varbinary.opt, unsaved.colVarbinaryMax)}, ${Fragment.encode(SqlServerTypes.image.opt, unsaved.colImage)}, ${Fragment.encode(SqlServerTypes.date.opt, unsaved.colDate)}, ${Fragment.encode(SqlServerTypes.time.opt, unsaved.colTime)}, ${Fragment.encode(SqlServerTypes.datetime.opt, unsaved.colDatetime)}, ${Fragment.encode(SqlServerTypes.smalldatetime.opt, unsaved.colSmalldatetime)}, ${Fragment.encode(SqlServerTypes.datetime2.opt, unsaved.colDatetime2)}, ${Fragment.encode(SqlServerTypes.datetimeoffset.opt, unsaved.colDatetimeoffset)}, ${Fragment.encode(SqlServerTypes.uniqueidentifier.opt, unsaved.colUniqueidentifier)}, ${Fragment.encode(SqlServerTypes.xml.opt, unsaved.colXml)}, ${Fragment.encode(SqlServerTypes.json.opt, unsaved.colJson)}, ${Fragment.encode(SqlServerTypes.hierarchyid.opt, unsaved.colHierarchyid)}, ${Fragment.encode(SqlServerTypes.geography.opt, unsaved.colGeography)}, ${Fragment.encode(SqlServerTypes.geometry.opt, unsaved.colGeometry)}, ${Fragment.encode(SqlServerTypes.nvarchar, unsaved.colNotNull)})
     """
-    .updateReturning(AllScalarTypesRow.`_rowParser`.exactlyOne()).runUnchecked(c)
+    .updateReturning(AllScalarTypesRow.rowCodec.exactlyOne()).run(using c)
   }
 
   override def insert(unsaved: AllScalarTypesRowUnsaved)(using c: Connection): AllScalarTypesRow = {
     val columns: ListBuffer[Fragment] = ListBuffer()
     val values: ListBuffer[Fragment] = ListBuffer()
-    columns.addOne(Fragment.lit("[col_tinyint]")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(SqlServerTypes.tinyint.nullable, unsaved.colTinyint)}"): @scala.annotation.nowarn
-    columns.addOne(Fragment.lit("[col_smallint]")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(ScalaDbTypes.SqlServerTypes.smallint.nullable, unsaved.colSmallint)}"): @scala.annotation.nowarn
-    columns.addOne(Fragment.lit("[col_int]")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(ScalaDbTypes.SqlServerTypes.int_.nullable, unsaved.colInt)}"): @scala.annotation.nowarn
-    columns.addOne(Fragment.lit("[col_bigint]")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(ScalaDbTypes.SqlServerTypes.bigint.nullable, unsaved.colBigint)}"): @scala.annotation.nowarn
-    columns.addOne(Fragment.lit("[col_decimal]")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(ScalaDbTypes.SqlServerTypes.decimal.nullable, unsaved.colDecimal)}"): @scala.annotation.nowarn
-    columns.addOne(Fragment.lit("[col_numeric]")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(ScalaDbTypes.SqlServerTypes.decimal.nullable, unsaved.colNumeric)}"): @scala.annotation.nowarn
-    columns.addOne(Fragment.lit("[col_money]")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(ScalaDbTypes.SqlServerTypes.money.nullable, unsaved.colMoney)}"): @scala.annotation.nowarn
-    columns.addOne(Fragment.lit("[col_smallmoney]")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(ScalaDbTypes.SqlServerTypes.smallmoney.nullable, unsaved.colSmallmoney)}"): @scala.annotation.nowarn
-    columns.addOne(Fragment.lit("[col_real]")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(ScalaDbTypes.SqlServerTypes.real.nullable, unsaved.colReal)}"): @scala.annotation.nowarn
-    columns.addOne(Fragment.lit("[col_float]")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(ScalaDbTypes.SqlServerTypes.float_.nullable, unsaved.colFloat)}"): @scala.annotation.nowarn
-    columns.addOne(Fragment.lit("[col_bit]")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(ScalaDbTypes.SqlServerTypes.bit.nullable, unsaved.colBit)}"): @scala.annotation.nowarn
-    columns.addOne(Fragment.lit("[col_char]")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(SqlServerTypes.char_.nullable, unsaved.colChar)}"): @scala.annotation.nowarn
-    columns.addOne(Fragment.lit("[col_varchar]")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(SqlServerTypes.varchar.nullable, unsaved.colVarchar)}"): @scala.annotation.nowarn
-    columns.addOne(Fragment.lit("[col_varchar_max]")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(SqlServerTypes.varchar.nullable, unsaved.colVarcharMax)}"): @scala.annotation.nowarn
-    columns.addOne(Fragment.lit("[col_text]")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(SqlServerTypes.text.nullable, unsaved.colText)}"): @scala.annotation.nowarn
-    columns.addOne(Fragment.lit("[col_nchar]")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(SqlServerTypes.nchar.nullable, unsaved.colNchar)}"): @scala.annotation.nowarn
-    columns.addOne(Fragment.lit("[col_nvarchar]")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(SqlServerTypes.nvarchar.nullable, unsaved.colNvarchar)}"): @scala.annotation.nowarn
-    columns.addOne(Fragment.lit("[col_nvarchar_max]")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(SqlServerTypes.nvarchar.nullable, unsaved.colNvarcharMax)}"): @scala.annotation.nowarn
-    columns.addOne(Fragment.lit("[col_ntext]")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(SqlServerTypes.ntext.nullable, unsaved.colNtext)}"): @scala.annotation.nowarn
-    columns.addOne(Fragment.lit("[col_binary]")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(SqlServerTypes.binary.nullable, unsaved.colBinary)}"): @scala.annotation.nowarn
-    columns.addOne(Fragment.lit("[col_varbinary]")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(SqlServerTypes.varbinary.nullable, unsaved.colVarbinary)}"): @scala.annotation.nowarn
-    columns.addOne(Fragment.lit("[col_varbinary_max]")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(SqlServerTypes.varbinary.nullable, unsaved.colVarbinaryMax)}"): @scala.annotation.nowarn
-    columns.addOne(Fragment.lit("[col_image]")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(SqlServerTypes.image.nullable, unsaved.colImage)}"): @scala.annotation.nowarn
-    columns.addOne(Fragment.lit("[col_date]")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(SqlServerTypes.date.nullable, unsaved.colDate)}"): @scala.annotation.nowarn
-    columns.addOne(Fragment.lit("[col_time]")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(SqlServerTypes.time.nullable, unsaved.colTime)}"): @scala.annotation.nowarn
-    columns.addOne(Fragment.lit("[col_datetime]")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(SqlServerTypes.datetime.nullable, unsaved.colDatetime)}"): @scala.annotation.nowarn
-    columns.addOne(Fragment.lit("[col_smalldatetime]")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(SqlServerTypes.smalldatetime.nullable, unsaved.colSmalldatetime)}"): @scala.annotation.nowarn
-    columns.addOne(Fragment.lit("[col_datetime2]")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(SqlServerTypes.datetime2.nullable, unsaved.colDatetime2)}"): @scala.annotation.nowarn
-    columns.addOne(Fragment.lit("[col_datetimeoffset]")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(SqlServerTypes.datetimeoffset.nullable, unsaved.colDatetimeoffset)}"): @scala.annotation.nowarn
-    columns.addOne(Fragment.lit("[col_uniqueidentifier]")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(SqlServerTypes.uniqueidentifier.nullable, unsaved.colUniqueidentifier)}"): @scala.annotation.nowarn
-    columns.addOne(Fragment.lit("[col_xml]")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(SqlServerTypes.xml.nullable, unsaved.colXml)}"): @scala.annotation.nowarn
-    columns.addOne(Fragment.lit("[col_json]")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(SqlServerTypes.json.nullable, unsaved.colJson)}"): @scala.annotation.nowarn
-    columns.addOne(Fragment.lit("[col_hierarchyid]")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(SqlServerTypes.hierarchyid.nullable, unsaved.colHierarchyid)}"): @scala.annotation.nowarn
-    columns.addOne(Fragment.lit("[col_geography]")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(SqlServerTypes.geography.nullable, unsaved.colGeography)}"): @scala.annotation.nowarn
-    columns.addOne(Fragment.lit("[col_geometry]")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(SqlServerTypes.geometry.nullable, unsaved.colGeometry)}"): @scala.annotation.nowarn
+    columns.addOne(Fragment.of("[col_tinyint]")): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(SqlServerTypes.tinyint.opt, unsaved.colTinyint)}"): @scala.annotation.nowarn
+    columns.addOne(Fragment.of("[col_smallint]")): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(SqlServerTypes.smallint.opt, unsaved.colSmallint)}"): @scala.annotation.nowarn
+    columns.addOne(Fragment.of("[col_int]")): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(SqlServerTypes.int_.opt, unsaved.colInt)}"): @scala.annotation.nowarn
+    columns.addOne(Fragment.of("[col_bigint]")): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(SqlServerTypes.bigint.opt, unsaved.colBigint)}"): @scala.annotation.nowarn
+    columns.addOne(Fragment.of("[col_decimal]")): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(SqlServerTypes.decimal.opt, unsaved.colDecimal)}"): @scala.annotation.nowarn
+    columns.addOne(Fragment.of("[col_numeric]")): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(SqlServerTypes.decimal.opt, unsaved.colNumeric)}"): @scala.annotation.nowarn
+    columns.addOne(Fragment.of("[col_money]")): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(SqlServerTypes.money.opt, unsaved.colMoney)}"): @scala.annotation.nowarn
+    columns.addOne(Fragment.of("[col_smallmoney]")): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(SqlServerTypes.smallmoney.opt, unsaved.colSmallmoney)}"): @scala.annotation.nowarn
+    columns.addOne(Fragment.of("[col_real]")): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(SqlServerTypes.real.opt, unsaved.colReal)}"): @scala.annotation.nowarn
+    columns.addOne(Fragment.of("[col_float]")): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(SqlServerTypes.float_.opt, unsaved.colFloat)}"): @scala.annotation.nowarn
+    columns.addOne(Fragment.of("[col_bit]")): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(SqlServerTypes.bit.opt, unsaved.colBit)}"): @scala.annotation.nowarn
+    columns.addOne(Fragment.of("[col_char]")): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(SqlServerTypes.char_.opt, unsaved.colChar)}"): @scala.annotation.nowarn
+    columns.addOne(Fragment.of("[col_varchar]")): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(SqlServerTypes.varchar.opt, unsaved.colVarchar)}"): @scala.annotation.nowarn
+    columns.addOne(Fragment.of("[col_varchar_max]")): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(SqlServerTypes.varchar.opt, unsaved.colVarcharMax)}"): @scala.annotation.nowarn
+    columns.addOne(Fragment.of("[col_text]")): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(SqlServerTypes.text.opt, unsaved.colText)}"): @scala.annotation.nowarn
+    columns.addOne(Fragment.of("[col_nchar]")): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(SqlServerTypes.nchar.opt, unsaved.colNchar)}"): @scala.annotation.nowarn
+    columns.addOne(Fragment.of("[col_nvarchar]")): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(SqlServerTypes.nvarchar.opt, unsaved.colNvarchar)}"): @scala.annotation.nowarn
+    columns.addOne(Fragment.of("[col_nvarchar_max]")): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(SqlServerTypes.nvarchar.opt, unsaved.colNvarcharMax)}"): @scala.annotation.nowarn
+    columns.addOne(Fragment.of("[col_ntext]")): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(SqlServerTypes.ntext.opt, unsaved.colNtext)}"): @scala.annotation.nowarn
+    columns.addOne(Fragment.of("[col_binary]")): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(SqlServerTypes.binary.opt, unsaved.colBinary)}"): @scala.annotation.nowarn
+    columns.addOne(Fragment.of("[col_varbinary]")): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(SqlServerTypes.varbinary.opt, unsaved.colVarbinary)}"): @scala.annotation.nowarn
+    columns.addOne(Fragment.of("[col_varbinary_max]")): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(SqlServerTypes.varbinary.opt, unsaved.colVarbinaryMax)}"): @scala.annotation.nowarn
+    columns.addOne(Fragment.of("[col_image]")): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(SqlServerTypes.image.opt, unsaved.colImage)}"): @scala.annotation.nowarn
+    columns.addOne(Fragment.of("[col_date]")): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(SqlServerTypes.date.opt, unsaved.colDate)}"): @scala.annotation.nowarn
+    columns.addOne(Fragment.of("[col_time]")): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(SqlServerTypes.time.opt, unsaved.colTime)}"): @scala.annotation.nowarn
+    columns.addOne(Fragment.of("[col_datetime]")): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(SqlServerTypes.datetime.opt, unsaved.colDatetime)}"): @scala.annotation.nowarn
+    columns.addOne(Fragment.of("[col_smalldatetime]")): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(SqlServerTypes.smalldatetime.opt, unsaved.colSmalldatetime)}"): @scala.annotation.nowarn
+    columns.addOne(Fragment.of("[col_datetime2]")): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(SqlServerTypes.datetime2.opt, unsaved.colDatetime2)}"): @scala.annotation.nowarn
+    columns.addOne(Fragment.of("[col_datetimeoffset]")): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(SqlServerTypes.datetimeoffset.opt, unsaved.colDatetimeoffset)}"): @scala.annotation.nowarn
+    columns.addOne(Fragment.of("[col_uniqueidentifier]")): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(SqlServerTypes.uniqueidentifier.opt, unsaved.colUniqueidentifier)}"): @scala.annotation.nowarn
+    columns.addOne(Fragment.of("[col_xml]")): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(SqlServerTypes.xml.opt, unsaved.colXml)}"): @scala.annotation.nowarn
+    columns.addOne(Fragment.of("[col_json]")): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(SqlServerTypes.json.opt, unsaved.colJson)}"): @scala.annotation.nowarn
+    columns.addOne(Fragment.of("[col_hierarchyid]")): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(SqlServerTypes.hierarchyid.opt, unsaved.colHierarchyid)}"): @scala.annotation.nowarn
+    columns.addOne(Fragment.of("[col_geography]")): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(SqlServerTypes.geography.opt, unsaved.colGeography)}"): @scala.annotation.nowarn
+    columns.addOne(Fragment.of("[col_geometry]")): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(SqlServerTypes.geometry.opt, unsaved.colGeometry)}"): @scala.annotation.nowarn
     unsaved.colNotNull.visit(
       {  },
-      value => { columns.addOne(Fragment.lit("[col_not_null]")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(SqlServerTypes.nvarchar, value)}"): @scala.annotation.nowarn }
+      value => { columns.addOne(Fragment.of("[col_not_null]")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(SqlServerTypes.nvarchar, value)}"): @scala.annotation.nowarn }
     );
     val q: Fragment = {
       sql"""insert into [all_scalar_types](${Fragment.comma(columns)})
@@ -119,82 +118,82 @@ class AllScalarTypesRepoImpl extends AllScalarTypesRepo {
       values (${Fragment.comma(values)})
       """
     }
-    return q.updateReturning(AllScalarTypesRow.`_rowParser`.exactlyOne()).runUnchecked(c)
+    return q.updateReturning(AllScalarTypesRow.rowCodec.exactlyOne()).run(using c)
   }
 
-  override def select: SelectBuilder[AllScalarTypesFields, AllScalarTypesRow] = SelectBuilder.of("[all_scalar_types]", AllScalarTypesFields.structure, AllScalarTypesRow.`_rowParser`, Dialect.SQLSERVER)
+  override def select: SelectBuilder[AllScalarTypesFields, AllScalarTypesRow] = SelectBuilder.of("[all_scalar_types]", AllScalarTypesFields.structure, AllScalarTypesRow.rowCodec, Dialect.SQLSERVER)
 
-  override def selectAll(using c: Connection): List[AllScalarTypesRow] = {
+  override def selectAll(using c: ConnectionRead): List[AllScalarTypesRow] = {
     sql"""select [id], [col_tinyint], [col_smallint], [col_int], [col_bigint], [col_decimal], [col_numeric], [col_money], [col_smallmoney], [col_real], [col_float], [col_bit], [col_char], [col_varchar], [col_varchar_max], [col_text], [col_nchar], [col_nvarchar], [col_nvarchar_max], [col_ntext], [col_binary], [col_varbinary], [col_varbinary_max], [col_image], [col_date], [col_time], [col_datetime], [col_smalldatetime], [col_datetime2], [col_datetimeoffset], [col_uniqueidentifier], [col_xml], [col_json], [col_rowversion], [col_hierarchyid], [col_geography], [col_geometry], [col_not_null]
     from [all_scalar_types]
-    """.query(AllScalarTypesRow.`_rowParser`.all()).runUnchecked(c)
+    """.query(AllScalarTypesRow.rowCodec.all()).run(using c)
   }
 
-  override def selectById(id: AllScalarTypesId)(using c: Connection): Option[AllScalarTypesRow] = {
+  override def selectById(id: AllScalarTypesId)(using c: ConnectionRead): Option[AllScalarTypesRow] = {
     sql"""select [id], [col_tinyint], [col_smallint], [col_int], [col_bigint], [col_decimal], [col_numeric], [col_money], [col_smallmoney], [col_real], [col_float], [col_bit], [col_char], [col_varchar], [col_varchar_max], [col_text], [col_nchar], [col_nvarchar], [col_nvarchar_max], [col_ntext], [col_binary], [col_varbinary], [col_varbinary_max], [col_image], [col_date], [col_time], [col_datetime], [col_smalldatetime], [col_datetime2], [col_datetimeoffset], [col_uniqueidentifier], [col_xml], [col_json], [col_rowversion], [col_hierarchyid], [col_geography], [col_geometry], [col_not_null]
     from [all_scalar_types]
-    where [id] = ${Fragment.encode(AllScalarTypesId.sqlServerType, id)}""".query(AllScalarTypesRow.`_rowParser`.first()).runUnchecked(c)
+    where [id] = ${Fragment.encode(AllScalarTypesId.sqlServerType, id)}""".query(AllScalarTypesRow.rowCodec.first()).run(using c)
   }
 
-  override def selectByIds(ids: Array[AllScalarTypesId])(using c: Connection): List[AllScalarTypesRow] = {
+  override def selectByIds(ids: List[AllScalarTypesId])(using c: ConnectionRead): List[AllScalarTypesRow] = {
     val fragments: ListBuffer[Fragment] = ListBuffer()
     ids.foreach { id => fragments.addOne(Fragment.encode(AllScalarTypesId.sqlServerType, id)): @scala.annotation.nowarn }
-    return Fragment.interpolate(Fragment.lit("select [id], [col_tinyint], [col_smallint], [col_int], [col_bigint], [col_decimal], [col_numeric], [col_money], [col_smallmoney], [col_real], [col_float], [col_bit], [col_char], [col_varchar], [col_varchar_max], [col_text], [col_nchar], [col_nvarchar], [col_nvarchar_max], [col_ntext], [col_binary], [col_varbinary], [col_varbinary_max], [col_image], [col_date], [col_time], [col_datetime], [col_smalldatetime], [col_datetime2], [col_datetimeoffset], [col_uniqueidentifier], [col_xml], [col_json], [col_rowversion], [col_hierarchyid], [col_geography], [col_geometry], [col_not_null] from [all_scalar_types] where [id] in ("), Fragment.comma(fragments), Fragment.lit(")")).query(AllScalarTypesRow.`_rowParser`.all()).runUnchecked(c)
+    return Fragment.concat(Fragment.of("select [id], [col_tinyint], [col_smallint], [col_int], [col_bigint], [col_decimal], [col_numeric], [col_money], [col_smallmoney], [col_real], [col_float], [col_bit], [col_char], [col_varchar], [col_varchar_max], [col_text], [col_nchar], [col_nvarchar], [col_nvarchar_max], [col_ntext], [col_binary], [col_varbinary], [col_varbinary_max], [col_image], [col_date], [col_time], [col_datetime], [col_smalldatetime], [col_datetime2], [col_datetimeoffset], [col_uniqueidentifier], [col_xml], [col_json], [col_rowversion], [col_hierarchyid], [col_geography], [col_geometry], [col_not_null] from [all_scalar_types] where [id] in ("), Fragment.comma(fragments), Fragment.of(")")).query(AllScalarTypesRow.rowCodec.all()).run(using c)
   }
 
-  override def selectByIdsTracked(ids: Array[AllScalarTypesId])(using c: Connection): Map[AllScalarTypesId, AllScalarTypesRow] = {
+  override def selectByIdsTracked(ids: List[AllScalarTypesId])(using c: ConnectionRead): Map[AllScalarTypesId, AllScalarTypesRow] = {
     val ret: scala.collection.mutable.Map[AllScalarTypesId, AllScalarTypesRow] = scala.collection.mutable.Map.empty[AllScalarTypesId, AllScalarTypesRow]
     selectByIds(ids)(using c).foreach(row => ret.put(row.id, row): @scala.annotation.nowarn)
     return ret.toMap
   }
 
-  override def update: UpdateBuilder[AllScalarTypesFields, AllScalarTypesRow] = UpdateBuilder.of("[all_scalar_types]", AllScalarTypesFields.structure, AllScalarTypesRow.`_rowParser`, Dialect.SQLSERVER)
+  override def update: UpdateBuilder[AllScalarTypesFields, AllScalarTypesRow] = UpdateBuilder.of("[all_scalar_types]", AllScalarTypesFields.structure, AllScalarTypesRow.rowCodec, Dialect.SQLSERVER)
 
   override def update(row: AllScalarTypesRow)(using c: Connection): Boolean = {
     val id: AllScalarTypesId = row.id
     return sql"""update [all_scalar_types]
-    set [col_tinyint] = ${Fragment.encode(SqlServerTypes.tinyint.nullable, row.colTinyint)},
-    [col_smallint] = ${Fragment.encode(ScalaDbTypes.SqlServerTypes.smallint.nullable, row.colSmallint)},
-    [col_int] = ${Fragment.encode(ScalaDbTypes.SqlServerTypes.int_.nullable, row.colInt)},
-    [col_bigint] = ${Fragment.encode(ScalaDbTypes.SqlServerTypes.bigint.nullable, row.colBigint)},
-    [col_decimal] = ${Fragment.encode(ScalaDbTypes.SqlServerTypes.decimal.nullable, row.colDecimal)},
-    [col_numeric] = ${Fragment.encode(ScalaDbTypes.SqlServerTypes.decimal.nullable, row.colNumeric)},
-    [col_money] = ${Fragment.encode(ScalaDbTypes.SqlServerTypes.money.nullable, row.colMoney)},
-    [col_smallmoney] = ${Fragment.encode(ScalaDbTypes.SqlServerTypes.smallmoney.nullable, row.colSmallmoney)},
-    [col_real] = ${Fragment.encode(ScalaDbTypes.SqlServerTypes.real.nullable, row.colReal)},
-    [col_float] = ${Fragment.encode(ScalaDbTypes.SqlServerTypes.float_.nullable, row.colFloat)},
-    [col_bit] = ${Fragment.encode(ScalaDbTypes.SqlServerTypes.bit.nullable, row.colBit)},
-    [col_char] = ${Fragment.encode(SqlServerTypes.char_.nullable, row.colChar)},
-    [col_varchar] = ${Fragment.encode(SqlServerTypes.varchar.nullable, row.colVarchar)},
-    [col_varchar_max] = ${Fragment.encode(SqlServerTypes.varchar.nullable, row.colVarcharMax)},
-    [col_text] = ${Fragment.encode(SqlServerTypes.text.nullable, row.colText)},
-    [col_nchar] = ${Fragment.encode(SqlServerTypes.nchar.nullable, row.colNchar)},
-    [col_nvarchar] = ${Fragment.encode(SqlServerTypes.nvarchar.nullable, row.colNvarchar)},
-    [col_nvarchar_max] = ${Fragment.encode(SqlServerTypes.nvarchar.nullable, row.colNvarcharMax)},
-    [col_ntext] = ${Fragment.encode(SqlServerTypes.ntext.nullable, row.colNtext)},
-    [col_binary] = ${Fragment.encode(SqlServerTypes.binary.nullable, row.colBinary)},
-    [col_varbinary] = ${Fragment.encode(SqlServerTypes.varbinary.nullable, row.colVarbinary)},
-    [col_varbinary_max] = ${Fragment.encode(SqlServerTypes.varbinary.nullable, row.colVarbinaryMax)},
-    [col_image] = ${Fragment.encode(SqlServerTypes.image.nullable, row.colImage)},
-    [col_date] = ${Fragment.encode(SqlServerTypes.date.nullable, row.colDate)},
-    [col_time] = ${Fragment.encode(SqlServerTypes.time.nullable, row.colTime)},
-    [col_datetime] = ${Fragment.encode(SqlServerTypes.datetime.nullable, row.colDatetime)},
-    [col_smalldatetime] = ${Fragment.encode(SqlServerTypes.smalldatetime.nullable, row.colSmalldatetime)},
-    [col_datetime2] = ${Fragment.encode(SqlServerTypes.datetime2.nullable, row.colDatetime2)},
-    [col_datetimeoffset] = ${Fragment.encode(SqlServerTypes.datetimeoffset.nullable, row.colDatetimeoffset)},
-    [col_uniqueidentifier] = ${Fragment.encode(SqlServerTypes.uniqueidentifier.nullable, row.colUniqueidentifier)},
-    [col_xml] = ${Fragment.encode(SqlServerTypes.xml.nullable, row.colXml)},
-    [col_json] = ${Fragment.encode(SqlServerTypes.json.nullable, row.colJson)},
-    [col_hierarchyid] = ${Fragment.encode(SqlServerTypes.hierarchyid.nullable, row.colHierarchyid)},
-    [col_geography] = ${Fragment.encode(SqlServerTypes.geography.nullable, row.colGeography)},
-    [col_geometry] = ${Fragment.encode(SqlServerTypes.geometry.nullable, row.colGeometry)},
+    set [col_tinyint] = ${Fragment.encode(SqlServerTypes.tinyint.opt, row.colTinyint)},
+    [col_smallint] = ${Fragment.encode(SqlServerTypes.smallint.opt, row.colSmallint)},
+    [col_int] = ${Fragment.encode(SqlServerTypes.int_.opt, row.colInt)},
+    [col_bigint] = ${Fragment.encode(SqlServerTypes.bigint.opt, row.colBigint)},
+    [col_decimal] = ${Fragment.encode(SqlServerTypes.decimal.opt, row.colDecimal)},
+    [col_numeric] = ${Fragment.encode(SqlServerTypes.decimal.opt, row.colNumeric)},
+    [col_money] = ${Fragment.encode(SqlServerTypes.money.opt, row.colMoney)},
+    [col_smallmoney] = ${Fragment.encode(SqlServerTypes.smallmoney.opt, row.colSmallmoney)},
+    [col_real] = ${Fragment.encode(SqlServerTypes.real.opt, row.colReal)},
+    [col_float] = ${Fragment.encode(SqlServerTypes.float_.opt, row.colFloat)},
+    [col_bit] = ${Fragment.encode(SqlServerTypes.bit.opt, row.colBit)},
+    [col_char] = ${Fragment.encode(SqlServerTypes.char_.opt, row.colChar)},
+    [col_varchar] = ${Fragment.encode(SqlServerTypes.varchar.opt, row.colVarchar)},
+    [col_varchar_max] = ${Fragment.encode(SqlServerTypes.varchar.opt, row.colVarcharMax)},
+    [col_text] = ${Fragment.encode(SqlServerTypes.text.opt, row.colText)},
+    [col_nchar] = ${Fragment.encode(SqlServerTypes.nchar.opt, row.colNchar)},
+    [col_nvarchar] = ${Fragment.encode(SqlServerTypes.nvarchar.opt, row.colNvarchar)},
+    [col_nvarchar_max] = ${Fragment.encode(SqlServerTypes.nvarchar.opt, row.colNvarcharMax)},
+    [col_ntext] = ${Fragment.encode(SqlServerTypes.ntext.opt, row.colNtext)},
+    [col_binary] = ${Fragment.encode(SqlServerTypes.binary.opt, row.colBinary)},
+    [col_varbinary] = ${Fragment.encode(SqlServerTypes.varbinary.opt, row.colVarbinary)},
+    [col_varbinary_max] = ${Fragment.encode(SqlServerTypes.varbinary.opt, row.colVarbinaryMax)},
+    [col_image] = ${Fragment.encode(SqlServerTypes.image.opt, row.colImage)},
+    [col_date] = ${Fragment.encode(SqlServerTypes.date.opt, row.colDate)},
+    [col_time] = ${Fragment.encode(SqlServerTypes.time.opt, row.colTime)},
+    [col_datetime] = ${Fragment.encode(SqlServerTypes.datetime.opt, row.colDatetime)},
+    [col_smalldatetime] = ${Fragment.encode(SqlServerTypes.smalldatetime.opt, row.colSmalldatetime)},
+    [col_datetime2] = ${Fragment.encode(SqlServerTypes.datetime2.opt, row.colDatetime2)},
+    [col_datetimeoffset] = ${Fragment.encode(SqlServerTypes.datetimeoffset.opt, row.colDatetimeoffset)},
+    [col_uniqueidentifier] = ${Fragment.encode(SqlServerTypes.uniqueidentifier.opt, row.colUniqueidentifier)},
+    [col_xml] = ${Fragment.encode(SqlServerTypes.xml.opt, row.colXml)},
+    [col_json] = ${Fragment.encode(SqlServerTypes.json.opt, row.colJson)},
+    [col_hierarchyid] = ${Fragment.encode(SqlServerTypes.hierarchyid.opt, row.colHierarchyid)},
+    [col_geography] = ${Fragment.encode(SqlServerTypes.geography.opt, row.colGeography)},
+    [col_geometry] = ${Fragment.encode(SqlServerTypes.geometry.opt, row.colGeometry)},
     [col_not_null] = ${Fragment.encode(SqlServerTypes.nvarchar, row.colNotNull)}
-    where [id] = ${Fragment.encode(AllScalarTypesId.sqlServerType, id)}""".update().runUnchecked(c) > 0
+    where [id] = ${Fragment.encode(AllScalarTypesId.sqlServerType, id)}""".update().run(using c) > 0
   }
 
   override def upsert(unsaved: AllScalarTypesRow)(using c: Connection): AllScalarTypesRow = {
   sql"""MERGE INTO [all_scalar_types] AS target
-    USING (VALUES (${Fragment.encode(AllScalarTypesId.sqlServerType, unsaved.id)}, ${Fragment.encode(SqlServerTypes.tinyint.nullable, unsaved.colTinyint)}, ${Fragment.encode(ScalaDbTypes.SqlServerTypes.smallint.nullable, unsaved.colSmallint)}, ${Fragment.encode(ScalaDbTypes.SqlServerTypes.int_.nullable, unsaved.colInt)}, ${Fragment.encode(ScalaDbTypes.SqlServerTypes.bigint.nullable, unsaved.colBigint)}, ${Fragment.encode(ScalaDbTypes.SqlServerTypes.decimal.nullable, unsaved.colDecimal)}, ${Fragment.encode(ScalaDbTypes.SqlServerTypes.decimal.nullable, unsaved.colNumeric)}, ${Fragment.encode(ScalaDbTypes.SqlServerTypes.money.nullable, unsaved.colMoney)}, ${Fragment.encode(ScalaDbTypes.SqlServerTypes.smallmoney.nullable, unsaved.colSmallmoney)}, ${Fragment.encode(ScalaDbTypes.SqlServerTypes.real.nullable, unsaved.colReal)}, ${Fragment.encode(ScalaDbTypes.SqlServerTypes.float_.nullable, unsaved.colFloat)}, ${Fragment.encode(ScalaDbTypes.SqlServerTypes.bit.nullable, unsaved.colBit)}, ${Fragment.encode(SqlServerTypes.char_.nullable, unsaved.colChar)}, ${Fragment.encode(SqlServerTypes.varchar.nullable, unsaved.colVarchar)}, ${Fragment.encode(SqlServerTypes.varchar.nullable, unsaved.colVarcharMax)}, ${Fragment.encode(SqlServerTypes.text.nullable, unsaved.colText)}, ${Fragment.encode(SqlServerTypes.nchar.nullable, unsaved.colNchar)}, ${Fragment.encode(SqlServerTypes.nvarchar.nullable, unsaved.colNvarchar)}, ${Fragment.encode(SqlServerTypes.nvarchar.nullable, unsaved.colNvarcharMax)}, ${Fragment.encode(SqlServerTypes.ntext.nullable, unsaved.colNtext)}, ${Fragment.encode(SqlServerTypes.binary.nullable, unsaved.colBinary)}, ${Fragment.encode(SqlServerTypes.varbinary.nullable, unsaved.colVarbinary)}, ${Fragment.encode(SqlServerTypes.varbinary.nullable, unsaved.colVarbinaryMax)}, ${Fragment.encode(SqlServerTypes.image.nullable, unsaved.colImage)}, ${Fragment.encode(SqlServerTypes.date.nullable, unsaved.colDate)}, ${Fragment.encode(SqlServerTypes.time.nullable, unsaved.colTime)}, ${Fragment.encode(SqlServerTypes.datetime.nullable, unsaved.colDatetime)}, ${Fragment.encode(SqlServerTypes.smalldatetime.nullable, unsaved.colSmalldatetime)}, ${Fragment.encode(SqlServerTypes.datetime2.nullable, unsaved.colDatetime2)}, ${Fragment.encode(SqlServerTypes.datetimeoffset.nullable, unsaved.colDatetimeoffset)}, ${Fragment.encode(SqlServerTypes.uniqueidentifier.nullable, unsaved.colUniqueidentifier)}, ${Fragment.encode(SqlServerTypes.xml.nullable, unsaved.colXml)}, ${Fragment.encode(SqlServerTypes.json.nullable, unsaved.colJson)}, ${Fragment.encode(SqlServerTypes.rowversion, unsaved.colRowversion)}, ${Fragment.encode(SqlServerTypes.hierarchyid.nullable, unsaved.colHierarchyid)}, ${Fragment.encode(SqlServerTypes.geography.nullable, unsaved.colGeography)}, ${Fragment.encode(SqlServerTypes.geometry.nullable, unsaved.colGeometry)}, ${Fragment.encode(SqlServerTypes.nvarchar, unsaved.colNotNull)})) AS source([id], [col_tinyint], [col_smallint], [col_int], [col_bigint], [col_decimal], [col_numeric], [col_money], [col_smallmoney], [col_real], [col_float], [col_bit], [col_char], [col_varchar], [col_varchar_max], [col_text], [col_nchar], [col_nvarchar], [col_nvarchar_max], [col_ntext], [col_binary], [col_varbinary], [col_varbinary_max], [col_image], [col_date], [col_time], [col_datetime], [col_smalldatetime], [col_datetime2], [col_datetimeoffset], [col_uniqueidentifier], [col_xml], [col_json], [col_rowversion], [col_hierarchyid], [col_geography], [col_geometry], [col_not_null])
+    USING (VALUES (${Fragment.encode(AllScalarTypesId.sqlServerType, unsaved.id)}, ${Fragment.encode(SqlServerTypes.tinyint.opt, unsaved.colTinyint)}, ${Fragment.encode(SqlServerTypes.smallint.opt, unsaved.colSmallint)}, ${Fragment.encode(SqlServerTypes.int_.opt, unsaved.colInt)}, ${Fragment.encode(SqlServerTypes.bigint.opt, unsaved.colBigint)}, ${Fragment.encode(SqlServerTypes.decimal.opt, unsaved.colDecimal)}, ${Fragment.encode(SqlServerTypes.decimal.opt, unsaved.colNumeric)}, ${Fragment.encode(SqlServerTypes.money.opt, unsaved.colMoney)}, ${Fragment.encode(SqlServerTypes.smallmoney.opt, unsaved.colSmallmoney)}, ${Fragment.encode(SqlServerTypes.real.opt, unsaved.colReal)}, ${Fragment.encode(SqlServerTypes.float_.opt, unsaved.colFloat)}, ${Fragment.encode(SqlServerTypes.bit.opt, unsaved.colBit)}, ${Fragment.encode(SqlServerTypes.char_.opt, unsaved.colChar)}, ${Fragment.encode(SqlServerTypes.varchar.opt, unsaved.colVarchar)}, ${Fragment.encode(SqlServerTypes.varchar.opt, unsaved.colVarcharMax)}, ${Fragment.encode(SqlServerTypes.text.opt, unsaved.colText)}, ${Fragment.encode(SqlServerTypes.nchar.opt, unsaved.colNchar)}, ${Fragment.encode(SqlServerTypes.nvarchar.opt, unsaved.colNvarchar)}, ${Fragment.encode(SqlServerTypes.nvarchar.opt, unsaved.colNvarcharMax)}, ${Fragment.encode(SqlServerTypes.ntext.opt, unsaved.colNtext)}, ${Fragment.encode(SqlServerTypes.binary.opt, unsaved.colBinary)}, ${Fragment.encode(SqlServerTypes.varbinary.opt, unsaved.colVarbinary)}, ${Fragment.encode(SqlServerTypes.varbinary.opt, unsaved.colVarbinaryMax)}, ${Fragment.encode(SqlServerTypes.image.opt, unsaved.colImage)}, ${Fragment.encode(SqlServerTypes.date.opt, unsaved.colDate)}, ${Fragment.encode(SqlServerTypes.time.opt, unsaved.colTime)}, ${Fragment.encode(SqlServerTypes.datetime.opt, unsaved.colDatetime)}, ${Fragment.encode(SqlServerTypes.smalldatetime.opt, unsaved.colSmalldatetime)}, ${Fragment.encode(SqlServerTypes.datetime2.opt, unsaved.colDatetime2)}, ${Fragment.encode(SqlServerTypes.datetimeoffset.opt, unsaved.colDatetimeoffset)}, ${Fragment.encode(SqlServerTypes.uniqueidentifier.opt, unsaved.colUniqueidentifier)}, ${Fragment.encode(SqlServerTypes.xml.opt, unsaved.colXml)}, ${Fragment.encode(SqlServerTypes.json.opt, unsaved.colJson)}, ${Fragment.encode(SqlServerTypes.rowversion, unsaved.colRowversion)}, ${Fragment.encode(SqlServerTypes.hierarchyid.opt, unsaved.colHierarchyid)}, ${Fragment.encode(SqlServerTypes.geography.opt, unsaved.colGeography)}, ${Fragment.encode(SqlServerTypes.geometry.opt, unsaved.colGeometry)}, ${Fragment.encode(SqlServerTypes.nvarchar, unsaved.colNotNull)})) AS source([id], [col_tinyint], [col_smallint], [col_int], [col_bigint], [col_decimal], [col_numeric], [col_money], [col_smallmoney], [col_real], [col_float], [col_bit], [col_char], [col_varchar], [col_varchar_max], [col_text], [col_nchar], [col_nvarchar], [col_nvarchar_max], [col_ntext], [col_binary], [col_varbinary], [col_varbinary_max], [col_image], [col_date], [col_time], [col_datetime], [col_smalldatetime], [col_datetime2], [col_datetimeoffset], [col_uniqueidentifier], [col_xml], [col_json], [col_rowversion], [col_hierarchyid], [col_geography], [col_geometry], [col_not_null])
     ON target.[id] = source.[id]
     WHEN MATCHED THEN UPDATE SET [col_tinyint] = source.[col_tinyint],
     [col_smallint] = source.[col_smallint],
@@ -233,10 +232,10 @@ class AllScalarTypesRepoImpl extends AllScalarTypesRepo {
     [col_geography] = source.[col_geography],
     [col_geometry] = source.[col_geometry],
     [col_not_null] = source.[col_not_null]
-    WHEN NOT MATCHED THEN INSERT ([id], [col_tinyint], [col_smallint], [col_int], [col_bigint], [col_decimal], [col_numeric], [col_money], [col_smallmoney], [col_real], [col_float], [col_bit], [col_char], [col_varchar], [col_varchar_max], [col_text], [col_nchar], [col_nvarchar], [col_nvarchar_max], [col_ntext], [col_binary], [col_varbinary], [col_varbinary_max], [col_image], [col_date], [col_time], [col_datetime], [col_smalldatetime], [col_datetime2], [col_datetimeoffset], [col_uniqueidentifier], [col_xml], [col_json], [col_rowversion], [col_hierarchyid], [col_geography], [col_geometry], [col_not_null]) VALUES (${Fragment.encode(AllScalarTypesId.sqlServerType, unsaved.id)}, ${Fragment.encode(SqlServerTypes.tinyint.nullable, unsaved.colTinyint)}, ${Fragment.encode(ScalaDbTypes.SqlServerTypes.smallint.nullable, unsaved.colSmallint)}, ${Fragment.encode(ScalaDbTypes.SqlServerTypes.int_.nullable, unsaved.colInt)}, ${Fragment.encode(ScalaDbTypes.SqlServerTypes.bigint.nullable, unsaved.colBigint)}, ${Fragment.encode(ScalaDbTypes.SqlServerTypes.decimal.nullable, unsaved.colDecimal)}, ${Fragment.encode(ScalaDbTypes.SqlServerTypes.decimal.nullable, unsaved.colNumeric)}, ${Fragment.encode(ScalaDbTypes.SqlServerTypes.money.nullable, unsaved.colMoney)}, ${Fragment.encode(ScalaDbTypes.SqlServerTypes.smallmoney.nullable, unsaved.colSmallmoney)}, ${Fragment.encode(ScalaDbTypes.SqlServerTypes.real.nullable, unsaved.colReal)}, ${Fragment.encode(ScalaDbTypes.SqlServerTypes.float_.nullable, unsaved.colFloat)}, ${Fragment.encode(ScalaDbTypes.SqlServerTypes.bit.nullable, unsaved.colBit)}, ${Fragment.encode(SqlServerTypes.char_.nullable, unsaved.colChar)}, ${Fragment.encode(SqlServerTypes.varchar.nullable, unsaved.colVarchar)}, ${Fragment.encode(SqlServerTypes.varchar.nullable, unsaved.colVarcharMax)}, ${Fragment.encode(SqlServerTypes.text.nullable, unsaved.colText)}, ${Fragment.encode(SqlServerTypes.nchar.nullable, unsaved.colNchar)}, ${Fragment.encode(SqlServerTypes.nvarchar.nullable, unsaved.colNvarchar)}, ${Fragment.encode(SqlServerTypes.nvarchar.nullable, unsaved.colNvarcharMax)}, ${Fragment.encode(SqlServerTypes.ntext.nullable, unsaved.colNtext)}, ${Fragment.encode(SqlServerTypes.binary.nullable, unsaved.colBinary)}, ${Fragment.encode(SqlServerTypes.varbinary.nullable, unsaved.colVarbinary)}, ${Fragment.encode(SqlServerTypes.varbinary.nullable, unsaved.colVarbinaryMax)}, ${Fragment.encode(SqlServerTypes.image.nullable, unsaved.colImage)}, ${Fragment.encode(SqlServerTypes.date.nullable, unsaved.colDate)}, ${Fragment.encode(SqlServerTypes.time.nullable, unsaved.colTime)}, ${Fragment.encode(SqlServerTypes.datetime.nullable, unsaved.colDatetime)}, ${Fragment.encode(SqlServerTypes.smalldatetime.nullable, unsaved.colSmalldatetime)}, ${Fragment.encode(SqlServerTypes.datetime2.nullable, unsaved.colDatetime2)}, ${Fragment.encode(SqlServerTypes.datetimeoffset.nullable, unsaved.colDatetimeoffset)}, ${Fragment.encode(SqlServerTypes.uniqueidentifier.nullable, unsaved.colUniqueidentifier)}, ${Fragment.encode(SqlServerTypes.xml.nullable, unsaved.colXml)}, ${Fragment.encode(SqlServerTypes.json.nullable, unsaved.colJson)}, ${Fragment.encode(SqlServerTypes.rowversion, unsaved.colRowversion)}, ${Fragment.encode(SqlServerTypes.hierarchyid.nullable, unsaved.colHierarchyid)}, ${Fragment.encode(SqlServerTypes.geography.nullable, unsaved.colGeography)}, ${Fragment.encode(SqlServerTypes.geometry.nullable, unsaved.colGeometry)}, ${Fragment.encode(SqlServerTypes.nvarchar, unsaved.colNotNull)})
+    WHEN NOT MATCHED THEN INSERT ([id], [col_tinyint], [col_smallint], [col_int], [col_bigint], [col_decimal], [col_numeric], [col_money], [col_smallmoney], [col_real], [col_float], [col_bit], [col_char], [col_varchar], [col_varchar_max], [col_text], [col_nchar], [col_nvarchar], [col_nvarchar_max], [col_ntext], [col_binary], [col_varbinary], [col_varbinary_max], [col_image], [col_date], [col_time], [col_datetime], [col_smalldatetime], [col_datetime2], [col_datetimeoffset], [col_uniqueidentifier], [col_xml], [col_json], [col_rowversion], [col_hierarchyid], [col_geography], [col_geometry], [col_not_null]) VALUES (${Fragment.encode(AllScalarTypesId.sqlServerType, unsaved.id)}, ${Fragment.encode(SqlServerTypes.tinyint.opt, unsaved.colTinyint)}, ${Fragment.encode(SqlServerTypes.smallint.opt, unsaved.colSmallint)}, ${Fragment.encode(SqlServerTypes.int_.opt, unsaved.colInt)}, ${Fragment.encode(SqlServerTypes.bigint.opt, unsaved.colBigint)}, ${Fragment.encode(SqlServerTypes.decimal.opt, unsaved.colDecimal)}, ${Fragment.encode(SqlServerTypes.decimal.opt, unsaved.colNumeric)}, ${Fragment.encode(SqlServerTypes.money.opt, unsaved.colMoney)}, ${Fragment.encode(SqlServerTypes.smallmoney.opt, unsaved.colSmallmoney)}, ${Fragment.encode(SqlServerTypes.real.opt, unsaved.colReal)}, ${Fragment.encode(SqlServerTypes.float_.opt, unsaved.colFloat)}, ${Fragment.encode(SqlServerTypes.bit.opt, unsaved.colBit)}, ${Fragment.encode(SqlServerTypes.char_.opt, unsaved.colChar)}, ${Fragment.encode(SqlServerTypes.varchar.opt, unsaved.colVarchar)}, ${Fragment.encode(SqlServerTypes.varchar.opt, unsaved.colVarcharMax)}, ${Fragment.encode(SqlServerTypes.text.opt, unsaved.colText)}, ${Fragment.encode(SqlServerTypes.nchar.opt, unsaved.colNchar)}, ${Fragment.encode(SqlServerTypes.nvarchar.opt, unsaved.colNvarchar)}, ${Fragment.encode(SqlServerTypes.nvarchar.opt, unsaved.colNvarcharMax)}, ${Fragment.encode(SqlServerTypes.ntext.opt, unsaved.colNtext)}, ${Fragment.encode(SqlServerTypes.binary.opt, unsaved.colBinary)}, ${Fragment.encode(SqlServerTypes.varbinary.opt, unsaved.colVarbinary)}, ${Fragment.encode(SqlServerTypes.varbinary.opt, unsaved.colVarbinaryMax)}, ${Fragment.encode(SqlServerTypes.image.opt, unsaved.colImage)}, ${Fragment.encode(SqlServerTypes.date.opt, unsaved.colDate)}, ${Fragment.encode(SqlServerTypes.time.opt, unsaved.colTime)}, ${Fragment.encode(SqlServerTypes.datetime.opt, unsaved.colDatetime)}, ${Fragment.encode(SqlServerTypes.smalldatetime.opt, unsaved.colSmalldatetime)}, ${Fragment.encode(SqlServerTypes.datetime2.opt, unsaved.colDatetime2)}, ${Fragment.encode(SqlServerTypes.datetimeoffset.opt, unsaved.colDatetimeoffset)}, ${Fragment.encode(SqlServerTypes.uniqueidentifier.opt, unsaved.colUniqueidentifier)}, ${Fragment.encode(SqlServerTypes.xml.opt, unsaved.colXml)}, ${Fragment.encode(SqlServerTypes.json.opt, unsaved.colJson)}, ${Fragment.encode(SqlServerTypes.rowversion, unsaved.colRowversion)}, ${Fragment.encode(SqlServerTypes.hierarchyid.opt, unsaved.colHierarchyid)}, ${Fragment.encode(SqlServerTypes.geography.opt, unsaved.colGeography)}, ${Fragment.encode(SqlServerTypes.geometry.opt, unsaved.colGeometry)}, ${Fragment.encode(SqlServerTypes.nvarchar, unsaved.colNotNull)})
     OUTPUT INSERTED.[id], INSERTED.[col_tinyint], INSERTED.[col_smallint], INSERTED.[col_int], INSERTED.[col_bigint], INSERTED.[col_decimal], INSERTED.[col_numeric], INSERTED.[col_money], INSERTED.[col_smallmoney], INSERTED.[col_real], INSERTED.[col_float], INSERTED.[col_bit], INSERTED.[col_char], INSERTED.[col_varchar], INSERTED.[col_varchar_max], INSERTED.[col_text], INSERTED.[col_nchar], INSERTED.[col_nvarchar], INSERTED.[col_nvarchar_max], INSERTED.[col_ntext], INSERTED.[col_binary], INSERTED.[col_varbinary], INSERTED.[col_varbinary_max], INSERTED.[col_image], INSERTED.[col_date], INSERTED.[col_time], INSERTED.[col_datetime], INSERTED.[col_smalldatetime], INSERTED.[col_datetime2], INSERTED.[col_datetimeoffset], INSERTED.[col_uniqueidentifier], INSERTED.[col_xml], INSERTED.[col_json], INSERTED.[col_rowversion], INSERTED.[col_hierarchyid], INSERTED.[col_geography], INSERTED.[col_geometry], INSERTED.[col_not_null];"""
-    .updateReturning(AllScalarTypesRow.`_rowParser`.exactlyOne())
-    .runUnchecked(c)
+    .updateReturning(AllScalarTypesRow.rowCodec.exactlyOne())
+    .run(using c)
   }
 
   override def upsertBatch(unsaved: Iterator[AllScalarTypesRow])(using c: Connection): List[AllScalarTypesRow] = {
@@ -282,7 +281,7 @@ class AllScalarTypesRepoImpl extends AllScalarTypesRepo {
     [col_not_null] = source.[col_not_null]
     WHEN NOT MATCHED THEN INSERT ([id], [col_tinyint], [col_smallint], [col_int], [col_bigint], [col_decimal], [col_numeric], [col_money], [col_smallmoney], [col_real], [col_float], [col_bit], [col_char], [col_varchar], [col_varchar_max], [col_text], [col_nchar], [col_nvarchar], [col_nvarchar_max], [col_ntext], [col_binary], [col_varbinary], [col_varbinary_max], [col_image], [col_date], [col_time], [col_datetime], [col_smalldatetime], [col_datetime2], [col_datetimeoffset], [col_uniqueidentifier], [col_xml], [col_json], [col_rowversion], [col_hierarchyid], [col_geography], [col_geometry], [col_not_null]) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     OUTPUT INSERTED.[id], INSERTED.[col_tinyint], INSERTED.[col_smallint], INSERTED.[col_int], INSERTED.[col_bigint], INSERTED.[col_decimal], INSERTED.[col_numeric], INSERTED.[col_money], INSERTED.[col_smallmoney], INSERTED.[col_real], INSERTED.[col_float], INSERTED.[col_bit], INSERTED.[col_char], INSERTED.[col_varchar], INSERTED.[col_varchar_max], INSERTED.[col_text], INSERTED.[col_nchar], INSERTED.[col_nvarchar], INSERTED.[col_nvarchar_max], INSERTED.[col_ntext], INSERTED.[col_binary], INSERTED.[col_varbinary], INSERTED.[col_varbinary_max], INSERTED.[col_image], INSERTED.[col_date], INSERTED.[col_time], INSERTED.[col_datetime], INSERTED.[col_smalldatetime], INSERTED.[col_datetime2], INSERTED.[col_datetimeoffset], INSERTED.[col_uniqueidentifier], INSERTED.[col_xml], INSERTED.[col_json], INSERTED.[col_rowversion], INSERTED.[col_hierarchyid], INSERTED.[col_geography], INSERTED.[col_geometry], INSERTED.[col_not_null];"""
-      .updateReturningEach(AllScalarTypesRow.`_rowParser`, unsaved)
-    .runUnchecked(c)
+      .updateReturningEach(AllScalarTypesRow.rowCodec, unsaved)
+    .run(using c)
   }
 }

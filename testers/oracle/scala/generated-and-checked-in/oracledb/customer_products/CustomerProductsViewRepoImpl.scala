@@ -5,18 +5,18 @@
  */
 package oracledb.customer_products
 
+import dev.typr.dsl.Dialect
+import dev.typr.dsl.SelectBuilder
+import dev.typr.foundations.ConnectionRead
 import dev.typr.foundations.Fragment
-import dev.typr.foundations.dsl.Dialect
-import dev.typr.foundations.dsl.SelectBuilder
-import java.sql.Connection
-import dev.typr.foundations.Fragment.interpolate
+import dev.typr.foundations.Fragment.concat
 
 class CustomerProductsViewRepoImpl extends CustomerProductsViewRepo {
-  override def select: SelectBuilder[CustomerProductsViewFields, CustomerProductsViewRow] = SelectBuilder.of(""""CUSTOMER_PRODUCTS"""", CustomerProductsViewFields.structure, CustomerProductsViewRow.`_rowParser`, Dialect.ORACLE)
+  override def select: SelectBuilder[CustomerProductsViewFields, CustomerProductsViewRow] = SelectBuilder.of(""""CUSTOMER_PRODUCTS"""", CustomerProductsViewFields.structure, CustomerProductsViewRow.rowCodec, Dialect.ORACLE)
 
-  override def selectAll(using c: Connection): java.util.List[CustomerProductsViewRow] = {
-    interpolate(Fragment.lit("""select "CUSTOMER_ID", "CUSTOMER_NAME", "BILLING_ADDRESS", "PRODUCT_ID", "PRODUCT_NAME", "PRICE"
+  override def selectAll(using c: ConnectionRead): java.util.List[CustomerProductsViewRow] = {
+    concat(Fragment.of("""select "CUSTOMER_ID", "CUSTOMER_NAME", "BILLING_ADDRESS", "PRODUCT_ID", "PRODUCT_NAME", "PRICE"
     from "CUSTOMER_PRODUCTS"
-    """)).query(CustomerProductsViewRow.`_rowParser`.all()).runUnchecked(c)
+    """)).query(CustomerProductsViewRow.rowCodec.all()).run(c)
   }
 }

@@ -6,9 +6,9 @@
 package adventureworks.public
 
 import com.fasterxml.jackson.annotation.JsonValue
-import dev.typr.foundations.PgType
-import dev.typr.foundations.PgTypes
-import dev.typr.foundations.scala.Bijection
+import dev.typr.dslsc.Bijection
+import dev.typr.foundationssc.PgType
+import dev.typr.foundationssc.PgTypes
 
 /** Domain `public.OrderNumber`
  * No constraint
@@ -16,9 +16,9 @@ import dev.typr.foundations.scala.Bijection
 case class OrderNumber(@JsonValue value: String)
 
 object OrderNumber {
-  given bijection: Bijection[OrderNumber, String] = Bijection.apply[OrderNumber, String](_.value)(OrderNumber.apply)
+  given bijection: Bijection[OrderNumber, String] = Bijection.of[OrderNumber, String](_.value, OrderNumber.apply)
 
-  given pgType: PgType[OrderNumber] = PgTypes.text.bimap(OrderNumber.apply, _.value).renamed(""""public"."OrderNumber"""")
+  given pgType: PgType[OrderNumber] = PgType(PgTypes.text.to(Bijection.of(OrderNumber.apply, _.value)).underlying.renamed(""""public"."OrderNumber""""))
 
-  given pgTypeArray: PgType[Array[OrderNumber]] = PgTypes.textArray.bimap(xs => xs.map(OrderNumber.apply), xs => xs.map(_.value)).renamed(""""public"."OrderNumber"[]""")
+  given pgTypeArray: PgType[List[OrderNumber]] = pgType.array
 }

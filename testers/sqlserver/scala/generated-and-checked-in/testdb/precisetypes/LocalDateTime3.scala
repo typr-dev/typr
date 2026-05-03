@@ -6,10 +6,10 @@
 package testdb.precisetypes
 
 import com.fasterxml.jackson.annotation.JsonValue
-import dev.typr.foundations.SqlServerType
-import dev.typr.foundations.SqlServerTypes
+import dev.typr.dslsc.Bijection
 import dev.typr.foundations.data.precise.LocalDateTimeN
-import dev.typr.foundations.scala.Bijection
+import dev.typr.foundationssc.SqlServerType
+import dev.typr.foundationssc.SqlServerTypes
 import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
 
@@ -18,7 +18,7 @@ case class LocalDateTime3 private(@JsonValue value: LocalDateTime) extends Local
 
   override def fractionalSecondsPrecision: Int = 3
 
-  override def semanticEquals(other: LocalDateTimeN): Boolean = (if (other == null) false else value == other.rawValue())
+  override def semanticEquals(other: LocalDateTimeN): Boolean = (if (other == null) false else (value == other.rawValue()))
 
   override def semanticHashCode: Int = value.hashCode()
 
@@ -28,11 +28,11 @@ case class LocalDateTime3 private(@JsonValue value: LocalDateTime) extends Local
 }
 
 object LocalDateTime3 {
-  given bijection: Bijection[LocalDateTime3, LocalDateTime] = Bijection.apply[LocalDateTime3, LocalDateTime](_.value)(LocalDateTime3.apply)
+  given bijection: Bijection[LocalDateTime3, LocalDateTime] = Bijection.of[LocalDateTime3, LocalDateTime](_.value, LocalDateTime3.apply)
 
   def now: LocalDateTime3 = new LocalDateTime3(LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS))
 
   def of(value: LocalDateTime): LocalDateTime3 = new LocalDateTime3(value.truncatedTo(ChronoUnit.MILLIS))
 
-  given sqlServerType: SqlServerType[LocalDateTime3] = SqlServerTypes.datetime2.bimap(LocalDateTime3.apply, _.value)
+  given sqlServerType: SqlServerType[LocalDateTime3] = SqlServerTypes.datetime2.to(Bijection.of(LocalDateTime3.apply, _.value))
 }

@@ -6,10 +6,11 @@
 package adventureworks.public.issue142_2
 
 import adventureworks.public.issue142.Issue142Id
-import dev.typr.foundations.kotlin.DeleteBuilder
-import dev.typr.foundations.kotlin.SelectBuilder
-import dev.typr.foundations.kotlin.UpdateBuilder
-import java.sql.Connection
+import dev.typr.dslkt.DeleteBuilder
+import dev.typr.dslkt.SelectBuilder
+import dev.typr.dslkt.UpdateBuilder
+import dev.typr.foundationskt.Connection
+import dev.typr.foundationskt.ConnectionRead
 import kotlin.collections.Iterator
 import kotlin.collections.List
 import kotlin.collections.Map
@@ -20,10 +21,10 @@ interface Issue1422Repo {
   abstract fun deleteById(
     tabellkode: Issue142Id,
     c: Connection
-  ): Boolean
+  ): kotlin.Boolean
 
   abstract fun deleteByIds(
-    tabellkodes: Array<Issue142Id>,
+    tabellkodes: List<Issue142Id>,
     c: Connection
   ): Int
 
@@ -36,25 +37,25 @@ interface Issue1422Repo {
     unsaved: Iterator<Issue1422Row>,
     batchSize: Int = 10000,
     c: Connection
-  ): Long
+  ): kotlin.Long
 
   abstract fun select(): SelectBuilder<Issue1422Fields, Issue1422Row>
 
-  abstract fun selectAll(c: Connection): List<Issue1422Row>
+  abstract fun selectAll(c: ConnectionRead): List<Issue1422Row>
 
   abstract fun selectById(
     tabellkode: Issue142Id,
-    c: Connection
+    c: ConnectionRead
   ): Issue1422Row?
 
   abstract fun selectByIds(
-    tabellkodes: Array<Issue142Id>,
-    c: Connection
+    tabellkodes: List<Issue142Id>,
+    c: ConnectionRead
   ): List<Issue1422Row>
 
   abstract fun selectByIdsTracked(
-    tabellkodes: Array<Issue142Id>,
-    c: Connection
+    tabellkodes: List<Issue142Id>,
+    c: ConnectionRead
   ): Map<Issue142Id, Issue1422Row>
 
   abstract fun update(): UpdateBuilder<Issue1422Fields, Issue1422Row>

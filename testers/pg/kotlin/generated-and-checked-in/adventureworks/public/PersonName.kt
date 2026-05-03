@@ -5,27 +5,23 @@
  */
 package adventureworks.public
 
-import dev.typr.foundations.PgRead
-import dev.typr.foundations.PgStruct
-import dev.typr.foundations.PgType
-import dev.typr.foundations.PgTypes
-import java.util.Optional
+import dev.typr.foundationskt.PgType
+import dev.typr.foundationskt.PgTypes
+import dev.typr.foundationskt.RowCodec
+import kotlin.collections.List
 
 /** PostgreSQL composite type: public.person_name */
 data class PersonName(
-  val firstName: String?,
-  val middleName: String?,
-  val lastName: String?,
-  val suffix: String?
+  val firstName: kotlin.String?,
+  val middleName: kotlin.String?,
+  val lastName: kotlin.String?,
+  val suffix: kotlin.String?
 ) {
   companion object {
-    val pgStruct: PgStruct<PersonName> =
-      PgStruct.builder<PersonName>("public.person_name").optField("firstName", PgTypes.text, { v: PersonName -> Optional.ofNullable(v.firstName) }).optField("middleName", PgTypes.text, { v: PersonName -> Optional.ofNullable(v.middleName) }).optField("lastName", PgTypes.text, { v: PersonName -> Optional.ofNullable(v.lastName) }).optField("suffix", PgTypes.text, { v: PersonName -> Optional.ofNullable(v.suffix) }).build({ arr -> PersonName(arr[0] as? String, arr[1] as? String, arr[2] as? String, arr[3] as? String) })
-
     val pgType: PgType<PersonName> =
-      pgStruct.asType()
+      PgTypes.compositeOf("public.person_name", RowCodec.namedBuilder<PersonName>().field("firstName", PgTypes.text.opt(), { v: PersonName -> v.firstName }).field("middleName", PgTypes.text.opt(), { v: PersonName -> v.middleName }).field("lastName", PgTypes.text.opt(), { v: PersonName -> v.lastName }).field("suffix", PgTypes.text.opt(), { v: PersonName -> v.suffix }).build({ t0, t1, t2, t3 -> PersonName(t0, t1, t2, t3) }))
 
-    val pgTypeArray: PgType<Array<PersonName>> =
-      pgType.array(PgRead.readCompositeArray(pgType.pgCompositeText(), { n -> arrayOfNulls<PersonName>(n) }), { n -> arrayOfNulls<PersonName>(n) })
+    val pgTypeArray: PgType<List<PersonName>> =
+      pgType.array()
   }
 }

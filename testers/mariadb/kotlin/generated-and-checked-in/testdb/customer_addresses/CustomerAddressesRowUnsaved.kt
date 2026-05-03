@@ -20,17 +20,17 @@ data class CustomerAddressesRowUnsaved(
     */
   @field:JsonProperty("customer_id") val customerId: CustomersId,
   /**  */
-  @field:JsonProperty("address_type") val addressType: String,
+  @field:JsonProperty("address_type") val addressType: kotlin.String,
   /**  */
-  @field:JsonProperty("recipient_name") val recipientName: String,
+  @field:JsonProperty("recipient_name") val recipientName: kotlin.String,
   /**  */
-  @field:JsonProperty("street_line1") val streetLine1: String,
+  @field:JsonProperty("street_line1") val streetLine1: kotlin.String,
   /**  */
-  val city: String,
+  val city: kotlin.String,
   /**  */
-  @field:JsonProperty("postal_code") val postalCode: String,
+  @field:JsonProperty("postal_code") val postalCode: kotlin.String,
   /**  */
-  @field:JsonProperty("country_code") val countryCode: String,
+  @field:JsonProperty("country_code") val countryCode: kotlin.String,
   /** Default: 0
 
     */
@@ -38,11 +38,11 @@ data class CustomerAddressesRowUnsaved(
   /** Default: NULL
 
     */
-  @field:JsonProperty("street_line2") val streetLine2: Defaulted<String?> = UseDefault(),
+  @field:JsonProperty("street_line2") val streetLine2: Defaulted<kotlin.String?> = UseDefault(),
   /** Default: NULL
 
     */
-  @field:JsonProperty("state_province") val stateProvince: Defaulted<String?> = UseDefault(),
+  @field:JsonProperty("state_province") val stateProvince: Defaulted<kotlin.String?> = UseDefault(),
   /** Default: NULL
 
     */
@@ -50,7 +50,7 @@ data class CustomerAddressesRowUnsaved(
   /** Default: NULL
 
     */
-  @field:JsonProperty("delivery_notes") val deliveryNotes: Defaulted<String?> = UseDefault(),
+  @field:JsonProperty("delivery_notes") val deliveryNotes: Defaulted<kotlin.String?> = UseDefault(),
   /** Default: current_timestamp()
 
     */
@@ -58,10 +58,10 @@ data class CustomerAddressesRowUnsaved(
 ) {
   fun toRow(
     isDefaultDefault: () -> /* user-picked */ IsDefault,
-    streetLine2Default: () -> String?,
-    stateProvinceDefault: () -> String?,
+    streetLine2Default: () -> kotlin.String?,
+    stateProvinceDefault: () -> kotlin.String?,
     locationDefault: () -> Point?,
-    deliveryNotesDefault: () -> String?,
+    deliveryNotesDefault: () -> kotlin.String?,
     createdAtDefault: () -> LocalDateTime,
     addressIdDefault: () -> CustomerAddressesId
   ): CustomerAddressesRow = CustomerAddressesRow(addressId = addressIdDefault(), customerId = customerId, addressType = addressType, isDefault = isDefault.getOrElse(isDefaultDefault), recipientName = recipientName, streetLine1 = streetLine1, streetLine2 = streetLine2.getOrElse(streetLine2Default), city = city, stateProvince = stateProvince.getOrElse(stateProvinceDefault), postalCode = postalCode, countryCode = countryCode, location = location.getOrElse(locationDefault), deliveryNotes = deliveryNotes.getOrElse(deliveryNotesDefault), createdAt = createdAt.getOrElse(createdAtDefault))

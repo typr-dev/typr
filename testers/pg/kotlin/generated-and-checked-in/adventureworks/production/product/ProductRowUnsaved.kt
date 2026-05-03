@@ -13,9 +13,7 @@ import adventureworks.production.unitmeasure.UnitmeasureId
 import adventureworks.public.Flag
 import adventureworks.public.Name
 import dev.typr.foundations.PgText
-import dev.typr.foundations.PgTypes
-import dev.typr.foundations.kotlin.KotlinDbTypes
-import dev.typr.foundations.kotlin.nullable
+import dev.typr.foundationskt.PgTypes
 import java.math.BigDecimal
 import java.time.LocalDateTime
 import java.util.UUID
@@ -25,17 +23,17 @@ data class ProductRowUnsaved(
   /** Name of the product. */
   val name: Name,
   /** Unique product identification number. */
-  val productnumber: String,
+  val productnumber: kotlin.String,
   /** Product color. */
-  val color: /* max 15 chars */ String? = null,
+  val color: /* max 15 chars */ kotlin.String? = null,
   /** Minimum inventory quantity.
     * Constraint CK_Product_SafetyStockLevel affecting columns safetystocklevel:  ((safetystocklevel > 0))
     */
-  val safetystocklevel: Short,
+  val safetystocklevel: kotlin.Short,
   /** Inventory level that triggers a purchase order or work order.
     * Constraint CK_Product_ReorderPoint affecting columns reorderpoint:  ((reorderpoint > 0))
     */
-  val reorderpoint: Short,
+  val reorderpoint: kotlin.Short,
   /** Standard cost of the product.
     * Constraint CK_Product_StandardCost affecting columns standardcost:  ((standardcost >= 0.00))
     */
@@ -45,7 +43,7 @@ data class ProductRowUnsaved(
     */
   val listprice: BigDecimal,
   /** Product size. */
-  val size: /* max 5 chars */ String? = null,
+  val size: /* max 5 chars */ kotlin.String? = null,
   /** Unit of measure for Size column.
     * Points to [adventureworks.production.unitmeasure.UnitmeasureRow.unitmeasurecode]
     */
@@ -65,15 +63,15 @@ data class ProductRowUnsaved(
   /** R = Road, M = Mountain, T = Touring, S = Standard
     * Constraint CK_Product_ProductLine affecting columns productline:  (((upper((productline)::text) = ANY (ARRAY['S'::text, 'T'::text, 'M'::text, 'R'::text])) OR (productline IS NULL)))
     */
-  val productline: /* bpchar, max 2 chars */ String? = null,
+  val productline: /* bpchar, max 2 chars */ kotlin.String? = null,
   /** H = High, M = Medium, L = Low
     * Constraint CK_Product_Class affecting columns class:  (((upper((class)::text) = ANY (ARRAY['L'::text, 'M'::text, 'H'::text])) OR (class IS NULL)))
     */
-  val `class`: /* bpchar, max 2 chars */ String? = null,
+  val `class`: /* bpchar, max 2 chars */ kotlin.String? = null,
   /** W = Womens, M = Mens, U = Universal
     * Constraint CK_Product_Style affecting columns style:  (((upper((style)::text) = ANY (ARRAY['W'::text, 'M'::text, 'U'::text])) OR (style IS NULL)))
     */
-  val style: /* bpchar, max 2 chars */ String? = null,
+  val style: /* bpchar, max 2 chars */ kotlin.String? = null,
   /** Product is a member of this product subcategory. Foreign key to ProductSubCategory.ProductSubCategoryID.
     * Points to [adventureworks.production.productsubcategory.ProductsubcategoryRow.productsubcategoryid]
     */
@@ -119,54 +117,54 @@ data class ProductRowUnsaved(
 
   companion object {
     val pgText: PgText<ProductRowUnsaved> =
-      PgText.instance({ row, sb -> Name.pgType.text().unsafeEncode(row.name, sb)
+      PgText.instance({ row, sb -> Name.pgType.pgText().unsafeEncode(row.name, sb)
       sb.append(PgText.DELIMETER)
-      PgTypes.text.text().unsafeEncode(row.productnumber, sb)
+      PgTypes.text.pgText().unsafeEncode(row.productnumber, sb)
       sb.append(PgText.DELIMETER)
-      PgTypes.text.nullable().text().unsafeEncode(row.color, sb)
+      PgTypes.text.opt().pgText().unsafeEncode(row.color, sb)
       sb.append(PgText.DELIMETER)
-      KotlinDbTypes.PgTypes.int2.text().unsafeEncode(row.safetystocklevel, sb)
+      PgTypes.int2.pgText().unsafeEncode(row.safetystocklevel, sb)
       sb.append(PgText.DELIMETER)
-      KotlinDbTypes.PgTypes.int2.text().unsafeEncode(row.reorderpoint, sb)
+      PgTypes.int2.pgText().unsafeEncode(row.reorderpoint, sb)
       sb.append(PgText.DELIMETER)
-      PgTypes.numeric.text().unsafeEncode(row.standardcost, sb)
+      PgTypes.numeric.pgText().unsafeEncode(row.standardcost, sb)
       sb.append(PgText.DELIMETER)
-      PgTypes.numeric.text().unsafeEncode(row.listprice, sb)
+      PgTypes.numeric.pgText().unsafeEncode(row.listprice, sb)
       sb.append(PgText.DELIMETER)
-      PgTypes.text.nullable().text().unsafeEncode(row.size, sb)
+      PgTypes.text.opt().pgText().unsafeEncode(row.size, sb)
       sb.append(PgText.DELIMETER)
-      UnitmeasureId.pgType.nullable().text().unsafeEncode(row.sizeunitmeasurecode, sb)
+      UnitmeasureId.pgType.opt().pgText().unsafeEncode(row.sizeunitmeasurecode, sb)
       sb.append(PgText.DELIMETER)
-      UnitmeasureId.pgType.nullable().text().unsafeEncode(row.weightunitmeasurecode, sb)
+      UnitmeasureId.pgType.opt().pgText().unsafeEncode(row.weightunitmeasurecode, sb)
       sb.append(PgText.DELIMETER)
-      PgTypes.numeric.nullable().text().unsafeEncode(row.weight, sb)
+      PgTypes.numeric.opt().pgText().unsafeEncode(row.weight, sb)
       sb.append(PgText.DELIMETER)
-      KotlinDbTypes.PgTypes.int4.text().unsafeEncode(row.daystomanufacture, sb)
+      PgTypes.int4.pgText().unsafeEncode(row.daystomanufacture, sb)
       sb.append(PgText.DELIMETER)
-      PgTypes.bpchar.nullable().text().unsafeEncode(row.productline, sb)
+      PgTypes.bpchar.opt().pgText().unsafeEncode(row.productline, sb)
       sb.append(PgText.DELIMETER)
-      PgTypes.bpchar.nullable().text().unsafeEncode(row.`class`, sb)
+      PgTypes.bpchar.opt().pgText().unsafeEncode(row.`class`, sb)
       sb.append(PgText.DELIMETER)
-      PgTypes.bpchar.nullable().text().unsafeEncode(row.style, sb)
+      PgTypes.bpchar.opt().pgText().unsafeEncode(row.style, sb)
       sb.append(PgText.DELIMETER)
-      ProductsubcategoryId.pgType.nullable().text().unsafeEncode(row.productsubcategoryid, sb)
+      ProductsubcategoryId.pgType.opt().pgText().unsafeEncode(row.productsubcategoryid, sb)
       sb.append(PgText.DELIMETER)
-      ProductmodelId.pgType.nullable().text().unsafeEncode(row.productmodelid, sb)
+      ProductmodelId.pgType.opt().pgText().unsafeEncode(row.productmodelid, sb)
       sb.append(PgText.DELIMETER)
-      PgTypes.timestamp.text().unsafeEncode(row.sellstartdate, sb)
+      PgTypes.timestamp.pgText().unsafeEncode(row.sellstartdate, sb)
       sb.append(PgText.DELIMETER)
-      PgTypes.timestamp.nullable().text().unsafeEncode(row.sellenddate, sb)
+      PgTypes.timestamp.opt().pgText().unsafeEncode(row.sellenddate, sb)
       sb.append(PgText.DELIMETER)
-      PgTypes.timestamp.nullable().text().unsafeEncode(row.discontinueddate, sb)
+      PgTypes.timestamp.opt().pgText().unsafeEncode(row.discontinueddate, sb)
       sb.append(PgText.DELIMETER)
-      Defaulted.pgText(ProductId.pgType.text()).unsafeEncode(row.productid, sb)
+      Defaulted.pgText(ProductId.pgType.pgText()).unsafeEncode(row.productid, sb)
       sb.append(PgText.DELIMETER)
-      Defaulted.pgText(Flag.pgType.text()).unsafeEncode(row.makeflag, sb)
+      Defaulted.pgText(Flag.pgType.pgText()).unsafeEncode(row.makeflag, sb)
       sb.append(PgText.DELIMETER)
-      Defaulted.pgText(Flag.pgType.text()).unsafeEncode(row.finishedgoodsflag, sb)
+      Defaulted.pgText(Flag.pgType.pgText()).unsafeEncode(row.finishedgoodsflag, sb)
       sb.append(PgText.DELIMETER)
-      Defaulted.pgText(PgTypes.uuid.text()).unsafeEncode(row.rowguid, sb)
+      Defaulted.pgText(PgTypes.uuid.pgText()).unsafeEncode(row.rowguid, sb)
       sb.append(PgText.DELIMETER)
-      Defaulted.pgText(PgTypes.timestamp.text()).unsafeEncode(row.modifieddate, sb) })
+      Defaulted.pgText(PgTypes.timestamp.pgText()).unsafeEncode(row.modifieddate, sb) })
   }
 }

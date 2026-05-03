@@ -23,7 +23,7 @@ object SqlIdentifier {
 
   given arrayPut: Put[Array[SqlIdentifier]] = adventureworks.StringArrayMeta.put.contramap(_.map(_.value))
 
-  given bijection: Bijection[SqlIdentifier, String] = Bijection.apply[SqlIdentifier, String](_.value)(SqlIdentifier.apply)
+  given bijection: Bijection[SqlIdentifier, String] = Bijection[SqlIdentifier, String](_.value)(SqlIdentifier.apply)
 
   given decoder: Decoder[SqlIdentifier] = Decoder.decodeString.map(SqlIdentifier.apply)
 

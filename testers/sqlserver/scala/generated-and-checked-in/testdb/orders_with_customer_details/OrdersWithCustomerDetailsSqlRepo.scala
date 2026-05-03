@@ -5,12 +5,12 @@
  */
 package testdb.orders_with_customer_details
 
-import java.sql.Connection
+import dev.typr.foundationssc.ConnectionRead
 import java.time.LocalDateTime
 
 trait OrdersWithCustomerDetailsSqlRepo {
   def apply(
     minAmount: Option[BigDecimal],
     startDate: Option[LocalDateTime]
-  )(using c: Connection): List[OrdersWithCustomerDetailsSqlRow]
+  )(using c: ConnectionRead): List[OrdersWithCustomerDetailsSqlRow]
 }

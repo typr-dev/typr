@@ -2,8 +2,8 @@ package testdb
 
 import dev.typr.foundations.data.Uint4
 import dev.typr.foundations.data.Uint8
-import dev.typr.foundations.dsl.MockConnection
-import dev.typr.foundations.kotlin.SqlExpr
+import dev.typr.dslkt.MockConnection
+import dev.typr.dslkt.SqlExpr
 import org.junit.Assert.*
 import org.junit.Ignore
 import org.junit.Test
@@ -12,7 +12,7 @@ import testdb.product_categories.*
 import testdb.products.*
 import testdb.userdefined.IsPrimary
 import java.math.BigDecimal
-import java.sql.Connection
+import dev.typr.foundationskt.Connection
 import java.time.LocalDateTime
 import java.util.concurrent.atomic.AtomicInteger
 

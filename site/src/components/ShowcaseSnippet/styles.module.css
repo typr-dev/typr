@@ -1,0 +1,136 @@
+/* ShowcaseSnippet styles */
+
+.showcaseSnippet {
+  margin: 1.5rem 0;
+}
+
+.snippetGroup {
+  margin: 1.5rem 0;
+}
+
+.snippets {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.snippets .showcaseSnippet {
+  margin: 0;
+}
+
+/* Picker bar - integrated with code block */
+.pickerBar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.5rem 1rem;
+  background: var(--ifm-color-emphasis-100);
+  border: 1px solid var(--ifm-color-emphasis-200);
+  border-bottom: none;
+  border-radius: 10px 10px 0 0;
+}
+
+.fileName {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--ifm-font-color-base);
+  font-family: var(--ifm-font-family-monospace);
+}
+
+.pickerGroup {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.pickerSelect {
+  padding: 0.35rem 0.6rem;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--ifm-font-color-base);
+  background: var(--ifm-background-color);
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: 5px;
+  cursor: pointer;
+  transition: border-color 0.15s ease;
+}
+
+.pickerSelect:hover {
+  border-color: var(--ifm-color-primary);
+}
+
+.pickerSelect:focus {
+  outline: none;
+  border-color: var(--ifm-color-primary);
+  box-shadow: 0 0 0 2px var(--ifm-color-primary-lightest);
+}
+
+.fullFileCheckbox {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.8rem;
+  color: var(--ifm-font-color-secondary);
+  cursor: pointer;
+  margin-left: auto;
+}
+
+.fullFileCheckbox input {
+  cursor: pointer;
+}
+
+.fullFileCheckbox span {
+  user-select: none;
+}
+
+/* Title */
+.title {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--ifm-font-color-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.5rem;
+}
+
+/* Code block adjustments */
+.showcaseSnippet :global(.theme-code-block) {
+  margin: 0;
+  border-radius: 10px;
+  font-size: 0.82rem;
+}
+
+/* When picker bar is present, connect code block to it */
+.pickerBar + :global(.theme-code-block),
+.pickerBar ~ .title + :global(.theme-code-block) {
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+  border-top: 1px solid var(--ifm-color-emphasis-200);
+}
+
+/* Error state */
+.error {
+  padding: 1.5rem;
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: 10px;
+  color: #dc2626;
+}
+
+.error code {
+  background: rgba(239, 68, 68, 0.15);
+  padding: 0.2rem 0.4rem;
+  border-radius: 4px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .pickerBar {
+    gap: 0.75rem;
+  }
+
+  .fullFileCheckbox {
+    margin-left: 0;
+  }
+}

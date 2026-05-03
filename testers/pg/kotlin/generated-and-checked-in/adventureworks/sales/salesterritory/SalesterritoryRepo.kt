@@ -5,10 +5,11 @@
  */
 package adventureworks.sales.salesterritory
 
-import dev.typr.foundations.kotlin.DeleteBuilder
-import dev.typr.foundations.kotlin.SelectBuilder
-import dev.typr.foundations.kotlin.UpdateBuilder
-import java.sql.Connection
+import dev.typr.dslkt.DeleteBuilder
+import dev.typr.dslkt.SelectBuilder
+import dev.typr.dslkt.UpdateBuilder
+import dev.typr.foundationskt.Connection
+import dev.typr.foundationskt.ConnectionRead
 import kotlin.collections.Iterator
 import kotlin.collections.List
 import kotlin.collections.Map
@@ -19,10 +20,10 @@ interface SalesterritoryRepo {
   abstract fun deleteById(
     territoryid: SalesterritoryId,
     c: Connection
-  ): Boolean
+  ): kotlin.Boolean
 
   abstract fun deleteByIds(
-    territoryids: Array<SalesterritoryId>,
+    territoryids: List<SalesterritoryId>,
     c: Connection
   ): Int
 
@@ -40,32 +41,32 @@ interface SalesterritoryRepo {
     unsaved: Iterator<SalesterritoryRow>,
     batchSize: Int = 10000,
     c: Connection
-  ): Long
+  ): kotlin.Long
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
   abstract fun insertUnsavedStreaming(
     unsaved: Iterator<SalesterritoryRowUnsaved>,
     batchSize: Int = 10000,
     c: Connection
-  ): Long
+  ): kotlin.Long
 
   abstract fun select(): SelectBuilder<SalesterritoryFields, SalesterritoryRow>
 
-  abstract fun selectAll(c: Connection): List<SalesterritoryRow>
+  abstract fun selectAll(c: ConnectionRead): List<SalesterritoryRow>
 
   abstract fun selectById(
     territoryid: SalesterritoryId,
-    c: Connection
+    c: ConnectionRead
   ): SalesterritoryRow?
 
   abstract fun selectByIds(
-    territoryids: Array<SalesterritoryId>,
-    c: Connection
+    territoryids: List<SalesterritoryId>,
+    c: ConnectionRead
   ): List<SalesterritoryRow>
 
   abstract fun selectByIdsTracked(
-    territoryids: Array<SalesterritoryId>,
-    c: Connection
+    territoryids: List<SalesterritoryId>,
+    c: ConnectionRead
   ): Map<SalesterritoryId, SalesterritoryRow>
 
   abstract fun update(): UpdateBuilder<SalesterritoryFields, SalesterritoryRow>
@@ -73,7 +74,7 @@ interface SalesterritoryRepo {
   abstract fun update(
     row: SalesterritoryRow,
     c: Connection
-  ): Boolean
+  ): kotlin.Boolean
 
   abstract fun upsert(
     unsaved: SalesterritoryRow,

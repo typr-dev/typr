@@ -45,7 +45,7 @@ object TypoXml {
     }))))
   }
 
-  given bijection: Bijection[TypoXml, String] = Bijection.apply[TypoXml, String](_.value)(TypoXml.apply)
+  given bijection: Bijection[TypoXml, String] = Bijection[TypoXml, String](_.value)(TypoXml.apply)
 
   given column: Column[TypoXml] = {
     Column.nonNull[TypoXml]((v1: Any, _) =>

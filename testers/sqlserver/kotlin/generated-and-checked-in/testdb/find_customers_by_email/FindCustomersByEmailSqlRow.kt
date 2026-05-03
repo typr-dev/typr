@@ -6,11 +6,10 @@
 package testdb.find_customers_by_email
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import dev.typr.foundations.SqlServerTypes
+import dev.typr.dslkt.RowCodecs
 import dev.typr.foundations.Tuple.Tuple4
-import dev.typr.foundations.kotlin.RowParser
-import dev.typr.foundations.kotlin.RowParsers
-import dev.typr.foundations.kotlin.nullable
+import dev.typr.foundationskt.RowCodec
+import dev.typr.foundationskt.SqlServerTypes
 import java.time.LocalDateTime
 import testdb.customers.CustomersId
 import testdb.userdefined.Email
@@ -20,21 +19,21 @@ data class FindCustomersByEmailSqlRow(
   /** Points to [testdb.customers.CustomersRow.customerId] */
   @field:JsonProperty("customer_id") val customerId: CustomersId,
   /** Points to [testdb.customers.CustomersRow.name] */
-  @field:JsonProperty("customer_name") val customerName: String,
+  @field:JsonProperty("customer_name") val customerName: kotlin.String,
   /** Points to [testdb.customers.CustomersRow.email] */
   @field:JsonProperty("customer_email") val customerEmail: /* user-picked */ Email,
   /** Points to [testdb.customers.CustomersRow.createdAt] */
   @field:JsonProperty("created_at") val createdAt: LocalDateTime?
-) : Tuple4<CustomersId, String, /* user-picked */ Email, LocalDateTime?> {
+) : Tuple4<CustomersId, kotlin.String, /* user-picked */ Email, LocalDateTime?> {
   override fun _1(): CustomersId = customerId
 
-  override fun _2(): String = customerName
+  override fun _2(): kotlin.String = customerName
 
   override fun _3(): /* user-picked */ Email = customerEmail
 
   override fun _4(): LocalDateTime? = createdAt
 
   companion object {
-    val _rowParser: RowParser<FindCustomersByEmailSqlRow> = RowParsers.of(CustomersId.sqlServerType, SqlServerTypes.nvarchar, Email.sqlServerType, SqlServerTypes.datetime2.nullable(), { t0, t1, t2, t3 -> FindCustomersByEmailSqlRow(t0, t1, t2, t3) }, { row -> arrayOf<Any?>(row.customerId, row.customerName, row.customerEmail, row.createdAt) })
+    val rowCodec: RowCodec<FindCustomersByEmailSqlRow> = RowCodecs.of(CustomersId.sqlServerType, SqlServerTypes.nvarchar, Email.sqlServerType, SqlServerTypes.datetime2.opt(), { t0: CustomersId, t1: kotlin.String, t2: /* user-picked */ Email, t3: LocalDateTime? -> FindCustomersByEmailSqlRow(t0, t1, t2, t3) }, { row: FindCustomersByEmailSqlRow -> arrayOf<Any?>(row.customerId, row.customerName, row.customerEmail, row.createdAt) })
   }
 }

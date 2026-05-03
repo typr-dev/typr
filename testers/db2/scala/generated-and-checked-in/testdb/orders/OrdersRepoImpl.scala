@@ -5,109 +5,108 @@
  */
 package testdb.orders
 
-import dev.typr.foundations.Db2Types
-import dev.typr.foundations.scala.DbTypeOps
-import dev.typr.foundations.scala.DeleteBuilder
-import dev.typr.foundations.scala.Dialect
-import dev.typr.foundations.scala.Fragment
-import dev.typr.foundations.scala.ScalaDbTypes
-import dev.typr.foundations.scala.SelectBuilder
-import dev.typr.foundations.scala.UpdateBuilder
-import java.sql.Connection
+import dev.typr.dslsc.DeleteBuilder
+import dev.typr.dslsc.Dialect
+import dev.typr.dslsc.SelectBuilder
+import dev.typr.dslsc.UpdateBuilder
+import dev.typr.foundationssc.Connection
+import dev.typr.foundationssc.ConnectionRead
+import dev.typr.foundationssc.Db2Types
+import dev.typr.foundationssc.Fragment
 import scala.collection.mutable.ListBuffer
 import testdb.customers.CustomersId
-import dev.typr.foundations.scala.Fragment.sql
+import dev.typr.foundationssc.Fragment.sql
 
 class OrdersRepoImpl extends OrdersRepo {
   override def delete: DeleteBuilder[OrdersFields, OrdersRow] = DeleteBuilder.of(""""ORDERS"""", OrdersFields.structure, Dialect.DB2)
 
-  override def deleteById(orderId: OrdersId)(using c: Connection): Boolean = sql"""delete from "ORDERS" where "ORDER_ID" = ${Fragment.encode(OrdersId.db2Type, orderId)}""".update().runUnchecked(c) > 0
+  override def deleteById(orderId: OrdersId)(using c: Connection): Boolean = sql"""delete from "ORDERS" where "ORDER_ID" = ${Fragment.encode(OrdersId.db2Type, orderId)}""".update().run(using c) > 0
 
-  override def deleteByIds(orderIds: Array[OrdersId])(using c: Connection): Int = {
+  override def deleteByIds(orderIds: List[OrdersId])(using c: Connection): Int = {
     val fragments: ListBuffer[Fragment] = ListBuffer()
     orderIds.foreach { id => fragments.addOne(Fragment.encode(OrdersId.db2Type, id)): @scala.annotation.nowarn }
-    return Fragment.interpolate(Fragment.lit("""delete from "ORDERS" where "ORDER_ID" in ("""), Fragment.comma(fragments), Fragment.lit(")")).update().runUnchecked(c)
+    return Fragment.concat(Fragment.of("""delete from "ORDERS" where "ORDER_ID" in ("""), Fragment.comma(fragments), Fragment.of(")")).update().run(using c)
   }
 
   override def insert(unsaved: OrdersRow)(using c: Connection): OrdersRow = {
   sql"""SELECT "ORDER_ID", "CUSTOMER_ID", "ORDER_DATE", "TOTAL_AMOUNT", "STATUS" FROM FINAL TABLE (INSERT INTO "ORDERS"("CUSTOMER_ID", "ORDER_DATE", "TOTAL_AMOUNT", "STATUS")
-    VALUES (${Fragment.encode(CustomersId.db2Type, unsaved.customerId)}, ${Fragment.encode(Db2Types.date, unsaved.orderDate)}, ${Fragment.encode(ScalaDbTypes.Db2Types.decimal.nullable, unsaved.totalAmount)}, ${Fragment.encode(Db2Types.varchar.nullable, unsaved.status)}))
+    VALUES (${Fragment.encode(CustomersId.db2Type, unsaved.customerId)}, ${Fragment.encode(Db2Types.date, unsaved.orderDate)}, ${Fragment.encode(Db2Types.decimal.opt, unsaved.totalAmount)}, ${Fragment.encode(Db2Types.varchar.opt, unsaved.status)}))
     """
-    .updateReturning(OrdersRow.`_rowParser`.exactlyOne()).runUnchecked(c)
+    .updateReturning(OrdersRow.rowCodec.exactlyOne()).run(using c)
   }
 
   override def insert(unsaved: OrdersRowUnsaved)(using c: Connection): OrdersRow = {
     val columns: ListBuffer[Fragment] = ListBuffer()
     val values: ListBuffer[Fragment] = ListBuffer()
-    columns.addOne(Fragment.lit(""""CUSTOMER_ID"""")): @scala.annotation.nowarn
+    columns.addOne(Fragment.of(""""CUSTOMER_ID"""")): @scala.annotation.nowarn
     values.addOne(sql"${Fragment.encode(CustomersId.db2Type, unsaved.customerId)}"): @scala.annotation.nowarn
-    columns.addOne(Fragment.lit(""""TOTAL_AMOUNT"""")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(ScalaDbTypes.Db2Types.decimal.nullable, unsaved.totalAmount)}"): @scala.annotation.nowarn
+    columns.addOne(Fragment.of(""""TOTAL_AMOUNT"""")): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(Db2Types.decimal.opt, unsaved.totalAmount)}"): @scala.annotation.nowarn
     unsaved.orderDate.visit(
       {  },
-      value => { columns.addOne(Fragment.lit(""""ORDER_DATE"""")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(Db2Types.date, value)}"): @scala.annotation.nowarn }
+      value => { columns.addOne(Fragment.of(""""ORDER_DATE"""")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(Db2Types.date, value)}"): @scala.annotation.nowarn }
     );
     unsaved.status.visit(
       {  },
-      value => { columns.addOne(Fragment.lit(""""STATUS"""")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(Db2Types.varchar.nullable, value)}"): @scala.annotation.nowarn }
+      value => { columns.addOne(Fragment.of(""""STATUS"""")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(Db2Types.varchar.opt, value)}"): @scala.annotation.nowarn }
     );
     val q: Fragment = {
       sql"""SELECT "ORDER_ID", "CUSTOMER_ID", "ORDER_DATE", "TOTAL_AMOUNT", "STATUS" FROM FINAL TABLE (INSERT INTO "ORDERS"(${Fragment.comma(columns)})
       VALUES (${Fragment.comma(values)}))
       """
     }
-    return q.updateReturning(OrdersRow.`_rowParser`.exactlyOne()).runUnchecked(c)
+    return q.updateReturning(OrdersRow.rowCodec.exactlyOne()).run(using c)
   }
 
-  override def select: SelectBuilder[OrdersFields, OrdersRow] = SelectBuilder.of(""""ORDERS"""", OrdersFields.structure, OrdersRow.`_rowParser`, Dialect.DB2)
+  override def select: SelectBuilder[OrdersFields, OrdersRow] = SelectBuilder.of(""""ORDERS"""", OrdersFields.structure, OrdersRow.rowCodec, Dialect.DB2)
 
-  override def selectAll(using c: Connection): List[OrdersRow] = {
+  override def selectAll(using c: ConnectionRead): List[OrdersRow] = {
     sql"""select "ORDER_ID", "CUSTOMER_ID", "ORDER_DATE", "TOTAL_AMOUNT", "STATUS"
     from "ORDERS"
-    """.query(OrdersRow.`_rowParser`.all()).runUnchecked(c)
+    """.query(OrdersRow.rowCodec.all()).run(using c)
   }
 
-  override def selectById(orderId: OrdersId)(using c: Connection): Option[OrdersRow] = {
+  override def selectById(orderId: OrdersId)(using c: ConnectionRead): Option[OrdersRow] = {
     sql"""select "ORDER_ID", "CUSTOMER_ID", "ORDER_DATE", "TOTAL_AMOUNT", "STATUS"
     from "ORDERS"
-    where "ORDER_ID" = ${Fragment.encode(OrdersId.db2Type, orderId)}""".query(OrdersRow.`_rowParser`.first()).runUnchecked(c)
+    where "ORDER_ID" = ${Fragment.encode(OrdersId.db2Type, orderId)}""".query(OrdersRow.rowCodec.first()).run(using c)
   }
 
-  override def selectByIds(orderIds: Array[OrdersId])(using c: Connection): List[OrdersRow] = {
+  override def selectByIds(orderIds: List[OrdersId])(using c: ConnectionRead): List[OrdersRow] = {
     val fragments: ListBuffer[Fragment] = ListBuffer()
     orderIds.foreach { id => fragments.addOne(Fragment.encode(OrdersId.db2Type, id)): @scala.annotation.nowarn }
-    return Fragment.interpolate(Fragment.lit("""select "ORDER_ID", "CUSTOMER_ID", "ORDER_DATE", "TOTAL_AMOUNT", "STATUS" from "ORDERS" where "ORDER_ID" in ("""), Fragment.comma(fragments), Fragment.lit(")")).query(OrdersRow.`_rowParser`.all()).runUnchecked(c)
+    return Fragment.concat(Fragment.of("""select "ORDER_ID", "CUSTOMER_ID", "ORDER_DATE", "TOTAL_AMOUNT", "STATUS" from "ORDERS" where "ORDER_ID" in ("""), Fragment.comma(fragments), Fragment.of(")")).query(OrdersRow.rowCodec.all()).run(using c)
   }
 
-  override def selectByIdsTracked(orderIds: Array[OrdersId])(using c: Connection): Map[OrdersId, OrdersRow] = {
+  override def selectByIdsTracked(orderIds: List[OrdersId])(using c: ConnectionRead): Map[OrdersId, OrdersRow] = {
     val ret: scala.collection.mutable.Map[OrdersId, OrdersRow] = scala.collection.mutable.Map.empty[OrdersId, OrdersRow]
     selectByIds(orderIds)(using c).foreach(row => ret.put(row.orderId, row): @scala.annotation.nowarn)
     return ret.toMap
   }
 
-  override def update: UpdateBuilder[OrdersFields, OrdersRow] = UpdateBuilder.of(""""ORDERS"""", OrdersFields.structure, OrdersRow.`_rowParser`, Dialect.DB2)
+  override def update: UpdateBuilder[OrdersFields, OrdersRow] = UpdateBuilder.of(""""ORDERS"""", OrdersFields.structure, OrdersRow.rowCodec, Dialect.DB2)
 
   override def update(row: OrdersRow)(using c: Connection): Boolean = {
     val orderId: OrdersId = row.orderId
     return sql"""update "ORDERS"
     set "CUSTOMER_ID" = ${Fragment.encode(CustomersId.db2Type, row.customerId)},
     "ORDER_DATE" = ${Fragment.encode(Db2Types.date, row.orderDate)},
-    "TOTAL_AMOUNT" = ${Fragment.encode(ScalaDbTypes.Db2Types.decimal.nullable, row.totalAmount)},
-    "STATUS" = ${Fragment.encode(Db2Types.varchar.nullable, row.status)}
-    where "ORDER_ID" = ${Fragment.encode(OrdersId.db2Type, orderId)}""".update().runUnchecked(c) > 0
+    "TOTAL_AMOUNT" = ${Fragment.encode(Db2Types.decimal.opt, row.totalAmount)},
+    "STATUS" = ${Fragment.encode(Db2Types.varchar.opt, row.status)}
+    where "ORDER_ID" = ${Fragment.encode(OrdersId.db2Type, orderId)}""".update().run(using c) > 0
   }
 
   override def upsert(unsaved: OrdersRow)(using c: Connection): Unit = {
     sql"""MERGE INTO "ORDERS" AS t
-    USING (VALUES (${Fragment.encode(OrdersId.db2Type, unsaved.orderId)}, ${Fragment.encode(CustomersId.db2Type, unsaved.customerId)}, ${Fragment.encode(Db2Types.date, unsaved.orderDate)}, ${Fragment.encode(ScalaDbTypes.Db2Types.decimal.nullable, unsaved.totalAmount)}, ${Fragment.encode(Db2Types.varchar.nullable, unsaved.status)})) AS s("ORDER_ID", "CUSTOMER_ID", "ORDER_DATE", "TOTAL_AMOUNT", "STATUS")
+    USING (VALUES (${Fragment.encode(OrdersId.db2Type, unsaved.orderId)}, ${Fragment.encode(CustomersId.db2Type, unsaved.customerId)}, ${Fragment.encode(Db2Types.date, unsaved.orderDate)}, ${Fragment.encode(Db2Types.decimal.opt, unsaved.totalAmount)}, ${Fragment.encode(Db2Types.varchar.opt, unsaved.status)})) AS s("ORDER_ID", "CUSTOMER_ID", "ORDER_DATE", "TOTAL_AMOUNT", "STATUS")
     ON t."ORDER_ID" = s."ORDER_ID"
     WHEN MATCHED THEN UPDATE SET "CUSTOMER_ID" = s."CUSTOMER_ID",
     "ORDER_DATE" = s."ORDER_DATE",
     "TOTAL_AMOUNT" = s."TOTAL_AMOUNT",
     "STATUS" = s."STATUS"
-    WHEN NOT MATCHED THEN INSERT ("ORDER_ID", "CUSTOMER_ID", "ORDER_DATE", "TOTAL_AMOUNT", "STATUS") VALUES (${Fragment.encode(OrdersId.db2Type, unsaved.orderId)}, ${Fragment.encode(CustomersId.db2Type, unsaved.customerId)}, ${Fragment.encode(Db2Types.date, unsaved.orderDate)}, ${Fragment.encode(ScalaDbTypes.Db2Types.decimal.nullable, unsaved.totalAmount)}, ${Fragment.encode(Db2Types.varchar.nullable, unsaved.status)})"""
+    WHEN NOT MATCHED THEN INSERT ("ORDER_ID", "CUSTOMER_ID", "ORDER_DATE", "TOTAL_AMOUNT", "STATUS") VALUES (${Fragment.encode(OrdersId.db2Type, unsaved.orderId)}, ${Fragment.encode(CustomersId.db2Type, unsaved.customerId)}, ${Fragment.encode(Db2Types.date, unsaved.orderDate)}, ${Fragment.encode(Db2Types.decimal.opt, unsaved.totalAmount)}, ${Fragment.encode(Db2Types.varchar.opt, unsaved.status)})"""
       .update()
-      .runUnchecked(c): @scala.annotation.nowarn
+      .run(using c): @scala.annotation.nowarn
   }
 
   override def upsertBatch(unsaved: Iterator[OrdersRow])(using c: Connection): Unit = {
@@ -119,7 +118,7 @@ class OrdersRepoImpl extends OrdersRepo {
     "TOTAL_AMOUNT" = s."TOTAL_AMOUNT",
     "STATUS" = s."STATUS"
     WHEN NOT MATCHED THEN INSERT ("ORDER_ID", "CUSTOMER_ID", "ORDER_DATE", "TOTAL_AMOUNT", "STATUS") VALUES (?, ?, ?, ?, ?)"""
-      .updateMany(OrdersRow.`_rowParser`, unsaved)
-      .runUnchecked(c): @scala.annotation.nowarn
+      .updateMany(OrdersRow.rowCodec, unsaved)
+      .run(using c): @scala.annotation.nowarn
   }
 }

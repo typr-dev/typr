@@ -27,7 +27,7 @@ object TypoUnknownCitext {
       .contramap(_.map(v => v.value))
   }
 
-  given bijection: Bijection[TypoUnknownCitext, String] = Bijection.apply[TypoUnknownCitext, String](_.value)(TypoUnknownCitext.apply)
+  given bijection: Bijection[TypoUnknownCitext, String] = Bijection[TypoUnknownCitext, String](_.value)(TypoUnknownCitext.apply)
 
   given decoder: Decoder[TypoUnknownCitext] = Decoder.decodeString.map(TypoUnknownCitext.apply)
 

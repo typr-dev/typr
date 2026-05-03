@@ -21,7 +21,7 @@ object ProductmodelId {
 
   given arrayToStatement: ToStatement[Array[ProductmodelId]] = adventureworks.IntArrayToStatement.contramap(_.map(_.value))
 
-  given bijection: Bijection[ProductmodelId, Int] = Bijection.apply[ProductmodelId, Int](_.value)(ProductmodelId.apply)
+  given bijection: Bijection[ProductmodelId, Int] = Bijection[ProductmodelId, Int](_.value)(ProductmodelId.apply)
 
   given column: Column[ProductmodelId] = Column.columnToInt.map(ProductmodelId.apply)
 

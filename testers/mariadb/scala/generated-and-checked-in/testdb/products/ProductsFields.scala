@@ -5,20 +5,19 @@
  */
 package testdb.products
 
-import dev.typr.foundations.MariaTypes
-import dev.typr.foundations.RowParser
+import dev.typr.dsl.FieldsBase
+import dev.typr.dsl.Path
+import dev.typr.dsl.SqlExpr.FieldLike
+import dev.typr.dslsc.ForeignKey
+import dev.typr.dslsc.RelationStructure
+import dev.typr.dslsc.SqlExpr
+import dev.typr.dslsc.SqlExpr.Field
+import dev.typr.dslsc.SqlExpr.IdField
+import dev.typr.dslsc.SqlExpr.OptField
+import dev.typr.dslsc.TupleExpr18
+import dev.typr.foundations.RowCodec
 import dev.typr.foundations.data.Json
-import dev.typr.foundations.dsl.FieldsBase
-import dev.typr.foundations.dsl.Path
-import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.scala.ForeignKey
-import dev.typr.foundations.scala.RelationStructure
-import dev.typr.foundations.scala.ScalaDbTypes
-import dev.typr.foundations.scala.SqlExpr
-import dev.typr.foundations.scala.SqlExpr.Field
-import dev.typr.foundations.scala.SqlExpr.IdField
-import dev.typr.foundations.scala.SqlExpr.OptField
-import dev.typr.foundations.scala.TupleExpr18
+import dev.typr.foundationssc.MariaTypes
 import java.time.LocalDateTime
 import testdb.BestsellerClearanceFSet
 import testdb.brands.BrandsFields
@@ -34,7 +33,7 @@ class ProductsFields(val `_path`: java.util.List[Path]) extends TupleExpr18[Prod
       None,
       None,
       (row, value) => row.copy(productId = value),
-      ProductsId.mariaType
+      ProductsId.mariaType.underlying
     )
   }
 
@@ -46,7 +45,7 @@ class ProductsFields(val `_path`: java.util.List[Path]) extends TupleExpr18[Prod
       None,
       None,
       (row, value) => row.copy(sku = value),
-      MariaTypes.varchar
+      MariaTypes.varchar.underlying
     )
   }
 
@@ -58,7 +57,7 @@ class ProductsFields(val `_path`: java.util.List[Path]) extends TupleExpr18[Prod
       None,
       None,
       (row, value) => row.copy(brandId = value),
-      BrandsId.mariaType
+      BrandsId.mariaType.underlying
     )
   }
 
@@ -70,7 +69,7 @@ class ProductsFields(val `_path`: java.util.List[Path]) extends TupleExpr18[Prod
       None,
       None,
       (row, value) => row.copy(name = value),
-      MariaTypes.varchar
+      MariaTypes.varchar.underlying
     )
   }
 
@@ -82,7 +81,7 @@ class ProductsFields(val `_path`: java.util.List[Path]) extends TupleExpr18[Prod
       None,
       None,
       (row, value) => row.copy(shortDescription = value),
-      MariaTypes.varchar
+      MariaTypes.varchar.underlying
     )
   }
 
@@ -94,7 +93,7 @@ class ProductsFields(val `_path`: java.util.List[Path]) extends TupleExpr18[Prod
       None,
       None,
       (row, value) => row.copy(fullDescription = value),
-      MariaTypes.longtext
+      MariaTypes.longtext.underlying
     )
   }
 
@@ -106,7 +105,7 @@ class ProductsFields(val `_path`: java.util.List[Path]) extends TupleExpr18[Prod
       None,
       None,
       (row, value) => row.copy(basePrice = value),
-      ScalaDbTypes.MariaTypes.numeric
+      MariaTypes.numeric.underlying
     )
   }
 
@@ -118,7 +117,7 @@ class ProductsFields(val `_path`: java.util.List[Path]) extends TupleExpr18[Prod
       None,
       None,
       (row, value) => row.copy(costPrice = value),
-      ScalaDbTypes.MariaTypes.numeric
+      MariaTypes.numeric.underlying
     )
   }
 
@@ -130,7 +129,7 @@ class ProductsFields(val `_path`: java.util.List[Path]) extends TupleExpr18[Prod
       None,
       None,
       (row, value) => row.copy(weightKg = value),
-      ScalaDbTypes.MariaTypes.numeric
+      MariaTypes.numeric.underlying
     )
   }
 
@@ -142,7 +141,7 @@ class ProductsFields(val `_path`: java.util.List[Path]) extends TupleExpr18[Prod
       None,
       None,
       (row, value) => row.copy(dimensionsJson = value),
-      MariaTypes.json
+      MariaTypes.json.underlying
     )
   }
 
@@ -154,7 +153,7 @@ class ProductsFields(val `_path`: java.util.List[Path]) extends TupleExpr18[Prod
       None,
       None,
       (row, value) => row.copy(status = value),
-      MariaTypes.text
+      MariaTypes.text.underlying
     )
   }
 
@@ -166,7 +165,7 @@ class ProductsFields(val `_path`: java.util.List[Path]) extends TupleExpr18[Prod
       None,
       None,
       (row, value) => row.copy(taxClass = value),
-      MariaTypes.text
+      MariaTypes.text.underlying
     )
   }
 
@@ -178,7 +177,7 @@ class ProductsFields(val `_path`: java.util.List[Path]) extends TupleExpr18[Prod
       None,
       None,
       (row, value) => row.copy(tags = value),
-      BestsellerClearanceFSet.mariaType
+      BestsellerClearanceFSet.mariaType.underlying
     )
   }
 
@@ -190,7 +189,7 @@ class ProductsFields(val `_path`: java.util.List[Path]) extends TupleExpr18[Prod
       None,
       None,
       (row, value) => row.copy(attributes = value),
-      MariaTypes.json
+      MariaTypes.json.underlying
     )
   }
 
@@ -202,7 +201,7 @@ class ProductsFields(val `_path`: java.util.List[Path]) extends TupleExpr18[Prod
       None,
       None,
       (row, value) => row.copy(seoMetadata = value),
-      MariaTypes.json
+      MariaTypes.json.underlying
     )
   }
 
@@ -214,7 +213,7 @@ class ProductsFields(val `_path`: java.util.List[Path]) extends TupleExpr18[Prod
       None,
       None,
       (row, value) => row.copy(createdAt = value),
-      MariaTypes.datetime
+      MariaTypes.datetime.underlying
     )
   }
 
@@ -226,7 +225,7 @@ class ProductsFields(val `_path`: java.util.List[Path]) extends TupleExpr18[Prod
       None,
       None,
       (row, value) => row.copy(updatedAt = value),
-      MariaTypes.datetime
+      MariaTypes.datetime.underlying
     )
   }
 
@@ -238,7 +237,7 @@ class ProductsFields(val `_path`: java.util.List[Path]) extends TupleExpr18[Prod
       None,
       None,
       (row, value) => row.copy(publishedAt = value),
-      MariaTypes.datetime
+      MariaTypes.datetime.underlying
     )
   }
 
@@ -246,7 +245,7 @@ class ProductsFields(val `_path`: java.util.List[Path]) extends TupleExpr18[Prod
 
   override def columns: java.util.List[FieldLike[?, ProductsRow]] = java.util.List.of(this.productId.underlying, this.sku.underlying, this.brandId.underlying, this.name.underlying, this.shortDescription.underlying, this.fullDescription.underlying, this.basePrice.underlying, this.costPrice.underlying, this.weightKg.underlying, this.dimensionsJson.underlying, this.status.underlying, this.taxClass.underlying, this.tags.underlying, this.attributes.underlying, this.seoMetadata.underlying, this.createdAt.underlying, this.updatedAt.underlying, this.publishedAt.underlying)
 
-  override def rowParser: RowParser[ProductsRow] = ProductsRow._rowParser.underlying
+  override def rowCodec: RowCodec[ProductsRow] = ProductsRow.rowCodec.underlying
 
   override def withPaths(`_path`: java.util.List[Path]): RelationStructure[ProductsFields, ProductsRow] = new ProductsFields(`_path`)
 

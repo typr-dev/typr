@@ -5,9 +5,9 @@
  */
 package testdb.customer_summary
 
-import java.sql.Connection
+import dev.typr.foundationskt.ConnectionRead
 import kotlin.collections.List
 
 interface CustomerSummarySqlRepo {
-  abstract fun apply(c: Connection): List<CustomerSummarySqlRow>
+  abstract fun apply(c: ConnectionRead): List<CustomerSummarySqlRow>
 }

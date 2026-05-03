@@ -6,25 +6,25 @@
 package adventureworks.person.countryregion
 
 import com.fasterxml.jackson.annotation.JsonValue
-import dev.typr.foundations.PgType
-import dev.typr.foundations.PgTypes
-import dev.typr.foundations.internal.arrayMap
-import dev.typr.foundations.kotlin.Bijection
+import dev.typr.foundationskt.Bijection
+import dev.typr.foundationskt.PgType
+import dev.typr.foundationskt.PgTypes
+import kotlin.collections.List
 
 /** Type for the primary key of table `person.countryregion` */
-data class CountryregionId(@field:JsonValue val value: String) {
+data class CountryregionId(@field:JsonValue val value: kotlin.String) {
   override fun toString(): kotlin.String {
-    return value.toString()
+    return value
   }
 
   companion object {
-    val bijection: Bijection<CountryregionId, String> =
+    val bijection: Bijection<CountryregionId, kotlin.String> =
       Bijection.of(CountryregionId::value, ::CountryregionId)
 
     val pgType: PgType<CountryregionId> =
-      PgTypes.text.bimap(::CountryregionId, CountryregionId::value)
+      PgTypes.text.to(Bijection.of(::CountryregionId, CountryregionId::value))
 
-    val pgTypeArray: PgType<Array<CountryregionId>> =
-      PgTypes.textArray.bimap({ xs -> arrayMap.map(xs, ::CountryregionId, CountryregionId::class.java) }, { xs -> arrayMap.map(xs, CountryregionId::value, String::class.java) })
+    val pgTypeArray: PgType<List<CountryregionId>> =
+      pgType.array()
   }
 }

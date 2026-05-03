@@ -5,25 +5,26 @@
  */
 package testdb
 
-import dev.typr.foundations.DuckDbType
-import dev.typr.foundations.DuckDbTypes
-import dev.typr.foundations.internal.arrayMap
+import dev.typr.foundationskt.Bijection
+import dev.typr.foundationskt.DuckDbType
+import dev.typr.foundationskt.DuckDbTypes
+import kotlin.collections.List
 
 enum class Mood(val value: kotlin.String) {
     happy("happy"),
     sad("sad"),
     neutral("neutral");
 
+    
+
     companion object {
         val Names: kotlin.String = entries.joinToString(", ") { it.value }
         val ByName: kotlin.collections.Map<kotlin.String, Mood> = entries.associateBy { it.value }
-        val duckDbTypeArray: DuckDbType<Array<Mood>> =
-          DuckDbTypes.varcharArray
-              .bimap({ xs -> arrayMap.map(xs, Mood::force, Mood::class.java) }, { xs -> arrayMap.map(xs, Mood::value, String::class.java) })
-            .renamedDropPrecision("mood")
+        val duckDbTypeArray: DuckDbType<List<Mood>> =
+          DuckDbType(DuckDbTypes.text.list()
+            .to(Bijection.of({ xs -> xs.map(Mood::force) }, { xs -> xs.map(Mood::value) })).underlying.renamedDropPrecision("mood"))
         val duckDbType: DuckDbType<Mood> =
-          DuckDbTypes.text.bimap(Mood::force, Mood::value)
-            .renamedDropPrecision("mood")
+          DuckDbType(DuckDbTypes.text.to(Bijection.of(Mood::force, Mood::value)).underlying.renamedDropPrecision("mood"))
 
         fun force(str: kotlin.String): Mood =
             ByName[str] ?: throw RuntimeException("'$str' does not match any of the following legal values: $Names")

@@ -5,13 +5,13 @@
  */
 package testdb.distinct_type_test
 
-import dev.typr.foundations.kotlin.DeleteBuilder
-import dev.typr.foundations.kotlin.Dialect
-import dev.typr.foundations.kotlin.Fragment
-import dev.typr.foundations.kotlin.SelectBuilder
-import dev.typr.foundations.kotlin.UpdateBuilder
-import dev.typr.foundations.kotlin.nullable
-import java.sql.Connection
+import dev.typr.dslkt.DeleteBuilder
+import dev.typr.dslkt.Dialect
+import dev.typr.dslkt.SelectBuilder
+import dev.typr.dslkt.UpdateBuilder
+import dev.typr.foundationskt.Connection
+import dev.typr.foundationskt.ConnectionRead
+import dev.typr.foundationskt.Fragment
 import java.util.ArrayList
 import kotlin.collections.Iterator
 import kotlin.collections.List
@@ -26,22 +26,22 @@ class DistinctTypeTestRepoImpl() : DistinctTypeTestRepo {
   override fun deleteById(
     id: DistinctTypeTestId,
     c: Connection
-  ): Boolean = Fragment.interpolate(Fragment.lit("delete from \"DISTINCT_TYPE_TEST\" where \"ID\" = "), Fragment.encode(DistinctTypeTestId.db2Type, id), Fragment.lit("")).update().runUnchecked(c) > 0
+  ): kotlin.Boolean = Fragment.concat(Fragment.of("delete from \"DISTINCT_TYPE_TEST\" where \"ID\" = "), Fragment.encode(DistinctTypeTestId.db2Type, id), Fragment.of("")).update().run(c) > 0
 
   override fun deleteByIds(
-    ids: Array<DistinctTypeTestId>,
+    ids: List<DistinctTypeTestId>,
     c: Connection
   ): Int {
     val fragments: ArrayList<Fragment> = ArrayList()
     for (id in ids) { fragments.add(Fragment.encode(DistinctTypeTestId.db2Type, id)) }
-    return Fragment.interpolate(Fragment.lit("delete from \"DISTINCT_TYPE_TEST\" where \"ID\" in ("), Fragment.comma(fragments.toMutableList()), Fragment.lit(")")).update().runUnchecked(c)
+    return Fragment.concat(Fragment.of("delete from \"DISTINCT_TYPE_TEST\" where \"ID\" in ("), Fragment.comma(fragments.toMutableList()), Fragment.of(")")).update().run(c)
   }
 
   override fun insert(
     unsaved: DistinctTypeTestRow,
     c: Connection
-  ): DistinctTypeTestRow = Fragment.interpolate(Fragment.lit("SELECT \"ID\", \"EMAIL\", \"BALANCE\" FROM FINAL TABLE (INSERT INTO \"DISTINCT_TYPE_TEST\"(\"EMAIL\", \"BALANCE\")\nVALUES ("), Fragment.encode(EmailAddress.db2Type, unsaved.email), Fragment.lit(", "), Fragment.encode(MoneyAmount.db2Type.nullable(), unsaved.balance), Fragment.lit("))\n"))
-    .updateReturning(DistinctTypeTestRow._rowParser.exactlyOne()).runUnchecked(c)
+  ): DistinctTypeTestRow = Fragment.concat(Fragment.of("SELECT \"ID\", \"EMAIL\", \"BALANCE\" FROM FINAL TABLE (INSERT INTO \"DISTINCT_TYPE_TEST\"(\"EMAIL\", \"BALANCE\")\nVALUES ("), Fragment.encode(EmailAddress.db2Type, unsaved.email), Fragment.of(", "), Fragment.encode(MoneyAmount.db2Type.opt(), unsaved.balance), Fragment.of("))\n"))
+    .updateReturning(DistinctTypeTestRow.rowCodec.exactlyOne()).run(c)
 
   override fun insert(
     unsaved: DistinctTypeTestRowUnsaved,
@@ -49,66 +49,66 @@ class DistinctTypeTestRepoImpl() : DistinctTypeTestRepo {
   ): DistinctTypeTestRow {
     val columns: ArrayList<Fragment> = ArrayList()
     val values: ArrayList<Fragment> = ArrayList()
-    columns.add(Fragment.lit("\"EMAIL\""))
-    values.add(Fragment.interpolate(Fragment.encode(EmailAddress.db2Type, unsaved.email), Fragment.lit("")))
-    columns.add(Fragment.lit("\"BALANCE\""))
-    values.add(Fragment.interpolate(Fragment.encode(MoneyAmount.db2Type.nullable(), unsaved.balance), Fragment.lit("")))
-    val q: Fragment = Fragment.interpolate(Fragment.lit("SELECT \"ID\", \"EMAIL\", \"BALANCE\" FROM FINAL TABLE (INSERT INTO \"DISTINCT_TYPE_TEST\"("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nVALUES ("), Fragment.comma(values.toMutableList()), Fragment.lit("))\n"))
-    return q.updateReturning(DistinctTypeTestRow._rowParser.exactlyOne()).runUnchecked(c)
+    columns.add(Fragment.of("\"EMAIL\""))
+    values.add(Fragment.concat(Fragment.encode(EmailAddress.db2Type, unsaved.email), Fragment.of("")))
+    columns.add(Fragment.of("\"BALANCE\""))
+    values.add(Fragment.concat(Fragment.encode(MoneyAmount.db2Type.opt(), unsaved.balance), Fragment.of("")))
+    val q: Fragment = Fragment.concat(Fragment.of("SELECT \"ID\", \"EMAIL\", \"BALANCE\" FROM FINAL TABLE (INSERT INTO \"DISTINCT_TYPE_TEST\"("), Fragment.comma(columns.toMutableList()), Fragment.of(")\nVALUES ("), Fragment.comma(values.toMutableList()), Fragment.of("))\n"))
+    return q.updateReturning(DistinctTypeTestRow.rowCodec.exactlyOne()).run(c)
   }
 
-  override fun select(): SelectBuilder<DistinctTypeTestFields, DistinctTypeTestRow> = SelectBuilder.of("\"DISTINCT_TYPE_TEST\"", DistinctTypeTestFields.structure, DistinctTypeTestRow._rowParser, Dialect.DB2)
+  override fun select(): SelectBuilder<DistinctTypeTestFields, DistinctTypeTestRow> = SelectBuilder.of("\"DISTINCT_TYPE_TEST\"", DistinctTypeTestFields.structure, DistinctTypeTestRow.rowCodec, Dialect.DB2)
 
-  override fun selectAll(c: Connection): List<DistinctTypeTestRow> = Fragment.interpolate(Fragment.lit("select \"ID\", \"EMAIL\", \"BALANCE\"\nfrom \"DISTINCT_TYPE_TEST\"\n")).query(DistinctTypeTestRow._rowParser.all()).runUnchecked(c)
+  override fun selectAll(c: ConnectionRead): List<DistinctTypeTestRow> = Fragment.concat(Fragment.of("select \"ID\", \"EMAIL\", \"BALANCE\"\nfrom \"DISTINCT_TYPE_TEST\"\n")).query(DistinctTypeTestRow.rowCodec.all()).run(c)
 
   override fun selectById(
     id: DistinctTypeTestId,
-    c: Connection
-  ): DistinctTypeTestRow? = Fragment.interpolate(Fragment.lit("select \"ID\", \"EMAIL\", \"BALANCE\"\nfrom \"DISTINCT_TYPE_TEST\"\nwhere \"ID\" = "), Fragment.encode(DistinctTypeTestId.db2Type, id), Fragment.lit("")).query(DistinctTypeTestRow._rowParser.first()).runUnchecked(c)
+    c: ConnectionRead
+  ): DistinctTypeTestRow? = Fragment.concat(Fragment.of("select \"ID\", \"EMAIL\", \"BALANCE\"\nfrom \"DISTINCT_TYPE_TEST\"\nwhere \"ID\" = "), Fragment.encode(DistinctTypeTestId.db2Type, id), Fragment.of("")).query(DistinctTypeTestRow.rowCodec.first()).run(c)
 
   override fun selectByIds(
-    ids: Array<DistinctTypeTestId>,
-    c: Connection
+    ids: List<DistinctTypeTestId>,
+    c: ConnectionRead
   ): List<DistinctTypeTestRow> {
     val fragments: ArrayList<Fragment> = ArrayList()
     for (id in ids) { fragments.add(Fragment.encode(DistinctTypeTestId.db2Type, id)) }
-    return Fragment.interpolate(Fragment.lit("select \"ID\", \"EMAIL\", \"BALANCE\" from \"DISTINCT_TYPE_TEST\" where \"ID\" in ("), Fragment.comma(fragments.toMutableList()), Fragment.lit(")")).query(DistinctTypeTestRow._rowParser.all()).runUnchecked(c)
+    return Fragment.concat(Fragment.of("select \"ID\", \"EMAIL\", \"BALANCE\" from \"DISTINCT_TYPE_TEST\" where \"ID\" in ("), Fragment.comma(fragments.toMutableList()), Fragment.of(")")).query(DistinctTypeTestRow.rowCodec.all()).run(c)
   }
 
   override fun selectByIdsTracked(
-    ids: Array<DistinctTypeTestId>,
-    c: Connection
+    ids: List<DistinctTypeTestId>,
+    c: ConnectionRead
   ): Map<DistinctTypeTestId, DistinctTypeTestRow> {
     val ret: MutableMap<DistinctTypeTestId, DistinctTypeTestRow> = mutableMapOf<DistinctTypeTestId, DistinctTypeTestRow>()
     selectByIds(ids, c).forEach({ row -> ret.put(row.id, row) })
     return ret.toMap()
   }
 
-  override fun update(): UpdateBuilder<DistinctTypeTestFields, DistinctTypeTestRow> = UpdateBuilder.of("\"DISTINCT_TYPE_TEST\"", DistinctTypeTestFields.structure, DistinctTypeTestRow._rowParser, Dialect.DB2)
+  override fun update(): UpdateBuilder<DistinctTypeTestFields, DistinctTypeTestRow> = UpdateBuilder.of("\"DISTINCT_TYPE_TEST\"", DistinctTypeTestFields.structure, DistinctTypeTestRow.rowCodec, Dialect.DB2)
 
   override fun update(
     row: DistinctTypeTestRow,
     c: Connection
-  ): Boolean {
+  ): kotlin.Boolean {
     val id: DistinctTypeTestId = row.id
-    return Fragment.interpolate(Fragment.lit("update \"DISTINCT_TYPE_TEST\"\nset \"EMAIL\" = "), Fragment.encode(EmailAddress.db2Type, row.email), Fragment.lit(",\n\"BALANCE\" = "), Fragment.encode(MoneyAmount.db2Type.nullable(), row.balance), Fragment.lit("\nwhere \"ID\" = "), Fragment.encode(DistinctTypeTestId.db2Type, id), Fragment.lit("")).update().runUnchecked(c) > 0
+    return Fragment.concat(Fragment.of("update \"DISTINCT_TYPE_TEST\"\nset \"EMAIL\" = "), Fragment.encode(EmailAddress.db2Type, row.email), Fragment.of(",\n\"BALANCE\" = "), Fragment.encode(MoneyAmount.db2Type.opt(), row.balance), Fragment.of("\nwhere \"ID\" = "), Fragment.encode(DistinctTypeTestId.db2Type, id), Fragment.of("")).update().run(c) > 0
   }
 
   override fun upsert(
     unsaved: DistinctTypeTestRow,
     c: Connection
   ) {
-    Fragment.interpolate(Fragment.lit("MERGE INTO \"DISTINCT_TYPE_TEST\" AS t\nUSING (VALUES ("), Fragment.encode(DistinctTypeTestId.db2Type, unsaved.id), Fragment.lit(", "), Fragment.encode(EmailAddress.db2Type, unsaved.email), Fragment.lit(", "), Fragment.encode(MoneyAmount.db2Type.nullable(), unsaved.balance), Fragment.lit(")) AS s(\"ID\", \"EMAIL\", \"BALANCE\")\nON t.\"ID\" = s.\"ID\"\nWHEN MATCHED THEN UPDATE SET \"EMAIL\" = s.\"EMAIL\",\n\"BALANCE\" = s.\"BALANCE\"\nWHEN NOT MATCHED THEN INSERT (\"ID\", \"EMAIL\", \"BALANCE\") VALUES ("), Fragment.encode(DistinctTypeTestId.db2Type, unsaved.id), Fragment.lit(", "), Fragment.encode(EmailAddress.db2Type, unsaved.email), Fragment.lit(", "), Fragment.encode(MoneyAmount.db2Type.nullable(), unsaved.balance), Fragment.lit(")"))
+    Fragment.concat(Fragment.of("MERGE INTO \"DISTINCT_TYPE_TEST\" AS t\nUSING (VALUES ("), Fragment.encode(DistinctTypeTestId.db2Type, unsaved.id), Fragment.of(", "), Fragment.encode(EmailAddress.db2Type, unsaved.email), Fragment.of(", "), Fragment.encode(MoneyAmount.db2Type.opt(), unsaved.balance), Fragment.of(")) AS s(\"ID\", \"EMAIL\", \"BALANCE\")\nON t.\"ID\" = s.\"ID\"\nWHEN MATCHED THEN UPDATE SET \"EMAIL\" = s.\"EMAIL\",\n\"BALANCE\" = s.\"BALANCE\"\nWHEN NOT MATCHED THEN INSERT (\"ID\", \"EMAIL\", \"BALANCE\") VALUES ("), Fragment.encode(DistinctTypeTestId.db2Type, unsaved.id), Fragment.of(", "), Fragment.encode(EmailAddress.db2Type, unsaved.email), Fragment.of(", "), Fragment.encode(MoneyAmount.db2Type.opt(), unsaved.balance), Fragment.of(")"))
       .update()
-      .runUnchecked(c)
+      .run(c)
   }
 
   override fun upsertBatch(
     unsaved: Iterator<DistinctTypeTestRow>,
     c: Connection
   ) {
-    Fragment.interpolate(Fragment.lit("MERGE INTO \"DISTINCT_TYPE_TEST\" AS t\nUSING (VALUES (?, ?, ?)) AS s(\"ID\", \"EMAIL\", \"BALANCE\")\nON t.\"ID\" = s.\"ID\"\nWHEN MATCHED THEN UPDATE SET \"EMAIL\" = s.\"EMAIL\",\n\"BALANCE\" = s.\"BALANCE\"\nWHEN NOT MATCHED THEN INSERT (\"ID\", \"EMAIL\", \"BALANCE\") VALUES (?, ?, ?)"))
-      .updateMany(DistinctTypeTestRow._rowParser, unsaved)
-      .runUnchecked(c)
+    Fragment.concat(Fragment.of("MERGE INTO \"DISTINCT_TYPE_TEST\" AS t\nUSING (VALUES (?, ?, ?)) AS s(\"ID\", \"EMAIL\", \"BALANCE\")\nON t.\"ID\" = s.\"ID\"\nWHEN MATCHED THEN UPDATE SET \"EMAIL\" = s.\"EMAIL\",\n\"BALANCE\" = s.\"BALANCE\"\nWHEN NOT MATCHED THEN INSERT (\"ID\", \"EMAIL\", \"BALANCE\") VALUES (?, ?, ?)"))
+      .updateMany(DistinctTypeTestRow.rowCodec, unsaved)
+      .run(c)
   }
 }

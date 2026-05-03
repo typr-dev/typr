@@ -5,29 +5,30 @@
  */
 package testdb.check_constraint_test
 
-import dev.typr.foundations.scala.DeleteBuilder
-import dev.typr.foundations.scala.SelectBuilder
-import dev.typr.foundations.scala.UpdateBuilder
-import java.sql.Connection
+import dev.typr.dslsc.DeleteBuilder
+import dev.typr.dslsc.SelectBuilder
+import dev.typr.dslsc.UpdateBuilder
+import dev.typr.foundationssc.Connection
+import dev.typr.foundationssc.ConnectionRead
 
 trait CheckConstraintTestRepo {
   def delete: DeleteBuilder[CheckConstraintTestFields, CheckConstraintTestRow]
 
   def deleteById(id: CheckConstraintTestId)(using c: Connection): Boolean
 
-  def deleteByIds(ids: Array[CheckConstraintTestId])(using c: Connection): Int
+  def deleteByIds(ids: List[CheckConstraintTestId])(using c: Connection): Int
 
   def insert(unsaved: CheckConstraintTestRow)(using c: Connection): CheckConstraintTestRow
 
   def select: SelectBuilder[CheckConstraintTestFields, CheckConstraintTestRow]
 
-  def selectAll(using c: Connection): List[CheckConstraintTestRow]
+  def selectAll(using c: ConnectionRead): List[CheckConstraintTestRow]
 
-  def selectById(id: CheckConstraintTestId)(using c: Connection): Option[CheckConstraintTestRow]
+  def selectById(id: CheckConstraintTestId)(using c: ConnectionRead): Option[CheckConstraintTestRow]
 
-  def selectByIds(ids: Array[CheckConstraintTestId])(using c: Connection): List[CheckConstraintTestRow]
+  def selectByIds(ids: List[CheckConstraintTestId])(using c: ConnectionRead): List[CheckConstraintTestRow]
 
-  def selectByIdsTracked(ids: Array[CheckConstraintTestId])(using c: Connection): Map[CheckConstraintTestId, CheckConstraintTestRow]
+  def selectByIdsTracked(ids: List[CheckConstraintTestId])(using c: ConnectionRead): Map[CheckConstraintTestId, CheckConstraintTestRow]
 
   def update: UpdateBuilder[CheckConstraintTestFields, CheckConstraintTestRow]
 

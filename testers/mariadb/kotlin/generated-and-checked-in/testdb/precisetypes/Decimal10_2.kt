@@ -6,10 +6,10 @@
 package testdb.precisetypes
 
 import com.fasterxml.jackson.annotation.JsonValue
-import dev.typr.foundations.MariaType
 import dev.typr.foundations.data.precise.DecimalN
-import dev.typr.foundations.kotlin.Bijection
-import dev.typr.foundations.kotlin.KotlinDbTypes
+import dev.typr.foundationskt.Bijection
+import dev.typr.foundationskt.MariaType
+import dev.typr.foundationskt.MariaTypes
 import java.lang.IllegalArgumentException
 import java.math.BigDecimal
 import java.math.RoundingMode
@@ -18,7 +18,7 @@ import java.math.RoundingMode
 data class Decimal10_2 private constructor(@field:JsonValue val value: BigDecimal) : DecimalN {
   override fun decimalValue(): BigDecimal = value
 
-  override fun equals(other: Any?): Boolean {
+  override fun equals(other: Any?): kotlin.Boolean {
     if (this === other) return true
     if (other !is DecimalN) return false
     return decimalValue().compareTo(other.decimalValue()) == 0
@@ -30,7 +30,7 @@ data class Decimal10_2 private constructor(@field:JsonValue val value: BigDecima
 
   override fun scale(): Int = 2
 
-  override fun semanticEquals(other: DecimalN): Boolean = if (other == null) false else decimalValue().compareTo(other.decimalValue()) == 0
+  override fun semanticEquals(other: DecimalN): kotlin.Boolean = if (other == null) false else decimalValue().compareTo(other.decimalValue()) == 0
 
   override fun semanticHashCode(): Int = decimalValue().stripTrailingZeros().hashCode()
 
@@ -39,6 +39,23 @@ data class Decimal10_2 private constructor(@field:JsonValue val value: BigDecima
   }
 
   companion object {
+    fun of(value: BigDecimal): Decimal10_2? {
+      val scaled = value.setScale(2, RoundingMode.HALF_UP)
+      return if (scaled.precision() <= 10) Decimal10_2(scaled) else null
+    }
+
+    fun unsafeForce(value: BigDecimal): Decimal10_2 {
+      val scaled = value.setScale(2, RoundingMode.HALF_UP)
+      if (scaled.precision() > 10) throw IllegalArgumentException("Value exceeds precision(10, 2)")
+      return Decimal10_2(scaled)
+    }
+
+    fun of(value: Int): Decimal10_2 = Decimal10_2(BigDecimal.valueOf(value.toLong()))
+
+    fun of(value: kotlin.Long): Decimal10_2? = Decimal10_2.of(BigDecimal.valueOf(value))
+
+    fun of(value: kotlin.Double): Decimal10_2? = Decimal10_2.of(BigDecimal.valueOf(value))
+
     val Zero: Decimal10_2 =
       Decimal10_2(BigDecimal.ZERO)
 
@@ -46,23 +63,6 @@ data class Decimal10_2 private constructor(@field:JsonValue val value: BigDecima
       Bijection.of(Decimal10_2::value, ::Decimal10_2)
 
     val mariaType: MariaType<Decimal10_2> =
-      KotlinDbTypes.MariaTypes.numeric.bimap(::Decimal10_2, Decimal10_2::value)
-
-    fun of(value: BigDecimal): Decimal10_2? {
-      val scaled = value.setScale(2, RoundingMode.HALF_UP)
-      return if (scaled.precision() <= 10) Decimal10_2(scaled) else null
-    }
-
-    fun of(value: Int): Decimal10_2 = Decimal10_2(BigDecimal.valueOf(value.toLong()))
-
-    fun of(value: Long): Decimal10_2? = Decimal10_2.of(BigDecimal.valueOf(value))
-
-    fun of(value: Double): Decimal10_2? = Decimal10_2.of(BigDecimal.valueOf(value))
-
-    fun unsafeForce(value: BigDecimal): Decimal10_2 {
-      val scaled = value.setScale(2, RoundingMode.HALF_UP)
-      if (scaled.precision() > 10) throw IllegalArgumentException("Value exceeds precision(10, 2)")
-      return Decimal10_2(scaled)
-    }
+      MariaTypes.numeric.to(Bijection.of(::Decimal10_2, Decimal10_2::value))
   }
 }

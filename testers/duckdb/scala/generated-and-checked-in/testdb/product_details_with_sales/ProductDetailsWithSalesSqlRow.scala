@@ -6,13 +6,11 @@
 package testdb.product_details_with_sales
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import dev.typr.foundations.DuckDbTypes
+import dev.typr.dslsc.RowCodecs
 import dev.typr.foundations.Tuple.Tuple9
 import dev.typr.foundations.data.Json
-import dev.typr.foundations.scala.DbTypeOps
-import dev.typr.foundations.scala.RowParser
-import dev.typr.foundations.scala.RowParsers
-import dev.typr.foundations.scala.ScalaDbTypes
+import dev.typr.foundationssc.DuckDbTypes
+import dev.typr.foundationssc.RowCodec
 import testdb.products.ProductsId
 
 /** SQL file: product_details_with_sales.sql */
@@ -31,7 +29,7 @@ case class ProductDetailsWithSalesSqlRow(
   @JsonProperty("times_ordered") timesOrdered: Option[Long],
   /** Points to [[testdb.order_items.OrderItemsRow.quantity]] */
   @JsonProperty("total_quantity_sold") totalQuantitySold: Option[Long],
-  /** Points to [[testdb.order_items.OrderItemsRow.unitPrice]] */
+  /** Points to [[testdb.order_items.OrderItemsRow.quantity]] */
   @JsonProperty("total_revenue") totalRevenue: Option[Double],
   /** Points to [[testdb.order_items.OrderItemsRow.orderId]] */
   popularity: Option[String]
@@ -56,5 +54,5 @@ case class ProductDetailsWithSalesSqlRow(
 }
 
 object ProductDetailsWithSalesSqlRow {
-  val `_rowParser`: RowParser[ProductDetailsWithSalesSqlRow] = RowParsers.of(ProductsId.duckDbType, DuckDbTypes.varchar, DuckDbTypes.varchar, ScalaDbTypes.DuckDbTypes.numeric, DuckDbTypes.json.nullable, ScalaDbTypes.DuckDbTypes.bigint.nullable, ScalaDbTypes.DuckDbTypes.bigint.nullable, ScalaDbTypes.DuckDbTypes.double_.nullable, DuckDbTypes.varchar.nullable)(ProductDetailsWithSalesSqlRow.apply)(row => Array[Any](row.productId, row.sku, row.name, row.price, row.metadata, row.timesOrdered, row.totalQuantitySold, row.totalRevenue, row.popularity))
+  val rowCodec: RowCodec[ProductDetailsWithSalesSqlRow] = RowCodecs.of(ProductsId.duckDbType, DuckDbTypes.varchar, DuckDbTypes.varchar, DuckDbTypes.numeric, DuckDbTypes.json.opt, DuckDbTypes.bigint.opt, DuckDbTypes.bigint.opt, DuckDbTypes.double_.opt, DuckDbTypes.varchar.opt)(ProductDetailsWithSalesSqlRow.apply)(row => Array[Any](row.productId, row.sku, row.name, row.price, row.metadata, row.timesOrdered, row.totalQuantitySold, row.totalRevenue, row.popularity))
 }

@@ -266,7 +266,7 @@ sealed trait FrameworkIntegration {
 }
 
 object FrameworkIntegration {
-  import typr.avro.codegen.{KafkaFrameworkSpring, KafkaFrameworkQuarkus}
+  import typr.avro.codegen.{KafkaFrameworkSpring, KafkaFrameworkQuarkus, KafkaFrameworkCats}
 
   /** No framework annotations - generate framework-agnostic code */
   case object None extends FrameworkIntegration {
@@ -287,5 +287,13 @@ object FrameworkIntegration {
     */
   case object Quarkus extends FrameworkIntegration {
     override def kafkaFramework: Option[typr.avro.codegen.KafkaFramework] = Some(KafkaFrameworkQuarkus)
+  }
+
+  /** Cats/Typelevel framework integration.
+    *
+    * Events: Uses KafkaProducer[IO, K, V] for publishing, stream-based consumers with handler traits RPC: Uses fs2.Stream patterns Effect type: cats.effect.IO
+    */
+  case object Cats extends FrameworkIntegration {
+    override def kafkaFramework: Option[typr.avro.codegen.KafkaFramework] = Some(KafkaFrameworkCats)
   }
 }

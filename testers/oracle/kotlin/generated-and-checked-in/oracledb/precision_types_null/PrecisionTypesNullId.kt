@@ -6,11 +6,11 @@
 package oracledb.precision_types_null
 
 import com.fasterxml.jackson.annotation.JsonValue
-import dev.typr.foundations.OracleType
-import dev.typr.foundations.kotlin.Bijection
-import dev.typr.foundations.kotlin.KotlinDbTypes
-import dev.typr.foundations.kotlin.RowParser
-import dev.typr.foundations.kotlin.RowParsers
+import dev.typr.dslkt.RowCodecs
+import dev.typr.foundationskt.Bijection
+import dev.typr.foundationskt.OracleType
+import dev.typr.foundationskt.OracleTypes
+import dev.typr.foundationskt.RowCodec
 import java.math.BigDecimal
 
 /** Type for the primary key of table `PRECISION_TYPES_NULL` */
@@ -20,13 +20,13 @@ data class PrecisionTypesNullId(@field:JsonValue val value: BigDecimal) {
   }
 
   companion object {
-    val _rowParser: RowParser<PrecisionTypesNullId> =
-      RowParsers.of(KotlinDbTypes.OracleTypes.number.bimap(::PrecisionTypesNullId, PrecisionTypesNullId::value), { x -> x }, { id -> arrayOf<Any?>(id) })
-
     val bijection: Bijection<PrecisionTypesNullId, BigDecimal> =
       Bijection.of(PrecisionTypesNullId::value, ::PrecisionTypesNullId)
 
     val oracleType: OracleType<PrecisionTypesNullId> =
-      KotlinDbTypes.OracleTypes.number.bimap(::PrecisionTypesNullId, PrecisionTypesNullId::value)
+      OracleTypes.number.to(Bijection.of(::PrecisionTypesNullId, PrecisionTypesNullId::value))
+
+    val rowCodec: RowCodec<PrecisionTypesNullId> =
+      RowCodecs.of(OracleTypes.number.to(Bijection.of(::PrecisionTypesNullId, PrecisionTypesNullId::value)), { x -> x }, { id -> arrayOf<Any?>(id) })
   }
 }

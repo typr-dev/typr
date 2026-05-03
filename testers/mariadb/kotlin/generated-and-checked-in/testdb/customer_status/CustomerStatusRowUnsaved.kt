@@ -15,7 +15,7 @@ data class CustomerStatusRowUnsaved(
   /**  */
   @field:JsonProperty("status_code") val statusCode: CustomerStatusId,
   /**  */
-  val description: String,
+  val description: kotlin.String,
   /** Default: 1
 
     */

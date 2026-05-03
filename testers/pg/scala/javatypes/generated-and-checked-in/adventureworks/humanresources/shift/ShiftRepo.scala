@@ -5,10 +5,11 @@
  */
 package adventureworks.humanresources.shift
 
-import dev.typr.foundations.dsl.DeleteBuilder
-import dev.typr.foundations.dsl.SelectBuilder
-import dev.typr.foundations.dsl.UpdateBuilder
-import java.sql.Connection
+import dev.typr.dsl.DeleteBuilder
+import dev.typr.dsl.SelectBuilder
+import dev.typr.dsl.UpdateBuilder
+import dev.typr.foundations.Connection
+import dev.typr.foundations.ConnectionRead
 import java.util.Optional
 
 trait ShiftRepo {
@@ -16,7 +17,7 @@ trait ShiftRepo {
 
   def deleteById(shiftid: ShiftId)(using c: Connection): java.lang.Boolean
 
-  def deleteByIds(shiftids: Array[ShiftId])(using c: Connection): Integer
+  def deleteByIds(shiftids: java.util.List[ShiftId])(using c: Connection): Integer
 
   def insert(unsaved: ShiftRow)(using c: Connection): ShiftRow
 
@@ -35,13 +36,13 @@ trait ShiftRepo {
 
   def select: SelectBuilder[ShiftFields, ShiftRow]
 
-  def selectAll(using c: Connection): java.util.List[ShiftRow]
+  def selectAll(using c: ConnectionRead): java.util.List[ShiftRow]
 
-  def selectById(shiftid: ShiftId)(using c: Connection): Optional[ShiftRow]
+  def selectById(shiftid: ShiftId)(using c: ConnectionRead): Optional[ShiftRow]
 
-  def selectByIds(shiftids: Array[ShiftId])(using c: Connection): java.util.List[ShiftRow]
+  def selectByIds(shiftids: java.util.List[ShiftId])(using c: ConnectionRead): java.util.List[ShiftRow]
 
-  def selectByIdsTracked(shiftids: Array[ShiftId])(using c: Connection): java.util.Map[ShiftId, ShiftRow]
+  def selectByIdsTracked(shiftids: java.util.List[ShiftId])(using c: ConnectionRead): java.util.Map[ShiftId, ShiftRow]
 
   def update: UpdateBuilder[ShiftFields, ShiftRow]
 

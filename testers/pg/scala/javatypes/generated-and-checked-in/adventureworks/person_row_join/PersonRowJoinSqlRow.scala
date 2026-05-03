@@ -6,9 +6,9 @@
 package adventureworks.person_row_join
 
 import adventureworks.person.businessentity.BusinessentityId
+import dev.typr.dsl.RowCodecs
 import dev.typr.foundations.PgTypes
-import dev.typr.foundations.RowParser
-import dev.typr.foundations.RowParsers
+import dev.typr.foundations.RowCodec
 import dev.typr.foundations.Tuple.Tuple3
 import dev.typr.foundations.data.Record
 import java.util.Optional
@@ -17,16 +17,16 @@ import java.util.Optional
 case class PersonRowJoinSqlRow(
   /** Points to [[adventureworks.sales.salesperson.SalespersonRow.businessentityid]] */
   businessentityid: BusinessentityId,
-  email: Optional[Array[Record]],
-  emails: Optional[Array[Record]]
-) extends Tuple3[BusinessentityId, Optional[Array[Record]], Optional[Array[Record]]] {
+  email: Optional[java.util.List[Record]],
+  emails: Optional[java.util.List[Record]]
+) extends Tuple3[BusinessentityId, Optional[java.util.List[Record]], Optional[java.util.List[Record]]] {
   override def `_1`: BusinessentityId = businessentityid
 
-  override def `_2`: Optional[Array[Record]] = email
+  override def `_2`: Optional[java.util.List[Record]] = email
 
-  override def `_3`: Optional[Array[Record]] = emails
+  override def `_3`: Optional[java.util.List[Record]] = emails
 }
 
 object PersonRowJoinSqlRow {
-  val `_rowParser`: RowParser[PersonRowJoinSqlRow] = RowParsers.of(BusinessentityId.pgType, PgTypes.recordArray.opt(), PgTypes.recordArray.opt(), PersonRowJoinSqlRow.apply, row => Array[Any](row.businessentityid, row.email, row.emails))
+  val rowCodec: RowCodec[PersonRowJoinSqlRow] = RowCodecs.of(BusinessentityId.pgType, PgTypes.record.array().opt, PgTypes.record.array().opt, PersonRowJoinSqlRow.apply, row => Array[Any](row.businessentityid, row.email, row.emails))
 }

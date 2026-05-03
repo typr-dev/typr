@@ -6,10 +6,9 @@
 package adventureworks.public
 
 import com.fasterxml.jackson.annotation.JsonValue
-import dev.typr.foundations.PgType
-import dev.typr.foundations.PgTypes
-import dev.typr.foundations.scala.Bijection
-import dev.typr.foundations.scala.ScalaDbTypes
+import dev.typr.dslsc.Bijection
+import dev.typr.foundationssc.PgType
+import dev.typr.foundationssc.PgTypes
 
 /** Domain `public.Flag`
  * No constraint
@@ -17,9 +16,9 @@ import dev.typr.foundations.scala.ScalaDbTypes
 case class Flag(@JsonValue value: Boolean)
 
 object Flag {
-  given bijection: Bijection[Flag, Boolean] = Bijection.apply[Flag, Boolean](_.value)(Flag.apply)
+  given bijection: Bijection[Flag, Boolean] = Bijection.of[Flag, Boolean](_.value, Flag.apply)
 
-  given pgType: PgType[Flag] = ScalaDbTypes.PgTypes.bool.bimap(Flag.apply, _.value).renamed(""""public"."Flag"""")
+  given pgType: PgType[Flag] = PgType(PgTypes.bool.to(Bijection.of(Flag.apply, _.value)).underlying.renamed(""""public"."Flag""""))
 
-  given pgTypeArray: PgType[Array[Flag]] = PgTypes.boolArrayUnboxed.bimap(xs => xs.map(Flag.apply), xs => xs.map(_.value)).renamed(""""public"."Flag"[]""")
+  given pgTypeArray: PgType[List[Flag]] = pgType.array
 }

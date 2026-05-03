@@ -6,13 +6,12 @@
 package testdb.audit_log
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import dev.typr.foundations.MariaTypes
+import dev.typr.dslkt.RowCodecs
 import dev.typr.foundations.Tuple.Tuple10
 import dev.typr.foundations.data.Json
 import dev.typr.foundations.data.maria.Inet6
-import dev.typr.foundations.kotlin.RowParser
-import dev.typr.foundations.kotlin.RowParsers
-import dev.typr.foundations.kotlin.nullable
+import dev.typr.foundationskt.MariaTypes
+import dev.typr.foundationskt.RowCodec
 import java.time.LocalDateTime
 import testdb.customtypes.Defaulted
 
@@ -25,11 +24,11 @@ data class AuditLogRow(
     */
   @field:JsonProperty("log_id") val logId: AuditLogId,
   /**  */
-  @field:JsonProperty("table_name") val tableName: String,
+  @field:JsonProperty("table_name") val tableName: kotlin.String,
   /**  */
-  @field:JsonProperty("record_id") val recordId: String,
+  @field:JsonProperty("record_id") val recordId: kotlin.String,
   /**  */
-  val action: String,
+  val action: kotlin.String,
   /** 
     * Default: NULL
     */
@@ -41,7 +40,7 @@ data class AuditLogRow(
   /** 
     * Default: NULL
     */
-  @field:JsonProperty("changed_by") val changedBy: String?,
+  @field:JsonProperty("changed_by") val changedBy: kotlin.String?,
   /** 
     * Default: current_timestamp(6)
     */
@@ -54,22 +53,22 @@ data class AuditLogRow(
     * Default: NULL
     */
   @field:JsonProperty("session_id") val sessionId: ByteArray?
-) : Tuple10<AuditLogId, String, String, String, Json?, Json?, String?, LocalDateTime, Inet6?, ByteArray?> {
+) : Tuple10<AuditLogId, kotlin.String, kotlin.String, kotlin.String, Json?, Json?, kotlin.String?, LocalDateTime, Inet6?, ByteArray?> {
   override fun _1(): AuditLogId = logId
 
   override fun _10(): ByteArray? = sessionId
 
-  override fun _2(): String = tableName
+  override fun _2(): kotlin.String = tableName
 
-  override fun _3(): String = recordId
+  override fun _3(): kotlin.String = recordId
 
-  override fun _4(): String = action
+  override fun _4(): kotlin.String = action
 
   override fun _5(): Json? = oldValues
 
   override fun _6(): Json? = newValues
 
-  override fun _7(): String? = changedBy
+  override fun _7(): kotlin.String? = changedBy
 
   override fun _8(): LocalDateTime = changedAt
 
@@ -80,13 +79,13 @@ data class AuditLogRow(
   fun toUnsavedRow(
     oldValues: Defaulted<Json?> = Defaulted.Provided(this.oldValues),
     newValues: Defaulted<Json?> = Defaulted.Provided(this.newValues),
-    changedBy: Defaulted<String?> = Defaulted.Provided(this.changedBy),
+    changedBy: Defaulted<kotlin.String?> = Defaulted.Provided(this.changedBy),
     changedAt: Defaulted<LocalDateTime> = Defaulted.Provided(this.changedAt),
     clientIp: Defaulted<Inet6?> = Defaulted.Provided(this.clientIp),
     sessionId: Defaulted<ByteArray?> = Defaulted.Provided(this.sessionId)
   ): AuditLogRowUnsaved = AuditLogRowUnsaved(tableName, recordId, action, oldValues, newValues, changedBy, changedAt, clientIp, sessionId)
 
   companion object {
-    val _rowParser: RowParser<AuditLogRow> = RowParsers.of(AuditLogId.mariaType, MariaTypes.varchar, MariaTypes.varchar, MariaTypes.text, MariaTypes.json.nullable(), MariaTypes.json.nullable(), MariaTypes.varchar.nullable(), MariaTypes.datetime, MariaTypes.inet6.nullable(), MariaTypes.varbinary.nullable(), { t0, t1, t2, t3, t4, t5, t6, t7, t8, t9 -> AuditLogRow(t0, t1, t2, t3, t4, t5, t6, t7, t8, t9) }, { row -> arrayOf<Any?>(row.logId, row.tableName, row.recordId, row.action, row.oldValues, row.newValues, row.changedBy, row.changedAt, row.clientIp, row.sessionId) })
+    val rowCodec: RowCodec<AuditLogRow> = RowCodecs.of(AuditLogId.mariaType, MariaTypes.varchar, MariaTypes.varchar, MariaTypes.text, MariaTypes.json.opt(), MariaTypes.json.opt(), MariaTypes.varchar.opt(), MariaTypes.datetime, MariaTypes.inet6.opt(), MariaTypes.varbinary.opt(), { t0: AuditLogId, t1: kotlin.String, t2: kotlin.String, t3: kotlin.String, t4: Json?, t5: Json?, t6: kotlin.String?, t7: LocalDateTime, t8: Inet6?, t9: ByteArray? -> AuditLogRow(t0, t1, t2, t3, t4, t5, t6, t7, t8, t9) }, { row: AuditLogRow -> arrayOf<Any?>(row.logId, row.tableName, row.recordId, row.action, row.oldValues, row.newValues, row.changedBy, row.changedAt, row.clientIp, row.sessionId) })
   }
 }

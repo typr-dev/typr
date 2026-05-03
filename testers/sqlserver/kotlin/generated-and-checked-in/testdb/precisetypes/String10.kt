@@ -6,15 +6,15 @@
 package testdb.precisetypes
 
 import com.fasterxml.jackson.annotation.JsonValue
-import dev.typr.foundations.SqlServerType
-import dev.typr.foundations.SqlServerTypes
 import dev.typr.foundations.data.precise.StringN
-import dev.typr.foundations.kotlin.Bijection
+import dev.typr.foundationskt.Bijection
+import dev.typr.foundationskt.SqlServerType
+import dev.typr.foundationskt.SqlServerTypes
 import java.lang.IllegalArgumentException
 
 @kotlin.ConsistentCopyVisibility
-data class String10 private constructor(@field:JsonValue val value: String) : StringN {
-  override fun equals(other: Any?): Boolean {
+data class String10 private constructor(@field:JsonValue val value: kotlin.String) : StringN {
+  override fun equals(other: Any?): kotlin.Boolean {
     if (this === other) return true
     if (other !is StringN) return false
     return value == other.rawValue()
@@ -24,32 +24,32 @@ data class String10 private constructor(@field:JsonValue val value: String) : St
 
   override fun maxLength(): Int = 10
 
-  override fun rawValue(): String = value
+  override fun rawValue(): kotlin.String = value
 
-  override fun semanticEquals(other: StringN): Boolean = if (other == null) false else value == other.rawValue()
+  override fun semanticEquals(other: StringN): kotlin.Boolean = if (other == null) false else (value == other.rawValue())
 
   override fun semanticHashCode(): Int = value.hashCode()
 
   override fun toString(): kotlin.String {
-    return value.toString()
+    return value
   }
 
   companion object {
-    val bijection: Bijection<String10, String> =
-      Bijection.of(String10::value, ::String10)
+    fun of(value: kotlin.String): String10? = if (value.length <= 10) String10(value) else null
 
-    fun of(value: String): String10? = if (value.length <= 10) String10(value) else null
-
-    val sqlServerType: SqlServerType<String10> =
-      SqlServerTypes.nvarchar.bimap(::String10, String10::value)
-
-    fun truncate(value: String): String10 = String10(if (value.length <= 10) value else value.substring(0, 10))
-
-    fun unsafeForce(value: String): String10 {
+    fun unsafeForce(value: kotlin.String): String10 {
       if (value.length > 10) {
         throw IllegalArgumentException("Value length ${value.length} exceeds maximum 10")
       }
       return String10(value)
     }
+
+    fun truncate(value: kotlin.String): String10 = String10(if (value.length <= 10) value else value.substring(0, 10))
+
+    val bijection: Bijection<String10, kotlin.String> =
+      Bijection.of(String10::value, ::String10)
+
+    val sqlServerType: SqlServerType<String10> =
+      SqlServerTypes.nvarchar.to(Bijection.of(::String10, String10::value))
   }
 }

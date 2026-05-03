@@ -20,7 +20,7 @@ import testdb.products.*;
 
 /** Tests for DuckDB-specific features: enums, special types, and views. */
 public class DatabaseFeaturesTest {
-  private final TestInsert testInsert = new TestInsert(new Random(42));
+  private final TestInsert testInsert = new TestInsert(new Random(2093113001));
   private final AllScalarTypesRepoImpl allTypesRepo = new AllScalarTypesRepoImpl();
   private final CustomersRepoImpl customersRepo = new CustomersRepoImpl();
   private final CustomerOrdersViewRepoImpl customerOrdersViewRepo =
@@ -159,7 +159,8 @@ public class DatabaseFeaturesTest {
   public void testTimestampWithTimezone() {
     DuckDbTestHelper.run(
         c -> {
-          var timestamptz = OffsetDateTime.of(2025, 6, 15, 14, 30, 45, 0, ZoneOffset.ofHours(-5));
+          var timestamptz =
+              OffsetDateTime.of(2025, 6, 15, 14, 30, 45, 0, ZoneOffset.ofHours(-5)).toInstant();
           var row =
               testInsert
                   .AllScalarTypes()

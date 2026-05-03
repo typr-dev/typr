@@ -5,12 +5,11 @@
  */
 package adventureworks.update_person
 
-import dev.typr.foundations.PgTypes
-import dev.typr.foundations.scala.DbTypeOps
-import dev.typr.foundations.scala.Fragment
-import java.sql.Connection
+import dev.typr.foundationssc.Connection
+import dev.typr.foundationssc.Fragment
+import dev.typr.foundationssc.PgTypes
 import java.time.LocalDateTime
-import dev.typr.foundations.scala.Fragment.sql
+import dev.typr.foundationssc.Fragment.sql
 
 class UpdatePersonSqlRepoImpl extends UpdatePersonSqlRepo {
   override def apply(
@@ -19,6 +18,6 @@ class UpdatePersonSqlRepoImpl extends UpdatePersonSqlRepo {
   )(using c: Connection): Int = {
     sql"""update person.person
     set firstname = firstname || '-' || ${Fragment.encode(PgTypes.text, suffix)}
-    where modifieddate < ${Fragment.encode(PgTypes.timestamp.nullable, cutoff)}::timestamp""".update().runUnchecked(c)
+    where modifieddate < ${Fragment.encode(PgTypes.timestamp.opt, cutoff)}::timestamp""".update().run(using c)
   }
 }

@@ -5,17 +5,16 @@
  */
 package adventureworks.person_dynamic
 
-import dev.typr.foundations.PgTypes
-import dev.typr.foundations.scala.DbTypeOps
-import dev.typr.foundations.scala.Fragment
-import java.sql.Connection
-import dev.typr.foundations.scala.Fragment.sql
+import dev.typr.foundationssc.ConnectionRead
+import dev.typr.foundationssc.Fragment
+import dev.typr.foundationssc.PgTypes
+import dev.typr.foundationssc.Fragment.sql
 
 class PersonDynamicSqlRepoImpl extends PersonDynamicSqlRepo {
-  override def apply(firstName: Option[String])(using c: Connection): List[PersonDynamicSqlRow] = {
+  override def apply(firstName: Option[String])(using c: ConnectionRead): List[PersonDynamicSqlRow] = {
     sql"""SELECT p.title, p.firstname, p.middlename, p.lastname
     FROM person.person p
-    WHERE ${Fragment.encode(PgTypes.text.nullable, firstName)}::text IS NULL OR p.firstname = ${Fragment.encode(PgTypes.text.nullable, firstName)}
-    """.query(PersonDynamicSqlRow.`_rowParser`.all()).runUnchecked(c)
+    WHERE ${Fragment.encode(PgTypes.text.opt, firstName)}::text IS NULL OR p.firstname = ${Fragment.encode(PgTypes.text.opt, firstName)}
+    """.query(PersonDynamicSqlRow.rowCodec.all()).run(using c)
   }
 }

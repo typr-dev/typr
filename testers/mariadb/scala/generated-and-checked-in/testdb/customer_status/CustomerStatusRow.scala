@@ -6,10 +6,10 @@
 package testdb.customer_status
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import dev.typr.foundations.MariaTypes
+import dev.typr.dslsc.RowCodecs
 import dev.typr.foundations.Tuple.Tuple3
-import dev.typr.foundations.scala.RowParser
-import dev.typr.foundations.scala.RowParsers
+import dev.typr.foundationssc.MariaTypes
+import dev.typr.foundationssc.RowCodec
 import testdb.customtypes.Defaulted
 import testdb.userdefined.IsActive
 
@@ -38,5 +38,5 @@ case class CustomerStatusRow(
 }
 
 object CustomerStatusRow {
-  val `_rowParser`: RowParser[CustomerStatusRow] = RowParsers.of(CustomerStatusId.mariaType, MariaTypes.varchar, IsActive.mariaType)(CustomerStatusRow.apply)(row => Array[Any](row.statusCode, row.description, row.isActive))
+  val rowCodec: RowCodec[CustomerStatusRow] = RowCodecs.of(CustomerStatusId.mariaType, MariaTypes.varchar, IsActive.mariaType)(CustomerStatusRow.apply)(row => Array[Any](row.statusCode, row.description, row.isActive))
 }

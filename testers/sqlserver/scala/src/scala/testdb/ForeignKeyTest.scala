@@ -13,16 +13,14 @@ import scala.util.Random
 /** Tests for foreign key relationships between tables. Tests orders -> customers and order_items -> orders/products relationships.
   */
 class ForeignKeyTest {
-  private val testInsert = TestInsert(Random(42))
+  private val testInsert = TestInsert(Random(213691149))
   private val customersRepo = CustomersRepoImpl()
   private val productsRepo = ProductsRepoImpl()
   private val ordersRepo = OrdersRepoImpl()
   private val orderItemsRepo = OrderItemsRepoImpl()
 
   @Test
-  def testOrderReferencesCustomer(): Unit = withConnection { c =>
-    given java.sql.Connection = c
-
+  def testOrderReferencesCustomer(): Unit = withConnection {
     val customer = testInsert.Customers(email = Email("order-ref@example.com"))
     val order = testInsert.Orders(customerId = customer.customerId, totalAmount = BigDecimal("99.99"))
 
@@ -35,9 +33,7 @@ class ForeignKeyTest {
   }
 
   @Test
-  def testOrderItemsReferencesOrderAndProduct(): Unit = withConnection { c =>
-    given java.sql.Connection = c
-
+  def testOrderItemsReferencesOrderAndProduct(): Unit = withConnection {
     val customer = testInsert.Customers(email = Email("item-refs@example.com"))
     val product = testInsert.Products()
     val order = testInsert.Orders(customerId = customer.customerId)
@@ -61,9 +57,7 @@ class ForeignKeyTest {
   }
 
   @Test
-  def testMultipleOrdersForCustomer(): Unit = withConnection { c =>
-    given java.sql.Connection = c
-
+  def testMultipleOrdersForCustomer(): Unit = withConnection {
     val customer = testInsert.Customers(email = Email("multi-orders@example.com"))
 
     val order1 = testInsert.Orders(customerId = customer.customerId, totalAmount = BigDecimal("100.00"))
@@ -79,9 +73,7 @@ class ForeignKeyTest {
   }
 
   @Test
-  def testMultipleItemsForOrder(): Unit = withConnection { c =>
-    given java.sql.Connection = c
-
+  def testMultipleItemsForOrder(): Unit = withConnection {
     val customer = testInsert.Customers(email = Email("multi-items@example.com"))
     val product1 = testInsert.Products()
     val product2 = testInsert.Products()
@@ -107,9 +99,7 @@ class ForeignKeyTest {
   }
 
   @Test
-  def testCascadingForeignKeys(): Unit = withConnection { c =>
-    given java.sql.Connection = c
-
+  def testCascadingForeignKeys(): Unit = withConnection {
     val customer = testInsert.Customers(email = Email("cascade-fk@example.com"))
     val product = testInsert.Products()
     val order = testInsert.Orders(customerId = customer.customerId)

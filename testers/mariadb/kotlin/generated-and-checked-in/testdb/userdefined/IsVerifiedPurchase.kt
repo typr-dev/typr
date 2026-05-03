@@ -6,23 +6,23 @@
 package testdb.userdefined
 
 import com.fasterxml.jackson.annotation.JsonValue
-import dev.typr.foundations.MariaType
-import dev.typr.foundations.kotlin.Bijection
-import dev.typr.foundations.kotlin.KotlinDbTypes
+import dev.typr.foundationskt.Bijection
+import dev.typr.foundationskt.MariaType
+import dev.typr.foundationskt.MariaTypes
 
 /** Shared type `IsVerifiedPurchase`
   * Generated from TypeDefinitions matching
   */
-data class IsVerifiedPurchase(@field:JsonValue val value: Boolean) {
+data class IsVerifiedPurchase(@field:JsonValue val value: kotlin.Boolean) {
   override fun toString(): kotlin.String {
     return value.toString()
   }
 
   companion object {
-    val bijection: Bijection<IsVerifiedPurchase, Boolean> =
+    val bijection: Bijection<IsVerifiedPurchase, kotlin.Boolean> =
       Bijection.of(IsVerifiedPurchase::value, ::IsVerifiedPurchase)
 
     val mariaType: MariaType<IsVerifiedPurchase> =
-      KotlinDbTypes.MariaTypes.bool.bimap(::IsVerifiedPurchase, IsVerifiedPurchase::value)
+      MariaTypes.bool.to(Bijection.of(::IsVerifiedPurchase, IsVerifiedPurchase::value))
   }
 }

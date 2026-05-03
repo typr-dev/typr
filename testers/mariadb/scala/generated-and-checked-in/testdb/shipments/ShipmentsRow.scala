@@ -6,13 +6,11 @@
 package testdb.shipments
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import dev.typr.foundations.MariaTypes
+import dev.typr.dslsc.RowCodecs
 import dev.typr.foundations.Tuple.Tuple17
 import dev.typr.foundations.data.Json
-import dev.typr.foundations.scala.DbTypeOps
-import dev.typr.foundations.scala.RowParser
-import dev.typr.foundations.scala.RowParsers
-import dev.typr.foundations.scala.ScalaDbTypes
+import dev.typr.foundationssc.MariaTypes
+import dev.typr.foundationssc.RowCodec
 import java.time.LocalDate
 import java.time.LocalDateTime
 import testdb.customtypes.Defaulted
@@ -162,5 +160,5 @@ case class ShipmentsRow(
 }
 
 object ShipmentsRow {
-  val `_rowParser`: RowParser[ShipmentsRow] = RowParsers.of(ShipmentsId.mariaType, OrdersId.mariaType, ShippingCarriersId.mariaType, MariaTypes.varchar.nullable, MariaTypes.varchar, ScalaDbTypes.MariaTypes.numeric.nullable, MariaTypes.json.nullable, MariaTypes.longblob.nullable, MariaTypes.text, MariaTypes.date.nullable, MariaTypes.datetime.nullable, ScalaDbTypes.MariaTypes.numeric, ScalaDbTypes.MariaTypes.numeric.nullable, WarehousesId.mariaType.nullable, MariaTypes.datetime.nullable, MariaTypes.datetime, MariaTypes.datetime)(ShipmentsRow.apply)(row => Array[Any](row.shipmentId, row.orderId, row.carrierId, row.trackingNumber, row.shippingMethod, row.weightKg, row.dimensionsJson, row.labelData, row.status, row.estimatedDeliveryDate, row.actualDeliveryAt, row.shippingCost, row.insuranceAmount, row.originWarehouseId, row.shippedAt, row.createdAt, row.updatedAt))
+  val rowCodec: RowCodec[ShipmentsRow] = RowCodecs.of(ShipmentsId.mariaType, OrdersId.mariaType, ShippingCarriersId.mariaType, MariaTypes.varchar.opt, MariaTypes.varchar, MariaTypes.numeric.opt, MariaTypes.json.opt, MariaTypes.longblob.opt, MariaTypes.text, MariaTypes.date.opt, MariaTypes.datetime.opt, MariaTypes.numeric, MariaTypes.numeric.opt, WarehousesId.mariaType.opt, MariaTypes.datetime.opt, MariaTypes.datetime, MariaTypes.datetime)(ShipmentsRow.apply)(row => Array[Any](row.shipmentId, row.orderId, row.carrierId, row.trackingNumber, row.shippingMethod, row.weightKg, row.dimensionsJson, row.labelData, row.status, row.estimatedDeliveryDate, row.actualDeliveryAt, row.shippingCost, row.insuranceAmount, row.originWarehouseId, row.shippedAt, row.createdAt, row.updatedAt))
 }

@@ -6,13 +6,11 @@
 package testdb.cte_test
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import dev.typr.foundations.MariaTypes
+import dev.typr.dslsc.RowCodecs
 import dev.typr.foundations.Tuple.Tuple6
 import dev.typr.foundations.data.Uint8
-import dev.typr.foundations.scala.DbTypeOps
-import dev.typr.foundations.scala.RowParser
-import dev.typr.foundations.scala.RowParsers
-import dev.typr.foundations.scala.ScalaDbTypes
+import dev.typr.foundationssc.MariaTypes
+import dev.typr.foundationssc.RowCodec
 
 /** SQL file: cte_test.sql */
 case class CteTestSqlRow(
@@ -38,5 +36,5 @@ case class CteTestSqlRow(
 }
 
 object CteTestSqlRow {
-  val `_rowParser`: RowParser[CteTestSqlRow] = RowParsers.of(MariaTypes.bigintUnsigned, MariaTypes.varchar, MariaTypes.varchar, ScalaDbTypes.MariaTypes.bigint, ScalaDbTypes.MariaTypes.numeric, MariaTypes.varchar.nullable)(CteTestSqlRow.apply)(row => Array[Any](row.customerId, row.email, row.firstName, row.orderCount, row.totalSpent, row.favoriteBrand))
+  val rowCodec: RowCodec[CteTestSqlRow] = RowCodecs.of(MariaTypes.bigintUnsigned, MariaTypes.varchar, MariaTypes.varchar, MariaTypes.bigint, MariaTypes.numeric, MariaTypes.varchar.opt)(CteTestSqlRow.apply)(row => Array[Any](row.customerId, row.email, row.firstName, row.orderCount, row.totalSpent, row.favoriteBrand))
 }

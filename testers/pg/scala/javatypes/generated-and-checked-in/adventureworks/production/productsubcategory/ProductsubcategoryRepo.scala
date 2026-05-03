@@ -5,10 +5,11 @@
  */
 package adventureworks.production.productsubcategory
 
-import dev.typr.foundations.dsl.DeleteBuilder
-import dev.typr.foundations.dsl.SelectBuilder
-import dev.typr.foundations.dsl.UpdateBuilder
-import java.sql.Connection
+import dev.typr.dsl.DeleteBuilder
+import dev.typr.dsl.SelectBuilder
+import dev.typr.dsl.UpdateBuilder
+import dev.typr.foundations.Connection
+import dev.typr.foundations.ConnectionRead
 import java.util.Optional
 
 trait ProductsubcategoryRepo {
@@ -16,7 +17,7 @@ trait ProductsubcategoryRepo {
 
   def deleteById(productsubcategoryid: ProductsubcategoryId)(using c: Connection): java.lang.Boolean
 
-  def deleteByIds(productsubcategoryids: Array[ProductsubcategoryId])(using c: Connection): Integer
+  def deleteByIds(productsubcategoryids: java.util.List[ProductsubcategoryId])(using c: Connection): Integer
 
   def insert(unsaved: ProductsubcategoryRow)(using c: Connection): ProductsubcategoryRow
 
@@ -35,13 +36,13 @@ trait ProductsubcategoryRepo {
 
   def select: SelectBuilder[ProductsubcategoryFields, ProductsubcategoryRow]
 
-  def selectAll(using c: Connection): java.util.List[ProductsubcategoryRow]
+  def selectAll(using c: ConnectionRead): java.util.List[ProductsubcategoryRow]
 
-  def selectById(productsubcategoryid: ProductsubcategoryId)(using c: Connection): Optional[ProductsubcategoryRow]
+  def selectById(productsubcategoryid: ProductsubcategoryId)(using c: ConnectionRead): Optional[ProductsubcategoryRow]
 
-  def selectByIds(productsubcategoryids: Array[ProductsubcategoryId])(using c: Connection): java.util.List[ProductsubcategoryRow]
+  def selectByIds(productsubcategoryids: java.util.List[ProductsubcategoryId])(using c: ConnectionRead): java.util.List[ProductsubcategoryRow]
 
-  def selectByIdsTracked(productsubcategoryids: Array[ProductsubcategoryId])(using c: Connection): java.util.Map[ProductsubcategoryId, ProductsubcategoryRow]
+  def selectByIdsTracked(productsubcategoryids: java.util.List[ProductsubcategoryId])(using c: ConnectionRead): java.util.Map[ProductsubcategoryId, ProductsubcategoryRow]
 
   def update: UpdateBuilder[ProductsubcategoryFields, ProductsubcategoryRow]
 

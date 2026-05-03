@@ -7,8 +7,13 @@ import io.grpc.MethodDescriptor.Marshaller;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.RuntimeException;
 
-public record Customer(CustomerId customerId, String name, String email) {
+public record Customer(
+  CustomerId customerId,
+  String name,
+  String email
+) {
   public Customer withCustomerId(CustomerId customerId) {
     return new Customer(customerId, name, email);
   }
@@ -21,51 +26,43 @@ public record Customer(CustomerId customerId, String name, String email) {
     return new Customer(customerId, name, email);
   }
 
-  public static Marshaller<Customer> MARSHALLER =
-      new Marshaller<Customer>() {
-        @Override
-        public InputStream stream(Customer value) {
-          var bytes = new byte[value.getSerializedSize()];
-          var cos = CodedOutputStream.newInstance(bytes);
-          try {
-            value.writeTo(cos);
-            cos.flush();
-          } catch (IOException e) {
-            throw new RuntimeException(e);
-          }
-          return new ByteArrayInputStream(bytes);
-        }
-
-        @Override
-        public Customer parse(InputStream stream) {
-          try {
-            return Customer.parseFrom(CodedInputStream.newInstance(stream));
-          } catch (IOException e) {
-            throw new RuntimeException(e);
-          }
-        }
-      };
-
-  public static Customer parseFrom(CodedInputStream input) throws IOException {
+  static public Customer parseFrom(CodedInputStream input) throws IOException {
     CustomerId customerId = CustomerId.valueOf("");
     String name = "";
     String email = "";
     while (!input.isAtEnd()) {
       var tag = input.readTag();
-      if (WireFormat.getTagFieldNumber(tag) == 1) {
-        customerId = CustomerId.valueOf(input.readString());
-      } else if (WireFormat.getTagFieldNumber(tag) == 2) {
-        name = input.readString();
-      } else if (WireFormat.getTagFieldNumber(tag) == 3) {
-        email = input.readString();
-      } else {
-        input.skipField(tag);
-      }
-      ;
-    }
-    ;
+      if (WireFormat.getTagFieldNumber(tag) == 1) { customerId = CustomerId.valueOf(input.readString()); }
+      else if (WireFormat.getTagFieldNumber(tag) == 2) { name = input.readString(); }
+      else if (WireFormat.getTagFieldNumber(tag) == 3) { email = input.readString(); }
+      else { input.skipField(tag); };
+    };
     return new Customer(customerId, name, email);
   }
+
+  static public Marshaller<Customer> MARSHALLER =
+    new Marshaller<Customer>() {
+      @Override
+      public InputStream stream(Customer value) {
+        var bytes = new byte[value.getSerializedSize()];
+        var cos = CodedOutputStream.newInstance(bytes);
+        try {
+          value.writeTo(cos);
+          cos.flush();
+        } catch (IOException e) {
+          throw new RuntimeException(e);
+        } 
+        return new ByteArrayInputStream(bytes);
+      }
+      @Override
+      public Customer parse(InputStream stream) {
+        try {
+          return Customer.parseFrom(CodedInputStream.newInstance(stream));
+        } catch (IOException e) {
+          throw new RuntimeException(e);
+        } 
+      }
+    };
 
   public Integer getSerializedSize() {
     Integer size = 0;

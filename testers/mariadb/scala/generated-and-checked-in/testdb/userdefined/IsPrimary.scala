@@ -6,9 +6,9 @@
 package testdb.userdefined
 
 import com.fasterxml.jackson.annotation.JsonValue
-import dev.typr.foundations.MariaType
-import dev.typr.foundations.scala.Bijection
-import dev.typr.foundations.scala.ScalaDbTypes
+import dev.typr.dslsc.Bijection
+import dev.typr.foundationssc.MariaType
+import dev.typr.foundationssc.MariaTypes
 
 /** Shared type `IsPrimary`
  * Generated from TypeDefinitions matching
@@ -16,7 +16,7 @@ import dev.typr.foundations.scala.ScalaDbTypes
 case class IsPrimary(@JsonValue value: Boolean) extends scala.AnyVal
 
 object IsPrimary {
-  given bijection: Bijection[IsPrimary, Boolean] = Bijection.apply[IsPrimary, Boolean](_.value)(IsPrimary.apply)
+  given bijection: Bijection[IsPrimary, Boolean] = Bijection.of[IsPrimary, Boolean](_.value, IsPrimary.apply)
 
-  given mariaType: MariaType[IsPrimary] = ScalaDbTypes.MariaTypes.bool.bimap(IsPrimary.apply, _.value)
+  given mariaType: MariaType[IsPrimary] = MariaTypes.bool.to(Bijection.of(IsPrimary.apply, _.value))
 }

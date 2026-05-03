@@ -5,10 +5,11 @@
  */
 package testdb.reviews
 
-import dev.typr.foundations.kotlin.DeleteBuilder
-import dev.typr.foundations.kotlin.SelectBuilder
-import dev.typr.foundations.kotlin.UpdateBuilder
-import java.sql.Connection
+import dev.typr.dslkt.DeleteBuilder
+import dev.typr.dslkt.SelectBuilder
+import dev.typr.dslkt.UpdateBuilder
+import dev.typr.foundationskt.Connection
+import dev.typr.foundationskt.ConnectionRead
 import kotlin.collections.Iterator
 import kotlin.collections.List
 import kotlin.collections.Map
@@ -19,10 +20,10 @@ interface ReviewsRepo {
   abstract fun deleteById(
     reviewId: ReviewsId,
     c: Connection
-  ): Boolean
+  ): kotlin.Boolean
 
   abstract fun deleteByIds(
-    reviewIds: Array<ReviewsId>,
+    reviewIds: List<ReviewsId>,
     c: Connection
   ): Int
 
@@ -38,21 +39,21 @@ interface ReviewsRepo {
 
   abstract fun select(): SelectBuilder<ReviewsFields, ReviewsRow>
 
-  abstract fun selectAll(c: Connection): List<ReviewsRow>
+  abstract fun selectAll(c: ConnectionRead): List<ReviewsRow>
 
   abstract fun selectById(
     reviewId: ReviewsId,
-    c: Connection
+    c: ConnectionRead
   ): ReviewsRow?
 
   abstract fun selectByIds(
-    reviewIds: Array<ReviewsId>,
-    c: Connection
+    reviewIds: List<ReviewsId>,
+    c: ConnectionRead
   ): List<ReviewsRow>
 
   abstract fun selectByIdsTracked(
-    reviewIds: Array<ReviewsId>,
-    c: Connection
+    reviewIds: List<ReviewsId>,
+    c: ConnectionRead
   ): Map<ReviewsId, ReviewsRow>
 
   abstract fun update(): UpdateBuilder<ReviewsFields, ReviewsRow>
@@ -60,7 +61,7 @@ interface ReviewsRepo {
   abstract fun update(
     row: ReviewsRow,
     c: Connection
-  ): Boolean
+  ): kotlin.Boolean
 
   abstract fun upsert(
     unsaved: ReviewsRow,

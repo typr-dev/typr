@@ -9,25 +9,18 @@ package testdb
 
 /** Members of MariaDB SET type with values: email, mail, push, sms */
 
-sealed abstract class EmailMailPushSmsSetMember(val value: java.lang.String)
+enum EmailMailPushSmsSetMember {
+  case email, mail, push, sms
+  
+}
 
 object EmailMailPushSmsSetMember {
   
+  extension (e: EmailMailPushSmsSetMember) def value: java.lang.String = e.toString
   def apply(str: java.lang.String): scala.Either[java.lang.String, EmailMailPushSmsSetMember] =
-    ByName.get(str).toRight(s"'$str' does not match any of the following legal values: $Names")
-  def force(str: java.lang.String): EmailMailPushSmsSetMember =
-    apply(str) match {
-      case scala.Left(msg) => sys.error(msg)
-      case scala.Right(value) => value
-    }
-  case object email extends EmailMailPushSmsSetMember("email")
-
-  case object mail extends EmailMailPushSmsSetMember("mail")
-
-  case object push extends EmailMailPushSmsSetMember("push")
-
-  case object sms extends EmailMailPushSmsSetMember("sms")
-  val All: scala.List[EmailMailPushSmsSetMember] = scala.List(email, mail, push, sms)
-  val Names: java.lang.String = All.map(_.value).mkString(", ")
-  val ByName: scala.collection.immutable.Map[java.lang.String, EmailMailPushSmsSetMember] = All.map(x => (x.value, x)).toMap
+    scala.util.Try(EmailMailPushSmsSetMember.valueOf(str)).toEither.left.map(_ => s"'$str' does not match any of the following legal values: $Names")
+  def force(str: java.lang.String): EmailMailPushSmsSetMember = EmailMailPushSmsSetMember.valueOf(str)
+  val All: scala.List[EmailMailPushSmsSetMember] = values.toList
+  val Names: java.lang.String = All.map(_.toString).mkString(", ")
+  val ByName: scala.collection.immutable.Map[java.lang.String, EmailMailPushSmsSetMember] = All.map(x => (x.toString, x)).toMap
 }

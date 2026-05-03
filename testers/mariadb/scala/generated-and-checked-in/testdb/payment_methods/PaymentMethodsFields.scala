@@ -5,19 +5,18 @@
  */
 package testdb.payment_methods
 
-import dev.typr.foundations.MariaTypes
-import dev.typr.foundations.RowParser
+import dev.typr.dsl.FieldsBase
+import dev.typr.dsl.Path
+import dev.typr.dsl.SqlExpr.FieldLike
+import dev.typr.dslsc.RelationStructure
+import dev.typr.dslsc.SqlExpr
+import dev.typr.dslsc.SqlExpr.Field
+import dev.typr.dslsc.SqlExpr.IdField
+import dev.typr.dslsc.SqlExpr.OptField
+import dev.typr.dslsc.TupleExpr7
+import dev.typr.foundations.RowCodec
 import dev.typr.foundations.data.Json
-import dev.typr.foundations.dsl.FieldsBase
-import dev.typr.foundations.dsl.Path
-import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.scala.RelationStructure
-import dev.typr.foundations.scala.ScalaDbTypes
-import dev.typr.foundations.scala.SqlExpr
-import dev.typr.foundations.scala.SqlExpr.Field
-import dev.typr.foundations.scala.SqlExpr.IdField
-import dev.typr.foundations.scala.SqlExpr.OptField
-import dev.typr.foundations.scala.TupleExpr7
+import dev.typr.foundationssc.MariaTypes
 import testdb.userdefined.IsActive
 
 class PaymentMethodsFields(val `_path`: java.util.List[Path]) extends TupleExpr7[PaymentMethodsId, String, String, String, Json, /* user-picked */ IsActive, Byte] with RelationStructure[PaymentMethodsFields, PaymentMethodsRow]  with FieldsBase[PaymentMethodsRow] {
@@ -29,7 +28,7 @@ class PaymentMethodsFields(val `_path`: java.util.List[Path]) extends TupleExpr7
       None,
       None,
       (row, value) => row.copy(methodId = value),
-      PaymentMethodsId.mariaType
+      PaymentMethodsId.mariaType.underlying
     )
   }
 
@@ -41,7 +40,7 @@ class PaymentMethodsFields(val `_path`: java.util.List[Path]) extends TupleExpr7
       None,
       None,
       (row, value) => row.copy(code = value),
-      MariaTypes.varchar
+      MariaTypes.varchar.underlying
     )
   }
 
@@ -53,7 +52,7 @@ class PaymentMethodsFields(val `_path`: java.util.List[Path]) extends TupleExpr7
       None,
       None,
       (row, value) => row.copy(name = value),
-      MariaTypes.varchar
+      MariaTypes.varchar.underlying
     )
   }
 
@@ -65,7 +64,7 @@ class PaymentMethodsFields(val `_path`: java.util.List[Path]) extends TupleExpr7
       None,
       None,
       (row, value) => row.copy(methodType = value),
-      MariaTypes.text
+      MariaTypes.text.underlying
     )
   }
 
@@ -77,7 +76,7 @@ class PaymentMethodsFields(val `_path`: java.util.List[Path]) extends TupleExpr7
       None,
       None,
       (row, value) => row.copy(processorConfig = value),
-      MariaTypes.json
+      MariaTypes.json.underlying
     )
   }
 
@@ -89,7 +88,7 @@ class PaymentMethodsFields(val `_path`: java.util.List[Path]) extends TupleExpr7
       None,
       None,
       (row, value) => row.copy(isActive = value),
-      IsActive.mariaType
+      IsActive.mariaType.underlying
     )
   }
 
@@ -101,13 +100,13 @@ class PaymentMethodsFields(val `_path`: java.util.List[Path]) extends TupleExpr7
       None,
       None,
       (row, value) => row.copy(sortOrder = value),
-      ScalaDbTypes.MariaTypes.tinyint
+      MariaTypes.tinyint.underlying
     )
   }
 
   override def columns: java.util.List[FieldLike[?, PaymentMethodsRow]] = java.util.List.of(this.methodId.underlying, this.code.underlying, this.name.underlying, this.methodType.underlying, this.processorConfig.underlying, this.isActive.underlying, this.sortOrder.underlying)
 
-  override def rowParser: RowParser[PaymentMethodsRow] = PaymentMethodsRow._rowParser.underlying
+  override def rowCodec: RowCodec[PaymentMethodsRow] = PaymentMethodsRow.rowCodec.underlying
 
   override def withPaths(`_path`: java.util.List[Path]): RelationStructure[PaymentMethodsFields, PaymentMethodsRow] = new PaymentMethodsFields(`_path`)
 

@@ -24,7 +24,7 @@ object ShortText {
 
   given arrayToStatement: ToStatement[Array[ShortText]] = ToStatement.arrayToParameter(using ParameterMetaData.StringParameterMetaData).contramap(_.map(_.value))
 
-  given bijection: Bijection[ShortText, String] = Bijection.apply[ShortText, String](_.value)(ShortText.apply)
+  given bijection: Bijection[ShortText, String] = Bijection[ShortText, String](_.value)(ShortText.apply)
 
   given column: Column[ShortText] = Column.columnToString.map(ShortText.apply)
 

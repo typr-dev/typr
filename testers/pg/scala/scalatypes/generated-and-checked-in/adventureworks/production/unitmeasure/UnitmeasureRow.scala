@@ -7,11 +7,11 @@ package adventureworks.production.unitmeasure
 
 import adventureworks.customtypes.Defaulted
 import adventureworks.public.Name
+import dev.typr.dslsc.RowCodecs
 import dev.typr.foundations.PgText
-import dev.typr.foundations.PgTypes
 import dev.typr.foundations.Tuple.Tuple3
-import dev.typr.foundations.scala.RowParser
-import dev.typr.foundations.scala.RowParsers
+import dev.typr.foundationssc.PgTypes
+import dev.typr.foundationssc.RowCodec
 import java.time.LocalDateTime
 
 /** Table: production.unitmeasure
@@ -38,7 +38,7 @@ case class UnitmeasureRow(
 }
 
 object UnitmeasureRow {
-  val `_rowParser`: RowParser[UnitmeasureRow] = RowParsers.of(UnitmeasureId.pgType, Name.pgType, PgTypes.timestamp)(UnitmeasureRow.apply)(row => Array[Any](row.unitmeasurecode, row.name, row.modifieddate))
+  given pgText: PgText[UnitmeasureRow] = PgText.from(rowCodec.underlying)
 
-  given pgText: PgText[UnitmeasureRow] = PgText.from(`_rowParser`.underlying)
+  val rowCodec: RowCodec[UnitmeasureRow] = RowCodecs.of(UnitmeasureId.pgType, Name.pgType, PgTypes.timestamp)(UnitmeasureRow.apply)(row => Array[Any](row.unitmeasurecode, row.name, row.modifieddate))
 }

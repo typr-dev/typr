@@ -5,19 +5,19 @@
  */
 package testdb.customers
 
-import dev.typr.foundations.MariaTypes
-import dev.typr.foundations.RowParser
+import dev.typr.dsl.FieldsBase
+import dev.typr.dsl.Path
+import dev.typr.dsl.SqlExpr.FieldLike
+import dev.typr.dslsc.ForeignKey
+import dev.typr.dslsc.RelationStructure
+import dev.typr.dslsc.SqlExpr
+import dev.typr.dslsc.SqlExpr.Field
+import dev.typr.dslsc.SqlExpr.IdField
+import dev.typr.dslsc.SqlExpr.OptField
+import dev.typr.dslsc.TupleExpr14
+import dev.typr.foundations.RowCodec
 import dev.typr.foundations.data.Json
-import dev.typr.foundations.dsl.FieldsBase
-import dev.typr.foundations.dsl.Path
-import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.scala.ForeignKey
-import dev.typr.foundations.scala.RelationStructure
-import dev.typr.foundations.scala.SqlExpr
-import dev.typr.foundations.scala.SqlExpr.Field
-import dev.typr.foundations.scala.SqlExpr.IdField
-import dev.typr.foundations.scala.SqlExpr.OptField
-import dev.typr.foundations.scala.TupleExpr14
+import dev.typr.foundationssc.MariaTypes
 import java.time.LocalDateTime
 import testdb.EmailMailPushSmsSet
 import testdb.customer_status.CustomerStatusFields
@@ -36,7 +36,7 @@ class CustomersFields(val `_path`: java.util.List[Path]) extends TupleExpr14[Cus
       None,
       None,
       (row, value) => row.copy(customerId = value),
-      CustomersId.mariaType
+      CustomersId.mariaType.underlying
     )
   }
 
@@ -48,7 +48,7 @@ class CustomersFields(val `_path`: java.util.List[Path]) extends TupleExpr14[Cus
       None,
       None,
       (row, value) => row.copy(email = value),
-      Email.mariaType
+      Email.mariaType.underlying
     )
   }
 
@@ -60,7 +60,7 @@ class CustomersFields(val `_path`: java.util.List[Path]) extends TupleExpr14[Cus
       None,
       None,
       (row, value) => row.copy(passwordHash = value),
-      MariaTypes.binary
+      MariaTypes.binary.underlying
     )
   }
 
@@ -72,7 +72,7 @@ class CustomersFields(val `_path`: java.util.List[Path]) extends TupleExpr14[Cus
       None,
       None,
       (row, value) => row.copy(firstName = value),
-      FirstName.mariaType
+      FirstName.mariaType.underlying
     )
   }
 
@@ -84,7 +84,7 @@ class CustomersFields(val `_path`: java.util.List[Path]) extends TupleExpr14[Cus
       None,
       None,
       (row, value) => row.copy(lastName = value),
-      LastName.mariaType
+      LastName.mariaType.underlying
     )
   }
 
@@ -96,7 +96,7 @@ class CustomersFields(val `_path`: java.util.List[Path]) extends TupleExpr14[Cus
       None,
       None,
       (row, value) => row.copy(phone = value),
-      MariaTypes.varchar
+      MariaTypes.varchar.underlying
     )
   }
 
@@ -108,7 +108,7 @@ class CustomersFields(val `_path`: java.util.List[Path]) extends TupleExpr14[Cus
       None,
       None,
       (row, value) => row.copy(status = value),
-      CustomerStatusId.mariaType
+      CustomerStatusId.mariaType.underlying
     )
   }
 
@@ -120,7 +120,7 @@ class CustomersFields(val `_path`: java.util.List[Path]) extends TupleExpr14[Cus
       None,
       None,
       (row, value) => row.copy(tier = value),
-      MariaTypes.text
+      MariaTypes.text.underlying
     )
   }
 
@@ -132,7 +132,7 @@ class CustomersFields(val `_path`: java.util.List[Path]) extends TupleExpr14[Cus
       None,
       None,
       (row, value) => row.copy(preferences = value),
-      MariaTypes.json
+      MariaTypes.json.underlying
     )
   }
 
@@ -144,7 +144,7 @@ class CustomersFields(val `_path`: java.util.List[Path]) extends TupleExpr14[Cus
       None,
       None,
       (row, value) => row.copy(marketingFlags = value),
-      EmailMailPushSmsSet.mariaType
+      EmailMailPushSmsSet.mariaType.underlying
     )
   }
 
@@ -156,7 +156,7 @@ class CustomersFields(val `_path`: java.util.List[Path]) extends TupleExpr14[Cus
       None,
       None,
       (row, value) => row.copy(notes = value),
-      MariaTypes.text
+      MariaTypes.text.underlying
     )
   }
 
@@ -168,7 +168,7 @@ class CustomersFields(val `_path`: java.util.List[Path]) extends TupleExpr14[Cus
       None,
       None,
       (row, value) => row.copy(createdAt = value),
-      MariaTypes.datetime
+      MariaTypes.datetime.underlying
     )
   }
 
@@ -180,7 +180,7 @@ class CustomersFields(val `_path`: java.util.List[Path]) extends TupleExpr14[Cus
       None,
       None,
       (row, value) => row.copy(updatedAt = value),
-      MariaTypes.datetime
+      MariaTypes.datetime.underlying
     )
   }
 
@@ -192,7 +192,7 @@ class CustomersFields(val `_path`: java.util.List[Path]) extends TupleExpr14[Cus
       None,
       None,
       (row, value) => row.copy(lastLoginAt = value),
-      MariaTypes.datetime
+      MariaTypes.datetime.underlying
     )
   }
 
@@ -200,7 +200,7 @@ class CustomersFields(val `_path`: java.util.List[Path]) extends TupleExpr14[Cus
 
   override def columns: java.util.List[FieldLike[?, CustomersRow]] = java.util.List.of(this.customerId.underlying, this.email.underlying, this.passwordHash.underlying, this.firstName.underlying, this.lastName.underlying, this.phone.underlying, this.status.underlying, this.tier.underlying, this.preferences.underlying, this.marketingFlags.underlying, this.notes.underlying, this.createdAt.underlying, this.updatedAt.underlying, this.lastLoginAt.underlying)
 
-  override def rowParser: RowParser[CustomersRow] = CustomersRow._rowParser.underlying
+  override def rowCodec: RowCodec[CustomersRow] = CustomersRow.rowCodec.underlying
 
   override def withPaths(`_path`: java.util.List[Path]): RelationStructure[CustomersFields, CustomersRow] = new CustomersFields(`_path`)
 

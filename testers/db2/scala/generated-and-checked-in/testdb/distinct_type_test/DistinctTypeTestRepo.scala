@@ -5,17 +5,18 @@
  */
 package testdb.distinct_type_test
 
-import dev.typr.foundations.scala.DeleteBuilder
-import dev.typr.foundations.scala.SelectBuilder
-import dev.typr.foundations.scala.UpdateBuilder
-import java.sql.Connection
+import dev.typr.dslsc.DeleteBuilder
+import dev.typr.dslsc.SelectBuilder
+import dev.typr.dslsc.UpdateBuilder
+import dev.typr.foundationssc.Connection
+import dev.typr.foundationssc.ConnectionRead
 
 trait DistinctTypeTestRepo {
   def delete: DeleteBuilder[DistinctTypeTestFields, DistinctTypeTestRow]
 
   def deleteById(id: DistinctTypeTestId)(using c: Connection): Boolean
 
-  def deleteByIds(ids: Array[DistinctTypeTestId])(using c: Connection): Int
+  def deleteByIds(ids: List[DistinctTypeTestId])(using c: Connection): Int
 
   def insert(unsaved: DistinctTypeTestRow)(using c: Connection): DistinctTypeTestRow
 
@@ -23,13 +24,13 @@ trait DistinctTypeTestRepo {
 
   def select: SelectBuilder[DistinctTypeTestFields, DistinctTypeTestRow]
 
-  def selectAll(using c: Connection): List[DistinctTypeTestRow]
+  def selectAll(using c: ConnectionRead): List[DistinctTypeTestRow]
 
-  def selectById(id: DistinctTypeTestId)(using c: Connection): Option[DistinctTypeTestRow]
+  def selectById(id: DistinctTypeTestId)(using c: ConnectionRead): Option[DistinctTypeTestRow]
 
-  def selectByIds(ids: Array[DistinctTypeTestId])(using c: Connection): List[DistinctTypeTestRow]
+  def selectByIds(ids: List[DistinctTypeTestId])(using c: ConnectionRead): List[DistinctTypeTestRow]
 
-  def selectByIdsTracked(ids: Array[DistinctTypeTestId])(using c: Connection): Map[DistinctTypeTestId, DistinctTypeTestRow]
+  def selectByIdsTracked(ids: List[DistinctTypeTestId])(using c: ConnectionRead): Map[DistinctTypeTestId, DistinctTypeTestRow]
 
   def update: UpdateBuilder[DistinctTypeTestFields, DistinctTypeTestRow]
 

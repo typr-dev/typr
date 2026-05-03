@@ -9,8 +9,7 @@ class CustomersTest extends AnyFunSuite {
   val repo: CustomersRepoImpl = new CustomersRepoImpl
 
   test("insert customer with address and money") {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       val coords = new CoordinatesT(BigDecimal("40.7128"), BigDecimal("-74.0061"))
       val address = new AddressT("123 Main St", "New York", coords)
       val creditLimit = new MoneyT(BigDecimal("10000.01"), "USD")
@@ -33,8 +32,7 @@ class CustomersTest extends AnyFunSuite {
   }
 
   test("nested object type roundtrip") {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       val coords = new CoordinatesT(BigDecimal("37.7749"), BigDecimal("-122.4194"))
       val address = new AddressT("456 Market St", "San Francisco", coords)
 
@@ -61,8 +59,7 @@ class CustomersTest extends AnyFunSuite {
   }
 
   test("update address") {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       val originalCoords = new CoordinatesT(BigDecimal("40.7128"), BigDecimal("-74.0061"))
       val originalAddress = new AddressT("123 Main St", "New York", originalCoords)
 
@@ -92,8 +89,7 @@ class CustomersTest extends AnyFunSuite {
   }
 
   test("update credit limit") {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       val address = new AddressT(
         "123 Test St",
         "Test City",
@@ -125,8 +121,7 @@ class CustomersTest extends AnyFunSuite {
   }
 
   test("delete customer") {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       val address = new AddressT(
         "Delete St",
         "Delete City",
@@ -152,8 +147,7 @@ class CustomersTest extends AnyFunSuite {
   }
 
   test("select all") {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       val address1 = new AddressT(
         "Address 1",
         "City 1",

@@ -24,7 +24,7 @@ object ProductsubcategoryId {
 
   given arraySetter: Setter[Array[ProductsubcategoryId]] = adventureworks.IntArraySetter.contramap(_.map(_.value))
 
-  given bijection: Bijection[ProductsubcategoryId, Int] = Bijection.apply[ProductsubcategoryId, Int](_.value)(ProductsubcategoryId.apply)
+  given bijection: Bijection[ProductsubcategoryId, Int] = Bijection[ProductsubcategoryId, Int](_.value)(ProductsubcategoryId.apply)
 
   given jdbcDecoder: JdbcDecoder[ProductsubcategoryId] = JdbcDecoder.intDecoder.map(ProductsubcategoryId.apply)
 

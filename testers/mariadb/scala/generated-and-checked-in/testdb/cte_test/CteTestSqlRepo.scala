@@ -5,8 +5,8 @@
  */
 package testdb.cte_test
 
-import java.sql.Connection
+import dev.typr.foundationssc.ConnectionRead
 
 trait CteTestSqlRepo {
-  def apply(using c: Connection): List[CteTestSqlRow]
+  def apply(using c: ConnectionRead): List[CteTestSqlRow]
 }

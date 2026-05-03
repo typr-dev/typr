@@ -13,6 +13,8 @@ enum class EmailMailPushSmsSetMember(val value: kotlin.String) {
     push("push"),
     sms("sms");
 
+    
+
     companion object {
         val Names: kotlin.String = entries.joinToString(", ") { it.value }
         val ByName: kotlin.collections.Map<kotlin.String, EmailMailPushSmsSetMember> = entries.associateBy { it.value }

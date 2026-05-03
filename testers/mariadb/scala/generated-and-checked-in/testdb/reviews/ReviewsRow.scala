@@ -6,14 +6,13 @@
 package testdb.reviews
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import dev.typr.foundations.MariaTypes
+import dev.typr.dslsc.RowCodecs
 import dev.typr.foundations.Tuple.Tuple18
 import dev.typr.foundations.data.Json
 import dev.typr.foundations.data.Uint1
 import dev.typr.foundations.data.Uint4
-import dev.typr.foundations.scala.DbTypeOps
-import dev.typr.foundations.scala.RowParser
-import dev.typr.foundations.scala.RowParsers
+import dev.typr.foundationssc.MariaTypes
+import dev.typr.foundationssc.RowCodec
 import java.time.LocalDateTime
 import testdb.customers.CustomersId
 import testdb.customtypes.Defaulted
@@ -175,5 +174,5 @@ case class ReviewsRow(
 }
 
 object ReviewsRow {
-  val `_rowParser`: RowParser[ReviewsRow] = RowParsers.of(ReviewsId.mariaType, ProductsId.mariaType, CustomersId.mariaType, OrderItemsId.mariaType.nullable, MariaTypes.tinyintUnsigned, MariaTypes.varchar.nullable, MariaTypes.text.nullable, MariaTypes.json.nullable, MariaTypes.json.nullable, MariaTypes.json.nullable, IsVerifiedPurchase.mariaType, IsApproved.mariaType, MariaTypes.intUnsigned, MariaTypes.intUnsigned, MariaTypes.text.nullable, MariaTypes.datetime.nullable, MariaTypes.datetime, MariaTypes.datetime)(ReviewsRow.apply)(row => Array[Any](row.reviewId, row.productId, row.customerId, row.orderItemId, row.rating, row.title, row.content, row.pros, row.cons, row.images, row.isVerifiedPurchase, row.isApproved, row.helpfulVotes, row.unhelpfulVotes, row.adminResponse, row.respondedAt, row.createdAt, row.updatedAt))
+  val rowCodec: RowCodec[ReviewsRow] = RowCodecs.of(ReviewsId.mariaType, ProductsId.mariaType, CustomersId.mariaType, OrderItemsId.mariaType.opt, MariaTypes.tinyintUnsigned, MariaTypes.varchar.opt, MariaTypes.text.opt, MariaTypes.json.opt, MariaTypes.json.opt, MariaTypes.json.opt, IsVerifiedPurchase.mariaType, IsApproved.mariaType, MariaTypes.intUnsigned, MariaTypes.intUnsigned, MariaTypes.text.opt, MariaTypes.datetime.opt, MariaTypes.datetime, MariaTypes.datetime)(ReviewsRow.apply)(row => Array[Any](row.reviewId, row.productId, row.customerId, row.orderItemId, row.rating, row.title, row.content, row.pros, row.cons, row.images, row.isVerifiedPurchase, row.isApproved, row.helpfulVotes, row.unhelpfulVotes, row.adminResponse, row.respondedAt, row.createdAt, row.updatedAt))
 }

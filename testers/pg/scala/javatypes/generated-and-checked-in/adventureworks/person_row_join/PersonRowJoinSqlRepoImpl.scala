@@ -5,16 +5,16 @@
  */
 package adventureworks.person_row_join
 
+import dev.typr.foundations.ConnectionRead
 import dev.typr.foundations.Fragment
-import java.sql.Connection
-import dev.typr.foundations.Fragment.interpolate
+import dev.typr.foundations.Fragment.concat
 
 class PersonRowJoinSqlRepoImpl extends PersonRowJoinSqlRepo {
-  override def apply(using c: Connection): java.util.List[PersonRowJoinSqlRow] = {
-    interpolate(Fragment.lit("""SELECT s.businessentityid,
+  override def apply(using c: ConnectionRead): java.util.List[PersonRowJoinSqlRow] = {
+    concat(Fragment.of("""SELECT s.businessentityid,
            (select array_agg(ROW(a.emailaddress, a.rowguid)) from person.emailaddress a where a.businessentityid = s.businessentityid) as email,
            (select ARRAY[ROW(a.emailaddress, a.rowguid)] from person.emailaddress a where a.businessentityid = s.businessentityid) as emails
     FROM sales.salesperson s
-    """)).query(PersonRowJoinSqlRow.`_rowParser`.all()).runUnchecked(c)
+    """)).query(PersonRowJoinSqlRow.rowCodec.all()).run(c)
   }
 }

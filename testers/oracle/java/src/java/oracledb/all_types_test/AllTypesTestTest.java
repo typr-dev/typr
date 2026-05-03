@@ -5,9 +5,10 @@ import static org.junit.Assert.*;
 import dev.typr.foundations.data.OracleIntervalDS;
 import dev.typr.foundations.data.OracleIntervalYM;
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.time.LocalDateTime;
-import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.util.Optional;
 import oracledb.AddressT;
 import oracledb.AllTypesStructNoLobs;
@@ -43,8 +44,8 @@ public class AllTypesTestTest {
         2.5,
         LocalDateTime.of(2025, 6, 15, 10, 30, 0),
         LocalDateTime.of(2025, 6, 15, 10, 30, 45, 123000000),
-        OffsetDateTime.of(2025, 6, 15, 10, 30, 45, 0, ZoneOffset.ofHours(-5)),
-        OffsetDateTime.of(2025, 6, 15, 10, 30, 45, 0, ZoneOffset.UTC),
+        ZonedDateTime.of(2025, 6, 15, 10, 30, 45, 0, ZoneOffset.ofHours(-5)),
+        Instant.parse("2025-06-15T10:30:45Z"),
         new OracleIntervalYM(2, 6),
         new OracleIntervalDS(5, 12, 30, 45, 0),
         address,

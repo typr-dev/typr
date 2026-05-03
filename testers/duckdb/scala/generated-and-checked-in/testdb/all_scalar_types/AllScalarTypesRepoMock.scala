@@ -5,24 +5,25 @@
  */
 package testdb.all_scalar_types
 
-import dev.typr.foundations.scala.DeleteBuilder
-import dev.typr.foundations.scala.DeleteBuilderMock
-import dev.typr.foundations.scala.DeleteParams
-import dev.typr.foundations.scala.SelectBuilder
-import dev.typr.foundations.scala.SelectBuilderMock
-import dev.typr.foundations.scala.SelectParams
-import dev.typr.foundations.scala.UpdateBuilder
-import dev.typr.foundations.scala.UpdateBuilderMock
-import dev.typr.foundations.scala.UpdateParams
+import dev.typr.dslsc.DeleteBuilder
+import dev.typr.dslsc.DeleteBuilderMock
+import dev.typr.dslsc.DeleteParams
+import dev.typr.dslsc.SelectBuilder
+import dev.typr.dslsc.SelectBuilderMock
+import dev.typr.dslsc.SelectParams
+import dev.typr.dslsc.UpdateBuilder
+import dev.typr.dslsc.UpdateBuilderMock
+import dev.typr.dslsc.UpdateParams
+import dev.typr.foundationssc.Connection
+import dev.typr.foundationssc.ConnectionRead
 import java.lang.RuntimeException
-import java.sql.Connection
 
 case class AllScalarTypesRepoMock(map: scala.collection.mutable.Map[AllScalarTypesId, AllScalarTypesRow] = scala.collection.mutable.Map.empty[AllScalarTypesId, AllScalarTypesRow]) extends AllScalarTypesRepo {
   override def delete: DeleteBuilder[AllScalarTypesFields, AllScalarTypesRow] = DeleteBuilderMock(AllScalarTypesFields.structure, () => map.values.toList, DeleteParams.empty(), row => row.id, id => map.remove(id): @scala.annotation.nowarn)
 
   override def deleteById(id: AllScalarTypesId)(using c: Connection): Boolean = map.remove(id).isDefined
 
-  override def deleteByIds(ids: Array[AllScalarTypesId])(using c: Connection): Int = {
+  override def deleteByIds(ids: List[AllScalarTypesId])(using c: Connection): Int = {
     var count = 0
     ids.foreach { id => if (map.remove(id).isDefined) {
       count = count + 1
@@ -40,13 +41,13 @@ case class AllScalarTypesRepoMock(map: scala.collection.mutable.Map[AllScalarTyp
 
   override def select: SelectBuilder[AllScalarTypesFields, AllScalarTypesRow] = SelectBuilderMock(AllScalarTypesFields.structure, () => map.values.toList, SelectParams.empty())
 
-  override def selectAll(using c: Connection): List[AllScalarTypesRow] = map.values.toList
+  override def selectAll(using c: ConnectionRead): List[AllScalarTypesRow] = map.values.toList
 
-  override def selectById(id: AllScalarTypesId)(using c: Connection): Option[AllScalarTypesRow] = map.get(id)
+  override def selectById(id: AllScalarTypesId)(using c: ConnectionRead): Option[AllScalarTypesRow] = map.get(id)
 
-  override def selectByIds(ids: Array[AllScalarTypesId])(using c: Connection): List[AllScalarTypesRow] = ids.flatMap(map.get(_)).toList
+  override def selectByIds(ids: List[AllScalarTypesId])(using c: ConnectionRead): List[AllScalarTypesRow] = ids.flatMap(map.get(_)).toList
 
-  override def selectByIdsTracked(ids: Array[AllScalarTypesId])(using c: Connection): Map[AllScalarTypesId, AllScalarTypesRow] = selectByIds(ids)(using c).map(x => (((row: AllScalarTypesRow) => row.id).apply(x), x)).toMap
+  override def selectByIdsTracked(ids: List[AllScalarTypesId])(using c: ConnectionRead): Map[AllScalarTypesId, AllScalarTypesRow] = selectByIds(ids)(using c).map(x => (((row: AllScalarTypesRow) => row.id).apply(x), x)).toMap
 
   override def update: UpdateBuilder[AllScalarTypesFields, AllScalarTypesRow] = UpdateBuilderMock(AllScalarTypesFields.structure, () => map.values.toList, UpdateParams.empty(), row => row)
 

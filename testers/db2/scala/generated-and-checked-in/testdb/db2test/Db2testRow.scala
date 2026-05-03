@@ -6,12 +6,11 @@
 package testdb.db2test
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import dev.typr.foundations.Db2Types
+import dev.typr.dslsc.RowCodecs
 import dev.typr.foundations.Tuple.Tuple24
 import dev.typr.foundations.data.Xml
-import dev.typr.foundations.scala.RowParser
-import dev.typr.foundations.scala.RowParsers
-import dev.typr.foundations.scala.ScalaDbTypes
+import dev.typr.foundationssc.Db2Types
+import dev.typr.foundationssc.RowCodec
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
@@ -97,5 +96,5 @@ case class Db2testRow(
 }
 
 object Db2testRow {
-  val `_rowParser`: RowParser[Db2testRow] = RowParsers.of(ScalaDbTypes.Db2Types.smallint, Db2testId.db2Type, ScalaDbTypes.Db2Types.bigint, ScalaDbTypes.Db2Types.decimal, ScalaDbTypes.Db2Types.decimal, ScalaDbTypes.Db2Types.decfloat, ScalaDbTypes.Db2Types.decfloat, ScalaDbTypes.Db2Types.real, ScalaDbTypes.Db2Types.double_, ScalaDbTypes.Db2Types.boolean_, Db2Types.char_, Db2Types.varchar, Db2Types.clob, Db2Types.graphic, Db2Types.vargraphic, Db2Types.binary, Db2Types.varbinary, Db2Types.blob, Db2Types.date, Db2Types.time, Db2Types.timestamp, Db2Types.timestamp, Db2Types.timestamp, Db2Types.xml)(Db2testRow.apply)(row => Array[Any](row.smallintCol, row.intCol, row.bigintCol, row.decimalCol, row.numericCol, row.decfloat16Col, row.decfloat34Col, row.realCol, row.doubleCol, row.boolCol, row.charCol, row.varcharCol, row.clobCol, row.graphicCol, row.vargraphicCol, row.binaryCol, row.varbinaryCol, row.blobCol, row.dateCol, row.timeCol, row.timestampCol, row.timestamp6Col, row.timestamp12Col, row.xmlCol))
+  val rowCodec: RowCodec[Db2testRow] = RowCodecs.of(Db2Types.smallint, Db2testId.db2Type, Db2Types.bigint, Db2Types.decimal, Db2Types.decimal, Db2Types.decfloat, Db2Types.decfloat, Db2Types.real, Db2Types.double_, Db2Types.boolean_, Db2Types.char_, Db2Types.varchar, Db2Types.clob, Db2Types.graphic, Db2Types.vargraphic, Db2Types.binary, Db2Types.varbinary, Db2Types.blob, Db2Types.date, Db2Types.time, Db2Types.timestamp, Db2Types.timestamp, Db2Types.timestamp, Db2Types.xml)(Db2testRow.apply)(row => Array[Any](row.smallintCol, row.intCol, row.bigintCol, row.decimalCol, row.numericCol, row.decfloat16Col, row.decfloat34Col, row.realCol, row.doubleCol, row.boolCol, row.charCol, row.varcharCol, row.clobCol, row.graphicCol, row.vargraphicCol, row.binaryCol, row.varbinaryCol, row.blobCol, row.dateCol, row.timeCol, row.timestampCol, row.timestamp6Col, row.timestamp12Col, row.xmlCol))
 }

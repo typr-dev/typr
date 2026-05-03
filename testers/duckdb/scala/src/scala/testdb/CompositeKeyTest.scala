@@ -16,9 +16,7 @@ class CompositeKeyTest {
   // ==================== Departments (String, String) Composite Key ====================
 
   @Test
-  def testDepartmentsInsert(): Unit = withConnection { c =>
-    given java.sql.Connection = c
-
+  def testDepartmentsInsert(): Unit = withConnection {
     val unique = System.nanoTime().toString.takeRight(6)
     val dept = DepartmentsRow(s"IT$unique", "US-WEST", "Information Technology", Some(BigDecimal("1000000")))
 
@@ -33,9 +31,7 @@ class CompositeKeyTest {
   }
 
   @Test
-  def testDepartmentsSelectByCompositeId(): Unit = withConnection { c =>
-    given java.sql.Connection = c
-
+  def testDepartmentsSelectByCompositeId(): Unit = withConnection {
     val dept = DepartmentsRow("HR", "EU-EAST", "Human Resources", None)
     val _ = departmentsRepo.insert(dept)
 
@@ -48,9 +44,7 @@ class CompositeKeyTest {
   }
 
   @Test
-  def testDepartmentsCompositeIdFromRow(): Unit = withConnection { c =>
-    given java.sql.Connection = c
-
+  def testDepartmentsCompositeIdFromRow(): Unit = withConnection {
     val dept = DepartmentsRow("SALES", "APAC", "Sales APAC", Some(BigDecimal("500000")))
     val inserted = departmentsRepo.insert(dept)
 
@@ -64,9 +58,7 @@ class CompositeKeyTest {
   }
 
   @Test
-  def testDepartmentsUpdate(): Unit = withConnection { c =>
-    given java.sql.Connection = c
-
+  def testDepartmentsUpdate(): Unit = withConnection {
     val dept = DepartmentsRow("FINANCE", "US-CENTRAL", "Finance", Some(BigDecimal("800000")))
     val inserted = departmentsRepo.insert(dept)
 
@@ -79,9 +71,7 @@ class CompositeKeyTest {
   }
 
   @Test
-  def testDepartmentsDelete(): Unit = withConnection { c =>
-    given java.sql.Connection = c
-
+  def testDepartmentsDelete(): Unit = withConnection {
     val dept = DepartmentsRow("TEMP", "TEMP-REGION", "Temporary", None)
     val inserted = departmentsRepo.insert(dept)
 
@@ -93,9 +83,7 @@ class CompositeKeyTest {
   }
 
   @Test
-  def testDepartmentsMultipleSameCode(): Unit = withConnection { c =>
-    given java.sql.Connection = c
-
+  def testDepartmentsMultipleSameCode(): Unit = withConnection {
     val dept1 = DepartmentsRow("ENG", "US", "Engineering US", None)
     val dept2 = DepartmentsRow("ENG", "EU", "Engineering EU", None)
     val dept3 = DepartmentsRow("ENG", "APAC", "Engineering APAC", None)
@@ -112,9 +100,7 @@ class CompositeKeyTest {
   // ==================== Employees (Integer, String) Composite Key ====================
 
   @Test
-  def testEmployeesInsert(): Unit = withConnection { c =>
-    given java.sql.Connection = c
-
+  def testEmployeesInsert(): Unit = withConnection {
     val unique = System.nanoTime().toString.takeRight(6)
     val empNum = (System.nanoTime() % 1000000).toInt
     val dept = DepartmentsRow(s"DEV$unique", "US", "Development", None)
@@ -139,9 +125,7 @@ class CompositeKeyTest {
   }
 
   @Test
-  def testEmployeesSelectByCompositeId(): Unit = withConnection { c =>
-    given java.sql.Connection = c
-
+  def testEmployeesSelectByCompositeId(): Unit = withConnection {
     val _ = departmentsRepo.insert(DepartmentsRow("QA", "EU", "Quality Assurance", None))
 
     val emp = EmployeesRow(
@@ -165,9 +149,7 @@ class CompositeKeyTest {
   }
 
   @Test
-  def testEmployeesCompositeIdFromRow(): Unit = withConnection { c =>
-    given java.sql.Connection = c
-
+  def testEmployeesCompositeIdFromRow(): Unit = withConnection {
     val _ = departmentsRepo.insert(DepartmentsRow("SUPPORT", "US", "Support", None))
 
     val emp = EmployeesRow(
@@ -190,9 +172,7 @@ class CompositeKeyTest {
   }
 
   @Test
-  def testEmployeesUpdate(): Unit = withConnection { c =>
-    given java.sql.Connection = c
-
+  def testEmployeesUpdate(): Unit = withConnection {
     val _ = departmentsRepo.insert(DepartmentsRow("MGMT", "US", "Management", None))
 
     val emp = EmployeesRow(
@@ -214,9 +194,7 @@ class CompositeKeyTest {
   }
 
   @Test
-  def testEmployeesDelete(): Unit = withConnection { c =>
-    given java.sql.Connection = c
-
+  def testEmployeesDelete(): Unit = withConnection {
     val _ = departmentsRepo.insert(DepartmentsRow("TEMP", "TEMP", "Temp Dept", None))
 
     val emp = EmployeesRow(5001, "X", "TEMP", "TEMP", "To Be Deleted", None, LocalDate.now())
@@ -230,9 +208,7 @@ class CompositeKeyTest {
   }
 
   @Test
-  def testEmployeesMultipleSameNumber(): Unit = withConnection { c =>
-    given java.sql.Connection = c
-
+  def testEmployeesMultipleSameNumber(): Unit = withConnection {
     val _ = departmentsRepo.insert(DepartmentsRow("SHARED", "US", "Shared Dept", None))
 
     val emp1 = EmployeesRow(9999, "A", "SHARED", "US", "Employee A", None, LocalDate.now())
@@ -251,9 +227,7 @@ class CompositeKeyTest {
   // ==================== Composite FK Relationship ====================
 
   @Test
-  def testEmployeeDepartmentForeignKey(): Unit = withConnection { c =>
-    given java.sql.Connection = c
-
+  def testEmployeeDepartmentForeignKey(): Unit = withConnection {
     val dept = DepartmentsRow("FK_TEST", "FK_REGION", "FK Test Dept", Some(BigDecimal("500000")))
     val _ = departmentsRepo.insert(dept)
 

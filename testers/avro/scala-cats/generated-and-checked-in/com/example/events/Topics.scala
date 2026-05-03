@@ -11,6 +11,8 @@ import com.example.events.serde.OrderCancelledSerde
 import com.example.events.serde.OrderEventsSerde
 import com.example.events.serde.OrderPlacedSerde
 import com.example.events.serde.OrderUpdatedSerde
+import com.example.events.serde.PaymentCallbackSerde
+import com.example.events.serde.PaymentChargedSerde
 import com.example.events.serde.TreeNodeSerde
 import org.apache.kafka.common.serialization.Serdes
 
@@ -37,6 +39,10 @@ object Topics {
   val ORDER_PLACED: TypedTopic[String, OrderPlaced] = new TypedTopic[String, OrderPlaced]("order-placed", Serdes.String, new OrderPlacedSerde())
 
   val ORDER_UPDATED: TypedTopic[String, OrderUpdated] = new TypedTopic[String, OrderUpdated]("order-updated", Serdes.String, new OrderUpdatedSerde())
+
+  val PAYMENT_CALLBACK: TypedTopic[String, PaymentCallback] = new TypedTopic[String, PaymentCallback]("payment-callback", Serdes.String, new PaymentCallbackSerde())
+
+  val PAYMENT_CHARGED: TypedTopic[String, PaymentCharged] = new TypedTopic[String, PaymentCharged]("payment-charged", Serdes.String, new PaymentChargedSerde())
 
   val TREE_NODE: TypedTopic[String, TreeNode] = new TypedTopic[String, TreeNode]("tree-node", Serdes.String, new TreeNodeSerde())
 }

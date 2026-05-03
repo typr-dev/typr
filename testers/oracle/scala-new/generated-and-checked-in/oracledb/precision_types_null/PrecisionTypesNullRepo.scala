@@ -5,17 +5,18 @@
  */
 package oracledb.precision_types_null
 
-import dev.typr.foundations.scala.DeleteBuilder
-import dev.typr.foundations.scala.SelectBuilder
-import dev.typr.foundations.scala.UpdateBuilder
-import java.sql.Connection
+import dev.typr.dslsc.DeleteBuilder
+import dev.typr.dslsc.SelectBuilder
+import dev.typr.dslsc.UpdateBuilder
+import dev.typr.foundationssc.Connection
+import dev.typr.foundationssc.ConnectionRead
 
 trait PrecisionTypesNullRepo {
   def delete: DeleteBuilder[PrecisionTypesNullFields, PrecisionTypesNullRow]
 
   def deleteById(id: PrecisionTypesNullId)(using c: Connection): Boolean
 
-  def deleteByIds(ids: Array[PrecisionTypesNullId])(using c: Connection): Int
+  def deleteByIds(ids: List[PrecisionTypesNullId])(using c: Connection): Int
 
   def insert(unsaved: PrecisionTypesNullRow)(using c: Connection): PrecisionTypesNullRow
 
@@ -23,13 +24,13 @@ trait PrecisionTypesNullRepo {
 
   def select: SelectBuilder[PrecisionTypesNullFields, PrecisionTypesNullRow]
 
-  def selectAll(using c: Connection): List[PrecisionTypesNullRow]
+  def selectAll(using c: ConnectionRead): List[PrecisionTypesNullRow]
 
-  def selectById(id: PrecisionTypesNullId)(using c: Connection): Option[PrecisionTypesNullRow]
+  def selectById(id: PrecisionTypesNullId)(using c: ConnectionRead): Option[PrecisionTypesNullRow]
 
-  def selectByIds(ids: Array[PrecisionTypesNullId])(using c: Connection): List[PrecisionTypesNullRow]
+  def selectByIds(ids: List[PrecisionTypesNullId])(using c: ConnectionRead): List[PrecisionTypesNullRow]
 
-  def selectByIdsTracked(ids: Array[PrecisionTypesNullId])(using c: Connection): Map[PrecisionTypesNullId, PrecisionTypesNullRow]
+  def selectByIdsTracked(ids: List[PrecisionTypesNullId])(using c: ConnectionRead): Map[PrecisionTypesNullId, PrecisionTypesNullRow]
 
   def update: UpdateBuilder[PrecisionTypesNullFields, PrecisionTypesNullRow]
 

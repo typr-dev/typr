@@ -5,15 +5,15 @@
  */
 package oracledb.employees_by_department
 
-import dev.typr.foundations.OracleTypes
-import dev.typr.foundations.kotlin.Fragment
-import java.sql.Connection
+import dev.typr.foundationskt.ConnectionRead
+import dev.typr.foundationskt.Fragment
+import dev.typr.foundationskt.OracleTypes
 import kotlin.collections.List
 
 class EmployeesByDepartmentSqlRepoImpl() : EmployeesByDepartmentSqlRepo {
   override fun apply(
-    deptCode: String,
-    deptRegion: String,
-    c: Connection
-  ): List<EmployeesByDepartmentSqlRow> = Fragment.interpolate(Fragment.lit("-- Get employees in a department\nSELECT\n    e.emp_number,\n    e.emp_suffix,\n    e.emp_name,\n    e.salary,\n    e.hire_date,\n    d.dept_name,\n    d.budget\nFROM employees e\nINNER JOIN departments d ON e.dept_code = d.dept_code AND e.dept_region = d.dept_region\nWHERE e.dept_code = "), Fragment.encode(OracleTypes.varchar2, deptCode), Fragment.lit("\n  AND e.dept_region = "), Fragment.encode(OracleTypes.varchar2, deptRegion), Fragment.lit("\nORDER BY e.emp_name\n")).query(EmployeesByDepartmentSqlRow._rowParser.all()).runUnchecked(c)
+    deptCode: kotlin.String,
+    deptRegion: kotlin.String,
+    c: ConnectionRead
+  ): List<EmployeesByDepartmentSqlRow> = Fragment.concat(Fragment.of("-- Get employees in a department\nSELECT\n    e.emp_number,\n    e.emp_suffix,\n    e.emp_name,\n    e.salary,\n    e.hire_date,\n    d.dept_name,\n    d.budget\nFROM employees e\nINNER JOIN departments d ON e.dept_code = d.dept_code AND e.dept_region = d.dept_region\nWHERE e.dept_code = "), Fragment.encode(OracleTypes.varchar2, deptCode), Fragment.of("\n  AND e.dept_region = "), Fragment.encode(OracleTypes.varchar2, deptRegion), Fragment.of("\nORDER BY e.emp_name\n")).query(EmployeesByDepartmentSqlRow.rowCodec.all()).run(c)
 }

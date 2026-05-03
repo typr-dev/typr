@@ -7,9 +7,9 @@ package adventureworks.userdefined
 
 import adventureworks.public.Flag
 import com.fasterxml.jackson.annotation.JsonValue
-import dev.typr.foundations.PgType
-import dev.typr.foundations.internal.arrayMap
-import dev.typr.foundations.kotlin.Bijection
+import dev.typr.foundationskt.Bijection
+import dev.typr.foundationskt.PgType
+import kotlin.collections.List
 
 /** Shared type `OnlineOrderFlag`
   * Generated from TypeDefinitions matching
@@ -24,9 +24,9 @@ data class OnlineOrderFlag(@field:JsonValue val value: Flag) {
       Bijection.of(OnlineOrderFlag::value, ::OnlineOrderFlag)
 
     val pgType: PgType<OnlineOrderFlag> =
-      Flag.pgType.bimap(::OnlineOrderFlag, OnlineOrderFlag::value)
+      Flag.pgType.to(Bijection.of(::OnlineOrderFlag, OnlineOrderFlag::value))
 
-    val pgTypeArray: PgType<Array<OnlineOrderFlag>> =
-      Flag.pgTypeArray.bimap({ xs -> arrayMap.map(xs, ::OnlineOrderFlag, OnlineOrderFlag::class.java) }, { xs -> arrayMap.map(xs, OnlineOrderFlag::value, Flag::class.java) })
+    val pgTypeArray: PgType<List<OnlineOrderFlag>> =
+      pgType.array()
   }
 }

@@ -5,18 +5,18 @@
  */
 package testdb.customer_search
 
-import java.sql.Connection
+import dev.typr.foundationskt.ConnectionRead
 import java.time.LocalDateTime
 import kotlin.collections.List
 import testdb.Priority
 
 interface CustomerSearchSqlRepo {
   abstract fun apply(
-    namePattern: String?,
-    emailPattern: String?,
+    namePattern: kotlin.String?,
+    emailPattern: kotlin.String?,
     minPriority: /* user-picked */ Priority?,
     createdAfter: LocalDateTime?,
-    maxResults: Long,
-    c: Connection
+    maxResults: kotlin.Long,
+    c: ConnectionRead
   ): List<CustomerSearchSqlRow>
 }

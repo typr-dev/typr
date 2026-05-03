@@ -5,10 +5,11 @@
  */
 package adventureworks.humanresources.employeedepartmenthistory
 
-import dev.typr.foundations.dsl.DeleteBuilder
-import dev.typr.foundations.dsl.SelectBuilder
-import dev.typr.foundations.dsl.UpdateBuilder
-import java.sql.Connection
+import dev.typr.dsl.DeleteBuilder
+import dev.typr.dsl.SelectBuilder
+import dev.typr.dsl.UpdateBuilder
+import dev.typr.foundations.Connection
+import dev.typr.foundations.ConnectionRead
 import java.util.Optional
 
 trait EmployeedepartmenthistoryRepo {
@@ -16,7 +17,7 @@ trait EmployeedepartmenthistoryRepo {
 
   def deleteById(compositeId: EmployeedepartmenthistoryId)(using c: Connection): java.lang.Boolean
 
-  def deleteByIds(compositeIds: Array[EmployeedepartmenthistoryId])(using c: Connection): Integer
+  def deleteByIds(compositeIds: java.util.List[EmployeedepartmenthistoryId])(using c: Connection): Integer
 
   def insert(unsaved: EmployeedepartmenthistoryRow)(using c: Connection): EmployeedepartmenthistoryRow
 
@@ -35,13 +36,13 @@ trait EmployeedepartmenthistoryRepo {
 
   def select: SelectBuilder[EmployeedepartmenthistoryFields, EmployeedepartmenthistoryRow]
 
-  def selectAll(using c: Connection): java.util.List[EmployeedepartmenthistoryRow]
+  def selectAll(using c: ConnectionRead): java.util.List[EmployeedepartmenthistoryRow]
 
-  def selectById(compositeId: EmployeedepartmenthistoryId)(using c: Connection): Optional[EmployeedepartmenthistoryRow]
+  def selectById(compositeId: EmployeedepartmenthistoryId)(using c: ConnectionRead): Optional[EmployeedepartmenthistoryRow]
 
-  def selectByIds(compositeIds: Array[EmployeedepartmenthistoryId])(using c: Connection): java.util.List[EmployeedepartmenthistoryRow]
+  def selectByIds(compositeIds: java.util.List[EmployeedepartmenthistoryId])(using c: ConnectionRead): java.util.List[EmployeedepartmenthistoryRow]
 
-  def selectByIdsTracked(compositeIds: Array[EmployeedepartmenthistoryId])(using c: Connection): java.util.Map[EmployeedepartmenthistoryId, EmployeedepartmenthistoryRow]
+  def selectByIdsTracked(compositeIds: java.util.List[EmployeedepartmenthistoryId])(using c: ConnectionRead): java.util.Map[EmployeedepartmenthistoryId, EmployeedepartmenthistoryRow]
 
   def update: UpdateBuilder[EmployeedepartmenthistoryFields, EmployeedepartmenthistoryRow]
 

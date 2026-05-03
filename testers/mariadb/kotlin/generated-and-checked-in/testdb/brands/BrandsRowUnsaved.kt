@@ -13,9 +13,9 @@ import testdb.userdefined.IsActive
 /** This class corresponds to a row in table `brands` which has not been persisted yet */
 data class BrandsRowUnsaved(
   /**  */
-  val name: String,
+  val name: kotlin.String,
   /**  */
-  val slug: String,
+  val slug: kotlin.String,
   /** Default: NULL
 
     */
@@ -23,11 +23,11 @@ data class BrandsRowUnsaved(
   /** Default: NULL
 
     */
-  @field:JsonProperty("website_url") val websiteUrl: Defaulted<String?> = UseDefault(),
+  @field:JsonProperty("website_url") val websiteUrl: Defaulted<kotlin.String?> = UseDefault(),
   /** Default: NULL
 
     */
-  @field:JsonProperty("country_of_origin") val countryOfOrigin: Defaulted<String?> = UseDefault(),
+  @field:JsonProperty("country_of_origin") val countryOfOrigin: Defaulted<kotlin.String?> = UseDefault(),
   /** Default: 1
 
     */
@@ -35,8 +35,8 @@ data class BrandsRowUnsaved(
 ) {
   fun toRow(
     logoBlobDefault: () -> ByteArray?,
-    websiteUrlDefault: () -> String?,
-    countryOfOriginDefault: () -> String?,
+    websiteUrlDefault: () -> kotlin.String?,
+    countryOfOriginDefault: () -> kotlin.String?,
     isActiveDefault: () -> /* user-picked */ IsActive,
     brandIdDefault: () -> BrandsId
   ): BrandsRow = BrandsRow(brandId = brandIdDefault(), name = name, slug = slug, logoBlob = logoBlob.getOrElse(logoBlobDefault), websiteUrl = websiteUrl.getOrElse(websiteUrlDefault), countryOfOrigin = countryOfOrigin.getOrElse(countryOfOriginDefault), isActive = isActive.getOrElse(isActiveDefault))

@@ -6,16 +6,16 @@
 package testdb.reviews
 
 import com.fasterxml.jackson.annotation.JsonValue
-import dev.typr.foundations.MariaType
-import dev.typr.foundations.MariaTypes
+import dev.typr.dslsc.Bijection
 import dev.typr.foundations.data.Uint8
-import dev.typr.foundations.scala.Bijection
+import dev.typr.foundationssc.MariaType
+import dev.typr.foundationssc.MariaTypes
 
 /** Type for the primary key of table `reviews` */
 case class ReviewsId(@JsonValue value: Uint8) extends scala.AnyVal
 
 object ReviewsId {
-  given bijection: Bijection[ReviewsId, Uint8] = Bijection.apply[ReviewsId, Uint8](_.value)(ReviewsId.apply)
+  given bijection: Bijection[ReviewsId, Uint8] = Bijection.of[ReviewsId, Uint8](_.value, ReviewsId.apply)
 
-  given mariaType: MariaType[ReviewsId] = MariaTypes.bigintUnsigned.bimap(ReviewsId.apply, _.value)
+  given mariaType: MariaType[ReviewsId] = MariaTypes.bigintUnsigned.to(Bijection.of(ReviewsId.apply, _.value))
 }

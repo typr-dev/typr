@@ -6,10 +6,10 @@
 package testdb.precision_types
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import dev.typr.foundations.SqlServerTypes
+import dev.typr.dslsc.RowCodecs
 import dev.typr.foundations.Tuple.Tuple27
-import dev.typr.foundations.scala.RowParser
-import dev.typr.foundations.scala.RowParsers
+import dev.typr.foundationssc.RowCodec
+import dev.typr.foundationssc.SqlServerTypes
 import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.OffsetDateTime
@@ -153,5 +153,5 @@ case class PrecisionTypesRow(
 }
 
 object PrecisionTypesRow {
-  val `_rowParser`: RowParser[PrecisionTypesRow] = RowParsers.of(PrecisionTypesId.sqlServerType, String10.sqlServerType, String20.sqlServerType, String50.sqlServerType, String100.sqlServerType, String255.sqlServerType, String10.sqlServerType, String50.sqlServerType, String255.sqlServerType, PaddedString10.sqlServerType, PaddedString10.sqlServerType, Decimal5_2.sqlServerType, Decimal10_2.sqlServerType, Decimal18_4.sqlServerType, Decimal8_2.sqlServerType, Decimal12_4.sqlServerType, Binary10.sqlServerType, Binary32.sqlServerType, SqlServerTypes.time, LocalTime3.sqlServerType, LocalTime7.sqlServerType, SqlServerTypes.datetime2, LocalDateTime3.sqlServerType, LocalDateTime7.sqlServerType, SqlServerTypes.datetimeoffset, OffsetDateTime3.sqlServerType, OffsetDateTime7.sqlServerType)(PrecisionTypesRow.apply)(row => Array[Any](row.id, row.string10, row.string20, row.string50, row.string100, row.string255, row.nstring10, row.nstring50, row.nstring255, row.char10, row.nchar10, row.decimal52, row.decimal102, row.decimal184, row.numeric82, row.numeric124, row.binary10, row.binary32, row.time0, row.time3, row.time7, row.datetime20, row.datetime23, row.datetime27, row.dto0, row.dto3, row.dto7))
+  val rowCodec: RowCodec[PrecisionTypesRow] = RowCodecs.of(PrecisionTypesId.sqlServerType, String10.sqlServerType, String20.sqlServerType, String50.sqlServerType, String100.sqlServerType, String255.sqlServerType, String10.sqlServerType, String50.sqlServerType, String255.sqlServerType, PaddedString10.sqlServerType, PaddedString10.sqlServerType, Decimal5_2.sqlServerType, Decimal10_2.sqlServerType, Decimal18_4.sqlServerType, Decimal8_2.sqlServerType, Decimal12_4.sqlServerType, Binary10.sqlServerType, Binary32.sqlServerType, SqlServerTypes.time, LocalTime3.sqlServerType, LocalTime7.sqlServerType, SqlServerTypes.datetime2, LocalDateTime3.sqlServerType, LocalDateTime7.sqlServerType, SqlServerTypes.datetimeoffset, OffsetDateTime3.sqlServerType, OffsetDateTime7.sqlServerType)(PrecisionTypesRow.apply)(row => Array[Any](row.id, row.string10, row.string20, row.string50, row.string100, row.string255, row.nstring10, row.nstring50, row.nstring255, row.char10, row.nchar10, row.decimal52, row.decimal102, row.decimal184, row.numeric82, row.numeric124, row.binary10, row.binary32, row.time0, row.time3, row.time7, row.datetime20, row.datetime23, row.datetime27, row.dto0, row.dto3, row.dto7))
 }

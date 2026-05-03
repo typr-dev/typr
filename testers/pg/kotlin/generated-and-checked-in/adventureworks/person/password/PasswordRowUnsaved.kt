@@ -9,7 +9,7 @@ import adventureworks.customtypes.Defaulted
 import adventureworks.customtypes.Defaulted.UseDefault
 import adventureworks.person.businessentity.BusinessentityId
 import dev.typr.foundations.PgText
-import dev.typr.foundations.PgTypes
+import dev.typr.foundationskt.PgTypes
 import java.time.LocalDateTime
 import java.util.UUID
 
@@ -18,9 +18,9 @@ data class PasswordRowUnsaved(
   /** Points to [adventureworks.person.person.PersonRow.businessentityid] */
   val businessentityid: BusinessentityId,
   /** Password for the e-mail account. */
-  val passwordhash: String,
+  val passwordhash: kotlin.String,
   /** Random value concatenated with the password string before the password is hashed. */
-  val passwordsalt: String,
+  val passwordsalt: kotlin.String,
   /** Default: uuid_generate_v1() */
   val rowguid: Defaulted<UUID> = UseDefault(),
   /** Default: now() */
@@ -33,14 +33,14 @@ data class PasswordRowUnsaved(
 
   companion object {
     val pgText: PgText<PasswordRowUnsaved> =
-      PgText.instance({ row, sb -> BusinessentityId.pgType.text().unsafeEncode(row.businessentityid, sb)
+      PgText.instance({ row, sb -> BusinessentityId.pgType.pgText().unsafeEncode(row.businessentityid, sb)
       sb.append(PgText.DELIMETER)
-      PgTypes.text.text().unsafeEncode(row.passwordhash, sb)
+      PgTypes.text.pgText().unsafeEncode(row.passwordhash, sb)
       sb.append(PgText.DELIMETER)
-      PgTypes.text.text().unsafeEncode(row.passwordsalt, sb)
+      PgTypes.text.pgText().unsafeEncode(row.passwordsalt, sb)
       sb.append(PgText.DELIMETER)
-      Defaulted.pgText(PgTypes.uuid.text()).unsafeEncode(row.rowguid, sb)
+      Defaulted.pgText(PgTypes.uuid.pgText()).unsafeEncode(row.rowguid, sb)
       sb.append(PgText.DELIMETER)
-      Defaulted.pgText(PgTypes.timestamp.text()).unsafeEncode(row.modifieddate, sb) })
+      Defaulted.pgText(PgTypes.timestamp.pgText()).unsafeEncode(row.modifieddate, sb) })
   }
 }

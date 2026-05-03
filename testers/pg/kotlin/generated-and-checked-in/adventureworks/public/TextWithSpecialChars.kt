@@ -5,29 +5,25 @@
  */
 package adventureworks.public
 
-import dev.typr.foundations.PgRead
-import dev.typr.foundations.PgStruct
-import dev.typr.foundations.PgType
-import dev.typr.foundations.PgTypes
-import java.util.Optional
+import dev.typr.foundationskt.PgType
+import dev.typr.foundationskt.PgTypes
+import dev.typr.foundationskt.RowCodec
+import kotlin.collections.List
 
 /** PostgreSQL composite type: public.text_with_special_chars */
 data class TextWithSpecialChars(
-  val withComma: String?,
-  val withQuotes: String?,
-  val withParens: String?,
-  val withBackslash: String?,
-  val withNewline: String?,
-  val withAll: String?
+  val withComma: kotlin.String?,
+  val withQuotes: kotlin.String?,
+  val withParens: kotlin.String?,
+  val withBackslash: kotlin.String?,
+  val withNewline: kotlin.String?,
+  val withAll: kotlin.String?
 ) {
   companion object {
-    val pgStruct: PgStruct<TextWithSpecialChars> =
-      PgStruct.builder<TextWithSpecialChars>("public.text_with_special_chars").optField("withComma", PgTypes.text, { v: TextWithSpecialChars -> Optional.ofNullable(v.withComma) }).optField("withQuotes", PgTypes.text, { v: TextWithSpecialChars -> Optional.ofNullable(v.withQuotes) }).optField("withParens", PgTypes.text, { v: TextWithSpecialChars -> Optional.ofNullable(v.withParens) }).optField("withBackslash", PgTypes.text, { v: TextWithSpecialChars -> Optional.ofNullable(v.withBackslash) }).optField("withNewline", PgTypes.text, { v: TextWithSpecialChars -> Optional.ofNullable(v.withNewline) }).optField("withAll", PgTypes.text, { v: TextWithSpecialChars -> Optional.ofNullable(v.withAll) }).build({ arr -> TextWithSpecialChars(arr[0] as? String, arr[1] as? String, arr[2] as? String, arr[3] as? String, arr[4] as? String, arr[5] as? String) })
-
     val pgType: PgType<TextWithSpecialChars> =
-      pgStruct.asType()
+      PgTypes.compositeOf("public.text_with_special_chars", RowCodec.namedBuilder<TextWithSpecialChars>().field("withComma", PgTypes.text.opt(), { v: TextWithSpecialChars -> v.withComma }).field("withQuotes", PgTypes.text.opt(), { v: TextWithSpecialChars -> v.withQuotes }).field("withParens", PgTypes.text.opt(), { v: TextWithSpecialChars -> v.withParens }).field("withBackslash", PgTypes.text.opt(), { v: TextWithSpecialChars -> v.withBackslash }).field("withNewline", PgTypes.text.opt(), { v: TextWithSpecialChars -> v.withNewline }).field("withAll", PgTypes.text.opt(), { v: TextWithSpecialChars -> v.withAll }).build({ t0, t1, t2, t3, t4, t5 -> TextWithSpecialChars(t0, t1, t2, t3, t4, t5) }))
 
-    val pgTypeArray: PgType<Array<TextWithSpecialChars>> =
-      pgType.array(PgRead.readCompositeArray(pgType.pgCompositeText(), { n -> arrayOfNulls<TextWithSpecialChars>(n) }), { n -> arrayOfNulls<TextWithSpecialChars>(n) })
+    val pgTypeArray: PgType<List<TextWithSpecialChars>> =
+      pgType.array()
   }
 }

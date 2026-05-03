@@ -27,7 +27,7 @@ object NameStyle {
 
   given arraySetter: Setter[Array[NameStyle]] = adventureworks.BooleanArraySetter.contramap(_.map(_.value))
 
-  given bijection: Bijection[NameStyle, Boolean] = Bijection.apply[NameStyle, Boolean](_.value)(NameStyle.apply)
+  given bijection: Bijection[NameStyle, Boolean] = Bijection[NameStyle, Boolean](_.value)(NameStyle.apply)
 
   given jdbcDecoder: JdbcDecoder[NameStyle] = JdbcDecoder.booleanDecoder.map(NameStyle.apply)
 

@@ -5,10 +5,11 @@
  */
 package testdb.mariatest_spatial
 
-import dev.typr.foundations.kotlin.DeleteBuilder
-import dev.typr.foundations.kotlin.SelectBuilder
-import dev.typr.foundations.kotlin.UpdateBuilder
-import java.sql.Connection
+import dev.typr.dslkt.DeleteBuilder
+import dev.typr.dslkt.SelectBuilder
+import dev.typr.dslkt.UpdateBuilder
+import dev.typr.foundationskt.Connection
+import dev.typr.foundationskt.ConnectionRead
 import kotlin.collections.Iterator
 import kotlin.collections.List
 import kotlin.collections.Map
@@ -19,10 +20,10 @@ interface MariatestSpatialRepo {
   abstract fun deleteById(
     id: MariatestSpatialId,
     c: Connection
-  ): Boolean
+  ): kotlin.Boolean
 
   abstract fun deleteByIds(
-    ids: Array<MariatestSpatialId>,
+    ids: List<MariatestSpatialId>,
     c: Connection
   ): Int
 
@@ -38,21 +39,21 @@ interface MariatestSpatialRepo {
 
   abstract fun select(): SelectBuilder<MariatestSpatialFields, MariatestSpatialRow>
 
-  abstract fun selectAll(c: Connection): List<MariatestSpatialRow>
+  abstract fun selectAll(c: ConnectionRead): List<MariatestSpatialRow>
 
   abstract fun selectById(
     id: MariatestSpatialId,
-    c: Connection
+    c: ConnectionRead
   ): MariatestSpatialRow?
 
   abstract fun selectByIds(
-    ids: Array<MariatestSpatialId>,
-    c: Connection
+    ids: List<MariatestSpatialId>,
+    c: ConnectionRead
   ): List<MariatestSpatialRow>
 
   abstract fun selectByIdsTracked(
-    ids: Array<MariatestSpatialId>,
-    c: Connection
+    ids: List<MariatestSpatialId>,
+    c: ConnectionRead
   ): Map<MariatestSpatialId, MariatestSpatialRow>
 
   abstract fun update(): UpdateBuilder<MariatestSpatialFields, MariatestSpatialRow>
@@ -60,7 +61,7 @@ interface MariatestSpatialRepo {
   abstract fun update(
     row: MariatestSpatialRow,
     c: Connection
-  ): Boolean
+  ): kotlin.Boolean
 
   abstract fun upsert(
     unsaved: MariatestSpatialRow,

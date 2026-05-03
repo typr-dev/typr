@@ -9,9 +9,9 @@ import com.fasterxml.jackson.annotation.JsonProperty
 
 /** This class corresponds to a row in table `DB2TEST_UNIQUE` which has not been persisted yet */
 data class Db2testUniqueRowUnsaved(
-  @field:JsonProperty("EMAIL") val email: String,
-  @field:JsonProperty("CODE") val code: String,
-  @field:JsonProperty("CATEGORY") val category: String
+  @field:JsonProperty("EMAIL") val email: kotlin.String,
+  @field:JsonProperty("CODE") val code: kotlin.String,
+  @field:JsonProperty("CATEGORY") val category: kotlin.String
 ) {
   fun toRow(idDefault: () -> Db2testUniqueId): Db2testUniqueRow = Db2testUniqueRow(id = idDefault(), email = email, code = code, category = category)
 }

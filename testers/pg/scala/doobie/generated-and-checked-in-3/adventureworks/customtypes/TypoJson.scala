@@ -33,7 +33,7 @@ object TypoJson {
                             }))
   }
 
-  given bijection: Bijection[TypoJson, String] = Bijection.apply[TypoJson, String](_.value)(TypoJson.apply)
+  given bijection: Bijection[TypoJson, String] = Bijection[TypoJson, String](_.value)(TypoJson.apply)
 
   given decoder: Decoder[TypoJson] = Decoder.decodeString.map(TypoJson.apply)
 

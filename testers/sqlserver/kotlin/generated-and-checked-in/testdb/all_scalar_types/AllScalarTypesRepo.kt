@@ -5,10 +5,11 @@
  */
 package testdb.all_scalar_types
 
-import dev.typr.foundations.kotlin.DeleteBuilder
-import dev.typr.foundations.kotlin.SelectBuilder
-import dev.typr.foundations.kotlin.UpdateBuilder
-import java.sql.Connection
+import dev.typr.dslkt.DeleteBuilder
+import dev.typr.dslkt.SelectBuilder
+import dev.typr.dslkt.UpdateBuilder
+import dev.typr.foundationskt.Connection
+import dev.typr.foundationskt.ConnectionRead
 import kotlin.collections.Iterator
 import kotlin.collections.List
 import kotlin.collections.Map
@@ -19,10 +20,10 @@ interface AllScalarTypesRepo {
   abstract fun deleteById(
     id: AllScalarTypesId,
     c: Connection
-  ): Boolean
+  ): kotlin.Boolean
 
   abstract fun deleteByIds(
-    ids: Array<AllScalarTypesId>,
+    ids: List<AllScalarTypesId>,
     c: Connection
   ): Int
 
@@ -38,21 +39,21 @@ interface AllScalarTypesRepo {
 
   abstract fun select(): SelectBuilder<AllScalarTypesFields, AllScalarTypesRow>
 
-  abstract fun selectAll(c: Connection): List<AllScalarTypesRow>
+  abstract fun selectAll(c: ConnectionRead): List<AllScalarTypesRow>
 
   abstract fun selectById(
     id: AllScalarTypesId,
-    c: Connection
+    c: ConnectionRead
   ): AllScalarTypesRow?
 
   abstract fun selectByIds(
-    ids: Array<AllScalarTypesId>,
-    c: Connection
+    ids: List<AllScalarTypesId>,
+    c: ConnectionRead
   ): List<AllScalarTypesRow>
 
   abstract fun selectByIdsTracked(
-    ids: Array<AllScalarTypesId>,
-    c: Connection
+    ids: List<AllScalarTypesId>,
+    c: ConnectionRead
   ): Map<AllScalarTypesId, AllScalarTypesRow>
 
   abstract fun update(): UpdateBuilder<AllScalarTypesFields, AllScalarTypesRow>
@@ -60,7 +61,7 @@ interface AllScalarTypesRepo {
   abstract fun update(
     row: AllScalarTypesRow,
     c: Connection
-  ): Boolean
+  ): kotlin.Boolean
 
   abstract fun upsert(
     unsaved: AllScalarTypesRow,

@@ -6,12 +6,10 @@
 package testdb.product_prices
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import dev.typr.foundations.MariaTypes
+import dev.typr.dslkt.RowCodecs
 import dev.typr.foundations.Tuple.Tuple7
-import dev.typr.foundations.kotlin.KotlinDbTypes
-import dev.typr.foundations.kotlin.RowParser
-import dev.typr.foundations.kotlin.RowParsers
-import dev.typr.foundations.kotlin.nullable
+import dev.typr.foundationskt.MariaTypes
+import dev.typr.foundationskt.RowCodec
 import java.math.BigDecimal
 import java.time.LocalDate
 import testdb.customtypes.Defaulted
@@ -40,14 +38,14 @@ data class ProductPricesRow(
   /** 
     * Default: 'USD'
     */
-  @field:JsonProperty("currency_code") val currencyCode: String,
+  @field:JsonProperty("currency_code") val currencyCode: kotlin.String,
   /**  */
   @field:JsonProperty("valid_from") val validFrom: LocalDate,
   /** 
     * Default: NULL
     */
   @field:JsonProperty("valid_to") val validTo: LocalDate?
-) : Tuple7<ProductPricesId, ProductsId, PriceTiersId?, BigDecimal, String, LocalDate, LocalDate?> {
+) : Tuple7<ProductPricesId, ProductsId, PriceTiersId?, BigDecimal, kotlin.String, LocalDate, LocalDate?> {
   override fun _1(): ProductPricesId = priceId
 
   override fun _2(): ProductsId = productId
@@ -56,7 +54,7 @@ data class ProductPricesRow(
 
   override fun _4(): BigDecimal = price
 
-  override fun _5(): String = currencyCode
+  override fun _5(): kotlin.String = currencyCode
 
   override fun _6(): LocalDate = validFrom
 
@@ -66,11 +64,11 @@ data class ProductPricesRow(
 
   fun toUnsavedRow(
     tierId: Defaulted<PriceTiersId?> = Defaulted.Provided(this.tierId),
-    currencyCode: Defaulted<String> = Defaulted.Provided(this.currencyCode),
+    currencyCode: Defaulted<kotlin.String> = Defaulted.Provided(this.currencyCode),
     validTo: Defaulted<LocalDate?> = Defaulted.Provided(this.validTo)
   ): ProductPricesRowUnsaved = ProductPricesRowUnsaved(productId, price, validFrom, tierId, currencyCode, validTo)
 
   companion object {
-    val _rowParser: RowParser<ProductPricesRow> = RowParsers.of(ProductPricesId.mariaType, ProductsId.mariaType, PriceTiersId.mariaType.nullable(), KotlinDbTypes.MariaTypes.numeric, MariaTypes.char_, MariaTypes.date, MariaTypes.date.nullable(), { t0, t1, t2, t3, t4, t5, t6 -> ProductPricesRow(t0, t1, t2, t3, t4, t5, t6) }, { row -> arrayOf<Any?>(row.priceId, row.productId, row.tierId, row.price, row.currencyCode, row.validFrom, row.validTo) })
+    val rowCodec: RowCodec<ProductPricesRow> = RowCodecs.of(ProductPricesId.mariaType, ProductsId.mariaType, PriceTiersId.mariaType.opt(), MariaTypes.numeric, MariaTypes.char_, MariaTypes.date, MariaTypes.date.opt(), { t0: ProductPricesId, t1: ProductsId, t2: PriceTiersId?, t3: BigDecimal, t4: kotlin.String, t5: LocalDate, t6: LocalDate? -> ProductPricesRow(t0, t1, t2, t3, t4, t5, t6) }, { row: ProductPricesRow -> arrayOf<Any?>(row.priceId, row.productId, row.tierId, row.price, row.currencyCode, row.validFrom, row.validTo) })
   }
 }

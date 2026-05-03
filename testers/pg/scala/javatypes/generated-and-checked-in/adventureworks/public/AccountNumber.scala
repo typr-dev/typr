@@ -6,9 +6,9 @@
 package adventureworks.public
 
 import com.fasterxml.jackson.annotation.JsonValue
+import dev.typr.foundations.Bijection
 import dev.typr.foundations.PgType
 import dev.typr.foundations.PgTypes
-import dev.typr.foundations.dsl.Bijection
 
 /** Domain `public.AccountNumber`
  * No constraint
@@ -16,9 +16,9 @@ import dev.typr.foundations.dsl.Bijection
 case class AccountNumber(@JsonValue value: String)
 
 object AccountNumber {
-  given bijection: Bijection[AccountNumber, String] = Bijection.apply[AccountNumber, String](_.value)(AccountNumber.apply)
+  given bijection: Bijection[AccountNumber, String] = Bijection.of[AccountNumber, String](_.value, AccountNumber.apply)
 
-  given pgType: PgType[AccountNumber] = PgTypes.text.bimap(AccountNumber.apply, _.value).renamed(""""public"."AccountNumber"""")
+  given pgType: PgType[AccountNumber] = PgTypes.text.to(Bijection.of(AccountNumber.apply, _.value)).renamed(""""public"."AccountNumber"""")
 
-  given pgTypeArray: PgType[Array[AccountNumber]] = PgTypes.textArray.bimap(xs => xs.map(AccountNumber.apply), xs => xs.map(_.value)).renamed(""""public"."AccountNumber"[]""")
+  given pgTypeArray: PgType[java.util.List[AccountNumber]] = pgType.array
 }

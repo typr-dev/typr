@@ -5,10 +5,11 @@
  */
 package testdb.nullability_test
 
-import dev.typr.foundations.kotlin.DeleteBuilder
-import dev.typr.foundations.kotlin.SelectBuilder
-import dev.typr.foundations.kotlin.UpdateBuilder
-import java.sql.Connection
+import dev.typr.dslkt.DeleteBuilder
+import dev.typr.dslkt.SelectBuilder
+import dev.typr.dslkt.UpdateBuilder
+import dev.typr.foundationskt.Connection
+import dev.typr.foundationskt.ConnectionRead
 import kotlin.collections.List
 
 interface NullabilityTestRepo {
@@ -26,7 +27,7 @@ interface NullabilityTestRepo {
 
   abstract fun select(): SelectBuilder<NullabilityTestFields, NullabilityTestRow>
 
-  abstract fun selectAll(c: Connection): List<NullabilityTestRow>
+  abstract fun selectAll(c: ConnectionRead): List<NullabilityTestRow>
 
   abstract fun update(): UpdateBuilder<NullabilityTestFields, NullabilityTestRow>
 }

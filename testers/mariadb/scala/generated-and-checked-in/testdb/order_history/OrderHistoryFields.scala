@@ -5,19 +5,19 @@
  */
 package testdb.order_history
 
-import dev.typr.foundations.MariaTypes
-import dev.typr.foundations.RowParser
+import dev.typr.dsl.FieldsBase
+import dev.typr.dsl.Path
+import dev.typr.dsl.SqlExpr.FieldLike
+import dev.typr.dslsc.ForeignKey
+import dev.typr.dslsc.RelationStructure
+import dev.typr.dslsc.SqlExpr
+import dev.typr.dslsc.SqlExpr.Field
+import dev.typr.dslsc.SqlExpr.IdField
+import dev.typr.dslsc.SqlExpr.OptField
+import dev.typr.dslsc.TupleExpr8
+import dev.typr.foundations.RowCodec
 import dev.typr.foundations.data.Json
-import dev.typr.foundations.dsl.FieldsBase
-import dev.typr.foundations.dsl.Path
-import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.scala.ForeignKey
-import dev.typr.foundations.scala.RelationStructure
-import dev.typr.foundations.scala.SqlExpr
-import dev.typr.foundations.scala.SqlExpr.Field
-import dev.typr.foundations.scala.SqlExpr.IdField
-import dev.typr.foundations.scala.SqlExpr.OptField
-import dev.typr.foundations.scala.TupleExpr8
+import dev.typr.foundationssc.MariaTypes
 import java.time.LocalDateTime
 import testdb.orders.OrdersFields
 import testdb.orders.OrdersId
@@ -32,7 +32,7 @@ class OrderHistoryFields(val `_path`: java.util.List[Path]) extends TupleExpr8[O
       None,
       None,
       (row, value) => row.copy(historyId = value),
-      OrderHistoryId.mariaType
+      OrderHistoryId.mariaType.underlying
     )
   }
 
@@ -44,7 +44,7 @@ class OrderHistoryFields(val `_path`: java.util.List[Path]) extends TupleExpr8[O
       None,
       None,
       (row, value) => row.copy(orderId = value),
-      OrdersId.mariaType
+      OrdersId.mariaType.underlying
     )
   }
 
@@ -56,7 +56,7 @@ class OrderHistoryFields(val `_path`: java.util.List[Path]) extends TupleExpr8[O
       None,
       None,
       (row, value) => row.copy(previousStatus = value),
-      MariaTypes.text
+      MariaTypes.text.underlying
     )
   }
 
@@ -68,7 +68,7 @@ class OrderHistoryFields(val `_path`: java.util.List[Path]) extends TupleExpr8[O
       None,
       None,
       (row, value) => row.copy(newStatus = value),
-      MariaTypes.text
+      MariaTypes.text.underlying
     )
   }
 
@@ -80,7 +80,7 @@ class OrderHistoryFields(val `_path`: java.util.List[Path]) extends TupleExpr8[O
       None,
       None,
       (row, value) => row.copy(changedBy = value),
-      MariaTypes.varchar
+      MariaTypes.varchar.underlying
     )
   }
 
@@ -92,7 +92,7 @@ class OrderHistoryFields(val `_path`: java.util.List[Path]) extends TupleExpr8[O
       None,
       None,
       (row, value) => row.copy(changeReason = value),
-      MariaTypes.varchar
+      MariaTypes.varchar.underlying
     )
   }
 
@@ -104,7 +104,7 @@ class OrderHistoryFields(val `_path`: java.util.List[Path]) extends TupleExpr8[O
       None,
       None,
       (row, value) => row.copy(metadata = value),
-      MariaTypes.json
+      MariaTypes.json.underlying
     )
   }
 
@@ -116,7 +116,7 @@ class OrderHistoryFields(val `_path`: java.util.List[Path]) extends TupleExpr8[O
       None,
       None,
       (row, value) => row.copy(createdAt = value),
-      MariaTypes.datetime
+      MariaTypes.datetime.underlying
     )
   }
 
@@ -124,7 +124,7 @@ class OrderHistoryFields(val `_path`: java.util.List[Path]) extends TupleExpr8[O
 
   override def columns: java.util.List[FieldLike[?, OrderHistoryRow]] = java.util.List.of(this.historyId.underlying, this.orderId.underlying, this.previousStatus.underlying, this.newStatus.underlying, this.changedBy.underlying, this.changeReason.underlying, this.metadata.underlying, this.createdAt.underlying)
 
-  override def rowParser: RowParser[OrderHistoryRow] = OrderHistoryRow._rowParser.underlying
+  override def rowCodec: RowCodec[OrderHistoryRow] = OrderHistoryRow.rowCodec.underlying
 
   override def withPaths(`_path`: java.util.List[Path]): RelationStructure[OrderHistoryFields, OrderHistoryRow] = new OrderHistoryFields(`_path`)
 

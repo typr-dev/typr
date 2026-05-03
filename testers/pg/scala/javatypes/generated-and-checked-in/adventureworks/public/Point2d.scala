@@ -5,10 +5,9 @@
  */
 package adventureworks.public
 
-import dev.typr.foundations.PgRead
-import dev.typr.foundations.PgStruct
 import dev.typr.foundations.PgType
 import dev.typr.foundations.PgTypes
+import dev.typr.foundations.RowCodec
 import java.util.Optional
 
 /** PostgreSQL composite type: public.point_2d */
@@ -18,9 +17,7 @@ case class Point2d(
 )
 
 object Point2d {
-  given pgStruct: PgStruct[Point2d] = PgStruct.builder[Point2d]("public.point_2d").optField("x", PgTypes.float8, (v: Point2d) => v.x).optField("y", PgTypes.float8, (v: Point2d) => v.y).build(arr => Point2d(x = Optional.ofNullable(arr(0).asInstanceOf[java.lang.Double]), y = Optional.ofNullable(arr(1).asInstanceOf[java.lang.Double])))
+  given pgType: PgType[Point2d] = PgTypes.compositeOf("public.point_2d", RowCodec.namedBuilder[Point2d]().field("x", PgTypes.float8.opt(), (v: Point2d) => v.x).field("y", PgTypes.float8.opt(), (v: Point2d) => v.y).build((t0, t1) => Point2d(x = t0, y = t1)))
 
-  given pgType: PgType[Point2d] = pgStruct.asType()
-
-  given pgTypeArray: PgType[Array[Point2d]] = pgType.array(PgRead.readCompositeArray(pgType.pgCompositeText(), n => new Array[Point2d](n)), n => new Array[Point2d](n))
+  given pgTypeArray: PgType[java.util.List[Point2d]] = pgType.array()
 }

@@ -5,17 +5,18 @@
  */
 package testdb.promotions
 
-import dev.typr.foundations.scala.DeleteBuilder
-import dev.typr.foundations.scala.SelectBuilder
-import dev.typr.foundations.scala.UpdateBuilder
-import java.sql.Connection
+import dev.typr.dslsc.DeleteBuilder
+import dev.typr.dslsc.SelectBuilder
+import dev.typr.dslsc.UpdateBuilder
+import dev.typr.foundationssc.Connection
+import dev.typr.foundationssc.ConnectionRead
 
 trait PromotionsRepo {
   def delete: DeleteBuilder[PromotionsFields, PromotionsRow]
 
   def deleteById(promotionId: PromotionsId)(using c: Connection): Boolean
 
-  def deleteByIds(promotionIds: Array[PromotionsId])(using c: Connection): Int
+  def deleteByIds(promotionIds: List[PromotionsId])(using c: Connection): Int
 
   def insert(unsaved: PromotionsRow)(using c: Connection): PromotionsRow
 
@@ -23,15 +24,15 @@ trait PromotionsRepo {
 
   def select: SelectBuilder[PromotionsFields, PromotionsRow]
 
-  def selectAll(using c: Connection): List[PromotionsRow]
+  def selectAll(using c: ConnectionRead): List[PromotionsRow]
 
-  def selectById(promotionId: PromotionsId)(using c: Connection): Option[PromotionsRow]
+  def selectById(promotionId: PromotionsId)(using c: ConnectionRead): Option[PromotionsRow]
 
-  def selectByIds(promotionIds: Array[PromotionsId])(using c: Connection): List[PromotionsRow]
+  def selectByIds(promotionIds: List[PromotionsId])(using c: ConnectionRead): List[PromotionsRow]
 
-  def selectByIdsTracked(promotionIds: Array[PromotionsId])(using c: Connection): Map[PromotionsId, PromotionsRow]
+  def selectByIdsTracked(promotionIds: List[PromotionsId])(using c: ConnectionRead): Map[PromotionsId, PromotionsRow]
 
-  def selectByUniqueCode(code: String)(using c: Connection): Option[PromotionsRow]
+  def selectByUniqueCode(code: String)(using c: ConnectionRead): Option[PromotionsRow]
 
   def update: UpdateBuilder[PromotionsFields, PromotionsRow]
 

@@ -138,6 +138,7 @@ import adventureworks.userdefined.FirstName
 import adventureworks.userdefined.LastName
 import adventureworks.userdefined.MiddleName
 import adventureworks.userdefined.SalariedFlag
+import dev.typr.foundations.Connection
 import dev.typr.foundations.data.Inet
 import dev.typr.foundations.data.Int2Vector
 import dev.typr.foundations.data.Json
@@ -147,7 +148,6 @@ import dev.typr.foundations.data.Unknown
 import dev.typr.foundations.data.Vector
 import dev.typr.foundations.data.Xml
 import dev.typr.foundations.internal.RandomHelper
-import java.sql.Connection
 import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -565,6 +565,39 @@ case class TestInsert(
 
   def publicPgtest(
     bytea: Array[scala.Byte],
+    boxes: java.util.List[PGbox],
+    bpchares: java.util.List[/* bpchar */ String],
+    chares: java.util.List[/* bpchar */ String],
+    circlees: java.util.List[PGcircle],
+    datees: java.util.List[LocalDate],
+    float4es: java.util.List[java.lang.Float],
+    float8es: java.util.List[java.lang.Double],
+    inetes: java.util.List[Inet],
+    int2es: java.util.List[java.lang.Short],
+    int2vectores: java.util.List[Int2Vector],
+    int4es: java.util.List[Integer],
+    int8es: java.util.List[java.lang.Long],
+    intervales: java.util.List[PGInterval],
+    jsones: java.util.List[Json],
+    jsonbes: java.util.List[Jsonb],
+    linees: java.util.List[PGline],
+    lseges: java.util.List[PGlseg],
+    moneyes: java.util.List[Money],
+    mydomaines: java.util.List[Mydomain],
+    myenumes: java.util.List[Myenum],
+    namees: java.util.List[String],
+    numerices: java.util.List[java.math.BigDecimal],
+    pathes: java.util.List[PGpath],
+    pointes: java.util.List[PGpoint],
+    polygones: java.util.List[PGpolygon],
+    textes: java.util.List[String],
+    timees: java.util.List[LocalTime],
+    timestampes: java.util.List[LocalDateTime],
+    timestampzes: java.util.List[Instant],
+    timezes: java.util.List[OffsetTime],
+    uuides: java.util.List[UUID],
+    varchares: java.util.List[String],
+    xmles: java.util.List[Xml],
     bool: java.lang.Boolean = random.nextBoolean(),
     box: PGbox = new PGbox(
     random.nextDouble(),
@@ -617,57 +650,7 @@ case class TestInsert(
     uuid: UUID = RandomHelper.randomUUID(random),
     varchar: String = RandomHelper.alphanumeric(random, 20),
     vector: Vector = new Vector("[1.0,2.0,3.0]"),
-    xml: Xml = new Xml("<root/>"),
-    boxes: Array[PGbox] = Array.fill(random.nextInt(3))(new PGbox(
-    random.nextDouble(),
-    random.nextDouble(),
-    random.nextDouble(),
-    random.nextDouble()
-  )),
-    bpchares: Array[/* bpchar */ String] = Array.fill(random.nextInt(3))(RandomHelper.alphanumeric(random, 20)),
-    chares: Array[/* bpchar */ String] = Array.fill(random.nextInt(3))(RandomHelper.alphanumeric(random, 20)),
-    circlees: Array[PGcircle] = Array.fill(random.nextInt(3))(new PGcircle(random.nextDouble(), random.nextDouble(), random.nextDouble())),
-    datees: Array[LocalDate] = Array.fill(random.nextInt(3))(LocalDate.ofEpochDay(random.nextInt(30000).toLong)),
-    float4es: Array[java.lang.Float] = Array.fill(random.nextInt(3))(random.nextFloat()),
-    float8es: Array[java.lang.Double] = Array.fill(random.nextInt(3))(random.nextDouble()),
-    inetes: Array[Inet] = Array.fill(random.nextInt(3))(new Inet(s"${random.nextInt(256)}.${random.nextInt(256)}.${random.nextInt(256)}.${random.nextInt(256)}")),
-    int2es: Array[java.lang.Short] = Array.fill(random.nextInt(3))(random.nextInt(java.lang.Short.MAX_VALUE).toShort),
-    int2vectores: Array[Int2Vector] = Array.fill(random.nextInt(3))(new Int2Vector("1 2 3")),
-    int4es: Array[Integer] = Array.fill(random.nextInt(3))(random.nextInt()),
-    int8es: Array[java.lang.Long] = Array.fill(random.nextInt(3))(random.nextLong()),
-    intervales: Array[PGInterval] = Array.fill(random.nextInt(3))(new PGInterval(
-    random.nextInt(10),
-    random.nextInt(12),
-    random.nextInt(28),
-    random.nextInt(24),
-    random.nextInt(60),
-    random.nextDouble() * 60
-  )),
-    jsones: Array[Json] = Array.fill(random.nextInt(3))(new Json("{}")),
-    jsonbes: Array[Jsonb] = Array.fill(random.nextInt(3))(new Jsonb("{}")),
-    linees: Array[PGline] = Array.fill(random.nextInt(3))(new PGline(random.nextDouble(), random.nextDouble(), random.nextDouble())),
-    lseges: Array[PGlseg] = Array.fill(random.nextInt(3))(new PGlseg(
-    random.nextDouble(),
-    random.nextDouble(),
-    random.nextDouble(),
-    random.nextDouble()
-  )),
-    moneyes: Array[Money] = Array.fill(random.nextInt(3))(new Money(random.nextDouble())),
-    mydomaines: Array[Mydomain] = Array.fill(random.nextInt(3))(domainInsert.publicMydomain(random)),
-    myenumes: Array[Myenum] = Array.fill(random.nextInt(3))(Myenum.All(random.nextInt(Myenum.All.length))),
-    namees: Array[String] = Array.fill(random.nextInt(3))(RandomHelper.alphanumeric(random, 20)),
-    numerices: Array[java.math.BigDecimal] = Array.fill(random.nextInt(3))(java.math.BigDecimal.valueOf(random.nextDouble())),
-    pathes: Array[PGpath] = Array.fill(random.nextInt(3))(new PGpath(Array[PGpoint](new PGpoint(random.nextDouble(), random.nextDouble())), false)),
-    pointes: Array[PGpoint] = Array.fill(random.nextInt(3))(new PGpoint(random.nextDouble(), random.nextDouble())),
-    polygones: Array[PGpolygon] = Array.fill(random.nextInt(3))(new PGpolygon(Array[PGpoint](new PGpoint(0.0, 0.0), new PGpoint(1.0, 0.0), new PGpoint(1.0, 1.0), new PGpoint(0.0, 1.0)))),
-    textes: Array[String] = Array.fill(random.nextInt(3))(RandomHelper.alphanumeric(random, 20)),
-    timees: Array[LocalTime] = Array.fill(random.nextInt(3))(LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong)),
-    timestampes: Array[LocalDateTime] = Array.fill(random.nextInt(3))(LocalDateTime.of(LocalDate.ofEpochDay(random.nextInt(30000).toLong), LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong))),
-    timestampzes: Array[Instant] = Array.fill(random.nextInt(3))(Instant.ofEpochMilli(1000000000000L + random.nextLong(1000000000000L))),
-    timezes: Array[OffsetTime] = Array.fill(random.nextInt(3))(LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong).atOffset(ZoneOffset.ofHours(random.nextInt(24) - 12))),
-    uuides: Array[UUID] = Array.fill(random.nextInt(3))(RandomHelper.randomUUID(random)),
-    varchares: Array[String] = Array.fill(random.nextInt(3))(RandomHelper.alphanumeric(random, 20)),
-    xmles: Array[Xml] = Array.fill(random.nextInt(3))(new Xml("<root/>"))
+    xml: Xml = new Xml("<root/>")
   )(using c: Connection): PgtestRow = {
     (new PgtestRepoImpl()).insert(new PgtestRow(
       bool = bool,
@@ -798,56 +781,39 @@ case class TestInsert(
     varchar: Optional[String] = (if (random.nextBoolean()) Optional.empty() else Optional.of(RandomHelper.alphanumeric(random, 20))),
     vector: Optional[Vector] = (if (random.nextBoolean()) Optional.empty() else Optional.of(new Vector("[1.0,2.0,3.0]"))),
     xml: Optional[Xml] = (if (random.nextBoolean()) Optional.empty() else Optional.of(new Xml("<root/>"))),
-    boxes: Optional[Array[PGbox]] = (if (random.nextBoolean()) Optional.empty() else Optional.of(Array.fill(random.nextInt(3))(new PGbox(
-    random.nextDouble(),
-    random.nextDouble(),
-    random.nextDouble(),
-    random.nextDouble()
-  )))),
-    bpchares: Optional[Array[/* bpchar */ String]] = (if (random.nextBoolean()) Optional.empty() else Optional.of(Array.fill(random.nextInt(3))(RandomHelper.alphanumeric(random, 20)))),
-    chares: Optional[Array[/* bpchar */ String]] = (if (random.nextBoolean()) Optional.empty() else Optional.of(Array.fill(random.nextInt(3))(RandomHelper.alphanumeric(random, 20)))),
-    circlees: Optional[Array[PGcircle]] = (if (random.nextBoolean()) Optional.empty() else Optional.of(Array.fill(random.nextInt(3))(new PGcircle(random.nextDouble(), random.nextDouble(), random.nextDouble())))),
-    datees: Optional[Array[LocalDate]] = (if (random.nextBoolean()) Optional.empty() else Optional.of(Array.fill(random.nextInt(3))(LocalDate.ofEpochDay(random.nextInt(30000).toLong)))),
-    float4es: Optional[Array[java.lang.Float]] = (if (random.nextBoolean()) Optional.empty() else Optional.of(Array.fill(random.nextInt(3))(random.nextFloat()))),
-    float8es: Optional[Array[java.lang.Double]] = (if (random.nextBoolean()) Optional.empty() else Optional.of(Array.fill(random.nextInt(3))(random.nextDouble()))),
-    inetes: Optional[Array[Inet]] = (if (random.nextBoolean()) Optional.empty() else Optional.of(Array.fill(random.nextInt(3))(new Inet(s"${random.nextInt(256)}.${random.nextInt(256)}.${random.nextInt(256)}.${random.nextInt(256)}")))),
-    int2es: Optional[Array[java.lang.Short]] = (if (random.nextBoolean()) Optional.empty() else Optional.of(Array.fill(random.nextInt(3))(random.nextInt(java.lang.Short.MAX_VALUE).toShort))),
-    int2vectores: Optional[Array[Int2Vector]] = (if (random.nextBoolean()) Optional.empty() else Optional.of(Array.fill(random.nextInt(3))(new Int2Vector("1 2 3")))),
-    int4es: Optional[Array[Integer]] = (if (random.nextBoolean()) Optional.empty() else Optional.of(Array.fill(random.nextInt(3))(random.nextInt()))),
-    int8es: Optional[Array[java.lang.Long]] = (if (random.nextBoolean()) Optional.empty() else Optional.of(Array.fill(random.nextInt(3))(random.nextLong()))),
-    intervales: Optional[Array[PGInterval]] = (if (random.nextBoolean()) Optional.empty() else Optional.of(Array.fill(random.nextInt(3))(new PGInterval(
-    random.nextInt(10),
-    random.nextInt(12),
-    random.nextInt(28),
-    random.nextInt(24),
-    random.nextInt(60),
-    random.nextDouble() * 60
-  )))),
-    jsones: Optional[Array[Json]] = (if (random.nextBoolean()) Optional.empty() else Optional.of(Array.fill(random.nextInt(3))(new Json("{}")))),
-    jsonbes: Optional[Array[Jsonb]] = (if (random.nextBoolean()) Optional.empty() else Optional.of(Array.fill(random.nextInt(3))(new Jsonb("{}")))),
-    linees: Optional[Array[PGline]] = (if (random.nextBoolean()) Optional.empty() else Optional.of(Array.fill(random.nextInt(3))(new PGline(random.nextDouble(), random.nextDouble(), random.nextDouble())))),
-    lseges: Optional[Array[PGlseg]] = (if (random.nextBoolean()) Optional.empty() else Optional.of(Array.fill(random.nextInt(3))(new PGlseg(
-    random.nextDouble(),
-    random.nextDouble(),
-    random.nextDouble(),
-    random.nextDouble()
-  )))),
-    moneyes: Optional[Array[Money]] = (if (random.nextBoolean()) Optional.empty() else Optional.of(Array.fill(random.nextInt(3))(new Money(random.nextDouble())))),
-    mydomaines: Optional[Array[Mydomain]] = (if (random.nextBoolean()) Optional.empty() else Optional.of(Array.fill(random.nextInt(3))(domainInsert.publicMydomain(random)))),
-    myenumes: Optional[Array[Myenum]] = (if (random.nextBoolean()) Optional.empty() else Optional.of(Array.fill(random.nextInt(3))(Myenum.All(random.nextInt(Myenum.All.length))))),
-    namees: Optional[Array[String]] = (if (random.nextBoolean()) Optional.empty() else Optional.of(Array.fill(random.nextInt(3))(RandomHelper.alphanumeric(random, 20)))),
-    numerices: Optional[Array[java.math.BigDecimal]] = (if (random.nextBoolean()) Optional.empty() else Optional.of(Array.fill(random.nextInt(3))(java.math.BigDecimal.valueOf(random.nextDouble())))),
-    pathes: Optional[Array[PGpath]] = (if (random.nextBoolean()) Optional.empty() else Optional.of(Array.fill(random.nextInt(3))(new PGpath(Array[PGpoint](new PGpoint(random.nextDouble(), random.nextDouble())), false)))),
-    pointes: Optional[Array[PGpoint]] = (if (random.nextBoolean()) Optional.empty() else Optional.of(Array.fill(random.nextInt(3))(new PGpoint(random.nextDouble(), random.nextDouble())))),
-    polygones: Optional[Array[PGpolygon]] = (if (random.nextBoolean()) Optional.empty() else Optional.of(Array.fill(random.nextInt(3))(new PGpolygon(Array[PGpoint](new PGpoint(0.0, 0.0), new PGpoint(1.0, 0.0), new PGpoint(1.0, 1.0), new PGpoint(0.0, 1.0)))))),
-    textes: Optional[Array[String]] = (if (random.nextBoolean()) Optional.empty() else Optional.of(Array.fill(random.nextInt(3))(RandomHelper.alphanumeric(random, 20)))),
-    timees: Optional[Array[LocalTime]] = (if (random.nextBoolean()) Optional.empty() else Optional.of(Array.fill(random.nextInt(3))(LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong)))),
-    timestampes: Optional[Array[LocalDateTime]] = (if (random.nextBoolean()) Optional.empty() else Optional.of(Array.fill(random.nextInt(3))(LocalDateTime.of(LocalDate.ofEpochDay(random.nextInt(30000).toLong), LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong))))),
-    timestampzes: Optional[Array[Instant]] = (if (random.nextBoolean()) Optional.empty() else Optional.of(Array.fill(random.nextInt(3))(Instant.ofEpochMilli(1000000000000L + random.nextLong(1000000000000L))))),
-    timezes: Optional[Array[OffsetTime]] = (if (random.nextBoolean()) Optional.empty() else Optional.of(Array.fill(random.nextInt(3))(LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong).atOffset(ZoneOffset.ofHours(random.nextInt(24) - 12))))),
-    uuides: Optional[Array[UUID]] = (if (random.nextBoolean()) Optional.empty() else Optional.of(Array.fill(random.nextInt(3))(RandomHelper.randomUUID(random)))),
-    varchares: Optional[Array[String]] = (if (random.nextBoolean()) Optional.empty() else Optional.of(Array.fill(random.nextInt(3))(RandomHelper.alphanumeric(random, 20)))),
-    xmles: Optional[Array[Xml]] = (if (random.nextBoolean()) Optional.empty() else Optional.of(Array.fill(random.nextInt(3))(new Xml("<root/>"))))
+    boxes: Optional[java.util.List[PGbox]] = Optional.empty(),
+    bpchares: Optional[java.util.List[/* bpchar */ String]] = Optional.empty(),
+    chares: Optional[java.util.List[/* bpchar */ String]] = Optional.empty(),
+    circlees: Optional[java.util.List[PGcircle]] = Optional.empty(),
+    datees: Optional[java.util.List[LocalDate]] = Optional.empty(),
+    float4es: Optional[java.util.List[java.lang.Float]] = Optional.empty(),
+    float8es: Optional[java.util.List[java.lang.Double]] = Optional.empty(),
+    inetes: Optional[java.util.List[Inet]] = Optional.empty(),
+    int2es: Optional[java.util.List[java.lang.Short]] = Optional.empty(),
+    int2vectores: Optional[java.util.List[Int2Vector]] = Optional.empty(),
+    int4es: Optional[java.util.List[Integer]] = Optional.empty(),
+    int8es: Optional[java.util.List[java.lang.Long]] = Optional.empty(),
+    intervales: Optional[java.util.List[PGInterval]] = Optional.empty(),
+    jsones: Optional[java.util.List[Json]] = Optional.empty(),
+    jsonbes: Optional[java.util.List[Jsonb]] = Optional.empty(),
+    linees: Optional[java.util.List[PGline]] = Optional.empty(),
+    lseges: Optional[java.util.List[PGlseg]] = Optional.empty(),
+    moneyes: Optional[java.util.List[Money]] = Optional.empty(),
+    mydomaines: Optional[java.util.List[Mydomain]] = Optional.empty(),
+    myenumes: Optional[java.util.List[Myenum]] = Optional.empty(),
+    namees: Optional[java.util.List[String]] = Optional.empty(),
+    numerices: Optional[java.util.List[java.math.BigDecimal]] = Optional.empty(),
+    pathes: Optional[java.util.List[PGpath]] = Optional.empty(),
+    pointes: Optional[java.util.List[PGpoint]] = Optional.empty(),
+    polygones: Optional[java.util.List[PGpolygon]] = Optional.empty(),
+    textes: Optional[java.util.List[String]] = Optional.empty(),
+    timees: Optional[java.util.List[LocalTime]] = Optional.empty(),
+    timestampes: Optional[java.util.List[LocalDateTime]] = Optional.empty(),
+    timestampzes: Optional[java.util.List[Instant]] = Optional.empty(),
+    timezes: Optional[java.util.List[OffsetTime]] = Optional.empty(),
+    uuides: Optional[java.util.List[UUID]] = Optional.empty(),
+    varchares: Optional[java.util.List[String]] = Optional.empty(),
+    xmles: Optional[java.util.List[Xml]] = Optional.empty()
   )(using c: Connection): PgtestnullRow = {
     (new PgtestnullRepoImpl()).insert(new PgtestnullRow(
       bool = bool,

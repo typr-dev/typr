@@ -6,17 +6,17 @@
 package adventureworks.person.businessentity
 
 import com.fasterxml.jackson.annotation.JsonValue
+import dev.typr.foundations.Bijection
 import dev.typr.foundations.PgType
 import dev.typr.foundations.PgTypes
-import dev.typr.foundations.dsl.Bijection
 
 /** Type for the primary key of table `person.businessentity` */
 case class BusinessentityId(@JsonValue value: Integer) extends scala.AnyVal
 
 object BusinessentityId {
-  given bijection: Bijection[BusinessentityId, Integer] = Bijection.apply[BusinessentityId, Integer](_.value)(BusinessentityId.apply)
+  given bijection: Bijection[BusinessentityId, Integer] = Bijection.of[BusinessentityId, Integer](_.value, BusinessentityId.apply)
 
-  given pgType: PgType[BusinessentityId] = PgTypes.int4.bimap(BusinessentityId.apply, _.value)
+  given pgType: PgType[BusinessentityId] = PgTypes.int4.to(Bijection.of(BusinessentityId.apply, _.value))
 
-  given pgTypeArray: PgType[Array[BusinessentityId]] = PgTypes.int4Array.bimap(xs => xs.map(BusinessentityId.apply), xs => xs.map(_.value))
+  given pgTypeArray: PgType[java.util.List[BusinessentityId]] = pgType.array
 }

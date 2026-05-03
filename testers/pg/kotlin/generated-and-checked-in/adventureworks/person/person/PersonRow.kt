@@ -11,14 +11,12 @@ import adventureworks.public.NameStyle
 import adventureworks.userdefined.FirstName
 import adventureworks.userdefined.LastName
 import adventureworks.userdefined.MiddleName
+import dev.typr.dslkt.RowCodecs
 import dev.typr.foundations.PgText
-import dev.typr.foundations.PgTypes
 import dev.typr.foundations.Tuple.Tuple13
 import dev.typr.foundations.data.Xml
-import dev.typr.foundations.kotlin.KotlinDbTypes
-import dev.typr.foundations.kotlin.RowParser
-import dev.typr.foundations.kotlin.RowParsers
-import dev.typr.foundations.kotlin.nullable
+import dev.typr.foundationskt.PgTypes
+import dev.typr.foundationskt.RowCodec
 import java.time.LocalDateTime
 import java.util.UUID
 
@@ -34,13 +32,13 @@ data class PersonRow(
   /** Primary type of person: SC = Store Contact, IN = Individual (retail) customer, SP = Sales person, EM = Employee (non-sales), VC = Vendor contact, GC = General contact
     * Constraint CK_Person_PersonType affecting columns persontype: (((persontype IS NULL) OR (upper((persontype)::text) = ANY (ARRAY['SC'::text, 'VC'::text, 'IN'::text, 'EM'::text, 'SP'::text, 'GC'::text]))))
     */
-  val persontype: String,
+  val persontype: kotlin.String,
   /** 0 = The data in FirstName and LastName are stored in western style (first name, last name) order.  1 = Eastern style (last name, first name) order.
     * Default: false
     */
   val namestyle: NameStyle,
   /** A courtesy title. For example, Mr. or Ms. */
-  val title: /* max 8 chars */ String?,
+  val title: /* max 8 chars */ kotlin.String?,
   /** First name of the person. */
   val firstname: /* user-picked */ FirstName,
   /** Middle name or middle initial of the person. */
@@ -48,7 +46,7 @@ data class PersonRow(
   /** Last name of the person. */
   val lastname: /* user-picked */ LastName,
   /** Surname suffix. For example, Sr. or Jr. */
-  val suffix: /* max 10 chars */ String?,
+  val suffix: /* max 10 chars */ kotlin.String?,
   /** 0 = Contact does not wish to receive e-mail promotions, 1 = Contact does wish to receive e-mail promotions from AdventureWorks, 2 = Contact does wish to receive e-mail promotions from AdventureWorks and selected partners.
     * Default: 0
     * Constraint CK_Person_EmailPromotion affecting columns emailpromotion: (((emailpromotion >= 0) AND (emailpromotion <= 2)))
@@ -62,7 +60,7 @@ data class PersonRow(
   val rowguid: UUID,
   /** Default: now() */
   val modifieddate: LocalDateTime
-) : Tuple13<BusinessentityId, String, NameStyle, /* max 8 chars */ String?, /* user-picked */ FirstName, /* user-picked */ MiddleName?, /* user-picked */ LastName, /* max 10 chars */ String?, Int, Xml?, Xml?, UUID, LocalDateTime> {
+) : Tuple13<BusinessentityId, kotlin.String, NameStyle, /* max 8 chars */ kotlin.String?, /* user-picked */ FirstName, /* user-picked */ MiddleName?, /* user-picked */ LastName, /* max 10 chars */ kotlin.String?, Int, Xml?, Xml?, UUID, LocalDateTime> {
   override fun _1(): BusinessentityId = businessentityid
 
   override fun _10(): Xml? = additionalcontactinfo
@@ -73,11 +71,11 @@ data class PersonRow(
 
   override fun _13(): LocalDateTime = modifieddate
 
-  override fun _2(): String = persontype
+  override fun _2(): kotlin.String = persontype
 
   override fun _3(): NameStyle = namestyle
 
-  override fun _4(): /* max 8 chars */ String? = title
+  override fun _4(): /* max 8 chars */ kotlin.String? = title
 
   override fun _5(): /* user-picked */ FirstName = firstname
 
@@ -85,7 +83,7 @@ data class PersonRow(
 
   override fun _7(): /* user-picked */ LastName = lastname
 
-  override fun _8(): /* max 10 chars */ String? = suffix
+  override fun _8(): /* max 10 chars */ kotlin.String? = suffix
 
   override fun _9(): Int = emailpromotion
 
@@ -99,9 +97,9 @@ data class PersonRow(
   ): PersonRowUnsaved = PersonRowUnsaved(businessentityid, persontype, title, firstname, middlename, lastname, suffix, additionalcontactinfo, demographics, namestyle, emailpromotion, rowguid, modifieddate)
 
   companion object {
-    val _rowParser: RowParser<PersonRow> = RowParsers.of(BusinessentityId.pgType, PgTypes.bpchar, NameStyle.pgType, PgTypes.text.nullable(), FirstName.pgType, MiddleName.pgType.nullable(), LastName.pgType, PgTypes.text.nullable(), KotlinDbTypes.PgTypes.int4, PgTypes.xml.nullable(), PgTypes.xml.nullable(), PgTypes.uuid, PgTypes.timestamp, { t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12 -> PersonRow(t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12) }, { row -> arrayOf<Any?>(row.businessentityid, row.persontype, row.namestyle, row.title, row.firstname, row.middlename, row.lastname, row.suffix, row.emailpromotion, row.additionalcontactinfo, row.demographics, row.rowguid, row.modifieddate) })
+    val rowCodec: RowCodec<PersonRow> = RowCodecs.of(BusinessentityId.pgType, PgTypes.bpchar, NameStyle.pgType, PgTypes.text.opt(), FirstName.pgType, MiddleName.pgType.opt(), LastName.pgType, PgTypes.text.opt(), PgTypes.int4, PgTypes.xml.opt(), PgTypes.xml.opt(), PgTypes.uuid, PgTypes.timestamp, { t0: BusinessentityId, t1: kotlin.String, t2: NameStyle, t3: /* max 8 chars */ kotlin.String?, t4: /* user-picked */ FirstName, t5: /* user-picked */ MiddleName?, t6: /* user-picked */ LastName, t7: /* max 10 chars */ kotlin.String?, t8: Int, t9: Xml?, t10: Xml?, t11: UUID, t12: LocalDateTime -> PersonRow(t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12) }, { row: PersonRow -> arrayOf<Any?>(row.businessentityid, row.persontype, row.namestyle, row.title, row.firstname, row.middlename, row.lastname, row.suffix, row.emailpromotion, row.additionalcontactinfo, row.demographics, row.rowguid, row.modifieddate) })
 
     val pgText: PgText<PersonRow> =
-      PgText.from(_rowParser.underlying)
+      PgText.from(rowCodec.underlying)
   }
 }

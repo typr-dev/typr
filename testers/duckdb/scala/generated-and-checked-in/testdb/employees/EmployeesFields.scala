@@ -5,19 +5,18 @@
  */
 package testdb.employees
 
-import dev.typr.foundations.DuckDbTypes
-import dev.typr.foundations.RowParser
-import dev.typr.foundations.dsl.FieldsBase
-import dev.typr.foundations.dsl.Path
-import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.scala.RelationStructure
-import dev.typr.foundations.scala.ScalaDbTypes
-import dev.typr.foundations.scala.SqlExpr
-import dev.typr.foundations.scala.SqlExpr.Field
-import dev.typr.foundations.scala.SqlExpr.IdField
-import dev.typr.foundations.scala.SqlExpr.OptField
-import dev.typr.foundations.scala.TupleExpr
-import dev.typr.foundations.scala.TupleExpr7
+import dev.typr.dsl.FieldsBase
+import dev.typr.dsl.Path
+import dev.typr.dsl.SqlExpr.FieldLike
+import dev.typr.dslsc.RelationStructure
+import dev.typr.dslsc.SqlExpr
+import dev.typr.dslsc.SqlExpr.Field
+import dev.typr.dslsc.SqlExpr.IdField
+import dev.typr.dslsc.SqlExpr.OptField
+import dev.typr.dslsc.TupleExpr
+import dev.typr.dslsc.TupleExpr7
+import dev.typr.foundations.RowCodec
+import dev.typr.foundationssc.DuckDbTypes
 import java.time.LocalDate
 
 class EmployeesFields(val `_path`: java.util.List[Path]) extends TupleExpr7[Int, String, String, String, String, BigDecimal, LocalDate] with RelationStructure[EmployeesFields, EmployeesRow]  with FieldsBase[EmployeesRow] {
@@ -29,7 +28,7 @@ class EmployeesFields(val `_path`: java.util.List[Path]) extends TupleExpr7[Int,
       None,
       Some("INTEGER"),
       (row, value) => row.copy(empNumber = value),
-      ScalaDbTypes.DuckDbTypes.integer
+      DuckDbTypes.integer.underlying
     )
   }
 
@@ -41,7 +40,7 @@ class EmployeesFields(val `_path`: java.util.List[Path]) extends TupleExpr7[Int,
       None,
       None,
       (row, value) => row.copy(empSuffix = value),
-      DuckDbTypes.varchar
+      DuckDbTypes.varchar.underlying
     )
   }
 
@@ -53,7 +52,7 @@ class EmployeesFields(val `_path`: java.util.List[Path]) extends TupleExpr7[Int,
       None,
       None,
       (row, value) => row.copy(deptCode = value),
-      DuckDbTypes.varchar
+      DuckDbTypes.varchar.underlying
     )
   }
 
@@ -65,7 +64,7 @@ class EmployeesFields(val `_path`: java.util.List[Path]) extends TupleExpr7[Int,
       None,
       None,
       (row, value) => row.copy(deptRegion = value),
-      DuckDbTypes.varchar
+      DuckDbTypes.varchar.underlying
     )
   }
 
@@ -77,7 +76,7 @@ class EmployeesFields(val `_path`: java.util.List[Path]) extends TupleExpr7[Int,
       None,
       None,
       (row, value) => row.copy(empName = value),
-      DuckDbTypes.varchar
+      DuckDbTypes.varchar.underlying
     )
   }
 
@@ -89,7 +88,7 @@ class EmployeesFields(val `_path`: java.util.List[Path]) extends TupleExpr7[Int,
       None,
       Some("DECIMAL(10,2)"),
       (row, value) => row.copy(salary = value),
-      ScalaDbTypes.DuckDbTypes.numeric
+      DuckDbTypes.numeric.underlying
     )
   }
 
@@ -101,7 +100,7 @@ class EmployeesFields(val `_path`: java.util.List[Path]) extends TupleExpr7[Int,
       None,
       Some("DATE"),
       (row, value) => row.copy(hireDate = value),
-      DuckDbTypes.date
+      DuckDbTypes.date.underlying
     )
   }
 
@@ -111,7 +110,7 @@ class EmployeesFields(val `_path`: java.util.List[Path]) extends TupleExpr7[Int,
 
   override def columns: java.util.List[FieldLike[?, EmployeesRow]] = java.util.List.of(this.empNumber.underlying, this.empSuffix.underlying, this.deptCode.underlying, this.deptRegion.underlying, this.empName.underlying, this.salary.underlying, this.hireDate.underlying)
 
-  override def rowParser: RowParser[EmployeesRow] = EmployeesRow._rowParser.underlying
+  override def rowCodec: RowCodec[EmployeesRow] = EmployeesRow.rowCodec.underlying
 
   override def withPaths(`_path`: java.util.List[Path]): RelationStructure[EmployeesFields, EmployeesRow] = new EmployeesFields(`_path`)
 

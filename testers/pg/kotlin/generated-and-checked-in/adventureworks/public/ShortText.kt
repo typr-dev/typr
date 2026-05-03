@@ -6,23 +6,23 @@
 package adventureworks.public
 
 import com.fasterxml.jackson.annotation.JsonValue
-import dev.typr.foundations.PgType
-import dev.typr.foundations.PgTypes
-import dev.typr.foundations.internal.arrayMap
-import dev.typr.foundations.kotlin.Bijection
+import dev.typr.foundationskt.Bijection
+import dev.typr.foundationskt.PgType
+import dev.typr.foundationskt.PgTypes
+import kotlin.collections.List
 
 /** Domain `public.short_text`
   * Constraint: CHECK ((length(VALUE) <= 55))
   */
-data class ShortText(@field:JsonValue val value: String) {
+data class ShortText(@field:JsonValue val value: kotlin.String) {
   companion object {
-    val bijection: Bijection<ShortText, String> =
+    val bijection: Bijection<ShortText, kotlin.String> =
       Bijection.of(ShortText::value, ::ShortText)
 
     val pgType: PgType<ShortText> =
-      PgTypes.text.bimap(::ShortText, ShortText::value).renamed("\"public\".\"short_text\"")
+      PgType(PgTypes.text.to(Bijection.of(::ShortText, ShortText::value)).underlying.renamed("\"public\".\"short_text\""))
 
-    val pgTypeArray: PgType<Array<ShortText>> =
-      PgTypes.textArray.bimap({ xs -> arrayMap.map(xs, ::ShortText, ShortText::class.java) }, { xs -> arrayMap.map(xs, ShortText::value, String::class.java) }).renamed("\"public\".\"short_text\"[]")
+    val pgTypeArray: PgType<List<ShortText>> =
+      pgType.array()
   }
 }

@@ -27,7 +27,7 @@ object OrderNumber {
 
   implicit lazy val arraySetter: Setter[Array[OrderNumber]] = adventureworks.StringArraySetter.contramap(_.map(_.value))
 
-  implicit lazy val bijection: Bijection[OrderNumber, String] = Bijection.apply[OrderNumber, String](_.value)(OrderNumber.apply)
+  implicit lazy val bijection: Bijection[OrderNumber, String] = Bijection[OrderNumber, String](_.value)(OrderNumber.apply)
 
   implicit lazy val jdbcDecoder: JdbcDecoder[OrderNumber] = JdbcDecoder.stringDecoder.map(OrderNumber.apply)
 

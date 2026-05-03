@@ -45,7 +45,7 @@ object TypoLocalDateTime {
 
   given arrayToStatement: ToStatement[Array[TypoLocalDateTime]] = ToStatement[Array[TypoLocalDateTime]]((s, index, v) => s.setArray(index, s.getConnection.createArrayOf("timestamp", v.map(v => v.value.toString()))))
 
-  given bijection: Bijection[TypoLocalDateTime, LocalDateTime] = Bijection.apply[TypoLocalDateTime, LocalDateTime](_.value)(TypoLocalDateTime.apply)
+  given bijection: Bijection[TypoLocalDateTime, LocalDateTime] = Bijection[TypoLocalDateTime, LocalDateTime](_.value)(TypoLocalDateTime.apply)
 
   given column: Column[TypoLocalDateTime] = {
     Column.nonNull[TypoLocalDateTime]((v1: Any, _) =>

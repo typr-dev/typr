@@ -5,17 +5,18 @@
  */
 package testdb.identity_params_test
 
-import dev.typr.foundations.kotlin.DeleteBuilder
-import dev.typr.foundations.kotlin.DeleteBuilderMock
-import dev.typr.foundations.kotlin.DeleteParams
-import dev.typr.foundations.kotlin.SelectBuilder
-import dev.typr.foundations.kotlin.SelectBuilderMock
-import dev.typr.foundations.kotlin.SelectParams
-import dev.typr.foundations.kotlin.UpdateBuilder
-import dev.typr.foundations.kotlin.UpdateBuilderMock
-import dev.typr.foundations.kotlin.UpdateParams
+import dev.typr.dslkt.DeleteBuilder
+import dev.typr.dslkt.DeleteBuilderMock
+import dev.typr.dslkt.DeleteParams
+import dev.typr.dslkt.SelectBuilder
+import dev.typr.dslkt.SelectBuilderMock
+import dev.typr.dslkt.SelectParams
+import dev.typr.dslkt.UpdateBuilder
+import dev.typr.dslkt.UpdateBuilderMock
+import dev.typr.dslkt.UpdateParams
+import dev.typr.foundationskt.Connection
+import dev.typr.foundationskt.ConnectionRead
 import java.lang.RuntimeException
-import java.sql.Connection
 import java.util.ArrayList
 import kotlin.collections.Iterator
 import kotlin.collections.List
@@ -31,10 +32,10 @@ data class IdentityParamsTestRepoMock(
   override fun deleteById(
     id: IdentityParamsTestId,
     c: Connection
-  ): Boolean = map.remove(id) != null
+  ): kotlin.Boolean = map.remove(id) != null
 
   override fun deleteByIds(
-    ids: Array<IdentityParamsTestId>,
+    ids: List<IdentityParamsTestId>,
     c: Connection
   ): Int {
     var count = 0
@@ -64,16 +65,16 @@ data class IdentityParamsTestRepoMock(
 
   override fun select(): SelectBuilder<IdentityParamsTestFields, IdentityParamsTestRow> = SelectBuilderMock(IdentityParamsTestFields.structure, { map.values.toList() }, SelectParams.empty())
 
-  override fun selectAll(c: Connection): List<IdentityParamsTestRow> = map.values.toList()
+  override fun selectAll(c: ConnectionRead): List<IdentityParamsTestRow> = map.values.toList()
 
   override fun selectById(
     id: IdentityParamsTestId,
-    c: Connection
+    c: ConnectionRead
   ): IdentityParamsTestRow? = map[id]
 
   override fun selectByIds(
-    ids: Array<IdentityParamsTestId>,
-    c: Connection
+    ids: List<IdentityParamsTestId>,
+    c: ConnectionRead
   ): List<IdentityParamsTestRow> {
     val result = ArrayList<IdentityParamsTestRow>()
     for (id in ids) {
@@ -86,8 +87,8 @@ data class IdentityParamsTestRepoMock(
   }
 
   override fun selectByIdsTracked(
-    ids: Array<IdentityParamsTestId>,
-    c: Connection
+    ids: List<IdentityParamsTestId>,
+    c: ConnectionRead
   ): Map<IdentityParamsTestId, IdentityParamsTestRow> = selectByIds(ids, c).associateBy({ row: IdentityParamsTestRow -> row.id })
 
   override fun update(): UpdateBuilder<IdentityParamsTestFields, IdentityParamsTestRow> = UpdateBuilderMock(IdentityParamsTestFields.structure, { map.values.toList() }, UpdateParams.empty(), { row -> row })
@@ -95,7 +96,7 @@ data class IdentityParamsTestRepoMock(
   override fun update(
     row: IdentityParamsTestRow,
     c: Connection
-  ): Boolean {
+  ): kotlin.Boolean {
     val shouldUpdate = map[row.id]?.takeIf({ oldRow -> (oldRow != row) }) != null
     if (shouldUpdate) {
       map[row.id] = row

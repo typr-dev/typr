@@ -6,10 +6,10 @@
 package oracledb.departments
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import dev.typr.foundations.OracleTypes
+import dev.typr.dslsc.RowCodecs
 import dev.typr.foundations.Tuple.Tuple2
-import dev.typr.foundations.scala.RowParser
-import dev.typr.foundations.scala.RowParsers
+import dev.typr.foundationssc.OracleTypes
+import dev.typr.foundationssc.RowCodec
 
 /** Type for the composite primary key of table `DEPARTMENTS` */
 case class DepartmentsId(
@@ -22,5 +22,5 @@ case class DepartmentsId(
 }
 
 object DepartmentsId {
-  val `_rowParser`: RowParser[DepartmentsId] = RowParsers.of(OracleTypes.varchar2, OracleTypes.varchar2)(DepartmentsId.apply)(row => Array[Any](row.deptCode, row.deptRegion))
+  val rowCodec: RowCodec[DepartmentsId] = RowCodecs.of(OracleTypes.varchar2, OracleTypes.varchar2)(DepartmentsId.apply)(row => Array[Any](row.deptCode, row.deptRegion))
 }

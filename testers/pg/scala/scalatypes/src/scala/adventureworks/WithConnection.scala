@@ -1,18 +1,11 @@
 package adventureworks
 
-import dev.typr.foundations.{SqlFunction, Transactor}
-import dev.typr.foundations.connect.postgres.PostgresConfig
-import java.sql.Connection
+import dev.typr.foundationssc.*
+import dev.typr.foundationssc.connect.PgConfig
 
 object WithConnection {
-  private val config = PostgresConfig.builder("localhost", 6432, "Adventureworks", "postgres", "password").build()
-  private val transactor = config.transactor(Transactor.testStrategy())
+  private val config = PgConfig.builder("localhost", 6432, "Adventureworks", "postgres", "password").build()
+  private val transactor = Transactor.create(config).rollbackOnly()
 
-  def apply[T](f: Connection ?=> T): T = {
-    val op: SqlFunction[Connection, T] = conn => {
-      given Connection = conn
-      f
-    }
-    transactor.execute(op)
-  }
+  def apply[T](f: Connection ?=> T): T = transactor.transact(f)
 }

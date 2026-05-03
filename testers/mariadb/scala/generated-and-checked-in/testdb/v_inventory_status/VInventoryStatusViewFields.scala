@@ -5,17 +5,16 @@
  */
 package testdb.v_inventory_status
 
-import dev.typr.foundations.MariaTypes
-import dev.typr.foundations.RowParser
-import dev.typr.foundations.dsl.FieldsBase
-import dev.typr.foundations.dsl.Path
-import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.scala.RelationStructure
-import dev.typr.foundations.scala.ScalaDbTypes
-import dev.typr.foundations.scala.SqlExpr
-import dev.typr.foundations.scala.SqlExpr.Field
-import dev.typr.foundations.scala.SqlExpr.OptField
-import dev.typr.foundations.scala.TupleExpr14
+import dev.typr.dsl.FieldsBase
+import dev.typr.dsl.Path
+import dev.typr.dsl.SqlExpr.FieldLike
+import dev.typr.dslsc.RelationStructure
+import dev.typr.dslsc.SqlExpr
+import dev.typr.dslsc.SqlExpr.Field
+import dev.typr.dslsc.SqlExpr.OptField
+import dev.typr.dslsc.TupleExpr14
+import dev.typr.foundations.RowCodec
+import dev.typr.foundationssc.MariaTypes
 import java.time.LocalDateTime
 import testdb.products.ProductsId
 import testdb.warehouses.WarehousesId
@@ -29,7 +28,7 @@ class VInventoryStatusViewFields(val `_path`: java.util.List[Path]) extends Tupl
       None,
       None,
       (row, value) => row.copy(productId = value),
-      ProductsId.mariaType
+      ProductsId.mariaType.underlying
     )
   }
 
@@ -41,7 +40,7 @@ class VInventoryStatusViewFields(val `_path`: java.util.List[Path]) extends Tupl
       None,
       None,
       (row, value) => row.copy(sku = value),
-      MariaTypes.varchar
+      MariaTypes.varchar.underlying
     )
   }
 
@@ -53,7 +52,7 @@ class VInventoryStatusViewFields(val `_path`: java.util.List[Path]) extends Tupl
       None,
       None,
       (row, value) => row.copy(productName = value),
-      MariaTypes.varchar
+      MariaTypes.varchar.underlying
     )
   }
 
@@ -65,7 +64,7 @@ class VInventoryStatusViewFields(val `_path`: java.util.List[Path]) extends Tupl
       None,
       None,
       (row, value) => row.copy(warehouseId = value),
-      WarehousesId.mariaType
+      WarehousesId.mariaType.underlying
     )
   }
 
@@ -77,7 +76,7 @@ class VInventoryStatusViewFields(val `_path`: java.util.List[Path]) extends Tupl
       None,
       None,
       (row, value) => row.copy(warehouseCode = value),
-      MariaTypes.char_
+      MariaTypes.char_.underlying
     )
   }
 
@@ -89,7 +88,7 @@ class VInventoryStatusViewFields(val `_path`: java.util.List[Path]) extends Tupl
       None,
       None,
       (row, value) => row.copy(warehouseName = value),
-      MariaTypes.varchar
+      MariaTypes.varchar.underlying
     )
   }
 
@@ -101,7 +100,7 @@ class VInventoryStatusViewFields(val `_path`: java.util.List[Path]) extends Tupl
       None,
       None,
       (row, value) => row.copy(quantityOnHand = value),
-      ScalaDbTypes.MariaTypes.int_
+      MariaTypes.int_.underlying
     )
   }
 
@@ -113,7 +112,7 @@ class VInventoryStatusViewFields(val `_path`: java.util.List[Path]) extends Tupl
       None,
       None,
       (row, value) => row.copy(quantityReserved = value),
-      ScalaDbTypes.MariaTypes.int_
+      MariaTypes.int_.underlying
     )
   }
 
@@ -125,7 +124,7 @@ class VInventoryStatusViewFields(val `_path`: java.util.List[Path]) extends Tupl
       None,
       None,
       (row, value) => row.copy(quantityOnOrder = value),
-      ScalaDbTypes.MariaTypes.int_
+      MariaTypes.int_.underlying
     )
   }
 
@@ -137,7 +136,7 @@ class VInventoryStatusViewFields(val `_path`: java.util.List[Path]) extends Tupl
       None,
       None,
       (row, value) => row.copy(available = value),
-      ScalaDbTypes.MariaTypes.bigint
+      MariaTypes.bigint.underlying
     )
   }
 
@@ -149,7 +148,7 @@ class VInventoryStatusViewFields(val `_path`: java.util.List[Path]) extends Tupl
       None,
       None,
       (row, value) => row.copy(reorderPoint = value),
-      ScalaDbTypes.MariaTypes.int_
+      MariaTypes.int_.underlying
     )
   }
 
@@ -161,7 +160,7 @@ class VInventoryStatusViewFields(val `_path`: java.util.List[Path]) extends Tupl
       None,
       None,
       (row, value) => row.copy(stockStatus = value),
-      MariaTypes.varchar
+      MariaTypes.varchar.underlying
     )
   }
 
@@ -173,7 +172,7 @@ class VInventoryStatusViewFields(val `_path`: java.util.List[Path]) extends Tupl
       None,
       None,
       (row, value) => row.copy(binLocation = value),
-      MariaTypes.varchar
+      MariaTypes.varchar.underlying
     )
   }
 
@@ -185,13 +184,13 @@ class VInventoryStatusViewFields(val `_path`: java.util.List[Path]) extends Tupl
       None,
       None,
       (row, value) => row.copy(lastCountedAt = value),
-      MariaTypes.datetime
+      MariaTypes.datetime.underlying
     )
   }
 
   override def columns: java.util.List[FieldLike[?, VInventoryStatusViewRow]] = java.util.List.of(this.productId.underlying, this.sku.underlying, this.productName.underlying, this.warehouseId.underlying, this.warehouseCode.underlying, this.warehouseName.underlying, this.quantityOnHand.underlying, this.quantityReserved.underlying, this.quantityOnOrder.underlying, this.available.underlying, this.reorderPoint.underlying, this.stockStatus.underlying, this.binLocation.underlying, this.lastCountedAt.underlying)
 
-  override def rowParser: RowParser[VInventoryStatusViewRow] = VInventoryStatusViewRow._rowParser.underlying
+  override def rowCodec: RowCodec[VInventoryStatusViewRow] = VInventoryStatusViewRow.rowCodec.underlying
 
   override def withPaths(`_path`: java.util.List[Path]): RelationStructure[VInventoryStatusViewFields, VInventoryStatusViewRow] = new VInventoryStatusViewFields(`_path`)
 

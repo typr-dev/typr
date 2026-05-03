@@ -5,25 +5,21 @@
  */
 package adventureworks.public
 
-import dev.typr.foundations.PgRead
-import dev.typr.foundations.PgStruct
-import dev.typr.foundations.PgType
-import dev.typr.foundations.kotlin.KotlinDbTypes
-import java.util.Optional
+import dev.typr.foundationskt.PgType
+import dev.typr.foundationskt.PgTypes
+import dev.typr.foundationskt.RowCodec
+import kotlin.collections.List
 
 /** PostgreSQL composite type: public.complex */
 data class Complex(
-  val r: Double?,
-  val i: Double?
+  val r: kotlin.Double?,
+  val i: kotlin.Double?
 ) {
   companion object {
-    val pgStruct: PgStruct<Complex> =
-      PgStruct.builder<Complex>("public.complex").optField("r", KotlinDbTypes.PgTypes.float8, { v: Complex -> Optional.ofNullable(v.r) }).optField("i", KotlinDbTypes.PgTypes.float8, { v: Complex -> Optional.ofNullable(v.i) }).build({ arr -> Complex(arr[0] as? Double, arr[1] as? Double) })
-
     val pgType: PgType<Complex> =
-      pgStruct.asType()
+      PgTypes.compositeOf("public.complex", RowCodec.namedBuilder<Complex>().field("r", PgTypes.float8.opt(), { v: Complex -> v.r }).field("i", PgTypes.float8.opt(), { v: Complex -> v.i }).build({ t0, t1 -> Complex(t0, t1) }))
 
-    val pgTypeArray: PgType<Array<Complex>> =
-      pgType.array(PgRead.readCompositeArray(pgType.pgCompositeText(), { n -> arrayOfNulls<Complex>(n) }), { n -> arrayOfNulls<Complex>(n) })
+    val pgTypeArray: PgType<List<Complex>> =
+      pgType.array()
   }
 }

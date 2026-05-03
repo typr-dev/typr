@@ -9,25 +9,24 @@ import adventureworks.customtypes.Defaulted
 import adventureworks.customtypes.Defaulted.UseDefault
 import adventureworks.person.stateprovince.StateprovinceId
 import dev.typr.foundations.PgText
-import dev.typr.foundations.PgTypes
-import dev.typr.foundations.kotlin.nullable
+import dev.typr.foundationskt.PgTypes
 import java.time.LocalDateTime
 import java.util.UUID
 
 /** This class corresponds to a row in table `person.address` which has not been persisted yet */
 data class AddressRowUnsaved(
   /** First street address line. */
-  val addressline1: String,
+  val addressline1: kotlin.String,
   /** Second street address line. */
-  val addressline2: /* max 60 chars */ String? = null,
+  val addressline2: /* max 60 chars */ kotlin.String? = null,
   /** Name of the city. */
-  val city: String,
+  val city: kotlin.String,
   /** Unique identification number for the state or province. Foreign key to StateProvince table.
     * Points to [adventureworks.person.stateprovince.StateprovinceRow.stateprovinceid]
     */
   val stateprovinceid: StateprovinceId,
   /** Postal code for the street address. */
-  val postalcode: String,
+  val postalcode: kotlin.String,
   /** Latitude and longitude of this address. */
   val spatiallocation: ByteArray? = null,
   /** Default: nextval('person.address_addressid_seq'::regclass)
@@ -47,22 +46,22 @@ data class AddressRowUnsaved(
 
   companion object {
     val pgText: PgText<AddressRowUnsaved> =
-      PgText.instance({ row, sb -> PgTypes.text.text().unsafeEncode(row.addressline1, sb)
+      PgText.instance({ row, sb -> PgTypes.text.pgText().unsafeEncode(row.addressline1, sb)
       sb.append(PgText.DELIMETER)
-      PgTypes.text.nullable().text().unsafeEncode(row.addressline2, sb)
+      PgTypes.text.opt().pgText().unsafeEncode(row.addressline2, sb)
       sb.append(PgText.DELIMETER)
-      PgTypes.text.text().unsafeEncode(row.city, sb)
+      PgTypes.text.pgText().unsafeEncode(row.city, sb)
       sb.append(PgText.DELIMETER)
-      StateprovinceId.pgType.text().unsafeEncode(row.stateprovinceid, sb)
+      StateprovinceId.pgType.pgText().unsafeEncode(row.stateprovinceid, sb)
       sb.append(PgText.DELIMETER)
-      PgTypes.text.text().unsafeEncode(row.postalcode, sb)
+      PgTypes.text.pgText().unsafeEncode(row.postalcode, sb)
       sb.append(PgText.DELIMETER)
-      PgTypes.bytea.nullable().text().unsafeEncode(row.spatiallocation, sb)
+      PgTypes.bytea.opt().pgText().unsafeEncode(row.spatiallocation, sb)
       sb.append(PgText.DELIMETER)
-      Defaulted.pgText(AddressId.pgType.text()).unsafeEncode(row.addressid, sb)
+      Defaulted.pgText(AddressId.pgType.pgText()).unsafeEncode(row.addressid, sb)
       sb.append(PgText.DELIMETER)
-      Defaulted.pgText(PgTypes.uuid.text()).unsafeEncode(row.rowguid, sb)
+      Defaulted.pgText(PgTypes.uuid.pgText()).unsafeEncode(row.rowguid, sb)
       sb.append(PgText.DELIMETER)
-      Defaulted.pgText(PgTypes.timestamp.text()).unsafeEncode(row.modifieddate, sb) })
+      Defaulted.pgText(PgTypes.timestamp.pgText()).unsafeEncode(row.modifieddate, sb) })
   }
 }

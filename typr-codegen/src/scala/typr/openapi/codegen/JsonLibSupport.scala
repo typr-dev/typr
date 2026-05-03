@@ -1,0 +1,388 @@
+package typr.openapi.codegen
+
+import typr.{TypesJava, TypesScala}
+import typr.internal.codegen.{CodeInterpolator, CodeOps, toCode}
+import typr.jvm
+import typr.jvm.Code.TreeOps
+import typr.openapi.SumType
+
+/** Support for JSON library annotations in OpenAPI code generation */
+trait JsonLibSupport {
+
+  /** Annotations for a model class */
+  def modelAnnotations: List[jvm.Annotation]
+
+  /** Annotations for a data class field property (uses @field: target in Kotlin) */
+  def propertyAnnotations(originalName: String): List[jvm.Annotation]
+
+  /** Annotations for a method property (no use-site target) */
+  def methodPropertyAnnotations(originalName: String): List[jvm.Annotation]
+
+  /** Annotations for a value field (in wrapper types) - placed on parameter */
+  def valueAnnotations: List[jvm.Annotation]
+
+  /** Annotations for the constructor of a wrapper type - placed before constructor keyword in Kotlin */
+  def constructorAnnotations: List[jvm.Annotation]
+
+  /** Annotations for a wrapper type */
+  def wrapperAnnotations(tpe: jvm.Type.Qualified): List[jvm.Annotation]
+
+  /** Annotations for a sum type (sealed interface) - OpenAPI specific */
+  def sumTypeAnnotations(sumType: SumType): List[jvm.Annotation]
+
+  /** Annotations for a sealed type with given subtypes (generic, for Avro and other uses)
+    * @param subtypes
+    *   List of (subtype, discriminatorValue) pairs
+    * @param discriminatorProperty
+    *   The JSON property name for the type discriminator (e.g., "@type")
+    */
+  def sealedTypeAnnotations(subtypes: List[(jvm.Type.Qualified, String)], discriminatorProperty: String): List[jvm.Annotation]
+
+  /** Static members to add to object type companion objects (e.g., Circe codecs) */
+  def objectTypeStaticMembers(tpe: jvm.Type.Qualified): List[jvm.ClassMember]
+
+  /** Static members to add to wrapper type companion objects */
+  def wrapperTypeStaticMembers(tpe: jvm.Type.Qualified, underlyingType: jvm.Type): List[jvm.ClassMember]
+
+  /** Static members to add to enum type companion objects */
+  def enumTypeStaticMembers(tpe: jvm.Type.Qualified): List[jvm.ClassMember]
+
+  /** Static members to add to sum type companion objects */
+  def sumTypeStaticMembers(tpe: jvm.Type.Qualified, sumType: SumType): List[jvm.ClassMember]
+}
+
+/** No JSON annotations - for manual codec derivation */
+object NoJsonLibSupport extends JsonLibSupport {
+  override def modelAnnotations: List[jvm.Annotation] = Nil
+  override def propertyAnnotations(originalName: String): List[jvm.Annotation] = Nil
+  override def methodPropertyAnnotations(originalName: String): List[jvm.Annotation] = Nil
+  override def valueAnnotations: List[jvm.Annotation] = Nil
+  override def constructorAnnotations: List[jvm.Annotation] = Nil
+  override def wrapperAnnotations(tpe: jvm.Type.Qualified): List[jvm.Annotation] = Nil
+  override def sumTypeAnnotations(sumType: SumType): List[jvm.Annotation] = Nil
+  override def sealedTypeAnnotations(subtypes: List[(jvm.Type.Qualified, String)], discriminatorProperty: String): List[jvm.Annotation] = Nil
+  override def objectTypeStaticMembers(tpe: jvm.Type.Qualified): List[jvm.ClassMember] = Nil
+  override def wrapperTypeStaticMembers(tpe: jvm.Type.Qualified, underlyingType: jvm.Type): List[jvm.ClassMember] = Nil
+  override def enumTypeStaticMembers(tpe: jvm.Type.Qualified): List[jvm.ClassMember] = Nil
+  override def sumTypeStaticMembers(tpe: jvm.Type.Qualified, sumType: SumType): List[jvm.ClassMember] = Nil
+}
+
+/** Jackson annotations for OpenAPI code generation.
+  *
+  * Emits the same AST for all languages - each language renderer handles language-specific output:
+  *   - Use-site targets (@get:) are rendered by Kotlin, ignored by Java/Scala
+  *   - Annotation arrays render as [ ] in Kotlin, { } in Java
+  *   - ClassOf renders as ::class in Kotlin, .class in Java (Kotlin auto-converts for annotation args)
+  */
+object JacksonSupport extends JsonLibSupport {
+
+  override def modelAnnotations: List[jvm.Annotation] = Nil
+
+  override def propertyAnnotations(originalName: String): List[jvm.Annotation] = {
+    List(
+      jvm.Annotation(
+        Types.Jackson.JsonProperty,
+        List(jvm.Annotation.Arg.Positional(jvm.StrLit(originalName).code)),
+        useTarget = Some(jvm.Annotation.UseTarget.Field)
+      )
+    )
+  }
+
+  override def methodPropertyAnnotations(originalName: String): List[jvm.Annotation] = {
+    List(
+      jvm.Annotation(
+        Types.Jackson.JsonProperty,
+        List(jvm.Annotation.Arg.Positional(jvm.StrLit(originalName).code))
+      )
+    )
+  }
+
+  override def valueAnnotations: List[jvm.Annotation] = {
+    // Use-site target is rendered by Kotlin (as @get:JsonValue), ignored by Java/Scala
+    List(
+      jvm.Annotation(Types.Jackson.JsonValue, Nil, useTarget = Some(jvm.Annotation.UseTarget.Get))
+    )
+  }
+
+  override def constructorAnnotations: List[jvm.Annotation] = {
+    // @JsonCreator goes on the constructor (Kotlin: `@JsonCreator constructor(...)`)
+    // For Java, this annotation is placed before the constructor
+    List(
+      jvm.Annotation(Types.Jackson.JsonCreator, Nil)
+    )
+  }
+
+  override def wrapperAnnotations(tpe: jvm.Type.Qualified): List[jvm.Annotation] = {
+    // Wrapper types use custom serializers/deserializers
+    Nil
+  }
+
+  override def sumTypeAnnotations(sumType: SumType): List[jvm.Annotation] = {
+    if (sumType.usesTypeInference) {
+      // Use Jackson's type inference (DEDUCTION) for discriminator-less oneOf
+      val typeInfoAnnotation = jvm.Annotation(
+        Types.Jackson.JsonTypeInfo,
+        List(
+          jvm.Annotation.Arg.Named(jvm.Ident("use"), code"${Types.Jackson.JsonTypeInfo}.Id.DEDUCTION")
+        )
+      )
+
+      // Still need @JsonSubTypes to tell Jackson what types to consider
+      val subTypesArgs = sumType.subtypeNames.map { subName =>
+        val subtypeTpe = jvm.Type.Qualified(jvm.QIdent(List(jvm.Ident(subName))))
+        jvm.Annotation(
+          Types.Jackson.JsonSubTypesType,
+          List(
+            jvm.Annotation.Arg.Named(jvm.Ident("value"), jvm.ClassOf(subtypeTpe).code)
+          )
+        )
+      }
+
+      val subTypesAnnotation = jvm.Annotation(
+        Types.Jackson.JsonSubTypes,
+        List(jvm.Annotation.Arg.Named(jvm.Ident("value"), jvm.AnnotationArray(subTypesArgs.map(_.code)).code))
+      )
+
+      List(typeInfoAnnotation, subTypesAnnotation)
+    } else {
+      // Explicit property-based discrimination
+      val typeInfoAnnotation = jvm.Annotation(
+        Types.Jackson.JsonTypeInfo,
+        List(
+          jvm.Annotation.Arg.Named(jvm.Ident("use"), code"${Types.Jackson.JsonTypeInfo}.Id.NAME"),
+          jvm.Annotation.Arg.Named(jvm.Ident("include"), code"${Types.Jackson.JsonTypeInfo}.As.EXISTING_PROPERTY"),
+          jvm.Annotation.Arg.Named(jvm.Ident("property"), jvm.StrLit(sumType.discriminator.propertyName).code)
+        )
+      )
+
+      // Build nested annotations using proper AST - AnnotationArray renders as [ ] in Kotlin, { } in Java
+      // Use ClassOf for annotation arguments - Kotlin auto-converts ::class (KClass) to Java Class for annotations
+      val subTypesArgs = sumType.subtypeNames.map { subName =>
+        val discValue = sumType.discriminator.mapping.getOrElse(subName, subName)
+        val subtypeTpe = jvm.Type.Qualified(jvm.QIdent(List(jvm.Ident(subName))))
+        jvm.Annotation(
+          Types.Jackson.JsonSubTypesType,
+          List(
+            jvm.Annotation.Arg.Named(jvm.Ident("value"), jvm.ClassOf(subtypeTpe).code),
+            jvm.Annotation.Arg.Named(jvm.Ident("name"), jvm.StrLit(discValue).code)
+          )
+        )
+      }
+
+      val subTypesAnnotation = jvm.Annotation(
+        Types.Jackson.JsonSubTypes,
+        List(jvm.Annotation.Arg.Named(jvm.Ident("value"), jvm.AnnotationArray(subTypesArgs.map(_.code)).code))
+      )
+
+      List(typeInfoAnnotation, subTypesAnnotation)
+    }
+  }
+
+  override def sealedTypeAnnotations(subtypes: List[(jvm.Type.Qualified, String)], discriminatorProperty: String): List[jvm.Annotation] = {
+    // @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = discriminatorProperty)
+    val typeInfoAnnotation = jvm.Annotation(
+      Types.Jackson.JsonTypeInfo,
+      List(
+        jvm.Annotation.Arg.Named(jvm.Ident("use"), code"${Types.Jackson.JsonTypeInfo}.Id.NAME"),
+        jvm.Annotation.Arg.Named(jvm.Ident("include"), code"${Types.Jackson.JsonTypeInfo}.As.PROPERTY"),
+        jvm.Annotation.Arg.Named(jvm.Ident("property"), jvm.StrLit(discriminatorProperty).code)
+      )
+    )
+
+    // @JsonSubTypes({ @Type(value = X.class, name = "X"), ... })
+    val subTypesArgs = subtypes.map { case (subtypeTpe, discValue) =>
+      jvm.Annotation(
+        Types.Jackson.JsonSubTypesType,
+        List(
+          jvm.Annotation.Arg.Named(jvm.Ident("value"), jvm.ClassOf(subtypeTpe).code),
+          jvm.Annotation.Arg.Named(jvm.Ident("name"), jvm.StrLit(discValue).code)
+        )
+      )
+    }
+
+    val subTypesAnnotation = jvm.Annotation(
+      Types.Jackson.JsonSubTypes,
+      List(jvm.Annotation.Arg.Named(jvm.Ident("value"), jvm.AnnotationArray(subTypesArgs.map(_.code)).code))
+    )
+
+    List(typeInfoAnnotation, subTypesAnnotation)
+  }
+
+  override def objectTypeStaticMembers(tpe: jvm.Type.Qualified): List[jvm.ClassMember] = Nil
+  override def wrapperTypeStaticMembers(tpe: jvm.Type.Qualified, underlyingType: jvm.Type): List[jvm.ClassMember] = Nil
+  override def enumTypeStaticMembers(tpe: jvm.Type.Qualified): List[jvm.ClassMember] = Nil
+  override def sumTypeStaticMembers(tpe: jvm.Type.Qualified, sumType: SumType): List[jvm.ClassMember] = Nil
+}
+
+/** Circe JSON support for Scala - generates encoder/decoder derivation in companion objects */
+object CirceSupport extends JsonLibSupport {
+  override def modelAnnotations: List[jvm.Annotation] = Nil
+  override def propertyAnnotations(originalName: String): List[jvm.Annotation] = Nil
+  override def methodPropertyAnnotations(originalName: String): List[jvm.Annotation] = Nil
+  override def valueAnnotations: List[jvm.Annotation] = Nil
+  override def constructorAnnotations: List[jvm.Annotation] = Nil
+  override def wrapperAnnotations(tpe: jvm.Type.Qualified): List[jvm.Annotation] = Nil
+  override def sumTypeAnnotations(sumType: SumType): List[jvm.Annotation] = Nil
+  override def sealedTypeAnnotations(subtypes: List[(jvm.Type.Qualified, String)], discriminatorProperty: String): List[jvm.Annotation] = Nil
+
+  override def objectTypeStaticMembers(tpe: jvm.Type.Qualified): List[jvm.ClassMember] = {
+    // Generate: implicit val encoder: Encoder[T] = deriveEncoder[T]
+    //           implicit val decoder: Decoder[T] = deriveDecoder[T]
+    val encoderVal = jvm.Value(
+      annotations = Nil,
+      name = jvm.Ident("encoder"),
+      tpe = jvm.Type.TApply(Types.Circe.Encoder, List(tpe)),
+      body = Some(code"${Types.Circe.deriveEncoder}[$tpe]"),
+      isLazy = false,
+      isOverride = false,
+      isImplicit = true
+    )
+    val decoderVal = jvm.Value(
+      annotations = Nil,
+      name = jvm.Ident("decoder"),
+      tpe = jvm.Type.TApply(Types.Circe.Decoder, List(tpe)),
+      body = Some(code"${Types.Circe.deriveDecoder}[$tpe]"),
+      isLazy = false,
+      isOverride = false,
+      isImplicit = true
+    )
+    List(encoderVal, decoderVal)
+  }
+
+  override def wrapperTypeStaticMembers(tpe: jvm.Type.Qualified, underlyingType: jvm.Type): List[jvm.ClassMember] = {
+    // For wrapper types, derive from underlying type:
+    // implicit val encoder: Encoder[T] = Encoder[U].contramap(_.value)
+    // implicit val decoder: Decoder[T] = Decoder[U].map(T.apply)
+    val encoderVal = jvm.Value(
+      annotations = Nil,
+      name = jvm.Ident("encoder"),
+      tpe = jvm.Type.TApply(Types.Circe.Encoder, List(tpe)),
+      body = Some(code"${Types.Circe.Encoder}[$underlyingType].contramap(_.value)"),
+      isLazy = false,
+      isOverride = false,
+      isImplicit = true
+    )
+    val decoderVal = jvm.Value(
+      annotations = Nil,
+      name = jvm.Ident("decoder"),
+      tpe = jvm.Type.TApply(Types.Circe.Decoder, List(tpe)),
+      body = Some(code"${Types.Circe.Decoder}[$underlyingType].map(${tpe.value.name}.apply)"),
+      isLazy = false,
+      isOverride = false,
+      isImplicit = true
+    )
+    List(encoderVal, decoderVal)
+  }
+
+  override def enumTypeStaticMembers(tpe: jvm.Type.Qualified): List[jvm.ClassMember] = {
+    // For enums: encode/decode as the string value
+    // implicit val encoder: Encoder[T] = Encoder.encodeString.contramap(_.value)
+    // implicit val decoder: Decoder[T] = Decoder.decodeString.emap(apply)
+    // Note: apply(str) returns Either[String, T] which is what emap expects
+    val encoderVal = jvm.Value(
+      annotations = Nil,
+      name = jvm.Ident("encoder"),
+      tpe = jvm.Type.TApply(Types.Circe.Encoder, List(tpe)),
+      body = Some(code"${Types.Circe.Encoder}.encodeString.contramap(_.value)"),
+      isLazy = false,
+      isOverride = false,
+      isImplicit = true
+    )
+    val decoderVal = jvm.Value(
+      annotations = Nil,
+      name = jvm.Ident("decoder"),
+      tpe = jvm.Type.TApply(Types.Circe.Decoder, List(tpe)),
+      body = Some(code"${Types.Circe.Decoder}.decodeString.emap(apply)"),
+      isLazy = false,
+      isOverride = false,
+      isImplicit = true
+    )
+    List(encoderVal, decoderVal)
+  }
+
+  override def sumTypeStaticMembers(tpe: jvm.Type.Qualified, sumType: SumType): List[jvm.ClassMember] = {
+    val subtypeNames = sumType.subtypeNames
+
+    // Generate encoder: pattern match on each subtype and encode using its encoder
+    // For discriminator-based sum types, add the discriminator field after encoding
+    val encoderVal = if (sumType.usesTypeInference) {
+      // For type-inferred sum types, just delegate to subtype encoder
+      val encoderCases = subtypeNames
+        .map { name =>
+          code"case x: $name => ${Types.Circe.Encoder}[$name].apply(x)"
+        }
+        .mkCode("\n      ")
+      jvm.Value(
+        annotations = Nil,
+        name = jvm.Ident("encoder"),
+        tpe = jvm.Type.TApply(Types.Circe.Encoder, List(tpe)),
+        body = Some(code"${Types.Circe.Encoder}.instance {\n      $encoderCases\n    }"),
+        isLazy = false,
+        isOverride = false,
+        isImplicit = true
+      )
+    } else {
+      // For discriminator-based sum types, add discriminator field after encoding
+      val discriminatorProp = sumType.discriminator.propertyName
+      val encoderCases = subtypeNames
+        .map { name =>
+          val discValue = sumType.discriminator.mapping.getOrElse(name, name.toLowerCase)
+          code"""case x: $name => ${Types.Circe.Encoder}[$name].apply(x).mapObject(_.add("$discriminatorProp", ${Types.Circe.Json}.fromString("$discValue")))"""
+        }
+        .mkCode("\n      ")
+      jvm.Value(
+        annotations = Nil,
+        name = jvm.Ident("encoder"),
+        tpe = jvm.Type.TApply(Types.Circe.Encoder, List(tpe)),
+        body = Some(code"${Types.Circe.Encoder}.instance {\n      $encoderCases\n    }"),
+        isLazy = false,
+        isOverride = false,
+        isImplicit = true
+      )
+    }
+
+    val decoderVal = if (sumType.usesTypeInference) {
+      // For type-inferred sum types, try each decoder in order (coproduct decoding)
+      // Decoder[T] = Decoder[A].map(x => x: T) or Decoder[B].map(x => x: T) or ...
+      val decoderChain = subtypeNames
+        .map { name =>
+          code"${Types.Circe.Decoder}[$name].map(x => x: $tpe)"
+        }
+        .mkCode(" or ")
+      jvm.Value(
+        annotations = Nil,
+        name = jvm.Ident("decoder"),
+        tpe = jvm.Type.TApply(Types.Circe.Decoder, List(tpe)),
+        body = Some(decoderChain),
+        isLazy = false,
+        isOverride = false,
+        isImplicit = true
+      )
+    } else {
+      // For discriminator-based sum types, read discriminator then delegate
+      val discriminatorProp = sumType.discriminator.propertyName
+      val decoderCases = subtypeNames
+        .map { name =>
+          val discValue = sumType.discriminator.mapping.getOrElse(name, name)
+          code"""case "$discValue" => cursor.as[$name]"""
+        }
+        .mkCode("\n        ")
+      jvm.Value(
+        annotations = Nil,
+        name = jvm.Ident("decoder"),
+        tpe = jvm.Type.TApply(Types.Circe.Decoder, List(tpe)),
+        body = Some(code"""${Types.Circe.Decoder}.instance { cursor =>
+      cursor.get[${TypesJava.String}]("$discriminatorProp").flatMap {
+        $decoderCases
+        case other => ${TypesScala.Left}(${Types.Circe.DecodingFailure}(s"Unknown discriminator value: $$other", cursor.history))
+      }
+    }"""),
+        isLazy = false,
+        isOverride = false,
+        isImplicit = true
+      )
+    }
+
+    List(encoderVal, decoderVal)
+  }
+}

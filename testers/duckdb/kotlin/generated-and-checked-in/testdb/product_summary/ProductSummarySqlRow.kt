@@ -6,12 +6,10 @@
 package testdb.product_summary
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import dev.typr.foundations.DuckDbTypes
+import dev.typr.dslkt.RowCodecs
 import dev.typr.foundations.Tuple.Tuple7
-import dev.typr.foundations.kotlin.KotlinDbTypes
-import dev.typr.foundations.kotlin.RowParser
-import dev.typr.foundations.kotlin.RowParsers
-import dev.typr.foundations.kotlin.nullable
+import dev.typr.foundationskt.DuckDbTypes
+import dev.typr.foundationskt.RowCodec
 import java.math.BigDecimal
 import testdb.products.ProductsId
 
@@ -20,32 +18,32 @@ data class ProductSummarySqlRow(
   /** Points to [testdb.products.ProductsRow.productId] */
   @field:JsonProperty("product_id") val productId: ProductsId,
   /** Points to [testdb.products.ProductsRow.name] */
-  @field:JsonProperty("product_name") val productName: String,
+  @field:JsonProperty("product_name") val productName: kotlin.String,
   /** Points to [testdb.products.ProductsRow.sku] */
-  val sku: String,
+  val sku: kotlin.String,
   /** Points to [testdb.products.ProductsRow.price] */
   val price: BigDecimal,
-  @field:JsonProperty("order_count") val orderCount: Long,
+  @field:JsonProperty("order_count") val orderCount: kotlin.Long,
   /** Points to [testdb.order_items.OrderItemsRow.quantity] */
-  @field:JsonProperty("total_quantity") val totalQuantity: Long?,
-  /** Points to [testdb.order_items.OrderItemsRow.unitPrice] */
+  @field:JsonProperty("total_quantity") val totalQuantity: kotlin.Long?,
+  /** Points to [testdb.order_items.OrderItemsRow.quantity] */
   @field:JsonProperty("total_revenue") val totalRevenue: BigDecimal?
-) : Tuple7<ProductsId, String, String, BigDecimal, Long, Long?, BigDecimal?> {
+) : Tuple7<ProductsId, kotlin.String, kotlin.String, BigDecimal, kotlin.Long, kotlin.Long?, BigDecimal?> {
   override fun _1(): ProductsId = productId
 
-  override fun _2(): String = productName
+  override fun _2(): kotlin.String = productName
 
-  override fun _3(): String = sku
+  override fun _3(): kotlin.String = sku
 
   override fun _4(): BigDecimal = price
 
-  override fun _5(): Long = orderCount
+  override fun _5(): kotlin.Long = orderCount
 
-  override fun _6(): Long? = totalQuantity
+  override fun _6(): kotlin.Long? = totalQuantity
 
   override fun _7(): BigDecimal? = totalRevenue
 
   companion object {
-    val _rowParser: RowParser<ProductSummarySqlRow> = RowParsers.of(ProductsId.duckDbType, DuckDbTypes.varchar, DuckDbTypes.varchar, DuckDbTypes.numeric, KotlinDbTypes.DuckDbTypes.bigint, KotlinDbTypes.DuckDbTypes.bigint.nullable(), DuckDbTypes.numeric.nullable(), { t0, t1, t2, t3, t4, t5, t6 -> ProductSummarySqlRow(t0, t1, t2, t3, t4, t5, t6) }, { row -> arrayOf<Any?>(row.productId, row.productName, row.sku, row.price, row.orderCount, row.totalQuantity, row.totalRevenue) })
+    val rowCodec: RowCodec<ProductSummarySqlRow> = RowCodecs.of(ProductsId.duckDbType, DuckDbTypes.varchar, DuckDbTypes.varchar, DuckDbTypes.numeric, DuckDbTypes.bigint, DuckDbTypes.bigint.opt(), DuckDbTypes.numeric.opt(), { t0: ProductsId, t1: kotlin.String, t2: kotlin.String, t3: BigDecimal, t4: kotlin.Long, t5: kotlin.Long?, t6: BigDecimal? -> ProductSummarySqlRow(t0, t1, t2, t3, t4, t5, t6) }, { row: ProductSummarySqlRow -> arrayOf<Any?>(row.productId, row.productName, row.sku, row.price, row.orderCount, row.totalQuantity, row.totalRevenue) })
   }
 }

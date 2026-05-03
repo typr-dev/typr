@@ -36,7 +36,7 @@ object TypoOffsetTime {
       .contramap(_.map(v => v.value.toString()))
   }
 
-  implicit lazy val bijection: Bijection[TypoOffsetTime, OffsetTime] = Bijection.apply[TypoOffsetTime, OffsetTime](_.value)(TypoOffsetTime.apply)
+  implicit lazy val bijection: Bijection[TypoOffsetTime, OffsetTime] = Bijection[TypoOffsetTime, OffsetTime](_.value)(TypoOffsetTime.apply)
 
   implicit lazy val decoder: Decoder[TypoOffsetTime] = Decoder.decodeOffsetTime.map(TypoOffsetTime.apply)
 

@@ -1,12 +1,13 @@
 package typr.avro.codegen
 
+import typr.boundaries.framework.Framework
 import typr.jvm
 
 /** Framework integration for generating Kafka event publishers/listeners and RPC client/server.
   *
-  * Implementations provide framework-specific types and code patterns for Spring and Quarkus.
+  * Implementations provide framework-specific types and code patterns for Spring and Quarkus. Extends the base Framework trait to share common DI patterns.
   */
-trait KafkaFramework {
+trait KafkaFramework extends Framework {
 
   /** Effect type for async operations (e.g., CompletableFuture, Uni) */
   def effectType: jvm.Type.Qualified
@@ -16,12 +17,6 @@ trait KafkaFramework {
 
   /** Void wrapped in effect type */
   def voidEffectType: jvm.Type
-
-  /** Service/bean class annotation */
-  def serviceAnnotation: jvm.Annotation
-
-  /** Constructor injection annotations (empty list for Spring implicit injection) */
-  def constructorAnnotations: List[jvm.Annotation]
 
   // ===== Event Publishing =====
 

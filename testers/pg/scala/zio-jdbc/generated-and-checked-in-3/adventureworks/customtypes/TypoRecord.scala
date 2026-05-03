@@ -53,7 +53,7 @@ object TypoRecord {
     )
   }
 
-  given bijection: Bijection[TypoRecord, String] = Bijection.apply[TypoRecord, String](_.value)(TypoRecord.apply)
+  given bijection: Bijection[TypoRecord, String] = Bijection[TypoRecord, String](_.value)(TypoRecord.apply)
 
   given jdbcDecoder: JdbcDecoder[TypoRecord] = {
     JdbcDecoder[TypoRecord](

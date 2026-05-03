@@ -50,7 +50,7 @@ object TypoUUID {
     )
   }
 
-  given bijection: Bijection[TypoUUID, UUID] = Bijection.apply[TypoUUID, UUID](_.value)(TypoUUID.apply)
+  given bijection: Bijection[TypoUUID, UUID] = Bijection[TypoUUID, UUID](_.value)(TypoUUID.apply)
 
   given jdbcDecoder: JdbcDecoder[TypoUUID] = {
     JdbcDecoder[TypoUUID](

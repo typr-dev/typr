@@ -17,7 +17,7 @@ import typr.dsl.Bijection
 case class TypoBytea(value: Array[Byte])
 
 object TypoBytea {
-  implicit lazy val bijection: Bijection[TypoBytea, Array[Byte]] = Bijection.apply[TypoBytea, Array[Byte]](_.value)(TypoBytea.apply)
+  implicit lazy val bijection: Bijection[TypoBytea, Array[Byte]] = Bijection[TypoBytea, Array[Byte]](_.value)(TypoBytea.apply)
 
   implicit lazy val decoder: Decoder[TypoBytea] = Decoder.decodeArray[Byte](Decoder.decodeByte, implicitly).map(TypoBytea.apply)
 

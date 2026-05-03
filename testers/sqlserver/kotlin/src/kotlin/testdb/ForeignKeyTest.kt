@@ -15,7 +15,7 @@ import java.util.Random
  * orders/products relationships.
  */
 class ForeignKeyTest {
-    private val testInsert = TestInsert(Random(42))
+    private val testInsert = TestInsert(Random(1236158911))
     private val customersRepo = CustomersRepoImpl()
     private val productsRepo = ProductsRepoImpl()
     private val ordersRepo = OrdersRepoImpl()

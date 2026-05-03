@@ -6,12 +6,10 @@
 package oracledb.all_scalar_types
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import dev.typr.foundations.OracleTypes
+import dev.typr.dslkt.RowCodecs
 import dev.typr.foundations.Tuple.Tuple7
-import dev.typr.foundations.kotlin.KotlinDbTypes
-import dev.typr.foundations.kotlin.RowParser
-import dev.typr.foundations.kotlin.RowParsers
-import dev.typr.foundations.kotlin.nullable
+import dev.typr.foundationskt.OracleTypes
+import dev.typr.foundationskt.RowCodec
 import java.math.BigDecimal
 import java.time.LocalDateTime
 import oracledb.customtypes.Defaulted
@@ -20,18 +18,18 @@ import oracledb.customtypes.Defaulted
   * Primary key: ID
   */
 data class AllScalarTypesRow(
-  /** Default: "TYPR"."ISEQ$$_72845".nextval */
+  /** Default: "TYPR"."ISEQ$$_72835".nextval */
   @field:JsonProperty("ID") val id: AllScalarTypesId,
-  @field:JsonProperty("COL_VARCHAR2") val colVarchar2: String?,
+  @field:JsonProperty("COL_VARCHAR2") val colVarchar2: kotlin.String?,
   @field:JsonProperty("COL_NUMBER") val colNumber: BigDecimal?,
   @field:JsonProperty("COL_DATE") val colDate: LocalDateTime?,
   @field:JsonProperty("COL_TIMESTAMP") val colTimestamp: LocalDateTime?,
-  @field:JsonProperty("COL_CLOB") val colClob: String?,
-  @field:JsonProperty("COL_NOT_NULL") val colNotNull: String
-) : Tuple7<AllScalarTypesId, String?, BigDecimal?, LocalDateTime?, LocalDateTime?, String?, String> {
+  @field:JsonProperty("COL_CLOB") val colClob: kotlin.String?,
+  @field:JsonProperty("COL_NOT_NULL") val colNotNull: kotlin.String
+) : Tuple7<AllScalarTypesId, kotlin.String?, BigDecimal?, LocalDateTime?, LocalDateTime?, kotlin.String?, kotlin.String> {
   override fun _1(): AllScalarTypesId = id
 
-  override fun _2(): String? = colVarchar2
+  override fun _2(): kotlin.String? = colVarchar2
 
   override fun _3(): BigDecimal? = colNumber
 
@@ -39,13 +37,13 @@ data class AllScalarTypesRow(
 
   override fun _5(): LocalDateTime? = colTimestamp
 
-  override fun _6(): String? = colClob
+  override fun _6(): kotlin.String? = colClob
 
-  override fun _7(): String = colNotNull
+  override fun _7(): kotlin.String = colNotNull
 
   fun toUnsavedRow(id: Defaulted<AllScalarTypesId>): AllScalarTypesRowUnsaved = AllScalarTypesRowUnsaved(colVarchar2, colNumber, colDate, colTimestamp, colClob, colNotNull, id)
 
   companion object {
-    val _rowParser: RowParser<AllScalarTypesRow> = RowParsers.of(AllScalarTypesId.oracleType, OracleTypes.varchar2.nullable(), KotlinDbTypes.OracleTypes.number.nullable(), OracleTypes.date.nullable(), OracleTypes.timestamp.nullable(), OracleTypes.clob.nullable(), OracleTypes.varchar2, { t0, t1, t2, t3, t4, t5, t6 -> AllScalarTypesRow(t0, t1, t2, t3, t4, t5, t6) }, { row -> arrayOf<Any?>(row.id, row.colVarchar2, row.colNumber, row.colDate, row.colTimestamp, row.colClob, row.colNotNull) })
+    val rowCodec: RowCodec<AllScalarTypesRow> = RowCodecs.of(AllScalarTypesId.oracleType, OracleTypes.varchar2.opt(), OracleTypes.number.opt(), OracleTypes.date.opt(), OracleTypes.timestamp.opt(), OracleTypes.clob.opt(), OracleTypes.varchar2, { t0: AllScalarTypesId, t1: kotlin.String?, t2: BigDecimal?, t3: LocalDateTime?, t4: LocalDateTime?, t5: kotlin.String?, t6: kotlin.String -> AllScalarTypesRow(t0, t1, t2, t3, t4, t5, t6) }, { row: AllScalarTypesRow -> arrayOf<Any?>(row.id, row.colVarchar2, row.colNumber, row.colDate, row.colTimestamp, row.colClob, row.colNotNull) })
   }
 }

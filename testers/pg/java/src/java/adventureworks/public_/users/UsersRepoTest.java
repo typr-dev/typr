@@ -65,7 +65,7 @@ public class UsersRepoTest {
 
           usersRepo.insertUnsavedStreaming(before.iterator(), 2, c);
 
-          UsersId[] ids = before.stream().map(UsersRowUnsaved::userId).toArray(UsersId[]::new);
+          var ids = before.stream().map(UsersRowUnsaved::userId).toList();
           var afterList = usersRepo.selectByIds(ids, c);
 
           Map<UsersId, UsersRowUnsaved> beforeById =
@@ -104,12 +104,11 @@ public class UsersRepoTest {
         WithConnection.apply(
             c -> {
               var versionResult =
-                  dev.typr.foundations.Fragment.lit("SELECT VERSION()")
+                  dev.typr.foundations.Fragment.of("SELECT VERSION()")
                       .query(
-                          dev.typr.foundations.RowParsers.of(
-                                  dev.typr.foundations.PgTypes.text, s -> s, s -> new Object[] {s})
+                          dev.typr.foundations.RowCodec.of(dev.typr.foundations.PgTypes.text)
                               .first())
-                      .runUnchecked(c);
+                      .run(c);
 
               if (versionResult.isEmpty()) {
                 System.err.println("Could not determine PostgreSQL version");

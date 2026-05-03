@@ -5,91 +5,91 @@
  */
 package testdb.precision_types_null
 
-import dev.typr.foundations.DuckDbTypes
-import dev.typr.foundations.scala.DbTypeOps
-import dev.typr.foundations.scala.DeleteBuilder
-import dev.typr.foundations.scala.Dialect
-import dev.typr.foundations.scala.Fragment
-import dev.typr.foundations.scala.SelectBuilder
-import dev.typr.foundations.scala.UpdateBuilder
-import java.sql.Connection
+import dev.typr.dslsc.DeleteBuilder
+import dev.typr.dslsc.Dialect
+import dev.typr.dslsc.SelectBuilder
+import dev.typr.dslsc.UpdateBuilder
+import dev.typr.foundationssc.Connection
+import dev.typr.foundationssc.ConnectionRead
+import dev.typr.foundationssc.DuckDbTypes
+import dev.typr.foundationssc.Fragment
 import testdb.precisetypes.Decimal10_2
 import testdb.precisetypes.Decimal18_4
 import testdb.precisetypes.Decimal5_2
 import testdb.precisetypes.Int10
 import testdb.precisetypes.Int18
 import testdb.precisetypes.Int5
-import dev.typr.foundations.scala.Fragment.sql
+import dev.typr.foundationssc.Fragment.sql
 
 class PrecisionTypesNullRepoImpl extends PrecisionTypesNullRepo {
   override def delete: DeleteBuilder[PrecisionTypesNullFields, PrecisionTypesNullRow] = DeleteBuilder.of(""""precision_types_null"""", PrecisionTypesNullFields.structure, Dialect.DUCKDB)
 
-  override def deleteById(id: PrecisionTypesNullId)(using c: Connection): Boolean = sql"""delete from "precision_types_null" where "id" = ${Fragment.encode(PrecisionTypesNullId.duckDbType, id)}""".update().runUnchecked(c) > 0
+  override def deleteById(id: PrecisionTypesNullId)(using c: Connection): Boolean = sql"""delete from "precision_types_null" where "id" = ${Fragment.encode(PrecisionTypesNullId.duckDbType, id)}""".update().run(using c) > 0
 
-  override def deleteByIds(ids: Array[PrecisionTypesNullId])(using c: Connection): Int = {
+  override def deleteByIds(ids: List[PrecisionTypesNullId])(using c: Connection): Int = {
     sql"""delete
     from "precision_types_null"
     where "id" = ANY(${Fragment.encode(PrecisionTypesNullId.duckDbTypeArray, ids)})"""
       .update()
-      .runUnchecked(c)
+      .run(using c)
   }
 
   override def insert(unsaved: PrecisionTypesNullRow)(using c: Connection): PrecisionTypesNullRow = {
   sql"""insert into "precision_types_null"("id", "string10", "string20", "string50", "string100", "string255", "decimal5_2", "decimal10_2", "decimal18_4", "decimal5_0", "decimal10_0", "decimal18_0")
-    values (${Fragment.encode(PrecisionTypesNullId.duckDbType, unsaved.id)}, ${Fragment.encode(DuckDbTypes.varchar.nullable, unsaved.string10)}, ${Fragment.encode(DuckDbTypes.varchar.nullable, unsaved.string20)}, ${Fragment.encode(DuckDbTypes.varchar.nullable, unsaved.string50)}, ${Fragment.encode(DuckDbTypes.varchar.nullable, unsaved.string100)}, ${Fragment.encode(DuckDbTypes.varchar.nullable, unsaved.string255)}, ${Fragment.encode(Decimal5_2.duckDbType.nullable, unsaved.decimal52)}, ${Fragment.encode(Decimal10_2.duckDbType.nullable, unsaved.decimal102)}, ${Fragment.encode(Decimal18_4.duckDbType.nullable, unsaved.decimal184)}, ${Fragment.encode(Int5.duckDbType.nullable, unsaved.decimal50)}, ${Fragment.encode(Int10.duckDbType.nullable, unsaved.decimal100)}, ${Fragment.encode(Int18.duckDbType.nullable, unsaved.decimal180)})
+    values (${Fragment.encode(PrecisionTypesNullId.duckDbType, unsaved.id)}, ${Fragment.encode(DuckDbTypes.varchar.opt, unsaved.string10)}, ${Fragment.encode(DuckDbTypes.varchar.opt, unsaved.string20)}, ${Fragment.encode(DuckDbTypes.varchar.opt, unsaved.string50)}, ${Fragment.encode(DuckDbTypes.varchar.opt, unsaved.string100)}, ${Fragment.encode(DuckDbTypes.varchar.opt, unsaved.string255)}, ${Fragment.encode(Decimal5_2.duckDbType.opt, unsaved.decimal52)}, ${Fragment.encode(Decimal10_2.duckDbType.opt, unsaved.decimal102)}, ${Fragment.encode(Decimal18_4.duckDbType.opt, unsaved.decimal184)}, ${Fragment.encode(Int5.duckDbType.opt, unsaved.decimal50)}, ${Fragment.encode(Int10.duckDbType.opt, unsaved.decimal100)}, ${Fragment.encode(Int18.duckDbType.opt, unsaved.decimal180)})
     RETURNING "id", "string10", "string20", "string50", "string100", "string255", "decimal5_2", "decimal10_2", "decimal18_4", "decimal5_0", "decimal10_0", "decimal18_0"
     """
-    .updateReturning(PrecisionTypesNullRow.`_rowParser`.exactlyOne()).runUnchecked(c)
+    .updateReturning(PrecisionTypesNullRow.rowCodec.exactlyOne()).run(using c)
   }
 
-  override def select: SelectBuilder[PrecisionTypesNullFields, PrecisionTypesNullRow] = SelectBuilder.of(""""precision_types_null"""", PrecisionTypesNullFields.structure, PrecisionTypesNullRow.`_rowParser`, Dialect.DUCKDB)
+  override def select: SelectBuilder[PrecisionTypesNullFields, PrecisionTypesNullRow] = SelectBuilder.of(""""precision_types_null"""", PrecisionTypesNullFields.structure, PrecisionTypesNullRow.rowCodec, Dialect.DUCKDB)
 
-  override def selectAll(using c: Connection): List[PrecisionTypesNullRow] = {
+  override def selectAll(using c: ConnectionRead): List[PrecisionTypesNullRow] = {
     sql"""select "id", "string10", "string20", "string50", "string100", "string255", "decimal5_2", "decimal10_2", "decimal18_4", "decimal5_0", "decimal10_0", "decimal18_0"
     from "precision_types_null"
-    """.query(PrecisionTypesNullRow.`_rowParser`.all()).runUnchecked(c)
+    """.query(PrecisionTypesNullRow.rowCodec.all()).run(using c)
   }
 
-  override def selectById(id: PrecisionTypesNullId)(using c: Connection): Option[PrecisionTypesNullRow] = {
+  override def selectById(id: PrecisionTypesNullId)(using c: ConnectionRead): Option[PrecisionTypesNullRow] = {
     sql"""select "id", "string10", "string20", "string50", "string100", "string255", "decimal5_2", "decimal10_2", "decimal18_4", "decimal5_0", "decimal10_0", "decimal18_0"
     from "precision_types_null"
-    where "id" = ${Fragment.encode(PrecisionTypesNullId.duckDbType, id)}""".query(PrecisionTypesNullRow.`_rowParser`.first()).runUnchecked(c)
+    where "id" = ${Fragment.encode(PrecisionTypesNullId.duckDbType, id)}""".query(PrecisionTypesNullRow.rowCodec.first()).run(using c)
   }
 
-  override def selectByIds(ids: Array[PrecisionTypesNullId])(using c: Connection): List[PrecisionTypesNullRow] = {
+  override def selectByIds(ids: List[PrecisionTypesNullId])(using c: ConnectionRead): List[PrecisionTypesNullRow] = {
     sql"""select "id", "string10", "string20", "string50", "string100", "string255", "decimal5_2", "decimal10_2", "decimal18_4", "decimal5_0", "decimal10_0", "decimal18_0"
     from "precision_types_null"
-    where "id" = ANY(${Fragment.encode(PrecisionTypesNullId.duckDbTypeArray, ids)})""".query(PrecisionTypesNullRow.`_rowParser`.all()).runUnchecked(c)
+    where "id" = ANY(${Fragment.encode(PrecisionTypesNullId.duckDbTypeArray, ids)})""".query(PrecisionTypesNullRow.rowCodec.all()).run(using c)
   }
 
-  override def selectByIdsTracked(ids: Array[PrecisionTypesNullId])(using c: Connection): Map[PrecisionTypesNullId, PrecisionTypesNullRow] = {
+  override def selectByIdsTracked(ids: List[PrecisionTypesNullId])(using c: ConnectionRead): Map[PrecisionTypesNullId, PrecisionTypesNullRow] = {
     val ret: scala.collection.mutable.Map[PrecisionTypesNullId, PrecisionTypesNullRow] = scala.collection.mutable.Map.empty[PrecisionTypesNullId, PrecisionTypesNullRow]
     selectByIds(ids)(using c).foreach(row => ret.put(row.id, row): @scala.annotation.nowarn)
     return ret.toMap
   }
 
-  override def update: UpdateBuilder[PrecisionTypesNullFields, PrecisionTypesNullRow] = UpdateBuilder.of(""""precision_types_null"""", PrecisionTypesNullFields.structure, PrecisionTypesNullRow.`_rowParser`, Dialect.DUCKDB)
+  override def update: UpdateBuilder[PrecisionTypesNullFields, PrecisionTypesNullRow] = UpdateBuilder.of(""""precision_types_null"""", PrecisionTypesNullFields.structure, PrecisionTypesNullRow.rowCodec, Dialect.DUCKDB)
 
   override def update(row: PrecisionTypesNullRow)(using c: Connection): Boolean = {
     val id: PrecisionTypesNullId = row.id
     return sql"""update "precision_types_null"
-    set "string10" = ${Fragment.encode(DuckDbTypes.varchar.nullable, row.string10)},
-    "string20" = ${Fragment.encode(DuckDbTypes.varchar.nullable, row.string20)},
-    "string50" = ${Fragment.encode(DuckDbTypes.varchar.nullable, row.string50)},
-    "string100" = ${Fragment.encode(DuckDbTypes.varchar.nullable, row.string100)},
-    "string255" = ${Fragment.encode(DuckDbTypes.varchar.nullable, row.string255)},
-    "decimal5_2" = ${Fragment.encode(Decimal5_2.duckDbType.nullable, row.decimal52)},
-    "decimal10_2" = ${Fragment.encode(Decimal10_2.duckDbType.nullable, row.decimal102)},
-    "decimal18_4" = ${Fragment.encode(Decimal18_4.duckDbType.nullable, row.decimal184)},
-    "decimal5_0" = ${Fragment.encode(Int5.duckDbType.nullable, row.decimal50)},
-    "decimal10_0" = ${Fragment.encode(Int10.duckDbType.nullable, row.decimal100)},
-    "decimal18_0" = ${Fragment.encode(Int18.duckDbType.nullable, row.decimal180)}
-    where "id" = ${Fragment.encode(PrecisionTypesNullId.duckDbType, id)}""".update().runUnchecked(c) > 0
+    set "string10" = ${Fragment.encode(DuckDbTypes.varchar.opt, row.string10)},
+    "string20" = ${Fragment.encode(DuckDbTypes.varchar.opt, row.string20)},
+    "string50" = ${Fragment.encode(DuckDbTypes.varchar.opt, row.string50)},
+    "string100" = ${Fragment.encode(DuckDbTypes.varchar.opt, row.string100)},
+    "string255" = ${Fragment.encode(DuckDbTypes.varchar.opt, row.string255)},
+    "decimal5_2" = ${Fragment.encode(Decimal5_2.duckDbType.opt, row.decimal52)},
+    "decimal10_2" = ${Fragment.encode(Decimal10_2.duckDbType.opt, row.decimal102)},
+    "decimal18_4" = ${Fragment.encode(Decimal18_4.duckDbType.opt, row.decimal184)},
+    "decimal5_0" = ${Fragment.encode(Int5.duckDbType.opt, row.decimal50)},
+    "decimal10_0" = ${Fragment.encode(Int10.duckDbType.opt, row.decimal100)},
+    "decimal18_0" = ${Fragment.encode(Int18.duckDbType.opt, row.decimal180)}
+    where "id" = ${Fragment.encode(PrecisionTypesNullId.duckDbType, id)}""".update().run(using c) > 0
   }
 
   override def upsert(unsaved: PrecisionTypesNullRow)(using c: Connection): PrecisionTypesNullRow = {
   sql"""INSERT INTO "precision_types_null"("id", "string10", "string20", "string50", "string100", "string255", "decimal5_2", "decimal10_2", "decimal18_4", "decimal5_0", "decimal10_0", "decimal18_0")
-    VALUES (${Fragment.encode(PrecisionTypesNullId.duckDbType, unsaved.id)}, ${Fragment.encode(DuckDbTypes.varchar.nullable, unsaved.string10)}, ${Fragment.encode(DuckDbTypes.varchar.nullable, unsaved.string20)}, ${Fragment.encode(DuckDbTypes.varchar.nullable, unsaved.string50)}, ${Fragment.encode(DuckDbTypes.varchar.nullable, unsaved.string100)}, ${Fragment.encode(DuckDbTypes.varchar.nullable, unsaved.string255)}, ${Fragment.encode(Decimal5_2.duckDbType.nullable, unsaved.decimal52)}, ${Fragment.encode(Decimal10_2.duckDbType.nullable, unsaved.decimal102)}, ${Fragment.encode(Decimal18_4.duckDbType.nullable, unsaved.decimal184)}, ${Fragment.encode(Int5.duckDbType.nullable, unsaved.decimal50)}, ${Fragment.encode(Int10.duckDbType.nullable, unsaved.decimal100)}, ${Fragment.encode(Int18.duckDbType.nullable, unsaved.decimal180)})
+    VALUES (${Fragment.encode(PrecisionTypesNullId.duckDbType, unsaved.id)}, ${Fragment.encode(DuckDbTypes.varchar.opt, unsaved.string10)}, ${Fragment.encode(DuckDbTypes.varchar.opt, unsaved.string20)}, ${Fragment.encode(DuckDbTypes.varchar.opt, unsaved.string50)}, ${Fragment.encode(DuckDbTypes.varchar.opt, unsaved.string100)}, ${Fragment.encode(DuckDbTypes.varchar.opt, unsaved.string255)}, ${Fragment.encode(Decimal5_2.duckDbType.opt, unsaved.decimal52)}, ${Fragment.encode(Decimal10_2.duckDbType.opt, unsaved.decimal102)}, ${Fragment.encode(Decimal18_4.duckDbType.opt, unsaved.decimal184)}, ${Fragment.encode(Int5.duckDbType.opt, unsaved.decimal50)}, ${Fragment.encode(Int10.duckDbType.opt, unsaved.decimal100)}, ${Fragment.encode(Int18.duckDbType.opt, unsaved.decimal180)})
     ON CONFLICT ("id")
     DO UPDATE SET
       "string10" = EXCLUDED."string10",
@@ -104,8 +104,8 @@ class PrecisionTypesNullRepoImpl extends PrecisionTypesNullRepo {
     "decimal10_0" = EXCLUDED."decimal10_0",
     "decimal18_0" = EXCLUDED."decimal18_0"
     RETURNING "id", "string10", "string20", "string50", "string100", "string255", "decimal5_2", "decimal10_2", "decimal18_4", "decimal5_0", "decimal10_0", "decimal18_0""""
-    .updateReturning(PrecisionTypesNullRow.`_rowParser`.exactlyOne())
-    .runUnchecked(c)
+    .updateReturning(PrecisionTypesNullRow.rowCodec.exactlyOne())
+    .run(using c)
   }
 
   override def upsertBatch(unsaved: Iterator[PrecisionTypesNullRow])(using c: Connection): List[PrecisionTypesNullRow] = {
@@ -125,7 +125,7 @@ class PrecisionTypesNullRepoImpl extends PrecisionTypesNullRepo {
     "decimal10_0" = EXCLUDED."decimal10_0",
     "decimal18_0" = EXCLUDED."decimal18_0"
     RETURNING "id", "string10", "string20", "string50", "string100", "string255", "decimal5_2", "decimal10_2", "decimal18_4", "decimal5_0", "decimal10_0", "decimal18_0""""
-      .updateReturningEach(PrecisionTypesNullRow.`_rowParser`, unsaved)
-    .runUnchecked(c)
+      .updateReturningEach(PrecisionTypesNullRow.rowCodec, unsaved)
+    .run(using c)
   }
 }

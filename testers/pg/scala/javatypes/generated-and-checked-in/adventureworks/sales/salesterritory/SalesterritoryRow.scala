@@ -8,10 +8,10 @@ package adventureworks.sales.salesterritory
 import adventureworks.customtypes.Defaulted
 import adventureworks.person.countryregion.CountryregionId
 import adventureworks.public.Name
+import dev.typr.dsl.RowCodecs
 import dev.typr.foundations.PgText
 import dev.typr.foundations.PgTypes
-import dev.typr.foundations.RowParser
-import dev.typr.foundations.RowParsers
+import dev.typr.foundations.RowCodec
 import dev.typr.foundations.Tuple.Tuple10
 import java.time.LocalDateTime
 import java.util.UUID
@@ -105,7 +105,7 @@ case class SalesterritoryRow(
 }
 
 object SalesterritoryRow {
-  val `_rowParser`: RowParser[SalesterritoryRow] = RowParsers.of(SalesterritoryId.pgType, Name.pgType, CountryregionId.pgType, PgTypes.text, PgTypes.numeric, PgTypes.numeric, PgTypes.numeric, PgTypes.numeric, PgTypes.uuid, PgTypes.timestamp, SalesterritoryRow.apply, row => Array[Any](row.territoryid, row.name, row.countryregioncode, row.group, row.salesytd, row.saleslastyear, row.costytd, row.costlastyear, row.rowguid, row.modifieddate))
+  given pgText: PgText[SalesterritoryRow] = PgText.from(rowCodec)
 
-  given pgText: PgText[SalesterritoryRow] = PgText.from(`_rowParser`)
+  val rowCodec: RowCodec[SalesterritoryRow] = RowCodecs.of(SalesterritoryId.pgType, Name.pgType, CountryregionId.pgType, PgTypes.text, PgTypes.numeric, PgTypes.numeric, PgTypes.numeric, PgTypes.numeric, PgTypes.uuid, PgTypes.timestamp, SalesterritoryRow.apply, row => Array[Any](row.territoryid, row.name, row.countryregioncode, row.group, row.salesytd, row.saleslastyear, row.costytd, row.costlastyear, row.rowguid, row.modifieddate))
 }

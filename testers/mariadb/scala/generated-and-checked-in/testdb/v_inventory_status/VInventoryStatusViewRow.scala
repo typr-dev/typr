@@ -6,12 +6,10 @@
 package testdb.v_inventory_status
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import dev.typr.foundations.MariaTypes
+import dev.typr.dslsc.RowCodecs
 import dev.typr.foundations.Tuple.Tuple14
-import dev.typr.foundations.scala.DbTypeOps
-import dev.typr.foundations.scala.RowParser
-import dev.typr.foundations.scala.RowParsers
-import dev.typr.foundations.scala.ScalaDbTypes
+import dev.typr.foundationssc.MariaTypes
+import dev.typr.foundationssc.RowCodec
 import java.time.LocalDateTime
 import testdb.products.ProductsId
 import testdb.warehouses.WarehousesId
@@ -115,5 +113,5 @@ case class VInventoryStatusViewRow(
 }
 
 object VInventoryStatusViewRow {
-  val `_rowParser`: RowParser[VInventoryStatusViewRow] = RowParsers.of(ProductsId.mariaType, MariaTypes.varchar, MariaTypes.varchar, WarehousesId.mariaType, MariaTypes.char_, MariaTypes.varchar, ScalaDbTypes.MariaTypes.int_, ScalaDbTypes.MariaTypes.int_, ScalaDbTypes.MariaTypes.int_, ScalaDbTypes.MariaTypes.bigint, ScalaDbTypes.MariaTypes.int_, MariaTypes.varchar, MariaTypes.varchar.nullable, MariaTypes.datetime.nullable)(VInventoryStatusViewRow.apply)(row => Array[Any](row.productId, row.sku, row.productName, row.warehouseId, row.warehouseCode, row.warehouseName, row.quantityOnHand, row.quantityReserved, row.quantityOnOrder, row.available, row.reorderPoint, row.stockStatus, row.binLocation, row.lastCountedAt))
+  val rowCodec: RowCodec[VInventoryStatusViewRow] = RowCodecs.of(ProductsId.mariaType, MariaTypes.varchar, MariaTypes.varchar, WarehousesId.mariaType, MariaTypes.char_, MariaTypes.varchar, MariaTypes.int_, MariaTypes.int_, MariaTypes.int_, MariaTypes.bigint, MariaTypes.int_, MariaTypes.varchar, MariaTypes.varchar.opt, MariaTypes.datetime.opt)(VInventoryStatusViewRow.apply)(row => Array[Any](row.productId, row.sku, row.productName, row.warehouseId, row.warehouseCode, row.warehouseName, row.quantityOnHand, row.quantityReserved, row.quantityOnOrder, row.available, row.reorderPoint, row.stockStatus, row.binLocation, row.lastCountedAt))
 }

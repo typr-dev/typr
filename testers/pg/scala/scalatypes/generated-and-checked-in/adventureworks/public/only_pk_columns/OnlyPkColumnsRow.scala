@@ -6,12 +6,11 @@
 package adventureworks.public.only_pk_columns
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import dev.typr.dslsc.RowCodecs
 import dev.typr.foundations.PgText
-import dev.typr.foundations.PgTypes
 import dev.typr.foundations.Tuple.Tuple2
-import dev.typr.foundations.scala.RowParser
-import dev.typr.foundations.scala.RowParsers
-import dev.typr.foundations.scala.ScalaDbTypes
+import dev.typr.foundationssc.PgTypes
+import dev.typr.foundationssc.RowCodec
 
 /** Table: public.only_pk_columns
  * Composite primary key: key_column_1, key_column_2
@@ -30,9 +29,9 @@ case class OnlyPkColumnsRow(
 }
 
 object OnlyPkColumnsRow {
-  val `_rowParser`: RowParser[OnlyPkColumnsRow] = RowParsers.of(PgTypes.text, ScalaDbTypes.PgTypes.int4)(OnlyPkColumnsRow.apply)(row => Array[Any](row.keyColumn1, row.keyColumn2))
-
   def apply(compositeId: OnlyPkColumnsId): OnlyPkColumnsRow = new OnlyPkColumnsRow(compositeId.keyColumn1, compositeId.keyColumn2)
 
-  given pgText: PgText[OnlyPkColumnsRow] = PgText.from(`_rowParser`.underlying)
+  given pgText: PgText[OnlyPkColumnsRow] = PgText.from(rowCodec.underlying)
+
+  val rowCodec: RowCodec[OnlyPkColumnsRow] = RowCodecs.of(PgTypes.text, PgTypes.int4)(OnlyPkColumnsRow.apply)(row => Array[Any](row.keyColumn1, row.keyColumn2))
 }

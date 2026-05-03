@@ -42,7 +42,7 @@ object TypoLocalTime {
 
   given arrayToStatement: ToStatement[Array[TypoLocalTime]] = ToStatement[Array[TypoLocalTime]]((s, index, v) => s.setArray(index, s.getConnection.createArrayOf("time", v.map(v => v.value.toString()))))
 
-  given bijection: Bijection[TypoLocalTime, LocalTime] = Bijection.apply[TypoLocalTime, LocalTime](_.value)(TypoLocalTime.apply)
+  given bijection: Bijection[TypoLocalTime, LocalTime] = Bijection[TypoLocalTime, LocalTime](_.value)(TypoLocalTime.apply)
 
   given column: Column[TypoLocalTime] = {
     Column.nonNull[TypoLocalTime]((v1: Any, _) =>

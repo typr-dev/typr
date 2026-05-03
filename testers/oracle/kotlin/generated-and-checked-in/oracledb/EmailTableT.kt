@@ -5,13 +5,14 @@
  */
 package oracledb
 
+import dev.typr.foundations.Bijection
 import dev.typr.foundations.OracleNestedTable
-import dev.typr.foundations.OracleType
-import dev.typr.foundations.OracleTypes
+import dev.typr.foundationskt.OracleType
+import dev.typr.foundationskt.OracleTypes
 
 /** Oracle Nested Table Type: EMAIL_TABLE_T */
-data class EmailTableT(val value: Array<String>) {
+data class EmailTableT(val value: Array<kotlin.String>) {
   companion object {
-    val oracleType: OracleType<EmailTableT> = OracleNestedTable.of("EMAIL_TABLE_T", OracleTypes.varchar2).bimap({ list -> EmailTableT(list.toTypedArray()) }, { wrapper -> wrapper.value.asList() })
+    val oracleType: OracleType<EmailTableT> = OracleType(OracleNestedTable.of("EMAIL_TABLE_T", OracleTypes.varchar2.underlying).to(Bijection.of({ list -> EmailTableT(list.toTypedArray()) }, { wrapper -> wrapper.value.asList() })))
   }
 }

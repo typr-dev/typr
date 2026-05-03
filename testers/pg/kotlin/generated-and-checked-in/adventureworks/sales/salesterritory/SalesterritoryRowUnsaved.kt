@@ -10,7 +10,7 @@ import adventureworks.customtypes.Defaulted.UseDefault
 import adventureworks.person.countryregion.CountryregionId
 import adventureworks.public.Name
 import dev.typr.foundations.PgText
-import dev.typr.foundations.PgTypes
+import dev.typr.foundationskt.PgTypes
 import java.math.BigDecimal
 import java.time.LocalDateTime
 import java.util.UUID
@@ -24,7 +24,7 @@ data class SalesterritoryRowUnsaved(
     */
   val countryregioncode: CountryregionId,
   /** Geographic area to which the sales territory belong. */
-  val group: String,
+  val group: kotlin.String,
   /** Default: nextval('sales.salesterritory_territoryid_seq'::regclass)
     * Primary key for SalesTerritory records.
     */
@@ -66,24 +66,24 @@ data class SalesterritoryRowUnsaved(
 
   companion object {
     val pgText: PgText<SalesterritoryRowUnsaved> =
-      PgText.instance({ row, sb -> Name.pgType.text().unsafeEncode(row.name, sb)
+      PgText.instance({ row, sb -> Name.pgType.pgText().unsafeEncode(row.name, sb)
       sb.append(PgText.DELIMETER)
-      CountryregionId.pgType.text().unsafeEncode(row.countryregioncode, sb)
+      CountryregionId.pgType.pgText().unsafeEncode(row.countryregioncode, sb)
       sb.append(PgText.DELIMETER)
-      PgTypes.text.text().unsafeEncode(row.group, sb)
+      PgTypes.text.pgText().unsafeEncode(row.group, sb)
       sb.append(PgText.DELIMETER)
-      Defaulted.pgText(SalesterritoryId.pgType.text()).unsafeEncode(row.territoryid, sb)
+      Defaulted.pgText(SalesterritoryId.pgType.pgText()).unsafeEncode(row.territoryid, sb)
       sb.append(PgText.DELIMETER)
-      Defaulted.pgText(PgTypes.numeric.text()).unsafeEncode(row.salesytd, sb)
+      Defaulted.pgText(PgTypes.numeric.pgText()).unsafeEncode(row.salesytd, sb)
       sb.append(PgText.DELIMETER)
-      Defaulted.pgText(PgTypes.numeric.text()).unsafeEncode(row.saleslastyear, sb)
+      Defaulted.pgText(PgTypes.numeric.pgText()).unsafeEncode(row.saleslastyear, sb)
       sb.append(PgText.DELIMETER)
-      Defaulted.pgText(PgTypes.numeric.text()).unsafeEncode(row.costytd, sb)
+      Defaulted.pgText(PgTypes.numeric.pgText()).unsafeEncode(row.costytd, sb)
       sb.append(PgText.DELIMETER)
-      Defaulted.pgText(PgTypes.numeric.text()).unsafeEncode(row.costlastyear, sb)
+      Defaulted.pgText(PgTypes.numeric.pgText()).unsafeEncode(row.costlastyear, sb)
       sb.append(PgText.DELIMETER)
-      Defaulted.pgText(PgTypes.uuid.text()).unsafeEncode(row.rowguid, sb)
+      Defaulted.pgText(PgTypes.uuid.pgText()).unsafeEncode(row.rowguid, sb)
       sb.append(PgText.DELIMETER)
-      Defaulted.pgText(PgTypes.timestamp.text()).unsafeEncode(row.modifieddate, sb) })
+      Defaulted.pgText(PgTypes.timestamp.pgText()).unsafeEncode(row.modifieddate, sb) })
   }
 }

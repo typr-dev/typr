@@ -6,13 +6,11 @@
 package testdb.orders
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import dev.typr.foundations.MariaTypes
+import dev.typr.dslsc.RowCodecs
 import dev.typr.foundations.Tuple.Tuple22
 import dev.typr.foundations.data.maria.Inet6
-import dev.typr.foundations.scala.DbTypeOps
-import dev.typr.foundations.scala.RowParser
-import dev.typr.foundations.scala.RowParsers
-import dev.typr.foundations.scala.ScalaDbTypes
+import dev.typr.foundationssc.MariaTypes
+import dev.typr.foundationssc.RowCodec
 import java.time.LocalDateTime
 import testdb.customer_addresses.CustomerAddressesId
 import testdb.customers.CustomersId
@@ -201,5 +199,5 @@ case class OrdersRow(
 }
 
 object OrdersRow {
-  val `_rowParser`: RowParser[OrdersRow] = RowParsers.of(OrdersId.mariaType, MariaTypes.varchar, CustomersId.mariaType, MariaTypes.text, MariaTypes.text, CustomerAddressesId.mariaType.nullable, CustomerAddressesId.mariaType.nullable, ScalaDbTypes.MariaTypes.numeric, ScalaDbTypes.MariaTypes.numeric, ScalaDbTypes.MariaTypes.numeric, ScalaDbTypes.MariaTypes.numeric, ScalaDbTypes.MariaTypes.numeric, MariaTypes.char_, PromotionsId.mariaType.nullable, MariaTypes.text.nullable, MariaTypes.mediumtext.nullable, MariaTypes.inet6.nullable, MariaTypes.varchar.nullable, MariaTypes.datetime, MariaTypes.datetime.nullable, MariaTypes.datetime.nullable, MariaTypes.datetime.nullable)(OrdersRow.apply)(row => Array[Any](row.orderId, row.orderNumber, row.customerId, row.orderStatus, row.paymentStatus, row.shippingAddressId, row.billingAddressId, row.subtotal, row.shippingCost, row.taxAmount, row.discountAmount, row.totalAmount, row.currencyCode, row.promotionId, row.notes, row.internalNotes, row.ipAddress, row.userAgent, row.orderedAt, row.confirmedAt, row.shippedAt, row.deliveredAt))
+  val rowCodec: RowCodec[OrdersRow] = RowCodecs.of(OrdersId.mariaType, MariaTypes.varchar, CustomersId.mariaType, MariaTypes.text, MariaTypes.text, CustomerAddressesId.mariaType.opt, CustomerAddressesId.mariaType.opt, MariaTypes.numeric, MariaTypes.numeric, MariaTypes.numeric, MariaTypes.numeric, MariaTypes.numeric, MariaTypes.char_, PromotionsId.mariaType.opt, MariaTypes.text.opt, MariaTypes.mediumtext.opt, MariaTypes.inet6.opt, MariaTypes.varchar.opt, MariaTypes.datetime, MariaTypes.datetime.opt, MariaTypes.datetime.opt, MariaTypes.datetime.opt)(OrdersRow.apply)(row => Array[Any](row.orderId, row.orderNumber, row.customerId, row.orderStatus, row.paymentStatus, row.shippingAddressId, row.billingAddressId, row.subtotal, row.shippingCost, row.taxAmount, row.discountAmount, row.totalAmount, row.currencyCode, row.promotionId, row.notes, row.internalNotes, row.ipAddress, row.userAgent, row.orderedAt, row.confirmedAt, row.shippedAt, row.deliveredAt))
 }

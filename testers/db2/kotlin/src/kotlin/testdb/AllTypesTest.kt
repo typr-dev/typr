@@ -16,7 +16,7 @@ import java.util.Random
  * string, binary, and date/time types.
  */
 class AllTypesTest {
-    private val testInsert = TestInsert(Random(42))
+    private val testInsert = TestInsert(Random(1088834394))
     private val db2testRepo = Db2testRepoImpl()
     private val db2testnullRepo = Db2testnullRepoImpl()
 

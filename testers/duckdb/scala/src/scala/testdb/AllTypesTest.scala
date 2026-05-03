@@ -36,7 +36,7 @@ class AllTypesTest {
       colDate = Some(LocalDate.of(2025, 1, 15)),
       colTime = Some(LocalTime.of(14, 30, 45)),
       colTimestamp = Some(LocalDateTime.of(2025, 1, 15, 14, 30, 45)),
-      colTimestamptz = Some(OffsetDateTime.of(2025, 1, 15, 14, 30, 45, 0, ZoneOffset.UTC)),
+      colTimestamptz = Some(OffsetDateTime.of(2025, 1, 15, 14, 30, 45, 0, ZoneOffset.UTC).toInstant),
       colInterval = Some(Duration.ofHours(2).plusMinutes(30)),
       colUuid = Some(UUID.fromString("550e8400-e29b-41d4-a716-446655440000")),
       colJson = Some(Json("{\"key\": \"value\"}")),
@@ -46,9 +46,7 @@ class AllTypesTest {
   }
 
   @Test
-  def testInsertAndSelectAllTypes(): Unit = withConnection { c =>
-    given java.sql.Connection = c
-
+  def testInsertAndSelectAllTypes(): Unit = withConnection {
     val row = createSampleRow(1001)
     val inserted = repo.insert(row)
 
@@ -71,9 +69,7 @@ class AllTypesTest {
   }
 
   @Test
-  def testUpdateAllTypes(): Unit = withConnection { c =>
-    given java.sql.Connection = c
-
+  def testUpdateAllTypes(): Unit = withConnection {
     val row = createSampleRow(1002)
     val inserted = repo.insert(row)
 
@@ -95,9 +91,7 @@ class AllTypesTest {
   }
 
   @Test
-  def testDeleteAllTypes(): Unit = withConnection { c =>
-    given java.sql.Connection = c
-
+  def testDeleteAllTypes(): Unit = withConnection {
     val row = createSampleRow(1003)
     val inserted = repo.insert(row)
 
@@ -109,9 +103,7 @@ class AllTypesTest {
   }
 
   @Test
-  def testInsertWithNulls(): Unit = withConnection { c =>
-    given java.sql.Connection = c
-
+  def testInsertWithNulls(): Unit = withConnection {
     val row = AllScalarTypesRow(
       id = AllScalarTypesId(1004),
       colTinyint = None,
@@ -158,9 +150,7 @@ class AllTypesTest {
   }
 
   @Test
-  def testIntegerTypes(): Unit = withConnection { c =>
-    given java.sql.Connection = c
-
+  def testIntegerTypes(): Unit = withConnection {
     val row = createSampleRow(1010)
     val inserted = repo.insert(row)
 
@@ -172,9 +162,7 @@ class AllTypesTest {
   }
 
   @Test
-  def testUnsignedTypes(): Unit = withConnection { c =>
-    given java.sql.Connection = c
-
+  def testUnsignedTypes(): Unit = withConnection {
     val row = createSampleRow(1011)
     val inserted = repo.insert(row)
 
@@ -185,9 +173,7 @@ class AllTypesTest {
   }
 
   @Test
-  def testFloatingPointTypes(): Unit = withConnection { c =>
-    given java.sql.Connection = c
-
+  def testFloatingPointTypes(): Unit = withConnection {
     val row = createSampleRow(1012)
     val inserted = repo.insert(row)
 
@@ -197,9 +183,7 @@ class AllTypesTest {
   }
 
   @Test
-  def testDateTimeTypes(): Unit = withConnection { c =>
-    given java.sql.Connection = c
-
+  def testDateTimeTypes(): Unit = withConnection {
     val row = createSampleRow(1013)
     val inserted = repo.insert(row)
 
@@ -211,9 +195,7 @@ class AllTypesTest {
   }
 
   @Test
-  def testUuidType(): Unit = withConnection { c =>
-    given java.sql.Connection = c
-
+  def testUuidType(): Unit = withConnection {
     val uuid = UUID.randomUUID()
     val row = createSampleRow(1014).copy(colUuid = Some(uuid))
     val inserted = repo.insert(row)
@@ -222,9 +204,7 @@ class AllTypesTest {
   }
 
   @Test
-  def testJsonType(): Unit = withConnection { c =>
-    given java.sql.Connection = c
-
+  def testJsonType(): Unit = withConnection {
     val jsonValue = Json("{\"name\": \"test\", \"values\": [1, 2, 3]}")
     val row = createSampleRow(1015).copy(colJson = Some(jsonValue))
     val inserted = repo.insert(row)
@@ -234,9 +214,7 @@ class AllTypesTest {
   }
 
   @Test
-  def testBlobType(): Unit = withConnection { c =>
-    given java.sql.Connection = c
-
+  def testBlobType(): Unit = withConnection {
     val blobData = Array[Byte](0x00, 0x01, 0x02, 0xff.toByte, 0xfe.toByte)
     val row = createSampleRow(1016).copy(colBlob = Some(blobData))
     val inserted = repo.insert(row)
@@ -246,9 +224,7 @@ class AllTypesTest {
   }
 
   @Test
-  def testEnumType(): Unit = withConnection { c =>
-    given java.sql.Connection = c
-
+  def testEnumType(): Unit = withConnection {
     for ((mood, idx) <- Mood.All.zipWithIndex) {
       val row = createSampleRow(1020 + idx).copy(colMood = Some(mood))
       val inserted = repo.insert(row)

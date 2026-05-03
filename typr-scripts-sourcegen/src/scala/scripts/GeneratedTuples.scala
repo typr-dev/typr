@@ -7,86 +7,6 @@ object GeneratedTuples extends bleep.BleepCodegenScript("GeneratedTuples") {
   val N = 100 // Support tables with up to 100 columns
 
   override def run(started: Started, commands: Commands, targets: List[GeneratedTuples.Target], args: List[String]): Unit = {
-    // Generate TupleN interfaces
-    val tupleInterfaces = 1.to(N).map { n =>
-      val range = 0.until(n)
-      val tparamsDecl = range.map(nn => s"T$nn").mkString(", ")
-      val abstractMethods = range.map(nn => s"        T$nn _${nn + 1}();").mkString("\n")
-      val asArrayBody = range.map(nn => s"_${nn + 1}()").mkString(", ")
-      val implFields = range.map(nn => s"T$nn _${nn + 1}").mkString(", ")
-
-      s"""    /**
-         |     * Tuple with $n element${if (n > 1) "s" else ""}.
-         |     * Use {@link Tuple#of} to create instances, or have your Row/ID records implement this interface.
-         |     */
-         |    non-sealed interface Tuple$n<$tparamsDecl> extends Tuple {
-         |$abstractMethods
-         |
-         |        @Override
-         |        default Object[] asArray() {
-         |            return new Object[] { $asArrayBody };
-         |        }
-         |
-         |        /** Default implementation record for Tuple$n. */
-         |        record Impl<$tparamsDecl>($implFields) implements Tuple$n<$tparamsDecl> {}
-         |    }""".stripMargin
-    }
-
-    // Factory methods for Tuple values
-    val tupleOfMethods = 1.to(N).map { n =>
-      val range = 0.until(n)
-      val tparamsDecl = range.map(nn => s"T$nn").mkString(", ")
-      val ofParams = range.map(nn => s"T$nn v$nn").mkString(", ")
-      val ofArgs = range.map(nn => s"v$nn").mkString(", ")
-
-      s"""    /** Create a Tuple$n with the given values. */
-         |    static <$tparamsDecl> Tuple$n<$tparamsDecl> of($ofParams) {
-         |        return new Tuple$n.Impl<>($ofArgs);
-         |    }""".stripMargin
-    }
-
-    // Generate the createTuple switch cases
-    val createTupleCases = 1.to(N).map { n =>
-      val range = 0.until(n)
-      val args = range.map(nn => s"values[$nn]").mkString(", ")
-      s"            case $n -> Tuple.of($args);"
-    }
-
-    val tupleContents =
-      s"""|package dev.typr.foundations;
-          |
-          |/**
-          | * Tuple value types for the DSL.
-          | * <p>
-          | * Use {@link #of} factory methods to create tuple instances.
-          | * These are used as Row types in queries.
-          | */
-          |public sealed interface Tuple {
-          |    /** Returns all elements as an Object array. */
-          |    Object[] asArray();
-          |
-          |    // Tuple value types (interfaces with Impl records)
-          |${tupleInterfaces.mkString("\n\n")}
-          |
-          |    // Factory methods for Tuple values
-          |${tupleOfMethods.mkString("\n\n")}
-          |
-          |    /**
-          |     * Create a Tuple of the appropriate arity from an array of values.
-          |     * @param values array of values (length 1-$N)
-          |     * @return a Tuple of the appropriate arity
-          |     * @throws IllegalArgumentException if values.length is 0 or greater than $N
-          |     */
-          |    @SuppressWarnings("unchecked")
-          |    static Tuple createTuple(Object[] values) {
-          |        return switch (values.length) {
-          |${createTupleCases.mkString("\n")}
-          |            default -> throw new IllegalArgumentException("Unsupported tuple arity: " + values.length);
-          |        };
-          |    }
-          |}
-          |""".stripMargin
-
     // Generate TupleExprN interfaces
     val tupleExprInterfaces = 1.to(N).map { n =>
       val range = 0.until(n)
@@ -143,7 +63,7 @@ object GeneratedTuples extends bleep.BleepCodegenScript("GeneratedTuples") {
     }
 
     val tupleExprContents =
-      s"""|package dev.typr.foundations.dsl;
+      s"""|package dev.typr.dsl;
           |
           |import dev.typr.foundations.Tuple;
           |
@@ -188,7 +108,7 @@ object GeneratedTuples extends bleep.BleepCodegenScript("GeneratedTuples") {
           |     * Renders all expressions in this tuple as comma-separated SQL fragments.
           |     */
           |    @Override
-          |    default dev.typr.foundations.Fragment render(dev.typr.foundations.dsl.RenderCtx ctx, java.util.concurrent.atomic.AtomicInteger counter) {
+          |    default dev.typr.foundations.Fragment render(dev.typr.dsl.RenderCtx ctx, java.util.concurrent.atomic.AtomicInteger counter) {
           |        java.util.List<dev.typr.foundations.Fragment> fragments = new java.util.ArrayList<>();
           |        for (SqlExpr<?> expr : children()) {
           |            fragments.add(expr.render(ctx, counter));
@@ -257,7 +177,7 @@ object GeneratedTuples extends bleep.BleepCodegenScript("GeneratedTuples") {
     }
 
     val kotlinTupleContents =
-      s"""|package dev.typr.foundations.kotlin
+      s"""|package dev.typr.dslkt
           |
           |import dev.typr.foundations.Tuple as JavaTuple
           |
@@ -284,7 +204,7 @@ object GeneratedTuples extends bleep.BleepCodegenScript("GeneratedTuples") {
       val range = 0.until(n)
       val tparamsDecl = range.map(nn => s"T$nn").mkString(", ")
       val javaTupleType = s"JavaTuple.Tuple$n<$tparamsDecl>"
-      val javaTupleExprType = s"dev.typr.foundations.dsl.TupleExpr.TupleExpr$n<$tparamsDecl>"
+      val javaTupleExprType = s"dev.typr.dsl.TupleExpr.TupleExpr$n<$tparamsDecl>"
       // Abstract _N() accessor methods that return Kotlin SqlExpr
       val abstractMethods = range.map(nn => s"    fun _${nn + 1}(): SqlExpr<T$nn>").mkString("\n")
       // Impl class that wraps Java TupleExprN - use SqlExpr.wrap to convert Java SqlExpr to Kotlin SqlExpr
@@ -299,7 +219,7 @@ object GeneratedTuples extends bleep.BleepCodegenScript("GeneratedTuples") {
          |
          |    /** Default underlying implementation that builds from _N() accessors */
          |    override val underlying: $javaTupleExprType
-         |        get() = dev.typr.foundations.dsl.TupleExpr.of($underlyingArgs)
+         |        get() = dev.typr.dsl.TupleExpr.of($underlyingArgs)
          |
          |    /** Default implementation that wraps a Java TupleExpr$n */
          |    class Impl<$tparamsDecl>(private val _underlying: $javaTupleExprType) : TupleExpr$n<$tparamsDecl> {
@@ -319,11 +239,11 @@ object GeneratedTuples extends bleep.BleepCodegenScript("GeneratedTuples") {
       s"""        /** Create a TupleExpr$n from $n expressions. */
          |        @JvmStatic
          |        fun <$tparamsDecl> of($params): TupleExpr$n<$tparamsDecl> =
-         |            TupleExpr$n.Impl(dev.typr.foundations.dsl.TupleExpr.of($underlyingArgs))""".stripMargin
+         |            TupleExpr$n.Impl(dev.typr.dsl.TupleExpr.of($underlyingArgs))""".stripMargin
     }
 
     val kotlinTupleExprContents =
-      s"""|package dev.typr.foundations.kotlin
+      s"""|package dev.typr.dslkt
           |
           |import dev.typr.foundations.Tuple as JavaTuple
           |
@@ -333,7 +253,7 @@ object GeneratedTuples extends bleep.BleepCodegenScript("GeneratedTuples") {
           | */
           |interface TupleExpr<T : JavaTuple> : SqlExpr<T> {
           |    /** Override with more specific type for use in SelectBuilder.map */
-          |    override val underlying: dev.typr.foundations.dsl.TupleExpr<T>
+          |    override val underlying: dev.typr.dsl.TupleExpr<T>
           |
           |    companion object {
           |${kotlinTupleExprOfMethods.mkString("\n\n")}
@@ -398,8 +318,8 @@ object GeneratedTuples extends bleep.BleepCodegenScript("GeneratedTuples") {
          |  }
          |
          |  /** Bijection for SelectBuilder.map to convert Scala TupleExpr$n to Java TupleExpr$n */
-         |  given bijection[$tparamsDecl]: dev.typr.foundations.dsl.Bijection[TupleExpr$n[$tparamsDecl], $javaTupleExprType] =
-         |    dev.typr.foundations.dsl.Bijection.of(
+         |  given bijection[$tparamsDecl]: dev.typr.foundations.Bijection[TupleExpr$n[$tparamsDecl], $javaTupleExprType] =
+         |    dev.typr.foundations.Bijection.of(
          |      (s: TupleExpr$n[$tparamsDecl]) => s.underlying,
          |      (j: $javaTupleExprType) => Impl(j)
          |    )
@@ -407,9 +327,9 @@ object GeneratedTuples extends bleep.BleepCodegenScript("GeneratedTuples") {
     }
 
     val scalaTuplesContents =
-      s"""|package dev.typr.foundations.scala
+      s"""|package dev.typr.dslsc
           |
-          |import dev.typr.foundations.dsl.{TupleExpr => JavaTupleExpr}
+          |import dev.typr.dsl.{TupleExpr => JavaTupleExpr}
           |import dev.typr.foundations.{Tuple => JavaTuple}
           |
           |/**
@@ -443,15 +363,13 @@ object GeneratedTuples extends bleep.BleepCodegenScript("GeneratedTuples") {
 
     targets.foreach { target =>
       val projectName = target.project.value
-      if (projectName == "foundations-jdbc") {
-        FileUtils.writeString(started.logger, Some("writing"), target.sources.resolve("dev/typr/foundations/Tuple.java"), tupleContents)
-      } else if (projectName == "foundations-jdbc-dsl") {
-        FileUtils.writeString(started.logger, Some("writing"), target.sources.resolve("dev/typr/foundations/dsl/TupleExpr.java"), tupleExprContents)
-      } else if (projectName == "foundations-jdbc-dsl-kotlin") {
-        FileUtils.writeString(started.logger, Some("writing"), target.sources.resolve("dev/typr/foundations/kotlin/Tuple.kt"), kotlinTupleContents)
-        FileUtils.writeString(started.logger, Some("writing"), target.sources.resolve("dev/typr/foundations/kotlin/TupleExpr.kt"), kotlinTupleExprContents)
-      } else if (projectName == "foundations-jdbc-dsl-scala") {
-        FileUtils.writeString(started.logger, Some("writing"), target.sources.resolve("dev/typr/foundations/scala/Tuples.scala"), scalaTuplesContents)
+      if (projectName == "typr-dsl") {
+        FileUtils.writeString(started.logger, Some("writing"), target.sources.resolve("dev/typr/dsl/TupleExpr.java"), tupleExprContents)
+      } else if (projectName == "typr-dsl-kotlin") {
+        FileUtils.writeString(started.logger, Some("writing"), target.sources.resolve("dev/typr/dslkt/Tuple.kt"), kotlinTupleContents)
+        FileUtils.writeString(started.logger, Some("writing"), target.sources.resolve("dev/typr/dslkt/TupleExpr.kt"), kotlinTupleExprContents)
+      } else if (projectName == "typr-dsl-scala") {
+        FileUtils.writeString(started.logger, Some("writing"), target.sources.resolve("dev/typr/dslsc/Tuples.scala"), scalaTuplesContents)
       }
     }
   }

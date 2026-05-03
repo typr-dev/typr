@@ -21,7 +21,7 @@ import zio.json.JsonEncoder
 case class TypoHStore(value: Map[String, String])
 
 object TypoHStore {
-  given bijection: Bijection[TypoHStore, Map[String, String]] = Bijection.apply[TypoHStore, Map[String, String]](_.value)(TypoHStore.apply)
+  given bijection: Bijection[TypoHStore, Map[String, String]] = Bijection[TypoHStore, Map[String, String]](_.value)(TypoHStore.apply)
 
   given jdbcDecoder: JdbcDecoder[TypoHStore] = {
     JdbcDecoder[TypoHStore](

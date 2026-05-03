@@ -5,92 +5,93 @@
  */
 package oracledb.departments
 
+import dev.typr.dsl.DeleteBuilder
+import dev.typr.dsl.Dialect
+import dev.typr.dsl.SelectBuilder
+import dev.typr.dsl.UpdateBuilder
+import dev.typr.foundations.Connection
+import dev.typr.foundations.ConnectionRead
 import dev.typr.foundations.Fragment
 import dev.typr.foundations.OracleTypes
-import dev.typr.foundations.dsl.DeleteBuilder
-import dev.typr.foundations.dsl.Dialect
-import dev.typr.foundations.dsl.SelectBuilder
-import dev.typr.foundations.dsl.UpdateBuilder
-import java.sql.Connection
 import java.util.ArrayList
 import java.util.HashMap
 import java.util.Optional
 import oracledb.MoneyT
-import dev.typr.foundations.Fragment.interpolate
+import dev.typr.foundations.Fragment.concat
 
 class DepartmentsRepoImpl extends DepartmentsRepo {
   override def delete: DeleteBuilder[DepartmentsFields, DepartmentsRow] = DeleteBuilder.of(""""DEPARTMENTS"""", DepartmentsFields.structure, Dialect.ORACLE)
 
-  override def deleteById(compositeId: DepartmentsId)(using c: Connection): java.lang.Boolean = interpolate(Fragment.lit("""delete from "DEPARTMENTS" where "DEPT_CODE" = """), Fragment.encode(OracleTypes.varchar2, compositeId.deptCode), Fragment.lit(""" AND "DEPT_REGION" = """), Fragment.encode(OracleTypes.varchar2, compositeId.deptRegion), Fragment.lit("")).update().runUnchecked(c) > 0
+  override def deleteById(compositeId: DepartmentsId)(using c: Connection): java.lang.Boolean = concat(Fragment.of("""delete from "DEPARTMENTS" where "DEPT_CODE" = """), Fragment.encode(OracleTypes.varchar2, compositeId.deptCode), Fragment.of(""" AND "DEPT_REGION" = """), Fragment.encode(OracleTypes.varchar2, compositeId.deptRegion), Fragment.of("")).update().run(c) > 0
 
-  override def deleteByIds(compositeIds: Array[DepartmentsId])(using c: Connection): Integer = {
+  override def deleteByIds(compositeIds: java.util.List[DepartmentsId])(using c: Connection): Integer = {
     val fragments: ArrayList[Fragment] = new ArrayList()
-    compositeIds.foreach { id => fragments.add(Fragment.interpolate(Fragment.lit("("), Fragment.encode(OracleTypes.varchar2, id.deptCode), Fragment.lit(", "), Fragment.encode(OracleTypes.varchar2, id.deptRegion), Fragment.lit(")"))): @scala.annotation.nowarn }
-    return Fragment.interpolate(Fragment.lit("""delete from "DEPARTMENTS" where ("DEPT_CODE", "DEPT_REGION") in ("""), Fragment.comma(fragments), Fragment.lit(")")).update().runUnchecked(c)
+    compositeIds.forEach { id => fragments.add(Fragment.concat(Fragment.of("("), Fragment.encode(OracleTypes.varchar2, id.deptCode), Fragment.of(", "), Fragment.encode(OracleTypes.varchar2, id.deptRegion), Fragment.of(")"))): @scala.annotation.nowarn }
+    return Fragment.concat(Fragment.of("""delete from "DEPARTMENTS" where ("DEPT_CODE", "DEPT_REGION") in ("""), Fragment.comma(fragments), Fragment.of(")")).update().run(c)
   }
 
   override def insert(unsaved: DepartmentsRow)(using c: Connection): DepartmentsId = {
-  interpolate(Fragment.lit("""insert into "DEPARTMENTS"("DEPT_CODE", "DEPT_REGION", "DEPT_NAME", "BUDGET")
-    values ("""), Fragment.encode(OracleTypes.varchar2, unsaved.deptCode), Fragment.lit(", "), Fragment.encode(OracleTypes.varchar2, unsaved.deptRegion), Fragment.lit(", "), Fragment.encode(OracleTypes.varchar2, unsaved.deptName), Fragment.lit(", "), Fragment.encode(MoneyT.oracleType.opt(), unsaved.budget), Fragment.lit(""")
+  concat(Fragment.of("""insert into "DEPARTMENTS"("DEPT_CODE", "DEPT_REGION", "DEPT_NAME", "BUDGET")
+    values ("""), Fragment.encode(OracleTypes.varchar2, unsaved.deptCode), Fragment.of(", "), Fragment.encode(OracleTypes.varchar2, unsaved.deptRegion), Fragment.of(", "), Fragment.encode(OracleTypes.varchar2, unsaved.deptName), Fragment.of(", "), Fragment.encode(MoneyT.oracleType.opt, unsaved.budget), Fragment.of(""")
     """))
-    .updateReturningGeneratedKeys(Array[String]("DEPT_CODE", "DEPT_REGION"), DepartmentsId.`_rowParser`.exactlyOne()).runUnchecked(c)
+    .updateReturningGeneratedKeys(Array[String]("DEPT_CODE", "DEPT_REGION"), DepartmentsId.rowCodec.exactlyOne()).run(c)
   }
 
-  override def select: SelectBuilder[DepartmentsFields, DepartmentsRow] = SelectBuilder.of(""""DEPARTMENTS"""", DepartmentsFields.structure, DepartmentsRow.`_rowParser`, Dialect.ORACLE)
+  override def select: SelectBuilder[DepartmentsFields, DepartmentsRow] = SelectBuilder.of(""""DEPARTMENTS"""", DepartmentsFields.structure, DepartmentsRow.rowCodec, Dialect.ORACLE)
 
-  override def selectAll(using c: Connection): java.util.List[DepartmentsRow] = {
-    interpolate(Fragment.lit("""select "DEPT_CODE", "DEPT_REGION", "DEPT_NAME", "BUDGET"
+  override def selectAll(using c: ConnectionRead): java.util.List[DepartmentsRow] = {
+    concat(Fragment.of("""select "DEPT_CODE", "DEPT_REGION", "DEPT_NAME", "BUDGET"
     from "DEPARTMENTS"
-    """)).query(DepartmentsRow.`_rowParser`.all()).runUnchecked(c)
+    """)).query(DepartmentsRow.rowCodec.all()).run(c)
   }
 
-  override def selectById(compositeId: DepartmentsId)(using c: Connection): Optional[DepartmentsRow] = {
-    interpolate(Fragment.lit("""select "DEPT_CODE", "DEPT_REGION", "DEPT_NAME", "BUDGET"
+  override def selectById(compositeId: DepartmentsId)(using c: ConnectionRead): Optional[DepartmentsRow] = {
+    concat(Fragment.of("""select "DEPT_CODE", "DEPT_REGION", "DEPT_NAME", "BUDGET"
     from "DEPARTMENTS"
-    where "DEPT_CODE" = """), Fragment.encode(OracleTypes.varchar2, compositeId.deptCode), Fragment.lit(""" AND "DEPT_REGION" = """), Fragment.encode(OracleTypes.varchar2, compositeId.deptRegion), Fragment.lit("")).query(DepartmentsRow.`_rowParser`.first()).runUnchecked(c)
+    where "DEPT_CODE" = """), Fragment.encode(OracleTypes.varchar2, compositeId.deptCode), Fragment.of(""" AND "DEPT_REGION" = """), Fragment.encode(OracleTypes.varchar2, compositeId.deptRegion), Fragment.of("")).query(DepartmentsRow.rowCodec.first()).run(c)
   }
 
-  override def selectByIds(compositeIds: Array[DepartmentsId])(using c: Connection): java.util.List[DepartmentsRow] = {
+  override def selectByIds(compositeIds: java.util.List[DepartmentsId])(using c: ConnectionRead): java.util.List[DepartmentsRow] = {
     val fragments: ArrayList[Fragment] = new ArrayList()
-    compositeIds.foreach { id => fragments.add(Fragment.interpolate(Fragment.lit("("), Fragment.encode(OracleTypes.varchar2, id.deptCode), Fragment.lit(", "), Fragment.encode(OracleTypes.varchar2, id.deptRegion), Fragment.lit(")"))): @scala.annotation.nowarn }
-    return Fragment.interpolate(Fragment.lit("""select "DEPT_CODE", "DEPT_REGION", "DEPT_NAME", "BUDGET" from "DEPARTMENTS" where ("DEPT_CODE", "DEPT_REGION") in ("""), Fragment.comma(fragments), Fragment.lit(")")).query(DepartmentsRow.`_rowParser`.all()).runUnchecked(c)
+    compositeIds.forEach { id => fragments.add(Fragment.concat(Fragment.of("("), Fragment.encode(OracleTypes.varchar2, id.deptCode), Fragment.of(", "), Fragment.encode(OracleTypes.varchar2, id.deptRegion), Fragment.of(")"))): @scala.annotation.nowarn }
+    return Fragment.concat(Fragment.of("""select "DEPT_CODE", "DEPT_REGION", "DEPT_NAME", "BUDGET" from "DEPARTMENTS" where ("DEPT_CODE", "DEPT_REGION") in ("""), Fragment.comma(fragments), Fragment.of(")")).query(DepartmentsRow.rowCodec.all()).run(c)
   }
 
-  override def selectByIdsTracked(compositeIds: Array[DepartmentsId])(using c: Connection): java.util.Map[DepartmentsId, DepartmentsRow] = {
+  override def selectByIdsTracked(compositeIds: java.util.List[DepartmentsId])(using c: ConnectionRead): java.util.Map[DepartmentsId, DepartmentsRow] = {
     val ret: HashMap[DepartmentsId, DepartmentsRow] = new HashMap[DepartmentsId, DepartmentsRow]()
     selectByIds(compositeIds)(using c).forEach(row => ret.put(row.compositeId, row): @scala.annotation.nowarn)
     return ret
   }
 
-  override def update: UpdateBuilder[DepartmentsFields, DepartmentsRow] = UpdateBuilder.of(""""DEPARTMENTS"""", DepartmentsFields.structure, DepartmentsRow.`_rowParser`, Dialect.ORACLE)
+  override def update: UpdateBuilder[DepartmentsFields, DepartmentsRow] = UpdateBuilder.of(""""DEPARTMENTS"""", DepartmentsFields.structure, DepartmentsRow.rowCodec, Dialect.ORACLE)
 
   override def update(row: DepartmentsRow)(using c: Connection): java.lang.Boolean = {
     val compositeId: DepartmentsId = row.compositeId
-    return interpolate(Fragment.lit("""update "DEPARTMENTS"
-    set "DEPT_NAME" = """), Fragment.encode(OracleTypes.varchar2, row.deptName), Fragment.lit(""",
-    "BUDGET" = """), Fragment.encode(MoneyT.oracleType.opt(), row.budget), Fragment.lit("""
-    where "DEPT_CODE" = """), Fragment.encode(OracleTypes.varchar2, compositeId.deptCode), Fragment.lit(""" AND "DEPT_REGION" = """), Fragment.encode(OracleTypes.varchar2, compositeId.deptRegion), Fragment.lit("")).update().runUnchecked(c) > 0
+    return concat(Fragment.of("""update "DEPARTMENTS"
+    set "DEPT_NAME" = """), Fragment.encode(OracleTypes.varchar2, row.deptName), Fragment.of(""",
+    "BUDGET" = """), Fragment.encode(MoneyT.oracleType.opt, row.budget), Fragment.of("""
+    where "DEPT_CODE" = """), Fragment.encode(OracleTypes.varchar2, compositeId.deptCode), Fragment.of(""" AND "DEPT_REGION" = """), Fragment.encode(OracleTypes.varchar2, compositeId.deptRegion), Fragment.of("")).update().run(c) > 0
   }
 
   override def upsert(unsaved: DepartmentsRow)(using c: Connection): Unit = {
-    interpolate(Fragment.lit("""MERGE INTO "DEPARTMENTS" t
-    USING (SELECT """), Fragment.encode(OracleTypes.varchar2, unsaved.deptCode), Fragment.lit(", "), Fragment.encode(OracleTypes.varchar2, unsaved.deptRegion), Fragment.lit(", "), Fragment.encode(OracleTypes.varchar2, unsaved.deptName), Fragment.lit(", "), Fragment.encode(MoneyT.oracleType.opt(), unsaved.budget), Fragment.lit(""" FROM DUAL) s
+    concat(Fragment.of("""MERGE INTO "DEPARTMENTS" t
+    USING (SELECT """), Fragment.encode(OracleTypes.varchar2, unsaved.deptCode), Fragment.of(", "), Fragment.encode(OracleTypes.varchar2, unsaved.deptRegion), Fragment.of(", "), Fragment.encode(OracleTypes.varchar2, unsaved.deptName), Fragment.of(", "), Fragment.encode(MoneyT.oracleType.opt, unsaved.budget), Fragment.of(""" FROM DUAL) s
     ON (t."DEPT_CODE" = s."DEPT_CODE" AND t."DEPT_REGION" = s."DEPT_REGION")
     WHEN MATCHED THEN UPDATE SET t."DEPT_NAME" = s."DEPT_NAME",
     t."BUDGET" = s."BUDGET"
-    WHEN NOT MATCHED THEN INSERT ("DEPT_CODE", "DEPT_REGION", "DEPT_NAME", "BUDGET") VALUES ("""), Fragment.encode(OracleTypes.varchar2, unsaved.deptCode), Fragment.lit(", "), Fragment.encode(OracleTypes.varchar2, unsaved.deptRegion), Fragment.lit(", "), Fragment.encode(OracleTypes.varchar2, unsaved.deptName), Fragment.lit(", "), Fragment.encode(MoneyT.oracleType.opt(), unsaved.budget), Fragment.lit(")"))
+    WHEN NOT MATCHED THEN INSERT ("DEPT_CODE", "DEPT_REGION", "DEPT_NAME", "BUDGET") VALUES ("""), Fragment.encode(OracleTypes.varchar2, unsaved.deptCode), Fragment.of(", "), Fragment.encode(OracleTypes.varchar2, unsaved.deptRegion), Fragment.of(", "), Fragment.encode(OracleTypes.varchar2, unsaved.deptName), Fragment.of(", "), Fragment.encode(MoneyT.oracleType.opt, unsaved.budget), Fragment.of(")"))
       .update()
-      .runUnchecked(c): @scala.annotation.nowarn
+      .run(c): @scala.annotation.nowarn
   }
 
   override def upsertBatch(unsaved: java.util.Iterator[DepartmentsRow])(using c: Connection): Unit = {
-    interpolate(Fragment.lit("""MERGE INTO "DEPARTMENTS" t
+    concat(Fragment.of("""MERGE INTO "DEPARTMENTS" t
     USING (SELECT ?, ?, ?, ? FROM DUAL) s
     ON (t."DEPT_CODE" = s."DEPT_CODE" AND t."DEPT_REGION" = s."DEPT_REGION")
     WHEN MATCHED THEN UPDATE SET t."DEPT_NAME" = s."DEPT_NAME",
     t."BUDGET" = s."BUDGET"
     WHEN NOT MATCHED THEN INSERT ("DEPT_CODE", "DEPT_REGION", "DEPT_NAME", "BUDGET") VALUES (?, ?, ?, ?)"""))
-      .updateMany(DepartmentsRow.`_rowParser`, unsaved)
-      .runUnchecked(c): @scala.annotation.nowarn
+      .updateMany(DepartmentsRow.rowCodec, unsaved)
+      .run(c): @scala.annotation.nowarn
   }
 }

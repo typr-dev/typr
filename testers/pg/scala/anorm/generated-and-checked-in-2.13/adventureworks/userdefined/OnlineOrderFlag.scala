@@ -24,7 +24,7 @@ object OnlineOrderFlag {
 
   implicit lazy val arrayToStatement: ToStatement[Array[OnlineOrderFlag]] = Flag.arrayToStatement.contramap(_.map(_.value))
 
-  implicit lazy val bijection: Bijection[OnlineOrderFlag, Flag] = Bijection.apply[OnlineOrderFlag, Flag](_.value)(OnlineOrderFlag.apply)
+  implicit lazy val bijection: Bijection[OnlineOrderFlag, Flag] = Bijection[OnlineOrderFlag, Flag](_.value)(OnlineOrderFlag.apply)
 
   implicit lazy val column: Column[OnlineOrderFlag] = Flag.column.map(OnlineOrderFlag.apply)
 

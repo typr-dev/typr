@@ -6,11 +6,10 @@
 package testdb.mariatest_spatial_null
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import dev.typr.foundations.MariaTypes
+import dev.typr.dslkt.RowCodecs
 import dev.typr.foundations.Tuple.Tuple9
-import dev.typr.foundations.kotlin.RowParser
-import dev.typr.foundations.kotlin.RowParsers
-import dev.typr.foundations.kotlin.nullable
+import dev.typr.foundationskt.MariaTypes
+import dev.typr.foundationskt.RowCodec
 import org.mariadb.jdbc.type.Geometry
 import org.mariadb.jdbc.type.GeometryCollection
 import org.mariadb.jdbc.type.LineString
@@ -92,6 +91,6 @@ data class MariatestSpatialNullRow(
   ): MariatestSpatialNullRowUnsaved = MariatestSpatialNullRowUnsaved(geometryCol, pointCol, linestringCol, polygonCol, multipointCol, multilinestringCol, multipolygonCol, geometrycollectionCol)
 
   companion object {
-    val _rowParser: RowParser<MariatestSpatialNullRow> = RowParsers.of(MariatestSpatialNullId.mariaType, MariaTypes.geometry.nullable(), MariaTypes.point.nullable(), MariaTypes.linestring.nullable(), MariaTypes.polygon.nullable(), MariaTypes.multipoint.nullable(), MariaTypes.multilinestring.nullable(), MariaTypes.multipolygon.nullable(), MariaTypes.geometrycollection.nullable(), { t0, t1, t2, t3, t4, t5, t6, t7, t8 -> MariatestSpatialNullRow(t0, t1, t2, t3, t4, t5, t6, t7, t8) }, { row -> arrayOf<Any?>(row.id, row.geometryCol, row.pointCol, row.linestringCol, row.polygonCol, row.multipointCol, row.multilinestringCol, row.multipolygonCol, row.geometrycollectionCol) })
+    val rowCodec: RowCodec<MariatestSpatialNullRow> = RowCodecs.of(MariatestSpatialNullId.mariaType, MariaTypes.geometry.opt(), MariaTypes.point.opt(), MariaTypes.linestring.opt(), MariaTypes.polygon.opt(), MariaTypes.multipoint.opt(), MariaTypes.multilinestring.opt(), MariaTypes.multipolygon.opt(), MariaTypes.geometrycollection.opt(), { t0: MariatestSpatialNullId, t1: Geometry?, t2: Point?, t3: LineString?, t4: Polygon?, t5: MultiPoint?, t6: MultiLineString?, t7: MultiPolygon?, t8: GeometryCollection? -> MariatestSpatialNullRow(t0, t1, t2, t3, t4, t5, t6, t7, t8) }, { row: MariatestSpatialNullRow -> arrayOf<Any?>(row.id, row.geometryCol, row.pointCol, row.linestringCol, row.polygonCol, row.multipointCol, row.multilinestringCol, row.multipolygonCol, row.geometrycollectionCol) })
   }
 }

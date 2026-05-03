@@ -23,7 +23,7 @@ object OrderNumber {
 
   implicit lazy val arrayPut: Put[Array[OrderNumber]] = adventureworks.StringArrayMeta.put.contramap(_.map(_.value))
 
-  implicit lazy val bijection: Bijection[OrderNumber, String] = Bijection.apply[OrderNumber, String](_.value)(OrderNumber.apply)
+  implicit lazy val bijection: Bijection[OrderNumber, String] = Bijection[OrderNumber, String](_.value)(OrderNumber.apply)
 
   implicit lazy val decoder: Decoder[OrderNumber] = Decoder.decodeString.map(OrderNumber.apply)
 

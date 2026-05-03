@@ -5,16 +5,15 @@
  */
 package testdb.customer_orders
 
-import dev.typr.foundations.DuckDbTypes
-import dev.typr.foundations.RowParser
-import dev.typr.foundations.dsl.FieldsBase
-import dev.typr.foundations.dsl.Path
-import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.scala.RelationStructure
-import dev.typr.foundations.scala.ScalaDbTypes
-import dev.typr.foundations.scala.SqlExpr
-import dev.typr.foundations.scala.SqlExpr.OptField
-import dev.typr.foundations.scala.TupleExpr7
+import dev.typr.dsl.FieldsBase
+import dev.typr.dsl.Path
+import dev.typr.dsl.SqlExpr.FieldLike
+import dev.typr.dslsc.RelationStructure
+import dev.typr.dslsc.SqlExpr
+import dev.typr.dslsc.SqlExpr.OptField
+import dev.typr.dslsc.TupleExpr7
+import dev.typr.foundations.RowCodec
+import dev.typr.foundationssc.DuckDbTypes
 import java.time.LocalDate
 
 class CustomerOrdersViewFields(val `_path`: java.util.List[Path]) extends TupleExpr7[Int, String, String, Int, LocalDate, BigDecimal, String] with RelationStructure[CustomerOrdersViewFields, CustomerOrdersViewRow]  with FieldsBase[CustomerOrdersViewRow] {
@@ -26,7 +25,7 @@ class CustomerOrdersViewFields(val `_path`: java.util.List[Path]) extends TupleE
       None,
       Some("INTEGER"),
       (row, value) => row.copy(customerId = value),
-      ScalaDbTypes.DuckDbTypes.integer
+      DuckDbTypes.integer.underlying
     )
   }
 
@@ -38,7 +37,7 @@ class CustomerOrdersViewFields(val `_path`: java.util.List[Path]) extends TupleE
       None,
       None,
       (row, value) => row.copy(customerName = value),
-      DuckDbTypes.varchar
+      DuckDbTypes.varchar.underlying
     )
   }
 
@@ -50,7 +49,7 @@ class CustomerOrdersViewFields(val `_path`: java.util.List[Path]) extends TupleE
       None,
       None,
       (row, value) => row.copy(email = value),
-      DuckDbTypes.varchar
+      DuckDbTypes.varchar.underlying
     )
   }
 
@@ -62,7 +61,7 @@ class CustomerOrdersViewFields(val `_path`: java.util.List[Path]) extends TupleE
       None,
       Some("INTEGER"),
       (row, value) => row.copy(orderId = value),
-      ScalaDbTypes.DuckDbTypes.integer
+      DuckDbTypes.integer.underlying
     )
   }
 
@@ -74,7 +73,7 @@ class CustomerOrdersViewFields(val `_path`: java.util.List[Path]) extends TupleE
       None,
       Some("DATE"),
       (row, value) => row.copy(orderDate = value),
-      DuckDbTypes.date
+      DuckDbTypes.date.underlying
     )
   }
 
@@ -86,7 +85,7 @@ class CustomerOrdersViewFields(val `_path`: java.util.List[Path]) extends TupleE
       None,
       Some("DECIMAL(12,2)"),
       (row, value) => row.copy(totalAmount = value),
-      ScalaDbTypes.DuckDbTypes.numeric
+      DuckDbTypes.numeric.underlying
     )
   }
 
@@ -98,13 +97,13 @@ class CustomerOrdersViewFields(val `_path`: java.util.List[Path]) extends TupleE
       None,
       None,
       (row, value) => row.copy(status = value),
-      DuckDbTypes.varchar
+      DuckDbTypes.varchar.underlying
     )
   }
 
   override def columns: java.util.List[FieldLike[?, CustomerOrdersViewRow]] = java.util.List.of(this.customerId.underlying, this.customerName.underlying, this.email.underlying, this.orderId.underlying, this.orderDate.underlying, this.totalAmount.underlying, this.status.underlying)
 
-  override def rowParser: RowParser[CustomerOrdersViewRow] = CustomerOrdersViewRow._rowParser.underlying
+  override def rowCodec: RowCodec[CustomerOrdersViewRow] = CustomerOrdersViewRow.rowCodec.underlying
 
   override def withPaths(`_path`: java.util.List[Path]): RelationStructure[CustomerOrdersViewFields, CustomerOrdersViewRow] = new CustomerOrdersViewFields(`_path`)
 

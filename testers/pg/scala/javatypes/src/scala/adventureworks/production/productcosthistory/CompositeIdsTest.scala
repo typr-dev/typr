@@ -15,7 +15,7 @@ import org.junit.Assert.*
 import org.junit.Test
 
 import java.math.BigDecimal
-import java.sql.Connection
+import dev.typr.foundations.Connection
 import java.time.LocalDateTime
 import java.util.{Optional, UUID, List as JList}
 import scala.jdk.CollectionConverters.*
@@ -102,7 +102,7 @@ class CompositeIdsTest extends SnapshotTest {
       assertEquals(product.productid, ph1.compositeId.productid)
 
       // Test selectByIds with composite IDs
-      val wanted = Array(
+      val wanted = java.util.List.of(
         ph1.compositeId,
         ph2.compositeId,
         ProductcosthistoryId(ProductId(9999), ph3.compositeId.startdate)

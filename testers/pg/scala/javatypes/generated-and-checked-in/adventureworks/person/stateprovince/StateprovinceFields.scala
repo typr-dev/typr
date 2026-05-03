@@ -13,17 +13,17 @@ import adventureworks.public.Name
 import adventureworks.sales.salesterritory.SalesterritoryFields
 import adventureworks.sales.salesterritory.SalesterritoryId
 import adventureworks.sales.salesterritory.SalesterritoryRow
+import dev.typr.dsl.FieldsBase
+import dev.typr.dsl.ForeignKey
+import dev.typr.dsl.Path
+import dev.typr.dsl.RelationStructure
+import dev.typr.dsl.SqlExpr
+import dev.typr.dsl.SqlExpr.Field
+import dev.typr.dsl.SqlExpr.FieldLike
+import dev.typr.dsl.SqlExpr.IdField
+import dev.typr.dsl.TupleExpr.TupleExpr8
 import dev.typr.foundations.PgTypes
-import dev.typr.foundations.RowParser
-import dev.typr.foundations.dsl.FieldsBase
-import dev.typr.foundations.dsl.ForeignKey
-import dev.typr.foundations.dsl.Path
-import dev.typr.foundations.dsl.RelationStructure
-import dev.typr.foundations.dsl.SqlExpr
-import dev.typr.foundations.dsl.SqlExpr.Field
-import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.dsl.SqlExpr.IdField
-import dev.typr.foundations.dsl.TupleExpr.TupleExpr8
+import dev.typr.foundations.RowCodec
 import java.time.LocalDateTime
 import java.util.Optional
 import java.util.UUID
@@ -131,7 +131,7 @@ class StateprovinceFields(val `_path`: java.util.List[Path]) extends TupleExpr8[
 
   override def columns: java.util.List[FieldLike[?, StateprovinceRow]] = java.util.List.of(this.stateprovinceid, this.stateprovincecode, this.countryregioncode, this.isonlystateprovinceflag, this.name, this.territoryid, this.rowguid, this.modifieddate)
 
-  override def rowParser: RowParser[StateprovinceRow] = StateprovinceRow._rowParser
+  override def rowCodec: RowCodec[StateprovinceRow] = StateprovinceRow.rowCodec
 
   override def withPaths(`_path`: java.util.List[Path]): RelationStructure[StateprovinceFields, StateprovinceRow] = new StateprovinceFields(`_path`)
 

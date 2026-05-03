@@ -5,24 +5,24 @@
  */
 package testdb.test_connection
 
-import dev.typr.foundations.RowParser
-import dev.typr.foundations.SqlServerTypes
-import dev.typr.foundations.dsl.FieldsBase
-import dev.typr.foundations.dsl.Path
-import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.kotlin.RelationStructure
-import dev.typr.foundations.kotlin.SqlExpr
-import dev.typr.foundations.kotlin.SqlExpr.Field
-import dev.typr.foundations.kotlin.SqlExpr.IdField
-import dev.typr.foundations.kotlin.SqlExpr.OptField
-import dev.typr.foundations.kotlin.TupleExpr3
+import dev.typr.dsl.FieldsBase
+import dev.typr.dsl.Path
+import dev.typr.dsl.SqlExpr.FieldLike
+import dev.typr.dslkt.RelationStructure
+import dev.typr.dslkt.SqlExpr
+import dev.typr.dslkt.SqlExpr.Field
+import dev.typr.dslkt.SqlExpr.IdField
+import dev.typr.dslkt.SqlExpr.OptField
+import dev.typr.dslkt.TupleExpr3
+import dev.typr.foundations.RowCodec
+import dev.typr.foundationskt.SqlServerTypes
 import java.time.LocalDateTime
 import kotlin.collections.List
 
-data class TestConnectionFields(val _path: List<Path>) : TupleExpr3<TestConnectionId, String, LocalDateTime>, RelationStructure<TestConnectionFields, TestConnectionRow>, FieldsBase<TestConnectionRow> {
+data class TestConnectionFields(val _path: List<Path>) : TupleExpr3<TestConnectionId, kotlin.String, LocalDateTime>, RelationStructure<TestConnectionFields, TestConnectionRow>, FieldsBase<TestConnectionRow> {
   override fun _1(): SqlExpr<TestConnectionId> = id()
 
-  override fun _2(): SqlExpr<String> = message()
+  override fun _2(): SqlExpr<kotlin.String> = message()
 
   override fun _3(): SqlExpr<LocalDateTime> = createdAt()
 
@@ -30,13 +30,13 @@ data class TestConnectionFields(val _path: List<Path>) : TupleExpr3<TestConnecti
 
   override fun columns(): List<FieldLike<*, TestConnectionRow>> = listOf(this.id().underlying, this.message().underlying, this.createdAt().underlying)
 
-  fun createdAt(): OptField<LocalDateTime, TestConnectionRow> = OptField<LocalDateTime, TestConnectionRow>(_path, "created_at", TestConnectionRow::createdAt, null, null, { row, value -> row.copy(createdAt = value) }, SqlServerTypes.datetime2)
+  fun createdAt(): OptField<LocalDateTime, TestConnectionRow> = OptField<LocalDateTime, TestConnectionRow>(_path, "created_at", TestConnectionRow::createdAt, null, null, { row, value -> row.copy(createdAt = value) }, SqlServerTypes.datetime2.underlying)
 
-  fun id(): IdField<TestConnectionId, TestConnectionRow> = IdField<TestConnectionId, TestConnectionRow>(_path, "id", TestConnectionRow::id, null, null, { row, value -> row.copy(id = value) }, TestConnectionId.sqlServerType)
+  fun id(): IdField<TestConnectionId, TestConnectionRow> = IdField<TestConnectionId, TestConnectionRow>(_path, "id", TestConnectionRow::id, null, null, { row, value -> row.copy(id = value) }, TestConnectionId.sqlServerType.underlying)
 
-  fun message(): Field<String, TestConnectionRow> = Field<String, TestConnectionRow>(_path, "message", TestConnectionRow::message, null, null, { row, value -> row.copy(message = value) }, SqlServerTypes.nvarchar)
+  fun message(): Field<kotlin.String, TestConnectionRow> = Field<kotlin.String, TestConnectionRow>(_path, "message", TestConnectionRow::message, null, null, { row, value -> row.copy(message = value) }, SqlServerTypes.nvarchar.underlying)
 
-  override fun rowParser(): RowParser<TestConnectionRow> = TestConnectionRow._rowParser.underlying
+  override fun rowCodec(): RowCodec<TestConnectionRow> = TestConnectionRow.rowCodec.underlying
 
   override fun withPaths(_path: List<Path>): RelationStructure<TestConnectionFields, TestConnectionRow> = TestConnectionFields(_path)
 

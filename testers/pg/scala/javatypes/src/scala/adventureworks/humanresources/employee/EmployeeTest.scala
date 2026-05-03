@@ -68,7 +68,7 @@ class EmployeeTest {
       val saved3 = all.get(0)
       assertEquals("M", saved3.gender)
 
-      val byIds = employeeRepo.selectByIds(Array(saved1.businessentityid, BusinessentityId(22)))
+      val byIds = employeeRepo.selectByIds(java.util.List.of(saved1.businessentityid, BusinessentityId(22)))
       assertEquals(1, byIds.size)
       assertEquals(saved3, byIds.get(0))
 

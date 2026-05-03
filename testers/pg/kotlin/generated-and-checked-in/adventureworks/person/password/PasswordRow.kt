@@ -7,11 +7,11 @@ package adventureworks.person.password
 
 import adventureworks.customtypes.Defaulted
 import adventureworks.person.businessentity.BusinessentityId
+import dev.typr.dslkt.RowCodecs
 import dev.typr.foundations.PgText
-import dev.typr.foundations.PgTypes
 import dev.typr.foundations.Tuple.Tuple5
-import dev.typr.foundations.kotlin.RowParser
-import dev.typr.foundations.kotlin.RowParsers
+import dev.typr.foundationskt.PgTypes
+import dev.typr.foundationskt.RowCodec
 import java.time.LocalDateTime
 import java.util.UUID
 
@@ -23,19 +23,19 @@ data class PasswordRow(
   /** Points to [adventureworks.person.person.PersonRow.businessentityid] */
   val businessentityid: BusinessentityId,
   /** Password for the e-mail account. */
-  val passwordhash: String,
+  val passwordhash: kotlin.String,
   /** Random value concatenated with the password string before the password is hashed. */
-  val passwordsalt: String,
+  val passwordsalt: kotlin.String,
   /** Default: uuid_generate_v1() */
   val rowguid: UUID,
   /** Default: now() */
   val modifieddate: LocalDateTime
-) : Tuple5<BusinessentityId, String, String, UUID, LocalDateTime> {
+) : Tuple5<BusinessentityId, kotlin.String, kotlin.String, UUID, LocalDateTime> {
   override fun _1(): BusinessentityId = businessentityid
 
-  override fun _2(): String = passwordhash
+  override fun _2(): kotlin.String = passwordhash
 
-  override fun _3(): String = passwordsalt
+  override fun _3(): kotlin.String = passwordsalt
 
   override fun _4(): UUID = rowguid
 
@@ -49,9 +49,9 @@ data class PasswordRow(
   ): PasswordRowUnsaved = PasswordRowUnsaved(businessentityid, passwordhash, passwordsalt, rowguid, modifieddate)
 
   companion object {
-    val _rowParser: RowParser<PasswordRow> = RowParsers.of(BusinessentityId.pgType, PgTypes.text, PgTypes.text, PgTypes.uuid, PgTypes.timestamp, { t0, t1, t2, t3, t4 -> PasswordRow(t0, t1, t2, t3, t4) }, { row -> arrayOf<Any?>(row.businessentityid, row.passwordhash, row.passwordsalt, row.rowguid, row.modifieddate) })
+    val rowCodec: RowCodec<PasswordRow> = RowCodecs.of(BusinessentityId.pgType, PgTypes.text, PgTypes.text, PgTypes.uuid, PgTypes.timestamp, { t0: BusinessentityId, t1: kotlin.String, t2: kotlin.String, t3: UUID, t4: LocalDateTime -> PasswordRow(t0, t1, t2, t3, t4) }, { row: PasswordRow -> arrayOf<Any?>(row.businessentityid, row.passwordhash, row.passwordsalt, row.rowguid, row.modifieddate) })
 
     val pgText: PgText<PasswordRow> =
-      PgText.from(_rowParser.underlying)
+      PgText.from(rowCodec.underlying)
   }
 }

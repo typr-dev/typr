@@ -104,11 +104,8 @@ public class CombinedApiServer
         .item(
             () -> {
               // Insert into MariaDB
-              // The wrapper types ensure type safety:
-              // customerCreate.firstName() returns FirstName (not String)
-              combined.shared.FirstName firstName = customerCreate.firstName();
-              combined.shared.LastName lastName = customerCreate.lastName();
-              // ... create customer in database
+              String firstName = customerCreate.firstName();
+              String lastName = customerCreate.lastName();
               throw new UnsupportedOperationException(
                   "Implementation requires database connection");
             });
@@ -129,12 +126,9 @@ public class CombinedApiServer
     return Uni.createFrom()
         .item(
             () -> {
-              // Update MariaDB customer
-              // Optional wrapper types for partial updates:
-              // customerUpdate.firstName() returns Optional<FirstName>
-              Optional<combined.shared.FirstName> firstName = customerUpdate.firstName();
-              Optional<combined.shared.LastName> lastName = customerUpdate.lastName();
-              Optional<combined.shared.IsActive> isActive = customerUpdate.isActive();
+              Optional<String> firstName = customerUpdate.firstName();
+              Optional<String> lastName = customerUpdate.lastName();
+              Optional<Boolean> isActive = customerUpdate.isActive();
               throw new UnsupportedOperationException(
                   "Implementation requires database connection");
             });
@@ -157,29 +151,10 @@ public class CombinedApiServer
             });
   }
 
-  /**
-   * Demonstrates how unified shared types work across all sources.
-   *
-   * <p>With shared types enabled (sharedPkg in GenerateConfig), TypeDefinitions that match across
-   * multiple sources are unified into a single type in combined.shared:
-   *
-   * <p>combined.shared.FirstName - Used by PostgreSQL (via Name domain) and MariaDB
-   * combined.shared.LastName - Used by PostgreSQL (via Name domain) and MariaDB
-   * combined.shared.IsActive - Used by PostgreSQL (via Flag domain) and MariaDB
-   *
-   * <p>Each shared type contains database-specific instances: - pgType: handles PostgreSQL domain
-   * types (Name -> String -> FirstName) - mariaType: handles MariaDB types (varchar -> FirstName)
-   *
-   * <p>The underlying value is always the canonical JVM type (String for names, Boolean for flags),
-   * making it trivial to use the same shared type across all sources.
-   */
-  private void sharedTypesExample(combined.shared.FirstName sharedFirstName) {
-    // The shared type can be used with any database
-    // The underlying value is the canonical type (String for text, Boolean for flags)
-    String value = sharedFirstName.value();
-
-    // Database adapters use the type's pgType/mariaType to handle conversions:
-    // - PostgreSQL: Name.pgType.bimap() converts through the Name domain
-    // - MariaDB: MariaTypes.text.bimap() handles direct String mapping
+  private void exampleUsage() {
+    // Database repositories and API models use consistent packages:
+    // - combined.postgres.* for PostgreSQL tables
+    // - combined.mariadb.* for MariaDB tables
+    // - combined.api.* for OpenAPI models
   }
 }

@@ -18,7 +18,7 @@ import testdb.promotions.PromotionsId
 /** This class corresponds to a row in table `orders` which has not been persisted yet */
 data class OrdersRowUnsaved(
   /**  */
-  @field:JsonProperty("order_number") val orderNumber: String,
+  @field:JsonProperty("order_number") val orderNumber: kotlin.String,
   /** 
     * Points to [testdb.customers.CustomersRow.customerId]
     */
@@ -30,11 +30,11 @@ data class OrdersRowUnsaved(
   /** Default: 'pending'
 
     */
-  @field:JsonProperty("order_status") val orderStatus: Defaulted<String> = UseDefault(),
+  @field:JsonProperty("order_status") val orderStatus: Defaulted<kotlin.String> = UseDefault(),
   /** Default: 'pending'
 
     */
-  @field:JsonProperty("payment_status") val paymentStatus: Defaulted<String> = UseDefault(),
+  @field:JsonProperty("payment_status") val paymentStatus: Defaulted<kotlin.String> = UseDefault(),
   /** Default: NULL
     * Points to [testdb.customer_addresses.CustomerAddressesRow.addressId]
     */
@@ -58,7 +58,7 @@ data class OrdersRowUnsaved(
   /** Default: 'USD'
 
     */
-  @field:JsonProperty("currency_code") val currencyCode: Defaulted<String> = UseDefault(),
+  @field:JsonProperty("currency_code") val currencyCode: Defaulted<kotlin.String> = UseDefault(),
   /** Default: NULL
     * Points to [testdb.promotions.PromotionsRow.promotionId]
     */
@@ -66,11 +66,11 @@ data class OrdersRowUnsaved(
   /** Default: NULL
 
     */
-  val notes: Defaulted<String?> = UseDefault(),
+  val notes: Defaulted<kotlin.String?> = UseDefault(),
   /** Default: NULL
 
     */
-  @field:JsonProperty("internal_notes") val internalNotes: Defaulted<String?> = UseDefault(),
+  @field:JsonProperty("internal_notes") val internalNotes: Defaulted<kotlin.String?> = UseDefault(),
   /** Default: NULL
 
     */
@@ -78,7 +78,7 @@ data class OrdersRowUnsaved(
   /** Default: NULL
 
     */
-  @field:JsonProperty("user_agent") val userAgent: Defaulted<String?> = UseDefault(),
+  @field:JsonProperty("user_agent") val userAgent: Defaulted<kotlin.String?> = UseDefault(),
   /** Default: current_timestamp(6)
 
     */
@@ -97,19 +97,19 @@ data class OrdersRowUnsaved(
   @field:JsonProperty("delivered_at") val deliveredAt: Defaulted<LocalDateTime?> = UseDefault()
 ) {
   fun toRow(
-    orderStatusDefault: () -> String,
-    paymentStatusDefault: () -> String,
+    orderStatusDefault: () -> kotlin.String,
+    paymentStatusDefault: () -> kotlin.String,
     shippingAddressIdDefault: () -> CustomerAddressesId?,
     billingAddressIdDefault: () -> CustomerAddressesId?,
     shippingCostDefault: () -> BigDecimal,
     taxAmountDefault: () -> BigDecimal,
     discountAmountDefault: () -> BigDecimal,
-    currencyCodeDefault: () -> String,
+    currencyCodeDefault: () -> kotlin.String,
     promotionIdDefault: () -> PromotionsId?,
-    notesDefault: () -> String?,
-    internalNotesDefault: () -> String?,
+    notesDefault: () -> kotlin.String?,
+    internalNotesDefault: () -> kotlin.String?,
     ipAddressDefault: () -> Inet6?,
-    userAgentDefault: () -> String?,
+    userAgentDefault: () -> kotlin.String?,
     orderedAtDefault: () -> LocalDateTime,
     confirmedAtDefault: () -> LocalDateTime?,
     shippedAtDefault: () -> LocalDateTime?,

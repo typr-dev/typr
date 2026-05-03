@@ -5,11 +5,11 @@
  */
 package testdb.subquery_test
 
-import java.sql.Connection
-import dev.typr.foundations.scala.Fragment.sql
+import dev.typr.foundationssc.ConnectionRead
+import dev.typr.foundationssc.Fragment.sql
 
 class SubqueryTestSqlRepoImpl extends SubqueryTestSqlRepo {
-  override def apply(using c: Connection): List[SubqueryTestSqlRow] = {
+  override def apply(using c: ConnectionRead): List[SubqueryTestSqlRow] = {
     sql"""-- Test subquery tracking (no CTE)
     SELECT
         c.customer_id,
@@ -32,6 +32,6 @@ class SubqueryTestSqlRepoImpl extends SubqueryTestSqlRepo {
     LEFT JOIN products p ON oi.product_id = p.product_id
     LEFT JOIN brands b ON p.brand_id = b.brand_id
     WHERE sub.total_spent > 100
-    """.query(SubqueryTestSqlRow.`_rowParser`.all()).runUnchecked(c)
+    """.query(SubqueryTestSqlRow.rowCodec.all()).run(using c)
   }
 }

@@ -6,11 +6,10 @@
 package testdb.customers
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import dev.typr.foundations.Db2Types
+import dev.typr.dslsc.RowCodecs
 import dev.typr.foundations.Tuple.Tuple4
-import dev.typr.foundations.scala.DbTypeOps
-import dev.typr.foundations.scala.RowParser
-import dev.typr.foundations.scala.RowParsers
+import dev.typr.foundationssc.Db2Types
+import dev.typr.foundationssc.RowCodec
 import java.time.LocalDateTime
 import testdb.customtypes.Defaulted
 
@@ -54,5 +53,5 @@ case class CustomersRow(
 }
 
 object CustomersRow {
-  val `_rowParser`: RowParser[CustomersRow] = RowParsers.of(CustomersId.db2Type, Db2Types.varchar, Db2Types.varchar, Db2Types.timestamp.nullable)(CustomersRow.apply)(row => Array[Any](row.customerId, row.name, row.email, row.createdAt))
+  val rowCodec: RowCodec[CustomersRow] = RowCodecs.of(CustomersId.db2Type, Db2Types.varchar, Db2Types.varchar, Db2Types.timestamp.opt)(CustomersRow.apply)(row => Array[Any](row.customerId, row.name, row.email, row.createdAt))
 }

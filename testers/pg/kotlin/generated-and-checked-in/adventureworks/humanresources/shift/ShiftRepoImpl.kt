@@ -6,14 +6,15 @@
 package adventureworks.humanresources.shift
 
 import adventureworks.public.Name
-import dev.typr.foundations.PgTypes
-import dev.typr.foundations.kotlin.DeleteBuilder
-import dev.typr.foundations.kotlin.Dialect
-import dev.typr.foundations.kotlin.Fragment
-import dev.typr.foundations.kotlin.SelectBuilder
-import dev.typr.foundations.kotlin.UpdateBuilder
-import dev.typr.foundations.streamingInsert
-import java.sql.Connection
+import dev.typr.dslkt.DeleteBuilder
+import dev.typr.dslkt.Dialect
+import dev.typr.dslkt.SelectBuilder
+import dev.typr.dslkt.UpdateBuilder
+import dev.typr.foundationskt.Connection
+import dev.typr.foundationskt.ConnectionRead
+import dev.typr.foundationskt.Fragment
+import dev.typr.foundationskt.PgTypes
+import dev.typr.foundationskt.StreamingInsert
 import java.util.ArrayList
 import kotlin.collections.Iterator
 import kotlin.collections.List
@@ -26,20 +27,20 @@ class ShiftRepoImpl() : ShiftRepo {
   override fun deleteById(
     shiftid: ShiftId,
     c: Connection
-  ): Boolean = Fragment.interpolate(Fragment.lit("delete from \"humanresources\".\"shift\" where \"shiftid\" = "), Fragment.encode(ShiftId.pgType, shiftid), Fragment.lit("")).update().runUnchecked(c) > 0
+  ): kotlin.Boolean = Fragment.concat(Fragment.of("delete from \"humanresources\".\"shift\" where \"shiftid\" = "), Fragment.encode(ShiftId.pgType, shiftid), Fragment.of("")).update().run(c) > 0
 
   override fun deleteByIds(
-    shiftids: Array<ShiftId>,
+    shiftids: List<ShiftId>,
     c: Connection
-  ): Int = Fragment.interpolate(Fragment.lit("delete\nfrom \"humanresources\".\"shift\"\nwhere \"shiftid\" = ANY("), Fragment.encode(ShiftId.pgTypeArray, shiftids), Fragment.lit(")"))
+  ): Int = Fragment.concat(Fragment.of("delete\nfrom \"humanresources\".\"shift\"\nwhere \"shiftid\" = ANY("), Fragment.encode(ShiftId.pgType.array(), shiftids), Fragment.of(")"))
     .update()
-    .runUnchecked(c)
+    .run(c)
 
   override fun insert(
     unsaved: ShiftRow,
     c: Connection
-  ): ShiftRow = Fragment.interpolate(Fragment.lit("insert into \"humanresources\".\"shift\"(\"shiftid\", \"name\", \"starttime\", \"endtime\", \"modifieddate\")\nvalues ("), Fragment.encode(ShiftId.pgType, unsaved.shiftid), Fragment.lit("::int4, "), Fragment.encode(Name.pgType, unsaved.name), Fragment.lit("::varchar, "), Fragment.encode(PgTypes.time, unsaved.starttime), Fragment.lit("::time, "), Fragment.encode(PgTypes.time, unsaved.endtime), Fragment.lit("::time, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\nRETURNING \"shiftid\", \"name\", \"starttime\", \"endtime\", \"modifieddate\"\n"))
-    .updateReturning(ShiftRow._rowParser.exactlyOne()).runUnchecked(c)
+  ): ShiftRow = Fragment.concat(Fragment.of("insert into \"humanresources\".\"shift\"(\"shiftid\", \"name\", \"starttime\", \"endtime\", \"modifieddate\")\nvalues ("), Fragment.encode(ShiftId.pgType, unsaved.shiftid), Fragment.of("::int4, "), Fragment.encode(Name.pgType, unsaved.name), Fragment.of("::varchar, "), Fragment.encode(PgTypes.time, unsaved.starttime), Fragment.of("::time, "), Fragment.encode(PgTypes.time, unsaved.endtime), Fragment.of("::time, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.of("::timestamp)\nRETURNING \"shiftid\", \"name\", \"starttime\", \"endtime\", \"modifieddate\"\n"))
+    .updateReturning(ShiftRow.rowCodec.exactlyOne()).run(c)
 
   override fun insert(
     unsaved: ShiftRowUnsaved,
@@ -47,85 +48,85 @@ class ShiftRepoImpl() : ShiftRepo {
   ): ShiftRow {
     val columns: ArrayList<Fragment> = ArrayList()
     val values: ArrayList<Fragment> = ArrayList()
-    columns.add(Fragment.lit("\"name\""))
-    values.add(Fragment.interpolate(Fragment.encode(Name.pgType, unsaved.name), Fragment.lit("::varchar")))
-    columns.add(Fragment.lit("\"starttime\""))
-    values.add(Fragment.interpolate(Fragment.encode(PgTypes.time, unsaved.starttime), Fragment.lit("::time")))
-    columns.add(Fragment.lit("\"endtime\""))
-    values.add(Fragment.interpolate(Fragment.encode(PgTypes.time, unsaved.endtime), Fragment.lit("::time")))
+    columns.add(Fragment.of("\"name\""))
+    values.add(Fragment.concat(Fragment.encode(Name.pgType, unsaved.name), Fragment.of("::varchar")))
+    columns.add(Fragment.of("\"starttime\""))
+    values.add(Fragment.concat(Fragment.encode(PgTypes.time, unsaved.starttime), Fragment.of("::time")))
+    columns.add(Fragment.of("\"endtime\""))
+    values.add(Fragment.concat(Fragment.encode(PgTypes.time, unsaved.endtime), Fragment.of("::time")))
     unsaved.shiftid.visit(
       {  },
-      { value -> columns.add(Fragment.lit("\"shiftid\""))
-      values.add(Fragment.interpolate(Fragment.encode(ShiftId.pgType, value), Fragment.lit("::int4"))) }
+      { value -> columns.add(Fragment.of("\"shiftid\""))
+      values.add(Fragment.concat(Fragment.encode(ShiftId.pgType, value), Fragment.of("::int4"))) }
     );
     unsaved.modifieddate.visit(
       {  },
-      { value -> columns.add(Fragment.lit("\"modifieddate\""))
-      values.add(Fragment.interpolate(Fragment.encode(PgTypes.timestamp, value), Fragment.lit("::timestamp"))) }
+      { value -> columns.add(Fragment.of("\"modifieddate\""))
+      values.add(Fragment.concat(Fragment.encode(PgTypes.timestamp, value), Fragment.of("::timestamp"))) }
     );
-    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into \"humanresources\".\"shift\"("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nRETURNING \"shiftid\", \"name\", \"starttime\", \"endtime\", \"modifieddate\"\n"))
-    return q.updateReturning(ShiftRow._rowParser.exactlyOne()).runUnchecked(c)
+    val q: Fragment = Fragment.concat(Fragment.of("insert into \"humanresources\".\"shift\"("), Fragment.comma(columns.toMutableList()), Fragment.of(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.of(")\nRETURNING \"shiftid\", \"name\", \"starttime\", \"endtime\", \"modifieddate\"\n"))
+    return q.updateReturning(ShiftRow.rowCodec.exactlyOne()).run(c)
   }
 
   override fun insertStreaming(
     unsaved: Iterator<ShiftRow>,
     batchSize: Int,
     c: Connection
-  ): Long = streamingInsert.insertUnchecked("COPY \"humanresources\".\"shift\"(\"shiftid\", \"name\", \"starttime\", \"endtime\", \"modifieddate\") FROM STDIN", batchSize, unsaved, c, ShiftRow.pgText)
+  ): kotlin.Long = StreamingInsert.of("COPY \"humanresources\".\"shift\"(\"shiftid\", \"name\", \"starttime\", \"endtime\", \"modifieddate\") FROM STDIN", batchSize, unsaved, ShiftRow.pgText).run(c)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
   override fun insertUnsavedStreaming(
     unsaved: Iterator<ShiftRowUnsaved>,
     batchSize: Int,
     c: Connection
-  ): Long = streamingInsert.insertUnchecked("COPY \"humanresources\".\"shift\"(\"name\", \"starttime\", \"endtime\", \"shiftid\", \"modifieddate\") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')", batchSize, unsaved, c, ShiftRowUnsaved.pgText)
+  ): kotlin.Long = StreamingInsert.of("COPY \"humanresources\".\"shift\"(\"name\", \"starttime\", \"endtime\", \"shiftid\", \"modifieddate\") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')", batchSize, unsaved, ShiftRowUnsaved.pgText).run(c)
 
-  override fun select(): SelectBuilder<ShiftFields, ShiftRow> = SelectBuilder.of("\"humanresources\".\"shift\"", ShiftFields.structure, ShiftRow._rowParser, Dialect.POSTGRESQL)
+  override fun select(): SelectBuilder<ShiftFields, ShiftRow> = SelectBuilder.of("\"humanresources\".\"shift\"", ShiftFields.structure, ShiftRow.rowCodec, Dialect.POSTGRESQL)
 
-  override fun selectAll(c: Connection): List<ShiftRow> = Fragment.interpolate(Fragment.lit("select \"shiftid\", \"name\", \"starttime\", \"endtime\", \"modifieddate\"\nfrom \"humanresources\".\"shift\"\n")).query(ShiftRow._rowParser.all()).runUnchecked(c)
+  override fun selectAll(c: ConnectionRead): List<ShiftRow> = Fragment.concat(Fragment.of("select \"shiftid\", \"name\", \"starttime\", \"endtime\", \"modifieddate\"\nfrom \"humanresources\".\"shift\"\n")).query(ShiftRow.rowCodec.all()).run(c)
 
   override fun selectById(
     shiftid: ShiftId,
-    c: Connection
-  ): ShiftRow? = Fragment.interpolate(Fragment.lit("select \"shiftid\", \"name\", \"starttime\", \"endtime\", \"modifieddate\"\nfrom \"humanresources\".\"shift\"\nwhere \"shiftid\" = "), Fragment.encode(ShiftId.pgType, shiftid), Fragment.lit("")).query(ShiftRow._rowParser.first()).runUnchecked(c)
+    c: ConnectionRead
+  ): ShiftRow? = Fragment.concat(Fragment.of("select \"shiftid\", \"name\", \"starttime\", \"endtime\", \"modifieddate\"\nfrom \"humanresources\".\"shift\"\nwhere \"shiftid\" = "), Fragment.encode(ShiftId.pgType, shiftid), Fragment.of("")).query(ShiftRow.rowCodec.first()).run(c)
 
   override fun selectByIds(
-    shiftids: Array<ShiftId>,
-    c: Connection
-  ): List<ShiftRow> = Fragment.interpolate(Fragment.lit("select \"shiftid\", \"name\", \"starttime\", \"endtime\", \"modifieddate\"\nfrom \"humanresources\".\"shift\"\nwhere \"shiftid\" = ANY("), Fragment.encode(ShiftId.pgTypeArray, shiftids), Fragment.lit(")")).query(ShiftRow._rowParser.all()).runUnchecked(c)
+    shiftids: List<ShiftId>,
+    c: ConnectionRead
+  ): List<ShiftRow> = Fragment.concat(Fragment.of("select \"shiftid\", \"name\", \"starttime\", \"endtime\", \"modifieddate\"\nfrom \"humanresources\".\"shift\"\nwhere \"shiftid\" = ANY("), Fragment.encode(ShiftId.pgType.array(), shiftids), Fragment.of(")")).query(ShiftRow.rowCodec.all()).run(c)
 
   override fun selectByIdsTracked(
-    shiftids: Array<ShiftId>,
-    c: Connection
+    shiftids: List<ShiftId>,
+    c: ConnectionRead
   ): Map<ShiftId, ShiftRow> {
     val ret: MutableMap<ShiftId, ShiftRow> = mutableMapOf<ShiftId, ShiftRow>()
     selectByIds(shiftids, c).forEach({ row -> ret.put(row.shiftid, row) })
     return ret.toMap()
   }
 
-  override fun update(): UpdateBuilder<ShiftFields, ShiftRow> = UpdateBuilder.of("\"humanresources\".\"shift\"", ShiftFields.structure, ShiftRow._rowParser, Dialect.POSTGRESQL)
+  override fun update(): UpdateBuilder<ShiftFields, ShiftRow> = UpdateBuilder.of("\"humanresources\".\"shift\"", ShiftFields.structure, ShiftRow.rowCodec, Dialect.POSTGRESQL)
 
   override fun update(
     row: ShiftRow,
     c: Connection
-  ): Boolean {
+  ): kotlin.Boolean {
     val shiftid: ShiftId = row.shiftid
-    return Fragment.interpolate(Fragment.lit("update \"humanresources\".\"shift\"\nset \"name\" = "), Fragment.encode(Name.pgType, row.name), Fragment.lit("::varchar,\n\"starttime\" = "), Fragment.encode(PgTypes.time, row.starttime), Fragment.lit("::time,\n\"endtime\" = "), Fragment.encode(PgTypes.time, row.endtime), Fragment.lit("::time,\n\"modifieddate\" = "), Fragment.encode(PgTypes.timestamp, row.modifieddate), Fragment.lit("::timestamp\nwhere \"shiftid\" = "), Fragment.encode(ShiftId.pgType, shiftid), Fragment.lit("")).update().runUnchecked(c) > 0
+    return Fragment.concat(Fragment.of("update \"humanresources\".\"shift\"\nset \"name\" = "), Fragment.encode(Name.pgType, row.name), Fragment.of("::varchar,\n\"starttime\" = "), Fragment.encode(PgTypes.time, row.starttime), Fragment.of("::time,\n\"endtime\" = "), Fragment.encode(PgTypes.time, row.endtime), Fragment.of("::time,\n\"modifieddate\" = "), Fragment.encode(PgTypes.timestamp, row.modifieddate), Fragment.of("::timestamp\nwhere \"shiftid\" = "), Fragment.encode(ShiftId.pgType, shiftid), Fragment.of("")).update().run(c) > 0
   }
 
   override fun upsert(
     unsaved: ShiftRow,
     c: Connection
-  ): ShiftRow = Fragment.interpolate(Fragment.lit("insert into \"humanresources\".\"shift\"(\"shiftid\", \"name\", \"starttime\", \"endtime\", \"modifieddate\")\nvalues ("), Fragment.encode(ShiftId.pgType, unsaved.shiftid), Fragment.lit("::int4, "), Fragment.encode(Name.pgType, unsaved.name), Fragment.lit("::varchar, "), Fragment.encode(PgTypes.time, unsaved.starttime), Fragment.lit("::time, "), Fragment.encode(PgTypes.time, unsaved.endtime), Fragment.lit("::time, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\non conflict (\"shiftid\")\ndo update set\n  \"name\" = EXCLUDED.\"name\",\n\"starttime\" = EXCLUDED.\"starttime\",\n\"endtime\" = EXCLUDED.\"endtime\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\nreturning \"shiftid\", \"name\", \"starttime\", \"endtime\", \"modifieddate\""))
-    .updateReturning(ShiftRow._rowParser.exactlyOne())
-    .runUnchecked(c)
+  ): ShiftRow = Fragment.concat(Fragment.of("insert into \"humanresources\".\"shift\"(\"shiftid\", \"name\", \"starttime\", \"endtime\", \"modifieddate\")\nvalues ("), Fragment.encode(ShiftId.pgType, unsaved.shiftid), Fragment.of("::int4, "), Fragment.encode(Name.pgType, unsaved.name), Fragment.of("::varchar, "), Fragment.encode(PgTypes.time, unsaved.starttime), Fragment.of("::time, "), Fragment.encode(PgTypes.time, unsaved.endtime), Fragment.of("::time, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.of("::timestamp)\non conflict (\"shiftid\")\ndo update set\n  \"name\" = EXCLUDED.\"name\",\n\"starttime\" = EXCLUDED.\"starttime\",\n\"endtime\" = EXCLUDED.\"endtime\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\nreturning \"shiftid\", \"name\", \"starttime\", \"endtime\", \"modifieddate\""))
+    .updateReturning(ShiftRow.rowCodec.exactlyOne())
+    .run(c)
 
   override fun upsertBatch(
     unsaved: Iterator<ShiftRow>,
     c: Connection
-  ): List<ShiftRow> = Fragment.interpolate(Fragment.lit("insert into \"humanresources\".\"shift\"(\"shiftid\", \"name\", \"starttime\", \"endtime\", \"modifieddate\")\nvalues (?::int4, ?::varchar, ?::time, ?::time, ?::timestamp)\non conflict (\"shiftid\")\ndo update set\n  \"name\" = EXCLUDED.\"name\",\n\"starttime\" = EXCLUDED.\"starttime\",\n\"endtime\" = EXCLUDED.\"endtime\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\nreturning \"shiftid\", \"name\", \"starttime\", \"endtime\", \"modifieddate\""))
-    .updateManyReturning(ShiftRow._rowParser, unsaved)
-  .runUnchecked(c)
+  ): List<ShiftRow> = Fragment.concat(Fragment.of("insert into \"humanresources\".\"shift\"(\"shiftid\", \"name\", \"starttime\", \"endtime\", \"modifieddate\")\nvalues (?::int4, ?::varchar, ?::time, ?::time, ?::timestamp)\non conflict (\"shiftid\")\ndo update set\n  \"name\" = EXCLUDED.\"name\",\n\"starttime\" = EXCLUDED.\"starttime\",\n\"endtime\" = EXCLUDED.\"endtime\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\nreturning \"shiftid\", \"name\", \"starttime\", \"endtime\", \"modifieddate\""))
+    .updateManyReturning(ShiftRow.rowCodec, unsaved)
+  .run(c)
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
   override fun upsertStreaming(
@@ -133,8 +134,8 @@ class ShiftRepoImpl() : ShiftRepo {
     batchSize: Int,
     c: Connection
   ): Int {
-    Fragment.interpolate(Fragment.lit("create temporary table shift_TEMP (like \"humanresources\".\"shift\") on commit drop")).update().runUnchecked(c)
-    streamingInsert.insertUnchecked("copy shift_TEMP(\"shiftid\", \"name\", \"starttime\", \"endtime\", \"modifieddate\") from stdin", batchSize, unsaved, c, ShiftRow.pgText)
-    return Fragment.interpolate(Fragment.lit("insert into \"humanresources\".\"shift\"(\"shiftid\", \"name\", \"starttime\", \"endtime\", \"modifieddate\")\nselect * from shift_TEMP\non conflict (\"shiftid\")\ndo update set\n  \"name\" = EXCLUDED.\"name\",\n\"starttime\" = EXCLUDED.\"starttime\",\n\"endtime\" = EXCLUDED.\"endtime\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\n;\ndrop table shift_TEMP;")).update().runUnchecked(c)
+    Fragment.concat(Fragment.of("create temporary table shift_TEMP (like \"humanresources\".\"shift\") on commit drop")).update().run(c)
+    StreamingInsert.of("copy shift_TEMP(\"shiftid\", \"name\", \"starttime\", \"endtime\", \"modifieddate\") from stdin", batchSize, unsaved, ShiftRow.pgText).run(c)
+    return Fragment.concat(Fragment.of("insert into \"humanresources\".\"shift\"(\"shiftid\", \"name\", \"starttime\", \"endtime\", \"modifieddate\")\nselect * from shift_TEMP\non conflict (\"shiftid\")\ndo update set\n  \"name\" = EXCLUDED.\"name\",\n\"starttime\" = EXCLUDED.\"starttime\",\n\"endtime\" = EXCLUDED.\"endtime\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\n;\ndrop table shift_TEMP;")).update().run(c)
   }
 }

@@ -11,9 +11,7 @@ import adventureworks.person.businessentity.BusinessentityId
 import adventureworks.userdefined.CurrentFlag
 import adventureworks.userdefined.SalariedFlag
 import dev.typr.foundations.PgText
-import dev.typr.foundations.PgTypes
-import dev.typr.foundations.kotlin.KotlinDbTypes
-import dev.typr.foundations.kotlin.nullable
+import dev.typr.foundationskt.PgTypes
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.UUID
@@ -25,11 +23,11 @@ data class EmployeeRowUnsaved(
     */
   val businessentityid: BusinessentityId,
   /** Unique national identification number such as a social security number. */
-  val nationalidnumber: String,
+  val nationalidnumber: kotlin.String,
   /** Network login. */
-  val loginid: String,
+  val loginid: kotlin.String,
   /** Work title such as Buyer or Sales Representative. */
-  val jobtitle: String,
+  val jobtitle: kotlin.String,
   /** Date of birth.
     * Constraint CK_Employee_BirthDate affecting columns birthdate:  (((birthdate >= '1930-01-01'::date) AND (birthdate <= (now() - '18 years'::interval))))
     */
@@ -37,11 +35,11 @@ data class EmployeeRowUnsaved(
   /** M = Married, S = Single
     * Constraint CK_Employee_MaritalStatus affecting columns maritalstatus:  ((upper((maritalstatus)::text) = ANY (ARRAY['M'::text, 'S'::text])))
     */
-  val maritalstatus: String,
+  val maritalstatus: kotlin.String,
   /** M = Male, F = Female
     * Constraint CK_Employee_Gender affecting columns gender:  ((upper((gender)::text) = ANY (ARRAY['M'::text, 'F'::text])))
     */
-  val gender: String,
+  val gender: kotlin.String,
   /** Employee hired on this date.
     * Constraint CK_Employee_HireDate affecting columns hiredate:  (((hiredate >= '1996-07-01'::date) AND (hiredate <= (now() + '1 day'::interval))))
     */
@@ -54,12 +52,12 @@ data class EmployeeRowUnsaved(
     * Number of available vacation hours.
     * Constraint CK_Employee_VacationHours affecting columns vacationhours:  (((vacationhours >= '-40'::integer) AND (vacationhours <= 240)))
     */
-  val vacationhours: Defaulted<Short> = UseDefault(),
+  val vacationhours: Defaulted<kotlin.Short> = UseDefault(),
   /** Default: 0
     * Number of available sick leave hours.
     * Constraint CK_Employee_SickLeaveHours affecting columns sickleavehours:  (((sickleavehours >= 0) AND (sickleavehours <= 120)))
     */
-  val sickleavehours: Defaulted<Short> = UseDefault(),
+  val sickleavehours: Defaulted<kotlin.Short> = UseDefault(),
   /** Default: true
     * 0 = Inactive, 1 = Active
     */
@@ -71,48 +69,48 @@ data class EmployeeRowUnsaved(
   /** Default: '/'::character varying
     * Where the employee is located in corporate hierarchy.
     */
-  val organizationnode: Defaulted<String?> = UseDefault()
+  val organizationnode: Defaulted<kotlin.String?> = UseDefault()
 ) {
   fun toRow(
     salariedflagDefault: () -> /* user-picked */ SalariedFlag,
-    vacationhoursDefault: () -> Short,
-    sickleavehoursDefault: () -> Short,
+    vacationhoursDefault: () -> kotlin.Short,
+    sickleavehoursDefault: () -> kotlin.Short,
     currentflagDefault: () -> /* user-picked */ CurrentFlag,
     rowguidDefault: () -> UUID,
     modifieddateDefault: () -> LocalDateTime,
-    organizationnodeDefault: () -> String?
+    organizationnodeDefault: () -> kotlin.String?
   ): EmployeeRow = EmployeeRow(businessentityid = businessentityid, nationalidnumber = nationalidnumber, loginid = loginid, jobtitle = jobtitle, birthdate = birthdate, maritalstatus = maritalstatus, gender = gender, hiredate = hiredate, salariedflag = salariedflag.getOrElse(salariedflagDefault), vacationhours = vacationhours.getOrElse(vacationhoursDefault), sickleavehours = sickleavehours.getOrElse(sickleavehoursDefault), currentflag = currentflag.getOrElse(currentflagDefault), rowguid = rowguid.getOrElse(rowguidDefault), modifieddate = modifieddate.getOrElse(modifieddateDefault), organizationnode = organizationnode.getOrElse(organizationnodeDefault))
 
   companion object {
     val pgText: PgText<EmployeeRowUnsaved> =
-      PgText.instance({ row, sb -> BusinessentityId.pgType.text().unsafeEncode(row.businessentityid, sb)
+      PgText.instance({ row, sb -> BusinessentityId.pgType.pgText().unsafeEncode(row.businessentityid, sb)
       sb.append(PgText.DELIMETER)
-      PgTypes.text.text().unsafeEncode(row.nationalidnumber, sb)
+      PgTypes.text.pgText().unsafeEncode(row.nationalidnumber, sb)
       sb.append(PgText.DELIMETER)
-      PgTypes.text.text().unsafeEncode(row.loginid, sb)
+      PgTypes.text.pgText().unsafeEncode(row.loginid, sb)
       sb.append(PgText.DELIMETER)
-      PgTypes.text.text().unsafeEncode(row.jobtitle, sb)
+      PgTypes.text.pgText().unsafeEncode(row.jobtitle, sb)
       sb.append(PgText.DELIMETER)
-      PgTypes.date.text().unsafeEncode(row.birthdate, sb)
+      PgTypes.date.pgText().unsafeEncode(row.birthdate, sb)
       sb.append(PgText.DELIMETER)
-      PgTypes.bpchar.text().unsafeEncode(row.maritalstatus, sb)
+      PgTypes.bpchar.pgText().unsafeEncode(row.maritalstatus, sb)
       sb.append(PgText.DELIMETER)
-      PgTypes.bpchar.text().unsafeEncode(row.gender, sb)
+      PgTypes.bpchar.pgText().unsafeEncode(row.gender, sb)
       sb.append(PgText.DELIMETER)
-      PgTypes.date.text().unsafeEncode(row.hiredate, sb)
+      PgTypes.date.pgText().unsafeEncode(row.hiredate, sb)
       sb.append(PgText.DELIMETER)
-      Defaulted.pgText(SalariedFlag.pgType.text()).unsafeEncode(row.salariedflag, sb)
+      Defaulted.pgText(SalariedFlag.pgType.pgText()).unsafeEncode(row.salariedflag, sb)
       sb.append(PgText.DELIMETER)
-      Defaulted.pgText(KotlinDbTypes.PgTypes.int2.text()).unsafeEncode(row.vacationhours, sb)
+      Defaulted.pgText(PgTypes.int2.pgText()).unsafeEncode(row.vacationhours, sb)
       sb.append(PgText.DELIMETER)
-      Defaulted.pgText(KotlinDbTypes.PgTypes.int2.text()).unsafeEncode(row.sickleavehours, sb)
+      Defaulted.pgText(PgTypes.int2.pgText()).unsafeEncode(row.sickleavehours, sb)
       sb.append(PgText.DELIMETER)
-      Defaulted.pgText(CurrentFlag.pgType.text()).unsafeEncode(row.currentflag, sb)
+      Defaulted.pgText(CurrentFlag.pgType.pgText()).unsafeEncode(row.currentflag, sb)
       sb.append(PgText.DELIMETER)
-      Defaulted.pgText(PgTypes.uuid.text()).unsafeEncode(row.rowguid, sb)
+      Defaulted.pgText(PgTypes.uuid.pgText()).unsafeEncode(row.rowguid, sb)
       sb.append(PgText.DELIMETER)
-      Defaulted.pgText(PgTypes.timestamp.text()).unsafeEncode(row.modifieddate, sb)
+      Defaulted.pgText(PgTypes.timestamp.pgText()).unsafeEncode(row.modifieddate, sb)
       sb.append(PgText.DELIMETER)
-      Defaulted.pgText(PgTypes.text.nullable().text()).unsafeEncode(row.organizationnode, sb) })
+      Defaulted.pgText(PgTypes.text.opt().pgText()).unsafeEncode(row.organizationnode, sb) })
   }
 }

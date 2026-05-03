@@ -8,20 +8,19 @@ package adventureworks.production.productcosthistory
 import adventureworks.production.product.ProductFields
 import adventureworks.production.product.ProductId
 import adventureworks.production.product.ProductRow
-import dev.typr.foundations.PgTypes
-import dev.typr.foundations.RowParser
-import dev.typr.foundations.dsl.FieldsBase
-import dev.typr.foundations.dsl.Path
-import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.scala.ForeignKey
-import dev.typr.foundations.scala.RelationStructure
-import dev.typr.foundations.scala.ScalaDbTypes
-import dev.typr.foundations.scala.SqlExpr
-import dev.typr.foundations.scala.SqlExpr.Field
-import dev.typr.foundations.scala.SqlExpr.IdField
-import dev.typr.foundations.scala.SqlExpr.OptField
-import dev.typr.foundations.scala.TupleExpr
-import dev.typr.foundations.scala.TupleExpr5
+import dev.typr.dsl.FieldsBase
+import dev.typr.dsl.Path
+import dev.typr.dsl.SqlExpr.FieldLike
+import dev.typr.dslsc.ForeignKey
+import dev.typr.dslsc.RelationStructure
+import dev.typr.dslsc.SqlExpr
+import dev.typr.dslsc.SqlExpr.Field
+import dev.typr.dslsc.SqlExpr.IdField
+import dev.typr.dslsc.SqlExpr.OptField
+import dev.typr.dslsc.TupleExpr
+import dev.typr.dslsc.TupleExpr5
+import dev.typr.foundations.RowCodec
+import dev.typr.foundationssc.PgTypes
 import java.time.LocalDateTime
 
 class ProductcosthistoryFields(val `_path`: java.util.List[Path]) extends TupleExpr5[ProductId, LocalDateTime, LocalDateTime, BigDecimal, LocalDateTime] with RelationStructure[ProductcosthistoryFields, ProductcosthistoryRow]  with FieldsBase[ProductcosthistoryRow] {
@@ -33,7 +32,7 @@ class ProductcosthistoryFields(val `_path`: java.util.List[Path]) extends TupleE
       None,
       Some("int4"),
       (row, value) => row.copy(productid = value),
-      ProductId.pgType
+      ProductId.pgType.underlying
     )
   }
 
@@ -45,7 +44,7 @@ class ProductcosthistoryFields(val `_path`: java.util.List[Path]) extends TupleE
       None,
       Some("timestamp"),
       (row, value) => row.copy(startdate = value),
-      PgTypes.timestamp
+      PgTypes.timestamp.underlying
     )
   }
 
@@ -57,7 +56,7 @@ class ProductcosthistoryFields(val `_path`: java.util.List[Path]) extends TupleE
       None,
       Some("timestamp"),
       (row, value) => row.copy(enddate = value),
-      PgTypes.timestamp
+      PgTypes.timestamp.underlying
     )
   }
 
@@ -69,7 +68,7 @@ class ProductcosthistoryFields(val `_path`: java.util.List[Path]) extends TupleE
       None,
       Some("numeric"),
       (row, value) => row.copy(standardcost = value),
-      ScalaDbTypes.PgTypes.numeric
+      PgTypes.numeric.underlying
     )
   }
 
@@ -81,7 +80,7 @@ class ProductcosthistoryFields(val `_path`: java.util.List[Path]) extends TupleE
       None,
       Some("timestamp"),
       (row, value) => row.copy(modifieddate = value),
-      PgTypes.timestamp
+      PgTypes.timestamp.underlying
     )
   }
 
@@ -93,7 +92,7 @@ class ProductcosthistoryFields(val `_path`: java.util.List[Path]) extends TupleE
 
   override def columns: java.util.List[FieldLike[?, ProductcosthistoryRow]] = java.util.List.of(this.productid.underlying, this.startdate.underlying, this.enddate.underlying, this.standardcost.underlying, this.modifieddate.underlying)
 
-  override def rowParser: RowParser[ProductcosthistoryRow] = ProductcosthistoryRow._rowParser.underlying
+  override def rowCodec: RowCodec[ProductcosthistoryRow] = ProductcosthistoryRow.rowCodec.underlying
 
   override def withPaths(`_path`: java.util.List[Path]): RelationStructure[ProductcosthistoryFields, ProductcosthistoryRow] = new ProductcosthistoryFields(`_path`)
 

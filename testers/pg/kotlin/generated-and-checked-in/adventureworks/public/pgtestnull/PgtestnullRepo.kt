@@ -5,10 +5,11 @@
  */
 package adventureworks.public.pgtestnull
 
-import dev.typr.foundations.kotlin.DeleteBuilder
-import dev.typr.foundations.kotlin.SelectBuilder
-import dev.typr.foundations.kotlin.UpdateBuilder
-import java.sql.Connection
+import dev.typr.dslkt.DeleteBuilder
+import dev.typr.dslkt.SelectBuilder
+import dev.typr.dslkt.UpdateBuilder
+import dev.typr.foundationskt.Connection
+import dev.typr.foundationskt.ConnectionRead
 import kotlin.collections.Iterator
 import kotlin.collections.List
 
@@ -24,11 +25,11 @@ interface PgtestnullRepo {
     unsaved: Iterator<PgtestnullRow>,
     batchSize: Int = 10000,
     c: Connection
-  ): Long
+  ): kotlin.Long
 
   abstract fun select(): SelectBuilder<PgtestnullFields, PgtestnullRow>
 
-  abstract fun selectAll(c: Connection): List<PgtestnullRow>
+  abstract fun selectAll(c: ConnectionRead): List<PgtestnullRow>
 
   abstract fun update(): UpdateBuilder<PgtestnullFields, PgtestnullRow>
 }

@@ -5,14 +5,14 @@
  */
 package testdb.products
 
-import dev.typr.foundations.DuckDbTypes
-import dev.typr.foundations.kotlin.DeleteBuilder
-import dev.typr.foundations.kotlin.Dialect
-import dev.typr.foundations.kotlin.Fragment
-import dev.typr.foundations.kotlin.SelectBuilder
-import dev.typr.foundations.kotlin.UpdateBuilder
-import dev.typr.foundations.kotlin.nullable
-import java.sql.Connection
+import dev.typr.dslkt.DeleteBuilder
+import dev.typr.dslkt.Dialect
+import dev.typr.dslkt.SelectBuilder
+import dev.typr.dslkt.UpdateBuilder
+import dev.typr.foundationskt.Connection
+import dev.typr.foundationskt.ConnectionRead
+import dev.typr.foundationskt.DuckDbTypes
+import dev.typr.foundationskt.Fragment
 import kotlin.collections.Iterator
 import kotlin.collections.List
 import kotlin.collections.Map
@@ -24,38 +24,38 @@ class ProductsRepoImpl() : ProductsRepo {
   override fun deleteById(
     productId: ProductsId,
     c: Connection
-  ): Boolean = Fragment.interpolate(Fragment.lit("delete from \"products\" where \"product_id\" = "), Fragment.encode(ProductsId.duckDbType, productId), Fragment.lit("")).update().runUnchecked(c) > 0
+  ): kotlin.Boolean = Fragment.concat(Fragment.of("delete from \"products\" where \"product_id\" = "), Fragment.encode(ProductsId.duckDbType, productId), Fragment.of("")).update().run(c) > 0
 
   override fun deleteByIds(
-    productIds: Array<ProductsId>,
+    productIds: List<ProductsId>,
     c: Connection
-  ): Int = Fragment.interpolate(Fragment.lit("delete\nfrom \"products\"\nwhere \"product_id\" = ANY("), Fragment.encode(ProductsId.duckDbTypeArray, productIds), Fragment.lit(")"))
+  ): Int = Fragment.concat(Fragment.of("delete\nfrom \"products\"\nwhere \"product_id\" = ANY("), Fragment.encode(ProductsId.duckDbTypeArray, productIds), Fragment.of(")"))
     .update()
-    .runUnchecked(c)
+    .run(c)
 
   override fun insert(
     unsaved: ProductsRow,
     c: Connection
-  ): ProductsRow = Fragment.interpolate(Fragment.lit("insert into \"products\"(\"product_id\", \"sku\", \"name\", \"price\", \"metadata\")\nvalues ("), Fragment.encode(ProductsId.duckDbType, unsaved.productId), Fragment.lit(", "), Fragment.encode(DuckDbTypes.varchar, unsaved.sku), Fragment.lit(", "), Fragment.encode(DuckDbTypes.varchar, unsaved.name), Fragment.lit(", "), Fragment.encode(DuckDbTypes.numeric, unsaved.price), Fragment.lit(", "), Fragment.encode(DuckDbTypes.json.nullable(), unsaved.metadata), Fragment.lit(")\nRETURNING \"product_id\", \"sku\", \"name\", \"price\", \"metadata\"\n"))
-    .updateReturning(ProductsRow._rowParser.exactlyOne()).runUnchecked(c)
+  ): ProductsRow = Fragment.concat(Fragment.of("insert into \"products\"(\"product_id\", \"sku\", \"name\", \"price\", \"metadata\")\nvalues ("), Fragment.encode(ProductsId.duckDbType, unsaved.productId), Fragment.of(", "), Fragment.encode(DuckDbTypes.varchar, unsaved.sku), Fragment.of(", "), Fragment.encode(DuckDbTypes.varchar, unsaved.name), Fragment.of(", "), Fragment.encode(DuckDbTypes.numeric, unsaved.price), Fragment.of(", "), Fragment.encode(DuckDbTypes.json.opt(), unsaved.metadata), Fragment.of(")\nRETURNING \"product_id\", \"sku\", \"name\", \"price\", \"metadata\"\n"))
+    .updateReturning(ProductsRow.rowCodec.exactlyOne()).run(c)
 
-  override fun select(): SelectBuilder<ProductsFields, ProductsRow> = SelectBuilder.of("\"products\"", ProductsFields.structure, ProductsRow._rowParser, Dialect.DUCKDB)
+  override fun select(): SelectBuilder<ProductsFields, ProductsRow> = SelectBuilder.of("\"products\"", ProductsFields.structure, ProductsRow.rowCodec, Dialect.DUCKDB)
 
-  override fun selectAll(c: Connection): List<ProductsRow> = Fragment.interpolate(Fragment.lit("select \"product_id\", \"sku\", \"name\", \"price\", \"metadata\"\nfrom \"products\"\n")).query(ProductsRow._rowParser.all()).runUnchecked(c)
+  override fun selectAll(c: ConnectionRead): List<ProductsRow> = Fragment.concat(Fragment.of("select \"product_id\", \"sku\", \"name\", \"price\", \"metadata\"\nfrom \"products\"\n")).query(ProductsRow.rowCodec.all()).run(c)
 
   override fun selectById(
     productId: ProductsId,
-    c: Connection
-  ): ProductsRow? = Fragment.interpolate(Fragment.lit("select \"product_id\", \"sku\", \"name\", \"price\", \"metadata\"\nfrom \"products\"\nwhere \"product_id\" = "), Fragment.encode(ProductsId.duckDbType, productId), Fragment.lit("")).query(ProductsRow._rowParser.first()).runUnchecked(c)
+    c: ConnectionRead
+  ): ProductsRow? = Fragment.concat(Fragment.of("select \"product_id\", \"sku\", \"name\", \"price\", \"metadata\"\nfrom \"products\"\nwhere \"product_id\" = "), Fragment.encode(ProductsId.duckDbType, productId), Fragment.of("")).query(ProductsRow.rowCodec.first()).run(c)
 
   override fun selectByIds(
-    productIds: Array<ProductsId>,
-    c: Connection
-  ): List<ProductsRow> = Fragment.interpolate(Fragment.lit("select \"product_id\", \"sku\", \"name\", \"price\", \"metadata\"\nfrom \"products\"\nwhere \"product_id\" = ANY("), Fragment.encode(ProductsId.duckDbTypeArray, productIds), Fragment.lit(")")).query(ProductsRow._rowParser.all()).runUnchecked(c)
+    productIds: List<ProductsId>,
+    c: ConnectionRead
+  ): List<ProductsRow> = Fragment.concat(Fragment.of("select \"product_id\", \"sku\", \"name\", \"price\", \"metadata\"\nfrom \"products\"\nwhere \"product_id\" = ANY("), Fragment.encode(ProductsId.duckDbTypeArray, productIds), Fragment.of(")")).query(ProductsRow.rowCodec.all()).run(c)
 
   override fun selectByIdsTracked(
-    productIds: Array<ProductsId>,
-    c: Connection
+    productIds: List<ProductsId>,
+    c: ConnectionRead
   ): Map<ProductsId, ProductsRow> {
     val ret: MutableMap<ProductsId, ProductsRow> = mutableMapOf<ProductsId, ProductsRow>()
     selectByIds(productIds, c).forEach({ row -> ret.put(row.productId, row) })
@@ -63,31 +63,31 @@ class ProductsRepoImpl() : ProductsRepo {
   }
 
   override fun selectByUniqueSku(
-    sku: String,
-    c: Connection
-  ): ProductsRow? = Fragment.interpolate(Fragment.lit("select \"product_id\", \"sku\", \"name\", \"price\", \"metadata\"\nfrom \"products\"\nwhere \"sku\" = "), Fragment.encode(DuckDbTypes.varchar, sku), Fragment.lit("\n")).query(ProductsRow._rowParser.first()).runUnchecked(c)
+    sku: kotlin.String,
+    c: ConnectionRead
+  ): ProductsRow? = Fragment.concat(Fragment.of("select \"product_id\", \"sku\", \"name\", \"price\", \"metadata\"\nfrom \"products\"\nwhere \"sku\" = "), Fragment.encode(DuckDbTypes.varchar, sku), Fragment.of("\n")).query(ProductsRow.rowCodec.first()).run(c)
 
-  override fun update(): UpdateBuilder<ProductsFields, ProductsRow> = UpdateBuilder.of("\"products\"", ProductsFields.structure, ProductsRow._rowParser, Dialect.DUCKDB)
+  override fun update(): UpdateBuilder<ProductsFields, ProductsRow> = UpdateBuilder.of("\"products\"", ProductsFields.structure, ProductsRow.rowCodec, Dialect.DUCKDB)
 
   override fun update(
     row: ProductsRow,
     c: Connection
-  ): Boolean {
+  ): kotlin.Boolean {
     val productId: ProductsId = row.productId
-    return Fragment.interpolate(Fragment.lit("update \"products\"\nset \"sku\" = "), Fragment.encode(DuckDbTypes.varchar, row.sku), Fragment.lit(",\n\"name\" = "), Fragment.encode(DuckDbTypes.varchar, row.name), Fragment.lit(",\n\"price\" = "), Fragment.encode(DuckDbTypes.numeric, row.price), Fragment.lit(",\n\"metadata\" = "), Fragment.encode(DuckDbTypes.json.nullable(), row.metadata), Fragment.lit("\nwhere \"product_id\" = "), Fragment.encode(ProductsId.duckDbType, productId), Fragment.lit("")).update().runUnchecked(c) > 0
+    return Fragment.concat(Fragment.of("update \"products\"\nset \"sku\" = "), Fragment.encode(DuckDbTypes.varchar, row.sku), Fragment.of(",\n\"name\" = "), Fragment.encode(DuckDbTypes.varchar, row.name), Fragment.of(",\n\"price\" = "), Fragment.encode(DuckDbTypes.numeric, row.price), Fragment.of(",\n\"metadata\" = "), Fragment.encode(DuckDbTypes.json.opt(), row.metadata), Fragment.of("\nwhere \"product_id\" = "), Fragment.encode(ProductsId.duckDbType, productId), Fragment.of("")).update().run(c) > 0
   }
 
   override fun upsert(
     unsaved: ProductsRow,
     c: Connection
-  ): ProductsRow = Fragment.interpolate(Fragment.lit("INSERT INTO \"products\"(\"product_id\", \"sku\", \"name\", \"price\", \"metadata\")\nVALUES ("), Fragment.encode(ProductsId.duckDbType, unsaved.productId), Fragment.lit(", "), Fragment.encode(DuckDbTypes.varchar, unsaved.sku), Fragment.lit(", "), Fragment.encode(DuckDbTypes.varchar, unsaved.name), Fragment.lit(", "), Fragment.encode(DuckDbTypes.numeric, unsaved.price), Fragment.lit(", "), Fragment.encode(DuckDbTypes.json.nullable(), unsaved.metadata), Fragment.lit(")\nON CONFLICT (\"product_id\")\nDO UPDATE SET\n  \"sku\" = EXCLUDED.\"sku\",\n\"name\" = EXCLUDED.\"name\",\n\"price\" = EXCLUDED.\"price\",\n\"metadata\" = EXCLUDED.\"metadata\"\nRETURNING \"product_id\", \"sku\", \"name\", \"price\", \"metadata\""))
-    .updateReturning(ProductsRow._rowParser.exactlyOne())
-    .runUnchecked(c)
+  ): ProductsRow = Fragment.concat(Fragment.of("INSERT INTO \"products\"(\"product_id\", \"sku\", \"name\", \"price\", \"metadata\")\nVALUES ("), Fragment.encode(ProductsId.duckDbType, unsaved.productId), Fragment.of(", "), Fragment.encode(DuckDbTypes.varchar, unsaved.sku), Fragment.of(", "), Fragment.encode(DuckDbTypes.varchar, unsaved.name), Fragment.of(", "), Fragment.encode(DuckDbTypes.numeric, unsaved.price), Fragment.of(", "), Fragment.encode(DuckDbTypes.json.opt(), unsaved.metadata), Fragment.of(")\nON CONFLICT (\"product_id\")\nDO UPDATE SET\n  \"sku\" = EXCLUDED.\"sku\",\n\"name\" = EXCLUDED.\"name\",\n\"price\" = EXCLUDED.\"price\",\n\"metadata\" = EXCLUDED.\"metadata\"\nRETURNING \"product_id\", \"sku\", \"name\", \"price\", \"metadata\""))
+    .updateReturning(ProductsRow.rowCodec.exactlyOne())
+    .run(c)
 
   override fun upsertBatch(
     unsaved: Iterator<ProductsRow>,
     c: Connection
-  ): List<ProductsRow> = Fragment.interpolate(Fragment.lit("INSERT INTO \"products\"(\"product_id\", \"sku\", \"name\", \"price\", \"metadata\")\nVALUES (?, ?, ?, ?, ?)\nON CONFLICT (\"product_id\")\nDO UPDATE SET\n  \"sku\" = EXCLUDED.\"sku\",\n\"name\" = EXCLUDED.\"name\",\n\"price\" = EXCLUDED.\"price\",\n\"metadata\" = EXCLUDED.\"metadata\"\nRETURNING \"product_id\", \"sku\", \"name\", \"price\", \"metadata\""))
-    .updateReturningEach(ProductsRow._rowParser, unsaved)
-  .runUnchecked(c)
+  ): List<ProductsRow> = Fragment.concat(Fragment.of("INSERT INTO \"products\"(\"product_id\", \"sku\", \"name\", \"price\", \"metadata\")\nVALUES (?, ?, ?, ?, ?)\nON CONFLICT (\"product_id\")\nDO UPDATE SET\n  \"sku\" = EXCLUDED.\"sku\",\n\"name\" = EXCLUDED.\"name\",\n\"price\" = EXCLUDED.\"price\",\n\"metadata\" = EXCLUDED.\"metadata\"\nRETURNING \"product_id\", \"sku\", \"name\", \"price\", \"metadata\""))
+    .updateReturningEach(ProductsRow.rowCodec, unsaved)
+  .run(c)
 }

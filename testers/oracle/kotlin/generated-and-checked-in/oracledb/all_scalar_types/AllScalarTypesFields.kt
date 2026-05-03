@@ -5,26 +5,25 @@
  */
 package oracledb.all_scalar_types
 
-import dev.typr.foundations.OracleTypes
-import dev.typr.foundations.RowParser
-import dev.typr.foundations.dsl.FieldsBase
-import dev.typr.foundations.dsl.Path
-import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.kotlin.KotlinDbTypes
-import dev.typr.foundations.kotlin.RelationStructure
-import dev.typr.foundations.kotlin.SqlExpr
-import dev.typr.foundations.kotlin.SqlExpr.Field
-import dev.typr.foundations.kotlin.SqlExpr.IdField
-import dev.typr.foundations.kotlin.SqlExpr.OptField
-import dev.typr.foundations.kotlin.TupleExpr7
+import dev.typr.dsl.FieldsBase
+import dev.typr.dsl.Path
+import dev.typr.dsl.SqlExpr.FieldLike
+import dev.typr.dslkt.RelationStructure
+import dev.typr.dslkt.SqlExpr
+import dev.typr.dslkt.SqlExpr.Field
+import dev.typr.dslkt.SqlExpr.IdField
+import dev.typr.dslkt.SqlExpr.OptField
+import dev.typr.dslkt.TupleExpr7
+import dev.typr.foundations.RowCodec
+import dev.typr.foundationskt.OracleTypes
 import java.math.BigDecimal
 import java.time.LocalDateTime
 import kotlin.collections.List
 
-data class AllScalarTypesFields(val _path: List<Path>) : TupleExpr7<AllScalarTypesId, String, BigDecimal, LocalDateTime, LocalDateTime, String, String>, RelationStructure<AllScalarTypesFields, AllScalarTypesRow>, FieldsBase<AllScalarTypesRow> {
+data class AllScalarTypesFields(val _path: List<Path>) : TupleExpr7<AllScalarTypesId, kotlin.String, BigDecimal, LocalDateTime, LocalDateTime, kotlin.String, kotlin.String>, RelationStructure<AllScalarTypesFields, AllScalarTypesRow>, FieldsBase<AllScalarTypesRow> {
   override fun _1(): SqlExpr<AllScalarTypesId> = id()
 
-  override fun _2(): SqlExpr<String> = colVarchar2()
+  override fun _2(): SqlExpr<kotlin.String> = colVarchar2()
 
   override fun _3(): SqlExpr<BigDecimal> = colNumber()
 
@@ -32,29 +31,29 @@ data class AllScalarTypesFields(val _path: List<Path>) : TupleExpr7<AllScalarTyp
 
   override fun _5(): SqlExpr<LocalDateTime> = colTimestamp()
 
-  override fun _6(): SqlExpr<String> = colClob()
+  override fun _6(): SqlExpr<kotlin.String> = colClob()
 
-  override fun _7(): SqlExpr<String> = colNotNull()
+  override fun _7(): SqlExpr<kotlin.String> = colNotNull()
 
   override fun _path(): List<Path> = _path
 
-  fun colClob(): OptField<String, AllScalarTypesRow> = OptField<String, AllScalarTypesRow>(_path, "COL_CLOB", AllScalarTypesRow::colClob, null, null, { row, value -> row.copy(colClob = value) }, OracleTypes.clob)
+  fun colClob(): OptField<kotlin.String, AllScalarTypesRow> = OptField<kotlin.String, AllScalarTypesRow>(_path, "COL_CLOB", AllScalarTypesRow::colClob, null, null, { row, value -> row.copy(colClob = value) }, OracleTypes.clob.underlying)
 
-  fun colDate(): OptField<LocalDateTime, AllScalarTypesRow> = OptField<LocalDateTime, AllScalarTypesRow>(_path, "COL_DATE", AllScalarTypesRow::colDate, null, null, { row, value -> row.copy(colDate = value) }, OracleTypes.date)
+  fun colDate(): OptField<LocalDateTime, AllScalarTypesRow> = OptField<LocalDateTime, AllScalarTypesRow>(_path, "COL_DATE", AllScalarTypesRow::colDate, null, null, { row, value -> row.copy(colDate = value) }, OracleTypes.date.underlying)
 
-  fun colNotNull(): Field<String, AllScalarTypesRow> = Field<String, AllScalarTypesRow>(_path, "COL_NOT_NULL", AllScalarTypesRow::colNotNull, null, null, { row, value -> row.copy(colNotNull = value) }, OracleTypes.varchar2)
+  fun colNotNull(): Field<kotlin.String, AllScalarTypesRow> = Field<kotlin.String, AllScalarTypesRow>(_path, "COL_NOT_NULL", AllScalarTypesRow::colNotNull, null, null, { row, value -> row.copy(colNotNull = value) }, OracleTypes.varchar2.underlying)
 
-  fun colNumber(): OptField<BigDecimal, AllScalarTypesRow> = OptField<BigDecimal, AllScalarTypesRow>(_path, "COL_NUMBER", AllScalarTypesRow::colNumber, null, null, { row, value -> row.copy(colNumber = value) }, KotlinDbTypes.OracleTypes.number)
+  fun colNumber(): OptField<BigDecimal, AllScalarTypesRow> = OptField<BigDecimal, AllScalarTypesRow>(_path, "COL_NUMBER", AllScalarTypesRow::colNumber, null, null, { row, value -> row.copy(colNumber = value) }, OracleTypes.number.underlying)
 
-  fun colTimestamp(): OptField<LocalDateTime, AllScalarTypesRow> = OptField<LocalDateTime, AllScalarTypesRow>(_path, "COL_TIMESTAMP", AllScalarTypesRow::colTimestamp, null, null, { row, value -> row.copy(colTimestamp = value) }, OracleTypes.timestamp)
+  fun colTimestamp(): OptField<LocalDateTime, AllScalarTypesRow> = OptField<LocalDateTime, AllScalarTypesRow>(_path, "COL_TIMESTAMP", AllScalarTypesRow::colTimestamp, null, null, { row, value -> row.copy(colTimestamp = value) }, OracleTypes.timestamp.underlying)
 
-  fun colVarchar2(): OptField<String, AllScalarTypesRow> = OptField<String, AllScalarTypesRow>(_path, "COL_VARCHAR2", AllScalarTypesRow::colVarchar2, null, null, { row, value -> row.copy(colVarchar2 = value) }, OracleTypes.varchar2)
+  fun colVarchar2(): OptField<kotlin.String, AllScalarTypesRow> = OptField<kotlin.String, AllScalarTypesRow>(_path, "COL_VARCHAR2", AllScalarTypesRow::colVarchar2, null, null, { row, value -> row.copy(colVarchar2 = value) }, OracleTypes.varchar2.underlying)
 
   override fun columns(): List<FieldLike<*, AllScalarTypesRow>> = listOf(this.id().underlying, this.colVarchar2().underlying, this.colNumber().underlying, this.colDate().underlying, this.colTimestamp().underlying, this.colClob().underlying, this.colNotNull().underlying)
 
-  fun id(): IdField<AllScalarTypesId, AllScalarTypesRow> = IdField<AllScalarTypesId, AllScalarTypesRow>(_path, "ID", AllScalarTypesRow::id, null, null, { row, value -> row.copy(id = value) }, AllScalarTypesId.oracleType)
+  fun id(): IdField<AllScalarTypesId, AllScalarTypesRow> = IdField<AllScalarTypesId, AllScalarTypesRow>(_path, "ID", AllScalarTypesRow::id, null, null, { row, value -> row.copy(id = value) }, AllScalarTypesId.oracleType.underlying)
 
-  override fun rowParser(): RowParser<AllScalarTypesRow> = AllScalarTypesRow._rowParser.underlying
+  override fun rowCodec(): RowCodec<AllScalarTypesRow> = AllScalarTypesRow.rowCodec.underlying
 
   override fun withPaths(_path: List<Path>): RelationStructure<AllScalarTypesFields, AllScalarTypesRow> = AllScalarTypesFields(_path)
 

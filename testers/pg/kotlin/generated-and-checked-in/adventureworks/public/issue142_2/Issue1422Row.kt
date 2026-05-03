@@ -6,10 +6,10 @@
 package adventureworks.public.issue142_2
 
 import adventureworks.public.issue142.Issue142Id
+import dev.typr.dslkt.RowCodecs
 import dev.typr.foundations.PgText
 import dev.typr.foundations.Tuple.Tuple1
-import dev.typr.foundations.kotlin.RowParser
-import dev.typr.foundations.kotlin.RowParsers
+import dev.typr.foundationskt.RowCodec
 
 /** Table: public.issue142_2
   * Primary key: tabellkode
@@ -21,9 +21,9 @@ val tabellkode: Issue142Id) : Tuple1<Issue142Id> {
   fun id(): Issue142Id = tabellkode
 
   companion object {
-    val _rowParser: RowParser<Issue1422Row> = RowParsers.of(Issue142Id.pgType, { t0 -> Issue1422Row(t0) }, { row -> arrayOf<Any?>(row.tabellkode) })
+    val rowCodec: RowCodec<Issue1422Row> = RowCodecs.of(Issue142Id.pgType, { t0: Issue142Id -> Issue1422Row(t0) }, { row: Issue1422Row -> arrayOf<Any?>(row.tabellkode) })
 
     val pgText: PgText<Issue1422Row> =
-      PgText.from(_rowParser.underlying)
+      PgText.from(rowCodec.underlying)
   }
 }

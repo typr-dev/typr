@@ -6,17 +6,17 @@
 package adventureworks.production.product
 
 import com.fasterxml.jackson.annotation.JsonValue
+import dev.typr.foundations.Bijection
 import dev.typr.foundations.PgType
 import dev.typr.foundations.PgTypes
-import dev.typr.foundations.dsl.Bijection
 
 /** Type for the primary key of table `production.product` */
 case class ProductId(@JsonValue value: Integer) extends scala.AnyVal
 
 object ProductId {
-  given bijection: Bijection[ProductId, Integer] = Bijection.apply[ProductId, Integer](_.value)(ProductId.apply)
+  given bijection: Bijection[ProductId, Integer] = Bijection.of[ProductId, Integer](_.value, ProductId.apply)
 
-  given pgType: PgType[ProductId] = PgTypes.int4.bimap(ProductId.apply, _.value)
+  given pgType: PgType[ProductId] = PgTypes.int4.to(Bijection.of(ProductId.apply, _.value))
 
-  given pgTypeArray: PgType[Array[ProductId]] = PgTypes.int4Array.bimap(xs => xs.map(ProductId.apply), xs => xs.map(_.value))
+  given pgTypeArray: PgType[java.util.List[ProductId]] = pgType.array
 }

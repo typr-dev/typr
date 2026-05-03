@@ -6,13 +6,11 @@
 package testdb.categories
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import dev.typr.foundations.MariaTypes
+import dev.typr.dslkt.RowCodecs
 import dev.typr.foundations.Tuple.Tuple9
 import dev.typr.foundations.data.Json
-import dev.typr.foundations.kotlin.KotlinDbTypes
-import dev.typr.foundations.kotlin.RowParser
-import dev.typr.foundations.kotlin.RowParsers
-import dev.typr.foundations.kotlin.nullable
+import dev.typr.foundationskt.MariaTypes
+import dev.typr.foundationskt.RowCodec
 import testdb.customtypes.Defaulted
 
 /** Table: categories
@@ -29,45 +27,45 @@ data class CategoriesRow(
     */
   @field:JsonProperty("parent_id") val parentId: CategoriesId?,
   /**  */
-  val name: String,
+  val name: kotlin.String,
   /**  */
-  val slug: String,
+  val slug: kotlin.String,
   /** 
     * Default: NULL
     */
-  val description: String?,
+  val description: kotlin.String?,
   /** 
     * Default: NULL
     */
-  @field:JsonProperty("image_url") val imageUrl: String?,
+  @field:JsonProperty("image_url") val imageUrl: kotlin.String?,
   /** 
     * Default: 0
     */
-  @field:JsonProperty("sort_order") val sortOrder: Short,
+  @field:JsonProperty("sort_order") val sortOrder: kotlin.Short,
   /** 
     * Default: 1
     */
-  @field:JsonProperty("is_visible") val isVisible: Boolean,
+  @field:JsonProperty("is_visible") val isVisible: kotlin.Boolean,
   /** 
     * Default: NULL
     */
   val metadata: Json?
-) : Tuple9<CategoriesId, CategoriesId?, String, String, String?, String?, Short, Boolean, Json?> {
+) : Tuple9<CategoriesId, CategoriesId?, kotlin.String, kotlin.String, kotlin.String?, kotlin.String?, kotlin.Short, kotlin.Boolean, Json?> {
   override fun _1(): CategoriesId = categoryId
 
   override fun _2(): CategoriesId? = parentId
 
-  override fun _3(): String = name
+  override fun _3(): kotlin.String = name
 
-  override fun _4(): String = slug
+  override fun _4(): kotlin.String = slug
 
-  override fun _5(): String? = description
+  override fun _5(): kotlin.String? = description
 
-  override fun _6(): String? = imageUrl
+  override fun _6(): kotlin.String? = imageUrl
 
-  override fun _7(): Short = sortOrder
+  override fun _7(): kotlin.Short = sortOrder
 
-  override fun _8(): Boolean = isVisible
+  override fun _8(): kotlin.Boolean = isVisible
 
   override fun _9(): Json? = metadata
 
@@ -75,14 +73,14 @@ data class CategoriesRow(
 
   fun toUnsavedRow(
     parentId: Defaulted<CategoriesId?> = Defaulted.Provided(this.parentId),
-    description: Defaulted<String?> = Defaulted.Provided(this.description),
-    imageUrl: Defaulted<String?> = Defaulted.Provided(this.imageUrl),
-    sortOrder: Defaulted<Short> = Defaulted.Provided(this.sortOrder),
-    isVisible: Defaulted<Boolean> = Defaulted.Provided(this.isVisible),
+    description: Defaulted<kotlin.String?> = Defaulted.Provided(this.description),
+    imageUrl: Defaulted<kotlin.String?> = Defaulted.Provided(this.imageUrl),
+    sortOrder: Defaulted<kotlin.Short> = Defaulted.Provided(this.sortOrder),
+    isVisible: Defaulted<kotlin.Boolean> = Defaulted.Provided(this.isVisible),
     metadata: Defaulted<Json?> = Defaulted.Provided(this.metadata)
   ): CategoriesRowUnsaved = CategoriesRowUnsaved(name, slug, parentId, description, imageUrl, sortOrder, isVisible, metadata)
 
   companion object {
-    val _rowParser: RowParser<CategoriesRow> = RowParsers.of(CategoriesId.mariaType, CategoriesId.mariaType.nullable(), MariaTypes.varchar, MariaTypes.varchar, MariaTypes.mediumtext.nullable(), MariaTypes.varchar.nullable(), KotlinDbTypes.MariaTypes.smallint, KotlinDbTypes.MariaTypes.bool, MariaTypes.json.nullable(), { t0, t1, t2, t3, t4, t5, t6, t7, t8 -> CategoriesRow(t0, t1, t2, t3, t4, t5, t6, t7, t8) }, { row -> arrayOf<Any?>(row.categoryId, row.parentId, row.name, row.slug, row.description, row.imageUrl, row.sortOrder, row.isVisible, row.metadata) })
+    val rowCodec: RowCodec<CategoriesRow> = RowCodecs.of(CategoriesId.mariaType, CategoriesId.mariaType.opt(), MariaTypes.varchar, MariaTypes.varchar, MariaTypes.mediumtext.opt(), MariaTypes.varchar.opt(), MariaTypes.smallint, MariaTypes.bool, MariaTypes.json.opt(), { t0: CategoriesId, t1: CategoriesId?, t2: kotlin.String, t3: kotlin.String, t4: kotlin.String?, t5: kotlin.String?, t6: kotlin.Short, t7: kotlin.Boolean, t8: Json? -> CategoriesRow(t0, t1, t2, t3, t4, t5, t6, t7, t8) }, { row: CategoriesRow -> arrayOf<Any?>(row.categoryId, row.parentId, row.name, row.slug, row.description, row.imageUrl, row.sortOrder, row.isVisible, row.metadata) })
   }
 }

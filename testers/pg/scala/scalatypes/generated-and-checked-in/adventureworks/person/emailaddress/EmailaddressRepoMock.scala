@@ -5,17 +5,18 @@
  */
 package adventureworks.person.emailaddress
 
-import dev.typr.foundations.scala.DeleteBuilder
-import dev.typr.foundations.scala.DeleteBuilderMock
-import dev.typr.foundations.scala.DeleteParams
-import dev.typr.foundations.scala.SelectBuilder
-import dev.typr.foundations.scala.SelectBuilderMock
-import dev.typr.foundations.scala.SelectParams
-import dev.typr.foundations.scala.UpdateBuilder
-import dev.typr.foundations.scala.UpdateBuilderMock
-import dev.typr.foundations.scala.UpdateParams
+import dev.typr.dslsc.DeleteBuilder
+import dev.typr.dslsc.DeleteBuilderMock
+import dev.typr.dslsc.DeleteParams
+import dev.typr.dslsc.SelectBuilder
+import dev.typr.dslsc.SelectBuilderMock
+import dev.typr.dslsc.SelectParams
+import dev.typr.dslsc.UpdateBuilder
+import dev.typr.dslsc.UpdateBuilderMock
+import dev.typr.dslsc.UpdateParams
+import dev.typr.foundationssc.Connection
+import dev.typr.foundationssc.ConnectionRead
 import java.lang.RuntimeException
-import java.sql.Connection
 
 case class EmailaddressRepoMock(
   toRow: EmailaddressRowUnsaved => EmailaddressRow,
@@ -25,7 +26,7 @@ case class EmailaddressRepoMock(
 
   override def deleteById(compositeId: EmailaddressId)(using c: Connection): Boolean = map.remove(compositeId).isDefined
 
-  override def deleteByIds(compositeIds: Array[EmailaddressId])(using c: Connection): Int = {
+  override def deleteByIds(compositeIds: List[EmailaddressId])(using c: Connection): Int = {
     var count = 0
     compositeIds.foreach { id => if (map.remove(id).isDefined) {
       count = count + 1
@@ -67,13 +68,13 @@ case class EmailaddressRepoMock(
 
   override def select: SelectBuilder[EmailaddressFields, EmailaddressRow] = SelectBuilderMock(EmailaddressFields.structure, () => map.values.toList, SelectParams.empty())
 
-  override def selectAll(using c: Connection): List[EmailaddressRow] = map.values.toList
+  override def selectAll(using c: ConnectionRead): List[EmailaddressRow] = map.values.toList
 
-  override def selectById(compositeId: EmailaddressId)(using c: Connection): Option[EmailaddressRow] = map.get(compositeId)
+  override def selectById(compositeId: EmailaddressId)(using c: ConnectionRead): Option[EmailaddressRow] = map.get(compositeId)
 
-  override def selectByIds(compositeIds: Array[EmailaddressId])(using c: Connection): List[EmailaddressRow] = compositeIds.flatMap(map.get(_)).toList
+  override def selectByIds(compositeIds: List[EmailaddressId])(using c: ConnectionRead): List[EmailaddressRow] = compositeIds.flatMap(map.get(_)).toList
 
-  override def selectByIdsTracked(compositeIds: Array[EmailaddressId])(using c: Connection): Map[EmailaddressId, EmailaddressRow] = selectByIds(compositeIds)(using c).map(x => (((row: EmailaddressRow) => row.compositeId).apply(x), x)).toMap
+  override def selectByIdsTracked(compositeIds: List[EmailaddressId])(using c: ConnectionRead): Map[EmailaddressId, EmailaddressRow] = selectByIds(compositeIds)(using c).map(x => (((row: EmailaddressRow) => row.compositeId).apply(x), x)).toMap
 
   override def update: UpdateBuilder[EmailaddressFields, EmailaddressRow] = UpdateBuilderMock(EmailaddressFields.structure, () => map.values.toList, UpdateParams.empty(), row => row)
 

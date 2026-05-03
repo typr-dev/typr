@@ -2,7 +2,7 @@ package adventureworks
 
 import adventureworks.humanresources.department.*
 import adventureworks.public.Name
-import dev.typr.foundations.scala.{TupleExpr2, TupleExpr3, Tuples}
+import dev.typr.dslsc.{TupleExpr2, TupleExpr3, Tuples}
 import org.junit.Assert.*
 import org.junit.Ignore
 import org.junit.Test

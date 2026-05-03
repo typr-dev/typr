@@ -5,20 +5,19 @@
  */
 package testdb.orders
 
-import dev.typr.foundations.MariaTypes
-import dev.typr.foundations.RowParser
+import dev.typr.dsl.FieldsBase
+import dev.typr.dsl.Path
+import dev.typr.dsl.SqlExpr.FieldLike
+import dev.typr.dslsc.ForeignKey
+import dev.typr.dslsc.RelationStructure
+import dev.typr.dslsc.SqlExpr
+import dev.typr.dslsc.SqlExpr.Field
+import dev.typr.dslsc.SqlExpr.IdField
+import dev.typr.dslsc.SqlExpr.OptField
+import dev.typr.dslsc.TupleExpr22
+import dev.typr.foundations.RowCodec
 import dev.typr.foundations.data.maria.Inet6
-import dev.typr.foundations.dsl.FieldsBase
-import dev.typr.foundations.dsl.Path
-import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.scala.ForeignKey
-import dev.typr.foundations.scala.RelationStructure
-import dev.typr.foundations.scala.ScalaDbTypes
-import dev.typr.foundations.scala.SqlExpr
-import dev.typr.foundations.scala.SqlExpr.Field
-import dev.typr.foundations.scala.SqlExpr.IdField
-import dev.typr.foundations.scala.SqlExpr.OptField
-import dev.typr.foundations.scala.TupleExpr22
+import dev.typr.foundationssc.MariaTypes
 import java.time.LocalDateTime
 import testdb.customer_addresses.CustomerAddressesFields
 import testdb.customer_addresses.CustomerAddressesId
@@ -39,7 +38,7 @@ class OrdersFields(val `_path`: java.util.List[Path]) extends TupleExpr22[Orders
       None,
       None,
       (row, value) => row.copy(orderId = value),
-      OrdersId.mariaType
+      OrdersId.mariaType.underlying
     )
   }
 
@@ -51,7 +50,7 @@ class OrdersFields(val `_path`: java.util.List[Path]) extends TupleExpr22[Orders
       None,
       None,
       (row, value) => row.copy(orderNumber = value),
-      MariaTypes.varchar
+      MariaTypes.varchar.underlying
     )
   }
 
@@ -63,7 +62,7 @@ class OrdersFields(val `_path`: java.util.List[Path]) extends TupleExpr22[Orders
       None,
       None,
       (row, value) => row.copy(customerId = value),
-      CustomersId.mariaType
+      CustomersId.mariaType.underlying
     )
   }
 
@@ -75,7 +74,7 @@ class OrdersFields(val `_path`: java.util.List[Path]) extends TupleExpr22[Orders
       None,
       None,
       (row, value) => row.copy(orderStatus = value),
-      MariaTypes.text
+      MariaTypes.text.underlying
     )
   }
 
@@ -87,7 +86,7 @@ class OrdersFields(val `_path`: java.util.List[Path]) extends TupleExpr22[Orders
       None,
       None,
       (row, value) => row.copy(paymentStatus = value),
-      MariaTypes.text
+      MariaTypes.text.underlying
     )
   }
 
@@ -99,7 +98,7 @@ class OrdersFields(val `_path`: java.util.List[Path]) extends TupleExpr22[Orders
       None,
       None,
       (row, value) => row.copy(shippingAddressId = value),
-      CustomerAddressesId.mariaType
+      CustomerAddressesId.mariaType.underlying
     )
   }
 
@@ -111,7 +110,7 @@ class OrdersFields(val `_path`: java.util.List[Path]) extends TupleExpr22[Orders
       None,
       None,
       (row, value) => row.copy(billingAddressId = value),
-      CustomerAddressesId.mariaType
+      CustomerAddressesId.mariaType.underlying
     )
   }
 
@@ -123,7 +122,7 @@ class OrdersFields(val `_path`: java.util.List[Path]) extends TupleExpr22[Orders
       None,
       None,
       (row, value) => row.copy(subtotal = value),
-      ScalaDbTypes.MariaTypes.numeric
+      MariaTypes.numeric.underlying
     )
   }
 
@@ -135,7 +134,7 @@ class OrdersFields(val `_path`: java.util.List[Path]) extends TupleExpr22[Orders
       None,
       None,
       (row, value) => row.copy(shippingCost = value),
-      ScalaDbTypes.MariaTypes.numeric
+      MariaTypes.numeric.underlying
     )
   }
 
@@ -147,7 +146,7 @@ class OrdersFields(val `_path`: java.util.List[Path]) extends TupleExpr22[Orders
       None,
       None,
       (row, value) => row.copy(taxAmount = value),
-      ScalaDbTypes.MariaTypes.numeric
+      MariaTypes.numeric.underlying
     )
   }
 
@@ -159,7 +158,7 @@ class OrdersFields(val `_path`: java.util.List[Path]) extends TupleExpr22[Orders
       None,
       None,
       (row, value) => row.copy(discountAmount = value),
-      ScalaDbTypes.MariaTypes.numeric
+      MariaTypes.numeric.underlying
     )
   }
 
@@ -171,7 +170,7 @@ class OrdersFields(val `_path`: java.util.List[Path]) extends TupleExpr22[Orders
       None,
       None,
       (row, value) => row.copy(totalAmount = value),
-      ScalaDbTypes.MariaTypes.numeric
+      MariaTypes.numeric.underlying
     )
   }
 
@@ -183,7 +182,7 @@ class OrdersFields(val `_path`: java.util.List[Path]) extends TupleExpr22[Orders
       None,
       None,
       (row, value) => row.copy(currencyCode = value),
-      MariaTypes.char_
+      MariaTypes.char_.underlying
     )
   }
 
@@ -195,7 +194,7 @@ class OrdersFields(val `_path`: java.util.List[Path]) extends TupleExpr22[Orders
       None,
       None,
       (row, value) => row.copy(promotionId = value),
-      PromotionsId.mariaType
+      PromotionsId.mariaType.underlying
     )
   }
 
@@ -207,7 +206,7 @@ class OrdersFields(val `_path`: java.util.List[Path]) extends TupleExpr22[Orders
       None,
       None,
       (row, value) => row.copy(notes = value),
-      MariaTypes.text
+      MariaTypes.text.underlying
     )
   }
 
@@ -219,7 +218,7 @@ class OrdersFields(val `_path`: java.util.List[Path]) extends TupleExpr22[Orders
       None,
       None,
       (row, value) => row.copy(internalNotes = value),
-      MariaTypes.mediumtext
+      MariaTypes.mediumtext.underlying
     )
   }
 
@@ -231,7 +230,7 @@ class OrdersFields(val `_path`: java.util.List[Path]) extends TupleExpr22[Orders
       None,
       None,
       (row, value) => row.copy(ipAddress = value),
-      MariaTypes.inet6
+      MariaTypes.inet6.underlying
     )
   }
 
@@ -243,7 +242,7 @@ class OrdersFields(val `_path`: java.util.List[Path]) extends TupleExpr22[Orders
       None,
       None,
       (row, value) => row.copy(userAgent = value),
-      MariaTypes.varchar
+      MariaTypes.varchar.underlying
     )
   }
 
@@ -255,7 +254,7 @@ class OrdersFields(val `_path`: java.util.List[Path]) extends TupleExpr22[Orders
       None,
       None,
       (row, value) => row.copy(orderedAt = value),
-      MariaTypes.datetime
+      MariaTypes.datetime.underlying
     )
   }
 
@@ -267,7 +266,7 @@ class OrdersFields(val `_path`: java.util.List[Path]) extends TupleExpr22[Orders
       None,
       None,
       (row, value) => row.copy(confirmedAt = value),
-      MariaTypes.datetime
+      MariaTypes.datetime.underlying
     )
   }
 
@@ -279,7 +278,7 @@ class OrdersFields(val `_path`: java.util.List[Path]) extends TupleExpr22[Orders
       None,
       None,
       (row, value) => row.copy(shippedAt = value),
-      MariaTypes.datetime
+      MariaTypes.datetime.underlying
     )
   }
 
@@ -291,7 +290,7 @@ class OrdersFields(val `_path`: java.util.List[Path]) extends TupleExpr22[Orders
       None,
       None,
       (row, value) => row.copy(deliveredAt = value),
-      MariaTypes.datetime
+      MariaTypes.datetime.underlying
     )
   }
 
@@ -305,7 +304,7 @@ class OrdersFields(val `_path`: java.util.List[Path]) extends TupleExpr22[Orders
 
   override def columns: java.util.List[FieldLike[?, OrdersRow]] = java.util.List.of(this.orderId.underlying, this.orderNumber.underlying, this.customerId.underlying, this.orderStatus.underlying, this.paymentStatus.underlying, this.shippingAddressId.underlying, this.billingAddressId.underlying, this.subtotal.underlying, this.shippingCost.underlying, this.taxAmount.underlying, this.discountAmount.underlying, this.totalAmount.underlying, this.currencyCode.underlying, this.promotionId.underlying, this.notes.underlying, this.internalNotes.underlying, this.ipAddress.underlying, this.userAgent.underlying, this.orderedAt.underlying, this.confirmedAt.underlying, this.shippedAt.underlying, this.deliveredAt.underlying)
 
-  override def rowParser: RowParser[OrdersRow] = OrdersRow._rowParser.underlying
+  override def rowCodec: RowCodec[OrdersRow] = OrdersRow.rowCodec.underlying
 
   override def withPaths(`_path`: java.util.List[Path]): RelationStructure[OrdersFields, OrdersRow] = new OrdersFields(`_path`)
 

@@ -6,13 +6,11 @@
 package testdb.payment_methods
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import dev.typr.foundations.MariaTypes
+import dev.typr.dslsc.RowCodecs
 import dev.typr.foundations.Tuple.Tuple7
 import dev.typr.foundations.data.Json
-import dev.typr.foundations.scala.DbTypeOps
-import dev.typr.foundations.scala.RowParser
-import dev.typr.foundations.scala.RowParsers
-import dev.typr.foundations.scala.ScalaDbTypes
+import dev.typr.foundationssc.MariaTypes
+import dev.typr.foundationssc.RowCodec
 import testdb.customtypes.Defaulted
 import testdb.userdefined.IsActive
 
@@ -76,5 +74,5 @@ case class PaymentMethodsRow(
 }
 
 object PaymentMethodsRow {
-  val `_rowParser`: RowParser[PaymentMethodsRow] = RowParsers.of(PaymentMethodsId.mariaType, MariaTypes.varchar, MariaTypes.varchar, MariaTypes.text, MariaTypes.json.nullable, IsActive.mariaType, ScalaDbTypes.MariaTypes.tinyint)(PaymentMethodsRow.apply)(row => Array[Any](row.methodId, row.code, row.name, row.methodType, row.processorConfig, row.isActive, row.sortOrder))
+  val rowCodec: RowCodec[PaymentMethodsRow] = RowCodecs.of(PaymentMethodsId.mariaType, MariaTypes.varchar, MariaTypes.varchar, MariaTypes.text, MariaTypes.json.opt, IsActive.mariaType, MariaTypes.tinyint)(PaymentMethodsRow.apply)(row => Array[Any](row.methodId, row.code, row.name, row.methodType, row.processorConfig, row.isActive, row.sortOrder))
 }

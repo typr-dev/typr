@@ -6,16 +6,16 @@
 package adventureworks.precisetypes
 
 import com.fasterxml.jackson.annotation.JsonValue
-import dev.typr.foundations.PgType
-import dev.typr.foundations.PgTypes
 import dev.typr.foundations.data.precise.PaddedStringN
-import dev.typr.foundations.internal.arrayMap
-import dev.typr.foundations.kotlin.Bijection
+import dev.typr.foundationskt.Bijection
+import dev.typr.foundationskt.PgType
+import dev.typr.foundationskt.PgTypes
 import java.lang.IllegalArgumentException
+import kotlin.collections.List
 
 @kotlin.ConsistentCopyVisibility
-data class PaddedString3 private constructor(@field:JsonValue val value: String) : PaddedStringN {
-  override fun equals(other: Any?): Boolean {
+data class PaddedString3 private constructor(@field:JsonValue val value: kotlin.String) : PaddedStringN {
+  override fun equals(other: Any?): kotlin.Boolean {
     if (this === other) return true
     if (other !is PaddedStringN) return false
     return trimmed() == other.trimmed()
@@ -25,35 +25,35 @@ data class PaddedString3 private constructor(@field:JsonValue val value: String)
 
   override fun length(): Int = 3
 
-  override fun rawValue(): String = value
+  override fun rawValue(): kotlin.String = value
 
-  override fun semanticEquals(other: PaddedStringN): Boolean = if (other == null) false else trimmed() == other.trimmed()
+  override fun semanticEquals(other: PaddedStringN): kotlin.Boolean = if (other == null) false else (trimmed() == other.trimmed())
 
   override fun semanticHashCode(): Int = trimmed().hashCode()
 
-  override fun trimmed(): String = value.trimEnd()
+  override fun trimmed(): kotlin.String = value.trimEnd()
 
   override fun toString(): kotlin.String {
-    return value.toString()
+    return value
   }
 
   companion object {
-    val bijection: Bijection<PaddedString3, String> =
-      Bijection.of(PaddedString3::value, ::PaddedString3)
+    fun of(value: kotlin.String): PaddedString3? = if (value.length <= 3) PaddedString3(String.format("%-3s", value)) else null
 
-    fun of(value: String): PaddedString3? = if (value.length <= 3) PaddedString3(String.format("%-3s", value)) else null
-
-    val pgType: PgType<PaddedString3> =
-      PgTypes.bpchar.bimap(::PaddedString3, PaddedString3::value)
-
-    val pgTypeArray: PgType<Array<PaddedString3>> =
-      PgTypes.bpcharArray.bimap({ xs -> arrayMap.map(xs, ::PaddedString3, PaddedString3::class.java) }, { xs -> arrayMap.map(xs, PaddedString3::value, String::class.java) })
-
-    fun unsafeForce(value: String): PaddedString3 {
+    fun unsafeForce(value: kotlin.String): PaddedString3 {
       if (value.length > 3) {
         throw IllegalArgumentException("Value length ${value.length} exceeds fixed length 3")
       }
       return PaddedString3(String.format("%-3s", value))
     }
+
+    val bijection: Bijection<PaddedString3, kotlin.String> =
+      Bijection.of(PaddedString3::value, ::PaddedString3)
+
+    val pgType: PgType<PaddedString3> =
+      PgTypes.bpchar.to(Bijection.of(::PaddedString3, PaddedString3::value))
+
+    val pgTypeArray: PgType<List<PaddedString3>> =
+      pgType.array()
   }
 }

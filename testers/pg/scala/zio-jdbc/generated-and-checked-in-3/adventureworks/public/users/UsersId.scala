@@ -25,7 +25,7 @@ object UsersId {
 
   given arraySetter: Setter[Array[UsersId]] = TypoUUID.arraySetter.contramap(_.map(_.value))
 
-  given bijection: Bijection[UsersId, TypoUUID] = Bijection.apply[UsersId, TypoUUID](_.value)(UsersId.apply)
+  given bijection: Bijection[UsersId, TypoUUID] = Bijection[UsersId, TypoUUID](_.value)(UsersId.apply)
 
   given jdbcDecoder: JdbcDecoder[UsersId] = TypoUUID.jdbcDecoder.map(UsersId.apply)
 

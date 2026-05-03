@@ -5,10 +5,11 @@
  */
 package testdb.categories
 
-import dev.typr.foundations.kotlin.DeleteBuilder
-import dev.typr.foundations.kotlin.SelectBuilder
-import dev.typr.foundations.kotlin.UpdateBuilder
-import java.sql.Connection
+import dev.typr.dslkt.DeleteBuilder
+import dev.typr.dslkt.SelectBuilder
+import dev.typr.dslkt.UpdateBuilder
+import dev.typr.foundationskt.Connection
+import dev.typr.foundationskt.ConnectionRead
 import kotlin.collections.Iterator
 import kotlin.collections.List
 import kotlin.collections.Map
@@ -19,10 +20,10 @@ interface CategoriesRepo {
   abstract fun deleteById(
     categoryId: CategoriesId,
     c: Connection
-  ): Boolean
+  ): kotlin.Boolean
 
   abstract fun deleteByIds(
-    categoryIds: Array<CategoriesId>,
+    categoryIds: List<CategoriesId>,
     c: Connection
   ): Int
 
@@ -38,26 +39,26 @@ interface CategoriesRepo {
 
   abstract fun select(): SelectBuilder<CategoriesFields, CategoriesRow>
 
-  abstract fun selectAll(c: Connection): List<CategoriesRow>
+  abstract fun selectAll(c: ConnectionRead): List<CategoriesRow>
 
   abstract fun selectById(
     categoryId: CategoriesId,
-    c: Connection
+    c: ConnectionRead
   ): CategoriesRow?
 
   abstract fun selectByIds(
-    categoryIds: Array<CategoriesId>,
-    c: Connection
+    categoryIds: List<CategoriesId>,
+    c: ConnectionRead
   ): List<CategoriesRow>
 
   abstract fun selectByIdsTracked(
-    categoryIds: Array<CategoriesId>,
-    c: Connection
+    categoryIds: List<CategoriesId>,
+    c: ConnectionRead
   ): Map<CategoriesId, CategoriesRow>
 
   abstract fun selectByUniqueSlug(
-    slug: String,
-    c: Connection
+    slug: kotlin.String,
+    c: ConnectionRead
   ): CategoriesRow?
 
   abstract fun update(): UpdateBuilder<CategoriesFields, CategoriesRow>
@@ -65,7 +66,7 @@ interface CategoriesRepo {
   abstract fun update(
     row: CategoriesRow,
     c: Connection
-  ): Boolean
+  ): kotlin.Boolean
 
   abstract fun upsert(
     unsaved: CategoriesRow,

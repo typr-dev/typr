@@ -5,11 +5,11 @@
  */
 package testdb.v_daily_sales
 
-import dev.typr.foundations.scala.SelectBuilder
-import java.sql.Connection
+import dev.typr.dslsc.SelectBuilder
+import dev.typr.foundationssc.ConnectionRead
 
 trait VDailySalesViewRepo {
   def select: SelectBuilder[VDailySalesViewFields, VDailySalesViewRow]
 
-  def selectAll(using c: Connection): List[VDailySalesViewRow]
+  def selectAll(using c: ConnectionRead): List[VDailySalesViewRow]
 }

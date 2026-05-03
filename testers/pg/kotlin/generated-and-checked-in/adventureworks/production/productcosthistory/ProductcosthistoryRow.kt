@@ -7,12 +7,11 @@ package adventureworks.production.productcosthistory
 
 import adventureworks.customtypes.Defaulted
 import adventureworks.production.product.ProductId
+import dev.typr.dslkt.RowCodecs
 import dev.typr.foundations.PgText
-import dev.typr.foundations.PgTypes
 import dev.typr.foundations.Tuple.Tuple5
-import dev.typr.foundations.kotlin.RowParser
-import dev.typr.foundations.kotlin.RowParsers
-import dev.typr.foundations.kotlin.nullable
+import dev.typr.foundationskt.PgTypes
+import dev.typr.foundationskt.RowCodec
 import java.math.BigDecimal
 import java.time.LocalDateTime
 
@@ -57,7 +56,10 @@ data class ProductcosthistoryRow(
   fun toUnsavedRow(modifieddate: Defaulted<LocalDateTime> = Defaulted.Provided(this.modifieddate)): ProductcosthistoryRowUnsaved = ProductcosthistoryRowUnsaved(productid, startdate, enddate, standardcost, modifieddate)
 
   companion object {
-    val _rowParser: RowParser<ProductcosthistoryRow> = RowParsers.of(ProductId.pgType, PgTypes.timestamp, PgTypes.timestamp.nullable(), PgTypes.numeric, PgTypes.timestamp, { t0, t1, t2, t3, t4 -> ProductcosthistoryRow(t0, t1, t2, t3, t4) }, { row -> arrayOf<Any?>(row.productid, row.startdate, row.enddate, row.standardcost, row.modifieddate) })
+    val rowCodec: RowCodec<ProductcosthistoryRow> = RowCodecs.of(ProductId.pgType, PgTypes.timestamp, PgTypes.timestamp.opt(), PgTypes.numeric, PgTypes.timestamp, { t0: ProductId, t1: LocalDateTime, t2: LocalDateTime?, t3: BigDecimal, t4: LocalDateTime -> ProductcosthistoryRow(t0, t1, t2, t3, t4) }, { row: ProductcosthistoryRow -> arrayOf<Any?>(row.productid, row.startdate, row.enddate, row.standardcost, row.modifieddate) })
+
+    val pgText: PgText<ProductcosthistoryRow> =
+      PgText.from(rowCodec.underlying)
 
     fun apply(
       compositeId: ProductcosthistoryId,
@@ -65,8 +67,5 @@ data class ProductcosthistoryRow(
       standardcost: BigDecimal,
       modifieddate: LocalDateTime
     ): ProductcosthistoryRow = ProductcosthistoryRow(compositeId.productid, compositeId.startdate, enddate, standardcost, modifieddate)
-
-    val pgText: PgText<ProductcosthistoryRow> =
-      PgText.from(_rowParser.underlying)
   }
 }

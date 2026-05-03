@@ -5,17 +5,18 @@
  */
 package testdb.mariatest_spatial_null
 
-import dev.typr.foundations.kotlin.DeleteBuilder
-import dev.typr.foundations.kotlin.DeleteBuilderMock
-import dev.typr.foundations.kotlin.DeleteParams
-import dev.typr.foundations.kotlin.SelectBuilder
-import dev.typr.foundations.kotlin.SelectBuilderMock
-import dev.typr.foundations.kotlin.SelectParams
-import dev.typr.foundations.kotlin.UpdateBuilder
-import dev.typr.foundations.kotlin.UpdateBuilderMock
-import dev.typr.foundations.kotlin.UpdateParams
+import dev.typr.dslkt.DeleteBuilder
+import dev.typr.dslkt.DeleteBuilderMock
+import dev.typr.dslkt.DeleteParams
+import dev.typr.dslkt.SelectBuilder
+import dev.typr.dslkt.SelectBuilderMock
+import dev.typr.dslkt.SelectParams
+import dev.typr.dslkt.UpdateBuilder
+import dev.typr.dslkt.UpdateBuilderMock
+import dev.typr.dslkt.UpdateParams
+import dev.typr.foundationskt.Connection
+import dev.typr.foundationskt.ConnectionRead
 import java.lang.RuntimeException
-import java.sql.Connection
 import java.util.ArrayList
 import kotlin.collections.Iterator
 import kotlin.collections.List
@@ -31,10 +32,10 @@ data class MariatestSpatialNullRepoMock(
   override fun deleteById(
     id: MariatestSpatialNullId,
     c: Connection
-  ): Boolean = map.remove(id) != null
+  ): kotlin.Boolean = map.remove(id) != null
 
   override fun deleteByIds(
-    ids: Array<MariatestSpatialNullId>,
+    ids: List<MariatestSpatialNullId>,
     c: Connection
   ): Int {
     var count = 0
@@ -64,16 +65,16 @@ data class MariatestSpatialNullRepoMock(
 
   override fun select(): SelectBuilder<MariatestSpatialNullFields, MariatestSpatialNullRow> = SelectBuilderMock(MariatestSpatialNullFields.structure, { map.values.toList() }, SelectParams.empty())
 
-  override fun selectAll(c: Connection): List<MariatestSpatialNullRow> = map.values.toList()
+  override fun selectAll(c: ConnectionRead): List<MariatestSpatialNullRow> = map.values.toList()
 
   override fun selectById(
     id: MariatestSpatialNullId,
-    c: Connection
+    c: ConnectionRead
   ): MariatestSpatialNullRow? = map[id]
 
   override fun selectByIds(
-    ids: Array<MariatestSpatialNullId>,
-    c: Connection
+    ids: List<MariatestSpatialNullId>,
+    c: ConnectionRead
   ): List<MariatestSpatialNullRow> {
     val result = ArrayList<MariatestSpatialNullRow>()
     for (id in ids) {
@@ -86,8 +87,8 @@ data class MariatestSpatialNullRepoMock(
   }
 
   override fun selectByIdsTracked(
-    ids: Array<MariatestSpatialNullId>,
-    c: Connection
+    ids: List<MariatestSpatialNullId>,
+    c: ConnectionRead
   ): Map<MariatestSpatialNullId, MariatestSpatialNullRow> = selectByIds(ids, c).associateBy({ row: MariatestSpatialNullRow -> row.id })
 
   override fun update(): UpdateBuilder<MariatestSpatialNullFields, MariatestSpatialNullRow> = UpdateBuilderMock(MariatestSpatialNullFields.structure, { map.values.toList() }, UpdateParams.empty(), { row -> row })
@@ -95,7 +96,7 @@ data class MariatestSpatialNullRepoMock(
   override fun update(
     row: MariatestSpatialNullRow,
     c: Connection
-  ): Boolean {
+  ): kotlin.Boolean {
     val shouldUpdate = map[row.id]?.takeIf({ oldRow -> (oldRow != row) }) != null
     if (shouldUpdate) {
       map[row.id] = row

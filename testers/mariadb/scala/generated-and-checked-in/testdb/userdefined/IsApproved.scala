@@ -6,9 +6,9 @@
 package testdb.userdefined
 
 import com.fasterxml.jackson.annotation.JsonValue
-import dev.typr.foundations.MariaType
-import dev.typr.foundations.scala.Bijection
-import dev.typr.foundations.scala.ScalaDbTypes
+import dev.typr.dslsc.Bijection
+import dev.typr.foundationssc.MariaType
+import dev.typr.foundationssc.MariaTypes
 
 /** Shared type `IsApproved`
  * Generated from TypeDefinitions matching
@@ -16,7 +16,7 @@ import dev.typr.foundations.scala.ScalaDbTypes
 case class IsApproved(@JsonValue value: Boolean) extends scala.AnyVal
 
 object IsApproved {
-  given bijection: Bijection[IsApproved, Boolean] = Bijection.apply[IsApproved, Boolean](_.value)(IsApproved.apply)
+  given bijection: Bijection[IsApproved, Boolean] = Bijection.of[IsApproved, Boolean](_.value, IsApproved.apply)
 
-  given mariaType: MariaType[IsApproved] = ScalaDbTypes.MariaTypes.bool.bimap(IsApproved.apply, _.value)
+  given mariaType: MariaType[IsApproved] = MariaTypes.bool.to(Bijection.of(IsApproved.apply, _.value))
 }

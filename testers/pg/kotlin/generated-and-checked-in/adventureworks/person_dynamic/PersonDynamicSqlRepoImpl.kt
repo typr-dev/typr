@@ -5,15 +5,14 @@
  */
 package adventureworks.person_dynamic
 
-import dev.typr.foundations.PgTypes
-import dev.typr.foundations.kotlin.Fragment
-import dev.typr.foundations.kotlin.nullable
-import java.sql.Connection
+import dev.typr.foundationskt.ConnectionRead
+import dev.typr.foundationskt.Fragment
+import dev.typr.foundationskt.PgTypes
 import kotlin.collections.List
 
 class PersonDynamicSqlRepoImpl() : PersonDynamicSqlRepo {
   override fun apply(
-    firstName: String?,
-    c: Connection
-  ): List<PersonDynamicSqlRow> = Fragment.interpolate(Fragment.lit("SELECT p.title, p.firstname, p.middlename, p.lastname\nFROM person.person p\nWHERE "), Fragment.encode(PgTypes.text.nullable(), firstName), Fragment.lit("::text IS NULL OR p.firstname = "), Fragment.encode(PgTypes.text.nullable(), firstName), Fragment.lit("\n")).query(PersonDynamicSqlRow._rowParser.all()).runUnchecked(c)
+    firstName: kotlin.String?,
+    c: ConnectionRead
+  ): List<PersonDynamicSqlRow> = Fragment.concat(Fragment.of("SELECT p.title, p.firstname, p.middlename, p.lastname\nFROM person.person p\nWHERE "), Fragment.encode(PgTypes.text.opt(), firstName), Fragment.of("::text IS NULL OR p.firstname = "), Fragment.encode(PgTypes.text.opt(), firstName), Fragment.of("\n")).query(PersonDynamicSqlRow.rowCodec.all()).run(c)
 }

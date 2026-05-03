@@ -7,11 +7,11 @@ package adventureworks.person.addresstype
 
 import adventureworks.customtypes.Defaulted
 import adventureworks.public.Name
+import dev.typr.dslkt.RowCodecs
 import dev.typr.foundations.PgText
-import dev.typr.foundations.PgTypes
 import dev.typr.foundations.Tuple.Tuple4
-import dev.typr.foundations.kotlin.RowParser
-import dev.typr.foundations.kotlin.RowParsers
+import dev.typr.foundationskt.PgTypes
+import dev.typr.foundationskt.RowCodec
 import java.time.LocalDateTime
 import java.util.UUID
 
@@ -48,9 +48,9 @@ data class AddresstypeRow(
   ): AddresstypeRowUnsaved = AddresstypeRowUnsaved(name, addresstypeid, rowguid, modifieddate)
 
   companion object {
-    val _rowParser: RowParser<AddresstypeRow> = RowParsers.of(AddresstypeId.pgType, Name.pgType, PgTypes.uuid, PgTypes.timestamp, { t0, t1, t2, t3 -> AddresstypeRow(t0, t1, t2, t3) }, { row -> arrayOf<Any?>(row.addresstypeid, row.name, row.rowguid, row.modifieddate) })
+    val rowCodec: RowCodec<AddresstypeRow> = RowCodecs.of(AddresstypeId.pgType, Name.pgType, PgTypes.uuid, PgTypes.timestamp, { t0: AddresstypeId, t1: Name, t2: UUID, t3: LocalDateTime -> AddresstypeRow(t0, t1, t2, t3) }, { row: AddresstypeRow -> arrayOf<Any?>(row.addresstypeid, row.name, row.rowguid, row.modifieddate) })
 
     val pgText: PgText<AddresstypeRow> =
-      PgText.from(_rowParser.underlying)
+      PgText.from(rowCodec.underlying)
   }
 }

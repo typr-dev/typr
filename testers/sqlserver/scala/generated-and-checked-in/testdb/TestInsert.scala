@@ -11,7 +11,7 @@ import dev.typr.foundations.data.HierarchyId
 import dev.typr.foundations.data.Json
 import dev.typr.foundations.data.Uint1
 import dev.typr.foundations.data.Xml
-import java.sql.Connection
+import dev.typr.foundationssc.Connection
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime

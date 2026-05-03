@@ -5,14 +5,14 @@
  */
 package testdb.simple_customer_lookup
 
-import dev.typr.foundations.MariaTypes
-import dev.typr.foundations.kotlin.Fragment
-import java.sql.Connection
+import dev.typr.foundationskt.ConnectionRead
+import dev.typr.foundationskt.Fragment
+import dev.typr.foundationskt.MariaTypes
 import kotlin.collections.List
 
 class SimpleCustomerLookupSqlRepoImpl() : SimpleCustomerLookupSqlRepo {
   override fun apply(
-    email: String,
-    c: Connection
-  ): List<SimpleCustomerLookupSqlRow> = Fragment.interpolate(Fragment.lit("-- Simple customer lookup by email\nSELECT customer_id,\n       email,\n       first_name,\n       last_name,\n       tier,\n       status,\n       created_at\nFROM customers\nWHERE email = "), Fragment.encode(MariaTypes.varchar, email), Fragment.lit("\n")).query(SimpleCustomerLookupSqlRow._rowParser.all()).runUnchecked(c)
+    email: kotlin.String,
+    c: ConnectionRead
+  ): List<SimpleCustomerLookupSqlRow> = Fragment.concat(Fragment.of("-- Simple customer lookup by email\nSELECT customer_id,\n       email,\n       first_name,\n       last_name,\n       tier,\n       status,\n       created_at\nFROM customers\nWHERE email = "), Fragment.encode(MariaTypes.varchar, email), Fragment.of("\n")).query(SimpleCustomerLookupSqlRow.rowCodec.all()).run(c)
 }

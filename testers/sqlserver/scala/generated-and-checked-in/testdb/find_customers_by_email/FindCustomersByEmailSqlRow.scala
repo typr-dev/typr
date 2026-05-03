@@ -6,11 +6,10 @@
 package testdb.find_customers_by_email
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import dev.typr.foundations.SqlServerTypes
+import dev.typr.dslsc.RowCodecs
 import dev.typr.foundations.Tuple.Tuple4
-import dev.typr.foundations.scala.DbTypeOps
-import dev.typr.foundations.scala.RowParser
-import dev.typr.foundations.scala.RowParsers
+import dev.typr.foundationssc.RowCodec
+import dev.typr.foundationssc.SqlServerTypes
 import java.time.LocalDateTime
 import testdb.customers.CustomersId
 import testdb.userdefined.Email
@@ -36,5 +35,5 @@ case class FindCustomersByEmailSqlRow(
 }
 
 object FindCustomersByEmailSqlRow {
-  val `_rowParser`: RowParser[FindCustomersByEmailSqlRow] = RowParsers.of(CustomersId.sqlServerType, SqlServerTypes.nvarchar, Email.sqlServerType, SqlServerTypes.datetime2.nullable)(FindCustomersByEmailSqlRow.apply)(row => Array[Any](row.customerId, row.customerName, row.customerEmail, row.createdAt))
+  val rowCodec: RowCodec[FindCustomersByEmailSqlRow] = RowCodecs.of(CustomersId.sqlServerType, SqlServerTypes.nvarchar, Email.sqlServerType, SqlServerTypes.datetime2.opt)(FindCustomersByEmailSqlRow.apply)(row => Array[Any](row.customerId, row.customerName, row.customerEmail, row.createdAt))
 }

@@ -8,12 +8,11 @@ package adventureworks.sales.salesperson
 import adventureworks.customtypes.Defaulted
 import adventureworks.person.businessentity.BusinessentityId
 import adventureworks.sales.salesterritory.SalesterritoryId
+import dev.typr.dslkt.RowCodecs
 import dev.typr.foundations.PgText
-import dev.typr.foundations.PgTypes
 import dev.typr.foundations.Tuple.Tuple9
-import dev.typr.foundations.kotlin.RowParser
-import dev.typr.foundations.kotlin.RowParsers
-import dev.typr.foundations.kotlin.nullable
+import dev.typr.foundationskt.PgTypes
+import dev.typr.foundationskt.RowCodec
 import java.math.BigDecimal
 import java.time.LocalDateTime
 import java.util.UUID
@@ -90,9 +89,9 @@ data class SalespersonRow(
   ): SalespersonRowUnsaved = SalespersonRowUnsaved(businessentityid, territoryid, salesquota, bonus, commissionpct, salesytd, saleslastyear, rowguid, modifieddate)
 
   companion object {
-    val _rowParser: RowParser<SalespersonRow> = RowParsers.of(BusinessentityId.pgType, SalesterritoryId.pgType.nullable(), PgTypes.numeric.nullable(), PgTypes.numeric, PgTypes.numeric, PgTypes.numeric, PgTypes.numeric, PgTypes.uuid, PgTypes.timestamp, { t0, t1, t2, t3, t4, t5, t6, t7, t8 -> SalespersonRow(t0, t1, t2, t3, t4, t5, t6, t7, t8) }, { row -> arrayOf<Any?>(row.businessentityid, row.territoryid, row.salesquota, row.bonus, row.commissionpct, row.salesytd, row.saleslastyear, row.rowguid, row.modifieddate) })
+    val rowCodec: RowCodec<SalespersonRow> = RowCodecs.of(BusinessentityId.pgType, SalesterritoryId.pgType.opt(), PgTypes.numeric.opt(), PgTypes.numeric, PgTypes.numeric, PgTypes.numeric, PgTypes.numeric, PgTypes.uuid, PgTypes.timestamp, { t0: BusinessentityId, t1: SalesterritoryId?, t2: BigDecimal?, t3: BigDecimal, t4: BigDecimal, t5: BigDecimal, t6: BigDecimal, t7: UUID, t8: LocalDateTime -> SalespersonRow(t0, t1, t2, t3, t4, t5, t6, t7, t8) }, { row: SalespersonRow -> arrayOf<Any?>(row.businessentityid, row.territoryid, row.salesquota, row.bonus, row.commissionpct, row.salesytd, row.saleslastyear, row.rowguid, row.modifieddate) })
 
     val pgText: PgText<SalespersonRow> =
-      PgText.from(_rowParser.underlying)
+      PgText.from(rowCodec.underlying)
   }
 }

@@ -5,18 +5,18 @@
  */
 package testdb.shipping_carriers
 
-import dev.typr.foundations.MariaTypes
-import dev.typr.foundations.RowParser
+import dev.typr.dsl.FieldsBase
+import dev.typr.dsl.Path
+import dev.typr.dsl.SqlExpr.FieldLike
+import dev.typr.dslsc.RelationStructure
+import dev.typr.dslsc.SqlExpr
+import dev.typr.dslsc.SqlExpr.Field
+import dev.typr.dslsc.SqlExpr.IdField
+import dev.typr.dslsc.SqlExpr.OptField
+import dev.typr.dslsc.TupleExpr6
+import dev.typr.foundations.RowCodec
 import dev.typr.foundations.data.Json
-import dev.typr.foundations.dsl.FieldsBase
-import dev.typr.foundations.dsl.Path
-import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.scala.RelationStructure
-import dev.typr.foundations.scala.SqlExpr
-import dev.typr.foundations.scala.SqlExpr.Field
-import dev.typr.foundations.scala.SqlExpr.IdField
-import dev.typr.foundations.scala.SqlExpr.OptField
-import dev.typr.foundations.scala.TupleExpr6
+import dev.typr.foundationssc.MariaTypes
 import testdb.userdefined.IsActive
 
 class ShippingCarriersFields(val `_path`: java.util.List[Path]) extends TupleExpr6[ShippingCarriersId, String, String, String, Json, /* user-picked */ IsActive] with RelationStructure[ShippingCarriersFields, ShippingCarriersRow]  with FieldsBase[ShippingCarriersRow] {
@@ -28,7 +28,7 @@ class ShippingCarriersFields(val `_path`: java.util.List[Path]) extends TupleExp
       None,
       None,
       (row, value) => row.copy(carrierId = value),
-      ShippingCarriersId.mariaType
+      ShippingCarriersId.mariaType.underlying
     )
   }
 
@@ -40,7 +40,7 @@ class ShippingCarriersFields(val `_path`: java.util.List[Path]) extends TupleExp
       None,
       None,
       (row, value) => row.copy(code = value),
-      MariaTypes.varchar
+      MariaTypes.varchar.underlying
     )
   }
 
@@ -52,7 +52,7 @@ class ShippingCarriersFields(val `_path`: java.util.List[Path]) extends TupleExp
       None,
       None,
       (row, value) => row.copy(name = value),
-      MariaTypes.varchar
+      MariaTypes.varchar.underlying
     )
   }
 
@@ -64,7 +64,7 @@ class ShippingCarriersFields(val `_path`: java.util.List[Path]) extends TupleExp
       None,
       None,
       (row, value) => row.copy(trackingUrlTemplate = value),
-      MariaTypes.varchar
+      MariaTypes.varchar.underlying
     )
   }
 
@@ -76,7 +76,7 @@ class ShippingCarriersFields(val `_path`: java.util.List[Path]) extends TupleExp
       None,
       None,
       (row, value) => row.copy(apiConfig = value),
-      MariaTypes.json
+      MariaTypes.json.underlying
     )
   }
 
@@ -88,13 +88,13 @@ class ShippingCarriersFields(val `_path`: java.util.List[Path]) extends TupleExp
       None,
       None,
       (row, value) => row.copy(isActive = value),
-      IsActive.mariaType
+      IsActive.mariaType.underlying
     )
   }
 
   override def columns: java.util.List[FieldLike[?, ShippingCarriersRow]] = java.util.List.of(this.carrierId.underlying, this.code.underlying, this.name.underlying, this.trackingUrlTemplate.underlying, this.apiConfig.underlying, this.isActive.underlying)
 
-  override def rowParser: RowParser[ShippingCarriersRow] = ShippingCarriersRow._rowParser.underlying
+  override def rowCodec: RowCodec[ShippingCarriersRow] = ShippingCarriersRow.rowCodec.underlying
 
   override def withPaths(`_path`: java.util.List[Path]): RelationStructure[ShippingCarriersFields, ShippingCarriersRow] = new ShippingCarriersFields(`_path`)
 

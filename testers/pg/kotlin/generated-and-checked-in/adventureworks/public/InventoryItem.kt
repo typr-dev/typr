@@ -5,29 +5,24 @@
  */
 package adventureworks.public
 
-import dev.typr.foundations.PgRead
-import dev.typr.foundations.PgStruct
-import dev.typr.foundations.PgType
-import dev.typr.foundations.PgTypes
-import dev.typr.foundations.kotlin.KotlinDbTypes
+import dev.typr.foundationskt.PgType
+import dev.typr.foundationskt.PgTypes
+import dev.typr.foundationskt.RowCodec
 import java.math.BigDecimal
-import java.util.Optional
+import kotlin.collections.List
 
 /** PostgreSQL composite type: public.inventory_item */
 data class InventoryItem(
-  val name: String?,
-  val tags: Array<String>?,
-  val prices: Array<BigDecimal>?,
-  val available: Boolean?
+  val name: kotlin.String?,
+  val tags: List<kotlin.String>?,
+  val prices: List<BigDecimal>?,
+  val available: kotlin.Boolean?
 ) {
   companion object {
-    val pgStruct: PgStruct<InventoryItem> =
-      PgStruct.builder<InventoryItem>("public.inventory_item").optField("name", PgTypes.text, { v: InventoryItem -> Optional.ofNullable(v.name) }).optField("tags", PgTypes.textArray, { v: InventoryItem -> Optional.ofNullable(v.tags) }).optField("prices", PgTypes.numericArray, { v: InventoryItem -> Optional.ofNullable(v.prices) }).optField("available", KotlinDbTypes.PgTypes.bool, { v: InventoryItem -> Optional.ofNullable(v.available) }).build({ arr -> InventoryItem(arr[0] as? String, arr[1] as? Array<String>, arr[2] as? Array<BigDecimal>, arr[3] as? Boolean) })
-
     val pgType: PgType<InventoryItem> =
-      pgStruct.asType()
+      PgTypes.compositeOf("public.inventory_item", RowCodec.namedBuilder<InventoryItem>().field("name", PgTypes.text.opt(), { v: InventoryItem -> v.name }).field("tags", PgTypes.text.array().opt(), { v: InventoryItem -> v.tags }).field("prices", PgTypes.numeric.array().opt(), { v: InventoryItem -> v.prices }).field("available", PgTypes.bool.opt(), { v: InventoryItem -> v.available }).build({ t0, t1, t2, t3 -> InventoryItem(t0, t1, t2, t3) }))
 
-    val pgTypeArray: PgType<Array<InventoryItem>> =
-      pgType.array(PgRead.readCompositeArray(pgType.pgCompositeText(), { n -> arrayOfNulls<InventoryItem>(n) }), { n -> arrayOfNulls<InventoryItem>(n) })
+    val pgTypeArray: PgType<List<InventoryItem>> =
+      pgType.array()
   }
 }

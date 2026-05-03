@@ -5,10 +5,11 @@
  */
 package testdb.inventory
 
-import dev.typr.foundations.kotlin.DeleteBuilder
-import dev.typr.foundations.kotlin.SelectBuilder
-import dev.typr.foundations.kotlin.UpdateBuilder
-import java.sql.Connection
+import dev.typr.dslkt.DeleteBuilder
+import dev.typr.dslkt.SelectBuilder
+import dev.typr.dslkt.UpdateBuilder
+import dev.typr.foundationskt.Connection
+import dev.typr.foundationskt.ConnectionRead
 import kotlin.collections.Iterator
 import kotlin.collections.List
 import kotlin.collections.Map
@@ -21,10 +22,10 @@ interface InventoryRepo {
   abstract fun deleteById(
     inventoryId: InventoryId,
     c: Connection
-  ): Boolean
+  ): kotlin.Boolean
 
   abstract fun deleteByIds(
-    inventoryIds: Array<InventoryId>,
+    inventoryIds: List<InventoryId>,
     c: Connection
   ): Int
 
@@ -40,27 +41,27 @@ interface InventoryRepo {
 
   abstract fun select(): SelectBuilder<InventoryFields, InventoryRow>
 
-  abstract fun selectAll(c: Connection): List<InventoryRow>
+  abstract fun selectAll(c: ConnectionRead): List<InventoryRow>
 
   abstract fun selectById(
     inventoryId: InventoryId,
-    c: Connection
+    c: ConnectionRead
   ): InventoryRow?
 
   abstract fun selectByIds(
-    inventoryIds: Array<InventoryId>,
-    c: Connection
+    inventoryIds: List<InventoryId>,
+    c: ConnectionRead
   ): List<InventoryRow>
 
   abstract fun selectByIdsTracked(
-    inventoryIds: Array<InventoryId>,
-    c: Connection
+    inventoryIds: List<InventoryId>,
+    c: ConnectionRead
   ): Map<InventoryId, InventoryRow>
 
   abstract fun selectByUniqueProductIdAndWarehouseId(
     productId: ProductsId,
     warehouseId: WarehousesId,
-    c: Connection
+    c: ConnectionRead
   ): InventoryRow?
 
   abstract fun update(): UpdateBuilder<InventoryFields, InventoryRow>
@@ -68,7 +69,7 @@ interface InventoryRepo {
   abstract fun update(
     row: InventoryRow,
     c: Connection
-  ): Boolean
+  ): kotlin.Boolean
 
   abstract fun upsert(
     unsaved: InventoryRow,

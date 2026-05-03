@@ -5,17 +5,18 @@
  */
 package adventureworks.public.identity_test
 
-import dev.typr.foundations.scala.DeleteBuilder
-import dev.typr.foundations.scala.SelectBuilder
-import dev.typr.foundations.scala.UpdateBuilder
-import java.sql.Connection
+import dev.typr.dslsc.DeleteBuilder
+import dev.typr.dslsc.SelectBuilder
+import dev.typr.dslsc.UpdateBuilder
+import dev.typr.foundationssc.Connection
+import dev.typr.foundationssc.ConnectionRead
 
 trait IdentityTestRepo {
   def delete: DeleteBuilder[IdentityTestFields, IdentityTestRow]
 
   def deleteById(name: IdentityTestId)(using c: Connection): Boolean
 
-  def deleteByIds(names: Array[IdentityTestId])(using c: Connection): Int
+  def deleteByIds(names: List[IdentityTestId])(using c: Connection): Int
 
   def insert(unsaved: IdentityTestRow)(using c: Connection): IdentityTestRow
 
@@ -34,13 +35,13 @@ trait IdentityTestRepo {
 
   def select: SelectBuilder[IdentityTestFields, IdentityTestRow]
 
-  def selectAll(using c: Connection): List[IdentityTestRow]
+  def selectAll(using c: ConnectionRead): List[IdentityTestRow]
 
-  def selectById(name: IdentityTestId)(using c: Connection): Option[IdentityTestRow]
+  def selectById(name: IdentityTestId)(using c: ConnectionRead): Option[IdentityTestRow]
 
-  def selectByIds(names: Array[IdentityTestId])(using c: Connection): List[IdentityTestRow]
+  def selectByIds(names: List[IdentityTestId])(using c: ConnectionRead): List[IdentityTestRow]
 
-  def selectByIdsTracked(names: Array[IdentityTestId])(using c: Connection): Map[IdentityTestId, IdentityTestRow]
+  def selectByIdsTracked(names: List[IdentityTestId])(using c: ConnectionRead): Map[IdentityTestId, IdentityTestRow]
 
   def update: UpdateBuilder[IdentityTestFields, IdentityTestRow]
 

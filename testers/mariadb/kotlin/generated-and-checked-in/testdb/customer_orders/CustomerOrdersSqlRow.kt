@@ -6,12 +6,10 @@
 package testdb.customer_orders
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import dev.typr.foundations.MariaTypes
+import dev.typr.dslkt.RowCodecs
 import dev.typr.foundations.Tuple.Tuple10
-import dev.typr.foundations.kotlin.KotlinDbTypes
-import dev.typr.foundations.kotlin.RowParser
-import dev.typr.foundations.kotlin.RowParsers
-import dev.typr.foundations.kotlin.nullable
+import dev.typr.foundationskt.MariaTypes
+import dev.typr.foundationskt.RowCodec
 import java.math.BigDecimal
 import java.time.LocalDateTime
 import testdb.customers.CustomersId
@@ -31,18 +29,18 @@ data class CustomerOrdersSqlRow(
   /** Points to [testdb.customers.CustomersRow.lastName] */
   @field:JsonProperty("last_name") val lastName: /* user-picked */ LastName,
   /** Points to [testdb.customers.CustomersRow.tier] */
-  val tier: String,
+  val tier: kotlin.String,
   /** Points to [testdb.orders.OrdersRow.orderId] */
   @field:JsonProperty("order_id") val orderId: OrdersId?,
   /** Points to [testdb.orders.OrdersRow.orderNumber] */
-  @field:JsonProperty("order_number") val orderNumber: String?,
+  @field:JsonProperty("order_number") val orderNumber: kotlin.String?,
   /** Points to [testdb.orders.OrdersRow.orderStatus] */
-  @field:JsonProperty("order_status") val orderStatus: String?,
+  @field:JsonProperty("order_status") val orderStatus: kotlin.String?,
   /** Points to [testdb.orders.OrdersRow.totalAmount] */
   @field:JsonProperty("total_amount") val totalAmount: BigDecimal?,
   /** Points to [testdb.orders.OrdersRow.orderedAt] */
   @field:JsonProperty("ordered_at") val orderedAt: LocalDateTime?
-) : Tuple10<CustomersId, /* user-picked */ Email, /* user-picked */ FirstName, /* user-picked */ LastName, String, OrdersId?, String?, String?, BigDecimal?, LocalDateTime?> {
+) : Tuple10<CustomersId, /* user-picked */ Email, /* user-picked */ FirstName, /* user-picked */ LastName, kotlin.String, OrdersId?, kotlin.String?, kotlin.String?, BigDecimal?, LocalDateTime?> {
   override fun _1(): CustomersId = customerId
 
   override fun _10(): LocalDateTime? = orderedAt
@@ -53,17 +51,17 @@ data class CustomerOrdersSqlRow(
 
   override fun _4(): /* user-picked */ LastName = lastName
 
-  override fun _5(): String = tier
+  override fun _5(): kotlin.String = tier
 
   override fun _6(): OrdersId? = orderId
 
-  override fun _7(): String? = orderNumber
+  override fun _7(): kotlin.String? = orderNumber
 
-  override fun _8(): String? = orderStatus
+  override fun _8(): kotlin.String? = orderStatus
 
   override fun _9(): BigDecimal? = totalAmount
 
   companion object {
-    val _rowParser: RowParser<CustomerOrdersSqlRow> = RowParsers.of(CustomersId.mariaType, Email.mariaType, FirstName.mariaType, LastName.mariaType, MariaTypes.text, OrdersId.mariaType.nullable(), MariaTypes.varchar.nullable(), MariaTypes.text.nullable(), KotlinDbTypes.MariaTypes.numeric.nullable(), MariaTypes.datetime.nullable(), { t0, t1, t2, t3, t4, t5, t6, t7, t8, t9 -> CustomerOrdersSqlRow(t0, t1, t2, t3, t4, t5, t6, t7, t8, t9) }, { row -> arrayOf<Any?>(row.customerId, row.email, row.firstName, row.lastName, row.tier, row.orderId, row.orderNumber, row.orderStatus, row.totalAmount, row.orderedAt) })
+    val rowCodec: RowCodec<CustomerOrdersSqlRow> = RowCodecs.of(CustomersId.mariaType, Email.mariaType, FirstName.mariaType, LastName.mariaType, MariaTypes.text, OrdersId.mariaType.opt(), MariaTypes.varchar.opt(), MariaTypes.text.opt(), MariaTypes.numeric.opt(), MariaTypes.datetime.opt(), { t0: CustomersId, t1: /* user-picked */ Email, t2: /* user-picked */ FirstName, t3: /* user-picked */ LastName, t4: kotlin.String, t5: OrdersId?, t6: kotlin.String?, t7: kotlin.String?, t8: BigDecimal?, t9: LocalDateTime? -> CustomerOrdersSqlRow(t0, t1, t2, t3, t4, t5, t6, t7, t8, t9) }, { row: CustomerOrdersSqlRow -> arrayOf<Any?>(row.customerId, row.email, row.firstName, row.lastName, row.tier, row.orderId, row.orderNumber, row.orderStatus, row.totalAmount, row.orderedAt) })
   }
 }

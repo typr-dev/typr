@@ -6,13 +6,14 @@
 package adventureworks.public.issue142_2
 
 import adventureworks.public.issue142.Issue142Id
-import dev.typr.foundations.kotlin.DeleteBuilder
-import dev.typr.foundations.kotlin.Dialect
-import dev.typr.foundations.kotlin.Fragment
-import dev.typr.foundations.kotlin.SelectBuilder
-import dev.typr.foundations.kotlin.UpdateBuilder
-import dev.typr.foundations.streamingInsert
-import java.sql.Connection
+import dev.typr.dslkt.DeleteBuilder
+import dev.typr.dslkt.Dialect
+import dev.typr.dslkt.SelectBuilder
+import dev.typr.dslkt.UpdateBuilder
+import dev.typr.foundationskt.Connection
+import dev.typr.foundationskt.ConnectionRead
+import dev.typr.foundationskt.Fragment
+import dev.typr.foundationskt.StreamingInsert
 import kotlin.collections.Iterator
 import kotlin.collections.List
 import kotlin.collections.Map
@@ -24,65 +25,65 @@ class Issue1422RepoImpl() : Issue1422Repo {
   override fun deleteById(
     tabellkode: Issue142Id,
     c: Connection
-  ): Boolean = Fragment.interpolate(Fragment.lit("delete from \"public\".\"issue142_2\" where \"tabellkode\" = "), Fragment.encode(Issue142Id.pgType, tabellkode), Fragment.lit("")).update().runUnchecked(c) > 0
+  ): kotlin.Boolean = Fragment.concat(Fragment.of("delete from \"public\".\"issue142_2\" where \"tabellkode\" = "), Fragment.encode(Issue142Id.pgType, tabellkode), Fragment.of("")).update().run(c) > 0
 
   override fun deleteByIds(
-    tabellkodes: Array<Issue142Id>,
+    tabellkodes: List<Issue142Id>,
     c: Connection
-  ): Int = Fragment.interpolate(Fragment.lit("delete\nfrom \"public\".\"issue142_2\"\nwhere \"tabellkode\" = ANY("), Fragment.encode(Issue142Id.pgTypeArray, tabellkodes), Fragment.lit(")"))
+  ): Int = Fragment.concat(Fragment.of("delete\nfrom \"public\".\"issue142_2\"\nwhere \"tabellkode\" = ANY("), Fragment.encode(Issue142Id.pgType.array(), tabellkodes), Fragment.of(")"))
     .update()
-    .runUnchecked(c)
+    .run(c)
 
   override fun insert(
     unsaved: Issue1422Row,
     c: Connection
-  ): Issue1422Row = Fragment.interpolate(Fragment.lit("insert into \"public\".\"issue142_2\"(\"tabellkode\")\nvalues ("), Fragment.encode(Issue142Id.pgType, unsaved.tabellkode), Fragment.lit(")\nRETURNING \"tabellkode\"\n"))
-    .updateReturning(Issue1422Row._rowParser.exactlyOne()).runUnchecked(c)
+  ): Issue1422Row = Fragment.concat(Fragment.of("insert into \"public\".\"issue142_2\"(\"tabellkode\")\nvalues ("), Fragment.encode(Issue142Id.pgType, unsaved.tabellkode), Fragment.of(")\nRETURNING \"tabellkode\"\n"))
+    .updateReturning(Issue1422Row.rowCodec.exactlyOne()).run(c)
 
   override fun insertStreaming(
     unsaved: Iterator<Issue1422Row>,
     batchSize: Int,
     c: Connection
-  ): Long = streamingInsert.insertUnchecked("COPY \"public\".\"issue142_2\"(\"tabellkode\") FROM STDIN", batchSize, unsaved, c, Issue1422Row.pgText)
+  ): kotlin.Long = StreamingInsert.of("COPY \"public\".\"issue142_2\"(\"tabellkode\") FROM STDIN", batchSize, unsaved, Issue1422Row.pgText).run(c)
 
-  override fun select(): SelectBuilder<Issue1422Fields, Issue1422Row> = SelectBuilder.of("\"public\".\"issue142_2\"", Issue1422Fields.structure, Issue1422Row._rowParser, Dialect.POSTGRESQL)
+  override fun select(): SelectBuilder<Issue1422Fields, Issue1422Row> = SelectBuilder.of("\"public\".\"issue142_2\"", Issue1422Fields.structure, Issue1422Row.rowCodec, Dialect.POSTGRESQL)
 
-  override fun selectAll(c: Connection): List<Issue1422Row> = Fragment.interpolate(Fragment.lit("select \"tabellkode\"\nfrom \"public\".\"issue142_2\"\n")).query(Issue1422Row._rowParser.all()).runUnchecked(c)
+  override fun selectAll(c: ConnectionRead): List<Issue1422Row> = Fragment.concat(Fragment.of("select \"tabellkode\"\nfrom \"public\".\"issue142_2\"\n")).query(Issue1422Row.rowCodec.all()).run(c)
 
   override fun selectById(
     tabellkode: Issue142Id,
-    c: Connection
-  ): Issue1422Row? = Fragment.interpolate(Fragment.lit("select \"tabellkode\"\nfrom \"public\".\"issue142_2\"\nwhere \"tabellkode\" = "), Fragment.encode(Issue142Id.pgType, tabellkode), Fragment.lit("")).query(Issue1422Row._rowParser.first()).runUnchecked(c)
+    c: ConnectionRead
+  ): Issue1422Row? = Fragment.concat(Fragment.of("select \"tabellkode\"\nfrom \"public\".\"issue142_2\"\nwhere \"tabellkode\" = "), Fragment.encode(Issue142Id.pgType, tabellkode), Fragment.of("")).query(Issue1422Row.rowCodec.first()).run(c)
 
   override fun selectByIds(
-    tabellkodes: Array<Issue142Id>,
-    c: Connection
-  ): List<Issue1422Row> = Fragment.interpolate(Fragment.lit("select \"tabellkode\"\nfrom \"public\".\"issue142_2\"\nwhere \"tabellkode\" = ANY("), Fragment.encode(Issue142Id.pgTypeArray, tabellkodes), Fragment.lit(")")).query(Issue1422Row._rowParser.all()).runUnchecked(c)
+    tabellkodes: List<Issue142Id>,
+    c: ConnectionRead
+  ): List<Issue1422Row> = Fragment.concat(Fragment.of("select \"tabellkode\"\nfrom \"public\".\"issue142_2\"\nwhere \"tabellkode\" = ANY("), Fragment.encode(Issue142Id.pgType.array(), tabellkodes), Fragment.of(")")).query(Issue1422Row.rowCodec.all()).run(c)
 
   override fun selectByIdsTracked(
-    tabellkodes: Array<Issue142Id>,
-    c: Connection
+    tabellkodes: List<Issue142Id>,
+    c: ConnectionRead
   ): Map<Issue142Id, Issue1422Row> {
     val ret: MutableMap<Issue142Id, Issue1422Row> = mutableMapOf<Issue142Id, Issue1422Row>()
     selectByIds(tabellkodes, c).forEach({ row -> ret.put(row.tabellkode, row) })
     return ret.toMap()
   }
 
-  override fun update(): UpdateBuilder<Issue1422Fields, Issue1422Row> = UpdateBuilder.of("\"public\".\"issue142_2\"", Issue1422Fields.structure, Issue1422Row._rowParser, Dialect.POSTGRESQL)
+  override fun update(): UpdateBuilder<Issue1422Fields, Issue1422Row> = UpdateBuilder.of("\"public\".\"issue142_2\"", Issue1422Fields.structure, Issue1422Row.rowCodec, Dialect.POSTGRESQL)
 
   override fun upsert(
     unsaved: Issue1422Row,
     c: Connection
-  ): Issue1422Row = Fragment.interpolate(Fragment.lit("insert into \"public\".\"issue142_2\"(\"tabellkode\")\nvalues ("), Fragment.encode(Issue142Id.pgType, unsaved.tabellkode), Fragment.lit(")\non conflict (\"tabellkode\")\ndo update set \"tabellkode\" = EXCLUDED.\"tabellkode\"\nreturning \"tabellkode\""))
-    .updateReturning(Issue1422Row._rowParser.exactlyOne())
-    .runUnchecked(c)
+  ): Issue1422Row = Fragment.concat(Fragment.of("insert into \"public\".\"issue142_2\"(\"tabellkode\")\nvalues ("), Fragment.encode(Issue142Id.pgType, unsaved.tabellkode), Fragment.of(")\non conflict (\"tabellkode\")\ndo update set \"tabellkode\" = EXCLUDED.\"tabellkode\"\nreturning \"tabellkode\""))
+    .updateReturning(Issue1422Row.rowCodec.exactlyOne())
+    .run(c)
 
   override fun upsertBatch(
     unsaved: Iterator<Issue1422Row>,
     c: Connection
-  ): List<Issue1422Row> = Fragment.interpolate(Fragment.lit("insert into \"public\".\"issue142_2\"(\"tabellkode\")\nvalues (?)\non conflict (\"tabellkode\")\ndo update set \"tabellkode\" = EXCLUDED.\"tabellkode\"\nreturning \"tabellkode\""))
-    .updateManyReturning(Issue1422Row._rowParser, unsaved)
-  .runUnchecked(c)
+  ): List<Issue1422Row> = Fragment.concat(Fragment.of("insert into \"public\".\"issue142_2\"(\"tabellkode\")\nvalues (?)\non conflict (\"tabellkode\")\ndo update set \"tabellkode\" = EXCLUDED.\"tabellkode\"\nreturning \"tabellkode\""))
+    .updateManyReturning(Issue1422Row.rowCodec, unsaved)
+  .run(c)
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
   override fun upsertStreaming(
@@ -90,8 +91,8 @@ class Issue1422RepoImpl() : Issue1422Repo {
     batchSize: Int,
     c: Connection
   ): Int {
-    Fragment.interpolate(Fragment.lit("create temporary table issue142_2_TEMP (like \"public\".\"issue142_2\") on commit drop")).update().runUnchecked(c)
-    streamingInsert.insertUnchecked("copy issue142_2_TEMP(\"tabellkode\") from stdin", batchSize, unsaved, c, Issue1422Row.pgText)
-    return Fragment.interpolate(Fragment.lit("insert into \"public\".\"issue142_2\"(\"tabellkode\")\nselect * from issue142_2_TEMP\non conflict (\"tabellkode\")\ndo nothing\n;\ndrop table issue142_2_TEMP;")).update().runUnchecked(c)
+    Fragment.concat(Fragment.of("create temporary table issue142_2_TEMP (like \"public\".\"issue142_2\") on commit drop")).update().run(c)
+    StreamingInsert.of("copy issue142_2_TEMP(\"tabellkode\") from stdin", batchSize, unsaved, Issue1422Row.pgText).run(c)
+    return Fragment.concat(Fragment.of("insert into \"public\".\"issue142_2\"(\"tabellkode\")\nselect * from issue142_2_TEMP\non conflict (\"tabellkode\")\ndo nothing\n;\ndrop table issue142_2_TEMP;")).update().run(c)
   }
 }

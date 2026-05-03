@@ -5,16 +5,16 @@
  */
 package adventureworks.public.only_pk_columns
 
+import dev.typr.dsl.FieldsBase
+import dev.typr.dsl.Path
+import dev.typr.dsl.RelationStructure
+import dev.typr.dsl.SqlExpr
+import dev.typr.dsl.SqlExpr.FieldLike
+import dev.typr.dsl.SqlExpr.IdField
+import dev.typr.dsl.TupleExpr
+import dev.typr.dsl.TupleExpr.TupleExpr2
 import dev.typr.foundations.PgTypes
-import dev.typr.foundations.RowParser
-import dev.typr.foundations.dsl.FieldsBase
-import dev.typr.foundations.dsl.Path
-import dev.typr.foundations.dsl.RelationStructure
-import dev.typr.foundations.dsl.SqlExpr
-import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.dsl.SqlExpr.IdField
-import dev.typr.foundations.dsl.TupleExpr
-import dev.typr.foundations.dsl.TupleExpr.TupleExpr2
+import dev.typr.foundations.RowCodec
 import java.util.Optional
 
 class OnlyPkColumnsFields(val `_path`: java.util.List[Path]) extends TupleExpr2[String, Integer] with RelationStructure[OnlyPkColumnsFields, OnlyPkColumnsRow]  with FieldsBase[OnlyPkColumnsRow] {
@@ -48,7 +48,7 @@ class OnlyPkColumnsFields(val `_path`: java.util.List[Path]) extends TupleExpr2[
 
   override def columns: java.util.List[FieldLike[?, OnlyPkColumnsRow]] = java.util.List.of(this.keyColumn1, this.keyColumn2)
 
-  override def rowParser: RowParser[OnlyPkColumnsRow] = OnlyPkColumnsRow._rowParser
+  override def rowCodec: RowCodec[OnlyPkColumnsRow] = OnlyPkColumnsRow.rowCodec
 
   override def withPaths(`_path`: java.util.List[Path]): RelationStructure[OnlyPkColumnsFields, OnlyPkColumnsRow] = new OnlyPkColumnsFields(`_path`)
 

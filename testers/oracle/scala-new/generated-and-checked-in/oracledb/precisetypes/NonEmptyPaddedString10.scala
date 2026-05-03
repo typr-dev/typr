@@ -6,12 +6,12 @@
 package oracledb.precisetypes
 
 import com.fasterxml.jackson.annotation.JsonValue
-import dev.typr.foundations.OracleType
-import dev.typr.foundations.OracleTypes
+import dev.typr.dslsc.Bijection
+import dev.typr.dslsc.RowCodecs
 import dev.typr.foundations.data.precise.NonEmptyPaddedStringN
-import dev.typr.foundations.scala.Bijection
-import dev.typr.foundations.scala.RowParser
-import dev.typr.foundations.scala.RowParsers
+import dev.typr.foundationssc.OracleType
+import dev.typr.foundationssc.OracleTypes
+import dev.typr.foundationssc.RowCodec
 import java.lang.IllegalArgumentException
 
 case class NonEmptyPaddedString10 private(@JsonValue value: String) extends NonEmptyPaddedStringN {
@@ -21,7 +21,7 @@ case class NonEmptyPaddedString10 private(@JsonValue value: String) extends NonE
 
   override def trimmed: String = value.stripTrailing()
 
-  override def semanticEquals(other: NonEmptyPaddedStringN): Boolean = (if (other == null) false else trimmed() == other.trimmed())
+  override def semanticEquals(other: NonEmptyPaddedStringN): Boolean = (if (other == null) false else (trimmed() == other.trimmed()))
 
   override def semanticHashCode: Int = trimmed().hashCode()
 
@@ -31,13 +31,13 @@ case class NonEmptyPaddedString10 private(@JsonValue value: String) extends NonE
 }
 
 object NonEmptyPaddedString10 {
-  given `_rowParser`: RowParser[NonEmptyPaddedString10] = RowParsers.of(OracleTypes.char_.bimap(NonEmptyPaddedString10.apply, _.value))(x => x)(id => Array[Any](id))
-
-  given bijection: Bijection[NonEmptyPaddedString10, String] = Bijection.apply[NonEmptyPaddedString10, String](_.value)(NonEmptyPaddedString10.apply)
+  given bijection: Bijection[NonEmptyPaddedString10, String] = Bijection.of[NonEmptyPaddedString10, String](_.value, NonEmptyPaddedString10.apply)
 
   def of(value: String): Option[NonEmptyPaddedString10] = (if (!value.strip().isEmpty && value.length <= 10) Some(new NonEmptyPaddedString10(String.format("%-10s", value))) else None)
 
-  given oracleType: OracleType[NonEmptyPaddedString10] = OracleTypes.char_.bimap(NonEmptyPaddedString10.apply, _.value)
+  given oracleType: OracleType[NonEmptyPaddedString10] = OracleTypes.char_.to(Bijection.of(NonEmptyPaddedString10.apply, _.value))
+
+  given rowCodec: RowCodec[NonEmptyPaddedString10] = RowCodecs.of(OracleTypes.char_.to(Bijection.of(NonEmptyPaddedString10.apply, _.value)))(x => x)(id => Array[Any](id))
 
   def unsafeForce(value: String): NonEmptyPaddedString10 = {
     if (value.strip().isEmpty) {

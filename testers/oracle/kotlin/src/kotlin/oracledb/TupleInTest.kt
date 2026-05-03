@@ -1,13 +1,13 @@
 package oracledb
 
-import dev.typr.foundations.dsl.MockConnection
-import dev.typr.foundations.kotlin.SqlExpr
+import dev.typr.dslkt.MockConnection
+import dev.typr.dslkt.SqlExpr
 import oracledb.departments.*
 import org.junit.Assert.*
 import org.junit.Ignore
 import org.junit.Test
 import java.math.BigDecimal
-import java.sql.Connection
+import dev.typr.foundationskt.Connection
 
 /**
  * Comprehensive tests for tuple IN functionality on Oracle. Tests cover:

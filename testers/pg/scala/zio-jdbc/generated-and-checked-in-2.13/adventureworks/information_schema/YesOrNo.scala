@@ -27,7 +27,7 @@ object YesOrNo {
 
   implicit lazy val arraySetter: Setter[Array[YesOrNo]] = adventureworks.StringArraySetter.contramap(_.map(_.value))
 
-  implicit lazy val bijection: Bijection[YesOrNo, String] = Bijection.apply[YesOrNo, String](_.value)(YesOrNo.apply)
+  implicit lazy val bijection: Bijection[YesOrNo, String] = Bijection[YesOrNo, String](_.value)(YesOrNo.apply)
 
   implicit lazy val jdbcDecoder: JdbcDecoder[YesOrNo] = JdbcDecoder.stringDecoder.map(YesOrNo.apply)
 

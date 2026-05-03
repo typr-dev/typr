@@ -5,9 +5,10 @@
  */
 package testdb
 
-import dev.typr.foundations.DuckDbType
-import dev.typr.foundations.DuckDbTypes
-import dev.typr.foundations.internal.arrayMap
+import dev.typr.foundationskt.Bijection
+import dev.typr.foundationskt.DuckDbType
+import dev.typr.foundationskt.DuckDbTypes
+import kotlin.collections.List
 
 enum class Priority(val value: kotlin.String) {
     low("low"),
@@ -15,16 +16,16 @@ enum class Priority(val value: kotlin.String) {
     high("high"),
     critical("critical");
 
+    
+
     companion object {
         val Names: kotlin.String = entries.joinToString(", ") { it.value }
         val ByName: kotlin.collections.Map<kotlin.String, Priority> = entries.associateBy { it.value }
-        val duckDbTypeArray: DuckDbType<Array<Priority>> =
-          DuckDbTypes.varcharArray
-              .bimap({ xs -> arrayMap.map(xs, Priority::force, Priority::class.java) }, { xs -> arrayMap.map(xs, Priority::value, String::class.java) })
-            .renamedDropPrecision("priority")
+        val duckDbTypeArray: DuckDbType<List<Priority>> =
+          DuckDbType(DuckDbTypes.text.list()
+            .to(Bijection.of({ xs -> xs.map(Priority::force) }, { xs -> xs.map(Priority::value) })).underlying.renamedDropPrecision("priority"))
         val duckDbType: DuckDbType<Priority> =
-          DuckDbTypes.text.bimap(Priority::force, Priority::value)
-            .renamedDropPrecision("priority")
+          DuckDbType(DuckDbTypes.text.to(Bijection.of(Priority::force, Priority::value)).underlying.renamedDropPrecision("priority"))
 
         fun force(str: kotlin.String): Priority =
             ByName[str] ?: throw RuntimeException("'$str' does not match any of the following legal values: $Names")

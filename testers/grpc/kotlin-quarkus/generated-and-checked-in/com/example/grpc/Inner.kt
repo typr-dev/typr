@@ -27,6 +27,19 @@ data class Inner(
   }
 
   companion object {
+    @Throws(IOException::class)
+    fun parseFrom(input: CodedInputStream): Inner {
+      var value: Int = 0
+      var description: kotlin.String = ""
+      while (!input.isAtEnd()) {
+        val tag = input.readTag()
+        if (WireFormat.getTagFieldNumber(tag) == 1) { value = input.readInt32() }
+        else if (WireFormat.getTagFieldNumber(tag) == 2) { description = input.readString() }
+        else { input.skipField(tag) }
+      }
+      return Inner(value, description)
+    }
+
     val MARSHALLER: Marshaller<Inner> =
       object : Marshaller<Inner> {
         override fun stream(value: Inner): InputStream {
@@ -48,18 +61,5 @@ data class Inner(
           } 
         }
       }
-
-    @Throws(IOException::class)
-    fun parseFrom(input: CodedInputStream): Inner {
-      var value: Int = 0
-      var description: kotlin.String = ""
-      while (!input.isAtEnd()) {
-        val tag = input.readTag()
-        if (WireFormat.getTagFieldNumber(tag) == 1) { value = input.readInt32() }
-        else if (WireFormat.getTagFieldNumber(tag) == 2) { description = input.readString() }
-        else { input.skipField(tag) }
-      }
-      return Inner(value, description)
-    }
   }
 }

@@ -5,17 +5,18 @@
  */
 package adventureworks.humanresources.employeedepartmenthistory
 
-import dev.typr.foundations.kotlin.DeleteBuilder
-import dev.typr.foundations.kotlin.DeleteBuilderMock
-import dev.typr.foundations.kotlin.DeleteParams
-import dev.typr.foundations.kotlin.SelectBuilder
-import dev.typr.foundations.kotlin.SelectBuilderMock
-import dev.typr.foundations.kotlin.SelectParams
-import dev.typr.foundations.kotlin.UpdateBuilder
-import dev.typr.foundations.kotlin.UpdateBuilderMock
-import dev.typr.foundations.kotlin.UpdateParams
+import dev.typr.dslkt.DeleteBuilder
+import dev.typr.dslkt.DeleteBuilderMock
+import dev.typr.dslkt.DeleteParams
+import dev.typr.dslkt.SelectBuilder
+import dev.typr.dslkt.SelectBuilderMock
+import dev.typr.dslkt.SelectParams
+import dev.typr.dslkt.UpdateBuilder
+import dev.typr.dslkt.UpdateBuilderMock
+import dev.typr.dslkt.UpdateParams
+import dev.typr.foundationskt.Connection
+import dev.typr.foundationskt.ConnectionRead
 import java.lang.RuntimeException
-import java.sql.Connection
 import java.util.ArrayList
 import kotlin.collections.Iterator
 import kotlin.collections.List
@@ -31,10 +32,10 @@ data class EmployeedepartmenthistoryRepoMock(
   override fun deleteById(
     compositeId: EmployeedepartmenthistoryId,
     c: Connection
-  ): Boolean = map.remove(compositeId) != null
+  ): kotlin.Boolean = map.remove(compositeId) != null
 
   override fun deleteByIds(
-    compositeIds: Array<EmployeedepartmenthistoryId>,
+    compositeIds: List<EmployeedepartmenthistoryId>,
     c: Connection
   ): Int {
     var count = 0
@@ -66,7 +67,7 @@ data class EmployeedepartmenthistoryRepoMock(
     unsaved: Iterator<EmployeedepartmenthistoryRow>,
     batchSize: Int,
     c: Connection
-  ): Long {
+  ): kotlin.Long {
     var count = 0L
     while (unsaved.hasNext()) {
       val row = unsaved.next()
@@ -81,7 +82,7 @@ data class EmployeedepartmenthistoryRepoMock(
     unsaved: Iterator<EmployeedepartmenthistoryRowUnsaved>,
     batchSize: Int,
     c: Connection
-  ): Long {
+  ): kotlin.Long {
     var count = 0L
     while (unsaved.hasNext()) {
       val unsavedRow = unsaved.next()
@@ -94,16 +95,16 @@ data class EmployeedepartmenthistoryRepoMock(
 
   override fun select(): SelectBuilder<EmployeedepartmenthistoryFields, EmployeedepartmenthistoryRow> = SelectBuilderMock(EmployeedepartmenthistoryFields.structure, { map.values.toList() }, SelectParams.empty())
 
-  override fun selectAll(c: Connection): List<EmployeedepartmenthistoryRow> = map.values.toList()
+  override fun selectAll(c: ConnectionRead): List<EmployeedepartmenthistoryRow> = map.values.toList()
 
   override fun selectById(
     compositeId: EmployeedepartmenthistoryId,
-    c: Connection
+    c: ConnectionRead
   ): EmployeedepartmenthistoryRow? = map[compositeId]
 
   override fun selectByIds(
-    compositeIds: Array<EmployeedepartmenthistoryId>,
-    c: Connection
+    compositeIds: List<EmployeedepartmenthistoryId>,
+    c: ConnectionRead
   ): List<EmployeedepartmenthistoryRow> {
     val result = ArrayList<EmployeedepartmenthistoryRow>()
     for (id in compositeIds) {
@@ -116,8 +117,8 @@ data class EmployeedepartmenthistoryRepoMock(
   }
 
   override fun selectByIdsTracked(
-    compositeIds: Array<EmployeedepartmenthistoryId>,
-    c: Connection
+    compositeIds: List<EmployeedepartmenthistoryId>,
+    c: ConnectionRead
   ): Map<EmployeedepartmenthistoryId, EmployeedepartmenthistoryRow> = selectByIds(compositeIds, c).associateBy({ row: EmployeedepartmenthistoryRow -> row.compositeId() })
 
   override fun update(): UpdateBuilder<EmployeedepartmenthistoryFields, EmployeedepartmenthistoryRow> = UpdateBuilderMock(EmployeedepartmenthistoryFields.structure, { map.values.toList() }, UpdateParams.empty(), { row -> row })
@@ -125,7 +126,7 @@ data class EmployeedepartmenthistoryRepoMock(
   override fun update(
     row: EmployeedepartmenthistoryRow,
     c: Connection
-  ): Boolean {
+  ): kotlin.Boolean {
     val shouldUpdate = map[row.compositeId()]?.takeIf({ oldRow -> (oldRow != row) }) != null
     if (shouldUpdate) {
       map[row.compositeId()] = row

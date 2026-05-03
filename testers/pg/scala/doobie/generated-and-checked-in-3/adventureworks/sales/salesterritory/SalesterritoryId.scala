@@ -21,7 +21,7 @@ object SalesterritoryId {
 
   given arrayPut: Put[Array[SalesterritoryId]] = adventureworks.IntegerArrayMeta.put.contramap(_.map(_.value))
 
-  given bijection: Bijection[SalesterritoryId, Int] = Bijection.apply[SalesterritoryId, Int](_.value)(SalesterritoryId.apply)
+  given bijection: Bijection[SalesterritoryId, Int] = Bijection[SalesterritoryId, Int](_.value)(SalesterritoryId.apply)
 
   given decoder: Decoder[SalesterritoryId] = Decoder.decodeInt.map(SalesterritoryId.apply)
 

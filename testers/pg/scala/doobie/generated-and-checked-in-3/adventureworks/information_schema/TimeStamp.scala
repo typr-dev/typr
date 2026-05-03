@@ -23,7 +23,7 @@ object TimeStamp {
 
   given arrayPut: Put[Array[TimeStamp]] = TypoInstant.arrayPut.contramap(_.map(_.value))
 
-  given bijection: Bijection[TimeStamp, TypoInstant] = Bijection.apply[TimeStamp, TypoInstant](_.value)(TimeStamp.apply)
+  given bijection: Bijection[TimeStamp, TypoInstant] = Bijection[TimeStamp, TypoInstant](_.value)(TimeStamp.apply)
 
   given decoder: Decoder[TimeStamp] = TypoInstant.decoder.map(TimeStamp.apply)
 

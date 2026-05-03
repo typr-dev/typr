@@ -5,17 +5,18 @@
  */
 package testdb.precision_types_null
 
-import dev.typr.foundations.kotlin.DeleteBuilder
-import dev.typr.foundations.kotlin.DeleteBuilderMock
-import dev.typr.foundations.kotlin.DeleteParams
-import dev.typr.foundations.kotlin.SelectBuilder
-import dev.typr.foundations.kotlin.SelectBuilderMock
-import dev.typr.foundations.kotlin.SelectParams
-import dev.typr.foundations.kotlin.UpdateBuilder
-import dev.typr.foundations.kotlin.UpdateBuilderMock
-import dev.typr.foundations.kotlin.UpdateParams
+import dev.typr.dslkt.DeleteBuilder
+import dev.typr.dslkt.DeleteBuilderMock
+import dev.typr.dslkt.DeleteParams
+import dev.typr.dslkt.SelectBuilder
+import dev.typr.dslkt.SelectBuilderMock
+import dev.typr.dslkt.SelectParams
+import dev.typr.dslkt.UpdateBuilder
+import dev.typr.dslkt.UpdateBuilderMock
+import dev.typr.dslkt.UpdateParams
+import dev.typr.foundationskt.Connection
+import dev.typr.foundationskt.ConnectionRead
 import java.lang.RuntimeException
-import java.sql.Connection
 import java.util.ArrayList
 import kotlin.collections.Iterator
 import kotlin.collections.List
@@ -31,10 +32,10 @@ data class PrecisionTypesNullRepoMock(
   override fun deleteById(
     id: PrecisionTypesNullId,
     c: Connection
-  ): Boolean = map.remove(id) != null
+  ): kotlin.Boolean = map.remove(id) != null
 
   override fun deleteByIds(
-    ids: Array<PrecisionTypesNullId>,
+    ids: List<PrecisionTypesNullId>,
     c: Connection
   ): Int {
     var count = 0
@@ -64,16 +65,16 @@ data class PrecisionTypesNullRepoMock(
 
   override fun select(): SelectBuilder<PrecisionTypesNullFields, PrecisionTypesNullRow> = SelectBuilderMock(PrecisionTypesNullFields.structure, { map.values.toList() }, SelectParams.empty())
 
-  override fun selectAll(c: Connection): List<PrecisionTypesNullRow> = map.values.toList()
+  override fun selectAll(c: ConnectionRead): List<PrecisionTypesNullRow> = map.values.toList()
 
   override fun selectById(
     id: PrecisionTypesNullId,
-    c: Connection
+    c: ConnectionRead
   ): PrecisionTypesNullRow? = map[id]
 
   override fun selectByIds(
-    ids: Array<PrecisionTypesNullId>,
-    c: Connection
+    ids: List<PrecisionTypesNullId>,
+    c: ConnectionRead
   ): List<PrecisionTypesNullRow> {
     val result = ArrayList<PrecisionTypesNullRow>()
     for (id in ids) {
@@ -86,8 +87,8 @@ data class PrecisionTypesNullRepoMock(
   }
 
   override fun selectByIdsTracked(
-    ids: Array<PrecisionTypesNullId>,
-    c: Connection
+    ids: List<PrecisionTypesNullId>,
+    c: ConnectionRead
   ): Map<PrecisionTypesNullId, PrecisionTypesNullRow> = selectByIds(ids, c).associateBy({ row: PrecisionTypesNullRow -> row.id })
 
   override fun update(): UpdateBuilder<PrecisionTypesNullFields, PrecisionTypesNullRow> = UpdateBuilderMock(PrecisionTypesNullFields.structure, { map.values.toList() }, UpdateParams.empty(), { row -> row })
@@ -95,7 +96,7 @@ data class PrecisionTypesNullRepoMock(
   override fun update(
     row: PrecisionTypesNullRow,
     c: Connection
-  ): Boolean {
+  ): kotlin.Boolean {
     val shouldUpdate = map[row.id]?.takeIf({ oldRow -> (oldRow != row) }) != null
     if (shouldUpdate) {
       map[row.id] = row

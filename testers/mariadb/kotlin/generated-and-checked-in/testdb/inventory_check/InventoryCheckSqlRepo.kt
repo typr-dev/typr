@@ -7,14 +7,14 @@ package testdb.inventory_check
 
 import dev.typr.foundations.data.Uint1
 import dev.typr.foundations.data.Uint8
-import java.sql.Connection
+import dev.typr.foundationskt.ConnectionRead
 import kotlin.collections.List
 
 interface InventoryCheckSqlRepo {
   abstract fun apply(
     warehouseId: Uint1?,
     productId: Uint8?,
-    lowStockOnly: Boolean?,
-    c: Connection
+    lowStockOnly: kotlin.Boolean?,
+    c: ConnectionRead
   ): List<InventoryCheckSqlRow>
 }

@@ -5,17 +5,18 @@
  */
 package testdb.mariatest_identity
 
-import dev.typr.foundations.scala.DeleteBuilder
-import dev.typr.foundations.scala.DeleteBuilderMock
-import dev.typr.foundations.scala.DeleteParams
-import dev.typr.foundations.scala.SelectBuilder
-import dev.typr.foundations.scala.SelectBuilderMock
-import dev.typr.foundations.scala.SelectParams
-import dev.typr.foundations.scala.UpdateBuilder
-import dev.typr.foundations.scala.UpdateBuilderMock
-import dev.typr.foundations.scala.UpdateParams
+import dev.typr.dslsc.DeleteBuilder
+import dev.typr.dslsc.DeleteBuilderMock
+import dev.typr.dslsc.DeleteParams
+import dev.typr.dslsc.SelectBuilder
+import dev.typr.dslsc.SelectBuilderMock
+import dev.typr.dslsc.SelectParams
+import dev.typr.dslsc.UpdateBuilder
+import dev.typr.dslsc.UpdateBuilderMock
+import dev.typr.dslsc.UpdateParams
+import dev.typr.foundationssc.Connection
+import dev.typr.foundationssc.ConnectionRead
 import java.lang.RuntimeException
-import java.sql.Connection
 
 case class MariatestIdentityRepoMock(
   toRow: MariatestIdentityRowUnsaved => MariatestIdentityRow,
@@ -25,7 +26,7 @@ case class MariatestIdentityRepoMock(
 
   override def deleteById(id: MariatestIdentityId)(using c: Connection): Boolean = map.remove(id).isDefined
 
-  override def deleteByIds(ids: Array[MariatestIdentityId])(using c: Connection): Int = {
+  override def deleteByIds(ids: List[MariatestIdentityId])(using c: Connection): Int = {
     var count = 0
     ids.foreach { id => if (map.remove(id).isDefined) {
       count = count + 1
@@ -45,13 +46,13 @@ case class MariatestIdentityRepoMock(
 
   override def select: SelectBuilder[MariatestIdentityFields, MariatestIdentityRow] = SelectBuilderMock(MariatestIdentityFields.structure, () => map.values.toList, SelectParams.empty())
 
-  override def selectAll(using c: Connection): List[MariatestIdentityRow] = map.values.toList
+  override def selectAll(using c: ConnectionRead): List[MariatestIdentityRow] = map.values.toList
 
-  override def selectById(id: MariatestIdentityId)(using c: Connection): Option[MariatestIdentityRow] = map.get(id)
+  override def selectById(id: MariatestIdentityId)(using c: ConnectionRead): Option[MariatestIdentityRow] = map.get(id)
 
-  override def selectByIds(ids: Array[MariatestIdentityId])(using c: Connection): List[MariatestIdentityRow] = ids.flatMap(map.get(_)).toList
+  override def selectByIds(ids: List[MariatestIdentityId])(using c: ConnectionRead): List[MariatestIdentityRow] = ids.flatMap(map.get(_)).toList
 
-  override def selectByIdsTracked(ids: Array[MariatestIdentityId])(using c: Connection): Map[MariatestIdentityId, MariatestIdentityRow] = selectByIds(ids)(using c).map(x => (((row: MariatestIdentityRow) => row.id).apply(x), x)).toMap
+  override def selectByIdsTracked(ids: List[MariatestIdentityId])(using c: ConnectionRead): Map[MariatestIdentityId, MariatestIdentityRow] = selectByIds(ids)(using c).map(x => (((row: MariatestIdentityRow) => row.id).apply(x), x)).toMap
 
   override def update: UpdateBuilder[MariatestIdentityFields, MariatestIdentityRow] = UpdateBuilderMock(MariatestIdentityFields.structure, () => map.values.toList, UpdateParams.empty(), row => row)
 

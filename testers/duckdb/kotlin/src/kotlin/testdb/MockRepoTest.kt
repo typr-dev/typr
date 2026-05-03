@@ -1,6 +1,6 @@
 package testdb
 
-import dev.typr.foundations.dsl.MockConnection
+import dev.typr.dslkt.MockConnection
 import org.junit.Assert.*
 import org.junit.Test
 import testdb.customers.*

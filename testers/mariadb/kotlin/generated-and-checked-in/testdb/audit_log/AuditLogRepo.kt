@@ -5,10 +5,11 @@
  */
 package testdb.audit_log
 
-import dev.typr.foundations.kotlin.DeleteBuilder
-import dev.typr.foundations.kotlin.SelectBuilder
-import dev.typr.foundations.kotlin.UpdateBuilder
-import java.sql.Connection
+import dev.typr.dslkt.DeleteBuilder
+import dev.typr.dslkt.SelectBuilder
+import dev.typr.dslkt.UpdateBuilder
+import dev.typr.foundationskt.Connection
+import dev.typr.foundationskt.ConnectionRead
 import kotlin.collections.Iterator
 import kotlin.collections.List
 import kotlin.collections.Map
@@ -19,10 +20,10 @@ interface AuditLogRepo {
   abstract fun deleteById(
     logId: AuditLogId,
     c: Connection
-  ): Boolean
+  ): kotlin.Boolean
 
   abstract fun deleteByIds(
-    logIds: Array<AuditLogId>,
+    logIds: List<AuditLogId>,
     c: Connection
   ): Int
 
@@ -38,21 +39,21 @@ interface AuditLogRepo {
 
   abstract fun select(): SelectBuilder<AuditLogFields, AuditLogRow>
 
-  abstract fun selectAll(c: Connection): List<AuditLogRow>
+  abstract fun selectAll(c: ConnectionRead): List<AuditLogRow>
 
   abstract fun selectById(
     logId: AuditLogId,
-    c: Connection
+    c: ConnectionRead
   ): AuditLogRow?
 
   abstract fun selectByIds(
-    logIds: Array<AuditLogId>,
-    c: Connection
+    logIds: List<AuditLogId>,
+    c: ConnectionRead
   ): List<AuditLogRow>
 
   abstract fun selectByIdsTracked(
-    logIds: Array<AuditLogId>,
-    c: Connection
+    logIds: List<AuditLogId>,
+    c: ConnectionRead
   ): Map<AuditLogId, AuditLogRow>
 
   abstract fun update(): UpdateBuilder<AuditLogFields, AuditLogRow>
@@ -60,7 +61,7 @@ interface AuditLogRepo {
   abstract fun update(
     row: AuditLogRow,
     c: Connection
-  ): Boolean
+  ): kotlin.Boolean
 
   abstract fun upsert(
     unsaved: AuditLogRow,

@@ -5,72 +5,73 @@
  */
 package testdb.db2test_unique
 
-import dev.typr.foundations.Db2Types
-import dev.typr.foundations.scala.DeleteBuilder
-import dev.typr.foundations.scala.Dialect
-import dev.typr.foundations.scala.Fragment
-import dev.typr.foundations.scala.SelectBuilder
-import dev.typr.foundations.scala.UpdateBuilder
-import java.sql.Connection
+import dev.typr.dslsc.DeleteBuilder
+import dev.typr.dslsc.Dialect
+import dev.typr.dslsc.SelectBuilder
+import dev.typr.dslsc.UpdateBuilder
+import dev.typr.foundationssc.Connection
+import dev.typr.foundationssc.ConnectionRead
+import dev.typr.foundationssc.Db2Types
+import dev.typr.foundationssc.Fragment
 import scala.collection.mutable.ListBuffer
-import dev.typr.foundations.scala.Fragment.sql
+import dev.typr.foundationssc.Fragment.sql
 
 class Db2testUniqueRepoImpl extends Db2testUniqueRepo {
   override def delete: DeleteBuilder[Db2testUniqueFields, Db2testUniqueRow] = DeleteBuilder.of(""""DB2TEST_UNIQUE"""", Db2testUniqueFields.structure, Dialect.DB2)
 
-  override def deleteById(id: Db2testUniqueId)(using c: Connection): Boolean = sql"""delete from "DB2TEST_UNIQUE" where "ID" = ${Fragment.encode(Db2testUniqueId.db2Type, id)}""".update().runUnchecked(c) > 0
+  override def deleteById(id: Db2testUniqueId)(using c: Connection): Boolean = sql"""delete from "DB2TEST_UNIQUE" where "ID" = ${Fragment.encode(Db2testUniqueId.db2Type, id)}""".update().run(using c) > 0
 
-  override def deleteByIds(ids: Array[Db2testUniqueId])(using c: Connection): Int = {
+  override def deleteByIds(ids: List[Db2testUniqueId])(using c: Connection): Int = {
     val fragments: ListBuffer[Fragment] = ListBuffer()
     ids.foreach { id => fragments.addOne(Fragment.encode(Db2testUniqueId.db2Type, id)): @scala.annotation.nowarn }
-    return Fragment.interpolate(Fragment.lit("""delete from "DB2TEST_UNIQUE" where "ID" in ("""), Fragment.comma(fragments), Fragment.lit(")")).update().runUnchecked(c)
+    return Fragment.concat(Fragment.of("""delete from "DB2TEST_UNIQUE" where "ID" in ("""), Fragment.comma(fragments), Fragment.of(")")).update().run(using c)
   }
 
   override def insert(unsaved: Db2testUniqueRow)(using c: Connection): Db2testUniqueRow = {
   sql"""SELECT "ID", "EMAIL", "CODE", "CATEGORY" FROM FINAL TABLE (INSERT INTO "DB2TEST_UNIQUE"("EMAIL", "CODE", "CATEGORY")
     VALUES (${Fragment.encode(Db2Types.varchar, unsaved.email)}, ${Fragment.encode(Db2Types.varchar, unsaved.code)}, ${Fragment.encode(Db2Types.varchar, unsaved.category)}))
     """
-    .updateReturning(Db2testUniqueRow.`_rowParser`.exactlyOne()).runUnchecked(c)
+    .updateReturning(Db2testUniqueRow.rowCodec.exactlyOne()).run(using c)
   }
 
   override def insert(unsaved: Db2testUniqueRowUnsaved)(using c: Connection): Db2testUniqueRow = {
     val columns: ListBuffer[Fragment] = ListBuffer()
     val values: ListBuffer[Fragment] = ListBuffer()
-    columns.addOne(Fragment.lit(""""EMAIL"""")): @scala.annotation.nowarn
+    columns.addOne(Fragment.of(""""EMAIL"""")): @scala.annotation.nowarn
     values.addOne(sql"${Fragment.encode(Db2Types.varchar, unsaved.email)}"): @scala.annotation.nowarn
-    columns.addOne(Fragment.lit(""""CODE"""")): @scala.annotation.nowarn
+    columns.addOne(Fragment.of(""""CODE"""")): @scala.annotation.nowarn
     values.addOne(sql"${Fragment.encode(Db2Types.varchar, unsaved.code)}"): @scala.annotation.nowarn
-    columns.addOne(Fragment.lit(""""CATEGORY"""")): @scala.annotation.nowarn
+    columns.addOne(Fragment.of(""""CATEGORY"""")): @scala.annotation.nowarn
     values.addOne(sql"${Fragment.encode(Db2Types.varchar, unsaved.category)}"): @scala.annotation.nowarn
     val q: Fragment = {
       sql"""SELECT "ID", "EMAIL", "CODE", "CATEGORY" FROM FINAL TABLE (INSERT INTO "DB2TEST_UNIQUE"(${Fragment.comma(columns)})
       VALUES (${Fragment.comma(values)}))
       """
     }
-    return q.updateReturning(Db2testUniqueRow.`_rowParser`.exactlyOne()).runUnchecked(c)
+    return q.updateReturning(Db2testUniqueRow.rowCodec.exactlyOne()).run(using c)
   }
 
-  override def select: SelectBuilder[Db2testUniqueFields, Db2testUniqueRow] = SelectBuilder.of(""""DB2TEST_UNIQUE"""", Db2testUniqueFields.structure, Db2testUniqueRow.`_rowParser`, Dialect.DB2)
+  override def select: SelectBuilder[Db2testUniqueFields, Db2testUniqueRow] = SelectBuilder.of(""""DB2TEST_UNIQUE"""", Db2testUniqueFields.structure, Db2testUniqueRow.rowCodec, Dialect.DB2)
 
-  override def selectAll(using c: Connection): List[Db2testUniqueRow] = {
+  override def selectAll(using c: ConnectionRead): List[Db2testUniqueRow] = {
     sql"""select "ID", "EMAIL", "CODE", "CATEGORY"
     from "DB2TEST_UNIQUE"
-    """.query(Db2testUniqueRow.`_rowParser`.all()).runUnchecked(c)
+    """.query(Db2testUniqueRow.rowCodec.all()).run(using c)
   }
 
-  override def selectById(id: Db2testUniqueId)(using c: Connection): Option[Db2testUniqueRow] = {
+  override def selectById(id: Db2testUniqueId)(using c: ConnectionRead): Option[Db2testUniqueRow] = {
     sql"""select "ID", "EMAIL", "CODE", "CATEGORY"
     from "DB2TEST_UNIQUE"
-    where "ID" = ${Fragment.encode(Db2testUniqueId.db2Type, id)}""".query(Db2testUniqueRow.`_rowParser`.first()).runUnchecked(c)
+    where "ID" = ${Fragment.encode(Db2testUniqueId.db2Type, id)}""".query(Db2testUniqueRow.rowCodec.first()).run(using c)
   }
 
-  override def selectByIds(ids: Array[Db2testUniqueId])(using c: Connection): List[Db2testUniqueRow] = {
+  override def selectByIds(ids: List[Db2testUniqueId])(using c: ConnectionRead): List[Db2testUniqueRow] = {
     val fragments: ListBuffer[Fragment] = ListBuffer()
     ids.foreach { id => fragments.addOne(Fragment.encode(Db2testUniqueId.db2Type, id)): @scala.annotation.nowarn }
-    return Fragment.interpolate(Fragment.lit("""select "ID", "EMAIL", "CODE", "CATEGORY" from "DB2TEST_UNIQUE" where "ID" in ("""), Fragment.comma(fragments), Fragment.lit(")")).query(Db2testUniqueRow.`_rowParser`.all()).runUnchecked(c)
+    return Fragment.concat(Fragment.of("""select "ID", "EMAIL", "CODE", "CATEGORY" from "DB2TEST_UNIQUE" where "ID" in ("""), Fragment.comma(fragments), Fragment.of(")")).query(Db2testUniqueRow.rowCodec.all()).run(using c)
   }
 
-  override def selectByIdsTracked(ids: Array[Db2testUniqueId])(using c: Connection): Map[Db2testUniqueId, Db2testUniqueRow] = {
+  override def selectByIdsTracked(ids: List[Db2testUniqueId])(using c: ConnectionRead): Map[Db2testUniqueId, Db2testUniqueRow] = {
     val ret: scala.collection.mutable.Map[Db2testUniqueId, Db2testUniqueRow] = scala.collection.mutable.Map.empty[Db2testUniqueId, Db2testUniqueRow]
     selectByIds(ids)(using c).foreach(row => ret.put(row.id, row): @scala.annotation.nowarn)
     return ret.toMap
@@ -79,21 +80,21 @@ class Db2testUniqueRepoImpl extends Db2testUniqueRepo {
   override def selectByUniqueCodeAndCategory(
     code: String,
     category: String
-  )(using c: Connection): Option[Db2testUniqueRow] = {
+  )(using c: ConnectionRead): Option[Db2testUniqueRow] = {
     sql"""select "ID", "EMAIL", "CODE", "CATEGORY"
     from "DB2TEST_UNIQUE"
     where "CODE" = ${Fragment.encode(Db2Types.varchar, code)} AND "CATEGORY" = ${Fragment.encode(Db2Types.varchar, category)}
-    """.query(Db2testUniqueRow.`_rowParser`.first()).runUnchecked(c)
+    """.query(Db2testUniqueRow.rowCodec.first()).run(using c)
   }
 
-  override def selectByUniqueEmail(email: String)(using c: Connection): Option[Db2testUniqueRow] = {
+  override def selectByUniqueEmail(email: String)(using c: ConnectionRead): Option[Db2testUniqueRow] = {
     sql"""select "ID", "EMAIL", "CODE", "CATEGORY"
     from "DB2TEST_UNIQUE"
     where "EMAIL" = ${Fragment.encode(Db2Types.varchar, email)}
-    """.query(Db2testUniqueRow.`_rowParser`.first()).runUnchecked(c)
+    """.query(Db2testUniqueRow.rowCodec.first()).run(using c)
   }
 
-  override def update: UpdateBuilder[Db2testUniqueFields, Db2testUniqueRow] = UpdateBuilder.of(""""DB2TEST_UNIQUE"""", Db2testUniqueFields.structure, Db2testUniqueRow.`_rowParser`, Dialect.DB2)
+  override def update: UpdateBuilder[Db2testUniqueFields, Db2testUniqueRow] = UpdateBuilder.of(""""DB2TEST_UNIQUE"""", Db2testUniqueFields.structure, Db2testUniqueRow.rowCodec, Dialect.DB2)
 
   override def update(row: Db2testUniqueRow)(using c: Connection): Boolean = {
     val id: Db2testUniqueId = row.id
@@ -101,7 +102,7 @@ class Db2testUniqueRepoImpl extends Db2testUniqueRepo {
     set "EMAIL" = ${Fragment.encode(Db2Types.varchar, row.email)},
     "CODE" = ${Fragment.encode(Db2Types.varchar, row.code)},
     "CATEGORY" = ${Fragment.encode(Db2Types.varchar, row.category)}
-    where "ID" = ${Fragment.encode(Db2testUniqueId.db2Type, id)}""".update().runUnchecked(c) > 0
+    where "ID" = ${Fragment.encode(Db2testUniqueId.db2Type, id)}""".update().run(using c) > 0
   }
 
   override def upsert(unsaved: Db2testUniqueRow)(using c: Connection): Unit = {
@@ -113,7 +114,7 @@ class Db2testUniqueRepoImpl extends Db2testUniqueRepo {
     "CATEGORY" = s."CATEGORY"
     WHEN NOT MATCHED THEN INSERT ("ID", "EMAIL", "CODE", "CATEGORY") VALUES (${Fragment.encode(Db2testUniqueId.db2Type, unsaved.id)}, ${Fragment.encode(Db2Types.varchar, unsaved.email)}, ${Fragment.encode(Db2Types.varchar, unsaved.code)}, ${Fragment.encode(Db2Types.varchar, unsaved.category)})"""
       .update()
-      .runUnchecked(c): @scala.annotation.nowarn
+      .run(using c): @scala.annotation.nowarn
   }
 
   override def upsertBatch(unsaved: Iterator[Db2testUniqueRow])(using c: Connection): Unit = {
@@ -124,7 +125,7 @@ class Db2testUniqueRepoImpl extends Db2testUniqueRepo {
     "CODE" = s."CODE",
     "CATEGORY" = s."CATEGORY"
     WHEN NOT MATCHED THEN INSERT ("ID", "EMAIL", "CODE", "CATEGORY") VALUES (?, ?, ?, ?)"""
-      .updateMany(Db2testUniqueRow.`_rowParser`, unsaved)
-      .runUnchecked(c): @scala.annotation.nowarn
+      .updateMany(Db2testUniqueRow.rowCodec, unsaved)
+      .run(using c): @scala.annotation.nowarn
   }
 }

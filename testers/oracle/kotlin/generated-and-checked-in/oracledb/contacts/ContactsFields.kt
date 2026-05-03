@@ -5,27 +5,27 @@
  */
 package oracledb.contacts
 
-import dev.typr.foundations.OracleTypes
-import dev.typr.foundations.RowParser
-import dev.typr.foundations.dsl.FieldsBase
-import dev.typr.foundations.dsl.Path
-import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.kotlin.RelationStructure
-import dev.typr.foundations.kotlin.SqlExpr
-import dev.typr.foundations.kotlin.SqlExpr.Field
-import dev.typr.foundations.kotlin.SqlExpr.IdField
-import dev.typr.foundations.kotlin.SqlExpr.OptField
-import dev.typr.foundations.kotlin.TupleExpr4
+import dev.typr.dsl.FieldsBase
+import dev.typr.dsl.Path
+import dev.typr.dsl.SqlExpr.FieldLike
+import dev.typr.dslkt.RelationStructure
+import dev.typr.dslkt.SqlExpr
+import dev.typr.dslkt.SqlExpr.Field
+import dev.typr.dslkt.SqlExpr.IdField
+import dev.typr.dslkt.SqlExpr.OptField
+import dev.typr.dslkt.TupleExpr4
+import dev.typr.foundations.RowCodec
+import dev.typr.foundationskt.OracleTypes
 import kotlin.collections.List
+import oracledb.EmailTableT
 import oracledb.TagVarrayT
-import oracledb.userdefined.Email
 
-data class ContactsFields(val _path: List<Path>) : TupleExpr4<ContactsId, String, /* user-picked */ Email, TagVarrayT>, RelationStructure<ContactsFields, ContactsRow>, FieldsBase<ContactsRow> {
+data class ContactsFields(val _path: List<Path>) : TupleExpr4<ContactsId, kotlin.String, EmailTableT, TagVarrayT>, RelationStructure<ContactsFields, ContactsRow>, FieldsBase<ContactsRow> {
   override fun _1(): SqlExpr<ContactsId> = contactId()
 
-  override fun _2(): SqlExpr<String> = name()
+  override fun _2(): SqlExpr<kotlin.String> = name()
 
-  override fun _3(): SqlExpr</* user-picked */ Email> = emails()
+  override fun _3(): SqlExpr<EmailTableT> = emails()
 
   override fun _4(): SqlExpr<TagVarrayT> = tags()
 
@@ -33,15 +33,15 @@ data class ContactsFields(val _path: List<Path>) : TupleExpr4<ContactsId, String
 
   override fun columns(): List<FieldLike<*, ContactsRow>> = listOf(this.contactId().underlying, this.name().underlying, this.emails().underlying, this.tags().underlying)
 
-  fun contactId(): IdField<ContactsId, ContactsRow> = IdField<ContactsId, ContactsRow>(_path, "CONTACT_ID", ContactsRow::contactId, null, null, { row, value -> row.copy(contactId = value) }, ContactsId.oracleType)
+  fun contactId(): IdField<ContactsId, ContactsRow> = IdField<ContactsId, ContactsRow>(_path, "CONTACT_ID", ContactsRow::contactId, null, null, { row, value -> row.copy(contactId = value) }, ContactsId.oracleType.underlying)
 
-  fun emails(): OptField</* user-picked */ Email, ContactsRow> = OptField</* user-picked */ Email, ContactsRow>(_path, "EMAILS", ContactsRow::emails, null, null, { row, value -> row.copy(emails = value) }, Email.oracleType)
+  fun emails(): OptField<EmailTableT, ContactsRow> = OptField<EmailTableT, ContactsRow>(_path, "EMAILS", ContactsRow::emails, null, null, { row, value -> row.copy(emails = value) }, EmailTableT.oracleType.underlying)
 
-  fun name(): Field<String, ContactsRow> = Field<String, ContactsRow>(_path, "NAME", ContactsRow::name, null, null, { row, value -> row.copy(name = value) }, OracleTypes.varchar2)
+  fun name(): Field<kotlin.String, ContactsRow> = Field<kotlin.String, ContactsRow>(_path, "NAME", ContactsRow::name, null, null, { row, value -> row.copy(name = value) }, OracleTypes.varchar2.underlying)
 
-  override fun rowParser(): RowParser<ContactsRow> = ContactsRow._rowParser.underlying
+  override fun rowCodec(): RowCodec<ContactsRow> = ContactsRow.rowCodec.underlying
 
-  fun tags(): OptField<TagVarrayT, ContactsRow> = OptField<TagVarrayT, ContactsRow>(_path, "TAGS", ContactsRow::tags, null, null, { row, value -> row.copy(tags = value) }, TagVarrayT.oracleType)
+  fun tags(): OptField<TagVarrayT, ContactsRow> = OptField<TagVarrayT, ContactsRow>(_path, "TAGS", ContactsRow::tags, null, null, { row, value -> row.copy(tags = value) }, TagVarrayT.oracleType.underlying)
 
   override fun withPaths(_path: List<Path>): RelationStructure<ContactsFields, ContactsRow> = ContactsFields(_path)
 

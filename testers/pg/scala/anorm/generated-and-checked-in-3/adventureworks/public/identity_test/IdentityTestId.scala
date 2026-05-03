@@ -21,7 +21,7 @@ object IdentityTestId {
 
   given arrayToStatement: ToStatement[Array[IdentityTestId]] = ToStatement.arrayToParameter(using ParameterMetaData.StringParameterMetaData).contramap(_.map(_.value))
 
-  given bijection: Bijection[IdentityTestId, String] = Bijection.apply[IdentityTestId, String](_.value)(IdentityTestId.apply)
+  given bijection: Bijection[IdentityTestId, String] = Bijection[IdentityTestId, String](_.value)(IdentityTestId.apply)
 
   given column: Column[IdentityTestId] = Column.columnToString.map(IdentityTestId.apply)
 

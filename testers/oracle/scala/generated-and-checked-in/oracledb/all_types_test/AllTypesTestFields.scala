@@ -5,17 +5,17 @@
  */
 package oracledb.all_types_test
 
+import dev.typr.dsl.FieldsBase
+import dev.typr.dsl.Path
+import dev.typr.dsl.RelationStructure
+import dev.typr.dsl.SqlExpr
+import dev.typr.dsl.SqlExpr.Field
+import dev.typr.dsl.SqlExpr.FieldLike
+import dev.typr.dsl.SqlExpr.IdField
+import dev.typr.dsl.SqlExpr.OptField
+import dev.typr.dsl.TupleExpr.TupleExpr4
 import dev.typr.foundations.OracleTypes
-import dev.typr.foundations.RowParser
-import dev.typr.foundations.dsl.FieldsBase
-import dev.typr.foundations.dsl.Path
-import dev.typr.foundations.dsl.RelationStructure
-import dev.typr.foundations.dsl.SqlExpr
-import dev.typr.foundations.dsl.SqlExpr.Field
-import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.dsl.SqlExpr.IdField
-import dev.typr.foundations.dsl.SqlExpr.OptField
-import dev.typr.foundations.dsl.TupleExpr.TupleExpr4
+import dev.typr.foundations.RowCodec
 import java.util.Optional
 import oracledb.AllTypesStructNoLobs
 import oracledb.AllTypesStructNoLobsArray
@@ -71,7 +71,7 @@ class AllTypesTestFields(val `_path`: java.util.List[Path]) extends TupleExpr4[A
 
   override def columns: java.util.List[FieldLike[?, AllTypesTestRow]] = java.util.List.of(this.id, this.name, this.data, this.dataArray)
 
-  override def rowParser: RowParser[AllTypesTestRow] = AllTypesTestRow._rowParser
+  override def rowCodec: RowCodec[AllTypesTestRow] = AllTypesTestRow.rowCodec
 
   override def withPaths(`_path`: java.util.List[Path]): RelationStructure[AllTypesTestFields, AllTypesTestRow] = new AllTypesTestFields(`_path`)
 

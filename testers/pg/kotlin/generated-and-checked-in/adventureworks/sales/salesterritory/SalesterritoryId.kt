@@ -6,11 +6,10 @@
 package adventureworks.sales.salesterritory
 
 import com.fasterxml.jackson.annotation.JsonValue
-import dev.typr.foundations.PgType
-import dev.typr.foundations.PgTypes
-import dev.typr.foundations.internal.arrayMap
-import dev.typr.foundations.kotlin.Bijection
-import dev.typr.foundations.kotlin.KotlinDbTypes
+import dev.typr.foundationskt.Bijection
+import dev.typr.foundationskt.PgType
+import dev.typr.foundationskt.PgTypes
+import kotlin.collections.List
 
 /** Type for the primary key of table `sales.salesterritory` */
 data class SalesterritoryId(@field:JsonValue val value: Int) {
@@ -23,9 +22,9 @@ data class SalesterritoryId(@field:JsonValue val value: Int) {
       Bijection.of(SalesterritoryId::value, ::SalesterritoryId)
 
     val pgType: PgType<SalesterritoryId> =
-      KotlinDbTypes.PgTypes.int4.bimap(::SalesterritoryId, SalesterritoryId::value)
+      PgTypes.int4.to(Bijection.of(::SalesterritoryId, SalesterritoryId::value))
 
-    val pgTypeArray: PgType<Array<SalesterritoryId>> =
-      PgTypes.int4Array.bimap({ xs -> arrayMap.map(xs, ::SalesterritoryId, SalesterritoryId::class.java) }, { xs -> arrayMap.map(xs, SalesterritoryId::value, Int::class.javaObjectType) })
+    val pgTypeArray: PgType<List<SalesterritoryId>> =
+      pgType.array()
   }
 }

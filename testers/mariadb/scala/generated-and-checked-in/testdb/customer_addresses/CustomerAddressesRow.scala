@@ -6,11 +6,10 @@
 package testdb.customer_addresses
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import dev.typr.foundations.MariaTypes
+import dev.typr.dslsc.RowCodecs
 import dev.typr.foundations.Tuple.Tuple14
-import dev.typr.foundations.scala.DbTypeOps
-import dev.typr.foundations.scala.RowParser
-import dev.typr.foundations.scala.RowParsers
+import dev.typr.foundationssc.MariaTypes
+import dev.typr.foundationssc.RowCodec
 import java.time.LocalDateTime
 import org.mariadb.jdbc.`type`.Point
 import testdb.customers.CustomersId
@@ -123,5 +122,5 @@ case class CustomerAddressesRow(
 }
 
 object CustomerAddressesRow {
-  val `_rowParser`: RowParser[CustomerAddressesRow] = RowParsers.of(CustomerAddressesId.mariaType, CustomersId.mariaType, MariaTypes.text, IsDefault.mariaType, MariaTypes.varchar, MariaTypes.varchar, MariaTypes.varchar.nullable, MariaTypes.varchar, MariaTypes.varchar.nullable, MariaTypes.varchar, MariaTypes.char_, MariaTypes.point.nullable, MariaTypes.tinytext.nullable, MariaTypes.datetime)(CustomerAddressesRow.apply)(row => Array[Any](row.addressId, row.customerId, row.addressType, row.isDefault, row.recipientName, row.streetLine1, row.streetLine2, row.city, row.stateProvince, row.postalCode, row.countryCode, row.location, row.deliveryNotes, row.createdAt))
+  val rowCodec: RowCodec[CustomerAddressesRow] = RowCodecs.of(CustomerAddressesId.mariaType, CustomersId.mariaType, MariaTypes.text, IsDefault.mariaType, MariaTypes.varchar, MariaTypes.varchar, MariaTypes.varchar.opt, MariaTypes.varchar, MariaTypes.varchar.opt, MariaTypes.varchar, MariaTypes.char_, MariaTypes.point.opt, MariaTypes.tinytext.opt, MariaTypes.datetime)(CustomerAddressesRow.apply)(row => Array[Any](row.addressId, row.customerId, row.addressType, row.isDefault, row.recipientName, row.streetLine1, row.streetLine2, row.city, row.stateProvince, row.postalCode, row.countryCode, row.location, row.deliveryNotes, row.createdAt))
 }

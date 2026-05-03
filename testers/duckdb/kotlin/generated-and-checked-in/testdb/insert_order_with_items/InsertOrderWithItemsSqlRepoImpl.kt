@@ -5,12 +5,10 @@
  */
 package testdb.insert_order_with_items
 
-import dev.typr.foundations.DuckDbTypes
-import dev.typr.foundations.kotlin.Fragment
-import dev.typr.foundations.kotlin.KotlinDbTypes
-import dev.typr.foundations.kotlin.nullable
+import dev.typr.foundationskt.ConnectionRead
+import dev.typr.foundationskt.DuckDbTypes
+import dev.typr.foundationskt.Fragment
 import java.math.BigDecimal
-import java.sql.Connection
 import java.time.LocalDate
 import kotlin.collections.List
 import testdb.customers.CustomersId
@@ -21,7 +19,7 @@ class InsertOrderWithItemsSqlRepoImpl() : InsertOrderWithItemsSqlRepo {
     customerId: /* user-picked */ CustomersId,
     orderDate: LocalDate?,
     totalAmount: BigDecimal?,
-    status: String?,
-    c: Connection
-  ): List<InsertOrderWithItemsSqlRow> = Fragment.interpolate(Fragment.lit("-- Insert a new order and return the generated data\n-- Tests: INSERT with RETURNING, multiple columns, foreign keys, DEFAULT values\n\nINSERT INTO orders (order_id, customer_id, order_date, total_amount, status)\nVALUES (\n    CAST("), Fragment.encode(KotlinDbTypes.DuckDbTypes.integer, orderId), Fragment.lit(" AS INTEGER),\n    CAST("), Fragment.encode(CustomersId.duckDbType, customerId), Fragment.lit(" AS INTEGER),\n    CAST("), Fragment.encode(DuckDbTypes.date.nullable(), orderDate), Fragment.lit(" AS DATE),\n    CAST("), Fragment.encode(DuckDbTypes.numeric.nullable(), totalAmount), Fragment.lit(" AS DECIMAL),\n    CAST("), Fragment.encode(DuckDbTypes.text.nullable(), status), Fragment.lit(" AS VARCHAR)\n)\nRETURNING\n    order_id,\n    customer_id,\n    order_date,\n    total_amount,\n    status")).query(InsertOrderWithItemsSqlRow._rowParser.all()).runUnchecked(c)
+    status: kotlin.String?,
+    c: ConnectionRead
+  ): List<InsertOrderWithItemsSqlRow> = Fragment.concat(Fragment.of("-- Insert a new order and return the generated data\n-- Tests: INSERT with RETURNING, multiple columns, foreign keys, DEFAULT values\n\nINSERT INTO orders (order_id, customer_id, order_date, total_amount, status)\nVALUES (\n    CAST("), Fragment.encode(DuckDbTypes.integer, orderId), Fragment.of(" AS INTEGER),\n    CAST("), Fragment.encode(CustomersId.duckDbType, customerId), Fragment.of(" AS INTEGER),\n    CAST("), Fragment.encode(DuckDbTypes.date.opt(), orderDate), Fragment.of(" AS DATE),\n    CAST("), Fragment.encode(DuckDbTypes.numeric.opt(), totalAmount), Fragment.of(" AS DECIMAL),\n    CAST("), Fragment.encode(DuckDbTypes.text.opt(), status), Fragment.of(" AS VARCHAR)\n)\nRETURNING\n    order_id,\n    customer_id,\n    order_date,\n    total_amount,\n    status")).query(InsertOrderWithItemsSqlRow.rowCodec.all()).run(c)
 }

@@ -16,7 +16,7 @@ import scala.util.Random
 /** Tests for DuckDB-specific features: enums, special types, and views.
   */
 class DatabaseFeaturesTest {
-  private val testInsert = TestInsert(Random(42))
+  private val testInsert = TestInsert(Random(1917394517))
   private val allTypesRepo = AllScalarTypesRepoImpl()
   private val customersRepo = CustomersRepoImpl()
   private val customerOrdersViewRepo = CustomerOrdersViewRepoImpl()
@@ -25,9 +25,7 @@ class DatabaseFeaturesTest {
   // ==================== Enum Tests ====================
 
   @Test
-  def testPriorityEnumValues(): Unit = withConnection { c =>
-    given java.sql.Connection = c
-
+  def testPriorityEnumValues(): Unit = withConnection {
     val lowPriority = testInsert.Customers(priority = Defaulted.Provided(Some(Priority.low)))
     val highPriority = testInsert.Customers(priority = Defaulted.Provided(Some(Priority.high)))
     val criticalPriority = testInsert.Customers(priority = Defaulted.Provided(Some(Priority.critical)))
@@ -38,9 +36,7 @@ class DatabaseFeaturesTest {
   }
 
   @Test
-  def testEnumDSLFilter(): Unit = withConnection { c =>
-    given java.sql.Connection = c
-
+  def testEnumDSLFilter(): Unit = withConnection {
     val _ = testInsert.Customers(priority = Defaulted.Provided(Some(Priority.low)))
     val _ = testInsert.Customers(priority = Defaulted.Provided(Some(Priority.high)))
     val _ = testInsert.Customers(priority = Defaulted.Provided(Some(Priority.critical)))
@@ -54,9 +50,7 @@ class DatabaseFeaturesTest {
   }
 
   @Test
-  def testMoodEnum(): Unit = withConnection { c =>
-    given java.sql.Connection = c
-
+  def testMoodEnum(): Unit = withConnection {
     val row = testInsert.AllScalarTypes(colMood = Some(Mood.happy))
 
     assertEquals(Some(Mood.happy), row.colMood)
@@ -68,9 +62,7 @@ class DatabaseFeaturesTest {
   // ==================== UUID Tests ====================
 
   @Test
-  def testUuidType(): Unit = withConnection { c =>
-    given java.sql.Connection = c
-
+  def testUuidType(): Unit = withConnection {
     val uuid = java.util.UUID.randomUUID()
     val row = testInsert.AllScalarTypes(colUuid = Some(uuid))
 
@@ -78,9 +70,7 @@ class DatabaseFeaturesTest {
   }
 
   @Test
-  def testUuidUniqueness(): Unit = withConnection { c =>
-    given java.sql.Connection = c
-
+  def testUuidUniqueness(): Unit = withConnection {
     val uuid1 = java.util.UUID.randomUUID()
     val uuid2 = java.util.UUID.randomUUID()
 
@@ -93,9 +83,7 @@ class DatabaseFeaturesTest {
   // ==================== JSON Tests ====================
 
   @Test
-  def testJsonType(): Unit = withConnection { c =>
-    given java.sql.Connection = c
-
+  def testJsonType(): Unit = withConnection {
     val json = "{\"name\": \"test\", \"values\": [1, 2, 3], \"nested\": {\"key\": \"value\"}}"
     val row = testInsert.AllScalarTypes(colJson = Some(Json(json)))
 
@@ -107,19 +95,15 @@ class DatabaseFeaturesTest {
   // ==================== Date/Time Tests ====================
 
   @Test
-  def testTimestampWithTimezone(): Unit = withConnection { c =>
-    given java.sql.Connection = c
-
-    val timestamptz = OffsetDateTime.of(2025, 6, 15, 14, 30, 45, 0, ZoneOffset.ofHours(-5))
+  def testTimestampWithTimezone(): Unit = withConnection {
+    val timestamptz = OffsetDateTime.of(2025, 6, 15, 14, 30, 45, 0, ZoneOffset.ofHours(-5)).toInstant
     val row = testInsert.AllScalarTypes(colTimestamptz = Some(timestamptz))
 
     assertTrue(row.colTimestamptz.isDefined)
   }
 
   @Test
-  def testIntervalType(): Unit = withConnection { c =>
-    given java.sql.Connection = c
-
+  def testIntervalType(): Unit = withConnection {
     val interval = Duration.ofDays(30).plusHours(12)
     val row = testInsert.AllScalarTypes(colInterval = Some(interval))
 
@@ -129,9 +113,7 @@ class DatabaseFeaturesTest {
   // ==================== Large Integer Tests ====================
 
   @Test
-  def testHugeintType(): Unit = withConnection { c =>
-    given java.sql.Connection = c
-
+  def testHugeintType(): Unit = withConnection {
     val hugeValue = new BigInteger("170141183460469231731687303715884105727")
     val row = testInsert.AllScalarTypes(colHugeint = Some(hugeValue))
 
@@ -139,9 +121,7 @@ class DatabaseFeaturesTest {
   }
 
   @Test
-  def testUnsignedIntegerTypes(): Unit = withConnection { c =>
-    given java.sql.Connection = c
-
+  def testUnsignedIntegerTypes(): Unit = withConnection {
     val row = testInsert.AllScalarTypes(
       colUtinyint = Some(Uint1(255)),
       colUsmallint = Some(Uint2(65535)),
@@ -157,9 +137,7 @@ class DatabaseFeaturesTest {
   // ==================== View Tests ====================
 
   @Test
-  def testCustomerOrdersView(): Unit = withConnection { c =>
-    given java.sql.Connection = c
-
+  def testCustomerOrdersView(): Unit = withConnection {
     val customer = testInsert.Customers(name = "View Test Customer")
     val _ = testInsert.Orders(customerId = customer.customerId.value, totalAmount = Some(BigDecimal("199.99")))
 
@@ -172,9 +150,7 @@ class DatabaseFeaturesTest {
   }
 
   @Test
-  def testOrderDetailsView(): Unit = withConnection { c =>
-    given java.sql.Connection = c
-
+  def testOrderDetailsView(): Unit = withConnection {
     val customer = testInsert.Customers()
     val product = testInsert.Products(name = "View Test Product")
     val order = testInsert.Orders(customerId = customer.customerId.value)
@@ -197,9 +173,7 @@ class DatabaseFeaturesTest {
   // ==================== Default Value Tests ====================
 
   @Test
-  def testEnumDefaultValue(): Unit = withConnection { c =>
-    given java.sql.Connection = c
-
+  def testEnumDefaultValue(): Unit = withConnection {
     val customer = testInsert.Customers()
 
     assertEquals(Some(Priority.medium), customer.priority)

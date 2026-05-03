@@ -6,9 +6,9 @@
 package oracledb
 
 import dev.typr.foundations.internal.RandomHelper
+import dev.typr.foundationskt.Connection
 import java.math.BigDecimal
 import java.math.BigInteger
-import java.sql.Connection
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
@@ -60,23 +60,22 @@ import oracledb.precision_types_null.PrecisionTypesNullRowUnsaved
 import oracledb.products.ProductsId
 import oracledb.products.ProductsRepoImpl
 import oracledb.products.ProductsRowUnsaved
-import oracledb.userdefined.Email
 
 /** Methods to generate random data for `Ident(TestInsert)` */
 data class TestInsert(val random: Random) {
   fun AllScalarTypes(
-    colNotNull: String,
-    colVarchar2: String? = null,
+    colNotNull: kotlin.String,
+    colVarchar2: kotlin.String? = null,
     colNumber: BigDecimal? = if (random.nextBoolean()) null else BigDecimal.valueOf(random.nextDouble()),
     colDate: LocalDateTime? = if (random.nextBoolean()) null else LocalDateTime.of(LocalDate.ofEpochDay(random.nextInt(30000).toLong()), LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong())),
     colTimestamp: LocalDateTime? = if (random.nextBoolean()) null else LocalDateTime.of(LocalDate.ofEpochDay(random.nextInt(30000).toLong()), LocalTime.ofSecondOfDay(random.nextInt(24 * 60 * 60).toLong())),
-    colClob: String? = null,
+    colClob: kotlin.String? = null,
     id: Defaulted<AllScalarTypesId> = UseDefault(),
     c: Connection
   ): AllScalarTypesRow = (AllScalarTypesRepoImpl()).insert(AllScalarTypesRowUnsaved(colVarchar2 = colVarchar2, colNumber = colNumber, colDate = colDate, colTimestamp = colTimestamp, colClob = colClob, colNotNull = colNotNull, id = id), c)
 
   fun AllTypesTest(
-    name: String,
+    name: kotlin.String,
     data: AllTypesStructNoLobs? = null,
     dataArray: AllTypesStructNoLobsArray? = null,
     id: Defaulted<AllTypesTestId> = UseDefault(),
@@ -84,15 +83,15 @@ data class TestInsert(val random: Random) {
   ): AllTypesTestId = (AllTypesTestRepoImpl()).insert(AllTypesTestRowUnsaved(name = name, data = data, dataArray = dataArray, id = id), c)
 
   fun Contacts(
-    name: String,
-    emails: /* user-picked */ Email? = null,
+    name: kotlin.String,
+    emails: EmailTableT? = null,
     tags: TagVarrayT? = null,
     contactId: Defaulted<ContactsId> = UseDefault(),
     c: Connection
   ): ContactsId = (ContactsRepoImpl()).insert(ContactsRowUnsaved(name = name, emails = emails, tags = tags, contactId = contactId), c)
 
   fun Customers(
-    name: String,
+    name: kotlin.String,
     billingAddress: AddressT,
     creditLimit: MoneyT? = null,
     customerId: Defaulted<CustomersId> = UseDefault(),
@@ -101,17 +100,17 @@ data class TestInsert(val random: Random) {
   ): CustomersId = (CustomersRepoImpl()).insert(CustomersRowUnsaved(name = name, billingAddress = billingAddress, creditLimit = creditLimit, customerId = customerId, createdAt = createdAt), c)
 
   fun Departments(
-    deptCode: String,
-    deptRegion: String,
-    deptName: String,
+    deptCode: kotlin.String,
+    deptRegion: kotlin.String,
+    deptName: kotlin.String,
     budget: MoneyT? = null,
     c: Connection
   ): DepartmentsId = (DepartmentsRepoImpl()).insert(DepartmentsRow(deptCode = deptCode, deptRegion = deptRegion, deptName = deptName, budget = budget), c)
 
   fun Employees(
     DepartmentsId: DepartmentsId,
-    empSuffix: String,
-    empName: String,
+    empSuffix: kotlin.String,
+    empName: kotlin.String,
     empNumber: BigDecimal = BigDecimal.valueOf(random.nextDouble()),
     salary: MoneyT? = null,
     hireDate: Defaulted<LocalDateTime> = UseDefault(),
@@ -161,8 +160,8 @@ data class TestInsert(val random: Random) {
   ): PrecisionTypesNullRow = (PrecisionTypesNullRepoImpl()).insert(PrecisionTypesNullRowUnsaved(string10 = string10, string20 = string20, string50 = string50, string100 = string100, string255 = string255, char10 = char10, number52 = number52, number102 = number102, number184 = number184, number50 = number50, number100 = number100, number180 = number180, ts0 = ts0, ts3 = ts3, ts6 = ts6, ts9 = ts9, id = id), c)
 
   fun Products(
-    sku: String,
-    name: String,
+    sku: kotlin.String,
+    name: kotlin.String,
     price: MoneyT,
     tags: TagVarrayT? = null,
     productId: Defaulted<ProductsId> = UseDefault(),

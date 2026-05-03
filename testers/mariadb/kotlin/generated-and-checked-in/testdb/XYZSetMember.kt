@@ -12,6 +12,8 @@ enum class XYZSetMember(val value: kotlin.String) {
     y("y"),
     z("z");
 
+    
+
     companion object {
         val Names: kotlin.String = entries.joinToString(", ") { it.value }
         val ByName: kotlin.collections.Map<kotlin.String, XYZSetMember> = entries.associateBy { it.value }

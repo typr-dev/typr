@@ -5,21 +5,20 @@
  */
 package adventureworks.public.only_pk_columns
 
-import dev.typr.foundations.PgTypes
-import dev.typr.foundations.RowParser
-import dev.typr.foundations.dsl.FieldsBase
-import dev.typr.foundations.dsl.Path
-import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.kotlin.KotlinDbTypes
-import dev.typr.foundations.kotlin.RelationStructure
-import dev.typr.foundations.kotlin.SqlExpr
-import dev.typr.foundations.kotlin.SqlExpr.IdField
-import dev.typr.foundations.kotlin.TupleExpr
-import dev.typr.foundations.kotlin.TupleExpr2
+import dev.typr.dsl.FieldsBase
+import dev.typr.dsl.Path
+import dev.typr.dsl.SqlExpr.FieldLike
+import dev.typr.dslkt.RelationStructure
+import dev.typr.dslkt.SqlExpr
+import dev.typr.dslkt.SqlExpr.IdField
+import dev.typr.dslkt.TupleExpr
+import dev.typr.dslkt.TupleExpr2
+import dev.typr.foundations.RowCodec
+import dev.typr.foundationskt.PgTypes
 import kotlin.collections.List
 
-data class OnlyPkColumnsFields(val _path: List<Path>) : TupleExpr2<String, Int>, RelationStructure<OnlyPkColumnsFields, OnlyPkColumnsRow>, FieldsBase<OnlyPkColumnsRow> {
-  override fun _1(): SqlExpr<String> = keyColumn1()
+data class OnlyPkColumnsFields(val _path: List<Path>) : TupleExpr2<kotlin.String, Int>, RelationStructure<OnlyPkColumnsFields, OnlyPkColumnsRow>, FieldsBase<OnlyPkColumnsRow> {
+  override fun _1(): SqlExpr<kotlin.String> = keyColumn1()
 
   override fun _2(): SqlExpr<Int> = keyColumn2()
 
@@ -27,15 +26,15 @@ data class OnlyPkColumnsFields(val _path: List<Path>) : TupleExpr2<String, Int>,
 
   override fun columns(): List<FieldLike<*, OnlyPkColumnsRow>> = listOf(this.keyColumn1().underlying, this.keyColumn2().underlying)
 
-  fun compositeIdIn(compositeIds: List<OnlyPkColumnsId>): SqlExpr<Boolean> = TupleExpr.of(keyColumn1(), keyColumn2()).among(compositeIds)
+  fun compositeIdIn(compositeIds: List<OnlyPkColumnsId>): SqlExpr<kotlin.Boolean> = TupleExpr.of(keyColumn1(), keyColumn2()).among(compositeIds)
 
-  fun compositeIdIs(compositeId: OnlyPkColumnsId): SqlExpr<Boolean> = SqlExpr.all(keyColumn1().isEqual(compositeId.keyColumn1), keyColumn2().isEqual(compositeId.keyColumn2))
+  fun compositeIdIs(compositeId: OnlyPkColumnsId): SqlExpr<kotlin.Boolean> = SqlExpr.all(keyColumn1().isEqual(compositeId.keyColumn1), keyColumn2().isEqual(compositeId.keyColumn2))
 
-  fun keyColumn1(): IdField<String, OnlyPkColumnsRow> = IdField<String, OnlyPkColumnsRow>(_path, "key_column_1", OnlyPkColumnsRow::keyColumn1, null, null, { row, value -> row.copy(keyColumn1 = value) }, PgTypes.text)
+  fun keyColumn1(): IdField<kotlin.String, OnlyPkColumnsRow> = IdField<kotlin.String, OnlyPkColumnsRow>(_path, "key_column_1", OnlyPkColumnsRow::keyColumn1, null, null, { row, value -> row.copy(keyColumn1 = value) }, PgTypes.text.underlying)
 
-  fun keyColumn2(): IdField<Int, OnlyPkColumnsRow> = IdField<Int, OnlyPkColumnsRow>(_path, "key_column_2", OnlyPkColumnsRow::keyColumn2, null, "int4", { row, value -> row.copy(keyColumn2 = value) }, KotlinDbTypes.PgTypes.int4)
+  fun keyColumn2(): IdField<Int, OnlyPkColumnsRow> = IdField<Int, OnlyPkColumnsRow>(_path, "key_column_2", OnlyPkColumnsRow::keyColumn2, null, "int4", { row, value -> row.copy(keyColumn2 = value) }, PgTypes.int4.underlying)
 
-  override fun rowParser(): RowParser<OnlyPkColumnsRow> = OnlyPkColumnsRow._rowParser.underlying
+  override fun rowCodec(): RowCodec<OnlyPkColumnsRow> = OnlyPkColumnsRow.rowCodec.underlying
 
   override fun withPaths(_path: List<Path>): RelationStructure<OnlyPkColumnsFields, OnlyPkColumnsRow> = OnlyPkColumnsFields(_path)
 

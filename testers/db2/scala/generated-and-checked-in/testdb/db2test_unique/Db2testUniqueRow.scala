@@ -6,10 +6,10 @@
 package testdb.db2test_unique
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import dev.typr.foundations.Db2Types
+import dev.typr.dslsc.RowCodecs
 import dev.typr.foundations.Tuple.Tuple4
-import dev.typr.foundations.scala.RowParser
-import dev.typr.foundations.scala.RowParsers
+import dev.typr.foundationssc.Db2Types
+import dev.typr.foundationssc.RowCodec
 
 /** Table: DB2TEST_UNIQUE
  * Primary key: ID
@@ -33,5 +33,5 @@ case class Db2testUniqueRow(
 }
 
 object Db2testUniqueRow {
-  val `_rowParser`: RowParser[Db2testUniqueRow] = RowParsers.of(Db2testUniqueId.db2Type, Db2Types.varchar, Db2Types.varchar, Db2Types.varchar)(Db2testUniqueRow.apply)(row => Array[Any](row.id, row.email, row.code, row.category))
+  val rowCodec: RowCodec[Db2testUniqueRow] = RowCodecs.of(Db2testUniqueId.db2Type, Db2Types.varchar, Db2Types.varchar, Db2Types.varchar)(Db2testUniqueRow.apply)(row => Array[Any](row.id, row.email, row.code, row.category))
 }

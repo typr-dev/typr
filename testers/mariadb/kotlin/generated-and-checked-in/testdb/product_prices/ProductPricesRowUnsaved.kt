@@ -30,7 +30,7 @@ data class ProductPricesRowUnsaved(
   /** Default: 'USD'
 
     */
-  @field:JsonProperty("currency_code") val currencyCode: Defaulted<String> = UseDefault(),
+  @field:JsonProperty("currency_code") val currencyCode: Defaulted<kotlin.String> = UseDefault(),
   /** Default: NULL
 
     */
@@ -38,7 +38,7 @@ data class ProductPricesRowUnsaved(
 ) {
   fun toRow(
     tierIdDefault: () -> PriceTiersId?,
-    currencyCodeDefault: () -> String,
+    currencyCodeDefault: () -> kotlin.String,
     validToDefault: () -> LocalDate?,
     priceIdDefault: () -> ProductPricesId
   ): ProductPricesRow = ProductPricesRow(priceId = priceIdDefault(), productId = productId, tierId = tierId.getOrElse(tierIdDefault), price = price, currencyCode = currencyCode.getOrElse(currencyCodeDefault), validFrom = validFrom, validTo = validTo.getOrElse(validToDefault))

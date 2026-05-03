@@ -6,9 +6,9 @@
 package testdb.product_categories
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import dev.typr.dslsc.RowCodecs
 import dev.typr.foundations.Tuple.Tuple2
-import dev.typr.foundations.scala.RowParser
-import dev.typr.foundations.scala.RowParsers
+import dev.typr.foundationssc.RowCodec
 import testdb.categories.CategoriesId
 import testdb.products.ProductsId
 
@@ -23,5 +23,5 @@ case class ProductCategoriesId(
 }
 
 object ProductCategoriesId {
-  val `_rowParser`: RowParser[ProductCategoriesId] = RowParsers.of(ProductsId.mariaType, CategoriesId.mariaType)(ProductCategoriesId.apply)(row => Array[Any](row.productId, row.categoryId))
+  val rowCodec: RowCodec[ProductCategoriesId] = RowCodecs.of(ProductsId.mariaType, CategoriesId.mariaType)(ProductCategoriesId.apply)(row => Array[Any](row.productId, row.categoryId))
 }

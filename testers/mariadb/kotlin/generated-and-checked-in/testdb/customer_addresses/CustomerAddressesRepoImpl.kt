@@ -5,14 +5,14 @@
  */
 package testdb.customer_addresses
 
-import dev.typr.foundations.MariaTypes
-import dev.typr.foundations.kotlin.DeleteBuilder
-import dev.typr.foundations.kotlin.Dialect
-import dev.typr.foundations.kotlin.Fragment
-import dev.typr.foundations.kotlin.SelectBuilder
-import dev.typr.foundations.kotlin.UpdateBuilder
-import dev.typr.foundations.kotlin.nullable
-import java.sql.Connection
+import dev.typr.dslkt.DeleteBuilder
+import dev.typr.dslkt.Dialect
+import dev.typr.dslkt.SelectBuilder
+import dev.typr.dslkt.UpdateBuilder
+import dev.typr.foundationskt.Connection
+import dev.typr.foundationskt.ConnectionRead
+import dev.typr.foundationskt.Fragment
+import dev.typr.foundationskt.MariaTypes
 import java.util.ArrayList
 import kotlin.collections.Iterator
 import kotlin.collections.List
@@ -27,22 +27,22 @@ class CustomerAddressesRepoImpl() : CustomerAddressesRepo {
   override fun deleteById(
     addressId: CustomerAddressesId,
     c: Connection
-  ): Boolean = Fragment.interpolate(Fragment.lit("delete from `customer_addresses` where `address_id` = "), Fragment.encode(CustomerAddressesId.mariaType, addressId), Fragment.lit("")).update().runUnchecked(c) > 0
+  ): kotlin.Boolean = Fragment.concat(Fragment.of("delete from `customer_addresses` where `address_id` = "), Fragment.encode(CustomerAddressesId.mariaType, addressId), Fragment.of("")).update().run(c) > 0
 
   override fun deleteByIds(
-    addressIds: Array<CustomerAddressesId>,
+    addressIds: List<CustomerAddressesId>,
     c: Connection
   ): Int {
     val fragments: ArrayList<Fragment> = ArrayList()
     for (id in addressIds) { fragments.add(Fragment.encode(CustomerAddressesId.mariaType, id)) }
-    return Fragment.interpolate(Fragment.lit("delete from `customer_addresses` where `address_id` in ("), Fragment.comma(fragments.toMutableList()), Fragment.lit(")")).update().runUnchecked(c)
+    return Fragment.concat(Fragment.of("delete from `customer_addresses` where `address_id` in ("), Fragment.comma(fragments.toMutableList()), Fragment.of(")")).update().run(c)
   }
 
   override fun insert(
     unsaved: CustomerAddressesRow,
     c: Connection
-  ): CustomerAddressesRow = Fragment.interpolate(Fragment.lit("insert into `customer_addresses`(`customer_id`, `address_type`, `is_default`, `recipient_name`, `street_line1`, `street_line2`, `city`, `state_province`, `postal_code`, `country_code`, `location`, `delivery_notes`, `created_at`)\nvalues ("), Fragment.encode(CustomersId.mariaType, unsaved.customerId), Fragment.lit(", "), Fragment.encode(MariaTypes.text, unsaved.addressType), Fragment.lit(", "), Fragment.encode(IsDefault.mariaType, unsaved.isDefault), Fragment.lit(", "), Fragment.encode(MariaTypes.varchar, unsaved.recipientName), Fragment.lit(", "), Fragment.encode(MariaTypes.varchar, unsaved.streetLine1), Fragment.lit(", "), Fragment.encode(MariaTypes.varchar.nullable(), unsaved.streetLine2), Fragment.lit(", "), Fragment.encode(MariaTypes.varchar, unsaved.city), Fragment.lit(", "), Fragment.encode(MariaTypes.varchar.nullable(), unsaved.stateProvince), Fragment.lit(", "), Fragment.encode(MariaTypes.varchar, unsaved.postalCode), Fragment.lit(", "), Fragment.encode(MariaTypes.char_, unsaved.countryCode), Fragment.lit(", "), Fragment.encode(MariaTypes.point.nullable(), unsaved.location), Fragment.lit(", "), Fragment.encode(MariaTypes.tinytext.nullable(), unsaved.deliveryNotes), Fragment.lit(", "), Fragment.encode(MariaTypes.datetime, unsaved.createdAt), Fragment.lit(")\nRETURNING `address_id`, `customer_id`, `address_type`, `is_default`, `recipient_name`, `street_line1`, `street_line2`, `city`, `state_province`, `postal_code`, `country_code`, `location`, `delivery_notes`, `created_at`\n"))
-    .updateReturning(CustomerAddressesRow._rowParser.exactlyOne()).runUnchecked(c)
+  ): CustomerAddressesRow = Fragment.concat(Fragment.of("insert into `customer_addresses`(`customer_id`, `address_type`, `is_default`, `recipient_name`, `street_line1`, `street_line2`, `city`, `state_province`, `postal_code`, `country_code`, `location`, `delivery_notes`, `created_at`)\nvalues ("), Fragment.encode(CustomersId.mariaType, unsaved.customerId), Fragment.of(", "), Fragment.encode(MariaTypes.text, unsaved.addressType), Fragment.of(", "), Fragment.encode(IsDefault.mariaType, unsaved.isDefault), Fragment.of(", "), Fragment.encode(MariaTypes.varchar, unsaved.recipientName), Fragment.of(", "), Fragment.encode(MariaTypes.varchar, unsaved.streetLine1), Fragment.of(", "), Fragment.encode(MariaTypes.varchar.opt(), unsaved.streetLine2), Fragment.of(", "), Fragment.encode(MariaTypes.varchar, unsaved.city), Fragment.of(", "), Fragment.encode(MariaTypes.varchar.opt(), unsaved.stateProvince), Fragment.of(", "), Fragment.encode(MariaTypes.varchar, unsaved.postalCode), Fragment.of(", "), Fragment.encode(MariaTypes.char_, unsaved.countryCode), Fragment.of(", "), Fragment.encode(MariaTypes.point.opt(), unsaved.location), Fragment.of(", "), Fragment.encode(MariaTypes.tinytext.opt(), unsaved.deliveryNotes), Fragment.of(", "), Fragment.encode(MariaTypes.datetime, unsaved.createdAt), Fragment.of(")\nRETURNING `address_id`, `customer_id`, `address_type`, `is_default`, `recipient_name`, `street_line1`, `street_line2`, `city`, `state_province`, `postal_code`, `country_code`, `location`, `delivery_notes`, `created_at`\n"))
+    .updateReturning(CustomerAddressesRow.rowCodec.exactlyOne()).run(c)
 
   override fun insert(
     unsaved: CustomerAddressesRowUnsaved,
@@ -50,102 +50,102 @@ class CustomerAddressesRepoImpl() : CustomerAddressesRepo {
   ): CustomerAddressesRow {
     val columns: ArrayList<Fragment> = ArrayList()
     val values: ArrayList<Fragment> = ArrayList()
-    columns.add(Fragment.lit("`customer_id`"))
-    values.add(Fragment.interpolate(Fragment.encode(CustomersId.mariaType, unsaved.customerId), Fragment.lit("")))
-    columns.add(Fragment.lit("`address_type`"))
-    values.add(Fragment.interpolate(Fragment.encode(MariaTypes.text, unsaved.addressType), Fragment.lit("")))
-    columns.add(Fragment.lit("`recipient_name`"))
-    values.add(Fragment.interpolate(Fragment.encode(MariaTypes.varchar, unsaved.recipientName), Fragment.lit("")))
-    columns.add(Fragment.lit("`street_line1`"))
-    values.add(Fragment.interpolate(Fragment.encode(MariaTypes.varchar, unsaved.streetLine1), Fragment.lit("")))
-    columns.add(Fragment.lit("`city`"))
-    values.add(Fragment.interpolate(Fragment.encode(MariaTypes.varchar, unsaved.city), Fragment.lit("")))
-    columns.add(Fragment.lit("`postal_code`"))
-    values.add(Fragment.interpolate(Fragment.encode(MariaTypes.varchar, unsaved.postalCode), Fragment.lit("")))
-    columns.add(Fragment.lit("`country_code`"))
-    values.add(Fragment.interpolate(Fragment.encode(MariaTypes.char_, unsaved.countryCode), Fragment.lit("")))
+    columns.add(Fragment.of("`customer_id`"))
+    values.add(Fragment.concat(Fragment.encode(CustomersId.mariaType, unsaved.customerId), Fragment.of("")))
+    columns.add(Fragment.of("`address_type`"))
+    values.add(Fragment.concat(Fragment.encode(MariaTypes.text, unsaved.addressType), Fragment.of("")))
+    columns.add(Fragment.of("`recipient_name`"))
+    values.add(Fragment.concat(Fragment.encode(MariaTypes.varchar, unsaved.recipientName), Fragment.of("")))
+    columns.add(Fragment.of("`street_line1`"))
+    values.add(Fragment.concat(Fragment.encode(MariaTypes.varchar, unsaved.streetLine1), Fragment.of("")))
+    columns.add(Fragment.of("`city`"))
+    values.add(Fragment.concat(Fragment.encode(MariaTypes.varchar, unsaved.city), Fragment.of("")))
+    columns.add(Fragment.of("`postal_code`"))
+    values.add(Fragment.concat(Fragment.encode(MariaTypes.varchar, unsaved.postalCode), Fragment.of("")))
+    columns.add(Fragment.of("`country_code`"))
+    values.add(Fragment.concat(Fragment.encode(MariaTypes.char_, unsaved.countryCode), Fragment.of("")))
     unsaved.isDefault.visit(
       {  },
-      { value -> columns.add(Fragment.lit("`is_default`"))
-      values.add(Fragment.interpolate(Fragment.encode(IsDefault.mariaType, value), Fragment.lit(""))) }
+      { value -> columns.add(Fragment.of("`is_default`"))
+      values.add(Fragment.concat(Fragment.encode(IsDefault.mariaType, value), Fragment.of(""))) }
     );
     unsaved.streetLine2.visit(
       {  },
-      { value -> columns.add(Fragment.lit("`street_line2`"))
-      values.add(Fragment.interpolate(Fragment.encode(MariaTypes.varchar.nullable(), value), Fragment.lit(""))) }
+      { value -> columns.add(Fragment.of("`street_line2`"))
+      values.add(Fragment.concat(Fragment.encode(MariaTypes.varchar.opt(), value), Fragment.of(""))) }
     );
     unsaved.stateProvince.visit(
       {  },
-      { value -> columns.add(Fragment.lit("`state_province`"))
-      values.add(Fragment.interpolate(Fragment.encode(MariaTypes.varchar.nullable(), value), Fragment.lit(""))) }
+      { value -> columns.add(Fragment.of("`state_province`"))
+      values.add(Fragment.concat(Fragment.encode(MariaTypes.varchar.opt(), value), Fragment.of(""))) }
     );
     unsaved.location.visit(
       {  },
-      { value -> columns.add(Fragment.lit("`location`"))
-      values.add(Fragment.interpolate(Fragment.encode(MariaTypes.point.nullable(), value), Fragment.lit(""))) }
+      { value -> columns.add(Fragment.of("`location`"))
+      values.add(Fragment.concat(Fragment.encode(MariaTypes.point.opt(), value), Fragment.of(""))) }
     );
     unsaved.deliveryNotes.visit(
       {  },
-      { value -> columns.add(Fragment.lit("`delivery_notes`"))
-      values.add(Fragment.interpolate(Fragment.encode(MariaTypes.tinytext.nullable(), value), Fragment.lit(""))) }
+      { value -> columns.add(Fragment.of("`delivery_notes`"))
+      values.add(Fragment.concat(Fragment.encode(MariaTypes.tinytext.opt(), value), Fragment.of(""))) }
     );
     unsaved.createdAt.visit(
       {  },
-      { value -> columns.add(Fragment.lit("`created_at`"))
-      values.add(Fragment.interpolate(Fragment.encode(MariaTypes.datetime, value), Fragment.lit(""))) }
+      { value -> columns.add(Fragment.of("`created_at`"))
+      values.add(Fragment.concat(Fragment.encode(MariaTypes.datetime, value), Fragment.of(""))) }
     );
-    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into `customer_addresses`("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nRETURNING `address_id`, `customer_id`, `address_type`, `is_default`, `recipient_name`, `street_line1`, `street_line2`, `city`, `state_province`, `postal_code`, `country_code`, `location`, `delivery_notes`, `created_at`\n"))
-    return q.updateReturning(CustomerAddressesRow._rowParser.exactlyOne()).runUnchecked(c)
+    val q: Fragment = Fragment.concat(Fragment.of("insert into `customer_addresses`("), Fragment.comma(columns.toMutableList()), Fragment.of(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.of(")\nRETURNING `address_id`, `customer_id`, `address_type`, `is_default`, `recipient_name`, `street_line1`, `street_line2`, `city`, `state_province`, `postal_code`, `country_code`, `location`, `delivery_notes`, `created_at`\n"))
+    return q.updateReturning(CustomerAddressesRow.rowCodec.exactlyOne()).run(c)
   }
 
-  override fun select(): SelectBuilder<CustomerAddressesFields, CustomerAddressesRow> = SelectBuilder.of("`customer_addresses`", CustomerAddressesFields.structure, CustomerAddressesRow._rowParser, Dialect.MARIADB)
+  override fun select(): SelectBuilder<CustomerAddressesFields, CustomerAddressesRow> = SelectBuilder.of("`customer_addresses`", CustomerAddressesFields.structure, CustomerAddressesRow.rowCodec, Dialect.MARIADB)
 
-  override fun selectAll(c: Connection): List<CustomerAddressesRow> = Fragment.interpolate(Fragment.lit("select `address_id`, `customer_id`, `address_type`, `is_default`, `recipient_name`, `street_line1`, `street_line2`, `city`, `state_province`, `postal_code`, `country_code`, `location`, `delivery_notes`, `created_at`\nfrom `customer_addresses`\n")).query(CustomerAddressesRow._rowParser.all()).runUnchecked(c)
+  override fun selectAll(c: ConnectionRead): List<CustomerAddressesRow> = Fragment.concat(Fragment.of("select `address_id`, `customer_id`, `address_type`, `is_default`, `recipient_name`, `street_line1`, `street_line2`, `city`, `state_province`, `postal_code`, `country_code`, `location`, `delivery_notes`, `created_at`\nfrom `customer_addresses`\n")).query(CustomerAddressesRow.rowCodec.all()).run(c)
 
   override fun selectById(
     addressId: CustomerAddressesId,
-    c: Connection
-  ): CustomerAddressesRow? = Fragment.interpolate(Fragment.lit("select `address_id`, `customer_id`, `address_type`, `is_default`, `recipient_name`, `street_line1`, `street_line2`, `city`, `state_province`, `postal_code`, `country_code`, `location`, `delivery_notes`, `created_at`\nfrom `customer_addresses`\nwhere `address_id` = "), Fragment.encode(CustomerAddressesId.mariaType, addressId), Fragment.lit("")).query(CustomerAddressesRow._rowParser.first()).runUnchecked(c)
+    c: ConnectionRead
+  ): CustomerAddressesRow? = Fragment.concat(Fragment.of("select `address_id`, `customer_id`, `address_type`, `is_default`, `recipient_name`, `street_line1`, `street_line2`, `city`, `state_province`, `postal_code`, `country_code`, `location`, `delivery_notes`, `created_at`\nfrom `customer_addresses`\nwhere `address_id` = "), Fragment.encode(CustomerAddressesId.mariaType, addressId), Fragment.of("")).query(CustomerAddressesRow.rowCodec.first()).run(c)
 
   override fun selectByIds(
-    addressIds: Array<CustomerAddressesId>,
-    c: Connection
+    addressIds: List<CustomerAddressesId>,
+    c: ConnectionRead
   ): List<CustomerAddressesRow> {
     val fragments: ArrayList<Fragment> = ArrayList()
     for (id in addressIds) { fragments.add(Fragment.encode(CustomerAddressesId.mariaType, id)) }
-    return Fragment.interpolate(Fragment.lit("select `address_id`, `customer_id`, `address_type`, `is_default`, `recipient_name`, `street_line1`, `street_line2`, `city`, `state_province`, `postal_code`, `country_code`, `location`, `delivery_notes`, `created_at` from `customer_addresses` where `address_id` in ("), Fragment.comma(fragments.toMutableList()), Fragment.lit(")")).query(CustomerAddressesRow._rowParser.all()).runUnchecked(c)
+    return Fragment.concat(Fragment.of("select `address_id`, `customer_id`, `address_type`, `is_default`, `recipient_name`, `street_line1`, `street_line2`, `city`, `state_province`, `postal_code`, `country_code`, `location`, `delivery_notes`, `created_at` from `customer_addresses` where `address_id` in ("), Fragment.comma(fragments.toMutableList()), Fragment.of(")")).query(CustomerAddressesRow.rowCodec.all()).run(c)
   }
 
   override fun selectByIdsTracked(
-    addressIds: Array<CustomerAddressesId>,
-    c: Connection
+    addressIds: List<CustomerAddressesId>,
+    c: ConnectionRead
   ): Map<CustomerAddressesId, CustomerAddressesRow> {
     val ret: MutableMap<CustomerAddressesId, CustomerAddressesRow> = mutableMapOf<CustomerAddressesId, CustomerAddressesRow>()
     selectByIds(addressIds, c).forEach({ row -> ret.put(row.addressId, row) })
     return ret.toMap()
   }
 
-  override fun update(): UpdateBuilder<CustomerAddressesFields, CustomerAddressesRow> = UpdateBuilder.of("`customer_addresses`", CustomerAddressesFields.structure, CustomerAddressesRow._rowParser, Dialect.MARIADB)
+  override fun update(): UpdateBuilder<CustomerAddressesFields, CustomerAddressesRow> = UpdateBuilder.of("`customer_addresses`", CustomerAddressesFields.structure, CustomerAddressesRow.rowCodec, Dialect.MARIADB)
 
   override fun update(
     row: CustomerAddressesRow,
     c: Connection
-  ): Boolean {
+  ): kotlin.Boolean {
     val addressId: CustomerAddressesId = row.addressId
-    return Fragment.interpolate(Fragment.lit("update `customer_addresses`\nset `customer_id` = "), Fragment.encode(CustomersId.mariaType, row.customerId), Fragment.lit(",\n`address_type` = "), Fragment.encode(MariaTypes.text, row.addressType), Fragment.lit(",\n`is_default` = "), Fragment.encode(IsDefault.mariaType, row.isDefault), Fragment.lit(",\n`recipient_name` = "), Fragment.encode(MariaTypes.varchar, row.recipientName), Fragment.lit(",\n`street_line1` = "), Fragment.encode(MariaTypes.varchar, row.streetLine1), Fragment.lit(",\n`street_line2` = "), Fragment.encode(MariaTypes.varchar.nullable(), row.streetLine2), Fragment.lit(",\n`city` = "), Fragment.encode(MariaTypes.varchar, row.city), Fragment.lit(",\n`state_province` = "), Fragment.encode(MariaTypes.varchar.nullable(), row.stateProvince), Fragment.lit(",\n`postal_code` = "), Fragment.encode(MariaTypes.varchar, row.postalCode), Fragment.lit(",\n`country_code` = "), Fragment.encode(MariaTypes.char_, row.countryCode), Fragment.lit(",\n`location` = "), Fragment.encode(MariaTypes.point.nullable(), row.location), Fragment.lit(",\n`delivery_notes` = "), Fragment.encode(MariaTypes.tinytext.nullable(), row.deliveryNotes), Fragment.lit(",\n`created_at` = "), Fragment.encode(MariaTypes.datetime, row.createdAt), Fragment.lit("\nwhere `address_id` = "), Fragment.encode(CustomerAddressesId.mariaType, addressId), Fragment.lit("")).update().runUnchecked(c) > 0
+    return Fragment.concat(Fragment.of("update `customer_addresses`\nset `customer_id` = "), Fragment.encode(CustomersId.mariaType, row.customerId), Fragment.of(",\n`address_type` = "), Fragment.encode(MariaTypes.text, row.addressType), Fragment.of(",\n`is_default` = "), Fragment.encode(IsDefault.mariaType, row.isDefault), Fragment.of(",\n`recipient_name` = "), Fragment.encode(MariaTypes.varchar, row.recipientName), Fragment.of(",\n`street_line1` = "), Fragment.encode(MariaTypes.varchar, row.streetLine1), Fragment.of(",\n`street_line2` = "), Fragment.encode(MariaTypes.varchar.opt(), row.streetLine2), Fragment.of(",\n`city` = "), Fragment.encode(MariaTypes.varchar, row.city), Fragment.of(",\n`state_province` = "), Fragment.encode(MariaTypes.varchar.opt(), row.stateProvince), Fragment.of(",\n`postal_code` = "), Fragment.encode(MariaTypes.varchar, row.postalCode), Fragment.of(",\n`country_code` = "), Fragment.encode(MariaTypes.char_, row.countryCode), Fragment.of(",\n`location` = "), Fragment.encode(MariaTypes.point.opt(), row.location), Fragment.of(",\n`delivery_notes` = "), Fragment.encode(MariaTypes.tinytext.opt(), row.deliveryNotes), Fragment.of(",\n`created_at` = "), Fragment.encode(MariaTypes.datetime, row.createdAt), Fragment.of("\nwhere `address_id` = "), Fragment.encode(CustomerAddressesId.mariaType, addressId), Fragment.of("")).update().run(c) > 0
   }
 
   override fun upsert(
     unsaved: CustomerAddressesRow,
     c: Connection
-  ): CustomerAddressesRow = Fragment.interpolate(Fragment.lit("INSERT INTO `customer_addresses`(`address_id`, `customer_id`, `address_type`, `is_default`, `recipient_name`, `street_line1`, `street_line2`, `city`, `state_province`, `postal_code`, `country_code`, `location`, `delivery_notes`, `created_at`)\nVALUES ("), Fragment.encode(CustomerAddressesId.mariaType, unsaved.addressId), Fragment.lit(", "), Fragment.encode(CustomersId.mariaType, unsaved.customerId), Fragment.lit(", "), Fragment.encode(MariaTypes.text, unsaved.addressType), Fragment.lit(", "), Fragment.encode(IsDefault.mariaType, unsaved.isDefault), Fragment.lit(", "), Fragment.encode(MariaTypes.varchar, unsaved.recipientName), Fragment.lit(", "), Fragment.encode(MariaTypes.varchar, unsaved.streetLine1), Fragment.lit(", "), Fragment.encode(MariaTypes.varchar.nullable(), unsaved.streetLine2), Fragment.lit(", "), Fragment.encode(MariaTypes.varchar, unsaved.city), Fragment.lit(", "), Fragment.encode(MariaTypes.varchar.nullable(), unsaved.stateProvince), Fragment.lit(", "), Fragment.encode(MariaTypes.varchar, unsaved.postalCode), Fragment.lit(", "), Fragment.encode(MariaTypes.char_, unsaved.countryCode), Fragment.lit(", "), Fragment.encode(MariaTypes.point.nullable(), unsaved.location), Fragment.lit(", "), Fragment.encode(MariaTypes.tinytext.nullable(), unsaved.deliveryNotes), Fragment.lit(", "), Fragment.encode(MariaTypes.datetime, unsaved.createdAt), Fragment.lit(")\nON DUPLICATE KEY UPDATE `customer_id` = VALUES(`customer_id`),\n`address_type` = VALUES(`address_type`),\n`is_default` = VALUES(`is_default`),\n`recipient_name` = VALUES(`recipient_name`),\n`street_line1` = VALUES(`street_line1`),\n`street_line2` = VALUES(`street_line2`),\n`city` = VALUES(`city`),\n`state_province` = VALUES(`state_province`),\n`postal_code` = VALUES(`postal_code`),\n`country_code` = VALUES(`country_code`),\n`location` = VALUES(`location`),\n`delivery_notes` = VALUES(`delivery_notes`),\n`created_at` = VALUES(`created_at`)\nRETURNING `address_id`, `customer_id`, `address_type`, `is_default`, `recipient_name`, `street_line1`, `street_line2`, `city`, `state_province`, `postal_code`, `country_code`, `location`, `delivery_notes`, `created_at`"))
-    .updateReturning(CustomerAddressesRow._rowParser.exactlyOne())
-    .runUnchecked(c)
+  ): CustomerAddressesRow = Fragment.concat(Fragment.of("INSERT INTO `customer_addresses`(`address_id`, `customer_id`, `address_type`, `is_default`, `recipient_name`, `street_line1`, `street_line2`, `city`, `state_province`, `postal_code`, `country_code`, `location`, `delivery_notes`, `created_at`)\nVALUES ("), Fragment.encode(CustomerAddressesId.mariaType, unsaved.addressId), Fragment.of(", "), Fragment.encode(CustomersId.mariaType, unsaved.customerId), Fragment.of(", "), Fragment.encode(MariaTypes.text, unsaved.addressType), Fragment.of(", "), Fragment.encode(IsDefault.mariaType, unsaved.isDefault), Fragment.of(", "), Fragment.encode(MariaTypes.varchar, unsaved.recipientName), Fragment.of(", "), Fragment.encode(MariaTypes.varchar, unsaved.streetLine1), Fragment.of(", "), Fragment.encode(MariaTypes.varchar.opt(), unsaved.streetLine2), Fragment.of(", "), Fragment.encode(MariaTypes.varchar, unsaved.city), Fragment.of(", "), Fragment.encode(MariaTypes.varchar.opt(), unsaved.stateProvince), Fragment.of(", "), Fragment.encode(MariaTypes.varchar, unsaved.postalCode), Fragment.of(", "), Fragment.encode(MariaTypes.char_, unsaved.countryCode), Fragment.of(", "), Fragment.encode(MariaTypes.point.opt(), unsaved.location), Fragment.of(", "), Fragment.encode(MariaTypes.tinytext.opt(), unsaved.deliveryNotes), Fragment.of(", "), Fragment.encode(MariaTypes.datetime, unsaved.createdAt), Fragment.of(")\nON DUPLICATE KEY UPDATE `customer_id` = VALUES(`customer_id`),\n`address_type` = VALUES(`address_type`),\n`is_default` = VALUES(`is_default`),\n`recipient_name` = VALUES(`recipient_name`),\n`street_line1` = VALUES(`street_line1`),\n`street_line2` = VALUES(`street_line2`),\n`city` = VALUES(`city`),\n`state_province` = VALUES(`state_province`),\n`postal_code` = VALUES(`postal_code`),\n`country_code` = VALUES(`country_code`),\n`location` = VALUES(`location`),\n`delivery_notes` = VALUES(`delivery_notes`),\n`created_at` = VALUES(`created_at`)\nRETURNING `address_id`, `customer_id`, `address_type`, `is_default`, `recipient_name`, `street_line1`, `street_line2`, `city`, `state_province`, `postal_code`, `country_code`, `location`, `delivery_notes`, `created_at`"))
+    .updateReturning(CustomerAddressesRow.rowCodec.exactlyOne())
+    .run(c)
 
   override fun upsertBatch(
     unsaved: Iterator<CustomerAddressesRow>,
     c: Connection
-  ): List<CustomerAddressesRow> = Fragment.interpolate(Fragment.lit("INSERT INTO `customer_addresses`(`address_id`, `customer_id`, `address_type`, `is_default`, `recipient_name`, `street_line1`, `street_line2`, `city`, `state_province`, `postal_code`, `country_code`, `location`, `delivery_notes`, `created_at`)\nVALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)\nON DUPLICATE KEY UPDATE `customer_id` = VALUES(`customer_id`),\n`address_type` = VALUES(`address_type`),\n`is_default` = VALUES(`is_default`),\n`recipient_name` = VALUES(`recipient_name`),\n`street_line1` = VALUES(`street_line1`),\n`street_line2` = VALUES(`street_line2`),\n`city` = VALUES(`city`),\n`state_province` = VALUES(`state_province`),\n`postal_code` = VALUES(`postal_code`),\n`country_code` = VALUES(`country_code`),\n`location` = VALUES(`location`),\n`delivery_notes` = VALUES(`delivery_notes`),\n`created_at` = VALUES(`created_at`)\nRETURNING `address_id`, `customer_id`, `address_type`, `is_default`, `recipient_name`, `street_line1`, `street_line2`, `city`, `state_province`, `postal_code`, `country_code`, `location`, `delivery_notes`, `created_at`"))
-    .updateReturningEach(CustomerAddressesRow._rowParser, unsaved)
-  .runUnchecked(c)
+  ): List<CustomerAddressesRow> = Fragment.concat(Fragment.of("INSERT INTO `customer_addresses`(`address_id`, `customer_id`, `address_type`, `is_default`, `recipient_name`, `street_line1`, `street_line2`, `city`, `state_province`, `postal_code`, `country_code`, `location`, `delivery_notes`, `created_at`)\nVALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)\nON DUPLICATE KEY UPDATE `customer_id` = VALUES(`customer_id`),\n`address_type` = VALUES(`address_type`),\n`is_default` = VALUES(`is_default`),\n`recipient_name` = VALUES(`recipient_name`),\n`street_line1` = VALUES(`street_line1`),\n`street_line2` = VALUES(`street_line2`),\n`city` = VALUES(`city`),\n`state_province` = VALUES(`state_province`),\n`postal_code` = VALUES(`postal_code`),\n`country_code` = VALUES(`country_code`),\n`location` = VALUES(`location`),\n`delivery_notes` = VALUES(`delivery_notes`),\n`created_at` = VALUES(`created_at`)\nRETURNING `address_id`, `customer_id`, `address_type`, `is_default`, `recipient_name`, `street_line1`, `street_line2`, `city`, `state_province`, `postal_code`, `country_code`, `location`, `delivery_notes`, `created_at`"))
+    .updateReturningEach(CustomerAddressesRow.rowCodec, unsaved)
+  .run(c)
 }

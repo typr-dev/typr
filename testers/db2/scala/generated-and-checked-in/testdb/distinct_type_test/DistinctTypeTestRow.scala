@@ -6,10 +6,9 @@
 package testdb.distinct_type_test
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import dev.typr.dslsc.RowCodecs
 import dev.typr.foundations.Tuple.Tuple3
-import dev.typr.foundations.scala.DbTypeOps
-import dev.typr.foundations.scala.RowParser
-import dev.typr.foundations.scala.RowParsers
+import dev.typr.foundationssc.RowCodec
 import testdb.EmailAddress
 import testdb.MoneyAmount
 
@@ -32,5 +31,5 @@ case class DistinctTypeTestRow(
 }
 
 object DistinctTypeTestRow {
-  val `_rowParser`: RowParser[DistinctTypeTestRow] = RowParsers.of(DistinctTypeTestId.db2Type, EmailAddress.db2Type, MoneyAmount.db2Type.nullable)(DistinctTypeTestRow.apply)(row => Array[Any](row.id, row.email, row.balance))
+  val rowCodec: RowCodec[DistinctTypeTestRow] = RowCodecs.of(DistinctTypeTestId.db2Type, EmailAddress.db2Type, MoneyAmount.db2Type.opt)(DistinctTypeTestRow.apply)(row => Array[Any](row.id, row.email, row.balance))
 }

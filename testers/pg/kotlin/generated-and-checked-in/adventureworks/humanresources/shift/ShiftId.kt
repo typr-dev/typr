@@ -6,11 +6,10 @@
 package adventureworks.humanresources.shift
 
 import com.fasterxml.jackson.annotation.JsonValue
-import dev.typr.foundations.PgType
-import dev.typr.foundations.PgTypes
-import dev.typr.foundations.internal.arrayMap
-import dev.typr.foundations.kotlin.Bijection
-import dev.typr.foundations.kotlin.KotlinDbTypes
+import dev.typr.foundationskt.Bijection
+import dev.typr.foundationskt.PgType
+import dev.typr.foundationskt.PgTypes
+import kotlin.collections.List
 
 /** Type for the primary key of table `humanresources.shift` */
 data class ShiftId(@field:JsonValue val value: Int) {
@@ -23,9 +22,9 @@ data class ShiftId(@field:JsonValue val value: Int) {
       Bijection.of(ShiftId::value, ::ShiftId)
 
     val pgType: PgType<ShiftId> =
-      KotlinDbTypes.PgTypes.int4.bimap(::ShiftId, ShiftId::value)
+      PgTypes.int4.to(Bijection.of(::ShiftId, ShiftId::value))
 
-    val pgTypeArray: PgType<Array<ShiftId>> =
-      PgTypes.int4Array.bimap({ xs -> arrayMap.map(xs, ::ShiftId, ShiftId::class.java) }, { xs -> arrayMap.map(xs, ShiftId::value, Int::class.javaObjectType) })
+    val pgTypeArray: PgType<List<ShiftId>> =
+      pgType.array()
   }
 }

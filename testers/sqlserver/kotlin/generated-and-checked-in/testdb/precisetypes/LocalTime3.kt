@@ -6,16 +6,16 @@
 package testdb.precisetypes
 
 import com.fasterxml.jackson.annotation.JsonValue
-import dev.typr.foundations.SqlServerType
-import dev.typr.foundations.SqlServerTypes
 import dev.typr.foundations.data.precise.LocalTimeN
-import dev.typr.foundations.kotlin.Bijection
+import dev.typr.foundationskt.Bijection
+import dev.typr.foundationskt.SqlServerType
+import dev.typr.foundationskt.SqlServerTypes
 import java.time.LocalTime
 import java.time.temporal.ChronoUnit
 
 @kotlin.ConsistentCopyVisibility
 data class LocalTime3 private constructor(@field:JsonValue val value: LocalTime) : LocalTimeN {
-  override fun equals(other: Any?): Boolean {
+  override fun equals(other: Any?): kotlin.Boolean {
     if (this === other) return true
     if (other !is LocalTimeN) return false
     return value == other.rawValue()
@@ -27,7 +27,7 @@ data class LocalTime3 private constructor(@field:JsonValue val value: LocalTime)
 
   override fun rawValue(): LocalTime = value
 
-  override fun semanticEquals(other: LocalTimeN): Boolean = if (other == null) false else value == other.rawValue()
+  override fun semanticEquals(other: LocalTimeN): kotlin.Boolean = if (other == null) false else (value == other.rawValue())
 
   override fun semanticHashCode(): Int = value.hashCode()
 
@@ -36,14 +36,14 @@ data class LocalTime3 private constructor(@field:JsonValue val value: LocalTime)
   }
 
   companion object {
-    val bijection: Bijection<LocalTime3, LocalTime> =
-      Bijection.of(LocalTime3::value, ::LocalTime3)
+    fun of(value: LocalTime): LocalTime3 = LocalTime3(value.truncatedTo(ChronoUnit.MILLIS))
 
     fun now(): LocalTime3 = LocalTime3(LocalTime.now().truncatedTo(ChronoUnit.MILLIS))
 
-    fun of(value: LocalTime): LocalTime3 = LocalTime3(value.truncatedTo(ChronoUnit.MILLIS))
+    val bijection: Bijection<LocalTime3, LocalTime> =
+      Bijection.of(LocalTime3::value, ::LocalTime3)
 
     val sqlServerType: SqlServerType<LocalTime3> =
-      SqlServerTypes.time.bimap(::LocalTime3, LocalTime3::value)
+      SqlServerTypes.time.to(Bijection.of(::LocalTime3, LocalTime3::value))
   }
 }

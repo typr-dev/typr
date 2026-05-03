@@ -5,28 +5,27 @@
  */
 package testdb.promotions
 
-import dev.typr.foundations.MariaTypes
-import dev.typr.foundations.RowParser
+import dev.typr.dsl.FieldsBase
+import dev.typr.dsl.Path
+import dev.typr.dsl.SqlExpr.FieldLike
+import dev.typr.dslkt.RelationStructure
+import dev.typr.dslkt.SqlExpr
+import dev.typr.dslkt.SqlExpr.Field
+import dev.typr.dslkt.SqlExpr.IdField
+import dev.typr.dslkt.SqlExpr.OptField
+import dev.typr.dslkt.TupleExpr16
+import dev.typr.foundations.RowCodec
 import dev.typr.foundations.data.Json
 import dev.typr.foundations.data.Uint1
 import dev.typr.foundations.data.Uint4
-import dev.typr.foundations.dsl.FieldsBase
-import dev.typr.foundations.dsl.Path
-import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.kotlin.KotlinDbTypes
-import dev.typr.foundations.kotlin.RelationStructure
-import dev.typr.foundations.kotlin.SqlExpr
-import dev.typr.foundations.kotlin.SqlExpr.Field
-import dev.typr.foundations.kotlin.SqlExpr.IdField
-import dev.typr.foundations.kotlin.SqlExpr.OptField
-import dev.typr.foundations.kotlin.TupleExpr16
+import dev.typr.foundationskt.MariaTypes
 import java.math.BigDecimal
 import java.time.LocalDateTime
 import kotlin.collections.List
 import testdb.AllBrandsCategoriesCSet
 import testdb.userdefined.IsActive
 
-data class PromotionsFields(val _path: List<Path>) : TupleExpr16<PromotionsId, String, String, String, String, BigDecimal, BigDecimal, Uint4, Uint4, Uint1, AllBrandsCategoriesCSet, Json, LocalDateTime, LocalDateTime, /* user-picked */ IsActive, LocalDateTime>, RelationStructure<PromotionsFields, PromotionsRow>, FieldsBase<PromotionsRow> {
+data class PromotionsFields(val _path: List<Path>) : TupleExpr16<PromotionsId, kotlin.String, kotlin.String, kotlin.String, kotlin.String, BigDecimal, BigDecimal, Uint4, Uint4, Uint1, AllBrandsCategoriesCSet, Json, LocalDateTime, LocalDateTime, /* user-picked */ IsActive, LocalDateTime>, RelationStructure<PromotionsFields, PromotionsRow>, FieldsBase<PromotionsRow> {
   override fun _1(): SqlExpr<PromotionsId> = promotionId()
 
   override fun _10(): SqlExpr<Uint1> = maxUsesPerCustomer()
@@ -43,13 +42,13 @@ data class PromotionsFields(val _path: List<Path>) : TupleExpr16<PromotionsId, S
 
   override fun _16(): SqlExpr<LocalDateTime> = createdAt()
 
-  override fun _2(): SqlExpr<String> = code()
+  override fun _2(): SqlExpr<kotlin.String> = code()
 
-  override fun _3(): SqlExpr<String> = name()
+  override fun _3(): SqlExpr<kotlin.String> = name()
 
-  override fun _4(): SqlExpr<String> = description()
+  override fun _4(): SqlExpr<kotlin.String> = description()
 
-  override fun _5(): SqlExpr<String> = discountType()
+  override fun _5(): SqlExpr<kotlin.String> = discountType()
 
   override fun _6(): SqlExpr<BigDecimal> = discountValue()
 
@@ -61,41 +60,41 @@ data class PromotionsFields(val _path: List<Path>) : TupleExpr16<PromotionsId, S
 
   override fun _path(): List<Path> = _path
 
-  fun applicableTo(): OptField<AllBrandsCategoriesCSet, PromotionsRow> = OptField<AllBrandsCategoriesCSet, PromotionsRow>(_path, "applicable_to", PromotionsRow::applicableTo, null, null, { row, value -> row.copy(applicableTo = value) }, AllBrandsCategoriesCSet.mariaType)
+  fun applicableTo(): OptField<AllBrandsCategoriesCSet, PromotionsRow> = OptField<AllBrandsCategoriesCSet, PromotionsRow>(_path, "applicable_to", PromotionsRow::applicableTo, null, null, { row, value -> row.copy(applicableTo = value) }, AllBrandsCategoriesCSet.mariaType.underlying)
 
-  fun code(): Field<String, PromotionsRow> = Field<String, PromotionsRow>(_path, "code", PromotionsRow::code, null, null, { row, value -> row.copy(code = value) }, MariaTypes.varchar)
+  fun code(): Field<kotlin.String, PromotionsRow> = Field<kotlin.String, PromotionsRow>(_path, "code", PromotionsRow::code, null, null, { row, value -> row.copy(code = value) }, MariaTypes.varchar.underlying)
 
   override fun columns(): List<FieldLike<*, PromotionsRow>> = listOf(this.promotionId().underlying, this.code().underlying, this.name().underlying, this.description().underlying, this.discountType().underlying, this.discountValue().underlying, this.minOrderAmount().underlying, this.maxUses().underlying, this.usesCount().underlying, this.maxUsesPerCustomer().underlying, this.applicableTo().underlying, this.rulesJson().underlying, this.validFrom().underlying, this.validTo().underlying, this.isActive().underlying, this.createdAt().underlying)
 
-  fun createdAt(): Field<LocalDateTime, PromotionsRow> = Field<LocalDateTime, PromotionsRow>(_path, "created_at", PromotionsRow::createdAt, null, null, { row, value -> row.copy(createdAt = value) }, MariaTypes.datetime)
+  fun createdAt(): Field<LocalDateTime, PromotionsRow> = Field<LocalDateTime, PromotionsRow>(_path, "created_at", PromotionsRow::createdAt, null, null, { row, value -> row.copy(createdAt = value) }, MariaTypes.datetime.underlying)
 
-  fun description(): OptField<String, PromotionsRow> = OptField<String, PromotionsRow>(_path, "description", PromotionsRow::description, null, null, { row, value -> row.copy(description = value) }, MariaTypes.text)
+  fun description(): OptField<kotlin.String, PromotionsRow> = OptField<kotlin.String, PromotionsRow>(_path, "description", PromotionsRow::description, null, null, { row, value -> row.copy(description = value) }, MariaTypes.text.underlying)
 
-  fun discountType(): Field<String, PromotionsRow> = Field<String, PromotionsRow>(_path, "discount_type", PromotionsRow::discountType, null, null, { row, value -> row.copy(discountType = value) }, MariaTypes.text)
+  fun discountType(): Field<kotlin.String, PromotionsRow> = Field<kotlin.String, PromotionsRow>(_path, "discount_type", PromotionsRow::discountType, null, null, { row, value -> row.copy(discountType = value) }, MariaTypes.text.underlying)
 
-  fun discountValue(): Field<BigDecimal, PromotionsRow> = Field<BigDecimal, PromotionsRow>(_path, "discount_value", PromotionsRow::discountValue, null, null, { row, value -> row.copy(discountValue = value) }, KotlinDbTypes.MariaTypes.numeric)
+  fun discountValue(): Field<BigDecimal, PromotionsRow> = Field<BigDecimal, PromotionsRow>(_path, "discount_value", PromotionsRow::discountValue, null, null, { row, value -> row.copy(discountValue = value) }, MariaTypes.numeric.underlying)
 
-  fun isActive(): Field</* user-picked */ IsActive, PromotionsRow> = Field</* user-picked */ IsActive, PromotionsRow>(_path, "is_active", PromotionsRow::isActive, null, null, { row, value -> row.copy(isActive = value) }, IsActive.mariaType)
+  fun isActive(): Field</* user-picked */ IsActive, PromotionsRow> = Field</* user-picked */ IsActive, PromotionsRow>(_path, "is_active", PromotionsRow::isActive, null, null, { row, value -> row.copy(isActive = value) }, IsActive.mariaType.underlying)
 
-  fun maxUses(): OptField<Uint4, PromotionsRow> = OptField<Uint4, PromotionsRow>(_path, "max_uses", PromotionsRow::maxUses, null, null, { row, value -> row.copy(maxUses = value) }, MariaTypes.intUnsigned)
+  fun maxUses(): OptField<Uint4, PromotionsRow> = OptField<Uint4, PromotionsRow>(_path, "max_uses", PromotionsRow::maxUses, null, null, { row, value -> row.copy(maxUses = value) }, MariaTypes.intUnsigned.underlying)
 
-  fun maxUsesPerCustomer(): OptField<Uint1, PromotionsRow> = OptField<Uint1, PromotionsRow>(_path, "max_uses_per_customer", PromotionsRow::maxUsesPerCustomer, null, null, { row, value -> row.copy(maxUsesPerCustomer = value) }, MariaTypes.tinyintUnsigned)
+  fun maxUsesPerCustomer(): OptField<Uint1, PromotionsRow> = OptField<Uint1, PromotionsRow>(_path, "max_uses_per_customer", PromotionsRow::maxUsesPerCustomer, null, null, { row, value -> row.copy(maxUsesPerCustomer = value) }, MariaTypes.tinyintUnsigned.underlying)
 
-  fun minOrderAmount(): OptField<BigDecimal, PromotionsRow> = OptField<BigDecimal, PromotionsRow>(_path, "min_order_amount", PromotionsRow::minOrderAmount, null, null, { row, value -> row.copy(minOrderAmount = value) }, KotlinDbTypes.MariaTypes.numeric)
+  fun minOrderAmount(): OptField<BigDecimal, PromotionsRow> = OptField<BigDecimal, PromotionsRow>(_path, "min_order_amount", PromotionsRow::minOrderAmount, null, null, { row, value -> row.copy(minOrderAmount = value) }, MariaTypes.numeric.underlying)
 
-  fun name(): Field<String, PromotionsRow> = Field<String, PromotionsRow>(_path, "name", PromotionsRow::name, null, null, { row, value -> row.copy(name = value) }, MariaTypes.varchar)
+  fun name(): Field<kotlin.String, PromotionsRow> = Field<kotlin.String, PromotionsRow>(_path, "name", PromotionsRow::name, null, null, { row, value -> row.copy(name = value) }, MariaTypes.varchar.underlying)
 
-  fun promotionId(): IdField<PromotionsId, PromotionsRow> = IdField<PromotionsId, PromotionsRow>(_path, "promotion_id", PromotionsRow::promotionId, null, null, { row, value -> row.copy(promotionId = value) }, PromotionsId.mariaType)
+  fun promotionId(): IdField<PromotionsId, PromotionsRow> = IdField<PromotionsId, PromotionsRow>(_path, "promotion_id", PromotionsRow::promotionId, null, null, { row, value -> row.copy(promotionId = value) }, PromotionsId.mariaType.underlying)
 
-  override fun rowParser(): RowParser<PromotionsRow> = PromotionsRow._rowParser.underlying
+  override fun rowCodec(): RowCodec<PromotionsRow> = PromotionsRow.rowCodec.underlying
 
-  fun rulesJson(): OptField<Json, PromotionsRow> = OptField<Json, PromotionsRow>(_path, "rules_json", PromotionsRow::rulesJson, null, null, { row, value -> row.copy(rulesJson = value) }, MariaTypes.json)
+  fun rulesJson(): OptField<Json, PromotionsRow> = OptField<Json, PromotionsRow>(_path, "rules_json", PromotionsRow::rulesJson, null, null, { row, value -> row.copy(rulesJson = value) }, MariaTypes.json.underlying)
 
-  fun usesCount(): Field<Uint4, PromotionsRow> = Field<Uint4, PromotionsRow>(_path, "uses_count", PromotionsRow::usesCount, null, null, { row, value -> row.copy(usesCount = value) }, MariaTypes.intUnsigned)
+  fun usesCount(): Field<Uint4, PromotionsRow> = Field<Uint4, PromotionsRow>(_path, "uses_count", PromotionsRow::usesCount, null, null, { row, value -> row.copy(usesCount = value) }, MariaTypes.intUnsigned.underlying)
 
-  fun validFrom(): Field<LocalDateTime, PromotionsRow> = Field<LocalDateTime, PromotionsRow>(_path, "valid_from", PromotionsRow::validFrom, null, null, { row, value -> row.copy(validFrom = value) }, MariaTypes.datetime)
+  fun validFrom(): Field<LocalDateTime, PromotionsRow> = Field<LocalDateTime, PromotionsRow>(_path, "valid_from", PromotionsRow::validFrom, null, null, { row, value -> row.copy(validFrom = value) }, MariaTypes.datetime.underlying)
 
-  fun validTo(): Field<LocalDateTime, PromotionsRow> = Field<LocalDateTime, PromotionsRow>(_path, "valid_to", PromotionsRow::validTo, null, null, { row, value -> row.copy(validTo = value) }, MariaTypes.datetime)
+  fun validTo(): Field<LocalDateTime, PromotionsRow> = Field<LocalDateTime, PromotionsRow>(_path, "valid_to", PromotionsRow::validTo, null, null, { row, value -> row.copy(validTo = value) }, MariaTypes.datetime.underlying)
 
   override fun withPaths(_path: List<Path>): RelationStructure<PromotionsFields, PromotionsRow> = PromotionsFields(_path)
 

@@ -6,11 +6,10 @@
 package testdb.test_connection
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import dev.typr.foundations.SqlServerTypes
+import dev.typr.dslkt.RowCodecs
 import dev.typr.foundations.Tuple.Tuple3
-import dev.typr.foundations.kotlin.RowParser
-import dev.typr.foundations.kotlin.RowParsers
-import dev.typr.foundations.kotlin.nullable
+import dev.typr.foundationskt.RowCodec
+import dev.typr.foundationskt.SqlServerTypes
 import java.time.LocalDateTime
 import testdb.customtypes.Defaulted
 
@@ -20,19 +19,19 @@ import testdb.customtypes.Defaulted
 data class TestConnectionRow(
   /** IDENTITY(1, 1) */
   val id: TestConnectionId,
-  val message: String,
+  val message: kotlin.String,
   /** Default: (getdate()) */
   @field:JsonProperty("created_at") val createdAt: LocalDateTime?
-) : Tuple3<TestConnectionId, String, LocalDateTime?> {
+) : Tuple3<TestConnectionId, kotlin.String, LocalDateTime?> {
   override fun _1(): TestConnectionId = id
 
-  override fun _2(): String = message
+  override fun _2(): kotlin.String = message
 
   override fun _3(): LocalDateTime? = createdAt
 
   fun toUnsavedRow(createdAt: Defaulted<LocalDateTime?> = Defaulted.Provided(this.createdAt)): TestConnectionRowUnsaved = TestConnectionRowUnsaved(message, createdAt)
 
   companion object {
-    val _rowParser: RowParser<TestConnectionRow> = RowParsers.of(TestConnectionId.sqlServerType, SqlServerTypes.nvarchar, SqlServerTypes.datetime2.nullable(), { t0, t1, t2 -> TestConnectionRow(t0, t1, t2) }, { row -> arrayOf<Any?>(row.id, row.message, row.createdAt) })
+    val rowCodec: RowCodec<TestConnectionRow> = RowCodecs.of(TestConnectionId.sqlServerType, SqlServerTypes.nvarchar, SqlServerTypes.datetime2.opt(), { t0: TestConnectionId, t1: kotlin.String, t2: LocalDateTime? -> TestConnectionRow(t0, t1, t2) }, { row: TestConnectionRow -> arrayOf<Any?>(row.id, row.message, row.createdAt) })
   }
 }

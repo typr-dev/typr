@@ -5,14 +5,14 @@
  */
 package testdb.product_images
 
-import dev.typr.foundations.MariaTypes
-import dev.typr.foundations.kotlin.DeleteBuilder
-import dev.typr.foundations.kotlin.Dialect
-import dev.typr.foundations.kotlin.Fragment
-import dev.typr.foundations.kotlin.SelectBuilder
-import dev.typr.foundations.kotlin.UpdateBuilder
-import dev.typr.foundations.kotlin.nullable
-import java.sql.Connection
+import dev.typr.dslkt.DeleteBuilder
+import dev.typr.dslkt.Dialect
+import dev.typr.dslkt.SelectBuilder
+import dev.typr.dslkt.UpdateBuilder
+import dev.typr.foundationskt.Connection
+import dev.typr.foundationskt.ConnectionRead
+import dev.typr.foundationskt.Fragment
+import dev.typr.foundationskt.MariaTypes
 import java.util.ArrayList
 import kotlin.collections.Iterator
 import kotlin.collections.List
@@ -27,22 +27,22 @@ class ProductImagesRepoImpl() : ProductImagesRepo {
   override fun deleteById(
     imageId: ProductImagesId,
     c: Connection
-  ): Boolean = Fragment.interpolate(Fragment.lit("delete from `product_images` where `image_id` = "), Fragment.encode(ProductImagesId.mariaType, imageId), Fragment.lit("")).update().runUnchecked(c) > 0
+  ): kotlin.Boolean = Fragment.concat(Fragment.of("delete from `product_images` where `image_id` = "), Fragment.encode(ProductImagesId.mariaType, imageId), Fragment.of("")).update().run(c) > 0
 
   override fun deleteByIds(
-    imageIds: Array<ProductImagesId>,
+    imageIds: List<ProductImagesId>,
     c: Connection
   ): Int {
     val fragments: ArrayList<Fragment> = ArrayList()
     for (id in imageIds) { fragments.add(Fragment.encode(ProductImagesId.mariaType, id)) }
-    return Fragment.interpolate(Fragment.lit("delete from `product_images` where `image_id` in ("), Fragment.comma(fragments.toMutableList()), Fragment.lit(")")).update().runUnchecked(c)
+    return Fragment.concat(Fragment.of("delete from `product_images` where `image_id` in ("), Fragment.comma(fragments.toMutableList()), Fragment.of(")")).update().run(c)
   }
 
   override fun insert(
     unsaved: ProductImagesRow,
     c: Connection
-  ): ProductImagesRow = Fragment.interpolate(Fragment.lit("insert into `product_images`(`product_id`, `image_url`, `thumbnail_url`, `alt_text`, `sort_order`, `is_primary`, `image_data`)\nvalues ("), Fragment.encode(ProductsId.mariaType, unsaved.productId), Fragment.lit(", "), Fragment.encode(MariaTypes.varchar, unsaved.imageUrl), Fragment.lit(", "), Fragment.encode(MariaTypes.varchar.nullable(), unsaved.thumbnailUrl), Fragment.lit(", "), Fragment.encode(MariaTypes.varchar.nullable(), unsaved.altText), Fragment.lit(", "), Fragment.encode(MariaTypes.tinyintUnsigned, unsaved.sortOrder), Fragment.lit(", "), Fragment.encode(IsPrimary.mariaType, unsaved.isPrimary), Fragment.lit(", "), Fragment.encode(MariaTypes.longblob.nullable(), unsaved.imageData), Fragment.lit(")\nRETURNING `image_id`, `product_id`, `image_url`, `thumbnail_url`, `alt_text`, `sort_order`, `is_primary`, `image_data`\n"))
-    .updateReturning(ProductImagesRow._rowParser.exactlyOne()).runUnchecked(c)
+  ): ProductImagesRow = Fragment.concat(Fragment.of("insert into `product_images`(`product_id`, `image_url`, `thumbnail_url`, `alt_text`, `sort_order`, `is_primary`, `image_data`)\nvalues ("), Fragment.encode(ProductsId.mariaType, unsaved.productId), Fragment.of(", "), Fragment.encode(MariaTypes.varchar, unsaved.imageUrl), Fragment.of(", "), Fragment.encode(MariaTypes.varchar.opt(), unsaved.thumbnailUrl), Fragment.of(", "), Fragment.encode(MariaTypes.varchar.opt(), unsaved.altText), Fragment.of(", "), Fragment.encode(MariaTypes.tinyintUnsigned, unsaved.sortOrder), Fragment.of(", "), Fragment.encode(IsPrimary.mariaType, unsaved.isPrimary), Fragment.of(", "), Fragment.encode(MariaTypes.longblob.opt(), unsaved.imageData), Fragment.of(")\nRETURNING `image_id`, `product_id`, `image_url`, `thumbnail_url`, `alt_text`, `sort_order`, `is_primary`, `image_data`\n"))
+    .updateReturning(ProductImagesRow.rowCodec.exactlyOne()).run(c)
 
   override fun insert(
     unsaved: ProductImagesRowUnsaved,
@@ -50,87 +50,87 @@ class ProductImagesRepoImpl() : ProductImagesRepo {
   ): ProductImagesRow {
     val columns: ArrayList<Fragment> = ArrayList()
     val values: ArrayList<Fragment> = ArrayList()
-    columns.add(Fragment.lit("`product_id`"))
-    values.add(Fragment.interpolate(Fragment.encode(ProductsId.mariaType, unsaved.productId), Fragment.lit("")))
-    columns.add(Fragment.lit("`image_url`"))
-    values.add(Fragment.interpolate(Fragment.encode(MariaTypes.varchar, unsaved.imageUrl), Fragment.lit("")))
+    columns.add(Fragment.of("`product_id`"))
+    values.add(Fragment.concat(Fragment.encode(ProductsId.mariaType, unsaved.productId), Fragment.of("")))
+    columns.add(Fragment.of("`image_url`"))
+    values.add(Fragment.concat(Fragment.encode(MariaTypes.varchar, unsaved.imageUrl), Fragment.of("")))
     unsaved.thumbnailUrl.visit(
       {  },
-      { value -> columns.add(Fragment.lit("`thumbnail_url`"))
-      values.add(Fragment.interpolate(Fragment.encode(MariaTypes.varchar.nullable(), value), Fragment.lit(""))) }
+      { value -> columns.add(Fragment.of("`thumbnail_url`"))
+      values.add(Fragment.concat(Fragment.encode(MariaTypes.varchar.opt(), value), Fragment.of(""))) }
     );
     unsaved.altText.visit(
       {  },
-      { value -> columns.add(Fragment.lit("`alt_text`"))
-      values.add(Fragment.interpolate(Fragment.encode(MariaTypes.varchar.nullable(), value), Fragment.lit(""))) }
+      { value -> columns.add(Fragment.of("`alt_text`"))
+      values.add(Fragment.concat(Fragment.encode(MariaTypes.varchar.opt(), value), Fragment.of(""))) }
     );
     unsaved.sortOrder.visit(
       {  },
-      { value -> columns.add(Fragment.lit("`sort_order`"))
-      values.add(Fragment.interpolate(Fragment.encode(MariaTypes.tinyintUnsigned, value), Fragment.lit(""))) }
+      { value -> columns.add(Fragment.of("`sort_order`"))
+      values.add(Fragment.concat(Fragment.encode(MariaTypes.tinyintUnsigned, value), Fragment.of(""))) }
     );
     unsaved.isPrimary.visit(
       {  },
-      { value -> columns.add(Fragment.lit("`is_primary`"))
-      values.add(Fragment.interpolate(Fragment.encode(IsPrimary.mariaType, value), Fragment.lit(""))) }
+      { value -> columns.add(Fragment.of("`is_primary`"))
+      values.add(Fragment.concat(Fragment.encode(IsPrimary.mariaType, value), Fragment.of(""))) }
     );
     unsaved.imageData.visit(
       {  },
-      { value -> columns.add(Fragment.lit("`image_data`"))
-      values.add(Fragment.interpolate(Fragment.encode(MariaTypes.longblob.nullable(), value), Fragment.lit(""))) }
+      { value -> columns.add(Fragment.of("`image_data`"))
+      values.add(Fragment.concat(Fragment.encode(MariaTypes.longblob.opt(), value), Fragment.of(""))) }
     );
-    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into `product_images`("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nRETURNING `image_id`, `product_id`, `image_url`, `thumbnail_url`, `alt_text`, `sort_order`, `is_primary`, `image_data`\n"))
-    return q.updateReturning(ProductImagesRow._rowParser.exactlyOne()).runUnchecked(c)
+    val q: Fragment = Fragment.concat(Fragment.of("insert into `product_images`("), Fragment.comma(columns.toMutableList()), Fragment.of(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.of(")\nRETURNING `image_id`, `product_id`, `image_url`, `thumbnail_url`, `alt_text`, `sort_order`, `is_primary`, `image_data`\n"))
+    return q.updateReturning(ProductImagesRow.rowCodec.exactlyOne()).run(c)
   }
 
-  override fun select(): SelectBuilder<ProductImagesFields, ProductImagesRow> = SelectBuilder.of("`product_images`", ProductImagesFields.structure, ProductImagesRow._rowParser, Dialect.MARIADB)
+  override fun select(): SelectBuilder<ProductImagesFields, ProductImagesRow> = SelectBuilder.of("`product_images`", ProductImagesFields.structure, ProductImagesRow.rowCodec, Dialect.MARIADB)
 
-  override fun selectAll(c: Connection): List<ProductImagesRow> = Fragment.interpolate(Fragment.lit("select `image_id`, `product_id`, `image_url`, `thumbnail_url`, `alt_text`, `sort_order`, `is_primary`, `image_data`\nfrom `product_images`\n")).query(ProductImagesRow._rowParser.all()).runUnchecked(c)
+  override fun selectAll(c: ConnectionRead): List<ProductImagesRow> = Fragment.concat(Fragment.of("select `image_id`, `product_id`, `image_url`, `thumbnail_url`, `alt_text`, `sort_order`, `is_primary`, `image_data`\nfrom `product_images`\n")).query(ProductImagesRow.rowCodec.all()).run(c)
 
   override fun selectById(
     imageId: ProductImagesId,
-    c: Connection
-  ): ProductImagesRow? = Fragment.interpolate(Fragment.lit("select `image_id`, `product_id`, `image_url`, `thumbnail_url`, `alt_text`, `sort_order`, `is_primary`, `image_data`\nfrom `product_images`\nwhere `image_id` = "), Fragment.encode(ProductImagesId.mariaType, imageId), Fragment.lit("")).query(ProductImagesRow._rowParser.first()).runUnchecked(c)
+    c: ConnectionRead
+  ): ProductImagesRow? = Fragment.concat(Fragment.of("select `image_id`, `product_id`, `image_url`, `thumbnail_url`, `alt_text`, `sort_order`, `is_primary`, `image_data`\nfrom `product_images`\nwhere `image_id` = "), Fragment.encode(ProductImagesId.mariaType, imageId), Fragment.of("")).query(ProductImagesRow.rowCodec.first()).run(c)
 
   override fun selectByIds(
-    imageIds: Array<ProductImagesId>,
-    c: Connection
+    imageIds: List<ProductImagesId>,
+    c: ConnectionRead
   ): List<ProductImagesRow> {
     val fragments: ArrayList<Fragment> = ArrayList()
     for (id in imageIds) { fragments.add(Fragment.encode(ProductImagesId.mariaType, id)) }
-    return Fragment.interpolate(Fragment.lit("select `image_id`, `product_id`, `image_url`, `thumbnail_url`, `alt_text`, `sort_order`, `is_primary`, `image_data` from `product_images` where `image_id` in ("), Fragment.comma(fragments.toMutableList()), Fragment.lit(")")).query(ProductImagesRow._rowParser.all()).runUnchecked(c)
+    return Fragment.concat(Fragment.of("select `image_id`, `product_id`, `image_url`, `thumbnail_url`, `alt_text`, `sort_order`, `is_primary`, `image_data` from `product_images` where `image_id` in ("), Fragment.comma(fragments.toMutableList()), Fragment.of(")")).query(ProductImagesRow.rowCodec.all()).run(c)
   }
 
   override fun selectByIdsTracked(
-    imageIds: Array<ProductImagesId>,
-    c: Connection
+    imageIds: List<ProductImagesId>,
+    c: ConnectionRead
   ): Map<ProductImagesId, ProductImagesRow> {
     val ret: MutableMap<ProductImagesId, ProductImagesRow> = mutableMapOf<ProductImagesId, ProductImagesRow>()
     selectByIds(imageIds, c).forEach({ row -> ret.put(row.imageId, row) })
     return ret.toMap()
   }
 
-  override fun update(): UpdateBuilder<ProductImagesFields, ProductImagesRow> = UpdateBuilder.of("`product_images`", ProductImagesFields.structure, ProductImagesRow._rowParser, Dialect.MARIADB)
+  override fun update(): UpdateBuilder<ProductImagesFields, ProductImagesRow> = UpdateBuilder.of("`product_images`", ProductImagesFields.structure, ProductImagesRow.rowCodec, Dialect.MARIADB)
 
   override fun update(
     row: ProductImagesRow,
     c: Connection
-  ): Boolean {
+  ): kotlin.Boolean {
     val imageId: ProductImagesId = row.imageId
-    return Fragment.interpolate(Fragment.lit("update `product_images`\nset `product_id` = "), Fragment.encode(ProductsId.mariaType, row.productId), Fragment.lit(",\n`image_url` = "), Fragment.encode(MariaTypes.varchar, row.imageUrl), Fragment.lit(",\n`thumbnail_url` = "), Fragment.encode(MariaTypes.varchar.nullable(), row.thumbnailUrl), Fragment.lit(",\n`alt_text` = "), Fragment.encode(MariaTypes.varchar.nullable(), row.altText), Fragment.lit(",\n`sort_order` = "), Fragment.encode(MariaTypes.tinyintUnsigned, row.sortOrder), Fragment.lit(",\n`is_primary` = "), Fragment.encode(IsPrimary.mariaType, row.isPrimary), Fragment.lit(",\n`image_data` = "), Fragment.encode(MariaTypes.longblob.nullable(), row.imageData), Fragment.lit("\nwhere `image_id` = "), Fragment.encode(ProductImagesId.mariaType, imageId), Fragment.lit("")).update().runUnchecked(c) > 0
+    return Fragment.concat(Fragment.of("update `product_images`\nset `product_id` = "), Fragment.encode(ProductsId.mariaType, row.productId), Fragment.of(",\n`image_url` = "), Fragment.encode(MariaTypes.varchar, row.imageUrl), Fragment.of(",\n`thumbnail_url` = "), Fragment.encode(MariaTypes.varchar.opt(), row.thumbnailUrl), Fragment.of(",\n`alt_text` = "), Fragment.encode(MariaTypes.varchar.opt(), row.altText), Fragment.of(",\n`sort_order` = "), Fragment.encode(MariaTypes.tinyintUnsigned, row.sortOrder), Fragment.of(",\n`is_primary` = "), Fragment.encode(IsPrimary.mariaType, row.isPrimary), Fragment.of(",\n`image_data` = "), Fragment.encode(MariaTypes.longblob.opt(), row.imageData), Fragment.of("\nwhere `image_id` = "), Fragment.encode(ProductImagesId.mariaType, imageId), Fragment.of("")).update().run(c) > 0
   }
 
   override fun upsert(
     unsaved: ProductImagesRow,
     c: Connection
-  ): ProductImagesRow = Fragment.interpolate(Fragment.lit("INSERT INTO `product_images`(`image_id`, `product_id`, `image_url`, `thumbnail_url`, `alt_text`, `sort_order`, `is_primary`, `image_data`)\nVALUES ("), Fragment.encode(ProductImagesId.mariaType, unsaved.imageId), Fragment.lit(", "), Fragment.encode(ProductsId.mariaType, unsaved.productId), Fragment.lit(", "), Fragment.encode(MariaTypes.varchar, unsaved.imageUrl), Fragment.lit(", "), Fragment.encode(MariaTypes.varchar.nullable(), unsaved.thumbnailUrl), Fragment.lit(", "), Fragment.encode(MariaTypes.varchar.nullable(), unsaved.altText), Fragment.lit(", "), Fragment.encode(MariaTypes.tinyintUnsigned, unsaved.sortOrder), Fragment.lit(", "), Fragment.encode(IsPrimary.mariaType, unsaved.isPrimary), Fragment.lit(", "), Fragment.encode(MariaTypes.longblob.nullable(), unsaved.imageData), Fragment.lit(")\nON DUPLICATE KEY UPDATE `product_id` = VALUES(`product_id`),\n`image_url` = VALUES(`image_url`),\n`thumbnail_url` = VALUES(`thumbnail_url`),\n`alt_text` = VALUES(`alt_text`),\n`sort_order` = VALUES(`sort_order`),\n`is_primary` = VALUES(`is_primary`),\n`image_data` = VALUES(`image_data`)\nRETURNING `image_id`, `product_id`, `image_url`, `thumbnail_url`, `alt_text`, `sort_order`, `is_primary`, `image_data`"))
-    .updateReturning(ProductImagesRow._rowParser.exactlyOne())
-    .runUnchecked(c)
+  ): ProductImagesRow = Fragment.concat(Fragment.of("INSERT INTO `product_images`(`image_id`, `product_id`, `image_url`, `thumbnail_url`, `alt_text`, `sort_order`, `is_primary`, `image_data`)\nVALUES ("), Fragment.encode(ProductImagesId.mariaType, unsaved.imageId), Fragment.of(", "), Fragment.encode(ProductsId.mariaType, unsaved.productId), Fragment.of(", "), Fragment.encode(MariaTypes.varchar, unsaved.imageUrl), Fragment.of(", "), Fragment.encode(MariaTypes.varchar.opt(), unsaved.thumbnailUrl), Fragment.of(", "), Fragment.encode(MariaTypes.varchar.opt(), unsaved.altText), Fragment.of(", "), Fragment.encode(MariaTypes.tinyintUnsigned, unsaved.sortOrder), Fragment.of(", "), Fragment.encode(IsPrimary.mariaType, unsaved.isPrimary), Fragment.of(", "), Fragment.encode(MariaTypes.longblob.opt(), unsaved.imageData), Fragment.of(")\nON DUPLICATE KEY UPDATE `product_id` = VALUES(`product_id`),\n`image_url` = VALUES(`image_url`),\n`thumbnail_url` = VALUES(`thumbnail_url`),\n`alt_text` = VALUES(`alt_text`),\n`sort_order` = VALUES(`sort_order`),\n`is_primary` = VALUES(`is_primary`),\n`image_data` = VALUES(`image_data`)\nRETURNING `image_id`, `product_id`, `image_url`, `thumbnail_url`, `alt_text`, `sort_order`, `is_primary`, `image_data`"))
+    .updateReturning(ProductImagesRow.rowCodec.exactlyOne())
+    .run(c)
 
   override fun upsertBatch(
     unsaved: Iterator<ProductImagesRow>,
     c: Connection
-  ): List<ProductImagesRow> = Fragment.interpolate(Fragment.lit("INSERT INTO `product_images`(`image_id`, `product_id`, `image_url`, `thumbnail_url`, `alt_text`, `sort_order`, `is_primary`, `image_data`)\nVALUES (?, ?, ?, ?, ?, ?, ?, ?)\nON DUPLICATE KEY UPDATE `product_id` = VALUES(`product_id`),\n`image_url` = VALUES(`image_url`),\n`thumbnail_url` = VALUES(`thumbnail_url`),\n`alt_text` = VALUES(`alt_text`),\n`sort_order` = VALUES(`sort_order`),\n`is_primary` = VALUES(`is_primary`),\n`image_data` = VALUES(`image_data`)\nRETURNING `image_id`, `product_id`, `image_url`, `thumbnail_url`, `alt_text`, `sort_order`, `is_primary`, `image_data`"))
-    .updateReturningEach(ProductImagesRow._rowParser, unsaved)
-  .runUnchecked(c)
+  ): List<ProductImagesRow> = Fragment.concat(Fragment.of("INSERT INTO `product_images`(`image_id`, `product_id`, `image_url`, `thumbnail_url`, `alt_text`, `sort_order`, `is_primary`, `image_data`)\nVALUES (?, ?, ?, ?, ?, ?, ?, ?)\nON DUPLICATE KEY UPDATE `product_id` = VALUES(`product_id`),\n`image_url` = VALUES(`image_url`),\n`thumbnail_url` = VALUES(`thumbnail_url`),\n`alt_text` = VALUES(`alt_text`),\n`sort_order` = VALUES(`sort_order`),\n`is_primary` = VALUES(`is_primary`),\n`image_data` = VALUES(`image_data`)\nRETURNING `image_id`, `product_id`, `image_url`, `thumbnail_url`, `alt_text`, `sort_order`, `is_primary`, `image_data`"))
+    .updateReturningEach(ProductImagesRow.rowCodec, unsaved)
+  .run(c)
 }

@@ -5,25 +5,25 @@
  */
 package oracledb.all_types_test
 
-import dev.typr.foundations.OracleTypes
-import dev.typr.foundations.RowParser
-import dev.typr.foundations.dsl.FieldsBase
-import dev.typr.foundations.dsl.Path
-import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.kotlin.RelationStructure
-import dev.typr.foundations.kotlin.SqlExpr
-import dev.typr.foundations.kotlin.SqlExpr.Field
-import dev.typr.foundations.kotlin.SqlExpr.IdField
-import dev.typr.foundations.kotlin.SqlExpr.OptField
-import dev.typr.foundations.kotlin.TupleExpr4
+import dev.typr.dsl.FieldsBase
+import dev.typr.dsl.Path
+import dev.typr.dsl.SqlExpr.FieldLike
+import dev.typr.dslkt.RelationStructure
+import dev.typr.dslkt.SqlExpr
+import dev.typr.dslkt.SqlExpr.Field
+import dev.typr.dslkt.SqlExpr.IdField
+import dev.typr.dslkt.SqlExpr.OptField
+import dev.typr.dslkt.TupleExpr4
+import dev.typr.foundations.RowCodec
+import dev.typr.foundationskt.OracleTypes
 import kotlin.collections.List
 import oracledb.AllTypesStructNoLobs
 import oracledb.AllTypesStructNoLobsArray
 
-data class AllTypesTestFields(val _path: List<Path>) : TupleExpr4<AllTypesTestId, String, AllTypesStructNoLobs, AllTypesStructNoLobsArray>, RelationStructure<AllTypesTestFields, AllTypesTestRow>, FieldsBase<AllTypesTestRow> {
+data class AllTypesTestFields(val _path: List<Path>) : TupleExpr4<AllTypesTestId, kotlin.String, AllTypesStructNoLobs, AllTypesStructNoLobsArray>, RelationStructure<AllTypesTestFields, AllTypesTestRow>, FieldsBase<AllTypesTestRow> {
   override fun _1(): SqlExpr<AllTypesTestId> = id()
 
-  override fun _2(): SqlExpr<String> = name()
+  override fun _2(): SqlExpr<kotlin.String> = name()
 
   override fun _3(): SqlExpr<AllTypesStructNoLobs> = data()
 
@@ -33,15 +33,15 @@ data class AllTypesTestFields(val _path: List<Path>) : TupleExpr4<AllTypesTestId
 
   override fun columns(): List<FieldLike<*, AllTypesTestRow>> = listOf(this.id().underlying, this.name().underlying, this.data().underlying, this.dataArray().underlying)
 
-  fun data(): OptField<AllTypesStructNoLobs, AllTypesTestRow> = OptField<AllTypesStructNoLobs, AllTypesTestRow>(_path, "DATA", AllTypesTestRow::data, null, null, { row, value -> row.copy(data = value) }, AllTypesStructNoLobs.oracleType)
+  fun data(): OptField<AllTypesStructNoLobs, AllTypesTestRow> = OptField<AllTypesStructNoLobs, AllTypesTestRow>(_path, "DATA", AllTypesTestRow::data, null, null, { row, value -> row.copy(data = value) }, AllTypesStructNoLobs.oracleType.underlying)
 
-  fun dataArray(): OptField<AllTypesStructNoLobsArray, AllTypesTestRow> = OptField<AllTypesStructNoLobsArray, AllTypesTestRow>(_path, "DATA_ARRAY", AllTypesTestRow::dataArray, null, null, { row, value -> row.copy(dataArray = value) }, AllTypesStructNoLobsArray.oracleType)
+  fun dataArray(): OptField<AllTypesStructNoLobsArray, AllTypesTestRow> = OptField<AllTypesStructNoLobsArray, AllTypesTestRow>(_path, "DATA_ARRAY", AllTypesTestRow::dataArray, null, null, { row, value -> row.copy(dataArray = value) }, AllTypesStructNoLobsArray.oracleType.underlying)
 
-  fun id(): IdField<AllTypesTestId, AllTypesTestRow> = IdField<AllTypesTestId, AllTypesTestRow>(_path, "ID", AllTypesTestRow::id, null, null, { row, value -> row.copy(id = value) }, AllTypesTestId.oracleType)
+  fun id(): IdField<AllTypesTestId, AllTypesTestRow> = IdField<AllTypesTestId, AllTypesTestRow>(_path, "ID", AllTypesTestRow::id, null, null, { row, value -> row.copy(id = value) }, AllTypesTestId.oracleType.underlying)
 
-  fun name(): Field<String, AllTypesTestRow> = Field<String, AllTypesTestRow>(_path, "NAME", AllTypesTestRow::name, null, null, { row, value -> row.copy(name = value) }, OracleTypes.varchar2)
+  fun name(): Field<kotlin.String, AllTypesTestRow> = Field<kotlin.String, AllTypesTestRow>(_path, "NAME", AllTypesTestRow::name, null, null, { row, value -> row.copy(name = value) }, OracleTypes.varchar2.underlying)
 
-  override fun rowParser(): RowParser<AllTypesTestRow> = AllTypesTestRow._rowParser.underlying
+  override fun rowCodec(): RowCodec<AllTypesTestRow> = AllTypesTestRow.rowCodec.underlying
 
   override fun withPaths(_path: List<Path>): RelationStructure<AllTypesTestFields, AllTypesTestRow> = AllTypesTestFields(_path)
 

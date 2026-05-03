@@ -5,9 +5,10 @@
  */
 package testdb
 
-import dev.typr.foundations.MariaType
-import dev.typr.foundations.MariaTypes
+import dev.typr.dslsc.Bijection
 import dev.typr.foundations.data.maria.MariaSet
+import dev.typr.foundationssc.MariaType
+import dev.typr.foundationssc.MariaTypes
 import scala.collection.immutable.Set
 
 /** MariaDB SET type with values: all, brands, categories, customers, products */
@@ -33,7 +34,7 @@ object AllBrandsCategoriesCSet {
     }
   }
 
-  given mariaType: MariaType[AllBrandsCategoriesCSet] = MariaTypes.set.bimap((ms: MariaSet) => AllBrandsCategoriesCSet.fromString(ms.toCommaSeparated), (s: AllBrandsCategoriesCSet) => MariaSet.fromString(s.toCommaSeparated))
+  given mariaType: MariaType[AllBrandsCategoriesCSet] = MariaTypes.set.to(Bijection.of((ms: MariaSet) => AllBrandsCategoriesCSet.fromString(ms.toCommaSeparated), (s: AllBrandsCategoriesCSet) => MariaSet.fromString(s.toCommaSeparated)))
 
   def of(members: List[AllBrandsCategoriesCSetMember]): AllBrandsCategoriesCSet = AllBrandsCategoriesCSet(members.toSet)
 }

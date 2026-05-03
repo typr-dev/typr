@@ -6,25 +6,25 @@
 package adventureworks.public.identity_test
 
 import com.fasterxml.jackson.annotation.JsonValue
-import dev.typr.foundations.PgType
-import dev.typr.foundations.PgTypes
-import dev.typr.foundations.internal.arrayMap
-import dev.typr.foundations.kotlin.Bijection
+import dev.typr.foundationskt.Bijection
+import dev.typr.foundationskt.PgType
+import dev.typr.foundationskt.PgTypes
+import kotlin.collections.List
 
 /** Type for the primary key of table `public.identity-test` */
-data class IdentityTestId(@field:JsonValue val value: String) {
+data class IdentityTestId(@field:JsonValue val value: kotlin.String) {
   override fun toString(): kotlin.String {
-    return value.toString()
+    return value
   }
 
   companion object {
-    val bijection: Bijection<IdentityTestId, String> =
+    val bijection: Bijection<IdentityTestId, kotlin.String> =
       Bijection.of(IdentityTestId::value, ::IdentityTestId)
 
     val pgType: PgType<IdentityTestId> =
-      PgTypes.text.bimap(::IdentityTestId, IdentityTestId::value)
+      PgTypes.text.to(Bijection.of(::IdentityTestId, IdentityTestId::value))
 
-    val pgTypeArray: PgType<Array<IdentityTestId>> =
-      PgTypes.textArray.bimap({ xs -> arrayMap.map(xs, ::IdentityTestId, IdentityTestId::class.java) }, { xs -> arrayMap.map(xs, IdentityTestId::value, String::class.java) })
+    val pgTypeArray: PgType<List<IdentityTestId>> =
+      pgType.array()
   }
 }

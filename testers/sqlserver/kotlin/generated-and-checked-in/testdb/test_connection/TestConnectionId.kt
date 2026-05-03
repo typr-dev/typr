@@ -6,9 +6,9 @@
 package testdb.test_connection
 
 import com.fasterxml.jackson.annotation.JsonValue
-import dev.typr.foundations.SqlServerType
-import dev.typr.foundations.kotlin.Bijection
-import dev.typr.foundations.kotlin.KotlinDbTypes
+import dev.typr.foundationskt.Bijection
+import dev.typr.foundationskt.SqlServerType
+import dev.typr.foundationskt.SqlServerTypes
 
 /** Type for the primary key of table `test_connection` */
 data class TestConnectionId(@field:JsonValue val value: Int) {
@@ -21,6 +21,6 @@ data class TestConnectionId(@field:JsonValue val value: Int) {
       Bijection.of(TestConnectionId::value, ::TestConnectionId)
 
     val sqlServerType: SqlServerType<TestConnectionId> =
-      KotlinDbTypes.SqlServerTypes.int_.bimap(::TestConnectionId, TestConnectionId::value)
+      SqlServerTypes.int_.to(Bijection.of(::TestConnectionId, TestConnectionId::value))
   }
 }

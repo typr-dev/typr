@@ -22,7 +22,9 @@ import io.circe.Encoder
  *  - c
  */
 
-sealed abstract class Myenum(val value: java.lang.String)
+sealed abstract class Myenum(val value: java.lang.String) {
+  
+}
 
 object Myenum {
   implicit lazy val put: Put[Myenum] = Put.Advanced.one[Myenum](JdbcType.Other, NonEmptyList.one("public.myenum"), (ps, i, a) => ps.setString(i, a.value), (rs, i, a) => rs.updateString(i, a.value))

@@ -6,9 +6,9 @@
 package oracledb.employees_by_department
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import dev.typr.dsl.RowCodecs
 import dev.typr.foundations.OracleTypes
-import dev.typr.foundations.RowParser
-import dev.typr.foundations.RowParsers
+import dev.typr.foundations.RowCodec
 import dev.typr.foundations.Tuple.Tuple7
 import java.time.LocalDateTime
 import java.util.Optional
@@ -47,5 +47,5 @@ case class EmployeesByDepartmentSqlRow(
 }
 
 object EmployeesByDepartmentSqlRow {
-  val `_rowParser`: RowParser[EmployeesByDepartmentSqlRow] = RowParsers.of(OracleTypes.number, OracleTypes.varchar2, OracleTypes.varchar2, MoneyT.oracleType.opt(), OracleTypes.date, OracleTypes.varchar2, MoneyT.oracleType.opt(), EmployeesByDepartmentSqlRow.apply, row => Array[Any](row.empNumber, row.empSuffix, row.empName, row.salary, row.hireDate, row.deptName, row.budget))
+  val rowCodec: RowCodec[EmployeesByDepartmentSqlRow] = RowCodecs.of(OracleTypes.number, OracleTypes.varchar2, OracleTypes.varchar2, MoneyT.oracleType.opt, OracleTypes.date, OracleTypes.varchar2, MoneyT.oracleType.opt, EmployeesByDepartmentSqlRow.apply, row => Array[Any](row.empNumber, row.empSuffix, row.empName, row.salary, row.hireDate, row.deptName, row.budget))
 }

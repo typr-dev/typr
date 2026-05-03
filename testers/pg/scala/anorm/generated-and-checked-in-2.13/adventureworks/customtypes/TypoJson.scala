@@ -44,7 +44,7 @@ object TypoJson {
     }))))
   }
 
-  implicit lazy val bijection: Bijection[TypoJson, String] = Bijection.apply[TypoJson, String](_.value)(TypoJson.apply)
+  implicit lazy val bijection: Bijection[TypoJson, String] = Bijection[TypoJson, String](_.value)(TypoJson.apply)
 
   implicit lazy val column: Column[TypoJson] = {
     Column.nonNull[TypoJson]((v1: Any, _) =>

@@ -5,10 +5,11 @@
  */
 package testdb.mariatestnull
 
-import dev.typr.foundations.scala.DeleteBuilder
-import dev.typr.foundations.scala.SelectBuilder
-import dev.typr.foundations.scala.UpdateBuilder
-import java.sql.Connection
+import dev.typr.dslsc.DeleteBuilder
+import dev.typr.dslsc.SelectBuilder
+import dev.typr.dslsc.UpdateBuilder
+import dev.typr.foundationssc.Connection
+import dev.typr.foundationssc.ConnectionRead
 
 trait MariatestnullRepo {
   def delete: DeleteBuilder[MariatestnullFields, MariatestnullRow]
@@ -19,7 +20,7 @@ trait MariatestnullRepo {
 
   def select: SelectBuilder[MariatestnullFields, MariatestnullRow]
 
-  def selectAll(using c: Connection): List[MariatestnullRow]
+  def selectAll(using c: ConnectionRead): List[MariatestnullRow]
 
   def update: UpdateBuilder[MariatestnullFields, MariatestnullRow]
 }

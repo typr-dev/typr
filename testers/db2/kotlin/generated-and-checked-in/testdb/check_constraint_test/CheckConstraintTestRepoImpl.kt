@@ -5,15 +5,14 @@
  */
 package testdb.check_constraint_test
 
-import dev.typr.foundations.Db2Types
-import dev.typr.foundations.kotlin.DeleteBuilder
-import dev.typr.foundations.kotlin.Dialect
-import dev.typr.foundations.kotlin.Fragment
-import dev.typr.foundations.kotlin.KotlinDbTypes
-import dev.typr.foundations.kotlin.SelectBuilder
-import dev.typr.foundations.kotlin.UpdateBuilder
-import dev.typr.foundations.kotlin.nullable
-import java.sql.Connection
+import dev.typr.dslkt.DeleteBuilder
+import dev.typr.dslkt.Dialect
+import dev.typr.dslkt.SelectBuilder
+import dev.typr.dslkt.UpdateBuilder
+import dev.typr.foundationskt.Connection
+import dev.typr.foundationskt.ConnectionRead
+import dev.typr.foundationskt.Db2Types
+import dev.typr.foundationskt.Fragment
 import java.util.ArrayList
 import kotlin.collections.Iterator
 import kotlin.collections.List
@@ -26,75 +25,75 @@ class CheckConstraintTestRepoImpl() : CheckConstraintTestRepo {
   override fun deleteById(
     id: CheckConstraintTestId,
     c: Connection
-  ): Boolean = Fragment.interpolate(Fragment.lit("delete from \"CHECK_CONSTRAINT_TEST\" where \"ID\" = "), Fragment.encode(CheckConstraintTestId.db2Type, id), Fragment.lit("")).update().runUnchecked(c) > 0
+  ): kotlin.Boolean = Fragment.concat(Fragment.of("delete from \"CHECK_CONSTRAINT_TEST\" where \"ID\" = "), Fragment.encode(CheckConstraintTestId.db2Type, id), Fragment.of("")).update().run(c) > 0
 
   override fun deleteByIds(
-    ids: Array<CheckConstraintTestId>,
+    ids: List<CheckConstraintTestId>,
     c: Connection
   ): Int {
     val fragments: ArrayList<Fragment> = ArrayList()
     for (id in ids) { fragments.add(Fragment.encode(CheckConstraintTestId.db2Type, id)) }
-    return Fragment.interpolate(Fragment.lit("delete from \"CHECK_CONSTRAINT_TEST\" where \"ID\" in ("), Fragment.comma(fragments.toMutableList()), Fragment.lit(")")).update().runUnchecked(c)
+    return Fragment.concat(Fragment.of("delete from \"CHECK_CONSTRAINT_TEST\" where \"ID\" in ("), Fragment.comma(fragments.toMutableList()), Fragment.of(")")).update().run(c)
   }
 
   override fun insert(
     unsaved: CheckConstraintTestRow,
     c: Connection
-  ): CheckConstraintTestRow = Fragment.interpolate(Fragment.lit("SELECT \"ID\", \"AGE\", \"STATUS\", \"PRICE\" FROM FINAL TABLE (INSERT INTO \"CHECK_CONSTRAINT_TEST\"(\"ID\", \"AGE\", \"STATUS\", \"PRICE\")\nVALUES ("), Fragment.encode(CheckConstraintTestId.db2Type, unsaved.id), Fragment.lit(", "), Fragment.encode(KotlinDbTypes.Db2Types.integer, unsaved.age), Fragment.lit(", "), Fragment.encode(Db2Types.varchar, unsaved.status), Fragment.lit(", "), Fragment.encode(KotlinDbTypes.Db2Types.decimal.nullable(), unsaved.price), Fragment.lit("))\n"))
-    .updateReturning(CheckConstraintTestRow._rowParser.exactlyOne()).runUnchecked(c)
+  ): CheckConstraintTestRow = Fragment.concat(Fragment.of("SELECT \"ID\", \"AGE\", \"STATUS\", \"PRICE\" FROM FINAL TABLE (INSERT INTO \"CHECK_CONSTRAINT_TEST\"(\"ID\", \"AGE\", \"STATUS\", \"PRICE\")\nVALUES ("), Fragment.encode(CheckConstraintTestId.db2Type, unsaved.id), Fragment.of(", "), Fragment.encode(Db2Types.integer, unsaved.age), Fragment.of(", "), Fragment.encode(Db2Types.varchar, unsaved.status), Fragment.of(", "), Fragment.encode(Db2Types.decimal.opt(), unsaved.price), Fragment.of("))\n"))
+    .updateReturning(CheckConstraintTestRow.rowCodec.exactlyOne()).run(c)
 
-  override fun select(): SelectBuilder<CheckConstraintTestFields, CheckConstraintTestRow> = SelectBuilder.of("\"CHECK_CONSTRAINT_TEST\"", CheckConstraintTestFields.structure, CheckConstraintTestRow._rowParser, Dialect.DB2)
+  override fun select(): SelectBuilder<CheckConstraintTestFields, CheckConstraintTestRow> = SelectBuilder.of("\"CHECK_CONSTRAINT_TEST\"", CheckConstraintTestFields.structure, CheckConstraintTestRow.rowCodec, Dialect.DB2)
 
-  override fun selectAll(c: Connection): List<CheckConstraintTestRow> = Fragment.interpolate(Fragment.lit("select \"ID\", \"AGE\", \"STATUS\", \"PRICE\"\nfrom \"CHECK_CONSTRAINT_TEST\"\n")).query(CheckConstraintTestRow._rowParser.all()).runUnchecked(c)
+  override fun selectAll(c: ConnectionRead): List<CheckConstraintTestRow> = Fragment.concat(Fragment.of("select \"ID\", \"AGE\", \"STATUS\", \"PRICE\"\nfrom \"CHECK_CONSTRAINT_TEST\"\n")).query(CheckConstraintTestRow.rowCodec.all()).run(c)
 
   override fun selectById(
     id: CheckConstraintTestId,
-    c: Connection
-  ): CheckConstraintTestRow? = Fragment.interpolate(Fragment.lit("select \"ID\", \"AGE\", \"STATUS\", \"PRICE\"\nfrom \"CHECK_CONSTRAINT_TEST\"\nwhere \"ID\" = "), Fragment.encode(CheckConstraintTestId.db2Type, id), Fragment.lit("")).query(CheckConstraintTestRow._rowParser.first()).runUnchecked(c)
+    c: ConnectionRead
+  ): CheckConstraintTestRow? = Fragment.concat(Fragment.of("select \"ID\", \"AGE\", \"STATUS\", \"PRICE\"\nfrom \"CHECK_CONSTRAINT_TEST\"\nwhere \"ID\" = "), Fragment.encode(CheckConstraintTestId.db2Type, id), Fragment.of("")).query(CheckConstraintTestRow.rowCodec.first()).run(c)
 
   override fun selectByIds(
-    ids: Array<CheckConstraintTestId>,
-    c: Connection
+    ids: List<CheckConstraintTestId>,
+    c: ConnectionRead
   ): List<CheckConstraintTestRow> {
     val fragments: ArrayList<Fragment> = ArrayList()
     for (id in ids) { fragments.add(Fragment.encode(CheckConstraintTestId.db2Type, id)) }
-    return Fragment.interpolate(Fragment.lit("select \"ID\", \"AGE\", \"STATUS\", \"PRICE\" from \"CHECK_CONSTRAINT_TEST\" where \"ID\" in ("), Fragment.comma(fragments.toMutableList()), Fragment.lit(")")).query(CheckConstraintTestRow._rowParser.all()).runUnchecked(c)
+    return Fragment.concat(Fragment.of("select \"ID\", \"AGE\", \"STATUS\", \"PRICE\" from \"CHECK_CONSTRAINT_TEST\" where \"ID\" in ("), Fragment.comma(fragments.toMutableList()), Fragment.of(")")).query(CheckConstraintTestRow.rowCodec.all()).run(c)
   }
 
   override fun selectByIdsTracked(
-    ids: Array<CheckConstraintTestId>,
-    c: Connection
+    ids: List<CheckConstraintTestId>,
+    c: ConnectionRead
   ): Map<CheckConstraintTestId, CheckConstraintTestRow> {
     val ret: MutableMap<CheckConstraintTestId, CheckConstraintTestRow> = mutableMapOf<CheckConstraintTestId, CheckConstraintTestRow>()
     selectByIds(ids, c).forEach({ row -> ret.put(row.id, row) })
     return ret.toMap()
   }
 
-  override fun update(): UpdateBuilder<CheckConstraintTestFields, CheckConstraintTestRow> = UpdateBuilder.of("\"CHECK_CONSTRAINT_TEST\"", CheckConstraintTestFields.structure, CheckConstraintTestRow._rowParser, Dialect.DB2)
+  override fun update(): UpdateBuilder<CheckConstraintTestFields, CheckConstraintTestRow> = UpdateBuilder.of("\"CHECK_CONSTRAINT_TEST\"", CheckConstraintTestFields.structure, CheckConstraintTestRow.rowCodec, Dialect.DB2)
 
   override fun update(
     row: CheckConstraintTestRow,
     c: Connection
-  ): Boolean {
+  ): kotlin.Boolean {
     val id: CheckConstraintTestId = row.id
-    return Fragment.interpolate(Fragment.lit("update \"CHECK_CONSTRAINT_TEST\"\nset \"AGE\" = "), Fragment.encode(KotlinDbTypes.Db2Types.integer, row.age), Fragment.lit(",\n\"STATUS\" = "), Fragment.encode(Db2Types.varchar, row.status), Fragment.lit(",\n\"PRICE\" = "), Fragment.encode(KotlinDbTypes.Db2Types.decimal.nullable(), row.price), Fragment.lit("\nwhere \"ID\" = "), Fragment.encode(CheckConstraintTestId.db2Type, id), Fragment.lit("")).update().runUnchecked(c) > 0
+    return Fragment.concat(Fragment.of("update \"CHECK_CONSTRAINT_TEST\"\nset \"AGE\" = "), Fragment.encode(Db2Types.integer, row.age), Fragment.of(",\n\"STATUS\" = "), Fragment.encode(Db2Types.varchar, row.status), Fragment.of(",\n\"PRICE\" = "), Fragment.encode(Db2Types.decimal.opt(), row.price), Fragment.of("\nwhere \"ID\" = "), Fragment.encode(CheckConstraintTestId.db2Type, id), Fragment.of("")).update().run(c) > 0
   }
 
   override fun upsert(
     unsaved: CheckConstraintTestRow,
     c: Connection
   ) {
-    Fragment.interpolate(Fragment.lit("MERGE INTO \"CHECK_CONSTRAINT_TEST\" AS t\nUSING (VALUES ("), Fragment.encode(CheckConstraintTestId.db2Type, unsaved.id), Fragment.lit(", "), Fragment.encode(KotlinDbTypes.Db2Types.integer, unsaved.age), Fragment.lit(", "), Fragment.encode(Db2Types.varchar, unsaved.status), Fragment.lit(", "), Fragment.encode(KotlinDbTypes.Db2Types.decimal.nullable(), unsaved.price), Fragment.lit(")) AS s(\"ID\", \"AGE\", \"STATUS\", \"PRICE\")\nON t.\"ID\" = s.\"ID\"\nWHEN MATCHED THEN UPDATE SET \"AGE\" = s.\"AGE\",\n\"STATUS\" = s.\"STATUS\",\n\"PRICE\" = s.\"PRICE\"\nWHEN NOT MATCHED THEN INSERT (\"ID\", \"AGE\", \"STATUS\", \"PRICE\") VALUES ("), Fragment.encode(CheckConstraintTestId.db2Type, unsaved.id), Fragment.lit(", "), Fragment.encode(KotlinDbTypes.Db2Types.integer, unsaved.age), Fragment.lit(", "), Fragment.encode(Db2Types.varchar, unsaved.status), Fragment.lit(", "), Fragment.encode(KotlinDbTypes.Db2Types.decimal.nullable(), unsaved.price), Fragment.lit(")"))
+    Fragment.concat(Fragment.of("MERGE INTO \"CHECK_CONSTRAINT_TEST\" AS t\nUSING (VALUES ("), Fragment.encode(CheckConstraintTestId.db2Type, unsaved.id), Fragment.of(", "), Fragment.encode(Db2Types.integer, unsaved.age), Fragment.of(", "), Fragment.encode(Db2Types.varchar, unsaved.status), Fragment.of(", "), Fragment.encode(Db2Types.decimal.opt(), unsaved.price), Fragment.of(")) AS s(\"ID\", \"AGE\", \"STATUS\", \"PRICE\")\nON t.\"ID\" = s.\"ID\"\nWHEN MATCHED THEN UPDATE SET \"AGE\" = s.\"AGE\",\n\"STATUS\" = s.\"STATUS\",\n\"PRICE\" = s.\"PRICE\"\nWHEN NOT MATCHED THEN INSERT (\"ID\", \"AGE\", \"STATUS\", \"PRICE\") VALUES ("), Fragment.encode(CheckConstraintTestId.db2Type, unsaved.id), Fragment.of(", "), Fragment.encode(Db2Types.integer, unsaved.age), Fragment.of(", "), Fragment.encode(Db2Types.varchar, unsaved.status), Fragment.of(", "), Fragment.encode(Db2Types.decimal.opt(), unsaved.price), Fragment.of(")"))
       .update()
-      .runUnchecked(c)
+      .run(c)
   }
 
   override fun upsertBatch(
     unsaved: Iterator<CheckConstraintTestRow>,
     c: Connection
   ) {
-    Fragment.interpolate(Fragment.lit("MERGE INTO \"CHECK_CONSTRAINT_TEST\" AS t\nUSING (VALUES (?, ?, ?, ?)) AS s(\"ID\", \"AGE\", \"STATUS\", \"PRICE\")\nON t.\"ID\" = s.\"ID\"\nWHEN MATCHED THEN UPDATE SET \"AGE\" = s.\"AGE\",\n\"STATUS\" = s.\"STATUS\",\n\"PRICE\" = s.\"PRICE\"\nWHEN NOT MATCHED THEN INSERT (\"ID\", \"AGE\", \"STATUS\", \"PRICE\") VALUES (?, ?, ?, ?)"))
-      .updateMany(CheckConstraintTestRow._rowParser, unsaved)
-      .runUnchecked(c)
+    Fragment.concat(Fragment.of("MERGE INTO \"CHECK_CONSTRAINT_TEST\" AS t\nUSING (VALUES (?, ?, ?, ?)) AS s(\"ID\", \"AGE\", \"STATUS\", \"PRICE\")\nON t.\"ID\" = s.\"ID\"\nWHEN MATCHED THEN UPDATE SET \"AGE\" = s.\"AGE\",\n\"STATUS\" = s.\"STATUS\",\n\"PRICE\" = s.\"PRICE\"\nWHEN NOT MATCHED THEN INSERT (\"ID\", \"AGE\", \"STATUS\", \"PRICE\") VALUES (?, ?, ?, ?)"))
+      .updateMany(CheckConstraintTestRow.rowCodec, unsaved)
+      .run(c)
   }
 }

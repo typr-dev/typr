@@ -5,10 +5,11 @@
  */
 package adventureworks.public.only_pk_columns
 
-import dev.typr.foundations.kotlin.DeleteBuilder
-import dev.typr.foundations.kotlin.SelectBuilder
-import dev.typr.foundations.kotlin.UpdateBuilder
-import java.sql.Connection
+import dev.typr.dslkt.DeleteBuilder
+import dev.typr.dslkt.SelectBuilder
+import dev.typr.dslkt.UpdateBuilder
+import dev.typr.foundationskt.Connection
+import dev.typr.foundationskt.ConnectionRead
 import kotlin.collections.Iterator
 import kotlin.collections.List
 import kotlin.collections.Map
@@ -19,10 +20,10 @@ interface OnlyPkColumnsRepo {
   abstract fun deleteById(
     compositeId: OnlyPkColumnsId,
     c: Connection
-  ): Boolean
+  ): kotlin.Boolean
 
   abstract fun deleteByIds(
-    compositeIds: Array<OnlyPkColumnsId>,
+    compositeIds: List<OnlyPkColumnsId>,
     c: Connection
   ): Int
 
@@ -35,25 +36,25 @@ interface OnlyPkColumnsRepo {
     unsaved: Iterator<OnlyPkColumnsRow>,
     batchSize: Int = 10000,
     c: Connection
-  ): Long
+  ): kotlin.Long
 
   abstract fun select(): SelectBuilder<OnlyPkColumnsFields, OnlyPkColumnsRow>
 
-  abstract fun selectAll(c: Connection): List<OnlyPkColumnsRow>
+  abstract fun selectAll(c: ConnectionRead): List<OnlyPkColumnsRow>
 
   abstract fun selectById(
     compositeId: OnlyPkColumnsId,
-    c: Connection
+    c: ConnectionRead
   ): OnlyPkColumnsRow?
 
   abstract fun selectByIds(
-    compositeIds: Array<OnlyPkColumnsId>,
-    c: Connection
+    compositeIds: List<OnlyPkColumnsId>,
+    c: ConnectionRead
   ): List<OnlyPkColumnsRow>
 
   abstract fun selectByIdsTracked(
-    compositeIds: Array<OnlyPkColumnsId>,
-    c: Connection
+    compositeIds: List<OnlyPkColumnsId>,
+    c: ConnectionRead
   ): Map<OnlyPkColumnsId, OnlyPkColumnsRow>
 
   abstract fun update(): UpdateBuilder<OnlyPkColumnsFields, OnlyPkColumnsRow>

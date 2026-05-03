@@ -22,6 +22,17 @@ data class GetCustomerRequest(val customerId: kotlin.String) {
   }
 
   companion object {
+    @Throws(IOException::class)
+    fun parseFrom(input: CodedInputStream): GetCustomerRequest {
+      var customerId: kotlin.String = ""
+      while (!input.isAtEnd()) {
+        val tag = input.readTag()
+        if (WireFormat.getTagFieldNumber(tag) == 1) { customerId = input.readString() }
+        else { input.skipField(tag) }
+      }
+      return GetCustomerRequest(customerId)
+    }
+
     val MARSHALLER: Marshaller<GetCustomerRequest> =
       object : Marshaller<GetCustomerRequest> {
         override fun stream(value: GetCustomerRequest): InputStream {
@@ -43,16 +54,5 @@ data class GetCustomerRequest(val customerId: kotlin.String) {
           } 
         }
       }
-
-    @Throws(IOException::class)
-    fun parseFrom(input: CodedInputStream): GetCustomerRequest {
-      var customerId: kotlin.String = ""
-      while (!input.isAtEnd()) {
-        val tag = input.readTag()
-        if (WireFormat.getTagFieldNumber(tag) == 1) { customerId = input.readString() }
-        else { input.skipField(tag) }
-      }
-      return GetCustomerRequest(customerId)
-    }
   }
 }

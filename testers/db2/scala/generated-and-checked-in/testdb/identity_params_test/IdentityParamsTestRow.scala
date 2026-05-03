@@ -6,10 +6,10 @@
 package testdb.identity_params_test
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import dev.typr.foundations.Db2Types
+import dev.typr.dslsc.RowCodecs
 import dev.typr.foundations.Tuple.Tuple2
-import dev.typr.foundations.scala.RowParser
-import dev.typr.foundations.scala.RowParsers
+import dev.typr.foundationssc.Db2Types
+import dev.typr.foundationssc.RowCodec
 
 /** Table: IDENTITY_PARAMS_TEST
  * Primary key: ID
@@ -27,5 +27,5 @@ case class IdentityParamsTestRow(
 }
 
 object IdentityParamsTestRow {
-  val `_rowParser`: RowParser[IdentityParamsTestRow] = RowParsers.of(IdentityParamsTestId.db2Type, Db2Types.varchar)(IdentityParamsTestRow.apply)(row => Array[Any](row.id, row.name))
+  val rowCodec: RowCodec[IdentityParamsTestRow] = RowCodecs.of(IdentityParamsTestId.db2Type, Db2Types.varchar)(IdentityParamsTestRow.apply)(row => Array[Any](row.id, row.name))
 }

@@ -5,20 +5,20 @@
  */
 package testdb.orders_by_customer
 
-import dev.typr.foundations.scala.Fragment
-import dev.typr.foundations.scala.ScalaDbTypes
-import java.sql.Connection
-import dev.typr.foundations.scala.Fragment.sql
+import dev.typr.foundationssc.ConnectionRead
+import dev.typr.foundationssc.Db2Types
+import dev.typr.foundationssc.Fragment
+import dev.typr.foundationssc.Fragment.sql
 
 class OrdersByCustomerSqlRepoImpl extends OrdersByCustomerSqlRepo {
-  override def apply(customerId: Int)(using c: Connection): List[OrdersByCustomerSqlRow] = {
+  override def apply(customerId: Int)(using c: ConnectionRead): List[OrdersByCustomerSqlRow] = {
     sql"""-- Orders by customer with order items
     SELECT o.order_id, o.order_date, o.total_amount, o.status,
            i.item_number, i.product_name, i.quantity, i.unit_price
     FROM orders o
     INNER JOIN order_items i ON o.order_id = i.order_id
-    WHERE o.customer_id = ${Fragment.encode(ScalaDbTypes.Db2Types.integer, customerId)}
+    WHERE o.customer_id = ${Fragment.encode(Db2Types.integer, customerId)}
     ORDER BY o.order_date DESC, i.item_number
-    """.query(OrdersByCustomerSqlRow.`_rowParser`.all()).runUnchecked(c)
+    """.query(OrdersByCustomerSqlRow.rowCodec.all()).run(using c)
   }
 }

@@ -5,7 +5,7 @@
  */
 package testdb.customer_search
 
-import java.sql.Connection
+import dev.typr.foundationssc.ConnectionRead
 import java.time.LocalDateTime
 import testdb.Priority
 
@@ -16,5 +16,5 @@ trait CustomerSearchSqlRepo {
     minPriority: Option[/* user-picked */ Priority],
     createdAfter: Option[LocalDateTime],
     maxResults: Long
-  )(using c: Connection): List[CustomerSearchSqlRow]
+  )(using c: ConnectionRead): List[CustomerSearchSqlRow]
 }

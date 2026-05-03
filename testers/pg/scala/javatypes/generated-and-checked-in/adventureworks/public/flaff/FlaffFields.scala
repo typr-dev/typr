@@ -6,18 +6,18 @@
 package adventureworks.public.flaff
 
 import adventureworks.public.ShortText
+import dev.typr.dsl.FieldsBase
+import dev.typr.dsl.ForeignKey
+import dev.typr.dsl.Path
+import dev.typr.dsl.RelationStructure
+import dev.typr.dsl.SqlExpr
+import dev.typr.dsl.SqlExpr.FieldLike
+import dev.typr.dsl.SqlExpr.IdField
+import dev.typr.dsl.SqlExpr.OptField
+import dev.typr.dsl.TupleExpr
+import dev.typr.dsl.TupleExpr.TupleExpr5
 import dev.typr.foundations.PgTypes
-import dev.typr.foundations.RowParser
-import dev.typr.foundations.dsl.FieldsBase
-import dev.typr.foundations.dsl.ForeignKey
-import dev.typr.foundations.dsl.Path
-import dev.typr.foundations.dsl.RelationStructure
-import dev.typr.foundations.dsl.SqlExpr
-import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.dsl.SqlExpr.IdField
-import dev.typr.foundations.dsl.SqlExpr.OptField
-import dev.typr.foundations.dsl.TupleExpr
-import dev.typr.foundations.dsl.TupleExpr.TupleExpr5
+import dev.typr.foundations.RowCodec
 import java.util.Optional
 
 class FlaffFields(val `_path`: java.util.List[Path]) extends TupleExpr5[ShortText, String, Integer, ShortText, ShortText] with RelationStructure[FlaffFields, FlaffRow]  with FieldsBase[FlaffRow] {
@@ -89,7 +89,7 @@ class FlaffFields(val `_path`: java.util.List[Path]) extends TupleExpr5[ShortTex
 
   override def columns: java.util.List[FieldLike[?, FlaffRow]] = java.util.List.of(this.code, this.anotherCode, this.someNumber, this.specifier, this.parentspecifier)
 
-  override def rowParser: RowParser[FlaffRow] = FlaffRow._rowParser
+  override def rowCodec: RowCodec[FlaffRow] = FlaffRow.rowCodec
 
   override def withPaths(`_path`: java.util.List[Path]): RelationStructure[FlaffFields, FlaffRow] = new FlaffFields(`_path`)
 

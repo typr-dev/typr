@@ -5,17 +5,17 @@
  */
 package testdb.customers
 
-import dev.typr.foundations.Db2Types
-import dev.typr.foundations.RowParser
-import dev.typr.foundations.dsl.FieldsBase
-import dev.typr.foundations.dsl.Path
-import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.scala.RelationStructure
-import dev.typr.foundations.scala.SqlExpr
-import dev.typr.foundations.scala.SqlExpr.Field
-import dev.typr.foundations.scala.SqlExpr.IdField
-import dev.typr.foundations.scala.SqlExpr.OptField
-import dev.typr.foundations.scala.TupleExpr4
+import dev.typr.dsl.FieldsBase
+import dev.typr.dsl.Path
+import dev.typr.dsl.SqlExpr.FieldLike
+import dev.typr.dslsc.RelationStructure
+import dev.typr.dslsc.SqlExpr
+import dev.typr.dslsc.SqlExpr.Field
+import dev.typr.dslsc.SqlExpr.IdField
+import dev.typr.dslsc.SqlExpr.OptField
+import dev.typr.dslsc.TupleExpr4
+import dev.typr.foundations.RowCodec
+import dev.typr.foundationssc.Db2Types
 import java.time.LocalDateTime
 
 class CustomersFields(val `_path`: java.util.List[Path]) extends TupleExpr4[CustomersId, String, String, LocalDateTime] with RelationStructure[CustomersFields, CustomersRow]  with FieldsBase[CustomersRow] {
@@ -27,7 +27,7 @@ class CustomersFields(val `_path`: java.util.List[Path]) extends TupleExpr4[Cust
       None,
       None,
       (row, value) => row.copy(customerId = value),
-      CustomersId.db2Type
+      CustomersId.db2Type.underlying
     )
   }
 
@@ -39,7 +39,7 @@ class CustomersFields(val `_path`: java.util.List[Path]) extends TupleExpr4[Cust
       None,
       None,
       (row, value) => row.copy(name = value),
-      Db2Types.varchar
+      Db2Types.varchar.underlying
     )
   }
 
@@ -51,7 +51,7 @@ class CustomersFields(val `_path`: java.util.List[Path]) extends TupleExpr4[Cust
       None,
       None,
       (row, value) => row.copy(email = value),
-      Db2Types.varchar
+      Db2Types.varchar.underlying
     )
   }
 
@@ -63,13 +63,13 @@ class CustomersFields(val `_path`: java.util.List[Path]) extends TupleExpr4[Cust
       None,
       None,
       (row, value) => row.copy(createdAt = value),
-      Db2Types.timestamp
+      Db2Types.timestamp.underlying
     )
   }
 
   override def columns: java.util.List[FieldLike[?, CustomersRow]] = java.util.List.of(this.customerId.underlying, this.name.underlying, this.email.underlying, this.createdAt.underlying)
 
-  override def rowParser: RowParser[CustomersRow] = CustomersRow._rowParser.underlying
+  override def rowCodec: RowCodec[CustomersRow] = CustomersRow.rowCodec.underlying
 
   override def withPaths(`_path`: java.util.List[Path]): RelationStructure[CustomersFields, CustomersRow] = new CustomersFields(`_path`)
 

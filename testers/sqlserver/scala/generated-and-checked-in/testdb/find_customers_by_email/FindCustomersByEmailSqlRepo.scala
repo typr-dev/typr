@@ -5,8 +5,8 @@
  */
 package testdb.find_customers_by_email
 
-import java.sql.Connection
+import dev.typr.foundationssc.ConnectionRead
 
 trait FindCustomersByEmailSqlRepo {
-  def apply(emailPattern: String)(using c: Connection): List[FindCustomersByEmailSqlRow]
+  def apply(emailPattern: String)(using c: ConnectionRead): List[FindCustomersByEmailSqlRow]
 }

@@ -6,12 +6,11 @@
 package testdb.shipping_carriers
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import dev.typr.foundations.MariaTypes
+import dev.typr.dslkt.RowCodecs
 import dev.typr.foundations.Tuple.Tuple6
 import dev.typr.foundations.data.Json
-import dev.typr.foundations.kotlin.RowParser
-import dev.typr.foundations.kotlin.RowParsers
-import dev.typr.foundations.kotlin.nullable
+import dev.typr.foundationskt.MariaTypes
+import dev.typr.foundationskt.RowCodec
 import testdb.customtypes.Defaulted
 import testdb.userdefined.IsActive
 
@@ -24,13 +23,13 @@ data class ShippingCarriersRow(
     */
   @field:JsonProperty("carrier_id") val carrierId: ShippingCarriersId,
   /**  */
-  val code: String,
+  val code: kotlin.String,
   /**  */
-  val name: String,
+  val name: kotlin.String,
   /** 
     * Default: NULL
     */
-  @field:JsonProperty("tracking_url_template") val trackingUrlTemplate: String?,
+  @field:JsonProperty("tracking_url_template") val trackingUrlTemplate: kotlin.String?,
   /** 
     * Default: NULL
     */
@@ -39,14 +38,14 @@ data class ShippingCarriersRow(
     * Default: 1
     */
   @field:JsonProperty("is_active") val isActive: /* user-picked */ IsActive
-) : Tuple6<ShippingCarriersId, String, String, String?, Json?, /* user-picked */ IsActive> {
+) : Tuple6<ShippingCarriersId, kotlin.String, kotlin.String, kotlin.String?, Json?, /* user-picked */ IsActive> {
   override fun _1(): ShippingCarriersId = carrierId
 
-  override fun _2(): String = code
+  override fun _2(): kotlin.String = code
 
-  override fun _3(): String = name
+  override fun _3(): kotlin.String = name
 
-  override fun _4(): String? = trackingUrlTemplate
+  override fun _4(): kotlin.String? = trackingUrlTemplate
 
   override fun _5(): Json? = apiConfig
 
@@ -55,12 +54,12 @@ data class ShippingCarriersRow(
   fun id(): ShippingCarriersId = carrierId
 
   fun toUnsavedRow(
-    trackingUrlTemplate: Defaulted<String?> = Defaulted.Provided(this.trackingUrlTemplate),
+    trackingUrlTemplate: Defaulted<kotlin.String?> = Defaulted.Provided(this.trackingUrlTemplate),
     apiConfig: Defaulted<Json?> = Defaulted.Provided(this.apiConfig),
     isActive: Defaulted</* user-picked */ IsActive> = Defaulted.Provided(this.isActive)
   ): ShippingCarriersRowUnsaved = ShippingCarriersRowUnsaved(code, name, trackingUrlTemplate, apiConfig, isActive)
 
   companion object {
-    val _rowParser: RowParser<ShippingCarriersRow> = RowParsers.of(ShippingCarriersId.mariaType, MariaTypes.varchar, MariaTypes.varchar, MariaTypes.varchar.nullable(), MariaTypes.json.nullable(), IsActive.mariaType, { t0, t1, t2, t3, t4, t5 -> ShippingCarriersRow(t0, t1, t2, t3, t4, t5) }, { row -> arrayOf<Any?>(row.carrierId, row.code, row.name, row.trackingUrlTemplate, row.apiConfig, row.isActive) })
+    val rowCodec: RowCodec<ShippingCarriersRow> = RowCodecs.of(ShippingCarriersId.mariaType, MariaTypes.varchar, MariaTypes.varchar, MariaTypes.varchar.opt(), MariaTypes.json.opt(), IsActive.mariaType, { t0: ShippingCarriersId, t1: kotlin.String, t2: kotlin.String, t3: kotlin.String?, t4: Json?, t5: /* user-picked */ IsActive -> ShippingCarriersRow(t0, t1, t2, t3, t4, t5) }, { row: ShippingCarriersRow -> arrayOf<Any?>(row.carrierId, row.code, row.name, row.trackingUrlTemplate, row.apiConfig, row.isActive) })
   }
 }

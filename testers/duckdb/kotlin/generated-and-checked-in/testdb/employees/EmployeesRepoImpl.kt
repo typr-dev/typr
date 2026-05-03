@@ -5,15 +5,14 @@
  */
 package testdb.employees
 
-import dev.typr.foundations.DuckDbTypes
-import dev.typr.foundations.kotlin.DeleteBuilder
-import dev.typr.foundations.kotlin.Dialect
-import dev.typr.foundations.kotlin.Fragment
-import dev.typr.foundations.kotlin.KotlinDbTypes
-import dev.typr.foundations.kotlin.SelectBuilder
-import dev.typr.foundations.kotlin.UpdateBuilder
-import dev.typr.foundations.kotlin.nullable
-import java.sql.Connection
+import dev.typr.dslkt.DeleteBuilder
+import dev.typr.dslkt.Dialect
+import dev.typr.dslkt.SelectBuilder
+import dev.typr.dslkt.UpdateBuilder
+import dev.typr.foundationskt.Connection
+import dev.typr.foundationskt.ConnectionRead
+import dev.typr.foundationskt.DuckDbTypes
+import dev.typr.foundationskt.Fragment
 import java.util.ArrayList
 import kotlin.collections.Iterator
 import kotlin.collections.List
@@ -26,22 +25,22 @@ class EmployeesRepoImpl() : EmployeesRepo {
   override fun deleteById(
     compositeId: EmployeesId,
     c: Connection
-  ): Boolean = Fragment.interpolate(Fragment.lit("delete from \"employees\" where \"emp_number\" = "), Fragment.encode(KotlinDbTypes.DuckDbTypes.integer, compositeId.empNumber), Fragment.lit(" AND \"emp_suffix\" = "), Fragment.encode(DuckDbTypes.varchar, compositeId.empSuffix), Fragment.lit("")).update().runUnchecked(c) > 0
+  ): kotlin.Boolean = Fragment.concat(Fragment.of("delete from \"employees\" where \"emp_number\" = "), Fragment.encode(DuckDbTypes.integer, compositeId.empNumber), Fragment.of(" AND \"emp_suffix\" = "), Fragment.encode(DuckDbTypes.varchar, compositeId.empSuffix), Fragment.of("")).update().run(c) > 0
 
   override fun deleteByIds(
-    compositeIds: Array<EmployeesId>,
+    compositeIds: List<EmployeesId>,
     c: Connection
   ): Int {
     val orClauses: ArrayList<Fragment> = ArrayList()
-    for (id in compositeIds) { orClauses.add(Fragment.interpolate(Fragment.lit("("), Fragment.lit("\"emp_number\" = "), Fragment.encode(KotlinDbTypes.DuckDbTypes.integer, id.empNumber), Fragment.lit(" AND "), Fragment.lit("\"emp_suffix\" = "), Fragment.encode(DuckDbTypes.varchar, id.empSuffix), Fragment.lit(")"))) }
-    return Fragment.interpolate(Fragment.lit("delete\nfrom \"employees\"\nwhere "), Fragment.or(orClauses), Fragment.lit("\n")).update().runUnchecked(c)
+    for (id in compositeIds) { orClauses.add(Fragment.concat(Fragment.of("("), Fragment.of("\"emp_number\" = "), Fragment.encode(DuckDbTypes.integer, id.empNumber), Fragment.of(" AND "), Fragment.of("\"emp_suffix\" = "), Fragment.encode(DuckDbTypes.varchar, id.empSuffix), Fragment.of(")"))) }
+    return Fragment.concat(Fragment.of("delete\nfrom \"employees\"\nwhere "), Fragment.or(orClauses), Fragment.of("\n")).update().run(c)
   }
 
   override fun insert(
     unsaved: EmployeesRow,
     c: Connection
-  ): EmployeesRow = Fragment.interpolate(Fragment.lit("insert into \"employees\"(\"emp_number\", \"emp_suffix\", \"dept_code\", \"dept_region\", \"emp_name\", \"salary\", \"hire_date\")\nvalues ("), Fragment.encode(KotlinDbTypes.DuckDbTypes.integer, unsaved.empNumber), Fragment.lit(", "), Fragment.encode(DuckDbTypes.varchar, unsaved.empSuffix), Fragment.lit(", "), Fragment.encode(DuckDbTypes.varchar, unsaved.deptCode), Fragment.lit(", "), Fragment.encode(DuckDbTypes.varchar, unsaved.deptRegion), Fragment.lit(", "), Fragment.encode(DuckDbTypes.varchar, unsaved.empName), Fragment.lit(", "), Fragment.encode(DuckDbTypes.numeric.nullable(), unsaved.salary), Fragment.lit(", "), Fragment.encode(DuckDbTypes.date, unsaved.hireDate), Fragment.lit(")\nRETURNING \"emp_number\", \"emp_suffix\", \"dept_code\", \"dept_region\", \"emp_name\", \"salary\", \"hire_date\"\n"))
-    .updateReturning(EmployeesRow._rowParser.exactlyOne()).runUnchecked(c)
+  ): EmployeesRow = Fragment.concat(Fragment.of("insert into \"employees\"(\"emp_number\", \"emp_suffix\", \"dept_code\", \"dept_region\", \"emp_name\", \"salary\", \"hire_date\")\nvalues ("), Fragment.encode(DuckDbTypes.integer, unsaved.empNumber), Fragment.of(", "), Fragment.encode(DuckDbTypes.varchar, unsaved.empSuffix), Fragment.of(", "), Fragment.encode(DuckDbTypes.varchar, unsaved.deptCode), Fragment.of(", "), Fragment.encode(DuckDbTypes.varchar, unsaved.deptRegion), Fragment.of(", "), Fragment.encode(DuckDbTypes.varchar, unsaved.empName), Fragment.of(", "), Fragment.encode(DuckDbTypes.numeric.opt(), unsaved.salary), Fragment.of(", "), Fragment.encode(DuckDbTypes.date, unsaved.hireDate), Fragment.of(")\nRETURNING \"emp_number\", \"emp_suffix\", \"dept_code\", \"dept_region\", \"emp_name\", \"salary\", \"hire_date\"\n"))
+    .updateReturning(EmployeesRow.rowCodec.exactlyOne()).run(c)
 
   override fun insert(
     unsaved: EmployeesRowUnsaved,
@@ -49,75 +48,75 @@ class EmployeesRepoImpl() : EmployeesRepo {
   ): EmployeesRow {
     val columns: ArrayList<Fragment> = ArrayList()
     val values: ArrayList<Fragment> = ArrayList()
-    columns.add(Fragment.lit("\"emp_number\""))
-    values.add(Fragment.interpolate(Fragment.encode(KotlinDbTypes.DuckDbTypes.integer, unsaved.empNumber), Fragment.lit("")))
-    columns.add(Fragment.lit("\"emp_suffix\""))
-    values.add(Fragment.interpolate(Fragment.encode(DuckDbTypes.varchar, unsaved.empSuffix), Fragment.lit("")))
-    columns.add(Fragment.lit("\"dept_code\""))
-    values.add(Fragment.interpolate(Fragment.encode(DuckDbTypes.varchar, unsaved.deptCode), Fragment.lit("")))
-    columns.add(Fragment.lit("\"dept_region\""))
-    values.add(Fragment.interpolate(Fragment.encode(DuckDbTypes.varchar, unsaved.deptRegion), Fragment.lit("")))
-    columns.add(Fragment.lit("\"emp_name\""))
-    values.add(Fragment.interpolate(Fragment.encode(DuckDbTypes.varchar, unsaved.empName), Fragment.lit("")))
-    columns.add(Fragment.lit("\"salary\""))
-    values.add(Fragment.interpolate(Fragment.encode(DuckDbTypes.numeric.nullable(), unsaved.salary), Fragment.lit("")))
+    columns.add(Fragment.of("\"emp_number\""))
+    values.add(Fragment.concat(Fragment.encode(DuckDbTypes.integer, unsaved.empNumber), Fragment.of("")))
+    columns.add(Fragment.of("\"emp_suffix\""))
+    values.add(Fragment.concat(Fragment.encode(DuckDbTypes.varchar, unsaved.empSuffix), Fragment.of("")))
+    columns.add(Fragment.of("\"dept_code\""))
+    values.add(Fragment.concat(Fragment.encode(DuckDbTypes.varchar, unsaved.deptCode), Fragment.of("")))
+    columns.add(Fragment.of("\"dept_region\""))
+    values.add(Fragment.concat(Fragment.encode(DuckDbTypes.varchar, unsaved.deptRegion), Fragment.of("")))
+    columns.add(Fragment.of("\"emp_name\""))
+    values.add(Fragment.concat(Fragment.encode(DuckDbTypes.varchar, unsaved.empName), Fragment.of("")))
+    columns.add(Fragment.of("\"salary\""))
+    values.add(Fragment.concat(Fragment.encode(DuckDbTypes.numeric.opt(), unsaved.salary), Fragment.of("")))
     unsaved.hireDate.visit(
       {  },
-      { value -> columns.add(Fragment.lit("\"hire_date\""))
-      values.add(Fragment.interpolate(Fragment.encode(DuckDbTypes.date, value), Fragment.lit(""))) }
+      { value -> columns.add(Fragment.of("\"hire_date\""))
+      values.add(Fragment.concat(Fragment.encode(DuckDbTypes.date, value), Fragment.of(""))) }
     );
-    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into \"employees\"("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nRETURNING \"emp_number\", \"emp_suffix\", \"dept_code\", \"dept_region\", \"emp_name\", \"salary\", \"hire_date\"\n"))
-    return q.updateReturning(EmployeesRow._rowParser.exactlyOne()).runUnchecked(c)
+    val q: Fragment = Fragment.concat(Fragment.of("insert into \"employees\"("), Fragment.comma(columns.toMutableList()), Fragment.of(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.of(")\nRETURNING \"emp_number\", \"emp_suffix\", \"dept_code\", \"dept_region\", \"emp_name\", \"salary\", \"hire_date\"\n"))
+    return q.updateReturning(EmployeesRow.rowCodec.exactlyOne()).run(c)
   }
 
-  override fun select(): SelectBuilder<EmployeesFields, EmployeesRow> = SelectBuilder.of("\"employees\"", EmployeesFields.structure, EmployeesRow._rowParser, Dialect.DUCKDB)
+  override fun select(): SelectBuilder<EmployeesFields, EmployeesRow> = SelectBuilder.of("\"employees\"", EmployeesFields.structure, EmployeesRow.rowCodec, Dialect.DUCKDB)
 
-  override fun selectAll(c: Connection): List<EmployeesRow> = Fragment.interpolate(Fragment.lit("select \"emp_number\", \"emp_suffix\", \"dept_code\", \"dept_region\", \"emp_name\", \"salary\", \"hire_date\"\nfrom \"employees\"\n")).query(EmployeesRow._rowParser.all()).runUnchecked(c)
+  override fun selectAll(c: ConnectionRead): List<EmployeesRow> = Fragment.concat(Fragment.of("select \"emp_number\", \"emp_suffix\", \"dept_code\", \"dept_region\", \"emp_name\", \"salary\", \"hire_date\"\nfrom \"employees\"\n")).query(EmployeesRow.rowCodec.all()).run(c)
 
   override fun selectById(
     compositeId: EmployeesId,
-    c: Connection
-  ): EmployeesRow? = Fragment.interpolate(Fragment.lit("select \"emp_number\", \"emp_suffix\", \"dept_code\", \"dept_region\", \"emp_name\", \"salary\", \"hire_date\"\nfrom \"employees\"\nwhere \"emp_number\" = "), Fragment.encode(KotlinDbTypes.DuckDbTypes.integer, compositeId.empNumber), Fragment.lit(" AND \"emp_suffix\" = "), Fragment.encode(DuckDbTypes.varchar, compositeId.empSuffix), Fragment.lit("")).query(EmployeesRow._rowParser.first()).runUnchecked(c)
+    c: ConnectionRead
+  ): EmployeesRow? = Fragment.concat(Fragment.of("select \"emp_number\", \"emp_suffix\", \"dept_code\", \"dept_region\", \"emp_name\", \"salary\", \"hire_date\"\nfrom \"employees\"\nwhere \"emp_number\" = "), Fragment.encode(DuckDbTypes.integer, compositeId.empNumber), Fragment.of(" AND \"emp_suffix\" = "), Fragment.encode(DuckDbTypes.varchar, compositeId.empSuffix), Fragment.of("")).query(EmployeesRow.rowCodec.first()).run(c)
 
   override fun selectByIds(
-    compositeIds: Array<EmployeesId>,
-    c: Connection
+    compositeIds: List<EmployeesId>,
+    c: ConnectionRead
   ): List<EmployeesRow> {
     val orClauses: ArrayList<Fragment> = ArrayList()
-    for (id in compositeIds) { orClauses.add(Fragment.interpolate(Fragment.lit("("), Fragment.lit("\"emp_number\" = "), Fragment.encode(KotlinDbTypes.DuckDbTypes.integer, id.empNumber), Fragment.lit(" AND "), Fragment.lit("\"emp_suffix\" = "), Fragment.encode(DuckDbTypes.varchar, id.empSuffix), Fragment.lit(")"))) }
-    return Fragment.interpolate(Fragment.lit("select \"emp_number\", \"emp_suffix\", \"dept_code\", \"dept_region\", \"emp_name\", \"salary\", \"hire_date\"\nfrom \"employees\"\nwhere "), Fragment.or(orClauses), Fragment.lit("\n")).query(EmployeesRow._rowParser.all()).runUnchecked(c)
+    for (id in compositeIds) { orClauses.add(Fragment.concat(Fragment.of("("), Fragment.of("\"emp_number\" = "), Fragment.encode(DuckDbTypes.integer, id.empNumber), Fragment.of(" AND "), Fragment.of("\"emp_suffix\" = "), Fragment.encode(DuckDbTypes.varchar, id.empSuffix), Fragment.of(")"))) }
+    return Fragment.concat(Fragment.of("select \"emp_number\", \"emp_suffix\", \"dept_code\", \"dept_region\", \"emp_name\", \"salary\", \"hire_date\"\nfrom \"employees\"\nwhere "), Fragment.or(orClauses), Fragment.of("\n")).query(EmployeesRow.rowCodec.all()).run(c)
   }
 
   override fun selectByIdsTracked(
-    compositeIds: Array<EmployeesId>,
-    c: Connection
+    compositeIds: List<EmployeesId>,
+    c: ConnectionRead
   ): Map<EmployeesId, EmployeesRow> {
     val ret: MutableMap<EmployeesId, EmployeesRow> = mutableMapOf<EmployeesId, EmployeesRow>()
     selectByIds(compositeIds, c).forEach({ row -> ret.put(row.compositeId(), row) })
     return ret.toMap()
   }
 
-  override fun update(): UpdateBuilder<EmployeesFields, EmployeesRow> = UpdateBuilder.of("\"employees\"", EmployeesFields.structure, EmployeesRow._rowParser, Dialect.DUCKDB)
+  override fun update(): UpdateBuilder<EmployeesFields, EmployeesRow> = UpdateBuilder.of("\"employees\"", EmployeesFields.structure, EmployeesRow.rowCodec, Dialect.DUCKDB)
 
   override fun update(
     row: EmployeesRow,
     c: Connection
-  ): Boolean {
+  ): kotlin.Boolean {
     val compositeId: EmployeesId = row.compositeId()
-    return Fragment.interpolate(Fragment.lit("update \"employees\"\nset \"dept_code\" = "), Fragment.encode(DuckDbTypes.varchar, row.deptCode), Fragment.lit(",\n\"dept_region\" = "), Fragment.encode(DuckDbTypes.varchar, row.deptRegion), Fragment.lit(",\n\"emp_name\" = "), Fragment.encode(DuckDbTypes.varchar, row.empName), Fragment.lit(",\n\"salary\" = "), Fragment.encode(DuckDbTypes.numeric.nullable(), row.salary), Fragment.lit(",\n\"hire_date\" = "), Fragment.encode(DuckDbTypes.date, row.hireDate), Fragment.lit("\nwhere \"emp_number\" = "), Fragment.encode(KotlinDbTypes.DuckDbTypes.integer, compositeId.empNumber), Fragment.lit(" AND \"emp_suffix\" = "), Fragment.encode(DuckDbTypes.varchar, compositeId.empSuffix), Fragment.lit("")).update().runUnchecked(c) > 0
+    return Fragment.concat(Fragment.of("update \"employees\"\nset \"dept_code\" = "), Fragment.encode(DuckDbTypes.varchar, row.deptCode), Fragment.of(",\n\"dept_region\" = "), Fragment.encode(DuckDbTypes.varchar, row.deptRegion), Fragment.of(",\n\"emp_name\" = "), Fragment.encode(DuckDbTypes.varchar, row.empName), Fragment.of(",\n\"salary\" = "), Fragment.encode(DuckDbTypes.numeric.opt(), row.salary), Fragment.of(",\n\"hire_date\" = "), Fragment.encode(DuckDbTypes.date, row.hireDate), Fragment.of("\nwhere \"emp_number\" = "), Fragment.encode(DuckDbTypes.integer, compositeId.empNumber), Fragment.of(" AND \"emp_suffix\" = "), Fragment.encode(DuckDbTypes.varchar, compositeId.empSuffix), Fragment.of("")).update().run(c) > 0
   }
 
   override fun upsert(
     unsaved: EmployeesRow,
     c: Connection
-  ): EmployeesRow = Fragment.interpolate(Fragment.lit("INSERT INTO \"employees\"(\"emp_number\", \"emp_suffix\", \"dept_code\", \"dept_region\", \"emp_name\", \"salary\", \"hire_date\")\nVALUES ("), Fragment.encode(KotlinDbTypes.DuckDbTypes.integer, unsaved.empNumber), Fragment.lit(", "), Fragment.encode(DuckDbTypes.varchar, unsaved.empSuffix), Fragment.lit(", "), Fragment.encode(DuckDbTypes.varchar, unsaved.deptCode), Fragment.lit(", "), Fragment.encode(DuckDbTypes.varchar, unsaved.deptRegion), Fragment.lit(", "), Fragment.encode(DuckDbTypes.varchar, unsaved.empName), Fragment.lit(", "), Fragment.encode(DuckDbTypes.numeric.nullable(), unsaved.salary), Fragment.lit(", "), Fragment.encode(DuckDbTypes.date, unsaved.hireDate), Fragment.lit(")\nON CONFLICT (\"emp_number\", \"emp_suffix\")\nDO UPDATE SET\n  \"dept_code\" = EXCLUDED.\"dept_code\",\n\"dept_region\" = EXCLUDED.\"dept_region\",\n\"emp_name\" = EXCLUDED.\"emp_name\",\n\"salary\" = EXCLUDED.\"salary\",\n\"hire_date\" = EXCLUDED.\"hire_date\"\nRETURNING \"emp_number\", \"emp_suffix\", \"dept_code\", \"dept_region\", \"emp_name\", \"salary\", \"hire_date\""))
-    .updateReturning(EmployeesRow._rowParser.exactlyOne())
-    .runUnchecked(c)
+  ): EmployeesRow = Fragment.concat(Fragment.of("INSERT INTO \"employees\"(\"emp_number\", \"emp_suffix\", \"dept_code\", \"dept_region\", \"emp_name\", \"salary\", \"hire_date\")\nVALUES ("), Fragment.encode(DuckDbTypes.integer, unsaved.empNumber), Fragment.of(", "), Fragment.encode(DuckDbTypes.varchar, unsaved.empSuffix), Fragment.of(", "), Fragment.encode(DuckDbTypes.varchar, unsaved.deptCode), Fragment.of(", "), Fragment.encode(DuckDbTypes.varchar, unsaved.deptRegion), Fragment.of(", "), Fragment.encode(DuckDbTypes.varchar, unsaved.empName), Fragment.of(", "), Fragment.encode(DuckDbTypes.numeric.opt(), unsaved.salary), Fragment.of(", "), Fragment.encode(DuckDbTypes.date, unsaved.hireDate), Fragment.of(")\nON CONFLICT (\"emp_number\", \"emp_suffix\")\nDO UPDATE SET\n  \"dept_code\" = EXCLUDED.\"dept_code\",\n\"dept_region\" = EXCLUDED.\"dept_region\",\n\"emp_name\" = EXCLUDED.\"emp_name\",\n\"salary\" = EXCLUDED.\"salary\",\n\"hire_date\" = EXCLUDED.\"hire_date\"\nRETURNING \"emp_number\", \"emp_suffix\", \"dept_code\", \"dept_region\", \"emp_name\", \"salary\", \"hire_date\""))
+    .updateReturning(EmployeesRow.rowCodec.exactlyOne())
+    .run(c)
 
   override fun upsertBatch(
     unsaved: Iterator<EmployeesRow>,
     c: Connection
-  ): List<EmployeesRow> = Fragment.interpolate(Fragment.lit("INSERT INTO \"employees\"(\"emp_number\", \"emp_suffix\", \"dept_code\", \"dept_region\", \"emp_name\", \"salary\", \"hire_date\")\nVALUES (?, ?, ?, ?, ?, ?, ?)\nON CONFLICT (\"emp_number\", \"emp_suffix\")\nDO UPDATE SET\n  \"dept_code\" = EXCLUDED.\"dept_code\",\n\"dept_region\" = EXCLUDED.\"dept_region\",\n\"emp_name\" = EXCLUDED.\"emp_name\",\n\"salary\" = EXCLUDED.\"salary\",\n\"hire_date\" = EXCLUDED.\"hire_date\"\nRETURNING \"emp_number\", \"emp_suffix\", \"dept_code\", \"dept_region\", \"emp_name\", \"salary\", \"hire_date\""))
-    .updateReturningEach(EmployeesRow._rowParser, unsaved)
-  .runUnchecked(c)
+  ): List<EmployeesRow> = Fragment.concat(Fragment.of("INSERT INTO \"employees\"(\"emp_number\", \"emp_suffix\", \"dept_code\", \"dept_region\", \"emp_name\", \"salary\", \"hire_date\")\nVALUES (?, ?, ?, ?, ?, ?, ?)\nON CONFLICT (\"emp_number\", \"emp_suffix\")\nDO UPDATE SET\n  \"dept_code\" = EXCLUDED.\"dept_code\",\n\"dept_region\" = EXCLUDED.\"dept_region\",\n\"emp_name\" = EXCLUDED.\"emp_name\",\n\"salary\" = EXCLUDED.\"salary\",\n\"hire_date\" = EXCLUDED.\"hire_date\"\nRETURNING \"emp_number\", \"emp_suffix\", \"dept_code\", \"dept_region\", \"emp_name\", \"salary\", \"hire_date\""))
+    .updateReturningEach(EmployeesRow.rowCodec, unsaved)
+  .run(c)
 }

@@ -21,7 +21,7 @@ object PrecisionTypesNullId {
 
   given arrayPut: Put[Array[PrecisionTypesNullId]] = adventureworks.IntegerArrayMeta.put.contramap(_.map(_.value))
 
-  given bijection: Bijection[PrecisionTypesNullId, Int] = Bijection.apply[PrecisionTypesNullId, Int](_.value)(PrecisionTypesNullId.apply)
+  given bijection: Bijection[PrecisionTypesNullId, Int] = Bijection[PrecisionTypesNullId, Int](_.value)(PrecisionTypesNullId.apply)
 
   given decoder: Decoder[PrecisionTypesNullId] = Decoder.decodeInt.map(PrecisionTypesNullId.apply)
 

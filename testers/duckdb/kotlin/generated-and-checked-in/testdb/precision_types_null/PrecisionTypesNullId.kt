@@ -6,11 +6,10 @@
 package testdb.precision_types_null
 
 import com.fasterxml.jackson.annotation.JsonValue
-import dev.typr.foundations.DuckDbType
-import dev.typr.foundations.DuckDbTypes
-import dev.typr.foundations.internal.arrayMap
-import dev.typr.foundations.kotlin.Bijection
-import dev.typr.foundations.kotlin.KotlinDbTypes
+import dev.typr.foundationskt.Bijection
+import dev.typr.foundationskt.DuckDbType
+import dev.typr.foundationskt.DuckDbTypes
+import kotlin.collections.List
 
 /** Type for the primary key of table `precision_types_null` */
 data class PrecisionTypesNullId(@field:JsonValue val value: Int) {
@@ -23,9 +22,9 @@ data class PrecisionTypesNullId(@field:JsonValue val value: Int) {
       Bijection.of(PrecisionTypesNullId::value, ::PrecisionTypesNullId)
 
     val duckDbType: DuckDbType<PrecisionTypesNullId> =
-      KotlinDbTypes.DuckDbTypes.integer.bimap(::PrecisionTypesNullId, PrecisionTypesNullId::value)
+      DuckDbTypes.integer.to(Bijection.of(::PrecisionTypesNullId, PrecisionTypesNullId::value))
 
-    val duckDbTypeArray: DuckDbType<Array<PrecisionTypesNullId>> =
-      DuckDbTypes.integerArray.bimap({ xs -> arrayMap.map(xs, ::PrecisionTypesNullId, PrecisionTypesNullId::class.java) }, { xs -> arrayMap.map(xs, PrecisionTypesNullId::value, Int::class.javaObjectType) })
+    val duckDbTypeArray: DuckDbType<List<PrecisionTypesNullId>> =
+      duckDbType.list()
   }
 }

@@ -5,7 +5,7 @@
  */
 package adventureworks.update_person
 
-import java.sql.Connection
+import dev.typr.foundations.Connection
 import java.time.LocalDateTime
 import java.util.Optional
 

@@ -5,21 +5,18 @@
  */
 package adventureworks.public
 
-import dev.typr.foundations.PgRead
-import dev.typr.foundations.PgStruct
-import dev.typr.foundations.PgType
-import dev.typr.foundations.PgTypes
 import dev.typr.foundations.data.Json
 import dev.typr.foundations.data.Jsonb
 import dev.typr.foundations.data.Xml
-import dev.typr.foundations.scala.ScalaDbTypes
+import dev.typr.foundationssc.PgType
+import dev.typr.foundationssc.PgTypes
+import dev.typr.foundationssc.RowCodec
 import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 import java.util.UUID
 import org.postgresql.util.PGInterval
-import scala.jdk.OptionConverters.RichOption
 
 /** PostgreSQL composite type: public.all_types_composite */
 case class AllTypesComposite(
@@ -46,9 +43,7 @@ case class AllTypesComposite(
 )
 
 object AllTypesComposite {
-  given pgStruct: PgStruct[AllTypesComposite] = PgStruct.builder[AllTypesComposite]("public.all_types_composite").optField("colBoolean", ScalaDbTypes.PgTypes.bool, (v: AllTypesComposite) => v.colBoolean.asJava).optField("colSmallint", ScalaDbTypes.PgTypes.int2, (v: AllTypesComposite) => v.colSmallint.asJava).optField("colInteger", ScalaDbTypes.PgTypes.int4, (v: AllTypesComposite) => v.colInteger.asJava).optField("colBigint", ScalaDbTypes.PgTypes.int8, (v: AllTypesComposite) => v.colBigint.asJava).optField("colReal", ScalaDbTypes.PgTypes.float4, (v: AllTypesComposite) => v.colReal.asJava).optField("colDouble", ScalaDbTypes.PgTypes.float8, (v: AllTypesComposite) => v.colDouble.asJava).optField("colNumeric", ScalaDbTypes.PgTypes.numeric, (v: AllTypesComposite) => v.colNumeric.asJava).optField("colText", PgTypes.text, (v: AllTypesComposite) => v.colText.asJava).optField("colVarchar", PgTypes.text, (v: AllTypesComposite) => v.colVarchar.asJava).optField("colChar", PgTypes.bpchar, (v: AllTypesComposite) => v.colChar.asJava).optField("colBytea", PgTypes.bytea, (v: AllTypesComposite) => v.colBytea.asJava).optField("colDate", PgTypes.date, (v: AllTypesComposite) => v.colDate.asJava).optField("colTime", PgTypes.time, (v: AllTypesComposite) => v.colTime.asJava).optField("colTimestamp", PgTypes.timestamp, (v: AllTypesComposite) => v.colTimestamp.asJava).optField("colTimestamptz", PgTypes.timestamptz, (v: AllTypesComposite) => v.colTimestamptz.asJava).optField("colInterval", PgTypes.interval, (v: AllTypesComposite) => v.colInterval.asJava).optField("colUuid", PgTypes.uuid, (v: AllTypesComposite) => v.colUuid.asJava).optField("colJson", PgTypes.json, (v: AllTypesComposite) => v.colJson.asJava).optField("colJsonb", PgTypes.jsonb, (v: AllTypesComposite) => v.colJsonb.asJava).optField("colXml", PgTypes.xml, (v: AllTypesComposite) => v.colXml.asJava).build(arr => AllTypesComposite(colBoolean = Option(arr(0).asInstanceOf[Boolean]), colSmallint = Option(arr(1).asInstanceOf[Short]), colInteger = Option(arr(2).asInstanceOf[Int]), colBigint = Option(arr(3).asInstanceOf[Long]), colReal = Option(arr(4).asInstanceOf[Float]), colDouble = Option(arr(5).asInstanceOf[Double]), colNumeric = Option(arr(6).asInstanceOf[BigDecimal]), colText = Option(arr(7).asInstanceOf[String]), colVarchar = Option(arr(8).asInstanceOf[String]), colChar = Option(arr(9).asInstanceOf[/* bpchar */ String]), colBytea = Option(arr(10).asInstanceOf[Array[Byte]]), colDate = Option(arr(11).asInstanceOf[LocalDate]), colTime = Option(arr(12).asInstanceOf[LocalTime]), colTimestamp = Option(arr(13).asInstanceOf[LocalDateTime]), colTimestamptz = Option(arr(14).asInstanceOf[Instant]), colInterval = Option(arr(15).asInstanceOf[PGInterval]), colUuid = Option(arr(16).asInstanceOf[UUID]), colJson = Option(arr(17).asInstanceOf[Json]), colJsonb = Option(arr(18).asInstanceOf[Jsonb]), colXml = Option(arr(19).asInstanceOf[Xml])))
+  given pgType: PgType[AllTypesComposite] = PgTypes.compositeOf("public.all_types_composite", RowCodec.namedBuilder[AllTypesComposite]().field("colBoolean", PgTypes.bool.opt)((v: AllTypesComposite) => v.colBoolean).field("colSmallint", PgTypes.int2.opt)((v: AllTypesComposite) => v.colSmallint).field("colInteger", PgTypes.int4.opt)((v: AllTypesComposite) => v.colInteger).field("colBigint", PgTypes.int8.opt)((v: AllTypesComposite) => v.colBigint).field("colReal", PgTypes.float4.opt)((v: AllTypesComposite) => v.colReal).field("colDouble", PgTypes.float8.opt)((v: AllTypesComposite) => v.colDouble).field("colNumeric", PgTypes.numeric.opt)((v: AllTypesComposite) => v.colNumeric).field("colText", PgTypes.text.opt)((v: AllTypesComposite) => v.colText).field("colVarchar", PgTypes.text.opt)((v: AllTypesComposite) => v.colVarchar).field("colChar", PgTypes.bpchar.opt)((v: AllTypesComposite) => v.colChar).field("colBytea", PgTypes.bytea.opt)((v: AllTypesComposite) => v.colBytea).field("colDate", PgTypes.date.opt)((v: AllTypesComposite) => v.colDate).field("colTime", PgTypes.time.opt)((v: AllTypesComposite) => v.colTime).field("colTimestamp", PgTypes.timestamp.opt)((v: AllTypesComposite) => v.colTimestamp).field("colTimestamptz", PgTypes.timestamptz.opt)((v: AllTypesComposite) => v.colTimestamptz).field("colInterval", PgTypes.interval.opt)((v: AllTypesComposite) => v.colInterval).field("colUuid", PgTypes.uuid.opt)((v: AllTypesComposite) => v.colUuid).field("colJson", PgTypes.json.opt)((v: AllTypesComposite) => v.colJson).field("colJsonb", PgTypes.jsonb.opt)((v: AllTypesComposite) => v.colJsonb).field("colXml", PgTypes.xml.opt)((v: AllTypesComposite) => v.colXml).build((t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15, t16, t17, t18, t19) => AllTypesComposite(colBoolean = t0, colSmallint = t1, colInteger = t2, colBigint = t3, colReal = t4, colDouble = t5, colNumeric = t6, colText = t7, colVarchar = t8, colChar = t9, colBytea = t10, colDate = t11, colTime = t12, colTimestamp = t13, colTimestamptz = t14, colInterval = t15, colUuid = t16, colJson = t17, colJsonb = t18, colXml = t19)))
 
-  given pgType: PgType[AllTypesComposite] = pgStruct.asType()
-
-  given pgTypeArray: PgType[Array[AllTypesComposite]] = pgType.array(PgRead.readCompositeArray(pgType.pgCompositeText(), n => new Array[AllTypesComposite](n)), n => new Array[AllTypesComposite](n))
+  given pgTypeArray: PgType[scala.collection.immutable.List[AllTypesComposite]] = pgType.array
 }

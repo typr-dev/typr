@@ -5,59 +5,58 @@
  */
 package adventureworks.public.users
 
-import dev.typr.foundations.PgTypes
+import dev.typr.dslsc.DeleteBuilder
+import dev.typr.dslsc.Dialect
+import dev.typr.dslsc.SelectBuilder
+import dev.typr.dslsc.UpdateBuilder
 import dev.typr.foundations.data.Unknown
-import dev.typr.foundations.scala.DbTypeOps
-import dev.typr.foundations.scala.DeleteBuilder
-import dev.typr.foundations.scala.Dialect
-import dev.typr.foundations.scala.Fragment
-import dev.typr.foundations.scala.ScalaIteratorOps
-import dev.typr.foundations.scala.SelectBuilder
-import dev.typr.foundations.scala.UpdateBuilder
-import dev.typr.foundations.streamingInsert
-import java.sql.Connection
+import dev.typr.foundationssc.Connection
+import dev.typr.foundationssc.ConnectionRead
+import dev.typr.foundationssc.Fragment
+import dev.typr.foundationssc.PgTypes
+import dev.typr.foundationssc.StreamingInsert
 import scala.collection.mutable.ListBuffer
-import dev.typr.foundations.scala.Fragment.sql
+import dev.typr.foundationssc.Fragment.sql
 
 class UsersRepoImpl extends UsersRepo {
   override def delete: DeleteBuilder[UsersFields, UsersRow] = DeleteBuilder.of(""""public"."users"""", UsersFields.structure, Dialect.POSTGRESQL)
 
-  override def deleteById(userId: UsersId)(using c: Connection): Boolean = sql"""delete from "public"."users" where "user_id" = ${Fragment.encode(UsersId.pgType, userId)}""".update().runUnchecked(c) > 0
+  override def deleteById(userId: UsersId)(using c: Connection): Boolean = sql"""delete from "public"."users" where "user_id" = ${Fragment.encode(UsersId.pgType, userId)}""".update().run(using c) > 0
 
-  override def deleteByIds(userIds: Array[UsersId])(using c: Connection): Int = {
+  override def deleteByIds(userIds: List[UsersId])(using c: Connection): Int = {
     sql"""delete
     from "public"."users"
-    where "user_id" = ANY(${Fragment.encode(UsersId.pgTypeArray, userIds)})"""
+    where "user_id" = ANY(${Fragment.encode(UsersId.pgType.array, userIds)})"""
       .update()
-      .runUnchecked(c)
+      .run(using c)
   }
 
   override def insert(unsaved: UsersRow)(using c: Connection): UsersRow = {
   sql"""insert into "public"."users"("user_id", "name", "last_name", "email", "password", "created_at", "verified_on")
-    values (${Fragment.encode(UsersId.pgType, unsaved.userId)}::uuid, ${Fragment.encode(PgTypes.text, unsaved.name)}, ${Fragment.encode(PgTypes.text.nullable, unsaved.lastName)}, ${Fragment.encode(PgTypes.unknown, unsaved.email)}::citext, ${Fragment.encode(PgTypes.text, unsaved.password)}, ${Fragment.encode(PgTypes.timestamptz, unsaved.createdAt)}::timestamptz, ${Fragment.encode(PgTypes.timestamptz.nullable, unsaved.verifiedOn)}::timestamptz)
+    values (${Fragment.encode(UsersId.pgType, unsaved.userId)}::uuid, ${Fragment.encode(PgTypes.text, unsaved.name)}, ${Fragment.encode(PgTypes.text.opt, unsaved.lastName)}, ${Fragment.encode(PgTypes.unknown, unsaved.email)}::citext, ${Fragment.encode(PgTypes.text, unsaved.password)}, ${Fragment.encode(PgTypes.timestamptz, unsaved.createdAt)}::timestamptz, ${Fragment.encode(PgTypes.timestamptz.opt, unsaved.verifiedOn)}::timestamptz)
     RETURNING "user_id", "name", "last_name", "email"::text, "password", "created_at", "verified_on"
     """
-    .updateReturning(UsersRow.`_rowParser`.exactlyOne()).runUnchecked(c)
+    .updateReturning(UsersRow.rowCodec.exactlyOne()).run(using c)
   }
 
   override def insert(unsaved: UsersRowUnsaved)(using c: Connection): UsersRow = {
     val columns: ListBuffer[Fragment] = ListBuffer()
     val values: ListBuffer[Fragment] = ListBuffer()
-    columns.addOne(Fragment.lit(""""user_id"""")): @scala.annotation.nowarn
+    columns.addOne(Fragment.of(""""user_id"""")): @scala.annotation.nowarn
     values.addOne(sql"${Fragment.encode(UsersId.pgType, unsaved.userId)}::uuid"): @scala.annotation.nowarn
-    columns.addOne(Fragment.lit(""""name"""")): @scala.annotation.nowarn
+    columns.addOne(Fragment.of(""""name"""")): @scala.annotation.nowarn
     values.addOne(sql"${Fragment.encode(PgTypes.text, unsaved.name)}"): @scala.annotation.nowarn
-    columns.addOne(Fragment.lit(""""last_name"""")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(PgTypes.text.nullable, unsaved.lastName)}"): @scala.annotation.nowarn
-    columns.addOne(Fragment.lit(""""email"""")): @scala.annotation.nowarn
+    columns.addOne(Fragment.of(""""last_name"""")): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(PgTypes.text.opt, unsaved.lastName)}"): @scala.annotation.nowarn
+    columns.addOne(Fragment.of(""""email"""")): @scala.annotation.nowarn
     values.addOne(sql"${Fragment.encode(PgTypes.unknown, unsaved.email)}::citext"): @scala.annotation.nowarn
-    columns.addOne(Fragment.lit(""""password"""")): @scala.annotation.nowarn
+    columns.addOne(Fragment.of(""""password"""")): @scala.annotation.nowarn
     values.addOne(sql"${Fragment.encode(PgTypes.text, unsaved.password)}"): @scala.annotation.nowarn
-    columns.addOne(Fragment.lit(""""verified_on"""")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(PgTypes.timestamptz.nullable, unsaved.verifiedOn)}::timestamptz"): @scala.annotation.nowarn
+    columns.addOne(Fragment.of(""""verified_on"""")): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(PgTypes.timestamptz.opt, unsaved.verifiedOn)}::timestamptz"): @scala.annotation.nowarn
     unsaved.createdAt.visit(
       {  },
-      value => { columns.addOne(Fragment.lit(""""created_at"""")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(PgTypes.timestamptz, value)}::timestamptz"): @scala.annotation.nowarn }
+      value => { columns.addOne(Fragment.of(""""created_at"""")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(PgTypes.timestamptz, value)}::timestamptz"): @scala.annotation.nowarn }
     );
     val q: Fragment = {
       sql"""insert into "public"."users"(${Fragment.comma(columns)})
@@ -65,70 +64,70 @@ class UsersRepoImpl extends UsersRepo {
       RETURNING "user_id", "name", "last_name", "email"::text, "password", "created_at", "verified_on"
       """
     }
-    return q.updateReturning(UsersRow.`_rowParser`.exactlyOne()).runUnchecked(c)
+    return q.updateReturning(UsersRow.rowCodec.exactlyOne()).run(using c)
   }
 
   override def insertStreaming(
     unsaved: Iterator[UsersRow],
     batchSize: Int = 10000
-  )(using c: Connection): Long = streamingInsert.insertUnchecked(s"""COPY "public"."users"("user_id", "name", "last_name", "email", "password", "created_at", "verified_on") FROM STDIN""", batchSize, unsaved.toJavaIterator, c, UsersRow.pgText)
+  )(using c: Connection): Long = StreamingInsert.of(s"""COPY "public"."users"("user_id", "name", "last_name", "email", "password", "created_at", "verified_on") FROM STDIN""", batchSize, unsaved, UsersRow.pgText).run(using c)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
   override def insertUnsavedStreaming(
     unsaved: Iterator[UsersRowUnsaved],
     batchSize: Int = 10000
-  )(using c: Connection): Long = streamingInsert.insertUnchecked(s"""COPY "public"."users"("user_id", "name", "last_name", "email", "password", "verified_on", "created_at") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved.toJavaIterator, c, UsersRowUnsaved.pgText)
+  )(using c: Connection): Long = StreamingInsert.of(s"""COPY "public"."users"("user_id", "name", "last_name", "email", "password", "verified_on", "created_at") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved, UsersRowUnsaved.pgText).run(using c)
 
-  override def select: SelectBuilder[UsersFields, UsersRow] = SelectBuilder.of(""""public"."users"""", UsersFields.structure, UsersRow.`_rowParser`, Dialect.POSTGRESQL)
+  override def select: SelectBuilder[UsersFields, UsersRow] = SelectBuilder.of(""""public"."users"""", UsersFields.structure, UsersRow.rowCodec, Dialect.POSTGRESQL)
 
-  override def selectAll(using c: Connection): List[UsersRow] = {
+  override def selectAll(using c: ConnectionRead): List[UsersRow] = {
     sql"""select "user_id", "name", "last_name", "email"::text, "password", "created_at", "verified_on"
     from "public"."users"
-    """.query(UsersRow.`_rowParser`.all()).runUnchecked(c)
+    """.query(UsersRow.rowCodec.all()).run(using c)
   }
 
-  override def selectById(userId: UsersId)(using c: Connection): Option[UsersRow] = {
+  override def selectById(userId: UsersId)(using c: ConnectionRead): Option[UsersRow] = {
     sql"""select "user_id", "name", "last_name", "email"::text, "password", "created_at", "verified_on"
     from "public"."users"
-    where "user_id" = ${Fragment.encode(UsersId.pgType, userId)}""".query(UsersRow.`_rowParser`.first()).runUnchecked(c)
+    where "user_id" = ${Fragment.encode(UsersId.pgType, userId)}""".query(UsersRow.rowCodec.first()).run(using c)
   }
 
-  override def selectByIds(userIds: Array[UsersId])(using c: Connection): List[UsersRow] = {
+  override def selectByIds(userIds: List[UsersId])(using c: ConnectionRead): List[UsersRow] = {
     sql"""select "user_id", "name", "last_name", "email"::text, "password", "created_at", "verified_on"
     from "public"."users"
-    where "user_id" = ANY(${Fragment.encode(UsersId.pgTypeArray, userIds)})""".query(UsersRow.`_rowParser`.all()).runUnchecked(c)
+    where "user_id" = ANY(${Fragment.encode(UsersId.pgType.array, userIds)})""".query(UsersRow.rowCodec.all()).run(using c)
   }
 
-  override def selectByIdsTracked(userIds: Array[UsersId])(using c: Connection): Map[UsersId, UsersRow] = {
+  override def selectByIdsTracked(userIds: List[UsersId])(using c: ConnectionRead): Map[UsersId, UsersRow] = {
     val ret: scala.collection.mutable.Map[UsersId, UsersRow] = scala.collection.mutable.Map.empty[UsersId, UsersRow]
     selectByIds(userIds)(using c).foreach(row => ret.put(row.userId, row): @scala.annotation.nowarn)
     return ret.toMap
   }
 
-  override def selectByUniqueEmail(email: Unknown)(using c: Connection): Option[UsersRow] = {
+  override def selectByUniqueEmail(email: Unknown)(using c: ConnectionRead): Option[UsersRow] = {
     sql"""select "user_id", "name", "last_name", "email"::text, "password", "created_at", "verified_on"
     from "public"."users"
     where "email" = ${Fragment.encode(PgTypes.unknown, email)}
-    """.query(UsersRow.`_rowParser`.first()).runUnchecked(c)
+    """.query(UsersRow.rowCodec.first()).run(using c)
   }
 
-  override def update: UpdateBuilder[UsersFields, UsersRow] = UpdateBuilder.of(""""public"."users"""", UsersFields.structure, UsersRow.`_rowParser`, Dialect.POSTGRESQL)
+  override def update: UpdateBuilder[UsersFields, UsersRow] = UpdateBuilder.of(""""public"."users"""", UsersFields.structure, UsersRow.rowCodec, Dialect.POSTGRESQL)
 
   override def update(row: UsersRow)(using c: Connection): Boolean = {
     val userId: UsersId = row.userId
     return sql"""update "public"."users"
     set "name" = ${Fragment.encode(PgTypes.text, row.name)},
-    "last_name" = ${Fragment.encode(PgTypes.text.nullable, row.lastName)},
+    "last_name" = ${Fragment.encode(PgTypes.text.opt, row.lastName)},
     "email" = ${Fragment.encode(PgTypes.unknown, row.email)}::citext,
     "password" = ${Fragment.encode(PgTypes.text, row.password)},
     "created_at" = ${Fragment.encode(PgTypes.timestamptz, row.createdAt)}::timestamptz,
-    "verified_on" = ${Fragment.encode(PgTypes.timestamptz.nullable, row.verifiedOn)}::timestamptz
-    where "user_id" = ${Fragment.encode(UsersId.pgType, userId)}""".update().runUnchecked(c) > 0
+    "verified_on" = ${Fragment.encode(PgTypes.timestamptz.opt, row.verifiedOn)}::timestamptz
+    where "user_id" = ${Fragment.encode(UsersId.pgType, userId)}""".update().run(using c) > 0
   }
 
   override def upsert(unsaved: UsersRow)(using c: Connection): UsersRow = {
   sql"""insert into "public"."users"("user_id", "name", "last_name", "email", "password", "created_at", "verified_on")
-    values (${Fragment.encode(UsersId.pgType, unsaved.userId)}::uuid, ${Fragment.encode(PgTypes.text, unsaved.name)}, ${Fragment.encode(PgTypes.text.nullable, unsaved.lastName)}, ${Fragment.encode(PgTypes.unknown, unsaved.email)}::citext, ${Fragment.encode(PgTypes.text, unsaved.password)}, ${Fragment.encode(PgTypes.timestamptz, unsaved.createdAt)}::timestamptz, ${Fragment.encode(PgTypes.timestamptz.nullable, unsaved.verifiedOn)}::timestamptz)
+    values (${Fragment.encode(UsersId.pgType, unsaved.userId)}::uuid, ${Fragment.encode(PgTypes.text, unsaved.name)}, ${Fragment.encode(PgTypes.text.opt, unsaved.lastName)}, ${Fragment.encode(PgTypes.unknown, unsaved.email)}::citext, ${Fragment.encode(PgTypes.text, unsaved.password)}, ${Fragment.encode(PgTypes.timestamptz, unsaved.createdAt)}::timestamptz, ${Fragment.encode(PgTypes.timestamptz.opt, unsaved.verifiedOn)}::timestamptz)
     on conflict ("user_id")
     do update set
       "name" = EXCLUDED."name",
@@ -138,8 +137,8 @@ class UsersRepoImpl extends UsersRepo {
     "created_at" = EXCLUDED."created_at",
     "verified_on" = EXCLUDED."verified_on"
     returning "user_id", "name", "last_name", "email"::text, "password", "created_at", "verified_on""""
-    .updateReturning(UsersRow.`_rowParser`.exactlyOne())
-    .runUnchecked(c)
+    .updateReturning(UsersRow.rowCodec.exactlyOne())
+    .run(using c)
   }
 
   override def upsertBatch(unsaved: Iterator[UsersRow])(using c: Connection): List[UsersRow] = {
@@ -154,8 +153,8 @@ class UsersRepoImpl extends UsersRepo {
     "created_at" = EXCLUDED."created_at",
     "verified_on" = EXCLUDED."verified_on"
     returning "user_id", "name", "last_name", "email"::text, "password", "created_at", "verified_on""""
-      .updateManyReturning(UsersRow.`_rowParser`, unsaved)
-    .runUnchecked(c)
+      .updateManyReturning(UsersRow.rowCodec, unsaved)
+    .run(using c)
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
@@ -163,8 +162,8 @@ class UsersRepoImpl extends UsersRepo {
     unsaved: Iterator[UsersRow],
     batchSize: Int = 10000
   )(using c: Connection): Int = {
-    sql"""create temporary table users_TEMP (like "public"."users") on commit drop""".update().runUnchecked(c): @scala.annotation.nowarn
-    streamingInsert.insertUnchecked(s"""copy users_TEMP("user_id", "name", "last_name", "email", "password", "created_at", "verified_on") from stdin""", batchSize, unsaved.toJavaIterator, c, UsersRow.pgText): @scala.annotation.nowarn
+    sql"""create temporary table users_TEMP (like "public"."users") on commit drop""".update().run(using c): @scala.annotation.nowarn
+    StreamingInsert.of(s"""copy users_TEMP("user_id", "name", "last_name", "email", "password", "created_at", "verified_on") from stdin""", batchSize, unsaved, UsersRow.pgText).run(using c): @scala.annotation.nowarn
     return sql"""insert into "public"."users"("user_id", "name", "last_name", "email", "password", "created_at", "verified_on")
     select * from users_TEMP
     on conflict ("user_id")
@@ -176,6 +175,6 @@ class UsersRepoImpl extends UsersRepo {
     "created_at" = EXCLUDED."created_at",
     "verified_on" = EXCLUDED."verified_on"
     ;
-    drop table users_TEMP;""".update().runUnchecked(c)
+    drop table users_TEMP;""".update().run(using c)
   }
 }

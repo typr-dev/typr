@@ -5,12 +5,10 @@
  */
 package testdb.orders_with_customer_details
 
-import dev.typr.foundations.SqlServerTypes
-import dev.typr.foundations.kotlin.Fragment
-import dev.typr.foundations.kotlin.KotlinDbTypes
-import dev.typr.foundations.kotlin.nullable
+import dev.typr.foundationskt.ConnectionRead
+import dev.typr.foundationskt.Fragment
+import dev.typr.foundationskt.SqlServerTypes
 import java.math.BigDecimal
-import java.sql.Connection
 import java.time.LocalDateTime
 import kotlin.collections.List
 
@@ -18,6 +16,6 @@ class OrdersWithCustomerDetailsSqlRepoImpl() : OrdersWithCustomerDetailsSqlRepo 
   override fun apply(
     minAmount: BigDecimal?,
     startDate: LocalDateTime?,
-    c: Connection
-  ): List<OrdersWithCustomerDetailsSqlRow> = Fragment.interpolate(Fragment.lit("-- Get orders with full customer details\nSELECT\n    o.order_id,\n    o.order_date,\n    o.total_amount,\n    c.customer_id,\n    c.name as customer_name,\n    c.email as customer_email\nFROM orders o\nINNER JOIN customers c ON o.customer_id = c.customer_id\nWHERE ("), Fragment.encode(KotlinDbTypes.SqlServerTypes.numeric.nullable(), minAmount), Fragment.lit(" IS NULL OR o.total_amount >= "), Fragment.encode(KotlinDbTypes.SqlServerTypes.numeric.nullable(), minAmount), Fragment.lit(")\n  AND ("), Fragment.encode(SqlServerTypes.datetime2.nullable(), startDate), Fragment.lit(" IS NULL OR o.order_date >= "), Fragment.encode(SqlServerTypes.datetime2.nullable(), startDate), Fragment.lit(")\nORDER BY o.order_date DESC\n")).query(OrdersWithCustomerDetailsSqlRow._rowParser.all()).runUnchecked(c)
+    c: ConnectionRead
+  ): List<OrdersWithCustomerDetailsSqlRow> = Fragment.concat(Fragment.of("-- Get orders with full customer details\nSELECT\n    o.order_id,\n    o.order_date,\n    o.total_amount,\n    c.customer_id,\n    c.name as customer_name,\n    c.email as customer_email\nFROM orders o\nINNER JOIN customers c ON o.customer_id = c.customer_id\nWHERE ("), Fragment.encode(SqlServerTypes.numeric.opt(), minAmount), Fragment.of(" IS NULL OR o.total_amount >= "), Fragment.encode(SqlServerTypes.numeric.opt(), minAmount), Fragment.of(")\n  AND ("), Fragment.encode(SqlServerTypes.datetime2.opt(), startDate), Fragment.of(" IS NULL OR o.order_date >= "), Fragment.encode(SqlServerTypes.datetime2.opt(), startDate), Fragment.of(")\nORDER BY o.order_date DESC\n")).query(OrdersWithCustomerDetailsSqlRow.rowCodec.all()).run(c)
 }

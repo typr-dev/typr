@@ -6,11 +6,10 @@
 package testdb.test_connection
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import dev.typr.foundations.SqlServerTypes
+import dev.typr.dslsc.RowCodecs
 import dev.typr.foundations.Tuple.Tuple3
-import dev.typr.foundations.scala.DbTypeOps
-import dev.typr.foundations.scala.RowParser
-import dev.typr.foundations.scala.RowParsers
+import dev.typr.foundationssc.RowCodec
+import dev.typr.foundationssc.SqlServerTypes
 import java.time.LocalDateTime
 import testdb.customtypes.Defaulted
 
@@ -34,5 +33,5 @@ case class TestConnectionRow(
 }
 
 object TestConnectionRow {
-  val `_rowParser`: RowParser[TestConnectionRow] = RowParsers.of(TestConnectionId.sqlServerType, SqlServerTypes.nvarchar, SqlServerTypes.datetime2.nullable)(TestConnectionRow.apply)(row => Array[Any](row.id, row.message, row.createdAt))
+  val rowCodec: RowCodec[TestConnectionRow] = RowCodecs.of(TestConnectionId.sqlServerType, SqlServerTypes.nvarchar, SqlServerTypes.datetime2.opt)(TestConnectionRow.apply)(row => Array[Any](row.id, row.message, row.createdAt))
 }

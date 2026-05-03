@@ -5,16 +5,16 @@
  */
 package testdb.db2test_identity_always
 
-import dev.typr.foundations.Db2Types
-import dev.typr.foundations.RowParser
-import dev.typr.foundations.dsl.FieldsBase
-import dev.typr.foundations.dsl.Path
-import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.scala.RelationStructure
-import dev.typr.foundations.scala.SqlExpr
-import dev.typr.foundations.scala.SqlExpr.Field
-import dev.typr.foundations.scala.SqlExpr.IdField
-import dev.typr.foundations.scala.TupleExpr2
+import dev.typr.dsl.FieldsBase
+import dev.typr.dsl.Path
+import dev.typr.dsl.SqlExpr.FieldLike
+import dev.typr.dslsc.RelationStructure
+import dev.typr.dslsc.SqlExpr
+import dev.typr.dslsc.SqlExpr.Field
+import dev.typr.dslsc.SqlExpr.IdField
+import dev.typr.dslsc.TupleExpr2
+import dev.typr.foundations.RowCodec
+import dev.typr.foundationssc.Db2Types
 
 class Db2testIdentityAlwaysFields(val `_path`: java.util.List[Path]) extends TupleExpr2[Db2testIdentityAlwaysId, String] with RelationStructure[Db2testIdentityAlwaysFields, Db2testIdentityAlwaysRow]  with FieldsBase[Db2testIdentityAlwaysRow] {
   def id: IdField[Db2testIdentityAlwaysId, Db2testIdentityAlwaysRow] = {
@@ -25,7 +25,7 @@ class Db2testIdentityAlwaysFields(val `_path`: java.util.List[Path]) extends Tup
       None,
       None,
       (row, value) => row.copy(id = value),
-      Db2testIdentityAlwaysId.db2Type
+      Db2testIdentityAlwaysId.db2Type.underlying
     )
   }
 
@@ -37,13 +37,13 @@ class Db2testIdentityAlwaysFields(val `_path`: java.util.List[Path]) extends Tup
       None,
       None,
       (row, value) => row.copy(name = value),
-      Db2Types.varchar
+      Db2Types.varchar.underlying
     )
   }
 
   override def columns: java.util.List[FieldLike[?, Db2testIdentityAlwaysRow]] = java.util.List.of(this.id.underlying, this.name.underlying)
 
-  override def rowParser: RowParser[Db2testIdentityAlwaysRow] = Db2testIdentityAlwaysRow._rowParser.underlying
+  override def rowCodec: RowCodec[Db2testIdentityAlwaysRow] = Db2testIdentityAlwaysRow.rowCodec.underlying
 
   override def withPaths(`_path`: java.util.List[Path]): RelationStructure[Db2testIdentityAlwaysFields, Db2testIdentityAlwaysRow] = new Db2testIdentityAlwaysFields(`_path`)
 

@@ -5,10 +5,9 @@
  */
 package adventureworks.public
 
-import dev.typr.foundations.PgRead
-import dev.typr.foundations.PgStruct
 import dev.typr.foundations.PgType
 import dev.typr.foundations.PgTypes
+import dev.typr.foundations.RowCodec
 import java.util.Optional
 
 /** PostgreSQL composite type: public.text_with_special_chars */
@@ -22,9 +21,7 @@ case class TextWithSpecialChars(
 )
 
 object TextWithSpecialChars {
-  given pgStruct: PgStruct[TextWithSpecialChars] = PgStruct.builder[TextWithSpecialChars]("public.text_with_special_chars").optField("withComma", PgTypes.text, (v: TextWithSpecialChars) => v.withComma).optField("withQuotes", PgTypes.text, (v: TextWithSpecialChars) => v.withQuotes).optField("withParens", PgTypes.text, (v: TextWithSpecialChars) => v.withParens).optField("withBackslash", PgTypes.text, (v: TextWithSpecialChars) => v.withBackslash).optField("withNewline", PgTypes.text, (v: TextWithSpecialChars) => v.withNewline).optField("withAll", PgTypes.text, (v: TextWithSpecialChars) => v.withAll).build(arr => TextWithSpecialChars(withComma = Optional.ofNullable(arr(0).asInstanceOf[String]), withQuotes = Optional.ofNullable(arr(1).asInstanceOf[String]), withParens = Optional.ofNullable(arr(2).asInstanceOf[String]), withBackslash = Optional.ofNullable(arr(3).asInstanceOf[String]), withNewline = Optional.ofNullable(arr(4).asInstanceOf[String]), withAll = Optional.ofNullable(arr(5).asInstanceOf[String])))
+  given pgType: PgType[TextWithSpecialChars] = PgTypes.compositeOf("public.text_with_special_chars", RowCodec.namedBuilder[TextWithSpecialChars]().field("withComma", PgTypes.text.opt(), (v: TextWithSpecialChars) => v.withComma).field("withQuotes", PgTypes.text.opt(), (v: TextWithSpecialChars) => v.withQuotes).field("withParens", PgTypes.text.opt(), (v: TextWithSpecialChars) => v.withParens).field("withBackslash", PgTypes.text.opt(), (v: TextWithSpecialChars) => v.withBackslash).field("withNewline", PgTypes.text.opt(), (v: TextWithSpecialChars) => v.withNewline).field("withAll", PgTypes.text.opt(), (v: TextWithSpecialChars) => v.withAll).build((t0, t1, t2, t3, t4, t5) => TextWithSpecialChars(withComma = t0, withQuotes = t1, withParens = t2, withBackslash = t3, withNewline = t4, withAll = t5)))
 
-  given pgType: PgType[TextWithSpecialChars] = pgStruct.asType()
-
-  given pgTypeArray: PgType[Array[TextWithSpecialChars]] = pgType.array(PgRead.readCompositeArray(pgType.pgCompositeText(), n => new Array[TextWithSpecialChars](n)), n => new Array[TextWithSpecialChars](n))
+  given pgTypeArray: PgType[java.util.List[TextWithSpecialChars]] = pgType.array()
 }

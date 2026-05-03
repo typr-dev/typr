@@ -6,12 +6,11 @@
 package testdb.order_history
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import dev.typr.foundations.MariaTypes
+import dev.typr.dslkt.RowCodecs
 import dev.typr.foundations.Tuple.Tuple8
 import dev.typr.foundations.data.Json
-import dev.typr.foundations.kotlin.RowParser
-import dev.typr.foundations.kotlin.RowParsers
-import dev.typr.foundations.kotlin.nullable
+import dev.typr.foundationskt.MariaTypes
+import dev.typr.foundationskt.RowCodec
 import java.time.LocalDateTime
 import testdb.customtypes.Defaulted
 import testdb.orders.OrdersId
@@ -31,17 +30,17 @@ data class OrderHistoryRow(
   /** 
     * Default: NULL
     */
-  @field:JsonProperty("previous_status") val previousStatus: String?,
+  @field:JsonProperty("previous_status") val previousStatus: kotlin.String?,
   /**  */
-  @field:JsonProperty("new_status") val newStatus: String,
+  @field:JsonProperty("new_status") val newStatus: kotlin.String,
   /** 
     * Default: NULL
     */
-  @field:JsonProperty("changed_by") val changedBy: String?,
+  @field:JsonProperty("changed_by") val changedBy: kotlin.String?,
   /** 
     * Default: NULL
     */
-  @field:JsonProperty("change_reason") val changeReason: String?,
+  @field:JsonProperty("change_reason") val changeReason: kotlin.String?,
   /** 
     * Default: NULL
     */
@@ -50,18 +49,18 @@ data class OrderHistoryRow(
     * Default: current_timestamp(6)
     */
   @field:JsonProperty("created_at") val createdAt: LocalDateTime
-) : Tuple8<OrderHistoryId, OrdersId, String?, String, String?, String?, Json?, LocalDateTime> {
+) : Tuple8<OrderHistoryId, OrdersId, kotlin.String?, kotlin.String, kotlin.String?, kotlin.String?, Json?, LocalDateTime> {
   override fun _1(): OrderHistoryId = historyId
 
   override fun _2(): OrdersId = orderId
 
-  override fun _3(): String? = previousStatus
+  override fun _3(): kotlin.String? = previousStatus
 
-  override fun _4(): String = newStatus
+  override fun _4(): kotlin.String = newStatus
 
-  override fun _5(): String? = changedBy
+  override fun _5(): kotlin.String? = changedBy
 
-  override fun _6(): String? = changeReason
+  override fun _6(): kotlin.String? = changeReason
 
   override fun _7(): Json? = metadata
 
@@ -70,14 +69,14 @@ data class OrderHistoryRow(
   fun id(): OrderHistoryId = historyId
 
   fun toUnsavedRow(
-    previousStatus: Defaulted<String?> = Defaulted.Provided(this.previousStatus),
-    changedBy: Defaulted<String?> = Defaulted.Provided(this.changedBy),
-    changeReason: Defaulted<String?> = Defaulted.Provided(this.changeReason),
+    previousStatus: Defaulted<kotlin.String?> = Defaulted.Provided(this.previousStatus),
+    changedBy: Defaulted<kotlin.String?> = Defaulted.Provided(this.changedBy),
+    changeReason: Defaulted<kotlin.String?> = Defaulted.Provided(this.changeReason),
     metadata: Defaulted<Json?> = Defaulted.Provided(this.metadata),
     createdAt: Defaulted<LocalDateTime> = Defaulted.Provided(this.createdAt)
   ): OrderHistoryRowUnsaved = OrderHistoryRowUnsaved(orderId, newStatus, previousStatus, changedBy, changeReason, metadata, createdAt)
 
   companion object {
-    val _rowParser: RowParser<OrderHistoryRow> = RowParsers.of(OrderHistoryId.mariaType, OrdersId.mariaType, MariaTypes.text.nullable(), MariaTypes.text, MariaTypes.varchar.nullable(), MariaTypes.varchar.nullable(), MariaTypes.json.nullable(), MariaTypes.datetime, { t0, t1, t2, t3, t4, t5, t6, t7 -> OrderHistoryRow(t0, t1, t2, t3, t4, t5, t6, t7) }, { row -> arrayOf<Any?>(row.historyId, row.orderId, row.previousStatus, row.newStatus, row.changedBy, row.changeReason, row.metadata, row.createdAt) })
+    val rowCodec: RowCodec<OrderHistoryRow> = RowCodecs.of(OrderHistoryId.mariaType, OrdersId.mariaType, MariaTypes.text.opt(), MariaTypes.text, MariaTypes.varchar.opt(), MariaTypes.varchar.opt(), MariaTypes.json.opt(), MariaTypes.datetime, { t0: OrderHistoryId, t1: OrdersId, t2: kotlin.String?, t3: kotlin.String, t4: kotlin.String?, t5: kotlin.String?, t6: Json?, t7: LocalDateTime -> OrderHistoryRow(t0, t1, t2, t3, t4, t5, t6, t7) }, { row: OrderHistoryRow -> arrayOf<Any?>(row.historyId, row.orderId, row.previousStatus, row.newStatus, row.changedBy, row.changeReason, row.metadata, row.createdAt) })
   }
 }

@@ -6,9 +6,9 @@
 package adventureworks.public
 
 import com.fasterxml.jackson.annotation.JsonValue
+import dev.typr.foundations.Bijection
 import dev.typr.foundations.PgType
 import dev.typr.foundations.PgTypes
-import dev.typr.foundations.dsl.Bijection
 
 /** Domain `public.Phone`
  * No constraint
@@ -16,9 +16,9 @@ import dev.typr.foundations.dsl.Bijection
 case class Phone(@JsonValue value: String)
 
 object Phone {
-  given bijection: Bijection[Phone, String] = Bijection.apply[Phone, String](_.value)(Phone.apply)
+  given bijection: Bijection[Phone, String] = Bijection.of[Phone, String](_.value, Phone.apply)
 
-  given pgType: PgType[Phone] = PgTypes.text.bimap(Phone.apply, _.value).renamed(""""public"."Phone"""")
+  given pgType: PgType[Phone] = PgTypes.text.to(Bijection.of(Phone.apply, _.value)).renamed(""""public"."Phone"""")
 
-  given pgTypeArray: PgType[Array[Phone]] = PgTypes.textArray.bimap(xs => xs.map(Phone.apply), xs => xs.map(_.value)).renamed(""""public"."Phone"[]""")
+  given pgTypeArray: PgType[java.util.List[Phone]] = pgType.array
 }

@@ -5,10 +5,11 @@
  */
 package testdb.mariatest_unique
 
-import dev.typr.foundations.scala.DeleteBuilder
-import dev.typr.foundations.scala.SelectBuilder
-import dev.typr.foundations.scala.UpdateBuilder
-import java.sql.Connection
+import dev.typr.dslsc.DeleteBuilder
+import dev.typr.dslsc.SelectBuilder
+import dev.typr.dslsc.UpdateBuilder
+import dev.typr.foundationssc.Connection
+import dev.typr.foundationssc.ConnectionRead
 import testdb.userdefined.Email
 
 trait MariatestUniqueRepo {
@@ -16,7 +17,7 @@ trait MariatestUniqueRepo {
 
   def deleteById(id: MariatestUniqueId)(using c: Connection): Boolean
 
-  def deleteByIds(ids: Array[MariatestUniqueId])(using c: Connection): Int
+  def deleteByIds(ids: List[MariatestUniqueId])(using c: Connection): Int
 
   def insert(unsaved: MariatestUniqueRow)(using c: Connection): MariatestUniqueRow
 
@@ -24,20 +25,20 @@ trait MariatestUniqueRepo {
 
   def select: SelectBuilder[MariatestUniqueFields, MariatestUniqueRow]
 
-  def selectAll(using c: Connection): List[MariatestUniqueRow]
+  def selectAll(using c: ConnectionRead): List[MariatestUniqueRow]
 
-  def selectById(id: MariatestUniqueId)(using c: Connection): Option[MariatestUniqueRow]
+  def selectById(id: MariatestUniqueId)(using c: ConnectionRead): Option[MariatestUniqueRow]
 
-  def selectByIds(ids: Array[MariatestUniqueId])(using c: Connection): List[MariatestUniqueRow]
+  def selectByIds(ids: List[MariatestUniqueId])(using c: ConnectionRead): List[MariatestUniqueRow]
 
-  def selectByIdsTracked(ids: Array[MariatestUniqueId])(using c: Connection): Map[MariatestUniqueId, MariatestUniqueRow]
+  def selectByIdsTracked(ids: List[MariatestUniqueId])(using c: ConnectionRead): Map[MariatestUniqueId, MariatestUniqueRow]
 
   def selectByUniqueCodeAndCategory(
     code: String,
     category: String
-  )(using c: Connection): Option[MariatestUniqueRow]
+  )(using c: ConnectionRead): Option[MariatestUniqueRow]
 
-  def selectByUniqueEmail(email: /* user-picked */ Email)(using c: Connection): Option[MariatestUniqueRow]
+  def selectByUniqueEmail(email: /* user-picked */ Email)(using c: ConnectionRead): Option[MariatestUniqueRow]
 
   def update: UpdateBuilder[MariatestUniqueFields, MariatestUniqueRow]
 

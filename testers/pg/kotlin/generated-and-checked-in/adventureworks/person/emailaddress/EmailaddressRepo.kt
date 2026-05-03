@@ -5,10 +5,11 @@
  */
 package adventureworks.person.emailaddress
 
-import dev.typr.foundations.kotlin.DeleteBuilder
-import dev.typr.foundations.kotlin.SelectBuilder
-import dev.typr.foundations.kotlin.UpdateBuilder
-import java.sql.Connection
+import dev.typr.dslkt.DeleteBuilder
+import dev.typr.dslkt.SelectBuilder
+import dev.typr.dslkt.UpdateBuilder
+import dev.typr.foundationskt.Connection
+import dev.typr.foundationskt.ConnectionRead
 import kotlin.collections.Iterator
 import kotlin.collections.List
 import kotlin.collections.Map
@@ -19,10 +20,10 @@ interface EmailaddressRepo {
   abstract fun deleteById(
     compositeId: EmailaddressId,
     c: Connection
-  ): Boolean
+  ): kotlin.Boolean
 
   abstract fun deleteByIds(
-    compositeIds: Array<EmailaddressId>,
+    compositeIds: List<EmailaddressId>,
     c: Connection
   ): Int
 
@@ -40,32 +41,32 @@ interface EmailaddressRepo {
     unsaved: Iterator<EmailaddressRow>,
     batchSize: Int = 10000,
     c: Connection
-  ): Long
+  ): kotlin.Long
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
   abstract fun insertUnsavedStreaming(
     unsaved: Iterator<EmailaddressRowUnsaved>,
     batchSize: Int = 10000,
     c: Connection
-  ): Long
+  ): kotlin.Long
 
   abstract fun select(): SelectBuilder<EmailaddressFields, EmailaddressRow>
 
-  abstract fun selectAll(c: Connection): List<EmailaddressRow>
+  abstract fun selectAll(c: ConnectionRead): List<EmailaddressRow>
 
   abstract fun selectById(
     compositeId: EmailaddressId,
-    c: Connection
+    c: ConnectionRead
   ): EmailaddressRow?
 
   abstract fun selectByIds(
-    compositeIds: Array<EmailaddressId>,
-    c: Connection
+    compositeIds: List<EmailaddressId>,
+    c: ConnectionRead
   ): List<EmailaddressRow>
 
   abstract fun selectByIdsTracked(
-    compositeIds: Array<EmailaddressId>,
-    c: Connection
+    compositeIds: List<EmailaddressId>,
+    c: ConnectionRead
   ): Map<EmailaddressId, EmailaddressRow>
 
   abstract fun update(): UpdateBuilder<EmailaddressFields, EmailaddressRow>
@@ -73,7 +74,7 @@ interface EmailaddressRepo {
   abstract fun update(
     row: EmailaddressRow,
     c: Connection
-  ): Boolean
+  ): kotlin.Boolean
 
   abstract fun upsert(
     unsaved: EmailaddressRow,

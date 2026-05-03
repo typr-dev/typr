@@ -6,7 +6,7 @@
 package testdb.mariatestnull
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import dev.typr.foundations.MariaTypes
+import dev.typr.dslsc.RowCodecs
 import dev.typr.foundations.Tuple.Tuple41
 import dev.typr.foundations.data.Json
 import dev.typr.foundations.data.Uint1
@@ -15,10 +15,8 @@ import dev.typr.foundations.data.Uint4
 import dev.typr.foundations.data.Uint8
 import dev.typr.foundations.data.maria.Inet4
 import dev.typr.foundations.data.maria.Inet6
-import dev.typr.foundations.scala.DbTypeOps
-import dev.typr.foundations.scala.RowParser
-import dev.typr.foundations.scala.RowParsers
-import dev.typr.foundations.scala.ScalaDbTypes
+import dev.typr.foundationssc.MariaTypes
+import dev.typr.foundationssc.RowCodec
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
@@ -367,5 +365,5 @@ case class MariatestnullRow(
 }
 
 object MariatestnullRow {
-  val `_rowParser`: RowParser[MariatestnullRow] = RowParsers.of(ScalaDbTypes.MariaTypes.tinyint.nullable, ScalaDbTypes.MariaTypes.smallint.nullable, ScalaDbTypes.MariaTypes.mediumint.nullable, ScalaDbTypes.MariaTypes.int_.nullable, ScalaDbTypes.MariaTypes.bigint.nullable, MariaTypes.tinyintUnsigned.nullable, MariaTypes.smallintUnsigned.nullable, MariaTypes.mediumintUnsigned.nullable, MariaTypes.intUnsigned.nullable, MariaTypes.bigintUnsigned.nullable, ScalaDbTypes.MariaTypes.numeric.nullable, ScalaDbTypes.MariaTypes.numeric.nullable, ScalaDbTypes.MariaTypes.float_.nullable, ScalaDbTypes.MariaTypes.double_.nullable, ScalaDbTypes.MariaTypes.bool.nullable, MariaTypes.bit.nullable, MariaTypes.bit.nullable, MariaTypes.char_.nullable, MariaTypes.varchar.nullable, MariaTypes.tinytext.nullable, MariaTypes.text.nullable, MariaTypes.mediumtext.nullable, MariaTypes.longtext.nullable, MariaTypes.binary.nullable, MariaTypes.varbinary.nullable, MariaTypes.tinyblob.nullable, MariaTypes.blob.nullable, MariaTypes.mediumblob.nullable, MariaTypes.longblob.nullable, MariaTypes.date.nullable, MariaTypes.time.nullable, MariaTypes.time.nullable, MariaTypes.datetime.nullable, MariaTypes.datetime.nullable, MariaTypes.timestamp.nullable, MariaTypes.timestamp.nullable, MariaTypes.year.nullable, XYZSet.mariaType.nullable, MariaTypes.json.nullable, MariaTypes.inet4.nullable, MariaTypes.inet6.nullable)(MariatestnullRow.apply)(row => Array[Any](row.tinyintCol, row.smallintCol, row.mediumintCol, row.intCol, row.bigintCol, row.tinyintUCol, row.smallintUCol, row.mediumintUCol, row.intUCol, row.bigintUCol, row.decimalCol, row.numericCol, row.floatCol, row.doubleCol, row.boolCol, row.bitCol, row.bit1Col, row.charCol, row.varcharCol, row.tinytextCol, row.textCol, row.mediumtextCol, row.longtextCol, row.binaryCol, row.varbinaryCol, row.tinyblobCol, row.blobCol, row.mediumblobCol, row.longblobCol, row.dateCol, row.timeCol, row.timeFspCol, row.datetimeCol, row.datetimeFspCol, row.timestampCol, row.timestampFspCol, row.yearCol, row.setCol, row.jsonCol, row.inet4Col, row.inet6Col))
+  val rowCodec: RowCodec[MariatestnullRow] = RowCodecs.of(MariaTypes.tinyint.opt, MariaTypes.smallint.opt, MariaTypes.mediumint.opt, MariaTypes.int_.opt, MariaTypes.bigint.opt, MariaTypes.tinyintUnsigned.opt, MariaTypes.smallintUnsigned.opt, MariaTypes.mediumintUnsigned.opt, MariaTypes.intUnsigned.opt, MariaTypes.bigintUnsigned.opt, MariaTypes.numeric.opt, MariaTypes.numeric.opt, MariaTypes.float_.opt, MariaTypes.double_.opt, MariaTypes.bool.opt, MariaTypes.bit.opt, MariaTypes.bit.opt, MariaTypes.char_.opt, MariaTypes.varchar.opt, MariaTypes.tinytext.opt, MariaTypes.text.opt, MariaTypes.mediumtext.opt, MariaTypes.longtext.opt, MariaTypes.binary.opt, MariaTypes.varbinary.opt, MariaTypes.tinyblob.opt, MariaTypes.blob.opt, MariaTypes.mediumblob.opt, MariaTypes.longblob.opt, MariaTypes.date.opt, MariaTypes.time.opt, MariaTypes.time.opt, MariaTypes.datetime.opt, MariaTypes.datetime.opt, MariaTypes.timestamp.opt, MariaTypes.timestamp.opt, MariaTypes.year.opt, XYZSet.mariaType.opt, MariaTypes.json.opt, MariaTypes.inet4.opt, MariaTypes.inet6.opt)(MariatestnullRow.apply)(row => Array[Any](row.tinyintCol, row.smallintCol, row.mediumintCol, row.intCol, row.bigintCol, row.tinyintUCol, row.smallintUCol, row.mediumintUCol, row.intUCol, row.bigintUCol, row.decimalCol, row.numericCol, row.floatCol, row.doubleCol, row.boolCol, row.bitCol, row.bit1Col, row.charCol, row.varcharCol, row.tinytextCol, row.textCol, row.mediumtextCol, row.longtextCol, row.binaryCol, row.varbinaryCol, row.tinyblobCol, row.blobCol, row.mediumblobCol, row.longblobCol, row.dateCol, row.timeCol, row.timeFspCol, row.datetimeCol, row.datetimeFspCol, row.timestampCol, row.timestampFspCol, row.yearCol, row.setCol, row.jsonCol, row.inet4Col, row.inet6Col))
 }

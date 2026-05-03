@@ -6,15 +6,15 @@
 package testdb.precisetypes
 
 import com.fasterxml.jackson.annotation.JsonValue
-import dev.typr.foundations.MariaType
-import dev.typr.foundations.MariaTypes
 import dev.typr.foundations.data.precise.BinaryN
-import dev.typr.foundations.kotlin.Bijection
+import dev.typr.foundationskt.Bijection
+import dev.typr.foundationskt.MariaType
+import dev.typr.foundationskt.MariaTypes
 import java.lang.IllegalArgumentException
 
 @kotlin.ConsistentCopyVisibility
 data class Binary16 private constructor(@field:JsonValue val value: ByteArray) : BinaryN {
-  override fun equals(other: Any?): Boolean {
+  override fun equals(other: Any?): kotlin.Boolean {
     if (this === other) return true
     if (other !is BinaryN) return false
     return value.contentEquals(other.rawValue())
@@ -26,7 +26,7 @@ data class Binary16 private constructor(@field:JsonValue val value: ByteArray) :
 
   override fun rawValue(): ByteArray = value
 
-  override fun semanticEquals(other: BinaryN): Boolean = if (other == null) false else value.contentEquals(other.rawValue())
+  override fun semanticEquals(other: BinaryN): kotlin.Boolean = if (other == null) false else value.contentEquals(other.rawValue())
 
   override fun semanticHashCode(): Int = value.contentHashCode()
 
@@ -35,12 +35,6 @@ data class Binary16 private constructor(@field:JsonValue val value: ByteArray) :
   }
 
   companion object {
-    val bijection: Bijection<Binary16, ByteArray> =
-      Bijection.of(Binary16::value, ::Binary16)
-
-    val mariaType: MariaType<Binary16> =
-      MariaTypes.binary.bimap(::Binary16, Binary16::value)
-
     fun of(value: ByteArray): Binary16? = if (value.size <= 16) Binary16(value) else null
 
     fun unsafeForce(value: ByteArray): Binary16 {
@@ -49,5 +43,11 @@ data class Binary16 private constructor(@field:JsonValue val value: ByteArray) :
       }
       return Binary16(value)
     }
+
+    val bijection: Bijection<Binary16, ByteArray> =
+      Bijection.of(Binary16::value, ::Binary16)
+
+    val mariaType: MariaType<Binary16> =
+      MariaTypes.binary.to(Bijection.of(::Binary16, Binary16::value))
   }
 }

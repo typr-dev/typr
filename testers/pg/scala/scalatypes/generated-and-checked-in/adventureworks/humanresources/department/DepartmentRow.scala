@@ -7,11 +7,11 @@ package adventureworks.humanresources.department
 
 import adventureworks.customtypes.Defaulted
 import adventureworks.public.Name
+import dev.typr.dslsc.RowCodecs
 import dev.typr.foundations.PgText
-import dev.typr.foundations.PgTypes
 import dev.typr.foundations.Tuple.Tuple4
-import dev.typr.foundations.scala.RowParser
-import dev.typr.foundations.scala.RowParsers
+import dev.typr.foundationssc.PgTypes
+import dev.typr.foundationssc.RowCodec
 import java.time.LocalDateTime
 
 /** Table: humanresources.department
@@ -54,7 +54,7 @@ case class DepartmentRow(
 }
 
 object DepartmentRow {
-  val `_rowParser`: RowParser[DepartmentRow] = RowParsers.of(DepartmentId.pgType, Name.pgType, Name.pgType, PgTypes.timestamp)(DepartmentRow.apply)(row => Array[Any](row.departmentid, row.name, row.groupname, row.modifieddate))
+  given pgText: PgText[DepartmentRow] = PgText.from(rowCodec.underlying)
 
-  given pgText: PgText[DepartmentRow] = PgText.from(`_rowParser`.underlying)
+  val rowCodec: RowCodec[DepartmentRow] = RowCodecs.of(DepartmentId.pgType, Name.pgType, Name.pgType, PgTypes.timestamp)(DepartmentRow.apply)(row => Array[Any](row.departmentid, row.name, row.groupname, row.modifieddate))
 }

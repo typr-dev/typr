@@ -6,15 +6,15 @@
 package testdb.db2test_unique
 
 import com.fasterxml.jackson.annotation.JsonValue
-import dev.typr.foundations.Db2Type
-import dev.typr.foundations.scala.Bijection
-import dev.typr.foundations.scala.ScalaDbTypes
+import dev.typr.dslsc.Bijection
+import dev.typr.foundationssc.Db2Type
+import dev.typr.foundationssc.Db2Types
 
 /** Type for the primary key of table `DB2TEST_UNIQUE` */
 case class Db2testUniqueId(@JsonValue value: Int) extends scala.AnyVal
 
 object Db2testUniqueId {
-  given bijection: Bijection[Db2testUniqueId, Int] = Bijection.apply[Db2testUniqueId, Int](_.value)(Db2testUniqueId.apply)
+  given bijection: Bijection[Db2testUniqueId, Int] = Bijection.of[Db2testUniqueId, Int](_.value, Db2testUniqueId.apply)
 
-  given db2Type: Db2Type[Db2testUniqueId] = ScalaDbTypes.Db2Types.integer.bimap(Db2testUniqueId.apply, _.value)
+  given db2Type: Db2Type[Db2testUniqueId] = Db2Types.integer.to(Bijection.of(Db2testUniqueId.apply, _.value))
 }

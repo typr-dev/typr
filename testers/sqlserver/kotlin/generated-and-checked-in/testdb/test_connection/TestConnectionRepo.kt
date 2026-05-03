@@ -5,10 +5,11 @@
  */
 package testdb.test_connection
 
-import dev.typr.foundations.kotlin.DeleteBuilder
-import dev.typr.foundations.kotlin.SelectBuilder
-import dev.typr.foundations.kotlin.UpdateBuilder
-import java.sql.Connection
+import dev.typr.dslkt.DeleteBuilder
+import dev.typr.dslkt.SelectBuilder
+import dev.typr.dslkt.UpdateBuilder
+import dev.typr.foundationskt.Connection
+import dev.typr.foundationskt.ConnectionRead
 import kotlin.collections.Iterator
 import kotlin.collections.List
 import kotlin.collections.Map
@@ -19,10 +20,10 @@ interface TestConnectionRepo {
   abstract fun deleteById(
     id: TestConnectionId,
     c: Connection
-  ): Boolean
+  ): kotlin.Boolean
 
   abstract fun deleteByIds(
-    ids: Array<TestConnectionId>,
+    ids: List<TestConnectionId>,
     c: Connection
   ): Int
 
@@ -38,21 +39,21 @@ interface TestConnectionRepo {
 
   abstract fun select(): SelectBuilder<TestConnectionFields, TestConnectionRow>
 
-  abstract fun selectAll(c: Connection): List<TestConnectionRow>
+  abstract fun selectAll(c: ConnectionRead): List<TestConnectionRow>
 
   abstract fun selectById(
     id: TestConnectionId,
-    c: Connection
+    c: ConnectionRead
   ): TestConnectionRow?
 
   abstract fun selectByIds(
-    ids: Array<TestConnectionId>,
-    c: Connection
+    ids: List<TestConnectionId>,
+    c: ConnectionRead
   ): List<TestConnectionRow>
 
   abstract fun selectByIdsTracked(
-    ids: Array<TestConnectionId>,
-    c: Connection
+    ids: List<TestConnectionId>,
+    c: ConnectionRead
   ): Map<TestConnectionId, TestConnectionRow>
 
   abstract fun update(): UpdateBuilder<TestConnectionFields, TestConnectionRow>
@@ -60,7 +61,7 @@ interface TestConnectionRepo {
   abstract fun update(
     row: TestConnectionRow,
     c: Connection
-  ): Boolean
+  ): kotlin.Boolean
 
   abstract fun upsert(
     unsaved: TestConnectionRow,

@@ -6,7 +6,7 @@
 package testdb.mariatest
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import dev.typr.foundations.MariaTypes
+import dev.typr.dslsc.RowCodecs
 import dev.typr.foundations.Tuple.Tuple41
 import dev.typr.foundations.data.Json
 import dev.typr.foundations.data.Uint1
@@ -15,9 +15,8 @@ import dev.typr.foundations.data.Uint4
 import dev.typr.foundations.data.Uint8
 import dev.typr.foundations.data.maria.Inet4
 import dev.typr.foundations.data.maria.Inet6
-import dev.typr.foundations.scala.RowParser
-import dev.typr.foundations.scala.RowParsers
-import dev.typr.foundations.scala.ScalaDbTypes
+import dev.typr.foundationssc.MariaTypes
+import dev.typr.foundationssc.RowCodec
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
@@ -251,5 +250,5 @@ case class MariatestRow(
 }
 
 object MariatestRow {
-  val `_rowParser`: RowParser[MariatestRow] = RowParsers.of(ScalaDbTypes.MariaTypes.tinyint, ScalaDbTypes.MariaTypes.smallint, ScalaDbTypes.MariaTypes.mediumint, MariatestId.mariaType, ScalaDbTypes.MariaTypes.bigint, MariaTypes.tinyintUnsigned, MariaTypes.smallintUnsigned, MariaTypes.mediumintUnsigned, MariaTypes.intUnsigned, MariaTypes.bigintUnsigned, ScalaDbTypes.MariaTypes.numeric, ScalaDbTypes.MariaTypes.numeric, ScalaDbTypes.MariaTypes.float_, ScalaDbTypes.MariaTypes.double_, ScalaDbTypes.MariaTypes.bool, MariaTypes.bit, MariaTypes.bit, MariaTypes.char_, MariaTypes.varchar, MariaTypes.tinytext, MariaTypes.text, MariaTypes.mediumtext, MariaTypes.longtext, MariaTypes.binary, MariaTypes.varbinary, MariaTypes.tinyblob, MariaTypes.blob, MariaTypes.mediumblob, MariaTypes.longblob, MariaTypes.date, MariaTypes.time, MariaTypes.time, MariaTypes.datetime, MariaTypes.datetime, MariaTypes.timestamp, MariaTypes.timestamp, MariaTypes.year, XYZSet.mariaType, MariaTypes.json, MariaTypes.inet4, MariaTypes.inet6)(MariatestRow.apply)(row => Array[Any](row.tinyintCol, row.smallintCol, row.mediumintCol, row.intCol, row.bigintCol, row.tinyintUCol, row.smallintUCol, row.mediumintUCol, row.intUCol, row.bigintUCol, row.decimalCol, row.numericCol, row.floatCol, row.doubleCol, row.boolCol, row.bitCol, row.bit1Col, row.charCol, row.varcharCol, row.tinytextCol, row.textCol, row.mediumtextCol, row.longtextCol, row.binaryCol, row.varbinaryCol, row.tinyblobCol, row.blobCol, row.mediumblobCol, row.longblobCol, row.dateCol, row.timeCol, row.timeFspCol, row.datetimeCol, row.datetimeFspCol, row.timestampCol, row.timestampFspCol, row.yearCol, row.setCol, row.jsonCol, row.inet4Col, row.inet6Col))
+  val rowCodec: RowCodec[MariatestRow] = RowCodecs.of(MariaTypes.tinyint, MariaTypes.smallint, MariaTypes.mediumint, MariatestId.mariaType, MariaTypes.bigint, MariaTypes.tinyintUnsigned, MariaTypes.smallintUnsigned, MariaTypes.mediumintUnsigned, MariaTypes.intUnsigned, MariaTypes.bigintUnsigned, MariaTypes.numeric, MariaTypes.numeric, MariaTypes.float_, MariaTypes.double_, MariaTypes.bool, MariaTypes.bit, MariaTypes.bit, MariaTypes.char_, MariaTypes.varchar, MariaTypes.tinytext, MariaTypes.text, MariaTypes.mediumtext, MariaTypes.longtext, MariaTypes.binary, MariaTypes.varbinary, MariaTypes.tinyblob, MariaTypes.blob, MariaTypes.mediumblob, MariaTypes.longblob, MariaTypes.date, MariaTypes.time, MariaTypes.time, MariaTypes.datetime, MariaTypes.datetime, MariaTypes.timestamp, MariaTypes.timestamp, MariaTypes.year, XYZSet.mariaType, MariaTypes.json, MariaTypes.inet4, MariaTypes.inet6)(MariatestRow.apply)(row => Array[Any](row.tinyintCol, row.smallintCol, row.mediumintCol, row.intCol, row.bigintCol, row.tinyintUCol, row.smallintUCol, row.mediumintUCol, row.intUCol, row.bigintUCol, row.decimalCol, row.numericCol, row.floatCol, row.doubleCol, row.boolCol, row.bitCol, row.bit1Col, row.charCol, row.varcharCol, row.tinytextCol, row.textCol, row.mediumtextCol, row.longtextCol, row.binaryCol, row.varbinaryCol, row.tinyblobCol, row.blobCol, row.mediumblobCol, row.longblobCol, row.dateCol, row.timeCol, row.timeFspCol, row.datetimeCol, row.datetimeFspCol, row.timestampCol, row.timestampFspCol, row.yearCol, row.setCol, row.jsonCol, row.inet4Col, row.inet6Col))
 }

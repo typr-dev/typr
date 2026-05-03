@@ -5,17 +5,18 @@
  */
 package testdb.product_images
 
-import dev.typr.foundations.scala.DeleteBuilder
-import dev.typr.foundations.scala.SelectBuilder
-import dev.typr.foundations.scala.UpdateBuilder
-import java.sql.Connection
+import dev.typr.dslsc.DeleteBuilder
+import dev.typr.dslsc.SelectBuilder
+import dev.typr.dslsc.UpdateBuilder
+import dev.typr.foundationssc.Connection
+import dev.typr.foundationssc.ConnectionRead
 
 trait ProductImagesRepo {
   def delete: DeleteBuilder[ProductImagesFields, ProductImagesRow]
 
   def deleteById(imageId: ProductImagesId)(using c: Connection): Boolean
 
-  def deleteByIds(imageIds: Array[ProductImagesId])(using c: Connection): Int
+  def deleteByIds(imageIds: List[ProductImagesId])(using c: Connection): Int
 
   def insert(unsaved: ProductImagesRow)(using c: Connection): ProductImagesRow
 
@@ -23,13 +24,13 @@ trait ProductImagesRepo {
 
   def select: SelectBuilder[ProductImagesFields, ProductImagesRow]
 
-  def selectAll(using c: Connection): List[ProductImagesRow]
+  def selectAll(using c: ConnectionRead): List[ProductImagesRow]
 
-  def selectById(imageId: ProductImagesId)(using c: Connection): Option[ProductImagesRow]
+  def selectById(imageId: ProductImagesId)(using c: ConnectionRead): Option[ProductImagesRow]
 
-  def selectByIds(imageIds: Array[ProductImagesId])(using c: Connection): List[ProductImagesRow]
+  def selectByIds(imageIds: List[ProductImagesId])(using c: ConnectionRead): List[ProductImagesRow]
 
-  def selectByIdsTracked(imageIds: Array[ProductImagesId])(using c: Connection): Map[ProductImagesId, ProductImagesRow]
+  def selectByIdsTracked(imageIds: List[ProductImagesId])(using c: ConnectionRead): Map[ProductImagesId, ProductImagesRow]
 
   def update: UpdateBuilder[ProductImagesFields, ProductImagesRow]
 

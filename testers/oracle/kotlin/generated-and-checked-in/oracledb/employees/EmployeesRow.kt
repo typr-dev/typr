@@ -6,12 +6,10 @@
 package oracledb.employees
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import dev.typr.foundations.OracleTypes
+import dev.typr.dslkt.RowCodecs
 import dev.typr.foundations.Tuple.Tuple7
-import dev.typr.foundations.kotlin.KotlinDbTypes
-import dev.typr.foundations.kotlin.RowParser
-import dev.typr.foundations.kotlin.RowParsers
-import dev.typr.foundations.kotlin.nullable
+import dev.typr.foundationskt.OracleTypes
+import dev.typr.foundationskt.RowCodec
 import java.math.BigDecimal
 import java.time.LocalDateTime
 import oracledb.MoneyT
@@ -23,25 +21,25 @@ import oracledb.departments.DepartmentsId
   */
 data class EmployeesRow(
   @field:JsonProperty("EMP_NUMBER") val empNumber: BigDecimal,
-  @field:JsonProperty("EMP_SUFFIX") val empSuffix: String,
+  @field:JsonProperty("EMP_SUFFIX") val empSuffix: kotlin.String,
   /** Points to [oracledb.departments.DepartmentsRow.deptCode] */
-  @field:JsonProperty("DEPT_CODE") val deptCode: String,
+  @field:JsonProperty("DEPT_CODE") val deptCode: kotlin.String,
   /** Points to [oracledb.departments.DepartmentsRow.deptRegion] */
-  @field:JsonProperty("DEPT_REGION") val deptRegion: String,
-  @field:JsonProperty("EMP_NAME") val empName: String,
+  @field:JsonProperty("DEPT_REGION") val deptRegion: kotlin.String,
+  @field:JsonProperty("EMP_NAME") val empName: kotlin.String,
   @field:JsonProperty("SALARY") val salary: MoneyT?,
   /** Default: SYSDATE  */
   @field:JsonProperty("HIRE_DATE") val hireDate: LocalDateTime
-) : Tuple7<BigDecimal, String, String, String, String, MoneyT?, LocalDateTime> {
+) : Tuple7<BigDecimal, kotlin.String, kotlin.String, kotlin.String, kotlin.String, MoneyT?, LocalDateTime> {
   override fun _1(): BigDecimal = empNumber
 
-  override fun _2(): String = empSuffix
+  override fun _2(): kotlin.String = empSuffix
 
-  override fun _3(): String = deptCode
+  override fun _3(): kotlin.String = deptCode
 
-  override fun _4(): String = deptRegion
+  override fun _4(): kotlin.String = deptRegion
 
-  override fun _5(): String = empName
+  override fun _5(): kotlin.String = empName
 
   override fun _6(): MoneyT? = salary
 
@@ -56,13 +54,13 @@ data class EmployeesRow(
   fun toUnsavedRow(hireDate: Defaulted<LocalDateTime> = Defaulted.Provided(this.hireDate)): EmployeesRowUnsaved = EmployeesRowUnsaved(empNumber, empSuffix, deptCode, deptRegion, empName, salary, hireDate)
 
   companion object {
-    val _rowParser: RowParser<EmployeesRow> = RowParsers.of(KotlinDbTypes.OracleTypes.number, OracleTypes.varchar2, OracleTypes.varchar2, OracleTypes.varchar2, OracleTypes.varchar2, MoneyT.oracleType.nullable(), OracleTypes.date, { t0, t1, t2, t3, t4, t5, t6 -> EmployeesRow(t0, t1, t2, t3, t4, t5, t6) }, { row -> arrayOf<Any?>(row.empNumber, row.empSuffix, row.deptCode, row.deptRegion, row.empName, row.salary, row.hireDate) })
+    val rowCodec: RowCodec<EmployeesRow> = RowCodecs.of(OracleTypes.number, OracleTypes.varchar2, OracleTypes.varchar2, OracleTypes.varchar2, OracleTypes.varchar2, MoneyT.oracleType.opt(), OracleTypes.date, { t0: BigDecimal, t1: kotlin.String, t2: kotlin.String, t3: kotlin.String, t4: kotlin.String, t5: MoneyT?, t6: LocalDateTime -> EmployeesRow(t0, t1, t2, t3, t4, t5, t6) }, { row: EmployeesRow -> arrayOf<Any?>(row.empNumber, row.empSuffix, row.deptCode, row.deptRegion, row.empName, row.salary, row.hireDate) })
 
     fun apply(
       compositeId: EmployeesId,
-      deptCode: String,
-      deptRegion: String,
-      empName: String,
+      deptCode: kotlin.String,
+      deptRegion: kotlin.String,
+      empName: kotlin.String,
       salary: MoneyT?,
       hireDate: LocalDateTime
     ): EmployeesRow = EmployeesRow(compositeId.empNumber, compositeId.empSuffix, deptCode, deptRegion, empName, salary, hireDate)

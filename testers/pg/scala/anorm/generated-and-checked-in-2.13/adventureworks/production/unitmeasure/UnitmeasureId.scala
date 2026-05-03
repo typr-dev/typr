@@ -21,7 +21,7 @@ object UnitmeasureId {
 
   implicit lazy val arrayToStatement: ToStatement[Array[UnitmeasureId]] = ToStatement.arrayToParameter(ParameterMetaData.StringParameterMetaData).contramap(_.map(_.value))
 
-  implicit lazy val bijection: Bijection[UnitmeasureId, String] = Bijection.apply[UnitmeasureId, String](_.value)(UnitmeasureId.apply)
+  implicit lazy val bijection: Bijection[UnitmeasureId, String] = Bijection[UnitmeasureId, String](_.value)(UnitmeasureId.apply)
 
   implicit lazy val column: Column[UnitmeasureId] = Column.columnToString.map(UnitmeasureId.apply)
 

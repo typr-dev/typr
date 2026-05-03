@@ -5,103 +5,102 @@
  */
 package testdb.products
 
-import dev.typr.foundations.MariaTypes
-import dev.typr.foundations.scala.DbTypeOps
-import dev.typr.foundations.scala.DeleteBuilder
-import dev.typr.foundations.scala.Dialect
-import dev.typr.foundations.scala.Fragment
-import dev.typr.foundations.scala.ScalaDbTypes
-import dev.typr.foundations.scala.SelectBuilder
-import dev.typr.foundations.scala.UpdateBuilder
-import java.sql.Connection
+import dev.typr.dslsc.DeleteBuilder
+import dev.typr.dslsc.Dialect
+import dev.typr.dslsc.SelectBuilder
+import dev.typr.dslsc.UpdateBuilder
+import dev.typr.foundationssc.Connection
+import dev.typr.foundationssc.ConnectionRead
+import dev.typr.foundationssc.Fragment
+import dev.typr.foundationssc.MariaTypes
 import scala.collection.mutable.ListBuffer
 import testdb.BestsellerClearanceFSet
 import testdb.brands.BrandsId
-import dev.typr.foundations.scala.Fragment.sql
+import dev.typr.foundationssc.Fragment.sql
 
 class ProductsRepoImpl extends ProductsRepo {
   override def delete: DeleteBuilder[ProductsFields, ProductsRow] = DeleteBuilder.of("`products`", ProductsFields.structure, Dialect.MARIADB)
 
-  override def deleteById(productId: ProductsId)(using c: Connection): Boolean = sql"delete from `products` where `product_id` = ${Fragment.encode(ProductsId.mariaType, productId)}".update().runUnchecked(c) > 0
+  override def deleteById(productId: ProductsId)(using c: Connection): Boolean = sql"delete from `products` where `product_id` = ${Fragment.encode(ProductsId.mariaType, productId)}".update().run(using c) > 0
 
-  override def deleteByIds(productIds: Array[ProductsId])(using c: Connection): Int = {
+  override def deleteByIds(productIds: List[ProductsId])(using c: Connection): Int = {
     val fragments: ListBuffer[Fragment] = ListBuffer()
     productIds.foreach { id => fragments.addOne(Fragment.encode(ProductsId.mariaType, id)): @scala.annotation.nowarn }
-    return Fragment.interpolate(Fragment.lit("delete from `products` where `product_id` in ("), Fragment.comma(fragments), Fragment.lit(")")).update().runUnchecked(c)
+    return Fragment.concat(Fragment.of("delete from `products` where `product_id` in ("), Fragment.comma(fragments), Fragment.of(")")).update().run(using c)
   }
 
   override def insert(unsaved: ProductsRow)(using c: Connection): ProductsRow = {
   sql"""insert into `products`(`sku`, `brand_id`, `name`, `short_description`, `full_description`, `base_price`, `cost_price`, `weight_kg`, `dimensions_json`, `status`, `tax_class`, `tags`, `attributes`, `seo_metadata`, `created_at`, `updated_at`, `published_at`)
-    values (${Fragment.encode(MariaTypes.varchar, unsaved.sku)}, ${Fragment.encode(BrandsId.mariaType.nullable, unsaved.brandId)}, ${Fragment.encode(MariaTypes.varchar, unsaved.name)}, ${Fragment.encode(MariaTypes.varchar.nullable, unsaved.shortDescription)}, ${Fragment.encode(MariaTypes.longtext.nullable, unsaved.fullDescription)}, ${Fragment.encode(ScalaDbTypes.MariaTypes.numeric, unsaved.basePrice)}, ${Fragment.encode(ScalaDbTypes.MariaTypes.numeric.nullable, unsaved.costPrice)}, ${Fragment.encode(ScalaDbTypes.MariaTypes.numeric.nullable, unsaved.weightKg)}, ${Fragment.encode(MariaTypes.json.nullable, unsaved.dimensionsJson)}, ${Fragment.encode(MariaTypes.text, unsaved.status)}, ${Fragment.encode(MariaTypes.text, unsaved.taxClass)}, ${Fragment.encode(BestsellerClearanceFSet.mariaType.nullable, unsaved.tags)}, ${Fragment.encode(MariaTypes.json.nullable, unsaved.attributes)}, ${Fragment.encode(MariaTypes.json.nullable, unsaved.seoMetadata)}, ${Fragment.encode(MariaTypes.datetime, unsaved.createdAt)}, ${Fragment.encode(MariaTypes.datetime, unsaved.updatedAt)}, ${Fragment.encode(MariaTypes.datetime.nullable, unsaved.publishedAt)})
+    values (${Fragment.encode(MariaTypes.varchar, unsaved.sku)}, ${Fragment.encode(BrandsId.mariaType.opt, unsaved.brandId)}, ${Fragment.encode(MariaTypes.varchar, unsaved.name)}, ${Fragment.encode(MariaTypes.varchar.opt, unsaved.shortDescription)}, ${Fragment.encode(MariaTypes.longtext.opt, unsaved.fullDescription)}, ${Fragment.encode(MariaTypes.numeric, unsaved.basePrice)}, ${Fragment.encode(MariaTypes.numeric.opt, unsaved.costPrice)}, ${Fragment.encode(MariaTypes.numeric.opt, unsaved.weightKg)}, ${Fragment.encode(MariaTypes.json.opt, unsaved.dimensionsJson)}, ${Fragment.encode(MariaTypes.text, unsaved.status)}, ${Fragment.encode(MariaTypes.text, unsaved.taxClass)}, ${Fragment.encode(BestsellerClearanceFSet.mariaType.opt, unsaved.tags)}, ${Fragment.encode(MariaTypes.json.opt, unsaved.attributes)}, ${Fragment.encode(MariaTypes.json.opt, unsaved.seoMetadata)}, ${Fragment.encode(MariaTypes.datetime, unsaved.createdAt)}, ${Fragment.encode(MariaTypes.datetime, unsaved.updatedAt)}, ${Fragment.encode(MariaTypes.datetime.opt, unsaved.publishedAt)})
     RETURNING `product_id`, `sku`, `brand_id`, `name`, `short_description`, `full_description`, `base_price`, `cost_price`, `weight_kg`, `dimensions_json`, `status`, `tax_class`, `tags`, `attributes`, `seo_metadata`, `created_at`, `updated_at`, `published_at`
     """
-    .updateReturning(ProductsRow.`_rowParser`.exactlyOne()).runUnchecked(c)
+    .updateReturning(ProductsRow.rowCodec.exactlyOne()).run(using c)
   }
 
   override def insert(unsaved: ProductsRowUnsaved)(using c: Connection): ProductsRow = {
     val columns: ListBuffer[Fragment] = ListBuffer()
     val values: ListBuffer[Fragment] = ListBuffer()
-    columns.addOne(Fragment.lit("`sku`")): @scala.annotation.nowarn
+    columns.addOne(Fragment.of("`sku`")): @scala.annotation.nowarn
     values.addOne(sql"${Fragment.encode(MariaTypes.varchar, unsaved.sku)}"): @scala.annotation.nowarn
-    columns.addOne(Fragment.lit("`name`")): @scala.annotation.nowarn
+    columns.addOne(Fragment.of("`name`")): @scala.annotation.nowarn
     values.addOne(sql"${Fragment.encode(MariaTypes.varchar, unsaved.name)}"): @scala.annotation.nowarn
-    columns.addOne(Fragment.lit("`base_price`")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(ScalaDbTypes.MariaTypes.numeric, unsaved.basePrice)}"): @scala.annotation.nowarn
+    columns.addOne(Fragment.of("`base_price`")): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(MariaTypes.numeric, unsaved.basePrice)}"): @scala.annotation.nowarn
     unsaved.brandId.visit(
       {  },
-      value => { columns.addOne(Fragment.lit("`brand_id`")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(BrandsId.mariaType.nullable, value)}"): @scala.annotation.nowarn }
+      value => { columns.addOne(Fragment.of("`brand_id`")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(BrandsId.mariaType.opt, value)}"): @scala.annotation.nowarn }
     );
     unsaved.shortDescription.visit(
       {  },
-      value => { columns.addOne(Fragment.lit("`short_description`")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(MariaTypes.varchar.nullable, value)}"): @scala.annotation.nowarn }
+      value => { columns.addOne(Fragment.of("`short_description`")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(MariaTypes.varchar.opt, value)}"): @scala.annotation.nowarn }
     );
     unsaved.fullDescription.visit(
       {  },
-      value => { columns.addOne(Fragment.lit("`full_description`")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(MariaTypes.longtext.nullable, value)}"): @scala.annotation.nowarn }
+      value => { columns.addOne(Fragment.of("`full_description`")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(MariaTypes.longtext.opt, value)}"): @scala.annotation.nowarn }
     );
     unsaved.costPrice.visit(
       {  },
-      value => { columns.addOne(Fragment.lit("`cost_price`")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(ScalaDbTypes.MariaTypes.numeric.nullable, value)}"): @scala.annotation.nowarn }
+      value => { columns.addOne(Fragment.of("`cost_price`")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(MariaTypes.numeric.opt, value)}"): @scala.annotation.nowarn }
     );
     unsaved.weightKg.visit(
       {  },
-      value => { columns.addOne(Fragment.lit("`weight_kg`")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(ScalaDbTypes.MariaTypes.numeric.nullable, value)}"): @scala.annotation.nowarn }
+      value => { columns.addOne(Fragment.of("`weight_kg`")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(MariaTypes.numeric.opt, value)}"): @scala.annotation.nowarn }
     );
     unsaved.dimensionsJson.visit(
       {  },
-      value => { columns.addOne(Fragment.lit("`dimensions_json`")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(MariaTypes.json.nullable, value)}"): @scala.annotation.nowarn }
+      value => { columns.addOne(Fragment.of("`dimensions_json`")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(MariaTypes.json.opt, value)}"): @scala.annotation.nowarn }
     );
     unsaved.status.visit(
       {  },
-      value => { columns.addOne(Fragment.lit("`status`")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(MariaTypes.text, value)}"): @scala.annotation.nowarn }
+      value => { columns.addOne(Fragment.of("`status`")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(MariaTypes.text, value)}"): @scala.annotation.nowarn }
     );
     unsaved.taxClass.visit(
       {  },
-      value => { columns.addOne(Fragment.lit("`tax_class`")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(MariaTypes.text, value)}"): @scala.annotation.nowarn }
+      value => { columns.addOne(Fragment.of("`tax_class`")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(MariaTypes.text, value)}"): @scala.annotation.nowarn }
     );
     unsaved.tags.visit(
       {  },
-      value => { columns.addOne(Fragment.lit("`tags`")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(BestsellerClearanceFSet.mariaType.nullable, value)}"): @scala.annotation.nowarn }
+      value => { columns.addOne(Fragment.of("`tags`")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(BestsellerClearanceFSet.mariaType.opt, value)}"): @scala.annotation.nowarn }
     );
     unsaved.attributes.visit(
       {  },
-      value => { columns.addOne(Fragment.lit("`attributes`")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(MariaTypes.json.nullable, value)}"): @scala.annotation.nowarn }
+      value => { columns.addOne(Fragment.of("`attributes`")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(MariaTypes.json.opt, value)}"): @scala.annotation.nowarn }
     );
     unsaved.seoMetadata.visit(
       {  },
-      value => { columns.addOne(Fragment.lit("`seo_metadata`")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(MariaTypes.json.nullable, value)}"): @scala.annotation.nowarn }
+      value => { columns.addOne(Fragment.of("`seo_metadata`")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(MariaTypes.json.opt, value)}"): @scala.annotation.nowarn }
     );
     unsaved.createdAt.visit(
       {  },
-      value => { columns.addOne(Fragment.lit("`created_at`")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(MariaTypes.datetime, value)}"): @scala.annotation.nowarn }
+      value => { columns.addOne(Fragment.of("`created_at`")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(MariaTypes.datetime, value)}"): @scala.annotation.nowarn }
     );
     unsaved.updatedAt.visit(
       {  },
-      value => { columns.addOne(Fragment.lit("`updated_at`")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(MariaTypes.datetime, value)}"): @scala.annotation.nowarn }
+      value => { columns.addOne(Fragment.of("`updated_at`")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(MariaTypes.datetime, value)}"): @scala.annotation.nowarn }
     );
     unsaved.publishedAt.visit(
       {  },
-      value => { columns.addOne(Fragment.lit("`published_at`")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(MariaTypes.datetime.nullable, value)}"): @scala.annotation.nowarn }
+      value => { columns.addOne(Fragment.of("`published_at`")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(MariaTypes.datetime.opt, value)}"): @scala.annotation.nowarn }
     );
     val q: Fragment = {
       sql"""insert into `products`(${Fragment.comma(columns)})
@@ -109,70 +108,70 @@ class ProductsRepoImpl extends ProductsRepo {
       RETURNING `product_id`, `sku`, `brand_id`, `name`, `short_description`, `full_description`, `base_price`, `cost_price`, `weight_kg`, `dimensions_json`, `status`, `tax_class`, `tags`, `attributes`, `seo_metadata`, `created_at`, `updated_at`, `published_at`
       """
     }
-    return q.updateReturning(ProductsRow.`_rowParser`.exactlyOne()).runUnchecked(c)
+    return q.updateReturning(ProductsRow.rowCodec.exactlyOne()).run(using c)
   }
 
-  override def select: SelectBuilder[ProductsFields, ProductsRow] = SelectBuilder.of("`products`", ProductsFields.structure, ProductsRow.`_rowParser`, Dialect.MARIADB)
+  override def select: SelectBuilder[ProductsFields, ProductsRow] = SelectBuilder.of("`products`", ProductsFields.structure, ProductsRow.rowCodec, Dialect.MARIADB)
 
-  override def selectAll(using c: Connection): List[ProductsRow] = {
+  override def selectAll(using c: ConnectionRead): List[ProductsRow] = {
     sql"""select `product_id`, `sku`, `brand_id`, `name`, `short_description`, `full_description`, `base_price`, `cost_price`, `weight_kg`, `dimensions_json`, `status`, `tax_class`, `tags`, `attributes`, `seo_metadata`, `created_at`, `updated_at`, `published_at`
     from `products`
-    """.query(ProductsRow.`_rowParser`.all()).runUnchecked(c)
+    """.query(ProductsRow.rowCodec.all()).run(using c)
   }
 
-  override def selectById(productId: ProductsId)(using c: Connection): Option[ProductsRow] = {
+  override def selectById(productId: ProductsId)(using c: ConnectionRead): Option[ProductsRow] = {
     sql"""select `product_id`, `sku`, `brand_id`, `name`, `short_description`, `full_description`, `base_price`, `cost_price`, `weight_kg`, `dimensions_json`, `status`, `tax_class`, `tags`, `attributes`, `seo_metadata`, `created_at`, `updated_at`, `published_at`
     from `products`
-    where `product_id` = ${Fragment.encode(ProductsId.mariaType, productId)}""".query(ProductsRow.`_rowParser`.first()).runUnchecked(c)
+    where `product_id` = ${Fragment.encode(ProductsId.mariaType, productId)}""".query(ProductsRow.rowCodec.first()).run(using c)
   }
 
-  override def selectByIds(productIds: Array[ProductsId])(using c: Connection): List[ProductsRow] = {
+  override def selectByIds(productIds: List[ProductsId])(using c: ConnectionRead): List[ProductsRow] = {
     val fragments: ListBuffer[Fragment] = ListBuffer()
     productIds.foreach { id => fragments.addOne(Fragment.encode(ProductsId.mariaType, id)): @scala.annotation.nowarn }
-    return Fragment.interpolate(Fragment.lit("select `product_id`, `sku`, `brand_id`, `name`, `short_description`, `full_description`, `base_price`, `cost_price`, `weight_kg`, `dimensions_json`, `status`, `tax_class`, `tags`, `attributes`, `seo_metadata`, `created_at`, `updated_at`, `published_at` from `products` where `product_id` in ("), Fragment.comma(fragments), Fragment.lit(")")).query(ProductsRow.`_rowParser`.all()).runUnchecked(c)
+    return Fragment.concat(Fragment.of("select `product_id`, `sku`, `brand_id`, `name`, `short_description`, `full_description`, `base_price`, `cost_price`, `weight_kg`, `dimensions_json`, `status`, `tax_class`, `tags`, `attributes`, `seo_metadata`, `created_at`, `updated_at`, `published_at` from `products` where `product_id` in ("), Fragment.comma(fragments), Fragment.of(")")).query(ProductsRow.rowCodec.all()).run(using c)
   }
 
-  override def selectByIdsTracked(productIds: Array[ProductsId])(using c: Connection): Map[ProductsId, ProductsRow] = {
+  override def selectByIdsTracked(productIds: List[ProductsId])(using c: ConnectionRead): Map[ProductsId, ProductsRow] = {
     val ret: scala.collection.mutable.Map[ProductsId, ProductsRow] = scala.collection.mutable.Map.empty[ProductsId, ProductsRow]
     selectByIds(productIds)(using c).foreach(row => ret.put(row.productId, row): @scala.annotation.nowarn)
     return ret.toMap
   }
 
-  override def selectByUniqueSku(sku: String)(using c: Connection): Option[ProductsRow] = {
+  override def selectByUniqueSku(sku: String)(using c: ConnectionRead): Option[ProductsRow] = {
     sql"""select `product_id`, `sku`, `brand_id`, `name`, `short_description`, `full_description`, `base_price`, `cost_price`, `weight_kg`, `dimensions_json`, `status`, `tax_class`, `tags`, `attributes`, `seo_metadata`, `created_at`, `updated_at`, `published_at`
     from `products`
     where `sku` = ${Fragment.encode(MariaTypes.varchar, sku)}
-    """.query(ProductsRow.`_rowParser`.first()).runUnchecked(c)
+    """.query(ProductsRow.rowCodec.first()).run(using c)
   }
 
-  override def update: UpdateBuilder[ProductsFields, ProductsRow] = UpdateBuilder.of("`products`", ProductsFields.structure, ProductsRow.`_rowParser`, Dialect.MARIADB)
+  override def update: UpdateBuilder[ProductsFields, ProductsRow] = UpdateBuilder.of("`products`", ProductsFields.structure, ProductsRow.rowCodec, Dialect.MARIADB)
 
   override def update(row: ProductsRow)(using c: Connection): Boolean = {
     val productId: ProductsId = row.productId
     return sql"""update `products`
     set `sku` = ${Fragment.encode(MariaTypes.varchar, row.sku)},
-    `brand_id` = ${Fragment.encode(BrandsId.mariaType.nullable, row.brandId)},
+    `brand_id` = ${Fragment.encode(BrandsId.mariaType.opt, row.brandId)},
     `name` = ${Fragment.encode(MariaTypes.varchar, row.name)},
-    `short_description` = ${Fragment.encode(MariaTypes.varchar.nullable, row.shortDescription)},
-    `full_description` = ${Fragment.encode(MariaTypes.longtext.nullable, row.fullDescription)},
-    `base_price` = ${Fragment.encode(ScalaDbTypes.MariaTypes.numeric, row.basePrice)},
-    `cost_price` = ${Fragment.encode(ScalaDbTypes.MariaTypes.numeric.nullable, row.costPrice)},
-    `weight_kg` = ${Fragment.encode(ScalaDbTypes.MariaTypes.numeric.nullable, row.weightKg)},
-    `dimensions_json` = ${Fragment.encode(MariaTypes.json.nullable, row.dimensionsJson)},
+    `short_description` = ${Fragment.encode(MariaTypes.varchar.opt, row.shortDescription)},
+    `full_description` = ${Fragment.encode(MariaTypes.longtext.opt, row.fullDescription)},
+    `base_price` = ${Fragment.encode(MariaTypes.numeric, row.basePrice)},
+    `cost_price` = ${Fragment.encode(MariaTypes.numeric.opt, row.costPrice)},
+    `weight_kg` = ${Fragment.encode(MariaTypes.numeric.opt, row.weightKg)},
+    `dimensions_json` = ${Fragment.encode(MariaTypes.json.opt, row.dimensionsJson)},
     `status` = ${Fragment.encode(MariaTypes.text, row.status)},
     `tax_class` = ${Fragment.encode(MariaTypes.text, row.taxClass)},
-    `tags` = ${Fragment.encode(BestsellerClearanceFSet.mariaType.nullable, row.tags)},
-    `attributes` = ${Fragment.encode(MariaTypes.json.nullable, row.attributes)},
-    `seo_metadata` = ${Fragment.encode(MariaTypes.json.nullable, row.seoMetadata)},
+    `tags` = ${Fragment.encode(BestsellerClearanceFSet.mariaType.opt, row.tags)},
+    `attributes` = ${Fragment.encode(MariaTypes.json.opt, row.attributes)},
+    `seo_metadata` = ${Fragment.encode(MariaTypes.json.opt, row.seoMetadata)},
     `created_at` = ${Fragment.encode(MariaTypes.datetime, row.createdAt)},
     `updated_at` = ${Fragment.encode(MariaTypes.datetime, row.updatedAt)},
-    `published_at` = ${Fragment.encode(MariaTypes.datetime.nullable, row.publishedAt)}
-    where `product_id` = ${Fragment.encode(ProductsId.mariaType, productId)}""".update().runUnchecked(c) > 0
+    `published_at` = ${Fragment.encode(MariaTypes.datetime.opt, row.publishedAt)}
+    where `product_id` = ${Fragment.encode(ProductsId.mariaType, productId)}""".update().run(using c) > 0
   }
 
   override def upsert(unsaved: ProductsRow)(using c: Connection): ProductsRow = {
   sql"""INSERT INTO `products`(`product_id`, `sku`, `brand_id`, `name`, `short_description`, `full_description`, `base_price`, `cost_price`, `weight_kg`, `dimensions_json`, `status`, `tax_class`, `tags`, `attributes`, `seo_metadata`, `created_at`, `updated_at`, `published_at`)
-    VALUES (${Fragment.encode(ProductsId.mariaType, unsaved.productId)}, ${Fragment.encode(MariaTypes.varchar, unsaved.sku)}, ${Fragment.encode(BrandsId.mariaType.nullable, unsaved.brandId)}, ${Fragment.encode(MariaTypes.varchar, unsaved.name)}, ${Fragment.encode(MariaTypes.varchar.nullable, unsaved.shortDescription)}, ${Fragment.encode(MariaTypes.longtext.nullable, unsaved.fullDescription)}, ${Fragment.encode(ScalaDbTypes.MariaTypes.numeric, unsaved.basePrice)}, ${Fragment.encode(ScalaDbTypes.MariaTypes.numeric.nullable, unsaved.costPrice)}, ${Fragment.encode(ScalaDbTypes.MariaTypes.numeric.nullable, unsaved.weightKg)}, ${Fragment.encode(MariaTypes.json.nullable, unsaved.dimensionsJson)}, ${Fragment.encode(MariaTypes.text, unsaved.status)}, ${Fragment.encode(MariaTypes.text, unsaved.taxClass)}, ${Fragment.encode(BestsellerClearanceFSet.mariaType.nullable, unsaved.tags)}, ${Fragment.encode(MariaTypes.json.nullable, unsaved.attributes)}, ${Fragment.encode(MariaTypes.json.nullable, unsaved.seoMetadata)}, ${Fragment.encode(MariaTypes.datetime, unsaved.createdAt)}, ${Fragment.encode(MariaTypes.datetime, unsaved.updatedAt)}, ${Fragment.encode(MariaTypes.datetime.nullable, unsaved.publishedAt)})
+    VALUES (${Fragment.encode(ProductsId.mariaType, unsaved.productId)}, ${Fragment.encode(MariaTypes.varchar, unsaved.sku)}, ${Fragment.encode(BrandsId.mariaType.opt, unsaved.brandId)}, ${Fragment.encode(MariaTypes.varchar, unsaved.name)}, ${Fragment.encode(MariaTypes.varchar.opt, unsaved.shortDescription)}, ${Fragment.encode(MariaTypes.longtext.opt, unsaved.fullDescription)}, ${Fragment.encode(MariaTypes.numeric, unsaved.basePrice)}, ${Fragment.encode(MariaTypes.numeric.opt, unsaved.costPrice)}, ${Fragment.encode(MariaTypes.numeric.opt, unsaved.weightKg)}, ${Fragment.encode(MariaTypes.json.opt, unsaved.dimensionsJson)}, ${Fragment.encode(MariaTypes.text, unsaved.status)}, ${Fragment.encode(MariaTypes.text, unsaved.taxClass)}, ${Fragment.encode(BestsellerClearanceFSet.mariaType.opt, unsaved.tags)}, ${Fragment.encode(MariaTypes.json.opt, unsaved.attributes)}, ${Fragment.encode(MariaTypes.json.opt, unsaved.seoMetadata)}, ${Fragment.encode(MariaTypes.datetime, unsaved.createdAt)}, ${Fragment.encode(MariaTypes.datetime, unsaved.updatedAt)}, ${Fragment.encode(MariaTypes.datetime.opt, unsaved.publishedAt)})
     ON DUPLICATE KEY UPDATE `sku` = VALUES(`sku`),
     `brand_id` = VALUES(`brand_id`),
     `name` = VALUES(`name`),
@@ -191,8 +190,8 @@ class ProductsRepoImpl extends ProductsRepo {
     `updated_at` = VALUES(`updated_at`),
     `published_at` = VALUES(`published_at`)
     RETURNING `product_id`, `sku`, `brand_id`, `name`, `short_description`, `full_description`, `base_price`, `cost_price`, `weight_kg`, `dimensions_json`, `status`, `tax_class`, `tags`, `attributes`, `seo_metadata`, `created_at`, `updated_at`, `published_at`"""
-    .updateReturning(ProductsRow.`_rowParser`.exactlyOne())
-    .runUnchecked(c)
+    .updateReturning(ProductsRow.rowCodec.exactlyOne())
+    .run(using c)
   }
 
   override def upsertBatch(unsaved: Iterator[ProductsRow])(using c: Connection): List[ProductsRow] = {
@@ -216,7 +215,7 @@ class ProductsRepoImpl extends ProductsRepo {
     `updated_at` = VALUES(`updated_at`),
     `published_at` = VALUES(`published_at`)
     RETURNING `product_id`, `sku`, `brand_id`, `name`, `short_description`, `full_description`, `base_price`, `cost_price`, `weight_kg`, `dimensions_json`, `status`, `tax_class`, `tags`, `attributes`, `seo_metadata`, `created_at`, `updated_at`, `published_at`"""
-      .updateReturningEach(ProductsRow.`_rowParser`, unsaved)
-    .runUnchecked(c)
+      .updateReturningEach(ProductsRow.rowCodec, unsaved)
+    .run(using c)
   }
 }

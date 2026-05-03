@@ -6,17 +6,18 @@
 package adventureworks.person.person
 
 import adventureworks.person.businessentity.BusinessentityId
-import dev.typr.foundations.scala.DeleteBuilder
-import dev.typr.foundations.scala.SelectBuilder
-import dev.typr.foundations.scala.UpdateBuilder
-import java.sql.Connection
+import dev.typr.dslsc.DeleteBuilder
+import dev.typr.dslsc.SelectBuilder
+import dev.typr.dslsc.UpdateBuilder
+import dev.typr.foundationssc.Connection
+import dev.typr.foundationssc.ConnectionRead
 
 trait PersonRepo {
   def delete: DeleteBuilder[PersonFields, PersonRow]
 
   def deleteById(businessentityid: BusinessentityId)(using c: Connection): Boolean
 
-  def deleteByIds(businessentityids: Array[BusinessentityId])(using c: Connection): Int
+  def deleteByIds(businessentityids: List[BusinessentityId])(using c: Connection): Int
 
   def insert(unsaved: PersonRow)(using c: Connection): PersonRow
 
@@ -35,13 +36,13 @@ trait PersonRepo {
 
   def select: SelectBuilder[PersonFields, PersonRow]
 
-  def selectAll(using c: Connection): List[PersonRow]
+  def selectAll(using c: ConnectionRead): List[PersonRow]
 
-  def selectById(businessentityid: BusinessentityId)(using c: Connection): Option[PersonRow]
+  def selectById(businessentityid: BusinessentityId)(using c: ConnectionRead): Option[PersonRow]
 
-  def selectByIds(businessentityids: Array[BusinessentityId])(using c: Connection): List[PersonRow]
+  def selectByIds(businessentityids: List[BusinessentityId])(using c: ConnectionRead): List[PersonRow]
 
-  def selectByIdsTracked(businessentityids: Array[BusinessentityId])(using c: Connection): Map[BusinessentityId, PersonRow]
+  def selectByIdsTracked(businessentityids: List[BusinessentityId])(using c: ConnectionRead): Map[BusinessentityId, PersonRow]
 
   def update: UpdateBuilder[PersonFields, PersonRow]
 

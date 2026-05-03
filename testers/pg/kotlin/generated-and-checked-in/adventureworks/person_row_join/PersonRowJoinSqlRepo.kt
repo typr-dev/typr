@@ -5,9 +5,9 @@
  */
 package adventureworks.person_row_join
 
-import java.sql.Connection
+import dev.typr.foundationskt.ConnectionRead
 import kotlin.collections.List
 
 interface PersonRowJoinSqlRepo {
-  abstract fun apply(c: Connection): List<PersonRowJoinSqlRow>
+  abstract fun apply(c: ConnectionRead): List<PersonRowJoinSqlRow>
 }

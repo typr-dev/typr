@@ -6,30 +6,28 @@
 package testdb.customer_orders
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import dev.typr.foundations.DuckDbTypes
+import dev.typr.dslkt.RowCodecs
 import dev.typr.foundations.Tuple.Tuple7
-import dev.typr.foundations.kotlin.KotlinDbTypes
-import dev.typr.foundations.kotlin.RowParser
-import dev.typr.foundations.kotlin.RowParsers
-import dev.typr.foundations.kotlin.nullable
+import dev.typr.foundationskt.DuckDbTypes
+import dev.typr.foundationskt.RowCodec
 import java.math.BigDecimal
 import java.time.LocalDate
 
 /** View: customer_orders */
 data class CustomerOrdersViewRow(
   @field:JsonProperty("customer_id") val customerId: Int?,
-  @field:JsonProperty("customer_name") val customerName: String?,
-  val email: String?,
+  @field:JsonProperty("customer_name") val customerName: kotlin.String?,
+  val email: kotlin.String?,
   @field:JsonProperty("order_id") val orderId: Int?,
   @field:JsonProperty("order_date") val orderDate: LocalDate?,
   @field:JsonProperty("total_amount") val totalAmount: BigDecimal?,
-  val status: String?
-) : Tuple7<Int?, String?, String?, Int?, LocalDate?, BigDecimal?, String?> {
+  val status: kotlin.String?
+) : Tuple7<Int?, kotlin.String?, kotlin.String?, Int?, LocalDate?, BigDecimal?, kotlin.String?> {
   override fun _1(): Int? = customerId
 
-  override fun _2(): String? = customerName
+  override fun _2(): kotlin.String? = customerName
 
-  override fun _3(): String? = email
+  override fun _3(): kotlin.String? = email
 
   override fun _4(): Int? = orderId
 
@@ -37,9 +35,9 @@ data class CustomerOrdersViewRow(
 
   override fun _6(): BigDecimal? = totalAmount
 
-  override fun _7(): String? = status
+  override fun _7(): kotlin.String? = status
 
   companion object {
-    val _rowParser: RowParser<CustomerOrdersViewRow> = RowParsers.of(KotlinDbTypes.DuckDbTypes.integer.nullable(), DuckDbTypes.varchar.nullable(), DuckDbTypes.varchar.nullable(), KotlinDbTypes.DuckDbTypes.integer.nullable(), DuckDbTypes.date.nullable(), DuckDbTypes.numeric.nullable(), DuckDbTypes.varchar.nullable(), { t0, t1, t2, t3, t4, t5, t6 -> CustomerOrdersViewRow(t0, t1, t2, t3, t4, t5, t6) }, { row -> arrayOf<Any?>(row.customerId, row.customerName, row.email, row.orderId, row.orderDate, row.totalAmount, row.status) })
+    val rowCodec: RowCodec<CustomerOrdersViewRow> = RowCodecs.of(DuckDbTypes.integer.opt(), DuckDbTypes.varchar.opt(), DuckDbTypes.varchar.opt(), DuckDbTypes.integer.opt(), DuckDbTypes.date.opt(), DuckDbTypes.numeric.opt(), DuckDbTypes.varchar.opt(), { t0: Int?, t1: kotlin.String?, t2: kotlin.String?, t3: Int?, t4: LocalDate?, t5: BigDecimal?, t6: kotlin.String? -> CustomerOrdersViewRow(t0, t1, t2, t3, t4, t5, t6) }, { row: CustomerOrdersViewRow -> arrayOf<Any?>(row.customerId, row.customerName, row.email, row.orderId, row.orderDate, row.totalAmount, row.status) })
   }
 }

@@ -6,10 +6,10 @@
 package testdb.db2test_unique
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import dev.typr.foundations.Db2Types
+import dev.typr.dslkt.RowCodecs
 import dev.typr.foundations.Tuple.Tuple4
-import dev.typr.foundations.kotlin.RowParser
-import dev.typr.foundations.kotlin.RowParsers
+import dev.typr.foundationskt.Db2Types
+import dev.typr.foundationskt.RowCodec
 
 /** Table: DB2TEST_UNIQUE
   * Primary key: ID
@@ -17,21 +17,21 @@ import dev.typr.foundations.kotlin.RowParsers
 data class Db2testUniqueRow(
   /** Identity ALWAYS */
   @field:JsonProperty("ID") val id: Db2testUniqueId,
-  @field:JsonProperty("EMAIL") val email: String,
-  @field:JsonProperty("CODE") val code: String,
-  @field:JsonProperty("CATEGORY") val category: String
-) : Tuple4<Db2testUniqueId, String, String, String> {
+  @field:JsonProperty("EMAIL") val email: kotlin.String,
+  @field:JsonProperty("CODE") val code: kotlin.String,
+  @field:JsonProperty("CATEGORY") val category: kotlin.String
+) : Tuple4<Db2testUniqueId, kotlin.String, kotlin.String, kotlin.String> {
   override fun _1(): Db2testUniqueId = id
 
-  override fun _2(): String = email
+  override fun _2(): kotlin.String = email
 
-  override fun _3(): String = code
+  override fun _3(): kotlin.String = code
 
-  override fun _4(): String = category
+  override fun _4(): kotlin.String = category
 
   fun toUnsavedRow(): Db2testUniqueRowUnsaved = Db2testUniqueRowUnsaved(email, code, category)
 
   companion object {
-    val _rowParser: RowParser<Db2testUniqueRow> = RowParsers.of(Db2testUniqueId.db2Type, Db2Types.varchar, Db2Types.varchar, Db2Types.varchar, { t0, t1, t2, t3 -> Db2testUniqueRow(t0, t1, t2, t3) }, { row -> arrayOf<Any?>(row.id, row.email, row.code, row.category) })
+    val rowCodec: RowCodec<Db2testUniqueRow> = RowCodecs.of(Db2testUniqueId.db2Type, Db2Types.varchar, Db2Types.varchar, Db2Types.varchar, { t0: Db2testUniqueId, t1: kotlin.String, t2: kotlin.String, t3: kotlin.String -> Db2testUniqueRow(t0, t1, t2, t3) }, { row: Db2testUniqueRow -> arrayOf<Any?>(row.id, row.email, row.code, row.category) })
   }
 }

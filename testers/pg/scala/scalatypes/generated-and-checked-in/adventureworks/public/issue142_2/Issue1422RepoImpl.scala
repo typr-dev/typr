@@ -6,27 +6,27 @@
 package adventureworks.public.issue142_2
 
 import adventureworks.public.issue142.Issue142Id
-import dev.typr.foundations.scala.DeleteBuilder
-import dev.typr.foundations.scala.Dialect
-import dev.typr.foundations.scala.Fragment
-import dev.typr.foundations.scala.ScalaIteratorOps
-import dev.typr.foundations.scala.SelectBuilder
-import dev.typr.foundations.scala.UpdateBuilder
-import dev.typr.foundations.streamingInsert
-import java.sql.Connection
-import dev.typr.foundations.scala.Fragment.sql
+import dev.typr.dslsc.DeleteBuilder
+import dev.typr.dslsc.Dialect
+import dev.typr.dslsc.SelectBuilder
+import dev.typr.dslsc.UpdateBuilder
+import dev.typr.foundationssc.Connection
+import dev.typr.foundationssc.ConnectionRead
+import dev.typr.foundationssc.Fragment
+import dev.typr.foundationssc.StreamingInsert
+import dev.typr.foundationssc.Fragment.sql
 
 class Issue1422RepoImpl extends Issue1422Repo {
   override def delete: DeleteBuilder[Issue1422Fields, Issue1422Row] = DeleteBuilder.of(""""public"."issue142_2"""", Issue1422Fields.structure, Dialect.POSTGRESQL)
 
-  override def deleteById(tabellkode: Issue142Id)(using c: Connection): Boolean = sql"""delete from "public"."issue142_2" where "tabellkode" = ${Fragment.encode(Issue142Id.pgType, tabellkode)}""".update().runUnchecked(c) > 0
+  override def deleteById(tabellkode: Issue142Id)(using c: Connection): Boolean = sql"""delete from "public"."issue142_2" where "tabellkode" = ${Fragment.encode(Issue142Id.pgType, tabellkode)}""".update().run(using c) > 0
 
-  override def deleteByIds(tabellkodes: Array[Issue142Id])(using c: Connection): Int = {
+  override def deleteByIds(tabellkodes: List[Issue142Id])(using c: Connection): Int = {
     sql"""delete
     from "public"."issue142_2"
-    where "tabellkode" = ANY(${Fragment.encode(Issue142Id.pgTypeArray, tabellkodes)})"""
+    where "tabellkode" = ANY(${Fragment.encode(Issue142Id.pgType.array, tabellkodes)})"""
       .update()
-      .runUnchecked(c)
+      .run(using c)
   }
 
   override def insert(unsaved: Issue1422Row)(using c: Connection): Issue1422Row = {
@@ -34,41 +34,41 @@ class Issue1422RepoImpl extends Issue1422Repo {
     values (${Fragment.encode(Issue142Id.pgType, unsaved.tabellkode)})
     RETURNING "tabellkode"
     """
-    .updateReturning(Issue1422Row.`_rowParser`.exactlyOne()).runUnchecked(c)
+    .updateReturning(Issue1422Row.rowCodec.exactlyOne()).run(using c)
   }
 
   override def insertStreaming(
     unsaved: Iterator[Issue1422Row],
     batchSize: Int = 10000
-  )(using c: Connection): Long = streamingInsert.insertUnchecked(s"""COPY "public"."issue142_2"("tabellkode") FROM STDIN""", batchSize, unsaved.toJavaIterator, c, Issue1422Row.pgText)
+  )(using c: Connection): Long = StreamingInsert.of(s"""COPY "public"."issue142_2"("tabellkode") FROM STDIN""", batchSize, unsaved, Issue1422Row.pgText).run(using c)
 
-  override def select: SelectBuilder[Issue1422Fields, Issue1422Row] = SelectBuilder.of(""""public"."issue142_2"""", Issue1422Fields.structure, Issue1422Row.`_rowParser`, Dialect.POSTGRESQL)
+  override def select: SelectBuilder[Issue1422Fields, Issue1422Row] = SelectBuilder.of(""""public"."issue142_2"""", Issue1422Fields.structure, Issue1422Row.rowCodec, Dialect.POSTGRESQL)
 
-  override def selectAll(using c: Connection): List[Issue1422Row] = {
+  override def selectAll(using c: ConnectionRead): List[Issue1422Row] = {
     sql"""select "tabellkode"
     from "public"."issue142_2"
-    """.query(Issue1422Row.`_rowParser`.all()).runUnchecked(c)
+    """.query(Issue1422Row.rowCodec.all()).run(using c)
   }
 
-  override def selectById(tabellkode: Issue142Id)(using c: Connection): Option[Issue1422Row] = {
+  override def selectById(tabellkode: Issue142Id)(using c: ConnectionRead): Option[Issue1422Row] = {
     sql"""select "tabellkode"
     from "public"."issue142_2"
-    where "tabellkode" = ${Fragment.encode(Issue142Id.pgType, tabellkode)}""".query(Issue1422Row.`_rowParser`.first()).runUnchecked(c)
+    where "tabellkode" = ${Fragment.encode(Issue142Id.pgType, tabellkode)}""".query(Issue1422Row.rowCodec.first()).run(using c)
   }
 
-  override def selectByIds(tabellkodes: Array[Issue142Id])(using c: Connection): List[Issue1422Row] = {
+  override def selectByIds(tabellkodes: List[Issue142Id])(using c: ConnectionRead): List[Issue1422Row] = {
     sql"""select "tabellkode"
     from "public"."issue142_2"
-    where "tabellkode" = ANY(${Fragment.encode(Issue142Id.pgTypeArray, tabellkodes)})""".query(Issue1422Row.`_rowParser`.all()).runUnchecked(c)
+    where "tabellkode" = ANY(${Fragment.encode(Issue142Id.pgType.array, tabellkodes)})""".query(Issue1422Row.rowCodec.all()).run(using c)
   }
 
-  override def selectByIdsTracked(tabellkodes: Array[Issue142Id])(using c: Connection): Map[Issue142Id, Issue1422Row] = {
+  override def selectByIdsTracked(tabellkodes: List[Issue142Id])(using c: ConnectionRead): Map[Issue142Id, Issue1422Row] = {
     val ret: scala.collection.mutable.Map[Issue142Id, Issue1422Row] = scala.collection.mutable.Map.empty[Issue142Id, Issue1422Row]
     selectByIds(tabellkodes)(using c).foreach(row => ret.put(row.tabellkode, row): @scala.annotation.nowarn)
     return ret.toMap
   }
 
-  override def update: UpdateBuilder[Issue1422Fields, Issue1422Row] = UpdateBuilder.of(""""public"."issue142_2"""", Issue1422Fields.structure, Issue1422Row.`_rowParser`, Dialect.POSTGRESQL)
+  override def update: UpdateBuilder[Issue1422Fields, Issue1422Row] = UpdateBuilder.of(""""public"."issue142_2"""", Issue1422Fields.structure, Issue1422Row.rowCodec, Dialect.POSTGRESQL)
 
   override def upsert(unsaved: Issue1422Row)(using c: Connection): Issue1422Row = {
   sql"""insert into "public"."issue142_2"("tabellkode")
@@ -76,8 +76,8 @@ class Issue1422RepoImpl extends Issue1422Repo {
     on conflict ("tabellkode")
     do update set "tabellkode" = EXCLUDED."tabellkode"
     returning "tabellkode""""
-    .updateReturning(Issue1422Row.`_rowParser`.exactlyOne())
-    .runUnchecked(c)
+    .updateReturning(Issue1422Row.rowCodec.exactlyOne())
+    .run(using c)
   }
 
   override def upsertBatch(unsaved: Iterator[Issue1422Row])(using c: Connection): List[Issue1422Row] = {
@@ -86,8 +86,8 @@ class Issue1422RepoImpl extends Issue1422Repo {
     on conflict ("tabellkode")
     do update set "tabellkode" = EXCLUDED."tabellkode"
     returning "tabellkode""""
-      .updateManyReturning(Issue1422Row.`_rowParser`, unsaved)
-    .runUnchecked(c)
+      .updateManyReturning(Issue1422Row.rowCodec, unsaved)
+    .run(using c)
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
@@ -95,13 +95,13 @@ class Issue1422RepoImpl extends Issue1422Repo {
     unsaved: Iterator[Issue1422Row],
     batchSize: Int = 10000
   )(using c: Connection): Int = {
-    sql"""create temporary table issue142_2_TEMP (like "public"."issue142_2") on commit drop""".update().runUnchecked(c): @scala.annotation.nowarn
-    streamingInsert.insertUnchecked(s"""copy issue142_2_TEMP("tabellkode") from stdin""", batchSize, unsaved.toJavaIterator, c, Issue1422Row.pgText): @scala.annotation.nowarn
+    sql"""create temporary table issue142_2_TEMP (like "public"."issue142_2") on commit drop""".update().run(using c): @scala.annotation.nowarn
+    StreamingInsert.of(s"""copy issue142_2_TEMP("tabellkode") from stdin""", batchSize, unsaved, Issue1422Row.pgText).run(using c): @scala.annotation.nowarn
     return sql"""insert into "public"."issue142_2"("tabellkode")
     select * from issue142_2_TEMP
     on conflict ("tabellkode")
     do nothing
     ;
-    drop table issue142_2_TEMP;""".update().runUnchecked(c)
+    drop table issue142_2_TEMP;""".update().run(using c)
   }
 }

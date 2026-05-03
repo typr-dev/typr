@@ -6,18 +6,17 @@
 package oracledb
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import dev.typr.foundations.OracleObject
-import dev.typr.foundations.OracleType
-import dev.typr.foundations.OracleTypes
-import dev.typr.foundations.kotlin.KotlinDbTypes
+import dev.typr.foundationskt.OracleType
+import dev.typr.foundationskt.OracleTypes
+import dev.typr.foundationskt.RowCodec
 import java.math.BigDecimal
 
 /** Oracle Object Type: MONEY_T */
 data class MoneyT(
   @field:JsonProperty("AMOUNT") val amount: BigDecimal,
-  @field:JsonProperty("CURRENCY") val currency: String
+  @field:JsonProperty("CURRENCY") val currency: kotlin.String
 ) {
   companion object {
-    val oracleType: OracleType<MoneyT> = OracleObject.builder<MoneyT>("MONEY_T").addAttribute("AMOUNT", KotlinDbTypes.OracleTypes.number, MoneyT::amount).addAttribute("CURRENCY", OracleTypes.char_, MoneyT::currency).build({ attrs -> MoneyT((attrs[0] as BigDecimal), (attrs[1] as String)) }).asType()
+    val oracleType: OracleType<MoneyT> = OracleTypes.compositeOf("MONEY_T", RowCodec.namedBuilder<MoneyT>().field("AMOUNT", OracleTypes.number, MoneyT::amount).field("CURRENCY", OracleTypes.char_, MoneyT::currency).build({ t0, t1 -> MoneyT(t0, t1) }))
   }
 }

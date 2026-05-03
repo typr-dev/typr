@@ -13,7 +13,7 @@ import java.util.Random
  * generated from SQL files in sql-scripts/db2/.
  */
 class SqlScriptTest {
-    private val testInsert = TestInsert(Random(42))
+    private val testInsert = TestInsert(Random(313927486))
     private val customerOrdersRepo = CustomerOrdersSqlRepoImpl()
     private val customerSummaryRepo = CustomerSummarySqlRepoImpl()
     private val ordersByCustomerRepo = OrdersByCustomerSqlRepoImpl()

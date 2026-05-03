@@ -18,7 +18,7 @@ import testdb.db2testnull.*;
  * string, binary, and date/time types.
  */
 public class AllTypesTest {
-  private final TestInsert testInsert = new TestInsert(new Random(42));
+  private final TestInsert testInsert = new TestInsert(new Random(1682197193));
   private final Db2testRepoImpl db2testRepo = new Db2testRepoImpl();
   private final Db2testnullRepoImpl db2testnullRepo = new Db2testnullRepoImpl();
 

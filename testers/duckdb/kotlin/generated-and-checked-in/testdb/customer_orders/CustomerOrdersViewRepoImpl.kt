@@ -5,14 +5,14 @@
  */
 package testdb.customer_orders
 
-import dev.typr.foundations.kotlin.Dialect
-import dev.typr.foundations.kotlin.Fragment
-import dev.typr.foundations.kotlin.SelectBuilder
-import java.sql.Connection
+import dev.typr.dslkt.Dialect
+import dev.typr.dslkt.SelectBuilder
+import dev.typr.foundationskt.ConnectionRead
+import dev.typr.foundationskt.Fragment
 import kotlin.collections.List
 
 class CustomerOrdersViewRepoImpl() : CustomerOrdersViewRepo {
-  override fun select(): SelectBuilder<CustomerOrdersViewFields, CustomerOrdersViewRow> = SelectBuilder.of("\"customer_orders\"", CustomerOrdersViewFields.structure, CustomerOrdersViewRow._rowParser, Dialect.DUCKDB)
+  override fun select(): SelectBuilder<CustomerOrdersViewFields, CustomerOrdersViewRow> = SelectBuilder.of("\"customer_orders\"", CustomerOrdersViewFields.structure, CustomerOrdersViewRow.rowCodec, Dialect.DUCKDB)
 
-  override fun selectAll(c: Connection): List<CustomerOrdersViewRow> = Fragment.interpolate(Fragment.lit("select \"customer_id\", \"customer_name\", \"email\", \"order_id\", \"order_date\", \"total_amount\", \"status\"\nfrom \"customer_orders\"\n")).query(CustomerOrdersViewRow._rowParser.all()).runUnchecked(c)
+  override fun selectAll(c: ConnectionRead): List<CustomerOrdersViewRow> = Fragment.concat(Fragment.of("select \"customer_id\", \"customer_name\", \"email\", \"order_id\", \"order_date\", \"total_amount\", \"status\"\nfrom \"customer_orders\"\n")).query(CustomerOrdersViewRow.rowCodec.all()).run(c)
 }

@@ -5,17 +5,16 @@
  */
 package testdb.v_customer_summary
 
-import dev.typr.foundations.MariaTypes
-import dev.typr.foundations.RowParser
-import dev.typr.foundations.dsl.FieldsBase
-import dev.typr.foundations.dsl.Path
-import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.scala.RelationStructure
-import dev.typr.foundations.scala.ScalaDbTypes
-import dev.typr.foundations.scala.SqlExpr
-import dev.typr.foundations.scala.SqlExpr.Field
-import dev.typr.foundations.scala.SqlExpr.OptField
-import dev.typr.foundations.scala.TupleExpr10
+import dev.typr.dsl.FieldsBase
+import dev.typr.dsl.Path
+import dev.typr.dsl.SqlExpr.FieldLike
+import dev.typr.dslsc.RelationStructure
+import dev.typr.dslsc.SqlExpr
+import dev.typr.dslsc.SqlExpr.Field
+import dev.typr.dslsc.SqlExpr.OptField
+import dev.typr.dslsc.TupleExpr10
+import dev.typr.foundations.RowCodec
+import dev.typr.foundationssc.MariaTypes
 import java.time.LocalDateTime
 import testdb.customer_status.CustomerStatusId
 import testdb.customers.CustomersId
@@ -30,7 +29,7 @@ class VCustomerSummaryViewFields(val `_path`: java.util.List[Path]) extends Tupl
       None,
       None,
       (row, value) => row.copy(customerId = value),
-      CustomersId.mariaType
+      CustomersId.mariaType.underlying
     )
   }
 
@@ -42,7 +41,7 @@ class VCustomerSummaryViewFields(val `_path`: java.util.List[Path]) extends Tupl
       None,
       None,
       (row, value) => row.copy(email = value),
-      Email.mariaType
+      Email.mariaType.underlying
     )
   }
 
@@ -54,7 +53,7 @@ class VCustomerSummaryViewFields(val `_path`: java.util.List[Path]) extends Tupl
       None,
       None,
       (row, value) => row.copy(fullName = value),
-      MariaTypes.varchar
+      MariaTypes.varchar.underlying
     )
   }
 
@@ -66,7 +65,7 @@ class VCustomerSummaryViewFields(val `_path`: java.util.List[Path]) extends Tupl
       None,
       None,
       (row, value) => row.copy(tier = value),
-      MariaTypes.text
+      MariaTypes.text.underlying
     )
   }
 
@@ -78,7 +77,7 @@ class VCustomerSummaryViewFields(val `_path`: java.util.List[Path]) extends Tupl
       None,
       None,
       (row, value) => row.copy(status = value),
-      CustomerStatusId.mariaType
+      CustomerStatusId.mariaType.underlying
     )
   }
 
@@ -90,7 +89,7 @@ class VCustomerSummaryViewFields(val `_path`: java.util.List[Path]) extends Tupl
       None,
       None,
       (row, value) => row.copy(createdAt = value),
-      MariaTypes.datetime
+      MariaTypes.datetime.underlying
     )
   }
 
@@ -102,7 +101,7 @@ class VCustomerSummaryViewFields(val `_path`: java.util.List[Path]) extends Tupl
       None,
       None,
       (row, value) => row.copy(lastLoginAt = value),
-      MariaTypes.datetime
+      MariaTypes.datetime.underlying
     )
   }
 
@@ -114,7 +113,7 @@ class VCustomerSummaryViewFields(val `_path`: java.util.List[Path]) extends Tupl
       None,
       None,
       (row, value) => row.copy(totalOrders = value),
-      ScalaDbTypes.MariaTypes.bigint
+      MariaTypes.bigint.underlying
     )
   }
 
@@ -126,7 +125,7 @@ class VCustomerSummaryViewFields(val `_path`: java.util.List[Path]) extends Tupl
       None,
       None,
       (row, value) => row.copy(lifetimeValue = value),
-      ScalaDbTypes.MariaTypes.numeric
+      MariaTypes.numeric.underlying
     )
   }
 
@@ -138,13 +137,13 @@ class VCustomerSummaryViewFields(val `_path`: java.util.List[Path]) extends Tupl
       None,
       None,
       (row, value) => row.copy(lastOrderDate = value),
-      MariaTypes.datetime
+      MariaTypes.datetime.underlying
     )
   }
 
   override def columns: java.util.List[FieldLike[?, VCustomerSummaryViewRow]] = java.util.List.of(this.customerId.underlying, this.email.underlying, this.fullName.underlying, this.tier.underlying, this.status.underlying, this.createdAt.underlying, this.lastLoginAt.underlying, this.totalOrders.underlying, this.lifetimeValue.underlying, this.lastOrderDate.underlying)
 
-  override def rowParser: RowParser[VCustomerSummaryViewRow] = VCustomerSummaryViewRow._rowParser.underlying
+  override def rowCodec: RowCodec[VCustomerSummaryViewRow] = VCustomerSummaryViewRow.rowCodec.underlying
 
   override def withPaths(`_path`: java.util.List[Path]): RelationStructure[VCustomerSummaryViewFields, VCustomerSummaryViewRow] = new VCustomerSummaryViewFields(`_path`)
 

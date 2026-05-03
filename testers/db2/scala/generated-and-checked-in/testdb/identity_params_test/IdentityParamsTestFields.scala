@@ -5,16 +5,16 @@
  */
 package testdb.identity_params_test
 
-import dev.typr.foundations.Db2Types
-import dev.typr.foundations.RowParser
-import dev.typr.foundations.dsl.FieldsBase
-import dev.typr.foundations.dsl.Path
-import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.scala.RelationStructure
-import dev.typr.foundations.scala.SqlExpr
-import dev.typr.foundations.scala.SqlExpr.Field
-import dev.typr.foundations.scala.SqlExpr.IdField
-import dev.typr.foundations.scala.TupleExpr2
+import dev.typr.dsl.FieldsBase
+import dev.typr.dsl.Path
+import dev.typr.dsl.SqlExpr.FieldLike
+import dev.typr.dslsc.RelationStructure
+import dev.typr.dslsc.SqlExpr
+import dev.typr.dslsc.SqlExpr.Field
+import dev.typr.dslsc.SqlExpr.IdField
+import dev.typr.dslsc.TupleExpr2
+import dev.typr.foundations.RowCodec
+import dev.typr.foundationssc.Db2Types
 
 class IdentityParamsTestFields(val `_path`: java.util.List[Path]) extends TupleExpr2[IdentityParamsTestId, String] with RelationStructure[IdentityParamsTestFields, IdentityParamsTestRow]  with FieldsBase[IdentityParamsTestRow] {
   def id: IdField[IdentityParamsTestId, IdentityParamsTestRow] = {
@@ -25,7 +25,7 @@ class IdentityParamsTestFields(val `_path`: java.util.List[Path]) extends TupleE
       None,
       None,
       (row, value) => row.copy(id = value),
-      IdentityParamsTestId.db2Type
+      IdentityParamsTestId.db2Type.underlying
     )
   }
 
@@ -37,13 +37,13 @@ class IdentityParamsTestFields(val `_path`: java.util.List[Path]) extends TupleE
       None,
       None,
       (row, value) => row.copy(name = value),
-      Db2Types.varchar
+      Db2Types.varchar.underlying
     )
   }
 
   override def columns: java.util.List[FieldLike[?, IdentityParamsTestRow]] = java.util.List.of(this.id.underlying, this.name.underlying)
 
-  override def rowParser: RowParser[IdentityParamsTestRow] = IdentityParamsTestRow._rowParser.underlying
+  override def rowCodec: RowCodec[IdentityParamsTestRow] = IdentityParamsTestRow.rowCodec.underlying
 
   override def withPaths(`_path`: java.util.List[Path]): RelationStructure[IdentityParamsTestFields, IdentityParamsTestRow] = new IdentityParamsTestFields(`_path`)
 

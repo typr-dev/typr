@@ -11,18 +11,18 @@ import adventureworks.person.businessentity.BusinessentityId
 import adventureworks.sales.salesterritory.SalesterritoryFields
 import adventureworks.sales.salesterritory.SalesterritoryId
 import adventureworks.sales.salesterritory.SalesterritoryRow
-import dev.typr.foundations.PgTypes
-import dev.typr.foundations.RowParser
-import dev.typr.foundations.dsl.FieldsBase
-import dev.typr.foundations.dsl.Path
-import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.kotlin.ForeignKey
-import dev.typr.foundations.kotlin.RelationStructure
-import dev.typr.foundations.kotlin.SqlExpr
-import dev.typr.foundations.kotlin.SqlExpr.Field
-import dev.typr.foundations.kotlin.SqlExpr.IdField
-import dev.typr.foundations.kotlin.SqlExpr.OptField
-import dev.typr.foundations.kotlin.TupleExpr9
+import dev.typr.dsl.FieldsBase
+import dev.typr.dsl.Path
+import dev.typr.dsl.SqlExpr.FieldLike
+import dev.typr.dslkt.ForeignKey
+import dev.typr.dslkt.RelationStructure
+import dev.typr.dslkt.SqlExpr
+import dev.typr.dslkt.SqlExpr.Field
+import dev.typr.dslkt.SqlExpr.IdField
+import dev.typr.dslkt.SqlExpr.OptField
+import dev.typr.dslkt.TupleExpr9
+import dev.typr.foundations.RowCodec
+import dev.typr.foundationskt.PgTypes
 import java.math.BigDecimal
 import java.time.LocalDateTime
 import java.util.UUID
@@ -49,31 +49,31 @@ data class SalespersonFields(val _path: List<Path>) : TupleExpr9<BusinessentityI
 
   override fun _path(): List<Path> = _path
 
-  fun bonus(): Field<BigDecimal, SalespersonRow> = Field<BigDecimal, SalespersonRow>(_path, "bonus", SalespersonRow::bonus, null, "numeric", { row, value -> row.copy(bonus = value) }, PgTypes.numeric)
+  fun bonus(): Field<BigDecimal, SalespersonRow> = Field<BigDecimal, SalespersonRow>(_path, "bonus", SalespersonRow::bonus, null, "numeric", { row, value -> row.copy(bonus = value) }, PgTypes.numeric.underlying)
 
-  fun businessentityid(): IdField<BusinessentityId, SalespersonRow> = IdField<BusinessentityId, SalespersonRow>(_path, "businessentityid", SalespersonRow::businessentityid, null, "int4", { row, value -> row.copy(businessentityid = value) }, BusinessentityId.pgType)
+  fun businessentityid(): IdField<BusinessentityId, SalespersonRow> = IdField<BusinessentityId, SalespersonRow>(_path, "businessentityid", SalespersonRow::businessentityid, null, "int4", { row, value -> row.copy(businessentityid = value) }, BusinessentityId.pgType.underlying)
 
   override fun columns(): List<FieldLike<*, SalespersonRow>> = listOf(this.businessentityid().underlying, this.territoryid().underlying, this.salesquota().underlying, this.bonus().underlying, this.commissionpct().underlying, this.salesytd().underlying, this.saleslastyear().underlying, this.rowguid().underlying, this.modifieddate().underlying)
 
-  fun commissionpct(): Field<BigDecimal, SalespersonRow> = Field<BigDecimal, SalespersonRow>(_path, "commissionpct", SalespersonRow::commissionpct, null, "numeric", { row, value -> row.copy(commissionpct = value) }, PgTypes.numeric)
+  fun commissionpct(): Field<BigDecimal, SalespersonRow> = Field<BigDecimal, SalespersonRow>(_path, "commissionpct", SalespersonRow::commissionpct, null, "numeric", { row, value -> row.copy(commissionpct = value) }, PgTypes.numeric.underlying)
 
   fun fkHumanresourcesEmployee(): ForeignKey<EmployeeFields, EmployeeRow> = ForeignKey.of<EmployeeFields, EmployeeRow>("sales.FK_SalesPerson_Employee_BusinessEntityID").withColumnPair<BusinessentityId>(businessentityid(), EmployeeFields::businessentityid)
 
   fun fkSalesterritory(): ForeignKey<SalesterritoryFields, SalesterritoryRow> = ForeignKey.of<SalesterritoryFields, SalesterritoryRow>("sales.FK_SalesPerson_SalesTerritory_TerritoryID").withColumnPair<SalesterritoryId>(territoryid(), SalesterritoryFields::territoryid)
 
-  fun modifieddate(): Field<LocalDateTime, SalespersonRow> = Field<LocalDateTime, SalespersonRow>(_path, "modifieddate", SalespersonRow::modifieddate, null, "timestamp", { row, value -> row.copy(modifieddate = value) }, PgTypes.timestamp)
+  fun modifieddate(): Field<LocalDateTime, SalespersonRow> = Field<LocalDateTime, SalespersonRow>(_path, "modifieddate", SalespersonRow::modifieddate, null, "timestamp", { row, value -> row.copy(modifieddate = value) }, PgTypes.timestamp.underlying)
 
-  override fun rowParser(): RowParser<SalespersonRow> = SalespersonRow._rowParser.underlying
+  override fun rowCodec(): RowCodec<SalespersonRow> = SalespersonRow.rowCodec.underlying
 
-  fun rowguid(): Field<UUID, SalespersonRow> = Field<UUID, SalespersonRow>(_path, "rowguid", SalespersonRow::rowguid, null, "uuid", { row, value -> row.copy(rowguid = value) }, PgTypes.uuid)
+  fun rowguid(): Field<UUID, SalespersonRow> = Field<UUID, SalespersonRow>(_path, "rowguid", SalespersonRow::rowguid, null, "uuid", { row, value -> row.copy(rowguid = value) }, PgTypes.uuid.underlying)
 
-  fun saleslastyear(): Field<BigDecimal, SalespersonRow> = Field<BigDecimal, SalespersonRow>(_path, "saleslastyear", SalespersonRow::saleslastyear, null, "numeric", { row, value -> row.copy(saleslastyear = value) }, PgTypes.numeric)
+  fun saleslastyear(): Field<BigDecimal, SalespersonRow> = Field<BigDecimal, SalespersonRow>(_path, "saleslastyear", SalespersonRow::saleslastyear, null, "numeric", { row, value -> row.copy(saleslastyear = value) }, PgTypes.numeric.underlying)
 
-  fun salesquota(): OptField<BigDecimal, SalespersonRow> = OptField<BigDecimal, SalespersonRow>(_path, "salesquota", SalespersonRow::salesquota, null, "numeric", { row, value -> row.copy(salesquota = value) }, PgTypes.numeric)
+  fun salesquota(): OptField<BigDecimal, SalespersonRow> = OptField<BigDecimal, SalespersonRow>(_path, "salesquota", SalespersonRow::salesquota, null, "numeric", { row, value -> row.copy(salesquota = value) }, PgTypes.numeric.underlying)
 
-  fun salesytd(): Field<BigDecimal, SalespersonRow> = Field<BigDecimal, SalespersonRow>(_path, "salesytd", SalespersonRow::salesytd, null, "numeric", { row, value -> row.copy(salesytd = value) }, PgTypes.numeric)
+  fun salesytd(): Field<BigDecimal, SalespersonRow> = Field<BigDecimal, SalespersonRow>(_path, "salesytd", SalespersonRow::salesytd, null, "numeric", { row, value -> row.copy(salesytd = value) }, PgTypes.numeric.underlying)
 
-  fun territoryid(): OptField<SalesterritoryId, SalespersonRow> = OptField<SalesterritoryId, SalespersonRow>(_path, "territoryid", SalespersonRow::territoryid, null, "int4", { row, value -> row.copy(territoryid = value) }, SalesterritoryId.pgType)
+  fun territoryid(): OptField<SalesterritoryId, SalespersonRow> = OptField<SalesterritoryId, SalespersonRow>(_path, "territoryid", SalespersonRow::territoryid, null, "int4", { row, value -> row.copy(territoryid = value) }, SalesterritoryId.pgType.underlying)
 
   override fun withPaths(_path: List<Path>): RelationStructure<SalespersonFields, SalespersonRow> = SalespersonFields(_path)
 

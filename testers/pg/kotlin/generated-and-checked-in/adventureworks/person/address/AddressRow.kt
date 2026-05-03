@@ -7,12 +7,11 @@ package adventureworks.person.address
 
 import adventureworks.customtypes.Defaulted
 import adventureworks.person.stateprovince.StateprovinceId
+import dev.typr.dslkt.RowCodecs
 import dev.typr.foundations.PgText
-import dev.typr.foundations.PgTypes
 import dev.typr.foundations.Tuple.Tuple9
-import dev.typr.foundations.kotlin.RowParser
-import dev.typr.foundations.kotlin.RowParsers
-import dev.typr.foundations.kotlin.nullable
+import dev.typr.foundationskt.PgTypes
+import dev.typr.foundationskt.RowCodec
 import java.time.LocalDateTime
 import java.util.UUID
 
@@ -26,35 +25,35 @@ data class AddressRow(
     */
   val addressid: AddressId,
   /** First street address line. */
-  val addressline1: String,
+  val addressline1: kotlin.String,
   /** Second street address line. */
-  val addressline2: /* max 60 chars */ String?,
+  val addressline2: /* max 60 chars */ kotlin.String?,
   /** Name of the city. */
-  val city: String,
+  val city: kotlin.String,
   /** Unique identification number for the state or province. Foreign key to StateProvince table.
     * Points to [adventureworks.person.stateprovince.StateprovinceRow.stateprovinceid]
     */
   val stateprovinceid: StateprovinceId,
   /** Postal code for the street address. */
-  val postalcode: String,
+  val postalcode: kotlin.String,
   /** Latitude and longitude of this address. */
   val spatiallocation: ByteArray?,
   /** Default: uuid_generate_v1() */
   val rowguid: UUID,
   /** Default: now() */
   val modifieddate: LocalDateTime
-) : Tuple9<AddressId, String, /* max 60 chars */ String?, String, StateprovinceId, String, ByteArray?, UUID, LocalDateTime> {
+) : Tuple9<AddressId, kotlin.String, /* max 60 chars */ kotlin.String?, kotlin.String, StateprovinceId, kotlin.String, ByteArray?, UUID, LocalDateTime> {
   override fun _1(): AddressId = addressid
 
-  override fun _2(): String = addressline1
+  override fun _2(): kotlin.String = addressline1
 
-  override fun _3(): /* max 60 chars */ String? = addressline2
+  override fun _3(): /* max 60 chars */ kotlin.String? = addressline2
 
-  override fun _4(): String = city
+  override fun _4(): kotlin.String = city
 
   override fun _5(): StateprovinceId = stateprovinceid
 
-  override fun _6(): String = postalcode
+  override fun _6(): kotlin.String = postalcode
 
   override fun _7(): ByteArray? = spatiallocation
 
@@ -71,9 +70,9 @@ data class AddressRow(
   ): AddressRowUnsaved = AddressRowUnsaved(addressline1, addressline2, city, stateprovinceid, postalcode, spatiallocation, addressid, rowguid, modifieddate)
 
   companion object {
-    val _rowParser: RowParser<AddressRow> = RowParsers.of(AddressId.pgType, PgTypes.text, PgTypes.text.nullable(), PgTypes.text, StateprovinceId.pgType, PgTypes.text, PgTypes.bytea.nullable(), PgTypes.uuid, PgTypes.timestamp, { t0, t1, t2, t3, t4, t5, t6, t7, t8 -> AddressRow(t0, t1, t2, t3, t4, t5, t6, t7, t8) }, { row -> arrayOf<Any?>(row.addressid, row.addressline1, row.addressline2, row.city, row.stateprovinceid, row.postalcode, row.spatiallocation, row.rowguid, row.modifieddate) })
+    val rowCodec: RowCodec<AddressRow> = RowCodecs.of(AddressId.pgType, PgTypes.text, PgTypes.text.opt(), PgTypes.text, StateprovinceId.pgType, PgTypes.text, PgTypes.bytea.opt(), PgTypes.uuid, PgTypes.timestamp, { t0: AddressId, t1: kotlin.String, t2: /* max 60 chars */ kotlin.String?, t3: kotlin.String, t4: StateprovinceId, t5: kotlin.String, t6: ByteArray?, t7: UUID, t8: LocalDateTime -> AddressRow(t0, t1, t2, t3, t4, t5, t6, t7, t8) }, { row: AddressRow -> arrayOf<Any?>(row.addressid, row.addressline1, row.addressline2, row.city, row.stateprovinceid, row.postalcode, row.spatiallocation, row.rowguid, row.modifieddate) })
 
     val pgText: PgText<AddressRow> =
-      PgText.from(_rowParser.underlying)
+      PgText.from(rowCodec.underlying)
   }
 }

@@ -5,16 +5,15 @@
  */
 package adventureworks.update_person
 
-import dev.typr.foundations.PgTypes
-import dev.typr.foundations.kotlin.Fragment
-import dev.typr.foundations.kotlin.nullable
-import java.sql.Connection
+import dev.typr.foundationskt.Connection
+import dev.typr.foundationskt.Fragment
+import dev.typr.foundationskt.PgTypes
 import java.time.LocalDateTime
 
 class UpdatePersonSqlRepoImpl() : UpdatePersonSqlRepo {
   override fun apply(
-    suffix: String,
+    suffix: kotlin.String,
     cutoff: LocalDateTime?,
     c: Connection
-  ): Int = Fragment.interpolate(Fragment.lit("update person.person\nset firstname = firstname || '-' || "), Fragment.encode(PgTypes.text, suffix), Fragment.lit("\nwhere modifieddate < "), Fragment.encode(PgTypes.timestamp.nullable(), cutoff), Fragment.lit("::timestamp")).update().runUnchecked(c)
+  ): Int = Fragment.concat(Fragment.of("update person.person\nset firstname = firstname || '-' || "), Fragment.encode(PgTypes.text, suffix), Fragment.of("\nwhere modifieddate < "), Fragment.encode(PgTypes.timestamp.opt(), cutoff), Fragment.of("::timestamp")).update().run(c)
 }

@@ -5,10 +5,11 @@
  */
 package testdb.shipping_carriers
 
-import dev.typr.foundations.kotlin.DeleteBuilder
-import dev.typr.foundations.kotlin.SelectBuilder
-import dev.typr.foundations.kotlin.UpdateBuilder
-import java.sql.Connection
+import dev.typr.dslkt.DeleteBuilder
+import dev.typr.dslkt.SelectBuilder
+import dev.typr.dslkt.UpdateBuilder
+import dev.typr.foundationskt.Connection
+import dev.typr.foundationskt.ConnectionRead
 import kotlin.collections.Iterator
 import kotlin.collections.List
 import kotlin.collections.Map
@@ -19,10 +20,10 @@ interface ShippingCarriersRepo {
   abstract fun deleteById(
     carrierId: ShippingCarriersId,
     c: Connection
-  ): Boolean
+  ): kotlin.Boolean
 
   abstract fun deleteByIds(
-    carrierIds: Array<ShippingCarriersId>,
+    carrierIds: List<ShippingCarriersId>,
     c: Connection
   ): Int
 
@@ -38,26 +39,26 @@ interface ShippingCarriersRepo {
 
   abstract fun select(): SelectBuilder<ShippingCarriersFields, ShippingCarriersRow>
 
-  abstract fun selectAll(c: Connection): List<ShippingCarriersRow>
+  abstract fun selectAll(c: ConnectionRead): List<ShippingCarriersRow>
 
   abstract fun selectById(
     carrierId: ShippingCarriersId,
-    c: Connection
+    c: ConnectionRead
   ): ShippingCarriersRow?
 
   abstract fun selectByIds(
-    carrierIds: Array<ShippingCarriersId>,
-    c: Connection
+    carrierIds: List<ShippingCarriersId>,
+    c: ConnectionRead
   ): List<ShippingCarriersRow>
 
   abstract fun selectByIdsTracked(
-    carrierIds: Array<ShippingCarriersId>,
-    c: Connection
+    carrierIds: List<ShippingCarriersId>,
+    c: ConnectionRead
   ): Map<ShippingCarriersId, ShippingCarriersRow>
 
   abstract fun selectByUniqueCode(
-    code: String,
-    c: Connection
+    code: kotlin.String,
+    c: ConnectionRead
   ): ShippingCarriersRow?
 
   abstract fun update(): UpdateBuilder<ShippingCarriersFields, ShippingCarriersRow>
@@ -65,7 +66,7 @@ interface ShippingCarriersRepo {
   abstract fun update(
     row: ShippingCarriersRow,
     c: Connection
-  ): Boolean
+  ): kotlin.Boolean
 
   abstract fun upsert(
     unsaved: ShippingCarriersRow,

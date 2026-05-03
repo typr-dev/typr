@@ -6,12 +6,10 @@
 package oracledb.customer_products
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import dev.typr.foundations.OracleTypes
+import dev.typr.dslsc.RowCodecs
 import dev.typr.foundations.Tuple.Tuple6
-import dev.typr.foundations.scala.DbTypeOps
-import dev.typr.foundations.scala.RowParser
-import dev.typr.foundations.scala.RowParsers
-import dev.typr.foundations.scala.ScalaDbTypes
+import dev.typr.foundationssc.OracleTypes
+import dev.typr.foundationssc.RowCodec
 import oracledb.AddressT
 import oracledb.MoneyT
 
@@ -38,5 +36,5 @@ case class CustomerProductsViewRow(
 }
 
 object CustomerProductsViewRow {
-  val `_rowParser`: RowParser[CustomerProductsViewRow] = RowParsers.of(ScalaDbTypes.OracleTypes.number, OracleTypes.varchar2, AddressT.oracleType.nullable, ScalaDbTypes.OracleTypes.number, OracleTypes.varchar2, MoneyT.oracleType.nullable)(CustomerProductsViewRow.apply)(row => Array[Any](row.customerId, row.customerName, row.billingAddress, row.productId, row.productName, row.price))
+  val rowCodec: RowCodec[CustomerProductsViewRow] = RowCodecs.of(OracleTypes.number, OracleTypes.varchar2, AddressT.oracleType.opt, OracleTypes.number, OracleTypes.varchar2, MoneyT.oracleType.opt)(CustomerProductsViewRow.apply)(row => Array[Any](row.customerId, row.customerName, row.billingAddress, row.productId, row.productName, row.price))
 }

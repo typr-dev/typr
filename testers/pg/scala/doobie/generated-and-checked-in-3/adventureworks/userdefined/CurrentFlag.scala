@@ -23,7 +23,7 @@ object CurrentFlag {
 
   given arrayPut: Put[Array[CurrentFlag]] = Flag.arrayPut.contramap(_.map(_.value))
 
-  given bijection: Bijection[CurrentFlag, Flag] = Bijection.apply[CurrentFlag, Flag](_.value)(CurrentFlag.apply)
+  given bijection: Bijection[CurrentFlag, Flag] = Bijection[CurrentFlag, Flag](_.value)(CurrentFlag.apply)
 
   given decoder: Decoder[CurrentFlag] = Flag.decoder.map(CurrentFlag.apply)
 

@@ -19,11 +19,11 @@ import testdb.userdefined.IsActive
 /** This class corresponds to a row in table `promotions` which has not been persisted yet */
 data class PromotionsRowUnsaved(
   /**  */
-  val code: String,
+  val code: kotlin.String,
   /**  */
-  val name: String,
+  val name: kotlin.String,
   /**  */
-  @field:JsonProperty("discount_type") val discountType: String,
+  @field:JsonProperty("discount_type") val discountType: kotlin.String,
   /**  */
   @field:JsonProperty("discount_value") val discountValue: BigDecimal,
   /**  */
@@ -33,7 +33,7 @@ data class PromotionsRowUnsaved(
   /** Default: NULL
 
     */
-  val description: Defaulted<String?> = UseDefault(),
+  val description: Defaulted<kotlin.String?> = UseDefault(),
   /** Default: NULL
 
     */
@@ -68,7 +68,7 @@ data class PromotionsRowUnsaved(
   @field:JsonProperty("created_at") val createdAt: Defaulted<LocalDateTime> = UseDefault()
 ) {
   fun toRow(
-    descriptionDefault: () -> String?,
+    descriptionDefault: () -> kotlin.String?,
     minOrderAmountDefault: () -> BigDecimal?,
     maxUsesDefault: () -> Uint4?,
     usesCountDefault: () -> Uint4,

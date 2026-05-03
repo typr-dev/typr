@@ -9,8 +9,7 @@ import adventureworks.customtypes.Defaulted
 import adventureworks.customtypes.Defaulted.UseDefault
 import adventureworks.production.product.ProductId
 import dev.typr.foundations.PgText
-import dev.typr.foundations.PgTypes
-import dev.typr.foundations.kotlin.nullable
+import dev.typr.foundationskt.PgTypes
 import java.math.BigDecimal
 import java.time.LocalDateTime
 
@@ -39,14 +38,14 @@ data class ProductcosthistoryRowUnsaved(
 
   companion object {
     val pgText: PgText<ProductcosthistoryRowUnsaved> =
-      PgText.instance({ row, sb -> ProductId.pgType.text().unsafeEncode(row.productid, sb)
+      PgText.instance({ row, sb -> ProductId.pgType.pgText().unsafeEncode(row.productid, sb)
       sb.append(PgText.DELIMETER)
-      PgTypes.timestamp.text().unsafeEncode(row.startdate, sb)
+      PgTypes.timestamp.pgText().unsafeEncode(row.startdate, sb)
       sb.append(PgText.DELIMETER)
-      PgTypes.timestamp.nullable().text().unsafeEncode(row.enddate, sb)
+      PgTypes.timestamp.opt().pgText().unsafeEncode(row.enddate, sb)
       sb.append(PgText.DELIMETER)
-      PgTypes.numeric.text().unsafeEncode(row.standardcost, sb)
+      PgTypes.numeric.pgText().unsafeEncode(row.standardcost, sb)
       sb.append(PgText.DELIMETER)
-      Defaulted.pgText(PgTypes.timestamp.text()).unsafeEncode(row.modifieddate, sb) })
+      Defaulted.pgText(PgTypes.timestamp.pgText()).unsafeEncode(row.modifieddate, sb) })
   }
 }

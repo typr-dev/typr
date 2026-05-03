@@ -5,8 +5,9 @@
  */
 package testdb
 
-import dev.typr.foundations.DuckDbType
-import dev.typr.foundations.DuckDbTypes
+import dev.typr.dslsc.Bijection
+import dev.typr.foundationssc.DuckDbType
+import dev.typr.foundationssc.DuckDbTypes
 
 /** Enum `priority`
  *  - low
@@ -15,34 +16,23 @@ import dev.typr.foundations.DuckDbTypes
  *  - critical
  */
 
-sealed abstract class Priority(val value: java.lang.String)
+enum Priority {
+  case low, medium, high, critical
+  
+}
 
 object Priority {
-  given duckDbTypeArray: DuckDbType[Array[Priority]] = {
-    DuckDbTypes.varcharArray
-      .bimap(xs => xs.map(Priority.force), xs => xs.map(_.value))
-      .renamedDropPrecision("priority")
+  given duckDbTypeArray: DuckDbType[List[Priority]] = {
+    DuckDbType(DuckDbTypes.text.list
+      .to(Bijection.of(xs => xs.map(Priority.force).toList, xs => xs.map(_.value).toList)).underlying.renamedDropPrecision("priority"))
   }
 
-  given duckDbType: DuckDbType[Priority] = {
-    DuckDbTypes.text.bimap(Priority.force, _.value)
-      .renamedDropPrecision("priority")
-  }
+  given duckDbType: DuckDbType[Priority] = DuckDbType(DuckDbTypes.text.to(Bijection.of(Priority.force, _.value)).underlying.renamedDropPrecision("priority"))
+  extension (e: Priority) def value: java.lang.String = e.toString
   def apply(str: java.lang.String): scala.Either[java.lang.String, Priority] =
-    ByName.get(str).toRight(s"'$str' does not match any of the following legal values: $Names")
-  def force(str: java.lang.String): Priority =
-    apply(str) match {
-      case scala.Left(msg) => sys.error(msg)
-      case scala.Right(value) => value
-    }
-  case object low extends Priority("low")
-
-  case object medium extends Priority("medium")
-
-  case object high extends Priority("high")
-
-  case object critical extends Priority("critical")
-  val All: scala.List[Priority] = scala.List(low, medium, high, critical)
-  val Names: java.lang.String = All.map(_.value).mkString(", ")
-  val ByName: scala.collection.immutable.Map[java.lang.String, Priority] = All.map(x => (x.value, x)).toMap
+    scala.util.Try(Priority.valueOf(str)).toEither.left.map(_ => s"'$str' does not match any of the following legal values: $Names")
+  def force(str: java.lang.String): Priority = Priority.valueOf(str)
+  val All: scala.List[Priority] = values.toList
+  val Names: java.lang.String = All.map(_.toString).mkString(", ")
+  val ByName: scala.collection.immutable.Map[java.lang.String, Priority] = All.map(x => (x.toString, x)).toMap
 }

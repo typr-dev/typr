@@ -14,10 +14,10 @@ import testdb.customtypes.Defaulted.UseDefault
 /** This class corresponds to a row in table `employees` which has not been persisted yet */
 data class EmployeesRowUnsaved(
   @field:JsonProperty("emp_number") val empNumber: Int,
-  @field:JsonProperty("emp_suffix") val empSuffix: String,
-  @field:JsonProperty("dept_code") val deptCode: String,
-  @field:JsonProperty("dept_region") val deptRegion: String,
-  @field:JsonProperty("emp_name") val empName: String,
+  @field:JsonProperty("emp_suffix") val empSuffix: kotlin.String,
+  @field:JsonProperty("dept_code") val deptCode: kotlin.String,
+  @field:JsonProperty("dept_region") val deptRegion: kotlin.String,
+  @field:JsonProperty("emp_name") val empName: kotlin.String,
   val salary: BigDecimal? = null,
   /** Default: current_date */
   @field:JsonProperty("hire_date") val hireDate: Defaulted<LocalDate> = UseDefault()

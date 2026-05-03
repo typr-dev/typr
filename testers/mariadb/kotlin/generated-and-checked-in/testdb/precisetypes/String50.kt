@@ -6,15 +6,15 @@
 package testdb.precisetypes
 
 import com.fasterxml.jackson.annotation.JsonValue
-import dev.typr.foundations.MariaType
-import dev.typr.foundations.MariaTypes
 import dev.typr.foundations.data.precise.StringN
-import dev.typr.foundations.kotlin.Bijection
+import dev.typr.foundationskt.Bijection
+import dev.typr.foundationskt.MariaType
+import dev.typr.foundationskt.MariaTypes
 import java.lang.IllegalArgumentException
 
 @kotlin.ConsistentCopyVisibility
-data class String50 private constructor(@field:JsonValue val value: String) : StringN {
-  override fun equals(other: Any?): Boolean {
+data class String50 private constructor(@field:JsonValue val value: kotlin.String) : StringN {
+  override fun equals(other: Any?): kotlin.Boolean {
     if (this === other) return true
     if (other !is StringN) return false
     return value == other.rawValue()
@@ -24,32 +24,32 @@ data class String50 private constructor(@field:JsonValue val value: String) : St
 
   override fun maxLength(): Int = 50
 
-  override fun rawValue(): String = value
+  override fun rawValue(): kotlin.String = value
 
-  override fun semanticEquals(other: StringN): Boolean = if (other == null) false else value == other.rawValue()
+  override fun semanticEquals(other: StringN): kotlin.Boolean = if (other == null) false else (value == other.rawValue())
 
   override fun semanticHashCode(): Int = value.hashCode()
 
   override fun toString(): kotlin.String {
-    return value.toString()
+    return value
   }
 
   companion object {
-    val bijection: Bijection<String50, String> =
-      Bijection.of(String50::value, ::String50)
+    fun of(value: kotlin.String): String50? = if (value.length <= 50) String50(value) else null
 
-    val mariaType: MariaType<String50> =
-      MariaTypes.varchar.bimap(::String50, String50::value)
-
-    fun of(value: String): String50? = if (value.length <= 50) String50(value) else null
-
-    fun truncate(value: String): String50 = String50(if (value.length <= 50) value else value.substring(0, 50))
-
-    fun unsafeForce(value: String): String50 {
+    fun unsafeForce(value: kotlin.String): String50 {
       if (value.length > 50) {
         throw IllegalArgumentException("Value length ${value.length} exceeds maximum 50")
       }
       return String50(value)
     }
+
+    fun truncate(value: kotlin.String): String50 = String50(if (value.length <= 50) value else value.substring(0, 50))
+
+    val bijection: Bijection<String50, kotlin.String> =
+      Bijection.of(String50::value, ::String50)
+
+    val mariaType: MariaType<String50> =
+      MariaTypes.varchar.to(Bijection.of(::String50, String50::value))
   }
 }

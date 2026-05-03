@@ -5,10 +5,11 @@
  */
 package testdb.orders
 
-import dev.typr.foundations.kotlin.DeleteBuilder
-import dev.typr.foundations.kotlin.SelectBuilder
-import dev.typr.foundations.kotlin.UpdateBuilder
-import java.sql.Connection
+import dev.typr.dslkt.DeleteBuilder
+import dev.typr.dslkt.SelectBuilder
+import dev.typr.dslkt.UpdateBuilder
+import dev.typr.foundationskt.Connection
+import dev.typr.foundationskt.ConnectionRead
 import kotlin.collections.Iterator
 import kotlin.collections.List
 import kotlin.collections.Map
@@ -19,10 +20,10 @@ interface OrdersRepo {
   abstract fun deleteById(
     orderId: OrdersId,
     c: Connection
-  ): Boolean
+  ): kotlin.Boolean
 
   abstract fun deleteByIds(
-    orderIds: Array<OrdersId>,
+    orderIds: List<OrdersId>,
     c: Connection
   ): Int
 
@@ -38,26 +39,26 @@ interface OrdersRepo {
 
   abstract fun select(): SelectBuilder<OrdersFields, OrdersRow>
 
-  abstract fun selectAll(c: Connection): List<OrdersRow>
+  abstract fun selectAll(c: ConnectionRead): List<OrdersRow>
 
   abstract fun selectById(
     orderId: OrdersId,
-    c: Connection
+    c: ConnectionRead
   ): OrdersRow?
 
   abstract fun selectByIds(
-    orderIds: Array<OrdersId>,
-    c: Connection
+    orderIds: List<OrdersId>,
+    c: ConnectionRead
   ): List<OrdersRow>
 
   abstract fun selectByIdsTracked(
-    orderIds: Array<OrdersId>,
-    c: Connection
+    orderIds: List<OrdersId>,
+    c: ConnectionRead
   ): Map<OrdersId, OrdersRow>
 
   abstract fun selectByUniqueOrderNumber(
-    orderNumber: String,
-    c: Connection
+    orderNumber: kotlin.String,
+    c: ConnectionRead
   ): OrdersRow?
 
   abstract fun update(): UpdateBuilder<OrdersFields, OrdersRow>
@@ -65,7 +66,7 @@ interface OrdersRepo {
   abstract fun update(
     row: OrdersRow,
     c: Connection
-  ): Boolean
+  ): kotlin.Boolean
 
   abstract fun upsert(
     unsaved: OrdersRow,

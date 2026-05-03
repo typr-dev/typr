@@ -5,31 +5,31 @@
  */
 package adventureworks.public.users
 
-import dev.typr.foundations.PgTypes
-import dev.typr.foundations.RowParser
+import dev.typr.dsl.FieldsBase
+import dev.typr.dsl.Path
+import dev.typr.dsl.SqlExpr.FieldLike
+import dev.typr.dslkt.RelationStructure
+import dev.typr.dslkt.SqlExpr
+import dev.typr.dslkt.SqlExpr.Field
+import dev.typr.dslkt.SqlExpr.IdField
+import dev.typr.dslkt.SqlExpr.OptField
+import dev.typr.dslkt.TupleExpr7
+import dev.typr.foundations.RowCodec
 import dev.typr.foundations.data.Unknown
-import dev.typr.foundations.dsl.FieldsBase
-import dev.typr.foundations.dsl.Path
-import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.kotlin.RelationStructure
-import dev.typr.foundations.kotlin.SqlExpr
-import dev.typr.foundations.kotlin.SqlExpr.Field
-import dev.typr.foundations.kotlin.SqlExpr.IdField
-import dev.typr.foundations.kotlin.SqlExpr.OptField
-import dev.typr.foundations.kotlin.TupleExpr7
+import dev.typr.foundationskt.PgTypes
 import java.time.Instant
 import kotlin.collections.List
 
-data class UsersFields(val _path: List<Path>) : TupleExpr7<UsersId, String, String, Unknown, String, Instant, Instant>, RelationStructure<UsersFields, UsersRow>, FieldsBase<UsersRow> {
+data class UsersFields(val _path: List<Path>) : TupleExpr7<UsersId, kotlin.String, kotlin.String, Unknown, kotlin.String, Instant, Instant>, RelationStructure<UsersFields, UsersRow>, FieldsBase<UsersRow> {
   override fun _1(): SqlExpr<UsersId> = userId()
 
-  override fun _2(): SqlExpr<String> = name()
+  override fun _2(): SqlExpr<kotlin.String> = name()
 
-  override fun _3(): SqlExpr<String> = lastName()
+  override fun _3(): SqlExpr<kotlin.String> = lastName()
 
   override fun _4(): SqlExpr<Unknown> = email()
 
-  override fun _5(): SqlExpr<String> = password()
+  override fun _5(): SqlExpr<kotlin.String> = password()
 
   override fun _6(): SqlExpr<Instant> = createdAt()
 
@@ -39,21 +39,21 @@ data class UsersFields(val _path: List<Path>) : TupleExpr7<UsersId, String, Stri
 
   override fun columns(): List<FieldLike<*, UsersRow>> = listOf(this.userId().underlying, this.name().underlying, this.lastName().underlying, this.email().underlying, this.password().underlying, this.createdAt().underlying, this.verifiedOn().underlying)
 
-  fun createdAt(): Field<Instant, UsersRow> = Field<Instant, UsersRow>(_path, "created_at", UsersRow::createdAt, null, "timestamptz", { row, value -> row.copy(createdAt = value) }, PgTypes.timestamptz)
+  fun createdAt(): Field<Instant, UsersRow> = Field<Instant, UsersRow>(_path, "created_at", UsersRow::createdAt, null, "timestamptz", { row, value -> row.copy(createdAt = value) }, PgTypes.timestamptz.underlying)
 
-  fun email(): Field<Unknown, UsersRow> = Field<Unknown, UsersRow>(_path, "email", UsersRow::email, "text", "citext", { row, value -> row.copy(email = value) }, PgTypes.unknown)
+  fun email(): Field<Unknown, UsersRow> = Field<Unknown, UsersRow>(_path, "email", UsersRow::email, "text", "citext", { row, value -> row.copy(email = value) }, PgTypes.unknown.underlying)
 
-  fun lastName(): OptField<String, UsersRow> = OptField<String, UsersRow>(_path, "last_name", UsersRow::lastName, null, null, { row, value -> row.copy(lastName = value) }, PgTypes.text)
+  fun lastName(): OptField<kotlin.String, UsersRow> = OptField<kotlin.String, UsersRow>(_path, "last_name", UsersRow::lastName, null, null, { row, value -> row.copy(lastName = value) }, PgTypes.text.underlying)
 
-  fun name(): Field<String, UsersRow> = Field<String, UsersRow>(_path, "name", UsersRow::name, null, null, { row, value -> row.copy(name = value) }, PgTypes.text)
+  fun name(): Field<kotlin.String, UsersRow> = Field<kotlin.String, UsersRow>(_path, "name", UsersRow::name, null, null, { row, value -> row.copy(name = value) }, PgTypes.text.underlying)
 
-  fun password(): Field<String, UsersRow> = Field<String, UsersRow>(_path, "password", UsersRow::password, null, null, { row, value -> row.copy(password = value) }, PgTypes.text)
+  fun password(): Field<kotlin.String, UsersRow> = Field<kotlin.String, UsersRow>(_path, "password", UsersRow::password, null, null, { row, value -> row.copy(password = value) }, PgTypes.text.underlying)
 
-  override fun rowParser(): RowParser<UsersRow> = UsersRow._rowParser.underlying
+  override fun rowCodec(): RowCodec<UsersRow> = UsersRow.rowCodec.underlying
 
-  fun userId(): IdField<UsersId, UsersRow> = IdField<UsersId, UsersRow>(_path, "user_id", UsersRow::userId, null, "uuid", { row, value -> row.copy(userId = value) }, UsersId.pgType)
+  fun userId(): IdField<UsersId, UsersRow> = IdField<UsersId, UsersRow>(_path, "user_id", UsersRow::userId, null, "uuid", { row, value -> row.copy(userId = value) }, UsersId.pgType.underlying)
 
-  fun verifiedOn(): OptField<Instant, UsersRow> = OptField<Instant, UsersRow>(_path, "verified_on", UsersRow::verifiedOn, null, "timestamptz", { row, value -> row.copy(verifiedOn = value) }, PgTypes.timestamptz)
+  fun verifiedOn(): OptField<Instant, UsersRow> = OptField<Instant, UsersRow>(_path, "verified_on", UsersRow::verifiedOn, null, "timestamptz", { row, value -> row.copy(verifiedOn = value) }, PgTypes.timestamptz.underlying)
 
   override fun withPaths(_path: List<Path>): RelationStructure<UsersFields, UsersRow> = UsersFields(_path)
 

@@ -5,17 +5,18 @@
  */
 package adventureworks.person.stateprovince
 
-import dev.typr.foundations.kotlin.DeleteBuilder
-import dev.typr.foundations.kotlin.DeleteBuilderMock
-import dev.typr.foundations.kotlin.DeleteParams
-import dev.typr.foundations.kotlin.SelectBuilder
-import dev.typr.foundations.kotlin.SelectBuilderMock
-import dev.typr.foundations.kotlin.SelectParams
-import dev.typr.foundations.kotlin.UpdateBuilder
-import dev.typr.foundations.kotlin.UpdateBuilderMock
-import dev.typr.foundations.kotlin.UpdateParams
+import dev.typr.dslkt.DeleteBuilder
+import dev.typr.dslkt.DeleteBuilderMock
+import dev.typr.dslkt.DeleteParams
+import dev.typr.dslkt.SelectBuilder
+import dev.typr.dslkt.SelectBuilderMock
+import dev.typr.dslkt.SelectParams
+import dev.typr.dslkt.UpdateBuilder
+import dev.typr.dslkt.UpdateBuilderMock
+import dev.typr.dslkt.UpdateParams
+import dev.typr.foundationskt.Connection
+import dev.typr.foundationskt.ConnectionRead
 import java.lang.RuntimeException
-import java.sql.Connection
 import java.util.ArrayList
 import kotlin.collections.Iterator
 import kotlin.collections.List
@@ -31,10 +32,10 @@ data class StateprovinceRepoMock(
   override fun deleteById(
     stateprovinceid: StateprovinceId,
     c: Connection
-  ): Boolean = map.remove(stateprovinceid) != null
+  ): kotlin.Boolean = map.remove(stateprovinceid) != null
 
   override fun deleteByIds(
-    stateprovinceids: Array<StateprovinceId>,
+    stateprovinceids: List<StateprovinceId>,
     c: Connection
   ): Int {
     var count = 0
@@ -66,7 +67,7 @@ data class StateprovinceRepoMock(
     unsaved: Iterator<StateprovinceRow>,
     batchSize: Int,
     c: Connection
-  ): Long {
+  ): kotlin.Long {
     var count = 0L
     while (unsaved.hasNext()) {
       val row = unsaved.next()
@@ -81,7 +82,7 @@ data class StateprovinceRepoMock(
     unsaved: Iterator<StateprovinceRowUnsaved>,
     batchSize: Int,
     c: Connection
-  ): Long {
+  ): kotlin.Long {
     var count = 0L
     while (unsaved.hasNext()) {
       val unsavedRow = unsaved.next()
@@ -94,16 +95,16 @@ data class StateprovinceRepoMock(
 
   override fun select(): SelectBuilder<StateprovinceFields, StateprovinceRow> = SelectBuilderMock(StateprovinceFields.structure, { map.values.toList() }, SelectParams.empty())
 
-  override fun selectAll(c: Connection): List<StateprovinceRow> = map.values.toList()
+  override fun selectAll(c: ConnectionRead): List<StateprovinceRow> = map.values.toList()
 
   override fun selectById(
     stateprovinceid: StateprovinceId,
-    c: Connection
+    c: ConnectionRead
   ): StateprovinceRow? = map[stateprovinceid]
 
   override fun selectByIds(
-    stateprovinceids: Array<StateprovinceId>,
-    c: Connection
+    stateprovinceids: List<StateprovinceId>,
+    c: ConnectionRead
   ): List<StateprovinceRow> {
     val result = ArrayList<StateprovinceRow>()
     for (id in stateprovinceids) {
@@ -116,8 +117,8 @@ data class StateprovinceRepoMock(
   }
 
   override fun selectByIdsTracked(
-    stateprovinceids: Array<StateprovinceId>,
-    c: Connection
+    stateprovinceids: List<StateprovinceId>,
+    c: ConnectionRead
   ): Map<StateprovinceId, StateprovinceRow> = selectByIds(stateprovinceids, c).associateBy({ row: StateprovinceRow -> row.stateprovinceid })
 
   override fun update(): UpdateBuilder<StateprovinceFields, StateprovinceRow> = UpdateBuilderMock(StateprovinceFields.structure, { map.values.toList() }, UpdateParams.empty(), { row -> row })
@@ -125,7 +126,7 @@ data class StateprovinceRepoMock(
   override fun update(
     row: StateprovinceRow,
     c: Connection
-  ): Boolean {
+  ): kotlin.Boolean {
     val shouldUpdate = map[row.stateprovinceid]?.takeIf({ oldRow -> (oldRow != row) }) != null
     if (shouldUpdate) {
       map[row.stateprovinceid] = row

@@ -27,7 +27,7 @@ object SalariedFlag {
 
   given arraySetter: Setter[Array[SalariedFlag]] = Flag.arraySetter.contramap(_.map(_.value))
 
-  given bijection: Bijection[SalariedFlag, Flag] = Bijection.apply[SalariedFlag, Flag](_.value)(SalariedFlag.apply)
+  given bijection: Bijection[SalariedFlag, Flag] = Bijection[SalariedFlag, Flag](_.value)(SalariedFlag.apply)
 
   given jdbcDecoder: JdbcDecoder[SalariedFlag] = Flag.jdbcDecoder.map(SalariedFlag.apply)
 

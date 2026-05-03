@@ -11,16 +11,16 @@ import adventureworks.public.Phone
 import adventureworks.userdefined.FirstName
 import adventureworks.userdefined.LastName
 import adventureworks.userdefined.MiddleName
+import dev.typr.dsl.FieldsBase
+import dev.typr.dsl.Path
+import dev.typr.dsl.RelationStructure
+import dev.typr.dsl.SqlExpr
+import dev.typr.dsl.SqlExpr.Field
+import dev.typr.dsl.SqlExpr.FieldLike
+import dev.typr.dsl.TupleExpr.TupleExpr18
 import dev.typr.foundations.PgTypes
-import dev.typr.foundations.RowParser
+import dev.typr.foundations.RowCodec
 import dev.typr.foundations.data.Xml
-import dev.typr.foundations.dsl.FieldsBase
-import dev.typr.foundations.dsl.Path
-import dev.typr.foundations.dsl.RelationStructure
-import dev.typr.foundations.dsl.SqlExpr
-import dev.typr.foundations.dsl.SqlExpr.Field
-import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.dsl.TupleExpr.TupleExpr18
 import java.util.Optional
 
 class VemployeeViewFields(val `_path`: java.util.List[Path]) extends TupleExpr18[BusinessentityId, String, /* user-picked */ FirstName, /* user-picked */ MiddleName, /* user-picked */ LastName, String, String, Phone, Name, String, Integer, String, String, String, Name, String, Name, Xml] with RelationStructure[VemployeeViewFields, VemployeeViewRow]  with FieldsBase[VemployeeViewRow] {
@@ -242,7 +242,7 @@ class VemployeeViewFields(val `_path`: java.util.List[Path]) extends TupleExpr18
 
   override def columns: java.util.List[FieldLike[?, VemployeeViewRow]] = java.util.List.of(this.businessentityid, this.title, this.firstname, this.middlename, this.lastname, this.suffix, this.jobtitle, this.phonenumber, this.phonenumbertype, this.emailaddress, this.emailpromotion, this.addressline1, this.addressline2, this.city, this.stateprovincename, this.postalcode, this.countryregionname, this.additionalcontactinfo)
 
-  override def rowParser: RowParser[VemployeeViewRow] = VemployeeViewRow._rowParser
+  override def rowCodec: RowCodec[VemployeeViewRow] = VemployeeViewRow.rowCodec
 
   override def withPaths(`_path`: java.util.List[Path]): RelationStructure[VemployeeViewFields, VemployeeViewRow] = new VemployeeViewFields(`_path`)
 

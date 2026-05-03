@@ -10,184 +10,185 @@ import adventureworks.production.productsubcategory.ProductsubcategoryId
 import adventureworks.production.unitmeasure.UnitmeasureId
 import adventureworks.public.Flag
 import adventureworks.public.Name
+import dev.typr.dsl.DeleteBuilder
+import dev.typr.dsl.Dialect
+import dev.typr.dsl.SelectBuilder
+import dev.typr.dsl.UpdateBuilder
+import dev.typr.foundations.Connection
+import dev.typr.foundations.ConnectionRead
 import dev.typr.foundations.Fragment
 import dev.typr.foundations.PgTypes
-import dev.typr.foundations.dsl.DeleteBuilder
-import dev.typr.foundations.dsl.Dialect
-import dev.typr.foundations.dsl.SelectBuilder
-import dev.typr.foundations.dsl.UpdateBuilder
-import dev.typr.foundations.streamingInsert
-import java.sql.Connection
+import dev.typr.foundations.StreamingInsert
 import java.util.ArrayList
 import java.util.HashMap
 import java.util.Optional
-import dev.typr.foundations.Fragment.interpolate
+import dev.typr.foundations.Fragment.concat
 
 class ProductRepoImpl extends ProductRepo {
   override def delete: DeleteBuilder[ProductFields, ProductRow] = DeleteBuilder.of(""""production"."product"""", ProductFields.structure, Dialect.POSTGRESQL)
 
-  override def deleteById(productid: ProductId)(using c: Connection): java.lang.Boolean = interpolate(Fragment.lit("""delete from "production"."product" where "productid" = """), Fragment.encode(ProductId.pgType, productid), Fragment.lit("")).update().runUnchecked(c) > 0
+  override def deleteById(productid: ProductId)(using c: Connection): java.lang.Boolean = concat(Fragment.of("""delete from "production"."product" where "productid" = """), Fragment.encode(ProductId.pgType, productid), Fragment.of("")).update().run(c) > 0
 
-  override def deleteByIds(productids: Array[ProductId])(using c: Connection): Integer = {
-    interpolate(Fragment.lit("""delete
+  override def deleteByIds(productids: java.util.List[ProductId])(using c: Connection): Integer = {
+    concat(Fragment.of("""delete
     from "production"."product"
-    where "productid" = ANY("""), Fragment.encode(ProductId.pgTypeArray, productids), Fragment.lit(")"))
+    where "productid" = ANY("""), Fragment.encode(ProductId.pgType.array(), productids), Fragment.of(")"))
       .update()
-      .runUnchecked(c)
+      .run(c)
   }
 
   override def insert(unsaved: ProductRow)(using c: Connection): ProductRow = {
-  interpolate(Fragment.lit("""insert into "production"."product"("productid", "name", "productnumber", "makeflag", "finishedgoodsflag", "color", "safetystocklevel", "reorderpoint", "standardcost", "listprice", "size", "sizeunitmeasurecode", "weightunitmeasurecode", "weight", "daystomanufacture", "productline", "class", "style", "productsubcategoryid", "productmodelid", "sellstartdate", "sellenddate", "discontinueddate", "rowguid", "modifieddate")
-    values ("""), Fragment.encode(ProductId.pgType, unsaved.productid), Fragment.lit("::int4, "), Fragment.encode(Name.pgType, unsaved.name), Fragment.lit("::varchar, "), Fragment.encode(PgTypes.text, unsaved.productnumber), Fragment.lit(", "), Fragment.encode(Flag.pgType, unsaved.makeflag), Fragment.lit("::bool, "), Fragment.encode(Flag.pgType, unsaved.finishedgoodsflag), Fragment.lit("::bool, "), Fragment.encode(PgTypes.text.opt(), unsaved.color), Fragment.lit(", "), Fragment.encode(PgTypes.int2, unsaved.safetystocklevel), Fragment.lit("::int2, "), Fragment.encode(PgTypes.int2, unsaved.reorderpoint), Fragment.lit("::int2, "), Fragment.encode(PgTypes.numeric, unsaved.standardcost), Fragment.lit("::numeric, "), Fragment.encode(PgTypes.numeric, unsaved.listprice), Fragment.lit("::numeric, "), Fragment.encode(PgTypes.text.opt(), unsaved.size), Fragment.lit(", "), Fragment.encode(UnitmeasureId.pgType.opt(), unsaved.sizeunitmeasurecode), Fragment.lit("::bpchar, "), Fragment.encode(UnitmeasureId.pgType.opt(), unsaved.weightunitmeasurecode), Fragment.lit("::bpchar, "), Fragment.encode(PgTypes.numeric.opt(), unsaved.weight), Fragment.lit("::numeric, "), Fragment.encode(PgTypes.int4, unsaved.daystomanufacture), Fragment.lit("::int4, "), Fragment.encode(PgTypes.bpchar.opt(), unsaved.productline), Fragment.lit("::bpchar, "), Fragment.encode(PgTypes.bpchar.opt(), unsaved.`class`), Fragment.lit("::bpchar, "), Fragment.encode(PgTypes.bpchar.opt(), unsaved.style), Fragment.lit("::bpchar, "), Fragment.encode(ProductsubcategoryId.pgType.opt(), unsaved.productsubcategoryid), Fragment.lit("::int4, "), Fragment.encode(ProductmodelId.pgType.opt(), unsaved.productmodelid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.timestamp, unsaved.sellstartdate), Fragment.lit("::timestamp, "), Fragment.encode(PgTypes.timestamp.opt(), unsaved.sellenddate), Fragment.lit("::timestamp, "), Fragment.encode(PgTypes.timestamp.opt(), unsaved.discontinueddate), Fragment.lit("::timestamp, "), Fragment.encode(PgTypes.uuid, unsaved.rowguid), Fragment.lit("::uuid, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("""::timestamp)
+  concat(Fragment.of("""insert into "production"."product"("productid", "name", "productnumber", "makeflag", "finishedgoodsflag", "color", "safetystocklevel", "reorderpoint", "standardcost", "listprice", "size", "sizeunitmeasurecode", "weightunitmeasurecode", "weight", "daystomanufacture", "productline", "class", "style", "productsubcategoryid", "productmodelid", "sellstartdate", "sellenddate", "discontinueddate", "rowguid", "modifieddate")
+    values ("""), Fragment.encode(ProductId.pgType, unsaved.productid), Fragment.of("::int4, "), Fragment.encode(Name.pgType, unsaved.name), Fragment.of("::varchar, "), Fragment.encode(PgTypes.text, unsaved.productnumber), Fragment.of(", "), Fragment.encode(Flag.pgType, unsaved.makeflag), Fragment.of("::bool, "), Fragment.encode(Flag.pgType, unsaved.finishedgoodsflag), Fragment.of("::bool, "), Fragment.encode(PgTypes.text.opt, unsaved.color), Fragment.of(", "), Fragment.encode(PgTypes.int2, unsaved.safetystocklevel), Fragment.of("::int2, "), Fragment.encode(PgTypes.int2, unsaved.reorderpoint), Fragment.of("::int2, "), Fragment.encode(PgTypes.numeric, unsaved.standardcost), Fragment.of("::numeric, "), Fragment.encode(PgTypes.numeric, unsaved.listprice), Fragment.of("::numeric, "), Fragment.encode(PgTypes.text.opt, unsaved.size), Fragment.of(", "), Fragment.encode(UnitmeasureId.pgType.opt, unsaved.sizeunitmeasurecode), Fragment.of("::bpchar, "), Fragment.encode(UnitmeasureId.pgType.opt, unsaved.weightunitmeasurecode), Fragment.of("::bpchar, "), Fragment.encode(PgTypes.numeric.opt, unsaved.weight), Fragment.of("::numeric, "), Fragment.encode(PgTypes.int4, unsaved.daystomanufacture), Fragment.of("::int4, "), Fragment.encode(PgTypes.bpchar.opt, unsaved.productline), Fragment.of("::bpchar, "), Fragment.encode(PgTypes.bpchar.opt, unsaved.`class`), Fragment.of("::bpchar, "), Fragment.encode(PgTypes.bpchar.opt, unsaved.style), Fragment.of("::bpchar, "), Fragment.encode(ProductsubcategoryId.pgType.opt, unsaved.productsubcategoryid), Fragment.of("::int4, "), Fragment.encode(ProductmodelId.pgType.opt, unsaved.productmodelid), Fragment.of("::int4, "), Fragment.encode(PgTypes.timestamp, unsaved.sellstartdate), Fragment.of("::timestamp, "), Fragment.encode(PgTypes.timestamp.opt, unsaved.sellenddate), Fragment.of("::timestamp, "), Fragment.encode(PgTypes.timestamp.opt, unsaved.discontinueddate), Fragment.of("::timestamp, "), Fragment.encode(PgTypes.uuid, unsaved.rowguid), Fragment.of("::uuid, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.of("""::timestamp)
     RETURNING "productid", "name", "productnumber", "makeflag", "finishedgoodsflag", "color", "safetystocklevel", "reorderpoint", "standardcost", "listprice", "size", "sizeunitmeasurecode", "weightunitmeasurecode", "weight", "daystomanufacture", "productline", "class", "style", "productsubcategoryid", "productmodelid", "sellstartdate", "sellenddate", "discontinueddate", "rowguid", "modifieddate"
     """))
-    .updateReturning(ProductRow.`_rowParser`.exactlyOne()).runUnchecked(c)
+    .updateReturning(ProductRow.rowCodec.exactlyOne()).run(c)
   }
 
   override def insert(unsaved: ProductRowUnsaved)(using c: Connection): ProductRow = {
     val columns: ArrayList[Fragment] = new ArrayList()
     val values: ArrayList[Fragment] = new ArrayList()
-    columns.add(Fragment.lit(""""name"""")): @scala.annotation.nowarn
-    values.add(interpolate(Fragment.encode(Name.pgType, unsaved.name), Fragment.lit("::varchar"))): @scala.annotation.nowarn
-    columns.add(Fragment.lit(""""productnumber"""")): @scala.annotation.nowarn
-    values.add(interpolate(Fragment.encode(PgTypes.text, unsaved.productnumber), Fragment.lit(""))): @scala.annotation.nowarn
-    columns.add(Fragment.lit(""""color"""")): @scala.annotation.nowarn
-    values.add(interpolate(Fragment.encode(PgTypes.text.opt(), unsaved.color), Fragment.lit(""))): @scala.annotation.nowarn
-    columns.add(Fragment.lit(""""safetystocklevel"""")): @scala.annotation.nowarn
-    values.add(interpolate(Fragment.encode(PgTypes.int2, unsaved.safetystocklevel), Fragment.lit("::int2"))): @scala.annotation.nowarn
-    columns.add(Fragment.lit(""""reorderpoint"""")): @scala.annotation.nowarn
-    values.add(interpolate(Fragment.encode(PgTypes.int2, unsaved.reorderpoint), Fragment.lit("::int2"))): @scala.annotation.nowarn
-    columns.add(Fragment.lit(""""standardcost"""")): @scala.annotation.nowarn
-    values.add(interpolate(Fragment.encode(PgTypes.numeric, unsaved.standardcost), Fragment.lit("::numeric"))): @scala.annotation.nowarn
-    columns.add(Fragment.lit(""""listprice"""")): @scala.annotation.nowarn
-    values.add(interpolate(Fragment.encode(PgTypes.numeric, unsaved.listprice), Fragment.lit("::numeric"))): @scala.annotation.nowarn
-    columns.add(Fragment.lit(""""size"""")): @scala.annotation.nowarn
-    values.add(interpolate(Fragment.encode(PgTypes.text.opt(), unsaved.size), Fragment.lit(""))): @scala.annotation.nowarn
-    columns.add(Fragment.lit(""""sizeunitmeasurecode"""")): @scala.annotation.nowarn
-    values.add(interpolate(Fragment.encode(UnitmeasureId.pgType.opt(), unsaved.sizeunitmeasurecode), Fragment.lit("::bpchar"))): @scala.annotation.nowarn
-    columns.add(Fragment.lit(""""weightunitmeasurecode"""")): @scala.annotation.nowarn
-    values.add(interpolate(Fragment.encode(UnitmeasureId.pgType.opt(), unsaved.weightunitmeasurecode), Fragment.lit("::bpchar"))): @scala.annotation.nowarn
-    columns.add(Fragment.lit(""""weight"""")): @scala.annotation.nowarn
-    values.add(interpolate(Fragment.encode(PgTypes.numeric.opt(), unsaved.weight), Fragment.lit("::numeric"))): @scala.annotation.nowarn
-    columns.add(Fragment.lit(""""daystomanufacture"""")): @scala.annotation.nowarn
-    values.add(interpolate(Fragment.encode(PgTypes.int4, unsaved.daystomanufacture), Fragment.lit("::int4"))): @scala.annotation.nowarn
-    columns.add(Fragment.lit(""""productline"""")): @scala.annotation.nowarn
-    values.add(interpolate(Fragment.encode(PgTypes.bpchar.opt(), unsaved.productline), Fragment.lit("::bpchar"))): @scala.annotation.nowarn
-    columns.add(Fragment.lit(""""class"""")): @scala.annotation.nowarn
-    values.add(interpolate(Fragment.encode(PgTypes.bpchar.opt(), unsaved.`class`), Fragment.lit("::bpchar"))): @scala.annotation.nowarn
-    columns.add(Fragment.lit(""""style"""")): @scala.annotation.nowarn
-    values.add(interpolate(Fragment.encode(PgTypes.bpchar.opt(), unsaved.style), Fragment.lit("::bpchar"))): @scala.annotation.nowarn
-    columns.add(Fragment.lit(""""productsubcategoryid"""")): @scala.annotation.nowarn
-    values.add(interpolate(Fragment.encode(ProductsubcategoryId.pgType.opt(), unsaved.productsubcategoryid), Fragment.lit("::int4"))): @scala.annotation.nowarn
-    columns.add(Fragment.lit(""""productmodelid"""")): @scala.annotation.nowarn
-    values.add(interpolate(Fragment.encode(ProductmodelId.pgType.opt(), unsaved.productmodelid), Fragment.lit("::int4"))): @scala.annotation.nowarn
-    columns.add(Fragment.lit(""""sellstartdate"""")): @scala.annotation.nowarn
-    values.add(interpolate(Fragment.encode(PgTypes.timestamp, unsaved.sellstartdate), Fragment.lit("::timestamp"))): @scala.annotation.nowarn
-    columns.add(Fragment.lit(""""sellenddate"""")): @scala.annotation.nowarn
-    values.add(interpolate(Fragment.encode(PgTypes.timestamp.opt(), unsaved.sellenddate), Fragment.lit("::timestamp"))): @scala.annotation.nowarn
-    columns.add(Fragment.lit(""""discontinueddate"""")): @scala.annotation.nowarn
-    values.add(interpolate(Fragment.encode(PgTypes.timestamp.opt(), unsaved.discontinueddate), Fragment.lit("::timestamp"))): @scala.annotation.nowarn
+    columns.add(Fragment.of(""""name"""")): @scala.annotation.nowarn
+    values.add(concat(Fragment.encode(Name.pgType, unsaved.name), Fragment.of("::varchar"))): @scala.annotation.nowarn
+    columns.add(Fragment.of(""""productnumber"""")): @scala.annotation.nowarn
+    values.add(concat(Fragment.encode(PgTypes.text, unsaved.productnumber), Fragment.of(""))): @scala.annotation.nowarn
+    columns.add(Fragment.of(""""color"""")): @scala.annotation.nowarn
+    values.add(concat(Fragment.encode(PgTypes.text.opt, unsaved.color), Fragment.of(""))): @scala.annotation.nowarn
+    columns.add(Fragment.of(""""safetystocklevel"""")): @scala.annotation.nowarn
+    values.add(concat(Fragment.encode(PgTypes.int2, unsaved.safetystocklevel), Fragment.of("::int2"))): @scala.annotation.nowarn
+    columns.add(Fragment.of(""""reorderpoint"""")): @scala.annotation.nowarn
+    values.add(concat(Fragment.encode(PgTypes.int2, unsaved.reorderpoint), Fragment.of("::int2"))): @scala.annotation.nowarn
+    columns.add(Fragment.of(""""standardcost"""")): @scala.annotation.nowarn
+    values.add(concat(Fragment.encode(PgTypes.numeric, unsaved.standardcost), Fragment.of("::numeric"))): @scala.annotation.nowarn
+    columns.add(Fragment.of(""""listprice"""")): @scala.annotation.nowarn
+    values.add(concat(Fragment.encode(PgTypes.numeric, unsaved.listprice), Fragment.of("::numeric"))): @scala.annotation.nowarn
+    columns.add(Fragment.of(""""size"""")): @scala.annotation.nowarn
+    values.add(concat(Fragment.encode(PgTypes.text.opt, unsaved.size), Fragment.of(""))): @scala.annotation.nowarn
+    columns.add(Fragment.of(""""sizeunitmeasurecode"""")): @scala.annotation.nowarn
+    values.add(concat(Fragment.encode(UnitmeasureId.pgType.opt, unsaved.sizeunitmeasurecode), Fragment.of("::bpchar"))): @scala.annotation.nowarn
+    columns.add(Fragment.of(""""weightunitmeasurecode"""")): @scala.annotation.nowarn
+    values.add(concat(Fragment.encode(UnitmeasureId.pgType.opt, unsaved.weightunitmeasurecode), Fragment.of("::bpchar"))): @scala.annotation.nowarn
+    columns.add(Fragment.of(""""weight"""")): @scala.annotation.nowarn
+    values.add(concat(Fragment.encode(PgTypes.numeric.opt, unsaved.weight), Fragment.of("::numeric"))): @scala.annotation.nowarn
+    columns.add(Fragment.of(""""daystomanufacture"""")): @scala.annotation.nowarn
+    values.add(concat(Fragment.encode(PgTypes.int4, unsaved.daystomanufacture), Fragment.of("::int4"))): @scala.annotation.nowarn
+    columns.add(Fragment.of(""""productline"""")): @scala.annotation.nowarn
+    values.add(concat(Fragment.encode(PgTypes.bpchar.opt, unsaved.productline), Fragment.of("::bpchar"))): @scala.annotation.nowarn
+    columns.add(Fragment.of(""""class"""")): @scala.annotation.nowarn
+    values.add(concat(Fragment.encode(PgTypes.bpchar.opt, unsaved.`class`), Fragment.of("::bpchar"))): @scala.annotation.nowarn
+    columns.add(Fragment.of(""""style"""")): @scala.annotation.nowarn
+    values.add(concat(Fragment.encode(PgTypes.bpchar.opt, unsaved.style), Fragment.of("::bpchar"))): @scala.annotation.nowarn
+    columns.add(Fragment.of(""""productsubcategoryid"""")): @scala.annotation.nowarn
+    values.add(concat(Fragment.encode(ProductsubcategoryId.pgType.opt, unsaved.productsubcategoryid), Fragment.of("::int4"))): @scala.annotation.nowarn
+    columns.add(Fragment.of(""""productmodelid"""")): @scala.annotation.nowarn
+    values.add(concat(Fragment.encode(ProductmodelId.pgType.opt, unsaved.productmodelid), Fragment.of("::int4"))): @scala.annotation.nowarn
+    columns.add(Fragment.of(""""sellstartdate"""")): @scala.annotation.nowarn
+    values.add(concat(Fragment.encode(PgTypes.timestamp, unsaved.sellstartdate), Fragment.of("::timestamp"))): @scala.annotation.nowarn
+    columns.add(Fragment.of(""""sellenddate"""")): @scala.annotation.nowarn
+    values.add(concat(Fragment.encode(PgTypes.timestamp.opt, unsaved.sellenddate), Fragment.of("::timestamp"))): @scala.annotation.nowarn
+    columns.add(Fragment.of(""""discontinueddate"""")): @scala.annotation.nowarn
+    values.add(concat(Fragment.encode(PgTypes.timestamp.opt, unsaved.discontinueddate), Fragment.of("::timestamp"))): @scala.annotation.nowarn
     unsaved.productid.visit(
       {  },
-      value => { columns.add(Fragment.lit(""""productid"""")): @scala.annotation.nowarn; values.add(interpolate(Fragment.encode(ProductId.pgType, value), Fragment.lit("::int4"))): @scala.annotation.nowarn }
+      value => { columns.add(Fragment.of(""""productid"""")): @scala.annotation.nowarn; values.add(concat(Fragment.encode(ProductId.pgType, value), Fragment.of("::int4"))): @scala.annotation.nowarn }
     );
     unsaved.makeflag.visit(
       {  },
-      value => { columns.add(Fragment.lit(""""makeflag"""")): @scala.annotation.nowarn; values.add(interpolate(Fragment.encode(Flag.pgType, value), Fragment.lit("::bool"))): @scala.annotation.nowarn }
+      value => { columns.add(Fragment.of(""""makeflag"""")): @scala.annotation.nowarn; values.add(concat(Fragment.encode(Flag.pgType, value), Fragment.of("::bool"))): @scala.annotation.nowarn }
     );
     unsaved.finishedgoodsflag.visit(
       {  },
-      value => { columns.add(Fragment.lit(""""finishedgoodsflag"""")): @scala.annotation.nowarn; values.add(interpolate(Fragment.encode(Flag.pgType, value), Fragment.lit("::bool"))): @scala.annotation.nowarn }
+      value => { columns.add(Fragment.of(""""finishedgoodsflag"""")): @scala.annotation.nowarn; values.add(concat(Fragment.encode(Flag.pgType, value), Fragment.of("::bool"))): @scala.annotation.nowarn }
     );
     unsaved.rowguid.visit(
       {  },
-      value => { columns.add(Fragment.lit(""""rowguid"""")): @scala.annotation.nowarn; values.add(interpolate(Fragment.encode(PgTypes.uuid, value), Fragment.lit("::uuid"))): @scala.annotation.nowarn }
+      value => { columns.add(Fragment.of(""""rowguid"""")): @scala.annotation.nowarn; values.add(concat(Fragment.encode(PgTypes.uuid, value), Fragment.of("::uuid"))): @scala.annotation.nowarn }
     );
     unsaved.modifieddate.visit(
       {  },
-      value => { columns.add(Fragment.lit(""""modifieddate"""")): @scala.annotation.nowarn; values.add(interpolate(Fragment.encode(PgTypes.timestamp, value), Fragment.lit("::timestamp"))): @scala.annotation.nowarn }
+      value => { columns.add(Fragment.of(""""modifieddate"""")): @scala.annotation.nowarn; values.add(concat(Fragment.encode(PgTypes.timestamp, value), Fragment.of("::timestamp"))): @scala.annotation.nowarn }
     );
     val q: Fragment = {
-      interpolate(Fragment.lit("""insert into "production"."product"("""), Fragment.comma(columns), Fragment.lit(""")
-      values ("""), Fragment.comma(values), Fragment.lit(""")
+      concat(Fragment.of("""insert into "production"."product"("""), Fragment.comma(columns), Fragment.of(""")
+      values ("""), Fragment.comma(values), Fragment.of(""")
       RETURNING "productid", "name", "productnumber", "makeflag", "finishedgoodsflag", "color", "safetystocklevel", "reorderpoint", "standardcost", "listprice", "size", "sizeunitmeasurecode", "weightunitmeasurecode", "weight", "daystomanufacture", "productline", "class", "style", "productsubcategoryid", "productmodelid", "sellstartdate", "sellenddate", "discontinueddate", "rowguid", "modifieddate"
       """))
     }
-    return q.updateReturning(ProductRow.`_rowParser`.exactlyOne()).runUnchecked(c)
+    return q.updateReturning(ProductRow.rowCodec.exactlyOne()).run(c)
   }
 
   override def insertStreaming(
     unsaved: java.util.Iterator[ProductRow],
     batchSize: Integer = 10000
-  )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "production"."product"("productid", "name", "productnumber", "makeflag", "finishedgoodsflag", "color", "safetystocklevel", "reorderpoint", "standardcost", "listprice", "size", "sizeunitmeasurecode", "weightunitmeasurecode", "weight", "daystomanufacture", "productline", "class", "style", "productsubcategoryid", "productmodelid", "sellstartdate", "sellenddate", "discontinueddate", "rowguid", "modifieddate") FROM STDIN""", batchSize, unsaved, c, ProductRow.pgText)
+  )(using c: Connection): java.lang.Long = StreamingInsert.of(s"""COPY "production"."product"("productid", "name", "productnumber", "makeflag", "finishedgoodsflag", "color", "safetystocklevel", "reorderpoint", "standardcost", "listprice", "size", "sizeunitmeasurecode", "weightunitmeasurecode", "weight", "daystomanufacture", "productline", "class", "style", "productsubcategoryid", "productmodelid", "sellstartdate", "sellenddate", "discontinueddate", "rowguid", "modifieddate") FROM STDIN""", batchSize, unsaved, ProductRow.pgText).run(c)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
   override def insertUnsavedStreaming(
     unsaved: java.util.Iterator[ProductRowUnsaved],
     batchSize: Integer = 10000
-  )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "production"."product"("name", "productnumber", "color", "safetystocklevel", "reorderpoint", "standardcost", "listprice", "size", "sizeunitmeasurecode", "weightunitmeasurecode", "weight", "daystomanufacture", "productline", "class", "style", "productsubcategoryid", "productmodelid", "sellstartdate", "sellenddate", "discontinueddate", "productid", "makeflag", "finishedgoodsflag", "rowguid", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved, c, ProductRowUnsaved.pgText)
+  )(using c: Connection): java.lang.Long = StreamingInsert.of(s"""COPY "production"."product"("name", "productnumber", "color", "safetystocklevel", "reorderpoint", "standardcost", "listprice", "size", "sizeunitmeasurecode", "weightunitmeasurecode", "weight", "daystomanufacture", "productline", "class", "style", "productsubcategoryid", "productmodelid", "sellstartdate", "sellenddate", "discontinueddate", "productid", "makeflag", "finishedgoodsflag", "rowguid", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved, ProductRowUnsaved.pgText).run(c)
 
-  override def select: SelectBuilder[ProductFields, ProductRow] = SelectBuilder.of(""""production"."product"""", ProductFields.structure, ProductRow.`_rowParser`, Dialect.POSTGRESQL)
+  override def select: SelectBuilder[ProductFields, ProductRow] = SelectBuilder.of(""""production"."product"""", ProductFields.structure, ProductRow.rowCodec, Dialect.POSTGRESQL)
 
-  override def selectAll(using c: Connection): java.util.List[ProductRow] = {
-    interpolate(Fragment.lit("""select "productid", "name", "productnumber", "makeflag", "finishedgoodsflag", "color", "safetystocklevel", "reorderpoint", "standardcost", "listprice", "size", "sizeunitmeasurecode", "weightunitmeasurecode", "weight", "daystomanufacture", "productline", "class", "style", "productsubcategoryid", "productmodelid", "sellstartdate", "sellenddate", "discontinueddate", "rowguid", "modifieddate"
+  override def selectAll(using c: ConnectionRead): java.util.List[ProductRow] = {
+    concat(Fragment.of("""select "productid", "name", "productnumber", "makeflag", "finishedgoodsflag", "color", "safetystocklevel", "reorderpoint", "standardcost", "listprice", "size", "sizeunitmeasurecode", "weightunitmeasurecode", "weight", "daystomanufacture", "productline", "class", "style", "productsubcategoryid", "productmodelid", "sellstartdate", "sellenddate", "discontinueddate", "rowguid", "modifieddate"
     from "production"."product"
-    """)).query(ProductRow.`_rowParser`.all()).runUnchecked(c)
+    """)).query(ProductRow.rowCodec.all()).run(c)
   }
 
-  override def selectById(productid: ProductId)(using c: Connection): Optional[ProductRow] = {
-    interpolate(Fragment.lit("""select "productid", "name", "productnumber", "makeflag", "finishedgoodsflag", "color", "safetystocklevel", "reorderpoint", "standardcost", "listprice", "size", "sizeunitmeasurecode", "weightunitmeasurecode", "weight", "daystomanufacture", "productline", "class", "style", "productsubcategoryid", "productmodelid", "sellstartdate", "sellenddate", "discontinueddate", "rowguid", "modifieddate"
+  override def selectById(productid: ProductId)(using c: ConnectionRead): Optional[ProductRow] = {
+    concat(Fragment.of("""select "productid", "name", "productnumber", "makeflag", "finishedgoodsflag", "color", "safetystocklevel", "reorderpoint", "standardcost", "listprice", "size", "sizeunitmeasurecode", "weightunitmeasurecode", "weight", "daystomanufacture", "productline", "class", "style", "productsubcategoryid", "productmodelid", "sellstartdate", "sellenddate", "discontinueddate", "rowguid", "modifieddate"
     from "production"."product"
-    where "productid" = """), Fragment.encode(ProductId.pgType, productid), Fragment.lit("")).query(ProductRow.`_rowParser`.first()).runUnchecked(c)
+    where "productid" = """), Fragment.encode(ProductId.pgType, productid), Fragment.of("")).query(ProductRow.rowCodec.first()).run(c)
   }
 
-  override def selectByIds(productids: Array[ProductId])(using c: Connection): java.util.List[ProductRow] = {
-    interpolate(Fragment.lit("""select "productid", "name", "productnumber", "makeflag", "finishedgoodsflag", "color", "safetystocklevel", "reorderpoint", "standardcost", "listprice", "size", "sizeunitmeasurecode", "weightunitmeasurecode", "weight", "daystomanufacture", "productline", "class", "style", "productsubcategoryid", "productmodelid", "sellstartdate", "sellenddate", "discontinueddate", "rowguid", "modifieddate"
+  override def selectByIds(productids: java.util.List[ProductId])(using c: ConnectionRead): java.util.List[ProductRow] = {
+    concat(Fragment.of("""select "productid", "name", "productnumber", "makeflag", "finishedgoodsflag", "color", "safetystocklevel", "reorderpoint", "standardcost", "listprice", "size", "sizeunitmeasurecode", "weightunitmeasurecode", "weight", "daystomanufacture", "productline", "class", "style", "productsubcategoryid", "productmodelid", "sellstartdate", "sellenddate", "discontinueddate", "rowguid", "modifieddate"
     from "production"."product"
-    where "productid" = ANY("""), Fragment.encode(ProductId.pgTypeArray, productids), Fragment.lit(")")).query(ProductRow.`_rowParser`.all()).runUnchecked(c)
+    where "productid" = ANY("""), Fragment.encode(ProductId.pgType.array(), productids), Fragment.of(")")).query(ProductRow.rowCodec.all()).run(c)
   }
 
-  override def selectByIdsTracked(productids: Array[ProductId])(using c: Connection): java.util.Map[ProductId, ProductRow] = {
+  override def selectByIdsTracked(productids: java.util.List[ProductId])(using c: ConnectionRead): java.util.Map[ProductId, ProductRow] = {
     val ret: HashMap[ProductId, ProductRow] = new HashMap[ProductId, ProductRow]()
     selectByIds(productids)(using c).forEach(row => ret.put(row.productid, row): @scala.annotation.nowarn)
     return ret
   }
 
-  override def update: UpdateBuilder[ProductFields, ProductRow] = UpdateBuilder.of(""""production"."product"""", ProductFields.structure, ProductRow.`_rowParser`, Dialect.POSTGRESQL)
+  override def update: UpdateBuilder[ProductFields, ProductRow] = UpdateBuilder.of(""""production"."product"""", ProductFields.structure, ProductRow.rowCodec, Dialect.POSTGRESQL)
 
   override def update(row: ProductRow)(using c: Connection): java.lang.Boolean = {
     val productid: ProductId = row.productid
-    return interpolate(Fragment.lit("""update "production"."product"
-    set "name" = """), Fragment.encode(Name.pgType, row.name), Fragment.lit("""::varchar,
-    "productnumber" = """), Fragment.encode(PgTypes.text, row.productnumber), Fragment.lit(""",
-    "makeflag" = """), Fragment.encode(Flag.pgType, row.makeflag), Fragment.lit("""::bool,
-    "finishedgoodsflag" = """), Fragment.encode(Flag.pgType, row.finishedgoodsflag), Fragment.lit("""::bool,
-    "color" = """), Fragment.encode(PgTypes.text.opt(), row.color), Fragment.lit(""",
-    "safetystocklevel" = """), Fragment.encode(PgTypes.int2, row.safetystocklevel), Fragment.lit("""::int2,
-    "reorderpoint" = """), Fragment.encode(PgTypes.int2, row.reorderpoint), Fragment.lit("""::int2,
-    "standardcost" = """), Fragment.encode(PgTypes.numeric, row.standardcost), Fragment.lit("""::numeric,
-    "listprice" = """), Fragment.encode(PgTypes.numeric, row.listprice), Fragment.lit("""::numeric,
-    "size" = """), Fragment.encode(PgTypes.text.opt(), row.size), Fragment.lit(""",
-    "sizeunitmeasurecode" = """), Fragment.encode(UnitmeasureId.pgType.opt(), row.sizeunitmeasurecode), Fragment.lit("""::bpchar,
-    "weightunitmeasurecode" = """), Fragment.encode(UnitmeasureId.pgType.opt(), row.weightunitmeasurecode), Fragment.lit("""::bpchar,
-    "weight" = """), Fragment.encode(PgTypes.numeric.opt(), row.weight), Fragment.lit("""::numeric,
-    "daystomanufacture" = """), Fragment.encode(PgTypes.int4, row.daystomanufacture), Fragment.lit("""::int4,
-    "productline" = """), Fragment.encode(PgTypes.bpchar.opt(), row.productline), Fragment.lit("""::bpchar,
-    "class" = """), Fragment.encode(PgTypes.bpchar.opt(), row.`class`), Fragment.lit("""::bpchar,
-    "style" = """), Fragment.encode(PgTypes.bpchar.opt(), row.style), Fragment.lit("""::bpchar,
-    "productsubcategoryid" = """), Fragment.encode(ProductsubcategoryId.pgType.opt(), row.productsubcategoryid), Fragment.lit("""::int4,
-    "productmodelid" = """), Fragment.encode(ProductmodelId.pgType.opt(), row.productmodelid), Fragment.lit("""::int4,
-    "sellstartdate" = """), Fragment.encode(PgTypes.timestamp, row.sellstartdate), Fragment.lit("""::timestamp,
-    "sellenddate" = """), Fragment.encode(PgTypes.timestamp.opt(), row.sellenddate), Fragment.lit("""::timestamp,
-    "discontinueddate" = """), Fragment.encode(PgTypes.timestamp.opt(), row.discontinueddate), Fragment.lit("""::timestamp,
-    "rowguid" = """), Fragment.encode(PgTypes.uuid, row.rowguid), Fragment.lit("""::uuid,
-    "modifieddate" = """), Fragment.encode(PgTypes.timestamp, row.modifieddate), Fragment.lit("""::timestamp
-    where "productid" = """), Fragment.encode(ProductId.pgType, productid), Fragment.lit("")).update().runUnchecked(c) > 0
+    return concat(Fragment.of("""update "production"."product"
+    set "name" = """), Fragment.encode(Name.pgType, row.name), Fragment.of("""::varchar,
+    "productnumber" = """), Fragment.encode(PgTypes.text, row.productnumber), Fragment.of(""",
+    "makeflag" = """), Fragment.encode(Flag.pgType, row.makeflag), Fragment.of("""::bool,
+    "finishedgoodsflag" = """), Fragment.encode(Flag.pgType, row.finishedgoodsflag), Fragment.of("""::bool,
+    "color" = """), Fragment.encode(PgTypes.text.opt, row.color), Fragment.of(""",
+    "safetystocklevel" = """), Fragment.encode(PgTypes.int2, row.safetystocklevel), Fragment.of("""::int2,
+    "reorderpoint" = """), Fragment.encode(PgTypes.int2, row.reorderpoint), Fragment.of("""::int2,
+    "standardcost" = """), Fragment.encode(PgTypes.numeric, row.standardcost), Fragment.of("""::numeric,
+    "listprice" = """), Fragment.encode(PgTypes.numeric, row.listprice), Fragment.of("""::numeric,
+    "size" = """), Fragment.encode(PgTypes.text.opt, row.size), Fragment.of(""",
+    "sizeunitmeasurecode" = """), Fragment.encode(UnitmeasureId.pgType.opt, row.sizeunitmeasurecode), Fragment.of("""::bpchar,
+    "weightunitmeasurecode" = """), Fragment.encode(UnitmeasureId.pgType.opt, row.weightunitmeasurecode), Fragment.of("""::bpchar,
+    "weight" = """), Fragment.encode(PgTypes.numeric.opt, row.weight), Fragment.of("""::numeric,
+    "daystomanufacture" = """), Fragment.encode(PgTypes.int4, row.daystomanufacture), Fragment.of("""::int4,
+    "productline" = """), Fragment.encode(PgTypes.bpchar.opt, row.productline), Fragment.of("""::bpchar,
+    "class" = """), Fragment.encode(PgTypes.bpchar.opt, row.`class`), Fragment.of("""::bpchar,
+    "style" = """), Fragment.encode(PgTypes.bpchar.opt, row.style), Fragment.of("""::bpchar,
+    "productsubcategoryid" = """), Fragment.encode(ProductsubcategoryId.pgType.opt, row.productsubcategoryid), Fragment.of("""::int4,
+    "productmodelid" = """), Fragment.encode(ProductmodelId.pgType.opt, row.productmodelid), Fragment.of("""::int4,
+    "sellstartdate" = """), Fragment.encode(PgTypes.timestamp, row.sellstartdate), Fragment.of("""::timestamp,
+    "sellenddate" = """), Fragment.encode(PgTypes.timestamp.opt, row.sellenddate), Fragment.of("""::timestamp,
+    "discontinueddate" = """), Fragment.encode(PgTypes.timestamp.opt, row.discontinueddate), Fragment.of("""::timestamp,
+    "rowguid" = """), Fragment.encode(PgTypes.uuid, row.rowguid), Fragment.of("""::uuid,
+    "modifieddate" = """), Fragment.encode(PgTypes.timestamp, row.modifieddate), Fragment.of("""::timestamp
+    where "productid" = """), Fragment.encode(ProductId.pgType, productid), Fragment.of("")).update().run(c) > 0
   }
 
   override def upsert(unsaved: ProductRow)(using c: Connection): ProductRow = {
-  interpolate(Fragment.lit("""insert into "production"."product"("productid", "name", "productnumber", "makeflag", "finishedgoodsflag", "color", "safetystocklevel", "reorderpoint", "standardcost", "listprice", "size", "sizeunitmeasurecode", "weightunitmeasurecode", "weight", "daystomanufacture", "productline", "class", "style", "productsubcategoryid", "productmodelid", "sellstartdate", "sellenddate", "discontinueddate", "rowguid", "modifieddate")
-    values ("""), Fragment.encode(ProductId.pgType, unsaved.productid), Fragment.lit("::int4, "), Fragment.encode(Name.pgType, unsaved.name), Fragment.lit("::varchar, "), Fragment.encode(PgTypes.text, unsaved.productnumber), Fragment.lit(", "), Fragment.encode(Flag.pgType, unsaved.makeflag), Fragment.lit("::bool, "), Fragment.encode(Flag.pgType, unsaved.finishedgoodsflag), Fragment.lit("::bool, "), Fragment.encode(PgTypes.text.opt(), unsaved.color), Fragment.lit(", "), Fragment.encode(PgTypes.int2, unsaved.safetystocklevel), Fragment.lit("::int2, "), Fragment.encode(PgTypes.int2, unsaved.reorderpoint), Fragment.lit("::int2, "), Fragment.encode(PgTypes.numeric, unsaved.standardcost), Fragment.lit("::numeric, "), Fragment.encode(PgTypes.numeric, unsaved.listprice), Fragment.lit("::numeric, "), Fragment.encode(PgTypes.text.opt(), unsaved.size), Fragment.lit(", "), Fragment.encode(UnitmeasureId.pgType.opt(), unsaved.sizeunitmeasurecode), Fragment.lit("::bpchar, "), Fragment.encode(UnitmeasureId.pgType.opt(), unsaved.weightunitmeasurecode), Fragment.lit("::bpchar, "), Fragment.encode(PgTypes.numeric.opt(), unsaved.weight), Fragment.lit("::numeric, "), Fragment.encode(PgTypes.int4, unsaved.daystomanufacture), Fragment.lit("::int4, "), Fragment.encode(PgTypes.bpchar.opt(), unsaved.productline), Fragment.lit("::bpchar, "), Fragment.encode(PgTypes.bpchar.opt(), unsaved.`class`), Fragment.lit("::bpchar, "), Fragment.encode(PgTypes.bpchar.opt(), unsaved.style), Fragment.lit("::bpchar, "), Fragment.encode(ProductsubcategoryId.pgType.opt(), unsaved.productsubcategoryid), Fragment.lit("::int4, "), Fragment.encode(ProductmodelId.pgType.opt(), unsaved.productmodelid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.timestamp, unsaved.sellstartdate), Fragment.lit("::timestamp, "), Fragment.encode(PgTypes.timestamp.opt(), unsaved.sellenddate), Fragment.lit("::timestamp, "), Fragment.encode(PgTypes.timestamp.opt(), unsaved.discontinueddate), Fragment.lit("::timestamp, "), Fragment.encode(PgTypes.uuid, unsaved.rowguid), Fragment.lit("::uuid, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("""::timestamp)
+  concat(Fragment.of("""insert into "production"."product"("productid", "name", "productnumber", "makeflag", "finishedgoodsflag", "color", "safetystocklevel", "reorderpoint", "standardcost", "listprice", "size", "sizeunitmeasurecode", "weightunitmeasurecode", "weight", "daystomanufacture", "productline", "class", "style", "productsubcategoryid", "productmodelid", "sellstartdate", "sellenddate", "discontinueddate", "rowguid", "modifieddate")
+    values ("""), Fragment.encode(ProductId.pgType, unsaved.productid), Fragment.of("::int4, "), Fragment.encode(Name.pgType, unsaved.name), Fragment.of("::varchar, "), Fragment.encode(PgTypes.text, unsaved.productnumber), Fragment.of(", "), Fragment.encode(Flag.pgType, unsaved.makeflag), Fragment.of("::bool, "), Fragment.encode(Flag.pgType, unsaved.finishedgoodsflag), Fragment.of("::bool, "), Fragment.encode(PgTypes.text.opt, unsaved.color), Fragment.of(", "), Fragment.encode(PgTypes.int2, unsaved.safetystocklevel), Fragment.of("::int2, "), Fragment.encode(PgTypes.int2, unsaved.reorderpoint), Fragment.of("::int2, "), Fragment.encode(PgTypes.numeric, unsaved.standardcost), Fragment.of("::numeric, "), Fragment.encode(PgTypes.numeric, unsaved.listprice), Fragment.of("::numeric, "), Fragment.encode(PgTypes.text.opt, unsaved.size), Fragment.of(", "), Fragment.encode(UnitmeasureId.pgType.opt, unsaved.sizeunitmeasurecode), Fragment.of("::bpchar, "), Fragment.encode(UnitmeasureId.pgType.opt, unsaved.weightunitmeasurecode), Fragment.of("::bpchar, "), Fragment.encode(PgTypes.numeric.opt, unsaved.weight), Fragment.of("::numeric, "), Fragment.encode(PgTypes.int4, unsaved.daystomanufacture), Fragment.of("::int4, "), Fragment.encode(PgTypes.bpchar.opt, unsaved.productline), Fragment.of("::bpchar, "), Fragment.encode(PgTypes.bpchar.opt, unsaved.`class`), Fragment.of("::bpchar, "), Fragment.encode(PgTypes.bpchar.opt, unsaved.style), Fragment.of("::bpchar, "), Fragment.encode(ProductsubcategoryId.pgType.opt, unsaved.productsubcategoryid), Fragment.of("::int4, "), Fragment.encode(ProductmodelId.pgType.opt, unsaved.productmodelid), Fragment.of("::int4, "), Fragment.encode(PgTypes.timestamp, unsaved.sellstartdate), Fragment.of("::timestamp, "), Fragment.encode(PgTypes.timestamp.opt, unsaved.sellenddate), Fragment.of("::timestamp, "), Fragment.encode(PgTypes.timestamp.opt, unsaved.discontinueddate), Fragment.of("::timestamp, "), Fragment.encode(PgTypes.uuid, unsaved.rowguid), Fragment.of("::uuid, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.of("""::timestamp)
     on conflict ("productid")
     do update set
       "name" = EXCLUDED."name",
@@ -215,12 +216,12 @@ class ProductRepoImpl extends ProductRepo {
     "rowguid" = EXCLUDED."rowguid",
     "modifieddate" = EXCLUDED."modifieddate"
     returning "productid", "name", "productnumber", "makeflag", "finishedgoodsflag", "color", "safetystocklevel", "reorderpoint", "standardcost", "listprice", "size", "sizeunitmeasurecode", "weightunitmeasurecode", "weight", "daystomanufacture", "productline", "class", "style", "productsubcategoryid", "productmodelid", "sellstartdate", "sellenddate", "discontinueddate", "rowguid", "modifieddate""""))
-    .updateReturning(ProductRow.`_rowParser`.exactlyOne())
-    .runUnchecked(c)
+    .updateReturning(ProductRow.rowCodec.exactlyOne())
+    .run(c)
   }
 
   override def upsertBatch(unsaved: java.util.Iterator[ProductRow])(using c: Connection): java.util.List[ProductRow] = {
-    interpolate(Fragment.lit("""insert into "production"."product"("productid", "name", "productnumber", "makeflag", "finishedgoodsflag", "color", "safetystocklevel", "reorderpoint", "standardcost", "listprice", "size", "sizeunitmeasurecode", "weightunitmeasurecode", "weight", "daystomanufacture", "productline", "class", "style", "productsubcategoryid", "productmodelid", "sellstartdate", "sellenddate", "discontinueddate", "rowguid", "modifieddate")
+    concat(Fragment.of("""insert into "production"."product"("productid", "name", "productnumber", "makeflag", "finishedgoodsflag", "color", "safetystocklevel", "reorderpoint", "standardcost", "listprice", "size", "sizeunitmeasurecode", "weightunitmeasurecode", "weight", "daystomanufacture", "productline", "class", "style", "productsubcategoryid", "productmodelid", "sellstartdate", "sellenddate", "discontinueddate", "rowguid", "modifieddate")
     values (?::int4, ?::varchar, ?, ?::bool, ?::bool, ?, ?::int2, ?::int2, ?::numeric, ?::numeric, ?, ?::bpchar, ?::bpchar, ?::numeric, ?::int4, ?::bpchar, ?::bpchar, ?::bpchar, ?::int4, ?::int4, ?::timestamp, ?::timestamp, ?::timestamp, ?::uuid, ?::timestamp)
     on conflict ("productid")
     do update set
@@ -249,8 +250,8 @@ class ProductRepoImpl extends ProductRepo {
     "rowguid" = EXCLUDED."rowguid",
     "modifieddate" = EXCLUDED."modifieddate"
     returning "productid", "name", "productnumber", "makeflag", "finishedgoodsflag", "color", "safetystocklevel", "reorderpoint", "standardcost", "listprice", "size", "sizeunitmeasurecode", "weightunitmeasurecode", "weight", "daystomanufacture", "productline", "class", "style", "productsubcategoryid", "productmodelid", "sellstartdate", "sellenddate", "discontinueddate", "rowguid", "modifieddate""""))
-      .updateManyReturning(ProductRow.`_rowParser`, unsaved)
-    .runUnchecked(c)
+      .updateManyReturning(ProductRow.rowCodec, unsaved)
+    .run(c)
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
@@ -258,9 +259,9 @@ class ProductRepoImpl extends ProductRepo {
     unsaved: java.util.Iterator[ProductRow],
     batchSize: Integer = 10000
   )(using c: Connection): Integer = {
-    interpolate(Fragment.lit("""create temporary table product_TEMP (like "production"."product") on commit drop""")).update().runUnchecked(c): @scala.annotation.nowarn
-    streamingInsert.insertUnchecked(s"""copy product_TEMP("productid", "name", "productnumber", "makeflag", "finishedgoodsflag", "color", "safetystocklevel", "reorderpoint", "standardcost", "listprice", "size", "sizeunitmeasurecode", "weightunitmeasurecode", "weight", "daystomanufacture", "productline", "class", "style", "productsubcategoryid", "productmodelid", "sellstartdate", "sellenddate", "discontinueddate", "rowguid", "modifieddate") from stdin""", batchSize, unsaved, c, ProductRow.pgText): @scala.annotation.nowarn
-    return interpolate(Fragment.lit("""insert into "production"."product"("productid", "name", "productnumber", "makeflag", "finishedgoodsflag", "color", "safetystocklevel", "reorderpoint", "standardcost", "listprice", "size", "sizeunitmeasurecode", "weightunitmeasurecode", "weight", "daystomanufacture", "productline", "class", "style", "productsubcategoryid", "productmodelid", "sellstartdate", "sellenddate", "discontinueddate", "rowguid", "modifieddate")
+    concat(Fragment.of("""create temporary table product_TEMP (like "production"."product") on commit drop""")).update().run(c): @scala.annotation.nowarn
+    StreamingInsert.of(s"""copy product_TEMP("productid", "name", "productnumber", "makeflag", "finishedgoodsflag", "color", "safetystocklevel", "reorderpoint", "standardcost", "listprice", "size", "sizeunitmeasurecode", "weightunitmeasurecode", "weight", "daystomanufacture", "productline", "class", "style", "productsubcategoryid", "productmodelid", "sellstartdate", "sellenddate", "discontinueddate", "rowguid", "modifieddate") from stdin""", batchSize, unsaved, ProductRow.pgText).run(c): @scala.annotation.nowarn
+    return concat(Fragment.of("""insert into "production"."product"("productid", "name", "productnumber", "makeflag", "finishedgoodsflag", "color", "safetystocklevel", "reorderpoint", "standardcost", "listprice", "size", "sizeunitmeasurecode", "weightunitmeasurecode", "weight", "daystomanufacture", "productline", "class", "style", "productsubcategoryid", "productmodelid", "sellstartdate", "sellenddate", "discontinueddate", "rowguid", "modifieddate")
     select * from product_TEMP
     on conflict ("productid")
     do update set
@@ -289,6 +290,6 @@ class ProductRepoImpl extends ProductRepo {
     "rowguid" = EXCLUDED."rowguid",
     "modifieddate" = EXCLUDED."modifieddate"
     ;
-    drop table product_TEMP;""")).update().runUnchecked(c)
+    drop table product_TEMP;""")).update().run(c)
   }
 }

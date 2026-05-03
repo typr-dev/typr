@@ -5,17 +5,16 @@
  */
 package testdb.db2testnull
 
-import dev.typr.foundations.Db2Types
-import dev.typr.foundations.RowParser
+import dev.typr.dsl.FieldsBase
+import dev.typr.dsl.Path
+import dev.typr.dsl.SqlExpr.FieldLike
+import dev.typr.dslsc.RelationStructure
+import dev.typr.dslsc.SqlExpr
+import dev.typr.dslsc.SqlExpr.OptField
+import dev.typr.dslsc.TupleExpr24
+import dev.typr.foundations.RowCodec
 import dev.typr.foundations.data.Xml
-import dev.typr.foundations.dsl.FieldsBase
-import dev.typr.foundations.dsl.Path
-import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.scala.RelationStructure
-import dev.typr.foundations.scala.ScalaDbTypes
-import dev.typr.foundations.scala.SqlExpr
-import dev.typr.foundations.scala.SqlExpr.OptField
-import dev.typr.foundations.scala.TupleExpr24
+import dev.typr.foundationssc.Db2Types
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
@@ -29,7 +28,7 @@ class Db2testnullFields(val `_path`: java.util.List[Path]) extends TupleExpr24[S
       None,
       None,
       (row, value) => row.copy(smallintCol = value),
-      ScalaDbTypes.Db2Types.smallint
+      Db2Types.smallint.underlying
     )
   }
 
@@ -41,7 +40,7 @@ class Db2testnullFields(val `_path`: java.util.List[Path]) extends TupleExpr24[S
       None,
       None,
       (row, value) => row.copy(intCol = value),
-      ScalaDbTypes.Db2Types.integer
+      Db2Types.integer.underlying
     )
   }
 
@@ -53,7 +52,7 @@ class Db2testnullFields(val `_path`: java.util.List[Path]) extends TupleExpr24[S
       None,
       None,
       (row, value) => row.copy(bigintCol = value),
-      ScalaDbTypes.Db2Types.bigint
+      Db2Types.bigint.underlying
     )
   }
 
@@ -65,7 +64,7 @@ class Db2testnullFields(val `_path`: java.util.List[Path]) extends TupleExpr24[S
       None,
       None,
       (row, value) => row.copy(decimalCol = value),
-      ScalaDbTypes.Db2Types.decimal
+      Db2Types.decimal.underlying
     )
   }
 
@@ -77,7 +76,7 @@ class Db2testnullFields(val `_path`: java.util.List[Path]) extends TupleExpr24[S
       None,
       None,
       (row, value) => row.copy(numericCol = value),
-      ScalaDbTypes.Db2Types.decimal
+      Db2Types.decimal.underlying
     )
   }
 
@@ -89,7 +88,7 @@ class Db2testnullFields(val `_path`: java.util.List[Path]) extends TupleExpr24[S
       None,
       None,
       (row, value) => row.copy(decfloat16Col = value),
-      ScalaDbTypes.Db2Types.decfloat
+      Db2Types.decfloat.underlying
     )
   }
 
@@ -101,7 +100,7 @@ class Db2testnullFields(val `_path`: java.util.List[Path]) extends TupleExpr24[S
       None,
       None,
       (row, value) => row.copy(decfloat34Col = value),
-      ScalaDbTypes.Db2Types.decfloat
+      Db2Types.decfloat.underlying
     )
   }
 
@@ -113,7 +112,7 @@ class Db2testnullFields(val `_path`: java.util.List[Path]) extends TupleExpr24[S
       None,
       None,
       (row, value) => row.copy(realCol = value),
-      ScalaDbTypes.Db2Types.real
+      Db2Types.real.underlying
     )
   }
 
@@ -125,7 +124,7 @@ class Db2testnullFields(val `_path`: java.util.List[Path]) extends TupleExpr24[S
       None,
       None,
       (row, value) => row.copy(doubleCol = value),
-      ScalaDbTypes.Db2Types.double_
+      Db2Types.double_.underlying
     )
   }
 
@@ -137,7 +136,7 @@ class Db2testnullFields(val `_path`: java.util.List[Path]) extends TupleExpr24[S
       None,
       None,
       (row, value) => row.copy(boolCol = value),
-      ScalaDbTypes.Db2Types.boolean_
+      Db2Types.boolean_.underlying
     )
   }
 
@@ -149,7 +148,7 @@ class Db2testnullFields(val `_path`: java.util.List[Path]) extends TupleExpr24[S
       None,
       None,
       (row, value) => row.copy(charCol = value),
-      Db2Types.char_
+      Db2Types.char_.underlying
     )
   }
 
@@ -161,7 +160,7 @@ class Db2testnullFields(val `_path`: java.util.List[Path]) extends TupleExpr24[S
       None,
       None,
       (row, value) => row.copy(varcharCol = value),
-      Db2Types.varchar
+      Db2Types.varchar.underlying
     )
   }
 
@@ -173,7 +172,7 @@ class Db2testnullFields(val `_path`: java.util.List[Path]) extends TupleExpr24[S
       None,
       None,
       (row, value) => row.copy(clobCol = value),
-      Db2Types.clob
+      Db2Types.clob.underlying
     )
   }
 
@@ -185,7 +184,7 @@ class Db2testnullFields(val `_path`: java.util.List[Path]) extends TupleExpr24[S
       None,
       None,
       (row, value) => row.copy(graphicCol = value),
-      Db2Types.graphic
+      Db2Types.graphic.underlying
     )
   }
 
@@ -197,7 +196,7 @@ class Db2testnullFields(val `_path`: java.util.List[Path]) extends TupleExpr24[S
       None,
       None,
       (row, value) => row.copy(vargraphicCol = value),
-      Db2Types.vargraphic
+      Db2Types.vargraphic.underlying
     )
   }
 
@@ -209,7 +208,7 @@ class Db2testnullFields(val `_path`: java.util.List[Path]) extends TupleExpr24[S
       None,
       None,
       (row, value) => row.copy(binaryCol = value),
-      Db2Types.binary
+      Db2Types.binary.underlying
     )
   }
 
@@ -221,7 +220,7 @@ class Db2testnullFields(val `_path`: java.util.List[Path]) extends TupleExpr24[S
       None,
       None,
       (row, value) => row.copy(varbinaryCol = value),
-      Db2Types.varbinary
+      Db2Types.varbinary.underlying
     )
   }
 
@@ -233,7 +232,7 @@ class Db2testnullFields(val `_path`: java.util.List[Path]) extends TupleExpr24[S
       None,
       None,
       (row, value) => row.copy(blobCol = value),
-      Db2Types.blob
+      Db2Types.blob.underlying
     )
   }
 
@@ -245,7 +244,7 @@ class Db2testnullFields(val `_path`: java.util.List[Path]) extends TupleExpr24[S
       None,
       None,
       (row, value) => row.copy(dateCol = value),
-      Db2Types.date
+      Db2Types.date.underlying
     )
   }
 
@@ -257,7 +256,7 @@ class Db2testnullFields(val `_path`: java.util.List[Path]) extends TupleExpr24[S
       None,
       None,
       (row, value) => row.copy(timeCol = value),
-      Db2Types.time
+      Db2Types.time.underlying
     )
   }
 
@@ -269,7 +268,7 @@ class Db2testnullFields(val `_path`: java.util.List[Path]) extends TupleExpr24[S
       None,
       None,
       (row, value) => row.copy(timestampCol = value),
-      Db2Types.timestamp
+      Db2Types.timestamp.underlying
     )
   }
 
@@ -281,7 +280,7 @@ class Db2testnullFields(val `_path`: java.util.List[Path]) extends TupleExpr24[S
       None,
       None,
       (row, value) => row.copy(timestamp6Col = value),
-      Db2Types.timestamp
+      Db2Types.timestamp.underlying
     )
   }
 
@@ -293,7 +292,7 @@ class Db2testnullFields(val `_path`: java.util.List[Path]) extends TupleExpr24[S
       None,
       None,
       (row, value) => row.copy(timestamp12Col = value),
-      Db2Types.timestamp
+      Db2Types.timestamp.underlying
     )
   }
 
@@ -305,13 +304,13 @@ class Db2testnullFields(val `_path`: java.util.List[Path]) extends TupleExpr24[S
       None,
       None,
       (row, value) => row.copy(xmlCol = value),
-      Db2Types.xml
+      Db2Types.xml.underlying
     )
   }
 
   override def columns: java.util.List[FieldLike[?, Db2testnullRow]] = java.util.List.of(this.smallintCol.underlying, this.intCol.underlying, this.bigintCol.underlying, this.decimalCol.underlying, this.numericCol.underlying, this.decfloat16Col.underlying, this.decfloat34Col.underlying, this.realCol.underlying, this.doubleCol.underlying, this.boolCol.underlying, this.charCol.underlying, this.varcharCol.underlying, this.clobCol.underlying, this.graphicCol.underlying, this.vargraphicCol.underlying, this.binaryCol.underlying, this.varbinaryCol.underlying, this.blobCol.underlying, this.dateCol.underlying, this.timeCol.underlying, this.timestampCol.underlying, this.timestamp6Col.underlying, this.timestamp12Col.underlying, this.xmlCol.underlying)
 
-  override def rowParser: RowParser[Db2testnullRow] = Db2testnullRow._rowParser.underlying
+  override def rowCodec: RowCodec[Db2testnullRow] = Db2testnullRow.rowCodec.underlying
 
   override def withPaths(`_path`: java.util.List[Path]): RelationStructure[Db2testnullFields, Db2testnullRow] = new Db2testnullFields(`_path`)
 

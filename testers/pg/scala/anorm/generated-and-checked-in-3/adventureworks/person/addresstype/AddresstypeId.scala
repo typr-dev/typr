@@ -21,7 +21,7 @@ object AddresstypeId {
 
   given arrayToStatement: ToStatement[Array[AddresstypeId]] = adventureworks.IntArrayToStatement.contramap(_.map(_.value))
 
-  given bijection: Bijection[AddresstypeId, Int] = Bijection.apply[AddresstypeId, Int](_.value)(AddresstypeId.apply)
+  given bijection: Bijection[AddresstypeId, Int] = Bijection[AddresstypeId, Int](_.value)(AddresstypeId.apply)
 
   given column: Column[AddresstypeId] = Column.columnToInt.map(AddresstypeId.apply)
 

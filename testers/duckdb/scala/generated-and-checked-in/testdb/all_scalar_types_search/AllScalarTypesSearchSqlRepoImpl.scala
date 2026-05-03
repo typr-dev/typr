@@ -5,16 +5,14 @@
  */
 package testdb.all_scalar_types_search
 
-import dev.typr.foundations.DuckDbTypes
-import dev.typr.foundations.scala.DbTypeOps
-import dev.typr.foundations.scala.Fragment
-import dev.typr.foundations.scala.ScalaDbTypes
-import java.sql.Connection
+import dev.typr.foundationssc.ConnectionRead
+import dev.typr.foundationssc.DuckDbTypes
+import dev.typr.foundationssc.Fragment
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.UUID
 import testdb.Mood
-import dev.typr.foundations.scala.Fragment.sql
+import dev.typr.foundationssc.Fragment.sql
 
 class AllScalarTypesSearchSqlRepoImpl extends AllScalarTypesSearchSqlRepo {
   override def apply(
@@ -29,7 +27,7 @@ class AllScalarTypesSearchSqlRepoImpl extends AllScalarTypesSearchSqlRepo {
     uuidValue: Option[UUID],
     moodValue: Option[/* user-picked */ Mood],
     minDecimal: Option[BigDecimal]
-  )(using c: Connection): List[AllScalarTypesSearchSqlRow] = {
+  )(using c: ConnectionRead): List[AllScalarTypesSearchSqlRow] = {
     sql"""-- Complex query testing all scalar types with various comparisons
     -- Tests: all DuckDB scalar types, optional parameters, range queries, UUID, JSON
   
@@ -62,17 +60,17 @@ class AllScalarTypesSearchSqlRepoImpl extends AllScalarTypesSearchSqlRepo {
         col_not_null
     FROM all_scalar_types
     WHERE
-        (${Fragment.encode(ScalaDbTypes.DuckDbTypes.integer.nullable, id)} IS NULL OR id = ${Fragment.encode(ScalaDbTypes.DuckDbTypes.integer.nullable, id)})
-        AND (${Fragment.encode(ScalaDbTypes.DuckDbTypes.integer.nullable, minInteger)} IS NULL OR col_integer >= ${Fragment.encode(ScalaDbTypes.DuckDbTypes.integer.nullable, minInteger)})
-        AND (${Fragment.encode(ScalaDbTypes.DuckDbTypes.bigint.nullable, maxBigint)} IS NULL OR col_bigint <= ${Fragment.encode(ScalaDbTypes.DuckDbTypes.bigint.nullable, maxBigint)})
-        AND (${Fragment.encode(ScalaDbTypes.DuckDbTypes.boolean_.nullable, booleanValue)} IS NULL OR col_boolean = ${Fragment.encode(ScalaDbTypes.DuckDbTypes.boolean_.nullable, booleanValue)})
-        AND (${Fragment.encode(DuckDbTypes.varchar.nullable, varcharPattern)} IS NULL OR col_varchar LIKE ${Fragment.encode(DuckDbTypes.varchar.nullable, varcharPattern)})
-        AND (${Fragment.encode(DuckDbTypes.date.nullable, minDate)} IS NULL OR col_date >= ${Fragment.encode(DuckDbTypes.date.nullable, minDate)})
-        AND (${Fragment.encode(DuckDbTypes.date.nullable, maxDate)} IS NULL OR col_date <= ${Fragment.encode(DuckDbTypes.date.nullable, maxDate)})
-        AND (${Fragment.encode(DuckDbTypes.timestamp.nullable, afterTimestamp)} IS NULL OR col_timestamp >= ${Fragment.encode(DuckDbTypes.timestamp.nullable, afterTimestamp)})
-        AND (${Fragment.encode(DuckDbTypes.uuid.nullable, uuidValue)} IS NULL OR col_uuid = ${Fragment.encode(DuckDbTypes.uuid.nullable, uuidValue)})
-        AND (${Fragment.encode(Mood.duckDbType.nullable, moodValue)} IS NULL OR col_mood = ${Fragment.encode(Mood.duckDbType.nullable, moodValue)})
-        AND (${Fragment.encode(ScalaDbTypes.DuckDbTypes.numeric.nullable, minDecimal)} IS NULL OR col_decimal >= ${Fragment.encode(ScalaDbTypes.DuckDbTypes.numeric.nullable, minDecimal)})
-    ORDER BY id""".query(AllScalarTypesSearchSqlRow.`_rowParser`.all()).runUnchecked(c)
+        (${Fragment.encode(DuckDbTypes.integer.opt, id)} IS NULL OR id = ${Fragment.encode(DuckDbTypes.integer.opt, id)})
+        AND (${Fragment.encode(DuckDbTypes.integer.opt, minInteger)} IS NULL OR col_integer >= ${Fragment.encode(DuckDbTypes.integer.opt, minInteger)})
+        AND (${Fragment.encode(DuckDbTypes.bigint.opt, maxBigint)} IS NULL OR col_bigint <= ${Fragment.encode(DuckDbTypes.bigint.opt, maxBigint)})
+        AND (${Fragment.encode(DuckDbTypes.boolean_.opt, booleanValue)} IS NULL OR col_boolean = ${Fragment.encode(DuckDbTypes.boolean_.opt, booleanValue)})
+        AND (${Fragment.encode(DuckDbTypes.varchar.opt, varcharPattern)} IS NULL OR col_varchar LIKE ${Fragment.encode(DuckDbTypes.varchar.opt, varcharPattern)})
+        AND (${Fragment.encode(DuckDbTypes.date.opt, minDate)} IS NULL OR col_date >= ${Fragment.encode(DuckDbTypes.date.opt, minDate)})
+        AND (${Fragment.encode(DuckDbTypes.date.opt, maxDate)} IS NULL OR col_date <= ${Fragment.encode(DuckDbTypes.date.opt, maxDate)})
+        AND (${Fragment.encode(DuckDbTypes.timestamp.opt, afterTimestamp)} IS NULL OR col_timestamp >= ${Fragment.encode(DuckDbTypes.timestamp.opt, afterTimestamp)})
+        AND (${Fragment.encode(DuckDbTypes.uuid.opt, uuidValue)} IS NULL OR col_uuid = ${Fragment.encode(DuckDbTypes.uuid.opt, uuidValue)})
+        AND (${Fragment.encode(Mood.duckDbType.opt, moodValue)} IS NULL OR col_mood = ${Fragment.encode(Mood.duckDbType.opt, moodValue)})
+        AND (${Fragment.encode(DuckDbTypes.numeric.opt, minDecimal)} IS NULL OR col_decimal >= ${Fragment.encode(DuckDbTypes.numeric.opt, minDecimal)})
+    ORDER BY id""".query(AllScalarTypesSearchSqlRow.rowCodec.all()).run(using c)
   }
 }

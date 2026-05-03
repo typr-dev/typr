@@ -19,10 +19,10 @@ data class OrdersRowUnsaved(
   /** Default: current_date */
   @field:JsonProperty("order_date") val orderDate: Defaulted<LocalDate> = UseDefault(),
   /** Default: 'pending' */
-  val status: Defaulted<String?> = UseDefault()
+  val status: Defaulted<kotlin.String?> = UseDefault()
 ) {
   fun toRow(
     orderDateDefault: () -> LocalDate,
-    statusDefault: () -> String?
+    statusDefault: () -> kotlin.String?
   ): OrdersRow = OrdersRow(orderId = orderId, customerId = customerId, orderDate = orderDate.getOrElse(orderDateDefault), totalAmount = totalAmount, status = status.getOrElse(statusDefault))
 }

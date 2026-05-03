@@ -1,9 +1,9 @@
 package oracledb
 
-import dev.typr.foundations.SqlFunction
-import dev.typr.foundations.Transactor
-import dev.typr.foundations.connect.oracle.OracleConfig
-import java.sql.Connection
+import dev.typr.foundationskt.Connection
+import dev.typr.foundationskt.ConnectionRead
+import dev.typr.foundationskt.Transactor
+import dev.typr.foundationskt.connect.OracleConfig
 
 object OracleTestHelper {
     private val CONFIG: OracleConfig =
@@ -11,13 +11,11 @@ object OracleTestHelper {
             .serviceName("FREEPDB1")
             .build()
 
-    private val TRANSACTOR: Transactor = CONFIG.transactor(Transactor.testStrategy())
+    private val TRANSACTOR: Transactor = Transactor.create(CONFIG).rollbackOnly()
 
-    fun <T> apply(f: (Connection) -> T): T {
-        return TRANSACTOR.execute(SqlFunction { conn -> f(conn) })
-    }
+    fun <T> apply(f: (Connection) -> T): T = TRANSACTOR.transact(f)
 
-    fun run(f: (Connection) -> Unit) {
-        TRANSACTOR.executeVoid { conn -> f(conn) }
-    }
+    fun run(f: (Connection) -> Unit) = TRANSACTOR.transact { conn -> f(conn) }
+
+    fun <T> applyRead(f: (ConnectionRead) -> T): T = TRANSACTOR.transactRead(f)
 }

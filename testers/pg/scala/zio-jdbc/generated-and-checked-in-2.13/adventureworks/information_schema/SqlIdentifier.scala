@@ -27,7 +27,7 @@ object SqlIdentifier {
 
   implicit lazy val arraySetter: Setter[Array[SqlIdentifier]] = adventureworks.StringArraySetter.contramap(_.map(_.value))
 
-  implicit lazy val bijection: Bijection[SqlIdentifier, String] = Bijection.apply[SqlIdentifier, String](_.value)(SqlIdentifier.apply)
+  implicit lazy val bijection: Bijection[SqlIdentifier, String] = Bijection[SqlIdentifier, String](_.value)(SqlIdentifier.apply)
 
   implicit lazy val jdbcDecoder: JdbcDecoder[SqlIdentifier] = JdbcDecoder.stringDecoder.map(SqlIdentifier.apply)
 

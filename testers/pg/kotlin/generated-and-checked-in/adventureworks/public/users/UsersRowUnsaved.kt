@@ -9,18 +9,17 @@ import adventureworks.customtypes.Defaulted
 import adventureworks.customtypes.Defaulted.UseDefault
 import com.fasterxml.jackson.annotation.JsonProperty
 import dev.typr.foundations.PgText
-import dev.typr.foundations.PgTypes
 import dev.typr.foundations.data.Unknown
-import dev.typr.foundations.kotlin.nullable
+import dev.typr.foundationskt.PgTypes
 import java.time.Instant
 
 /** This class corresponds to a row in table `public.users` which has not been persisted yet */
 data class UsersRowUnsaved(
   @field:JsonProperty("user_id") val userId: UsersId,
-  val name: String,
-  @field:JsonProperty("last_name") val lastName: String? = null,
+  val name: kotlin.String,
+  @field:JsonProperty("last_name") val lastName: kotlin.String? = null,
   val email: Unknown,
-  val password: String,
+  val password: kotlin.String,
   @field:JsonProperty("verified_on") val verifiedOn: Instant? = null,
   /** Default: now() */
   @field:JsonProperty("created_at") val createdAt: Defaulted<Instant> = UseDefault()
@@ -29,18 +28,18 @@ data class UsersRowUnsaved(
 
   companion object {
     val pgText: PgText<UsersRowUnsaved> =
-      PgText.instance({ row, sb -> UsersId.pgType.text().unsafeEncode(row.userId, sb)
+      PgText.instance({ row, sb -> UsersId.pgType.pgText().unsafeEncode(row.userId, sb)
       sb.append(PgText.DELIMETER)
-      PgTypes.text.text().unsafeEncode(row.name, sb)
+      PgTypes.text.pgText().unsafeEncode(row.name, sb)
       sb.append(PgText.DELIMETER)
-      PgTypes.text.nullable().text().unsafeEncode(row.lastName, sb)
+      PgTypes.text.opt().pgText().unsafeEncode(row.lastName, sb)
       sb.append(PgText.DELIMETER)
-      PgTypes.unknown.text().unsafeEncode(row.email, sb)
+      PgTypes.unknown.pgText().unsafeEncode(row.email, sb)
       sb.append(PgText.DELIMETER)
-      PgTypes.text.text().unsafeEncode(row.password, sb)
+      PgTypes.text.pgText().unsafeEncode(row.password, sb)
       sb.append(PgText.DELIMETER)
-      PgTypes.timestamptz.nullable().text().unsafeEncode(row.verifiedOn, sb)
+      PgTypes.timestamptz.opt().pgText().unsafeEncode(row.verifiedOn, sb)
       sb.append(PgText.DELIMETER)
-      Defaulted.pgText(PgTypes.timestamptz.text()).unsafeEncode(row.createdAt, sb) })
+      Defaulted.pgText(PgTypes.timestamptz.pgText()).unsafeEncode(row.createdAt, sb) })
   }
 }

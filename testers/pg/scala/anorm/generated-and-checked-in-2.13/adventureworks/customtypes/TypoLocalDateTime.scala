@@ -45,7 +45,7 @@ object TypoLocalDateTime {
 
   implicit lazy val arrayToStatement: ToStatement[Array[TypoLocalDateTime]] = ToStatement[Array[TypoLocalDateTime]]((s, index, v) => s.setArray(index, s.getConnection.createArrayOf("timestamp", v.map(v => v.value.toString()))))
 
-  implicit lazy val bijection: Bijection[TypoLocalDateTime, LocalDateTime] = Bijection.apply[TypoLocalDateTime, LocalDateTime](_.value)(TypoLocalDateTime.apply)
+  implicit lazy val bijection: Bijection[TypoLocalDateTime, LocalDateTime] = Bijection[TypoLocalDateTime, LocalDateTime](_.value)(TypoLocalDateTime.apply)
 
   implicit lazy val column: Column[TypoLocalDateTime] = {
     Column.nonNull[TypoLocalDateTime]((v1: Any, _) =>

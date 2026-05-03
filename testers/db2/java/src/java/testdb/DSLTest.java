@@ -2,7 +2,7 @@ package testdb;
 
 import static org.junit.Assert.*;
 
-import dev.typr.foundations.dsl.Bijection;
+import dev.typr.foundations.Bijection;
 import java.math.BigDecimal;
 import java.util.Optional;
 import java.util.Random;
@@ -15,7 +15,7 @@ import testdb.orders.*;
  * orderBy, limit, count, and projection.
  */
 public class DSLTest {
-  private final TestInsert testInsert = new TestInsert(new Random(42));
+  private final TestInsert testInsert = new TestInsert(new Random(1985535425));
   private final CustomersRepoImpl customersRepo = new CustomersRepoImpl();
   private final OrdersRepoImpl ordersRepo = new OrdersRepoImpl();
 

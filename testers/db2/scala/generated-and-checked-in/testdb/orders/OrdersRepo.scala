@@ -5,17 +5,18 @@
  */
 package testdb.orders
 
-import dev.typr.foundations.scala.DeleteBuilder
-import dev.typr.foundations.scala.SelectBuilder
-import dev.typr.foundations.scala.UpdateBuilder
-import java.sql.Connection
+import dev.typr.dslsc.DeleteBuilder
+import dev.typr.dslsc.SelectBuilder
+import dev.typr.dslsc.UpdateBuilder
+import dev.typr.foundationssc.Connection
+import dev.typr.foundationssc.ConnectionRead
 
 trait OrdersRepo {
   def delete: DeleteBuilder[OrdersFields, OrdersRow]
 
   def deleteById(orderId: OrdersId)(using c: Connection): Boolean
 
-  def deleteByIds(orderIds: Array[OrdersId])(using c: Connection): Int
+  def deleteByIds(orderIds: List[OrdersId])(using c: Connection): Int
 
   def insert(unsaved: OrdersRow)(using c: Connection): OrdersRow
 
@@ -23,13 +24,13 @@ trait OrdersRepo {
 
   def select: SelectBuilder[OrdersFields, OrdersRow]
 
-  def selectAll(using c: Connection): List[OrdersRow]
+  def selectAll(using c: ConnectionRead): List[OrdersRow]
 
-  def selectById(orderId: OrdersId)(using c: Connection): Option[OrdersRow]
+  def selectById(orderId: OrdersId)(using c: ConnectionRead): Option[OrdersRow]
 
-  def selectByIds(orderIds: Array[OrdersId])(using c: Connection): List[OrdersRow]
+  def selectByIds(orderIds: List[OrdersId])(using c: ConnectionRead): List[OrdersRow]
 
-  def selectByIdsTracked(orderIds: Array[OrdersId])(using c: Connection): Map[OrdersId, OrdersRow]
+  def selectByIdsTracked(orderIds: List[OrdersId])(using c: ConnectionRead): Map[OrdersId, OrdersRow]
 
   def update: UpdateBuilder[OrdersFields, OrdersRow]
 

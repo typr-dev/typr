@@ -5,10 +5,11 @@
  */
 package adventureworks.public.pgtestnull
 
-import dev.typr.foundations.scala.DeleteBuilder
-import dev.typr.foundations.scala.SelectBuilder
-import dev.typr.foundations.scala.UpdateBuilder
-import java.sql.Connection
+import dev.typr.dslsc.DeleteBuilder
+import dev.typr.dslsc.SelectBuilder
+import dev.typr.dslsc.UpdateBuilder
+import dev.typr.foundationssc.Connection
+import dev.typr.foundationssc.ConnectionRead
 
 trait PgtestnullRepo {
   def delete: DeleteBuilder[PgtestnullFields, PgtestnullRow]
@@ -22,7 +23,7 @@ trait PgtestnullRepo {
 
   def select: SelectBuilder[PgtestnullFields, PgtestnullRow]
 
-  def selectAll(using c: Connection): List[PgtestnullRow]
+  def selectAll(using c: ConnectionRead): List[PgtestnullRow]
 
   def update: UpdateBuilder[PgtestnullFields, PgtestnullRow]
 }

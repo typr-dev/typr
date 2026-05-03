@@ -6,9 +6,9 @@
 package testdb.customers
 
 import com.fasterxml.jackson.annotation.JsonValue
-import dev.typr.foundations.Db2Type
-import dev.typr.foundations.kotlin.Bijection
-import dev.typr.foundations.kotlin.KotlinDbTypes
+import dev.typr.foundationskt.Bijection
+import dev.typr.foundationskt.Db2Type
+import dev.typr.foundationskt.Db2Types
 
 /** Type for the primary key of table `CUSTOMERS` */
 data class CustomersId(@field:JsonValue val value: Int) {
@@ -21,6 +21,6 @@ data class CustomersId(@field:JsonValue val value: Int) {
       Bijection.of(CustomersId::value, ::CustomersId)
 
     val db2Type: Db2Type<CustomersId> =
-      KotlinDbTypes.Db2Types.integer.bimap(::CustomersId, CustomersId::value)
+      Db2Types.integer.to(Bijection.of(::CustomersId, CustomersId::value))
   }
 }

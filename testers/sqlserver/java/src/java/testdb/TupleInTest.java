@@ -2,11 +2,11 @@ package testdb;
 
 import static org.junit.Assert.assertEquals;
 
+import dev.typr.dsl.SqlExpr;
+import dev.typr.foundations.Bijection;
+import dev.typr.foundations.Connection;
 import dev.typr.foundations.Tuple;
-import dev.typr.foundations.dsl.Bijection;
-import dev.typr.foundations.dsl.SqlExpr;
 import java.math.BigDecimal;
-import java.sql.Connection;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;

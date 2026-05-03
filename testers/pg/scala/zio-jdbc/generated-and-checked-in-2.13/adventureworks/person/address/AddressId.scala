@@ -24,7 +24,7 @@ object AddressId {
 
   implicit lazy val arraySetter: Setter[Array[AddressId]] = adventureworks.IntArraySetter.contramap(_.map(_.value))
 
-  implicit lazy val bijection: Bijection[AddressId, Int] = Bijection.apply[AddressId, Int](_.value)(AddressId.apply)
+  implicit lazy val bijection: Bijection[AddressId, Int] = Bijection[AddressId, Int](_.value)(AddressId.apply)
 
   implicit lazy val jdbcDecoder: JdbcDecoder[AddressId] = JdbcDecoder.intDecoder.map(AddressId.apply)
 

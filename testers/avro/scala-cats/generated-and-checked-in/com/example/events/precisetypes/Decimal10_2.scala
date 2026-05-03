@@ -22,7 +22,7 @@ case class Decimal10_2 private(value: BigDecimal) extends DecimalN {
 object Decimal10_2 {
   def of(value: BigDecimal): Option[Decimal10_2] = { val scaled = value.setScale(2, BigDecimal.RoundingMode.HALF_UP); if (scaled.precision <= 10) Some(new Decimal10_2(scaled)) else None }
 
-  def of(value: Int): Decimal10_2 = new Decimal10_2(BigDecimal(value))
+  def of(value: Int): Decimal10_2 = new Decimal10_2(BigDecimal(value.toLong))
 
   def of(value: Long): Option[Decimal10_2] = Decimal10_2.of(BigDecimal(value))
 

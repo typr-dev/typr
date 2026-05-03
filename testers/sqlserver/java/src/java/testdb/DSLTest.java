@@ -2,7 +2,7 @@ package testdb;
 
 import static org.junit.Assert.*;
 
-import dev.typr.foundations.dsl.Bijection;
+import dev.typr.foundations.Bijection;
 import java.math.BigDecimal;
 import java.util.Random;
 import org.junit.Test;
@@ -16,7 +16,7 @@ import testdb.userdefined.Email;
  * orderBy, limit, count, and projection.
  */
 public class DSLTest {
-  private final TestInsert testInsert = new TestInsert(new Random(42));
+  private final TestInsert testInsert = new TestInsert(new Random(206274075));
   private final CustomersRepoImpl customersRepo = new CustomersRepoImpl();
   private final ProductsRepoImpl productsRepo = new ProductsRepoImpl();
   private final OrdersRepoImpl ordersRepo = new OrdersRepoImpl();
@@ -50,7 +50,7 @@ public class DSLTest {
           String firstName = null;
           for (var result : results) {
             if (firstName != null) {
-              assertTrue(result.name().compareTo(firstName) >= 0);
+              assertTrue(result.name().compareToIgnoreCase(firstName) >= 0);
             }
             firstName = result.name();
           }

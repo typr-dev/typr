@@ -22,7 +22,9 @@ import zio.json.JsonEncoder
  *  - c
  */
 
-sealed abstract class Myenum(val value: java.lang.String)
+sealed abstract class Myenum(val value: java.lang.String) {
+  
+}
 
 object Myenum {
   implicit lazy val arraySetter: Setter[Array[Myenum]] = {

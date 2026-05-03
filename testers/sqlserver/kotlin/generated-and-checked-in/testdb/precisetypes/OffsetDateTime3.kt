@@ -6,16 +6,16 @@
 package testdb.precisetypes
 
 import com.fasterxml.jackson.annotation.JsonValue
-import dev.typr.foundations.SqlServerType
-import dev.typr.foundations.SqlServerTypes
 import dev.typr.foundations.data.precise.OffsetDateTimeN
-import dev.typr.foundations.kotlin.Bijection
+import dev.typr.foundationskt.Bijection
+import dev.typr.foundationskt.SqlServerType
+import dev.typr.foundationskt.SqlServerTypes
 import java.time.OffsetDateTime
 import java.time.temporal.ChronoUnit
 
 @kotlin.ConsistentCopyVisibility
 data class OffsetDateTime3 private constructor(@field:JsonValue val value: OffsetDateTime) : OffsetDateTimeN {
-  override fun equals(other: Any?): Boolean {
+  override fun equals(other: Any?): kotlin.Boolean {
     if (this === other) return true
     if (other !is OffsetDateTimeN) return false
     return value == other.rawValue()
@@ -27,7 +27,7 @@ data class OffsetDateTime3 private constructor(@field:JsonValue val value: Offse
 
   override fun rawValue(): OffsetDateTime = value
 
-  override fun semanticEquals(other: OffsetDateTimeN): Boolean = if (other == null) false else value == other.rawValue()
+  override fun semanticEquals(other: OffsetDateTimeN): kotlin.Boolean = if (other == null) false else (value == other.rawValue())
 
   override fun semanticHashCode(): Int = value.hashCode()
 
@@ -36,14 +36,14 @@ data class OffsetDateTime3 private constructor(@field:JsonValue val value: Offse
   }
 
   companion object {
-    val bijection: Bijection<OffsetDateTime3, OffsetDateTime> =
-      Bijection.of(OffsetDateTime3::value, ::OffsetDateTime3)
+    fun of(value: OffsetDateTime): OffsetDateTime3 = OffsetDateTime3(value.truncatedTo(ChronoUnit.MILLIS))
 
     fun now(): OffsetDateTime3 = OffsetDateTime3(OffsetDateTime.now().truncatedTo(ChronoUnit.MILLIS))
 
-    fun of(value: OffsetDateTime): OffsetDateTime3 = OffsetDateTime3(value.truncatedTo(ChronoUnit.MILLIS))
+    val bijection: Bijection<OffsetDateTime3, OffsetDateTime> =
+      Bijection.of(OffsetDateTime3::value, ::OffsetDateTime3)
 
     val sqlServerType: SqlServerType<OffsetDateTime3> =
-      SqlServerTypes.datetimeoffset.bimap(::OffsetDateTime3, OffsetDateTime3::value)
+      SqlServerTypes.datetimeoffset.to(Bijection.of(::OffsetDateTime3, OffsetDateTime3::value))
   }
 }

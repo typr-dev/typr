@@ -6,11 +6,10 @@
 package testdb.customer_stats
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import dev.typr.foundations.Db2Types
+import dev.typr.dslsc.RowCodecs
 import dev.typr.foundations.Tuple.Tuple4
-import dev.typr.foundations.scala.RowParser
-import dev.typr.foundations.scala.RowParsers
-import dev.typr.foundations.scala.ScalaDbTypes
+import dev.typr.foundationssc.Db2Types
+import dev.typr.foundationssc.RowCodec
 
 /** Materialized View: CUSTOMER_STATS */
 case class CustomerStatsMVRow(
@@ -29,5 +28,5 @@ case class CustomerStatsMVRow(
 }
 
 object CustomerStatsMVRow {
-  val `_rowParser`: RowParser[CustomerStatsMVRow] = RowParsers.of(ScalaDbTypes.Db2Types.integer, Db2Types.varchar, ScalaDbTypes.Db2Types.integer, ScalaDbTypes.Db2Types.decimal)(CustomerStatsMVRow.apply)(row => Array[Any](row.customerId, row.customerName, row.totalOrders, row.totalRevenue))
+  val rowCodec: RowCodec[CustomerStatsMVRow] = RowCodecs.of(Db2Types.integer, Db2Types.varchar, Db2Types.integer, Db2Types.decimal)(CustomerStatsMVRow.apply)(row => Array[Any](row.customerId, row.customerName, row.totalOrders, row.totalRevenue))
 }

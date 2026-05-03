@@ -68,28 +68,6 @@ data class WellKnownTypesMessage(
   }
 
   companion object {
-    val MARSHALLER: Marshaller<WellKnownTypesMessage> =
-      object : Marshaller<WellKnownTypesMessage> {
-        override fun stream(value: WellKnownTypesMessage): InputStream {
-          val bytes = ByteArray(value.getSerializedSize())
-          val cos = CodedOutputStream.newInstance(bytes)
-          try {
-            value.writeTo(cos)
-            cos.flush()
-          } catch (e: IOException) {
-            throw RuntimeException(e)
-          } 
-          return ByteArrayInputStream(bytes)
-        }
-        override fun parse(stream: InputStream): WellKnownTypesMessage {
-          try {
-            return WellKnownTypesMessage.parseFrom(CodedInputStream.newInstance(stream))
-          } catch (e: IOException) {
-            throw RuntimeException(e)
-          } 
-        }
-      }
-
     @Throws(IOException::class)
     fun parseFrom(input: CodedInputStream): WellKnownTypesMessage {
       var createdAt: Instant = Instant.EPOCH
@@ -142,5 +120,27 @@ data class WellKnownTypesMessage(
       }
       return WellKnownTypesMessage(createdAt, ttl, nullableString, nullableInt, nullableBool)
     }
+
+    val MARSHALLER: Marshaller<WellKnownTypesMessage> =
+      object : Marshaller<WellKnownTypesMessage> {
+        override fun stream(value: WellKnownTypesMessage): InputStream {
+          val bytes = ByteArray(value.getSerializedSize())
+          val cos = CodedOutputStream.newInstance(bytes)
+          try {
+            value.writeTo(cos)
+            cos.flush()
+          } catch (e: IOException) {
+            throw RuntimeException(e)
+          } 
+          return ByteArrayInputStream(bytes)
+        }
+        override fun parse(stream: InputStream): WellKnownTypesMessage {
+          try {
+            return WellKnownTypesMessage.parseFrom(CodedInputStream.newInstance(stream))
+          } catch (e: IOException) {
+            throw RuntimeException(e)
+          } 
+        }
+      }
   }
 }

@@ -5,11 +5,11 @@
  */
 package oracledb.department_summary
 
-import java.sql.Connection
-import dev.typr.foundations.scala.Fragment.sql
+import dev.typr.foundationssc.ConnectionRead
+import dev.typr.foundationssc.Fragment.sql
 
 class DepartmentSummarySqlRepoImpl extends DepartmentSummarySqlRepo {
-  override def apply(using c: Connection): List[DepartmentSummarySqlRow] = {
+  override def apply(using c: ConnectionRead): List[DepartmentSummarySqlRow] = {
     sql"""-- Get department summary with employee count
     SELECT
         d.dept_code,
@@ -21,6 +21,6 @@ class DepartmentSummarySqlRepoImpl extends DepartmentSummarySqlRepo {
     LEFT JOIN employees e ON d.dept_code = e.dept_code AND d.dept_region = e.dept_region
     GROUP BY d.dept_code, d.dept_region, d.dept_name, d.budget
     ORDER BY d.dept_code, d.dept_region
-    """.query(DepartmentSummarySqlRow.`_rowParser`.all()).runUnchecked(c)
+    """.query(DepartmentSummarySqlRow.rowCodec.all()).run(using c)
   }
 }

@@ -6,18 +6,17 @@
 package adventureworks.person.address
 
 import com.fasterxml.jackson.annotation.JsonValue
-import dev.typr.foundations.PgType
-import dev.typr.foundations.PgTypes
-import dev.typr.foundations.scala.Bijection
-import dev.typr.foundations.scala.ScalaDbTypes
+import dev.typr.dslsc.Bijection
+import dev.typr.foundationssc.PgType
+import dev.typr.foundationssc.PgTypes
 
 /** Type for the primary key of table `person.address` */
 case class AddressId(@JsonValue value: Int) extends scala.AnyVal
 
 object AddressId {
-  given bijection: Bijection[AddressId, Int] = Bijection.apply[AddressId, Int](_.value)(AddressId.apply)
+  given bijection: Bijection[AddressId, Int] = Bijection.of[AddressId, Int](_.value, AddressId.apply)
 
-  given pgType: PgType[AddressId] = ScalaDbTypes.PgTypes.int4.bimap(AddressId.apply, _.value)
+  given pgType: PgType[AddressId] = PgTypes.int4.to(Bijection.of(AddressId.apply, _.value))
 
-  given pgTypeArray: PgType[Array[AddressId]] = PgTypes.int4ArrayUnboxed.bimap(xs => xs.map(AddressId.apply), xs => xs.map(_.value))
+  given pgTypeArray: PgType[List[AddressId]] = pgType.array
 }

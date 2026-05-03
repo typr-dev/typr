@@ -25,7 +25,7 @@ import testdb.userdefined.Email;
  * generated from SQL files in sql-scripts/duckdb/.
  */
 public class SqlScriptTest {
-  private final TestInsert testInsert = new TestInsert(new Random(42));
+  private final TestInsert testInsert = new TestInsert(new Random(286146544));
   private final CustomerSearchSqlRepoImpl customerSearchRepo = new CustomerSearchSqlRepoImpl();
   private final OrderSummaryByCustomerSqlRepoImpl orderSummaryRepo =
       new OrderSummaryByCustomerSqlRepoImpl();
@@ -184,7 +184,8 @@ public class SqlScriptTest {
           testInsert.Orders().with(r -> r.withCustomerId(customer1.customerId().value())).insert(c);
           testInsert.Orders().with(r -> r.withCustomerId(customer2.customerId().value())).insert(c);
 
-          Integer[] ids = {customer1.customerId().value(), customer2.customerId().value()};
+          var ids =
+              java.util.List.of(customer1.customerId().value(), customer2.customerId().value());
           var results =
               orderSummaryRepo.apply(Optional.of(ids), Optional.empty(), Optional.empty(), c);
 

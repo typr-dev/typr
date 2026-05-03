@@ -1,13 +1,12 @@
 package testdb
 
-import dev.typr.foundations.{SqlFunction, Transactor}
-import dev.typr.foundations.connect.mariadb.MariaDbConfig
+import dev.typr.foundationssc.*
+import dev.typr.foundationssc.connect.{ConnectionSettings, MariaConfig, TransactionIsolation}
 
 object withConnection {
-  private val config = MariaDbConfig.builder("localhost", 3307, "typr", "typr", "password").build()
-  private val transactor = config.transactor(Transactor.testStrategy())
+  private val config = MariaConfig.builder("localhost", 3307, "typr", "typr", "password").build()
+  private val settings = ConnectionSettings.builder().transactionIsolation(TransactionIsolation.READ_COMMITTED).build()
+  private val transactor = Transactor.create(config, settings).rollbackOnly()
 
-  def apply[T](f: java.sql.Connection => T): T = {
-    transactor.execute[T]((conn => f(conn)): SqlFunction[java.sql.Connection, T])
-  }
+  def apply[T](f: Connection ?=> T): T = transactor.transact(f)
 }

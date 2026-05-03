@@ -5,10 +5,11 @@
  */
 package oracledb.all_scalar_types
 
-import dev.typr.foundations.dsl.DeleteBuilder
-import dev.typr.foundations.dsl.SelectBuilder
-import dev.typr.foundations.dsl.UpdateBuilder
-import java.sql.Connection
+import dev.typr.dsl.DeleteBuilder
+import dev.typr.dsl.SelectBuilder
+import dev.typr.dsl.UpdateBuilder
+import dev.typr.foundations.Connection
+import dev.typr.foundations.ConnectionRead
 import java.util.Optional
 
 trait AllScalarTypesRepo {
@@ -16,7 +17,7 @@ trait AllScalarTypesRepo {
 
   def deleteById(id: AllScalarTypesId)(using c: Connection): java.lang.Boolean
 
-  def deleteByIds(ids: Array[AllScalarTypesId])(using c: Connection): Integer
+  def deleteByIds(ids: java.util.List[AllScalarTypesId])(using c: Connection): Integer
 
   def insert(unsaved: AllScalarTypesRow)(using c: Connection): AllScalarTypesRow
 
@@ -24,13 +25,13 @@ trait AllScalarTypesRepo {
 
   def select: SelectBuilder[AllScalarTypesFields, AllScalarTypesRow]
 
-  def selectAll(using c: Connection): java.util.List[AllScalarTypesRow]
+  def selectAll(using c: ConnectionRead): java.util.List[AllScalarTypesRow]
 
-  def selectById(id: AllScalarTypesId)(using c: Connection): Optional[AllScalarTypesRow]
+  def selectById(id: AllScalarTypesId)(using c: ConnectionRead): Optional[AllScalarTypesRow]
 
-  def selectByIds(ids: Array[AllScalarTypesId])(using c: Connection): java.util.List[AllScalarTypesRow]
+  def selectByIds(ids: java.util.List[AllScalarTypesId])(using c: ConnectionRead): java.util.List[AllScalarTypesRow]
 
-  def selectByIdsTracked(ids: Array[AllScalarTypesId])(using c: Connection): java.util.Map[AllScalarTypesId, AllScalarTypesRow]
+  def selectByIdsTracked(ids: java.util.List[AllScalarTypesId])(using c: ConnectionRead): java.util.Map[AllScalarTypesId, AllScalarTypesRow]
 
   def update: UpdateBuilder[AllScalarTypesFields, AllScalarTypesRow]
 

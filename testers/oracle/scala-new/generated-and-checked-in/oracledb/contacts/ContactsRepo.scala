@@ -5,17 +5,18 @@
  */
 package oracledb.contacts
 
-import dev.typr.foundations.scala.DeleteBuilder
-import dev.typr.foundations.scala.SelectBuilder
-import dev.typr.foundations.scala.UpdateBuilder
-import java.sql.Connection
+import dev.typr.dslsc.DeleteBuilder
+import dev.typr.dslsc.SelectBuilder
+import dev.typr.dslsc.UpdateBuilder
+import dev.typr.foundationssc.Connection
+import dev.typr.foundationssc.ConnectionRead
 
 trait ContactsRepo {
   def delete: DeleteBuilder[ContactsFields, ContactsRow]
 
   def deleteById(contactId: ContactsId)(using c: Connection): Boolean
 
-  def deleteByIds(contactIds: Array[ContactsId])(using c: Connection): Int
+  def deleteByIds(contactIds: List[ContactsId])(using c: Connection): Int
 
   def insert(unsaved: ContactsRow)(using c: Connection): ContactsId
 
@@ -23,13 +24,13 @@ trait ContactsRepo {
 
   def select: SelectBuilder[ContactsFields, ContactsRow]
 
-  def selectAll(using c: Connection): List[ContactsRow]
+  def selectAll(using c: ConnectionRead): List[ContactsRow]
 
-  def selectById(contactId: ContactsId)(using c: Connection): Option[ContactsRow]
+  def selectById(contactId: ContactsId)(using c: ConnectionRead): Option[ContactsRow]
 
-  def selectByIds(contactIds: Array[ContactsId])(using c: Connection): List[ContactsRow]
+  def selectByIds(contactIds: List[ContactsId])(using c: ConnectionRead): List[ContactsRow]
 
-  def selectByIdsTracked(contactIds: Array[ContactsId])(using c: Connection): Map[ContactsId, ContactsRow]
+  def selectByIdsTracked(contactIds: List[ContactsId])(using c: ConnectionRead): Map[ContactsId, ContactsRow]
 
   def update: UpdateBuilder[ContactsFields, ContactsRow]
 

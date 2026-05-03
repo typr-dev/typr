@@ -5,10 +5,11 @@
  */
 package oracledb.products
 
-import dev.typr.foundations.kotlin.DeleteBuilder
-import dev.typr.foundations.kotlin.SelectBuilder
-import dev.typr.foundations.kotlin.UpdateBuilder
-import java.sql.Connection
+import dev.typr.dslkt.DeleteBuilder
+import dev.typr.dslkt.SelectBuilder
+import dev.typr.dslkt.UpdateBuilder
+import dev.typr.foundationskt.Connection
+import dev.typr.foundationskt.ConnectionRead
 import kotlin.collections.Iterator
 import kotlin.collections.List
 import kotlin.collections.Map
@@ -19,10 +20,10 @@ interface ProductsRepo {
   abstract fun deleteById(
     productId: ProductsId,
     c: Connection
-  ): Boolean
+  ): kotlin.Boolean
 
   abstract fun deleteByIds(
-    productIds: Array<ProductsId>,
+    productIds: List<ProductsId>,
     c: Connection
   ): Int
 
@@ -38,26 +39,26 @@ interface ProductsRepo {
 
   abstract fun select(): SelectBuilder<ProductsFields, ProductsRow>
 
-  abstract fun selectAll(c: Connection): List<ProductsRow>
+  abstract fun selectAll(c: ConnectionRead): List<ProductsRow>
 
   abstract fun selectById(
     productId: ProductsId,
-    c: Connection
+    c: ConnectionRead
   ): ProductsRow?
 
   abstract fun selectByIds(
-    productIds: Array<ProductsId>,
-    c: Connection
+    productIds: List<ProductsId>,
+    c: ConnectionRead
   ): List<ProductsRow>
 
   abstract fun selectByIdsTracked(
-    productIds: Array<ProductsId>,
-    c: Connection
+    productIds: List<ProductsId>,
+    c: ConnectionRead
   ): Map<ProductsId, ProductsRow>
 
   abstract fun selectByUniqueSku(
-    sku: String,
-    c: Connection
+    sku: kotlin.String,
+    c: ConnectionRead
   ): ProductsRow?
 
   abstract fun update(): UpdateBuilder<ProductsFields, ProductsRow>
@@ -65,7 +66,7 @@ interface ProductsRepo {
   abstract fun update(
     row: ProductsRow,
     c: Connection
-  ): Boolean
+  ): kotlin.Boolean
 
   abstract fun upsert(
     unsaved: ProductsRow,

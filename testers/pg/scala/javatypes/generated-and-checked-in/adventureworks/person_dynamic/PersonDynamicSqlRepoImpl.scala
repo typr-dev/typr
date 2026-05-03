@@ -5,17 +5,17 @@
  */
 package adventureworks.person_dynamic
 
+import dev.typr.foundations.ConnectionRead
 import dev.typr.foundations.Fragment
 import dev.typr.foundations.PgTypes
-import java.sql.Connection
 import java.util.Optional
-import dev.typr.foundations.Fragment.interpolate
+import dev.typr.foundations.Fragment.concat
 
 class PersonDynamicSqlRepoImpl extends PersonDynamicSqlRepo {
-  override def apply(firstName: Optional[String])(using c: Connection): java.util.List[PersonDynamicSqlRow] = {
-    interpolate(Fragment.lit("""SELECT p.title, p.firstname, p.middlename, p.lastname
+  override def apply(firstName: Optional[String])(using c: ConnectionRead): java.util.List[PersonDynamicSqlRow] = {
+    concat(Fragment.of("""SELECT p.title, p.firstname, p.middlename, p.lastname
     FROM person.person p
-    WHERE """), Fragment.encode(PgTypes.text.opt(), firstName), Fragment.lit("::text IS NULL OR p.firstname = "), Fragment.encode(PgTypes.text.opt(), firstName), Fragment.lit("""
-    """)).query(PersonDynamicSqlRow.`_rowParser`.all()).runUnchecked(c)
+    WHERE """), Fragment.encode(PgTypes.text.opt, firstName), Fragment.of("::text IS NULL OR p.firstname = "), Fragment.encode(PgTypes.text.opt, firstName), Fragment.of("""
+    """)).query(PersonDynamicSqlRow.rowCodec.all()).run(c)
   }
 }

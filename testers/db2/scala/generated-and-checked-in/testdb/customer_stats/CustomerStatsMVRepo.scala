@@ -5,11 +5,11 @@
  */
 package testdb.customer_stats
 
-import dev.typr.foundations.scala.SelectBuilder
-import java.sql.Connection
+import dev.typr.dslsc.SelectBuilder
+import dev.typr.foundationssc.ConnectionRead
 
 trait CustomerStatsMVRepo {
   def select: SelectBuilder[CustomerStatsMVFields, CustomerStatsMVRow]
 
-  def selectAll(using c: Connection): List[CustomerStatsMVRow]
+  def selectAll(using c: ConnectionRead): List[CustomerStatsMVRow]
 }

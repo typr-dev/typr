@@ -5,21 +5,21 @@
  */
 package oracledb.contacts
 
-import dev.typr.foundations.OracleTypes
-import dev.typr.foundations.RowParser
-import dev.typr.foundations.dsl.FieldsBase
-import dev.typr.foundations.dsl.Path
-import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.scala.RelationStructure
-import dev.typr.foundations.scala.SqlExpr
-import dev.typr.foundations.scala.SqlExpr.Field
-import dev.typr.foundations.scala.SqlExpr.IdField
-import dev.typr.foundations.scala.SqlExpr.OptField
-import dev.typr.foundations.scala.TupleExpr4
+import dev.typr.dsl.FieldsBase
+import dev.typr.dsl.Path
+import dev.typr.dsl.SqlExpr.FieldLike
+import dev.typr.dslsc.RelationStructure
+import dev.typr.dslsc.SqlExpr
+import dev.typr.dslsc.SqlExpr.Field
+import dev.typr.dslsc.SqlExpr.IdField
+import dev.typr.dslsc.SqlExpr.OptField
+import dev.typr.dslsc.TupleExpr4
+import dev.typr.foundations.RowCodec
+import dev.typr.foundationssc.OracleTypes
+import oracledb.EmailTableT
 import oracledb.TagVarrayT
-import oracledb.userdefined.Email
 
-class ContactsFields(val `_path`: java.util.List[Path]) extends TupleExpr4[ContactsId, String, /* user-picked */ Email, TagVarrayT] with RelationStructure[ContactsFields, ContactsRow]  with FieldsBase[ContactsRow] {
+class ContactsFields(val `_path`: java.util.List[Path]) extends TupleExpr4[ContactsId, String, EmailTableT, TagVarrayT] with RelationStructure[ContactsFields, ContactsRow]  with FieldsBase[ContactsRow] {
   def contactId: IdField[ContactsId, ContactsRow] = {
     new IdField[ContactsId, ContactsRow](
       _path,
@@ -28,7 +28,7 @@ class ContactsFields(val `_path`: java.util.List[Path]) extends TupleExpr4[Conta
       None,
       None,
       (row, value) => row.copy(contactId = value),
-      ContactsId.oracleType
+      ContactsId.oracleType.underlying
     )
   }
 
@@ -40,19 +40,19 @@ class ContactsFields(val `_path`: java.util.List[Path]) extends TupleExpr4[Conta
       None,
       None,
       (row, value) => row.copy(name = value),
-      OracleTypes.varchar2
+      OracleTypes.varchar2.underlying
     )
   }
 
-  def emails: OptField[/* user-picked */ Email, ContactsRow] = {
-    new OptField[/* user-picked */ Email, ContactsRow](
+  def emails: OptField[EmailTableT, ContactsRow] = {
+    new OptField[EmailTableT, ContactsRow](
       _path,
       "EMAILS",
       _.emails,
       None,
       None,
       (row, value) => row.copy(emails = value),
-      Email.oracleType
+      EmailTableT.oracleType.underlying
     )
   }
 
@@ -64,13 +64,13 @@ class ContactsFields(val `_path`: java.util.List[Path]) extends TupleExpr4[Conta
       None,
       None,
       (row, value) => row.copy(tags = value),
-      TagVarrayT.oracleType
+      TagVarrayT.oracleType.underlying
     )
   }
 
   override def columns: java.util.List[FieldLike[?, ContactsRow]] = java.util.List.of(this.contactId.underlying, this.name.underlying, this.emails.underlying, this.tags.underlying)
 
-  override def rowParser: RowParser[ContactsRow] = ContactsRow._rowParser.underlying
+  override def rowCodec: RowCodec[ContactsRow] = ContactsRow.rowCodec.underlying
 
   override def withPaths(`_path`: java.util.List[Path]): RelationStructure[ContactsFields, ContactsRow] = new ContactsFields(`_path`)
 
@@ -78,7 +78,7 @@ class ContactsFields(val `_path`: java.util.List[Path]) extends TupleExpr4[Conta
 
   override def `_2`: SqlExpr[String] = name
 
-  override def `_3`: SqlExpr[/* user-picked */ Email] = emails
+  override def `_3`: SqlExpr[EmailTableT] = emails
 
   override def `_4`: SqlExpr[TagVarrayT] = tags
 }

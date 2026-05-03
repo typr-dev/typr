@@ -5,17 +5,18 @@
  */
 package adventureworks.public.issue142
 
-import dev.typr.foundations.kotlin.DeleteBuilder
-import dev.typr.foundations.kotlin.DeleteBuilderMock
-import dev.typr.foundations.kotlin.DeleteParams
-import dev.typr.foundations.kotlin.SelectBuilder
-import dev.typr.foundations.kotlin.SelectBuilderMock
-import dev.typr.foundations.kotlin.SelectParams
-import dev.typr.foundations.kotlin.UpdateBuilder
-import dev.typr.foundations.kotlin.UpdateBuilderMock
-import dev.typr.foundations.kotlin.UpdateParams
+import dev.typr.dslkt.DeleteBuilder
+import dev.typr.dslkt.DeleteBuilderMock
+import dev.typr.dslkt.DeleteParams
+import dev.typr.dslkt.SelectBuilder
+import dev.typr.dslkt.SelectBuilderMock
+import dev.typr.dslkt.SelectParams
+import dev.typr.dslkt.UpdateBuilder
+import dev.typr.dslkt.UpdateBuilderMock
+import dev.typr.dslkt.UpdateParams
+import dev.typr.foundationskt.Connection
+import dev.typr.foundationskt.ConnectionRead
 import java.lang.RuntimeException
-import java.sql.Connection
 import java.util.ArrayList
 import kotlin.collections.Iterator
 import kotlin.collections.List
@@ -28,10 +29,10 @@ data class Issue142RepoMock(val map: MutableMap<Issue142Id, Issue142Row> = mutab
   override fun deleteById(
     tabellkode: Issue142Id,
     c: Connection
-  ): Boolean = map.remove(tabellkode) != null
+  ): kotlin.Boolean = map.remove(tabellkode) != null
 
   override fun deleteByIds(
-    tabellkodes: Array<Issue142Id>,
+    tabellkodes: List<Issue142Id>,
     c: Connection
   ): Int {
     var count = 0
@@ -58,7 +59,7 @@ data class Issue142RepoMock(val map: MutableMap<Issue142Id, Issue142Row> = mutab
     unsaved: Iterator<Issue142Row>,
     batchSize: Int,
     c: Connection
-  ): Long {
+  ): kotlin.Long {
     var count = 0L
     while (unsaved.hasNext()) {
       val row = unsaved.next()
@@ -70,16 +71,16 @@ data class Issue142RepoMock(val map: MutableMap<Issue142Id, Issue142Row> = mutab
 
   override fun select(): SelectBuilder<Issue142Fields, Issue142Row> = SelectBuilderMock(Issue142Fields.structure, { map.values.toList() }, SelectParams.empty())
 
-  override fun selectAll(c: Connection): List<Issue142Row> = map.values.toList()
+  override fun selectAll(c: ConnectionRead): List<Issue142Row> = map.values.toList()
 
   override fun selectById(
     tabellkode: Issue142Id,
-    c: Connection
+    c: ConnectionRead
   ): Issue142Row? = map[tabellkode]
 
   override fun selectByIds(
-    tabellkodes: Array<Issue142Id>,
-    c: Connection
+    tabellkodes: List<Issue142Id>,
+    c: ConnectionRead
   ): List<Issue142Row> {
     val result = ArrayList<Issue142Row>()
     for (id in tabellkodes) {
@@ -92,8 +93,8 @@ data class Issue142RepoMock(val map: MutableMap<Issue142Id, Issue142Row> = mutab
   }
 
   override fun selectByIdsTracked(
-    tabellkodes: Array<Issue142Id>,
-    c: Connection
+    tabellkodes: List<Issue142Id>,
+    c: ConnectionRead
   ): Map<Issue142Id, Issue142Row> = selectByIds(tabellkodes, c).associateBy({ row: Issue142Row -> row.tabellkode })
 
   override fun update(): UpdateBuilder<Issue142Fields, Issue142Row> = UpdateBuilderMock(Issue142Fields.structure, { map.values.toList() }, UpdateParams.empty(), { row -> row })

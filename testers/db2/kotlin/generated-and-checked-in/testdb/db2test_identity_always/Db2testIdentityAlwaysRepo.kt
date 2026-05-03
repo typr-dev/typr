@@ -5,10 +5,11 @@
  */
 package testdb.db2test_identity_always
 
-import dev.typr.foundations.kotlin.DeleteBuilder
-import dev.typr.foundations.kotlin.SelectBuilder
-import dev.typr.foundations.kotlin.UpdateBuilder
-import java.sql.Connection
+import dev.typr.dslkt.DeleteBuilder
+import dev.typr.dslkt.SelectBuilder
+import dev.typr.dslkt.UpdateBuilder
+import dev.typr.foundationskt.Connection
+import dev.typr.foundationskt.ConnectionRead
 import kotlin.collections.Iterator
 import kotlin.collections.List
 import kotlin.collections.Map
@@ -19,10 +20,10 @@ interface Db2testIdentityAlwaysRepo {
   abstract fun deleteById(
     id: Db2testIdentityAlwaysId,
     c: Connection
-  ): Boolean
+  ): kotlin.Boolean
 
   abstract fun deleteByIds(
-    ids: Array<Db2testIdentityAlwaysId>,
+    ids: List<Db2testIdentityAlwaysId>,
     c: Connection
   ): Int
 
@@ -38,21 +39,21 @@ interface Db2testIdentityAlwaysRepo {
 
   abstract fun select(): SelectBuilder<Db2testIdentityAlwaysFields, Db2testIdentityAlwaysRow>
 
-  abstract fun selectAll(c: Connection): List<Db2testIdentityAlwaysRow>
+  abstract fun selectAll(c: ConnectionRead): List<Db2testIdentityAlwaysRow>
 
   abstract fun selectById(
     id: Db2testIdentityAlwaysId,
-    c: Connection
+    c: ConnectionRead
   ): Db2testIdentityAlwaysRow?
 
   abstract fun selectByIds(
-    ids: Array<Db2testIdentityAlwaysId>,
-    c: Connection
+    ids: List<Db2testIdentityAlwaysId>,
+    c: ConnectionRead
   ): List<Db2testIdentityAlwaysRow>
 
   abstract fun selectByIdsTracked(
-    ids: Array<Db2testIdentityAlwaysId>,
-    c: Connection
+    ids: List<Db2testIdentityAlwaysId>,
+    c: ConnectionRead
   ): Map<Db2testIdentityAlwaysId, Db2testIdentityAlwaysRow>
 
   abstract fun update(): UpdateBuilder<Db2testIdentityAlwaysFields, Db2testIdentityAlwaysRow>
@@ -60,7 +61,7 @@ interface Db2testIdentityAlwaysRepo {
   abstract fun update(
     row: Db2testIdentityAlwaysRow,
     c: Connection
-  ): Boolean
+  ): kotlin.Boolean
 
   abstract fun upsert(
     unsaved: Db2testIdentityAlwaysRow,

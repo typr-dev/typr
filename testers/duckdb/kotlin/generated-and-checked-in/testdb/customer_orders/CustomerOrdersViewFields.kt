@@ -5,26 +5,25 @@
  */
 package testdb.customer_orders
 
-import dev.typr.foundations.DuckDbTypes
-import dev.typr.foundations.RowParser
-import dev.typr.foundations.dsl.FieldsBase
-import dev.typr.foundations.dsl.Path
-import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.kotlin.KotlinDbTypes
-import dev.typr.foundations.kotlin.RelationStructure
-import dev.typr.foundations.kotlin.SqlExpr
-import dev.typr.foundations.kotlin.SqlExpr.OptField
-import dev.typr.foundations.kotlin.TupleExpr7
+import dev.typr.dsl.FieldsBase
+import dev.typr.dsl.Path
+import dev.typr.dsl.SqlExpr.FieldLike
+import dev.typr.dslkt.RelationStructure
+import dev.typr.dslkt.SqlExpr
+import dev.typr.dslkt.SqlExpr.OptField
+import dev.typr.dslkt.TupleExpr7
+import dev.typr.foundations.RowCodec
+import dev.typr.foundationskt.DuckDbTypes
 import java.math.BigDecimal
 import java.time.LocalDate
 import kotlin.collections.List
 
-data class CustomerOrdersViewFields(val _path: List<Path>) : TupleExpr7<Int, String, String, Int, LocalDate, BigDecimal, String>, RelationStructure<CustomerOrdersViewFields, CustomerOrdersViewRow>, FieldsBase<CustomerOrdersViewRow> {
+data class CustomerOrdersViewFields(val _path: List<Path>) : TupleExpr7<Int, kotlin.String, kotlin.String, Int, LocalDate, BigDecimal, kotlin.String>, RelationStructure<CustomerOrdersViewFields, CustomerOrdersViewRow>, FieldsBase<CustomerOrdersViewRow> {
   override fun _1(): SqlExpr<Int> = customerId()
 
-  override fun _2(): SqlExpr<String> = customerName()
+  override fun _2(): SqlExpr<kotlin.String> = customerName()
 
-  override fun _3(): SqlExpr<String> = email()
+  override fun _3(): SqlExpr<kotlin.String> = email()
 
   override fun _4(): SqlExpr<Int> = orderId()
 
@@ -32,27 +31,27 @@ data class CustomerOrdersViewFields(val _path: List<Path>) : TupleExpr7<Int, Str
 
   override fun _6(): SqlExpr<BigDecimal> = totalAmount()
 
-  override fun _7(): SqlExpr<String> = status()
+  override fun _7(): SqlExpr<kotlin.String> = status()
 
   override fun _path(): List<Path> = _path
 
   override fun columns(): List<FieldLike<*, CustomerOrdersViewRow>> = listOf(this.customerId().underlying, this.customerName().underlying, this.email().underlying, this.orderId().underlying, this.orderDate().underlying, this.totalAmount().underlying, this.status().underlying)
 
-  fun customerId(): OptField<Int, CustomerOrdersViewRow> = OptField<Int, CustomerOrdersViewRow>(_path, "customer_id", CustomerOrdersViewRow::customerId, null, "INTEGER", { row, value -> row.copy(customerId = value) }, KotlinDbTypes.DuckDbTypes.integer)
+  fun customerId(): OptField<Int, CustomerOrdersViewRow> = OptField<Int, CustomerOrdersViewRow>(_path, "customer_id", CustomerOrdersViewRow::customerId, null, "INTEGER", { row, value -> row.copy(customerId = value) }, DuckDbTypes.integer.underlying)
 
-  fun customerName(): OptField<String, CustomerOrdersViewRow> = OptField<String, CustomerOrdersViewRow>(_path, "customer_name", CustomerOrdersViewRow::customerName, null, null, { row, value -> row.copy(customerName = value) }, DuckDbTypes.varchar)
+  fun customerName(): OptField<kotlin.String, CustomerOrdersViewRow> = OptField<kotlin.String, CustomerOrdersViewRow>(_path, "customer_name", CustomerOrdersViewRow::customerName, null, null, { row, value -> row.copy(customerName = value) }, DuckDbTypes.varchar.underlying)
 
-  fun email(): OptField<String, CustomerOrdersViewRow> = OptField<String, CustomerOrdersViewRow>(_path, "email", CustomerOrdersViewRow::email, null, null, { row, value -> row.copy(email = value) }, DuckDbTypes.varchar)
+  fun email(): OptField<kotlin.String, CustomerOrdersViewRow> = OptField<kotlin.String, CustomerOrdersViewRow>(_path, "email", CustomerOrdersViewRow::email, null, null, { row, value -> row.copy(email = value) }, DuckDbTypes.varchar.underlying)
 
-  fun orderDate(): OptField<LocalDate, CustomerOrdersViewRow> = OptField<LocalDate, CustomerOrdersViewRow>(_path, "order_date", CustomerOrdersViewRow::orderDate, null, "DATE", { row, value -> row.copy(orderDate = value) }, DuckDbTypes.date)
+  fun orderDate(): OptField<LocalDate, CustomerOrdersViewRow> = OptField<LocalDate, CustomerOrdersViewRow>(_path, "order_date", CustomerOrdersViewRow::orderDate, null, "DATE", { row, value -> row.copy(orderDate = value) }, DuckDbTypes.date.underlying)
 
-  fun orderId(): OptField<Int, CustomerOrdersViewRow> = OptField<Int, CustomerOrdersViewRow>(_path, "order_id", CustomerOrdersViewRow::orderId, null, "INTEGER", { row, value -> row.copy(orderId = value) }, KotlinDbTypes.DuckDbTypes.integer)
+  fun orderId(): OptField<Int, CustomerOrdersViewRow> = OptField<Int, CustomerOrdersViewRow>(_path, "order_id", CustomerOrdersViewRow::orderId, null, "INTEGER", { row, value -> row.copy(orderId = value) }, DuckDbTypes.integer.underlying)
 
-  override fun rowParser(): RowParser<CustomerOrdersViewRow> = CustomerOrdersViewRow._rowParser.underlying
+  override fun rowCodec(): RowCodec<CustomerOrdersViewRow> = CustomerOrdersViewRow.rowCodec.underlying
 
-  fun status(): OptField<String, CustomerOrdersViewRow> = OptField<String, CustomerOrdersViewRow>(_path, "status", CustomerOrdersViewRow::status, null, null, { row, value -> row.copy(status = value) }, DuckDbTypes.varchar)
+  fun status(): OptField<kotlin.String, CustomerOrdersViewRow> = OptField<kotlin.String, CustomerOrdersViewRow>(_path, "status", CustomerOrdersViewRow::status, null, null, { row, value -> row.copy(status = value) }, DuckDbTypes.varchar.underlying)
 
-  fun totalAmount(): OptField<BigDecimal, CustomerOrdersViewRow> = OptField<BigDecimal, CustomerOrdersViewRow>(_path, "total_amount", CustomerOrdersViewRow::totalAmount, null, "DECIMAL(12,2)", { row, value -> row.copy(totalAmount = value) }, DuckDbTypes.numeric)
+  fun totalAmount(): OptField<BigDecimal, CustomerOrdersViewRow> = OptField<BigDecimal, CustomerOrdersViewRow>(_path, "total_amount", CustomerOrdersViewRow::totalAmount, null, "DECIMAL(12,2)", { row, value -> row.copy(totalAmount = value) }, DuckDbTypes.numeric.underlying)
 
   override fun withPaths(_path: List<Path>): RelationStructure<CustomerOrdersViewFields, CustomerOrdersViewRow> = CustomerOrdersViewFields(_path)
 

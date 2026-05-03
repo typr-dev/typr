@@ -6,10 +6,10 @@
 package testdb.precisetypes
 
 import com.fasterxml.jackson.annotation.JsonValue
-import dev.typr.foundations.MariaType
-import dev.typr.foundations.MariaTypes
+import dev.typr.dslsc.Bijection
 import dev.typr.foundations.data.precise.LocalDateTimeN
-import dev.typr.foundations.scala.Bijection
+import dev.typr.foundationssc.MariaType
+import dev.typr.foundationssc.MariaTypes
 import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
 
@@ -18,7 +18,7 @@ case class LocalDateTime3 private(@JsonValue value: LocalDateTime) extends Local
 
   override def fractionalSecondsPrecision: Int = 3
 
-  override def semanticEquals(other: LocalDateTimeN): Boolean = (if (other == null) false else value == other.rawValue())
+  override def semanticEquals(other: LocalDateTimeN): Boolean = (if (other == null) false else (value == other.rawValue()))
 
   override def semanticHashCode: Int = value.hashCode()
 
@@ -28,9 +28,9 @@ case class LocalDateTime3 private(@JsonValue value: LocalDateTime) extends Local
 }
 
 object LocalDateTime3 {
-  given bijection: Bijection[LocalDateTime3, LocalDateTime] = Bijection.apply[LocalDateTime3, LocalDateTime](_.value)(LocalDateTime3.apply)
+  given bijection: Bijection[LocalDateTime3, LocalDateTime] = Bijection.of[LocalDateTime3, LocalDateTime](_.value, LocalDateTime3.apply)
 
-  given mariaType: MariaType[LocalDateTime3] = MariaTypes.datetime.bimap(LocalDateTime3.apply, _.value)
+  given mariaType: MariaType[LocalDateTime3] = MariaTypes.datetime.to(Bijection.of(LocalDateTime3.apply, _.value))
 
   def now: LocalDateTime3 = new LocalDateTime3(LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS))
 

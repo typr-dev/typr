@@ -5,6 +5,7 @@
  */
 package adventureworks.public.title
 
+import dev.typr.foundations.Bijection
 import dev.typr.foundations.PgType
 import dev.typr.foundations.PgTypes
 
@@ -20,12 +21,12 @@ sealed abstract class TitleId(val value: String)
 object TitleId {
   def apply(underlying: String): TitleId =
     ByName.getOrElse(underlying, Unknown(underlying))
-  given pgTypeArray: PgType[Array[TitleId]] = {
-    PgTypes.textArray
-      .bimap(xs => xs.map(TitleId.apply), xs => xs.map(_.value))
+  given pgTypeArray: PgType[java.util.List[TitleId]] = {
+    PgTypes.text.array()
+      .to(Bijection.of(xs => xs.stream().map(TitleId.apply).toList(), xs => xs.stream().map(_.value).toList()))
   }
 
-  given pgType: PgType[TitleId] = PgTypes.text.bimap(TitleId.apply, _.value)
+  given pgType: PgType[TitleId] = PgTypes.text.to(Bijection.of(TitleId.apply, _.value))
 
   case object dr extends TitleId("dr")
 

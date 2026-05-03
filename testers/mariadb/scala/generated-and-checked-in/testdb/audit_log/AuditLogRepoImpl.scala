@@ -5,68 +5,68 @@
  */
 package testdb.audit_log
 
-import dev.typr.foundations.MariaTypes
-import dev.typr.foundations.scala.DbTypeOps
-import dev.typr.foundations.scala.DeleteBuilder
-import dev.typr.foundations.scala.Dialect
-import dev.typr.foundations.scala.Fragment
-import dev.typr.foundations.scala.SelectBuilder
-import dev.typr.foundations.scala.UpdateBuilder
-import java.sql.Connection
+import dev.typr.dslsc.DeleteBuilder
+import dev.typr.dslsc.Dialect
+import dev.typr.dslsc.SelectBuilder
+import dev.typr.dslsc.UpdateBuilder
+import dev.typr.foundationssc.Connection
+import dev.typr.foundationssc.ConnectionRead
+import dev.typr.foundationssc.Fragment
+import dev.typr.foundationssc.MariaTypes
 import scala.collection.mutable.ListBuffer
-import dev.typr.foundations.scala.Fragment.sql
+import dev.typr.foundationssc.Fragment.sql
 
 class AuditLogRepoImpl extends AuditLogRepo {
   override def delete: DeleteBuilder[AuditLogFields, AuditLogRow] = DeleteBuilder.of("`audit_log`", AuditLogFields.structure, Dialect.MARIADB)
 
-  override def deleteById(logId: AuditLogId)(using c: Connection): Boolean = sql"delete from `audit_log` where `log_id` = ${Fragment.encode(AuditLogId.mariaType, logId)}".update().runUnchecked(c) > 0
+  override def deleteById(logId: AuditLogId)(using c: Connection): Boolean = sql"delete from `audit_log` where `log_id` = ${Fragment.encode(AuditLogId.mariaType, logId)}".update().run(using c) > 0
 
-  override def deleteByIds(logIds: Array[AuditLogId])(using c: Connection): Int = {
+  override def deleteByIds(logIds: List[AuditLogId])(using c: Connection): Int = {
     val fragments: ListBuffer[Fragment] = ListBuffer()
     logIds.foreach { id => fragments.addOne(Fragment.encode(AuditLogId.mariaType, id)): @scala.annotation.nowarn }
-    return Fragment.interpolate(Fragment.lit("delete from `audit_log` where `log_id` in ("), Fragment.comma(fragments), Fragment.lit(")")).update().runUnchecked(c)
+    return Fragment.concat(Fragment.of("delete from `audit_log` where `log_id` in ("), Fragment.comma(fragments), Fragment.of(")")).update().run(using c)
   }
 
   override def insert(unsaved: AuditLogRow)(using c: Connection): AuditLogRow = {
   sql"""insert into `audit_log`(`table_name`, `record_id`, `action`, `old_values`, `new_values`, `changed_by`, `changed_at`, `client_ip`, `session_id`)
-    values (${Fragment.encode(MariaTypes.varchar, unsaved.tableName)}, ${Fragment.encode(MariaTypes.varchar, unsaved.recordId)}, ${Fragment.encode(MariaTypes.text, unsaved.action)}, ${Fragment.encode(MariaTypes.json.nullable, unsaved.oldValues)}, ${Fragment.encode(MariaTypes.json.nullable, unsaved.newValues)}, ${Fragment.encode(MariaTypes.varchar.nullable, unsaved.changedBy)}, ${Fragment.encode(MariaTypes.datetime, unsaved.changedAt)}, ${Fragment.encode(MariaTypes.inet6.nullable, unsaved.clientIp)}, ${Fragment.encode(MariaTypes.varbinary.nullable, unsaved.sessionId)})
+    values (${Fragment.encode(MariaTypes.varchar, unsaved.tableName)}, ${Fragment.encode(MariaTypes.varchar, unsaved.recordId)}, ${Fragment.encode(MariaTypes.text, unsaved.action)}, ${Fragment.encode(MariaTypes.json.opt, unsaved.oldValues)}, ${Fragment.encode(MariaTypes.json.opt, unsaved.newValues)}, ${Fragment.encode(MariaTypes.varchar.opt, unsaved.changedBy)}, ${Fragment.encode(MariaTypes.datetime, unsaved.changedAt)}, ${Fragment.encode(MariaTypes.inet6.opt, unsaved.clientIp)}, ${Fragment.encode(MariaTypes.varbinary.opt, unsaved.sessionId)})
     RETURNING `log_id`, `table_name`, `record_id`, `action`, `old_values`, `new_values`, `changed_by`, `changed_at`, `client_ip`, `session_id`
     """
-    .updateReturning(AuditLogRow.`_rowParser`.exactlyOne()).runUnchecked(c)
+    .updateReturning(AuditLogRow.rowCodec.exactlyOne()).run(using c)
   }
 
   override def insert(unsaved: AuditLogRowUnsaved)(using c: Connection): AuditLogRow = {
     val columns: ListBuffer[Fragment] = ListBuffer()
     val values: ListBuffer[Fragment] = ListBuffer()
-    columns.addOne(Fragment.lit("`table_name`")): @scala.annotation.nowarn
+    columns.addOne(Fragment.of("`table_name`")): @scala.annotation.nowarn
     values.addOne(sql"${Fragment.encode(MariaTypes.varchar, unsaved.tableName)}"): @scala.annotation.nowarn
-    columns.addOne(Fragment.lit("`record_id`")): @scala.annotation.nowarn
+    columns.addOne(Fragment.of("`record_id`")): @scala.annotation.nowarn
     values.addOne(sql"${Fragment.encode(MariaTypes.varchar, unsaved.recordId)}"): @scala.annotation.nowarn
-    columns.addOne(Fragment.lit("`action`")): @scala.annotation.nowarn
+    columns.addOne(Fragment.of("`action`")): @scala.annotation.nowarn
     values.addOne(sql"${Fragment.encode(MariaTypes.text, unsaved.action)}"): @scala.annotation.nowarn
     unsaved.oldValues.visit(
       {  },
-      value => { columns.addOne(Fragment.lit("`old_values`")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(MariaTypes.json.nullable, value)}"): @scala.annotation.nowarn }
+      value => { columns.addOne(Fragment.of("`old_values`")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(MariaTypes.json.opt, value)}"): @scala.annotation.nowarn }
     );
     unsaved.newValues.visit(
       {  },
-      value => { columns.addOne(Fragment.lit("`new_values`")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(MariaTypes.json.nullable, value)}"): @scala.annotation.nowarn }
+      value => { columns.addOne(Fragment.of("`new_values`")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(MariaTypes.json.opt, value)}"): @scala.annotation.nowarn }
     );
     unsaved.changedBy.visit(
       {  },
-      value => { columns.addOne(Fragment.lit("`changed_by`")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(MariaTypes.varchar.nullable, value)}"): @scala.annotation.nowarn }
+      value => { columns.addOne(Fragment.of("`changed_by`")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(MariaTypes.varchar.opt, value)}"): @scala.annotation.nowarn }
     );
     unsaved.changedAt.visit(
       {  },
-      value => { columns.addOne(Fragment.lit("`changed_at`")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(MariaTypes.datetime, value)}"): @scala.annotation.nowarn }
+      value => { columns.addOne(Fragment.of("`changed_at`")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(MariaTypes.datetime, value)}"): @scala.annotation.nowarn }
     );
     unsaved.clientIp.visit(
       {  },
-      value => { columns.addOne(Fragment.lit("`client_ip`")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(MariaTypes.inet6.nullable, value)}"): @scala.annotation.nowarn }
+      value => { columns.addOne(Fragment.of("`client_ip`")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(MariaTypes.inet6.opt, value)}"): @scala.annotation.nowarn }
     );
     unsaved.sessionId.visit(
       {  },
-      value => { columns.addOne(Fragment.lit("`session_id`")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(MariaTypes.varbinary.nullable, value)}"): @scala.annotation.nowarn }
+      value => { columns.addOne(Fragment.of("`session_id`")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(MariaTypes.varbinary.opt, value)}"): @scala.annotation.nowarn }
     );
     val q: Fragment = {
       sql"""insert into `audit_log`(${Fragment.comma(columns)})
@@ -74,36 +74,36 @@ class AuditLogRepoImpl extends AuditLogRepo {
       RETURNING `log_id`, `table_name`, `record_id`, `action`, `old_values`, `new_values`, `changed_by`, `changed_at`, `client_ip`, `session_id`
       """
     }
-    return q.updateReturning(AuditLogRow.`_rowParser`.exactlyOne()).runUnchecked(c)
+    return q.updateReturning(AuditLogRow.rowCodec.exactlyOne()).run(using c)
   }
 
-  override def select: SelectBuilder[AuditLogFields, AuditLogRow] = SelectBuilder.of("`audit_log`", AuditLogFields.structure, AuditLogRow.`_rowParser`, Dialect.MARIADB)
+  override def select: SelectBuilder[AuditLogFields, AuditLogRow] = SelectBuilder.of("`audit_log`", AuditLogFields.structure, AuditLogRow.rowCodec, Dialect.MARIADB)
 
-  override def selectAll(using c: Connection): List[AuditLogRow] = {
+  override def selectAll(using c: ConnectionRead): List[AuditLogRow] = {
     sql"""select `log_id`, `table_name`, `record_id`, `action`, `old_values`, `new_values`, `changed_by`, `changed_at`, `client_ip`, `session_id`
     from `audit_log`
-    """.query(AuditLogRow.`_rowParser`.all()).runUnchecked(c)
+    """.query(AuditLogRow.rowCodec.all()).run(using c)
   }
 
-  override def selectById(logId: AuditLogId)(using c: Connection): Option[AuditLogRow] = {
+  override def selectById(logId: AuditLogId)(using c: ConnectionRead): Option[AuditLogRow] = {
     sql"""select `log_id`, `table_name`, `record_id`, `action`, `old_values`, `new_values`, `changed_by`, `changed_at`, `client_ip`, `session_id`
     from `audit_log`
-    where `log_id` = ${Fragment.encode(AuditLogId.mariaType, logId)}""".query(AuditLogRow.`_rowParser`.first()).runUnchecked(c)
+    where `log_id` = ${Fragment.encode(AuditLogId.mariaType, logId)}""".query(AuditLogRow.rowCodec.first()).run(using c)
   }
 
-  override def selectByIds(logIds: Array[AuditLogId])(using c: Connection): List[AuditLogRow] = {
+  override def selectByIds(logIds: List[AuditLogId])(using c: ConnectionRead): List[AuditLogRow] = {
     val fragments: ListBuffer[Fragment] = ListBuffer()
     logIds.foreach { id => fragments.addOne(Fragment.encode(AuditLogId.mariaType, id)): @scala.annotation.nowarn }
-    return Fragment.interpolate(Fragment.lit("select `log_id`, `table_name`, `record_id`, `action`, `old_values`, `new_values`, `changed_by`, `changed_at`, `client_ip`, `session_id` from `audit_log` where `log_id` in ("), Fragment.comma(fragments), Fragment.lit(")")).query(AuditLogRow.`_rowParser`.all()).runUnchecked(c)
+    return Fragment.concat(Fragment.of("select `log_id`, `table_name`, `record_id`, `action`, `old_values`, `new_values`, `changed_by`, `changed_at`, `client_ip`, `session_id` from `audit_log` where `log_id` in ("), Fragment.comma(fragments), Fragment.of(")")).query(AuditLogRow.rowCodec.all()).run(using c)
   }
 
-  override def selectByIdsTracked(logIds: Array[AuditLogId])(using c: Connection): Map[AuditLogId, AuditLogRow] = {
+  override def selectByIdsTracked(logIds: List[AuditLogId])(using c: ConnectionRead): Map[AuditLogId, AuditLogRow] = {
     val ret: scala.collection.mutable.Map[AuditLogId, AuditLogRow] = scala.collection.mutable.Map.empty[AuditLogId, AuditLogRow]
     selectByIds(logIds)(using c).foreach(row => ret.put(row.logId, row): @scala.annotation.nowarn)
     return ret.toMap
   }
 
-  override def update: UpdateBuilder[AuditLogFields, AuditLogRow] = UpdateBuilder.of("`audit_log`", AuditLogFields.structure, AuditLogRow.`_rowParser`, Dialect.MARIADB)
+  override def update: UpdateBuilder[AuditLogFields, AuditLogRow] = UpdateBuilder.of("`audit_log`", AuditLogFields.structure, AuditLogRow.rowCodec, Dialect.MARIADB)
 
   override def update(row: AuditLogRow)(using c: Connection): Boolean = {
     val logId: AuditLogId = row.logId
@@ -111,18 +111,18 @@ class AuditLogRepoImpl extends AuditLogRepo {
     set `table_name` = ${Fragment.encode(MariaTypes.varchar, row.tableName)},
     `record_id` = ${Fragment.encode(MariaTypes.varchar, row.recordId)},
     `action` = ${Fragment.encode(MariaTypes.text, row.action)},
-    `old_values` = ${Fragment.encode(MariaTypes.json.nullable, row.oldValues)},
-    `new_values` = ${Fragment.encode(MariaTypes.json.nullable, row.newValues)},
-    `changed_by` = ${Fragment.encode(MariaTypes.varchar.nullable, row.changedBy)},
+    `old_values` = ${Fragment.encode(MariaTypes.json.opt, row.oldValues)},
+    `new_values` = ${Fragment.encode(MariaTypes.json.opt, row.newValues)},
+    `changed_by` = ${Fragment.encode(MariaTypes.varchar.opt, row.changedBy)},
     `changed_at` = ${Fragment.encode(MariaTypes.datetime, row.changedAt)},
-    `client_ip` = ${Fragment.encode(MariaTypes.inet6.nullable, row.clientIp)},
-    `session_id` = ${Fragment.encode(MariaTypes.varbinary.nullable, row.sessionId)}
-    where `log_id` = ${Fragment.encode(AuditLogId.mariaType, logId)}""".update().runUnchecked(c) > 0
+    `client_ip` = ${Fragment.encode(MariaTypes.inet6.opt, row.clientIp)},
+    `session_id` = ${Fragment.encode(MariaTypes.varbinary.opt, row.sessionId)}
+    where `log_id` = ${Fragment.encode(AuditLogId.mariaType, logId)}""".update().run(using c) > 0
   }
 
   override def upsert(unsaved: AuditLogRow)(using c: Connection): AuditLogRow = {
   sql"""INSERT INTO `audit_log`(`log_id`, `table_name`, `record_id`, `action`, `old_values`, `new_values`, `changed_by`, `changed_at`, `client_ip`, `session_id`)
-    VALUES (${Fragment.encode(AuditLogId.mariaType, unsaved.logId)}, ${Fragment.encode(MariaTypes.varchar, unsaved.tableName)}, ${Fragment.encode(MariaTypes.varchar, unsaved.recordId)}, ${Fragment.encode(MariaTypes.text, unsaved.action)}, ${Fragment.encode(MariaTypes.json.nullable, unsaved.oldValues)}, ${Fragment.encode(MariaTypes.json.nullable, unsaved.newValues)}, ${Fragment.encode(MariaTypes.varchar.nullable, unsaved.changedBy)}, ${Fragment.encode(MariaTypes.datetime, unsaved.changedAt)}, ${Fragment.encode(MariaTypes.inet6.nullable, unsaved.clientIp)}, ${Fragment.encode(MariaTypes.varbinary.nullable, unsaved.sessionId)})
+    VALUES (${Fragment.encode(AuditLogId.mariaType, unsaved.logId)}, ${Fragment.encode(MariaTypes.varchar, unsaved.tableName)}, ${Fragment.encode(MariaTypes.varchar, unsaved.recordId)}, ${Fragment.encode(MariaTypes.text, unsaved.action)}, ${Fragment.encode(MariaTypes.json.opt, unsaved.oldValues)}, ${Fragment.encode(MariaTypes.json.opt, unsaved.newValues)}, ${Fragment.encode(MariaTypes.varchar.opt, unsaved.changedBy)}, ${Fragment.encode(MariaTypes.datetime, unsaved.changedAt)}, ${Fragment.encode(MariaTypes.inet6.opt, unsaved.clientIp)}, ${Fragment.encode(MariaTypes.varbinary.opt, unsaved.sessionId)})
     ON DUPLICATE KEY UPDATE `table_name` = VALUES(`table_name`),
     `record_id` = VALUES(`record_id`),
     `action` = VALUES(`action`),
@@ -133,8 +133,8 @@ class AuditLogRepoImpl extends AuditLogRepo {
     `client_ip` = VALUES(`client_ip`),
     `session_id` = VALUES(`session_id`)
     RETURNING `log_id`, `table_name`, `record_id`, `action`, `old_values`, `new_values`, `changed_by`, `changed_at`, `client_ip`, `session_id`"""
-    .updateReturning(AuditLogRow.`_rowParser`.exactlyOne())
-    .runUnchecked(c)
+    .updateReturning(AuditLogRow.rowCodec.exactlyOne())
+    .run(using c)
   }
 
   override def upsertBatch(unsaved: Iterator[AuditLogRow])(using c: Connection): List[AuditLogRow] = {
@@ -150,7 +150,7 @@ class AuditLogRepoImpl extends AuditLogRepo {
     `client_ip` = VALUES(`client_ip`),
     `session_id` = VALUES(`session_id`)
     RETURNING `log_id`, `table_name`, `record_id`, `action`, `old_values`, `new_values`, `changed_by`, `changed_at`, `client_ip`, `session_id`"""
-      .updateReturningEach(AuditLogRow.`_rowParser`, unsaved)
-    .runUnchecked(c)
+      .updateReturningEach(AuditLogRow.rowCodec, unsaved)
+    .run(using c)
   }
 }

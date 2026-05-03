@@ -5,16 +5,15 @@
  */
 package testdb.customer_stats
 
-import dev.typr.foundations.Db2Types
-import dev.typr.foundations.RowParser
-import dev.typr.foundations.dsl.FieldsBase
-import dev.typr.foundations.dsl.Path
-import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.scala.RelationStructure
-import dev.typr.foundations.scala.ScalaDbTypes
-import dev.typr.foundations.scala.SqlExpr
-import dev.typr.foundations.scala.SqlExpr.Field
-import dev.typr.foundations.scala.TupleExpr4
+import dev.typr.dsl.FieldsBase
+import dev.typr.dsl.Path
+import dev.typr.dsl.SqlExpr.FieldLike
+import dev.typr.dslsc.RelationStructure
+import dev.typr.dslsc.SqlExpr
+import dev.typr.dslsc.SqlExpr.Field
+import dev.typr.dslsc.TupleExpr4
+import dev.typr.foundations.RowCodec
+import dev.typr.foundationssc.Db2Types
 
 class CustomerStatsMVFields(val `_path`: java.util.List[Path]) extends TupleExpr4[Int, String, Int, BigDecimal] with RelationStructure[CustomerStatsMVFields, CustomerStatsMVRow]  with FieldsBase[CustomerStatsMVRow] {
   def customerId: Field[Int, CustomerStatsMVRow] = {
@@ -25,7 +24,7 @@ class CustomerStatsMVFields(val `_path`: java.util.List[Path]) extends TupleExpr
       None,
       None,
       (row, value) => row.copy(customerId = value),
-      ScalaDbTypes.Db2Types.integer
+      Db2Types.integer.underlying
     )
   }
 
@@ -37,7 +36,7 @@ class CustomerStatsMVFields(val `_path`: java.util.List[Path]) extends TupleExpr
       None,
       None,
       (row, value) => row.copy(customerName = value),
-      Db2Types.varchar
+      Db2Types.varchar.underlying
     )
   }
 
@@ -49,7 +48,7 @@ class CustomerStatsMVFields(val `_path`: java.util.List[Path]) extends TupleExpr
       None,
       None,
       (row, value) => row.copy(totalOrders = value),
-      ScalaDbTypes.Db2Types.integer
+      Db2Types.integer.underlying
     )
   }
 
@@ -61,13 +60,13 @@ class CustomerStatsMVFields(val `_path`: java.util.List[Path]) extends TupleExpr
       None,
       None,
       (row, value) => row.copy(totalRevenue = value),
-      ScalaDbTypes.Db2Types.decimal
+      Db2Types.decimal.underlying
     )
   }
 
   override def columns: java.util.List[FieldLike[?, CustomerStatsMVRow]] = java.util.List.of(this.customerId.underlying, this.customerName.underlying, this.totalOrders.underlying, this.totalRevenue.underlying)
 
-  override def rowParser: RowParser[CustomerStatsMVRow] = CustomerStatsMVRow._rowParser.underlying
+  override def rowCodec: RowCodec[CustomerStatsMVRow] = CustomerStatsMVRow.rowCodec.underlying
 
   override def withPaths(`_path`: java.util.List[Path]): RelationStructure[CustomerStatsMVFields, CustomerStatsMVRow] = new CustomerStatsMVFields(`_path`)
 

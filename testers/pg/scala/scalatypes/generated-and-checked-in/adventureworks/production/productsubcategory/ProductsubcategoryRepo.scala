@@ -5,17 +5,18 @@
  */
 package adventureworks.production.productsubcategory
 
-import dev.typr.foundations.scala.DeleteBuilder
-import dev.typr.foundations.scala.SelectBuilder
-import dev.typr.foundations.scala.UpdateBuilder
-import java.sql.Connection
+import dev.typr.dslsc.DeleteBuilder
+import dev.typr.dslsc.SelectBuilder
+import dev.typr.dslsc.UpdateBuilder
+import dev.typr.foundationssc.Connection
+import dev.typr.foundationssc.ConnectionRead
 
 trait ProductsubcategoryRepo {
   def delete: DeleteBuilder[ProductsubcategoryFields, ProductsubcategoryRow]
 
   def deleteById(productsubcategoryid: ProductsubcategoryId)(using c: Connection): Boolean
 
-  def deleteByIds(productsubcategoryids: Array[ProductsubcategoryId])(using c: Connection): Int
+  def deleteByIds(productsubcategoryids: List[ProductsubcategoryId])(using c: Connection): Int
 
   def insert(unsaved: ProductsubcategoryRow)(using c: Connection): ProductsubcategoryRow
 
@@ -34,13 +35,13 @@ trait ProductsubcategoryRepo {
 
   def select: SelectBuilder[ProductsubcategoryFields, ProductsubcategoryRow]
 
-  def selectAll(using c: Connection): List[ProductsubcategoryRow]
+  def selectAll(using c: ConnectionRead): List[ProductsubcategoryRow]
 
-  def selectById(productsubcategoryid: ProductsubcategoryId)(using c: Connection): Option[ProductsubcategoryRow]
+  def selectById(productsubcategoryid: ProductsubcategoryId)(using c: ConnectionRead): Option[ProductsubcategoryRow]
 
-  def selectByIds(productsubcategoryids: Array[ProductsubcategoryId])(using c: Connection): List[ProductsubcategoryRow]
+  def selectByIds(productsubcategoryids: List[ProductsubcategoryId])(using c: ConnectionRead): List[ProductsubcategoryRow]
 
-  def selectByIdsTracked(productsubcategoryids: Array[ProductsubcategoryId])(using c: Connection): Map[ProductsubcategoryId, ProductsubcategoryRow]
+  def selectByIdsTracked(productsubcategoryids: List[ProductsubcategoryId])(using c: ConnectionRead): Map[ProductsubcategoryId, ProductsubcategoryRow]
 
   def update: UpdateBuilder[ProductsubcategoryFields, ProductsubcategoryRow]
 

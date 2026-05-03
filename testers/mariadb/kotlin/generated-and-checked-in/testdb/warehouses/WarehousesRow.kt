@@ -6,11 +6,10 @@
 package testdb.warehouses
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import dev.typr.foundations.MariaTypes
+import dev.typr.dslkt.RowCodecs
 import dev.typr.foundations.Tuple.Tuple10
-import dev.typr.foundations.kotlin.RowParser
-import dev.typr.foundations.kotlin.RowParsers
-import dev.typr.foundations.kotlin.nullable
+import dev.typr.foundationskt.MariaTypes
+import dev.typr.foundationskt.RowCodec
 import org.mariadb.jdbc.type.Point
 import org.mariadb.jdbc.type.Polygon
 import testdb.customtypes.Defaulted
@@ -26,11 +25,11 @@ data class WarehousesRow(
     */
   @field:JsonProperty("warehouse_id") val warehouseId: WarehousesId,
   /**  */
-  val code: String,
+  val code: kotlin.String,
   /**  */
-  val name: String,
+  val name: kotlin.String,
   /**  */
-  val address: String,
+  val address: kotlin.String,
   /**  */
   val location: Point,
   /** 
@@ -40,7 +39,7 @@ data class WarehousesRow(
   /** 
     * Default: 'UTC'
     */
-  val timezone: String,
+  val timezone: kotlin.String,
   /** 
     * Default: 1
     */
@@ -52,23 +51,23 @@ data class WarehousesRow(
   /** 
     * Default: NULL
     */
-  @field:JsonProperty("contact_phone") val contactPhone: String?
-) : Tuple10<WarehousesId, String, String, String, Point, Polygon?, String, /* user-picked */ IsActive, /* user-picked */ Email?, String?> {
+  @field:JsonProperty("contact_phone") val contactPhone: kotlin.String?
+) : Tuple10<WarehousesId, kotlin.String, kotlin.String, kotlin.String, Point, Polygon?, kotlin.String, /* user-picked */ IsActive, /* user-picked */ Email?, kotlin.String?> {
   override fun _1(): WarehousesId = warehouseId
 
-  override fun _10(): String? = contactPhone
+  override fun _10(): kotlin.String? = contactPhone
 
-  override fun _2(): String = code
+  override fun _2(): kotlin.String = code
 
-  override fun _3(): String = name
+  override fun _3(): kotlin.String = name
 
-  override fun _4(): String = address
+  override fun _4(): kotlin.String = address
 
   override fun _5(): Point = location
 
   override fun _6(): Polygon? = serviceArea
 
-  override fun _7(): String = timezone
+  override fun _7(): kotlin.String = timezone
 
   override fun _8(): /* user-picked */ IsActive = isActive
 
@@ -78,13 +77,13 @@ data class WarehousesRow(
 
   fun toUnsavedRow(
     serviceArea: Defaulted<Polygon?> = Defaulted.Provided(this.serviceArea),
-    timezone: Defaulted<String> = Defaulted.Provided(this.timezone),
+    timezone: Defaulted<kotlin.String> = Defaulted.Provided(this.timezone),
     isActive: Defaulted</* user-picked */ IsActive> = Defaulted.Provided(this.isActive),
     contactEmail: Defaulted</* user-picked */ Email?> = Defaulted.Provided(this.contactEmail),
-    contactPhone: Defaulted<String?> = Defaulted.Provided(this.contactPhone)
+    contactPhone: Defaulted<kotlin.String?> = Defaulted.Provided(this.contactPhone)
   ): WarehousesRowUnsaved = WarehousesRowUnsaved(code, name, address, location, serviceArea, timezone, isActive, contactEmail, contactPhone)
 
   companion object {
-    val _rowParser: RowParser<WarehousesRow> = RowParsers.of(WarehousesId.mariaType, MariaTypes.char_, MariaTypes.varchar, MariaTypes.varchar, MariaTypes.point, MariaTypes.polygon.nullable(), MariaTypes.varchar, IsActive.mariaType, Email.mariaType.nullable(), MariaTypes.varchar.nullable(), { t0, t1, t2, t3, t4, t5, t6, t7, t8, t9 -> WarehousesRow(t0, t1, t2, t3, t4, t5, t6, t7, t8, t9) }, { row -> arrayOf<Any?>(row.warehouseId, row.code, row.name, row.address, row.location, row.serviceArea, row.timezone, row.isActive, row.contactEmail, row.contactPhone) })
+    val rowCodec: RowCodec<WarehousesRow> = RowCodecs.of(WarehousesId.mariaType, MariaTypes.char_, MariaTypes.varchar, MariaTypes.varchar, MariaTypes.point, MariaTypes.polygon.opt(), MariaTypes.varchar, IsActive.mariaType, Email.mariaType.opt(), MariaTypes.varchar.opt(), { t0: WarehousesId, t1: kotlin.String, t2: kotlin.String, t3: kotlin.String, t4: Point, t5: Polygon?, t6: kotlin.String, t7: /* user-picked */ IsActive, t8: /* user-picked */ Email?, t9: kotlin.String? -> WarehousesRow(t0, t1, t2, t3, t4, t5, t6, t7, t8, t9) }, { row: WarehousesRow -> arrayOf<Any?>(row.warehouseId, row.code, row.name, row.address, row.location, row.serviceArea, row.timezone, row.isActive, row.contactEmail, row.contactPhone) })
   }
 }

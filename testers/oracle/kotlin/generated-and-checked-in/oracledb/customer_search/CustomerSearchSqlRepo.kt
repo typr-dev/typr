@@ -5,12 +5,12 @@
  */
 package oracledb.customer_search
 
-import java.sql.Connection
+import dev.typr.foundationskt.ConnectionRead
 import kotlin.collections.List
 
 interface CustomerSearchSqlRepo {
   abstract fun apply(
-    namePattern: String,
-    c: Connection
+    namePattern: kotlin.String,
+    c: ConnectionRead
   ): List<CustomerSearchSqlRow>
 }

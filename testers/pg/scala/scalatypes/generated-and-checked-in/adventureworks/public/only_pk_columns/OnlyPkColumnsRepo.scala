@@ -5,17 +5,18 @@
  */
 package adventureworks.public.only_pk_columns
 
-import dev.typr.foundations.scala.DeleteBuilder
-import dev.typr.foundations.scala.SelectBuilder
-import dev.typr.foundations.scala.UpdateBuilder
-import java.sql.Connection
+import dev.typr.dslsc.DeleteBuilder
+import dev.typr.dslsc.SelectBuilder
+import dev.typr.dslsc.UpdateBuilder
+import dev.typr.foundationssc.Connection
+import dev.typr.foundationssc.ConnectionRead
 
 trait OnlyPkColumnsRepo {
   def delete: DeleteBuilder[OnlyPkColumnsFields, OnlyPkColumnsRow]
 
   def deleteById(compositeId: OnlyPkColumnsId)(using c: Connection): Boolean
 
-  def deleteByIds(compositeIds: Array[OnlyPkColumnsId])(using c: Connection): Int
+  def deleteByIds(compositeIds: List[OnlyPkColumnsId])(using c: Connection): Int
 
   def insert(unsaved: OnlyPkColumnsRow)(using c: Connection): OnlyPkColumnsRow
 
@@ -26,13 +27,13 @@ trait OnlyPkColumnsRepo {
 
   def select: SelectBuilder[OnlyPkColumnsFields, OnlyPkColumnsRow]
 
-  def selectAll(using c: Connection): List[OnlyPkColumnsRow]
+  def selectAll(using c: ConnectionRead): List[OnlyPkColumnsRow]
 
-  def selectById(compositeId: OnlyPkColumnsId)(using c: Connection): Option[OnlyPkColumnsRow]
+  def selectById(compositeId: OnlyPkColumnsId)(using c: ConnectionRead): Option[OnlyPkColumnsRow]
 
-  def selectByIds(compositeIds: Array[OnlyPkColumnsId])(using c: Connection): List[OnlyPkColumnsRow]
+  def selectByIds(compositeIds: List[OnlyPkColumnsId])(using c: ConnectionRead): List[OnlyPkColumnsRow]
 
-  def selectByIdsTracked(compositeIds: Array[OnlyPkColumnsId])(using c: Connection): Map[OnlyPkColumnsId, OnlyPkColumnsRow]
+  def selectByIdsTracked(compositeIds: List[OnlyPkColumnsId])(using c: ConnectionRead): Map[OnlyPkColumnsId, OnlyPkColumnsRow]
 
   def update: UpdateBuilder[OnlyPkColumnsFields, OnlyPkColumnsRow]
 

@@ -5,17 +5,18 @@
  */
 package adventureworks.person.emailaddress
 
-import dev.typr.foundations.kotlin.DeleteBuilder
-import dev.typr.foundations.kotlin.DeleteBuilderMock
-import dev.typr.foundations.kotlin.DeleteParams
-import dev.typr.foundations.kotlin.SelectBuilder
-import dev.typr.foundations.kotlin.SelectBuilderMock
-import dev.typr.foundations.kotlin.SelectParams
-import dev.typr.foundations.kotlin.UpdateBuilder
-import dev.typr.foundations.kotlin.UpdateBuilderMock
-import dev.typr.foundations.kotlin.UpdateParams
+import dev.typr.dslkt.DeleteBuilder
+import dev.typr.dslkt.DeleteBuilderMock
+import dev.typr.dslkt.DeleteParams
+import dev.typr.dslkt.SelectBuilder
+import dev.typr.dslkt.SelectBuilderMock
+import dev.typr.dslkt.SelectParams
+import dev.typr.dslkt.UpdateBuilder
+import dev.typr.dslkt.UpdateBuilderMock
+import dev.typr.dslkt.UpdateParams
+import dev.typr.foundationskt.Connection
+import dev.typr.foundationskt.ConnectionRead
 import java.lang.RuntimeException
-import java.sql.Connection
 import java.util.ArrayList
 import kotlin.collections.Iterator
 import kotlin.collections.List
@@ -31,10 +32,10 @@ data class EmailaddressRepoMock(
   override fun deleteById(
     compositeId: EmailaddressId,
     c: Connection
-  ): Boolean = map.remove(compositeId) != null
+  ): kotlin.Boolean = map.remove(compositeId) != null
 
   override fun deleteByIds(
-    compositeIds: Array<EmailaddressId>,
+    compositeIds: List<EmailaddressId>,
     c: Connection
   ): Int {
     var count = 0
@@ -66,7 +67,7 @@ data class EmailaddressRepoMock(
     unsaved: Iterator<EmailaddressRow>,
     batchSize: Int,
     c: Connection
-  ): Long {
+  ): kotlin.Long {
     var count = 0L
     while (unsaved.hasNext()) {
       val row = unsaved.next()
@@ -81,7 +82,7 @@ data class EmailaddressRepoMock(
     unsaved: Iterator<EmailaddressRowUnsaved>,
     batchSize: Int,
     c: Connection
-  ): Long {
+  ): kotlin.Long {
     var count = 0L
     while (unsaved.hasNext()) {
       val unsavedRow = unsaved.next()
@@ -94,16 +95,16 @@ data class EmailaddressRepoMock(
 
   override fun select(): SelectBuilder<EmailaddressFields, EmailaddressRow> = SelectBuilderMock(EmailaddressFields.structure, { map.values.toList() }, SelectParams.empty())
 
-  override fun selectAll(c: Connection): List<EmailaddressRow> = map.values.toList()
+  override fun selectAll(c: ConnectionRead): List<EmailaddressRow> = map.values.toList()
 
   override fun selectById(
     compositeId: EmailaddressId,
-    c: Connection
+    c: ConnectionRead
   ): EmailaddressRow? = map[compositeId]
 
   override fun selectByIds(
-    compositeIds: Array<EmailaddressId>,
-    c: Connection
+    compositeIds: List<EmailaddressId>,
+    c: ConnectionRead
   ): List<EmailaddressRow> {
     val result = ArrayList<EmailaddressRow>()
     for (id in compositeIds) {
@@ -116,8 +117,8 @@ data class EmailaddressRepoMock(
   }
 
   override fun selectByIdsTracked(
-    compositeIds: Array<EmailaddressId>,
-    c: Connection
+    compositeIds: List<EmailaddressId>,
+    c: ConnectionRead
   ): Map<EmailaddressId, EmailaddressRow> = selectByIds(compositeIds, c).associateBy({ row: EmailaddressRow -> row.compositeId() })
 
   override fun update(): UpdateBuilder<EmailaddressFields, EmailaddressRow> = UpdateBuilderMock(EmailaddressFields.structure, { map.values.toList() }, UpdateParams.empty(), { row -> row })
@@ -125,7 +126,7 @@ data class EmailaddressRepoMock(
   override fun update(
     row: EmailaddressRow,
     c: Connection
-  ): Boolean {
+  ): kotlin.Boolean {
     val shouldUpdate = map[row.compositeId()]?.takeIf({ oldRow -> (oldRow != row) }) != null
     if (shouldUpdate) {
       map[row.compositeId()] = row

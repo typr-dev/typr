@@ -6,118 +6,119 @@
 package adventureworks.person.password
 
 import adventureworks.person.businessentity.BusinessentityId
+import dev.typr.dsl.DeleteBuilder
+import dev.typr.dsl.Dialect
+import dev.typr.dsl.SelectBuilder
+import dev.typr.dsl.UpdateBuilder
+import dev.typr.foundations.Connection
+import dev.typr.foundations.ConnectionRead
 import dev.typr.foundations.Fragment
 import dev.typr.foundations.PgTypes
-import dev.typr.foundations.dsl.DeleteBuilder
-import dev.typr.foundations.dsl.Dialect
-import dev.typr.foundations.dsl.SelectBuilder
-import dev.typr.foundations.dsl.UpdateBuilder
-import dev.typr.foundations.streamingInsert
-import java.sql.Connection
+import dev.typr.foundations.StreamingInsert
 import java.util.ArrayList
 import java.util.HashMap
 import java.util.Optional
-import dev.typr.foundations.Fragment.interpolate
+import dev.typr.foundations.Fragment.concat
 
 class PasswordRepoImpl extends PasswordRepo {
   override def delete: DeleteBuilder[PasswordFields, PasswordRow] = DeleteBuilder.of(""""person"."password"""", PasswordFields.structure, Dialect.POSTGRESQL)
 
-  override def deleteById(businessentityid: BusinessentityId)(using c: Connection): java.lang.Boolean = interpolate(Fragment.lit("""delete from "person"."password" where "businessentityid" = """), Fragment.encode(BusinessentityId.pgType, businessentityid), Fragment.lit("")).update().runUnchecked(c) > 0
+  override def deleteById(businessentityid: BusinessentityId)(using c: Connection): java.lang.Boolean = concat(Fragment.of("""delete from "person"."password" where "businessentityid" = """), Fragment.encode(BusinessentityId.pgType, businessentityid), Fragment.of("")).update().run(c) > 0
 
-  override def deleteByIds(businessentityids: Array[BusinessentityId])(using c: Connection): Integer = {
-    interpolate(Fragment.lit("""delete
+  override def deleteByIds(businessentityids: java.util.List[BusinessentityId])(using c: Connection): Integer = {
+    concat(Fragment.of("""delete
     from "person"."password"
-    where "businessentityid" = ANY("""), Fragment.encode(BusinessentityId.pgTypeArray, businessentityids), Fragment.lit(")"))
+    where "businessentityid" = ANY("""), Fragment.encode(BusinessentityId.pgType.array(), businessentityids), Fragment.of(")"))
       .update()
-      .runUnchecked(c)
+      .run(c)
   }
 
   override def insert(unsaved: PasswordRow)(using c: Connection): PasswordRow = {
-  interpolate(Fragment.lit("""insert into "person"."password"("businessentityid", "passwordhash", "passwordsalt", "rowguid", "modifieddate")
-    values ("""), Fragment.encode(BusinessentityId.pgType, unsaved.businessentityid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.text, unsaved.passwordhash), Fragment.lit(", "), Fragment.encode(PgTypes.text, unsaved.passwordsalt), Fragment.lit(", "), Fragment.encode(PgTypes.uuid, unsaved.rowguid), Fragment.lit("::uuid, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("""::timestamp)
+  concat(Fragment.of("""insert into "person"."password"("businessentityid", "passwordhash", "passwordsalt", "rowguid", "modifieddate")
+    values ("""), Fragment.encode(BusinessentityId.pgType, unsaved.businessentityid), Fragment.of("::int4, "), Fragment.encode(PgTypes.text, unsaved.passwordhash), Fragment.of(", "), Fragment.encode(PgTypes.text, unsaved.passwordsalt), Fragment.of(", "), Fragment.encode(PgTypes.uuid, unsaved.rowguid), Fragment.of("::uuid, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.of("""::timestamp)
     RETURNING "businessentityid", "passwordhash", "passwordsalt", "rowguid", "modifieddate"
     """))
-    .updateReturning(PasswordRow.`_rowParser`.exactlyOne()).runUnchecked(c)
+    .updateReturning(PasswordRow.rowCodec.exactlyOne()).run(c)
   }
 
   override def insert(unsaved: PasswordRowUnsaved)(using c: Connection): PasswordRow = {
     val columns: ArrayList[Fragment] = new ArrayList()
     val values: ArrayList[Fragment] = new ArrayList()
-    columns.add(Fragment.lit(""""businessentityid"""")): @scala.annotation.nowarn
-    values.add(interpolate(Fragment.encode(BusinessentityId.pgType, unsaved.businessentityid), Fragment.lit("::int4"))): @scala.annotation.nowarn
-    columns.add(Fragment.lit(""""passwordhash"""")): @scala.annotation.nowarn
-    values.add(interpolate(Fragment.encode(PgTypes.text, unsaved.passwordhash), Fragment.lit(""))): @scala.annotation.nowarn
-    columns.add(Fragment.lit(""""passwordsalt"""")): @scala.annotation.nowarn
-    values.add(interpolate(Fragment.encode(PgTypes.text, unsaved.passwordsalt), Fragment.lit(""))): @scala.annotation.nowarn
+    columns.add(Fragment.of(""""businessentityid"""")): @scala.annotation.nowarn
+    values.add(concat(Fragment.encode(BusinessentityId.pgType, unsaved.businessentityid), Fragment.of("::int4"))): @scala.annotation.nowarn
+    columns.add(Fragment.of(""""passwordhash"""")): @scala.annotation.nowarn
+    values.add(concat(Fragment.encode(PgTypes.text, unsaved.passwordhash), Fragment.of(""))): @scala.annotation.nowarn
+    columns.add(Fragment.of(""""passwordsalt"""")): @scala.annotation.nowarn
+    values.add(concat(Fragment.encode(PgTypes.text, unsaved.passwordsalt), Fragment.of(""))): @scala.annotation.nowarn
     unsaved.rowguid.visit(
       {  },
-      value => { columns.add(Fragment.lit(""""rowguid"""")): @scala.annotation.nowarn; values.add(interpolate(Fragment.encode(PgTypes.uuid, value), Fragment.lit("::uuid"))): @scala.annotation.nowarn }
+      value => { columns.add(Fragment.of(""""rowguid"""")): @scala.annotation.nowarn; values.add(concat(Fragment.encode(PgTypes.uuid, value), Fragment.of("::uuid"))): @scala.annotation.nowarn }
     );
     unsaved.modifieddate.visit(
       {  },
-      value => { columns.add(Fragment.lit(""""modifieddate"""")): @scala.annotation.nowarn; values.add(interpolate(Fragment.encode(PgTypes.timestamp, value), Fragment.lit("::timestamp"))): @scala.annotation.nowarn }
+      value => { columns.add(Fragment.of(""""modifieddate"""")): @scala.annotation.nowarn; values.add(concat(Fragment.encode(PgTypes.timestamp, value), Fragment.of("::timestamp"))): @scala.annotation.nowarn }
     );
     val q: Fragment = {
-      interpolate(Fragment.lit("""insert into "person"."password"("""), Fragment.comma(columns), Fragment.lit(""")
-      values ("""), Fragment.comma(values), Fragment.lit(""")
+      concat(Fragment.of("""insert into "person"."password"("""), Fragment.comma(columns), Fragment.of(""")
+      values ("""), Fragment.comma(values), Fragment.of(""")
       RETURNING "businessentityid", "passwordhash", "passwordsalt", "rowguid", "modifieddate"
       """))
     }
-    return q.updateReturning(PasswordRow.`_rowParser`.exactlyOne()).runUnchecked(c)
+    return q.updateReturning(PasswordRow.rowCodec.exactlyOne()).run(c)
   }
 
   override def insertStreaming(
     unsaved: java.util.Iterator[PasswordRow],
     batchSize: Integer = 10000
-  )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "person"."password"("businessentityid", "passwordhash", "passwordsalt", "rowguid", "modifieddate") FROM STDIN""", batchSize, unsaved, c, PasswordRow.pgText)
+  )(using c: Connection): java.lang.Long = StreamingInsert.of(s"""COPY "person"."password"("businessentityid", "passwordhash", "passwordsalt", "rowguid", "modifieddate") FROM STDIN""", batchSize, unsaved, PasswordRow.pgText).run(c)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
   override def insertUnsavedStreaming(
     unsaved: java.util.Iterator[PasswordRowUnsaved],
     batchSize: Integer = 10000
-  )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "person"."password"("businessentityid", "passwordhash", "passwordsalt", "rowguid", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved, c, PasswordRowUnsaved.pgText)
+  )(using c: Connection): java.lang.Long = StreamingInsert.of(s"""COPY "person"."password"("businessentityid", "passwordhash", "passwordsalt", "rowguid", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved, PasswordRowUnsaved.pgText).run(c)
 
-  override def select: SelectBuilder[PasswordFields, PasswordRow] = SelectBuilder.of(""""person"."password"""", PasswordFields.structure, PasswordRow.`_rowParser`, Dialect.POSTGRESQL)
+  override def select: SelectBuilder[PasswordFields, PasswordRow] = SelectBuilder.of(""""person"."password"""", PasswordFields.structure, PasswordRow.rowCodec, Dialect.POSTGRESQL)
 
-  override def selectAll(using c: Connection): java.util.List[PasswordRow] = {
-    interpolate(Fragment.lit("""select "businessentityid", "passwordhash", "passwordsalt", "rowguid", "modifieddate"
+  override def selectAll(using c: ConnectionRead): java.util.List[PasswordRow] = {
+    concat(Fragment.of("""select "businessentityid", "passwordhash", "passwordsalt", "rowguid", "modifieddate"
     from "person"."password"
-    """)).query(PasswordRow.`_rowParser`.all()).runUnchecked(c)
+    """)).query(PasswordRow.rowCodec.all()).run(c)
   }
 
-  override def selectById(businessentityid: BusinessentityId)(using c: Connection): Optional[PasswordRow] = {
-    interpolate(Fragment.lit("""select "businessentityid", "passwordhash", "passwordsalt", "rowguid", "modifieddate"
+  override def selectById(businessentityid: BusinessentityId)(using c: ConnectionRead): Optional[PasswordRow] = {
+    concat(Fragment.of("""select "businessentityid", "passwordhash", "passwordsalt", "rowguid", "modifieddate"
     from "person"."password"
-    where "businessentityid" = """), Fragment.encode(BusinessentityId.pgType, businessentityid), Fragment.lit("")).query(PasswordRow.`_rowParser`.first()).runUnchecked(c)
+    where "businessentityid" = """), Fragment.encode(BusinessentityId.pgType, businessentityid), Fragment.of("")).query(PasswordRow.rowCodec.first()).run(c)
   }
 
-  override def selectByIds(businessentityids: Array[BusinessentityId])(using c: Connection): java.util.List[PasswordRow] = {
-    interpolate(Fragment.lit("""select "businessentityid", "passwordhash", "passwordsalt", "rowguid", "modifieddate"
+  override def selectByIds(businessentityids: java.util.List[BusinessentityId])(using c: ConnectionRead): java.util.List[PasswordRow] = {
+    concat(Fragment.of("""select "businessentityid", "passwordhash", "passwordsalt", "rowguid", "modifieddate"
     from "person"."password"
-    where "businessentityid" = ANY("""), Fragment.encode(BusinessentityId.pgTypeArray, businessentityids), Fragment.lit(")")).query(PasswordRow.`_rowParser`.all()).runUnchecked(c)
+    where "businessentityid" = ANY("""), Fragment.encode(BusinessentityId.pgType.array(), businessentityids), Fragment.of(")")).query(PasswordRow.rowCodec.all()).run(c)
   }
 
-  override def selectByIdsTracked(businessentityids: Array[BusinessentityId])(using c: Connection): java.util.Map[BusinessentityId, PasswordRow] = {
+  override def selectByIdsTracked(businessentityids: java.util.List[BusinessentityId])(using c: ConnectionRead): java.util.Map[BusinessentityId, PasswordRow] = {
     val ret: HashMap[BusinessentityId, PasswordRow] = new HashMap[BusinessentityId, PasswordRow]()
     selectByIds(businessentityids)(using c).forEach(row => ret.put(row.businessentityid, row): @scala.annotation.nowarn)
     return ret
   }
 
-  override def update: UpdateBuilder[PasswordFields, PasswordRow] = UpdateBuilder.of(""""person"."password"""", PasswordFields.structure, PasswordRow.`_rowParser`, Dialect.POSTGRESQL)
+  override def update: UpdateBuilder[PasswordFields, PasswordRow] = UpdateBuilder.of(""""person"."password"""", PasswordFields.structure, PasswordRow.rowCodec, Dialect.POSTGRESQL)
 
   override def update(row: PasswordRow)(using c: Connection): java.lang.Boolean = {
     val businessentityid: BusinessentityId = row.businessentityid
-    return interpolate(Fragment.lit("""update "person"."password"
-    set "passwordhash" = """), Fragment.encode(PgTypes.text, row.passwordhash), Fragment.lit(""",
-    "passwordsalt" = """), Fragment.encode(PgTypes.text, row.passwordsalt), Fragment.lit(""",
-    "rowguid" = """), Fragment.encode(PgTypes.uuid, row.rowguid), Fragment.lit("""::uuid,
-    "modifieddate" = """), Fragment.encode(PgTypes.timestamp, row.modifieddate), Fragment.lit("""::timestamp
-    where "businessentityid" = """), Fragment.encode(BusinessentityId.pgType, businessentityid), Fragment.lit("")).update().runUnchecked(c) > 0
+    return concat(Fragment.of("""update "person"."password"
+    set "passwordhash" = """), Fragment.encode(PgTypes.text, row.passwordhash), Fragment.of(""",
+    "passwordsalt" = """), Fragment.encode(PgTypes.text, row.passwordsalt), Fragment.of(""",
+    "rowguid" = """), Fragment.encode(PgTypes.uuid, row.rowguid), Fragment.of("""::uuid,
+    "modifieddate" = """), Fragment.encode(PgTypes.timestamp, row.modifieddate), Fragment.of("""::timestamp
+    where "businessentityid" = """), Fragment.encode(BusinessentityId.pgType, businessentityid), Fragment.of("")).update().run(c) > 0
   }
 
   override def upsert(unsaved: PasswordRow)(using c: Connection): PasswordRow = {
-  interpolate(Fragment.lit("""insert into "person"."password"("businessentityid", "passwordhash", "passwordsalt", "rowguid", "modifieddate")
-    values ("""), Fragment.encode(BusinessentityId.pgType, unsaved.businessentityid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.text, unsaved.passwordhash), Fragment.lit(", "), Fragment.encode(PgTypes.text, unsaved.passwordsalt), Fragment.lit(", "), Fragment.encode(PgTypes.uuid, unsaved.rowguid), Fragment.lit("::uuid, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("""::timestamp)
+  concat(Fragment.of("""insert into "person"."password"("businessentityid", "passwordhash", "passwordsalt", "rowguid", "modifieddate")
+    values ("""), Fragment.encode(BusinessentityId.pgType, unsaved.businessentityid), Fragment.of("::int4, "), Fragment.encode(PgTypes.text, unsaved.passwordhash), Fragment.of(", "), Fragment.encode(PgTypes.text, unsaved.passwordsalt), Fragment.of(", "), Fragment.encode(PgTypes.uuid, unsaved.rowguid), Fragment.of("::uuid, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.of("""::timestamp)
     on conflict ("businessentityid")
     do update set
       "passwordhash" = EXCLUDED."passwordhash",
@@ -125,12 +126,12 @@ class PasswordRepoImpl extends PasswordRepo {
     "rowguid" = EXCLUDED."rowguid",
     "modifieddate" = EXCLUDED."modifieddate"
     returning "businessentityid", "passwordhash", "passwordsalt", "rowguid", "modifieddate""""))
-    .updateReturning(PasswordRow.`_rowParser`.exactlyOne())
-    .runUnchecked(c)
+    .updateReturning(PasswordRow.rowCodec.exactlyOne())
+    .run(c)
   }
 
   override def upsertBatch(unsaved: java.util.Iterator[PasswordRow])(using c: Connection): java.util.List[PasswordRow] = {
-    interpolate(Fragment.lit("""insert into "person"."password"("businessentityid", "passwordhash", "passwordsalt", "rowguid", "modifieddate")
+    concat(Fragment.of("""insert into "person"."password"("businessentityid", "passwordhash", "passwordsalt", "rowguid", "modifieddate")
     values (?::int4, ?, ?, ?::uuid, ?::timestamp)
     on conflict ("businessentityid")
     do update set
@@ -139,8 +140,8 @@ class PasswordRepoImpl extends PasswordRepo {
     "rowguid" = EXCLUDED."rowguid",
     "modifieddate" = EXCLUDED."modifieddate"
     returning "businessentityid", "passwordhash", "passwordsalt", "rowguid", "modifieddate""""))
-      .updateManyReturning(PasswordRow.`_rowParser`, unsaved)
-    .runUnchecked(c)
+      .updateManyReturning(PasswordRow.rowCodec, unsaved)
+    .run(c)
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
@@ -148,9 +149,9 @@ class PasswordRepoImpl extends PasswordRepo {
     unsaved: java.util.Iterator[PasswordRow],
     batchSize: Integer = 10000
   )(using c: Connection): Integer = {
-    interpolate(Fragment.lit("""create temporary table password_TEMP (like "person"."password") on commit drop""")).update().runUnchecked(c): @scala.annotation.nowarn
-    streamingInsert.insertUnchecked(s"""copy password_TEMP("businessentityid", "passwordhash", "passwordsalt", "rowguid", "modifieddate") from stdin""", batchSize, unsaved, c, PasswordRow.pgText): @scala.annotation.nowarn
-    return interpolate(Fragment.lit("""insert into "person"."password"("businessentityid", "passwordhash", "passwordsalt", "rowguid", "modifieddate")
+    concat(Fragment.of("""create temporary table password_TEMP (like "person"."password") on commit drop""")).update().run(c): @scala.annotation.nowarn
+    StreamingInsert.of(s"""copy password_TEMP("businessentityid", "passwordhash", "passwordsalt", "rowguid", "modifieddate") from stdin""", batchSize, unsaved, PasswordRow.pgText).run(c): @scala.annotation.nowarn
+    return concat(Fragment.of("""insert into "person"."password"("businessentityid", "passwordhash", "passwordsalt", "rowguid", "modifieddate")
     select * from password_TEMP
     on conflict ("businessentityid")
     do update set
@@ -159,6 +160,6 @@ class PasswordRepoImpl extends PasswordRepo {
     "rowguid" = EXCLUDED."rowguid",
     "modifieddate" = EXCLUDED."modifieddate"
     ;
-    drop table password_TEMP;""")).update().runUnchecked(c)
+    drop table password_TEMP;""")).update().run(c)
   }
 }

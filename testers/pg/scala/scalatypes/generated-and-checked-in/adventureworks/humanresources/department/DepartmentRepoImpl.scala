@@ -6,29 +6,29 @@
 package adventureworks.humanresources.department
 
 import adventureworks.public.Name
-import dev.typr.foundations.PgTypes
-import dev.typr.foundations.scala.DeleteBuilder
-import dev.typr.foundations.scala.Dialect
-import dev.typr.foundations.scala.Fragment
-import dev.typr.foundations.scala.ScalaIteratorOps
-import dev.typr.foundations.scala.SelectBuilder
-import dev.typr.foundations.scala.UpdateBuilder
-import dev.typr.foundations.streamingInsert
-import java.sql.Connection
+import dev.typr.dslsc.DeleteBuilder
+import dev.typr.dslsc.Dialect
+import dev.typr.dslsc.SelectBuilder
+import dev.typr.dslsc.UpdateBuilder
+import dev.typr.foundationssc.Connection
+import dev.typr.foundationssc.ConnectionRead
+import dev.typr.foundationssc.Fragment
+import dev.typr.foundationssc.PgTypes
+import dev.typr.foundationssc.StreamingInsert
 import scala.collection.mutable.ListBuffer
-import dev.typr.foundations.scala.Fragment.sql
+import dev.typr.foundationssc.Fragment.sql
 
 class DepartmentRepoImpl extends DepartmentRepo {
   override def delete: DeleteBuilder[DepartmentFields, DepartmentRow] = DeleteBuilder.of(""""humanresources"."department"""", DepartmentFields.structure, Dialect.POSTGRESQL)
 
-  override def deleteById(departmentid: DepartmentId)(using c: Connection): Boolean = sql"""delete from "humanresources"."department" where "departmentid" = ${Fragment.encode(DepartmentId.pgType, departmentid)}""".update().runUnchecked(c) > 0
+  override def deleteById(departmentid: DepartmentId)(using c: Connection): Boolean = sql"""delete from "humanresources"."department" where "departmentid" = ${Fragment.encode(DepartmentId.pgType, departmentid)}""".update().run(using c) > 0
 
-  override def deleteByIds(departmentids: Array[DepartmentId])(using c: Connection): Int = {
+  override def deleteByIds(departmentids: List[DepartmentId])(using c: Connection): Int = {
     sql"""delete
     from "humanresources"."department"
-    where "departmentid" = ANY(${Fragment.encode(DepartmentId.pgTypeArray, departmentids)})"""
+    where "departmentid" = ANY(${Fragment.encode(DepartmentId.pgType.array, departmentids)})"""
       .update()
-      .runUnchecked(c)
+      .run(using c)
   }
 
   override def insert(unsaved: DepartmentRow)(using c: Connection): DepartmentRow = {
@@ -36,23 +36,23 @@ class DepartmentRepoImpl extends DepartmentRepo {
     values (${Fragment.encode(DepartmentId.pgType, unsaved.departmentid)}::int4, ${Fragment.encode(Name.pgType, unsaved.name)}::varchar, ${Fragment.encode(Name.pgType, unsaved.groupname)}::varchar, ${Fragment.encode(PgTypes.timestamp, unsaved.modifieddate)}::timestamp)
     RETURNING "departmentid", "name", "groupname", "modifieddate"
     """
-    .updateReturning(DepartmentRow.`_rowParser`.exactlyOne()).runUnchecked(c)
+    .updateReturning(DepartmentRow.rowCodec.exactlyOne()).run(using c)
   }
 
   override def insert(unsaved: DepartmentRowUnsaved)(using c: Connection): DepartmentRow = {
     val columns: ListBuffer[Fragment] = ListBuffer()
     val values: ListBuffer[Fragment] = ListBuffer()
-    columns.addOne(Fragment.lit(""""name"""")): @scala.annotation.nowarn
+    columns.addOne(Fragment.of(""""name"""")): @scala.annotation.nowarn
     values.addOne(sql"${Fragment.encode(Name.pgType, unsaved.name)}::varchar"): @scala.annotation.nowarn
-    columns.addOne(Fragment.lit(""""groupname"""")): @scala.annotation.nowarn
+    columns.addOne(Fragment.of(""""groupname"""")): @scala.annotation.nowarn
     values.addOne(sql"${Fragment.encode(Name.pgType, unsaved.groupname)}::varchar"): @scala.annotation.nowarn
     unsaved.departmentid.visit(
       {  },
-      value => { columns.addOne(Fragment.lit(""""departmentid"""")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(DepartmentId.pgType, value)}::int4"): @scala.annotation.nowarn }
+      value => { columns.addOne(Fragment.of(""""departmentid"""")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(DepartmentId.pgType, value)}::int4"): @scala.annotation.nowarn }
     );
     unsaved.modifieddate.visit(
       {  },
-      value => { columns.addOne(Fragment.lit(""""modifieddate"""")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(PgTypes.timestamp, value)}::timestamp"): @scala.annotation.nowarn }
+      value => { columns.addOne(Fragment.of(""""modifieddate"""")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(PgTypes.timestamp, value)}::timestamp"): @scala.annotation.nowarn }
     );
     val q: Fragment = {
       sql"""insert into "humanresources"."department"(${Fragment.comma(columns)})
@@ -60,47 +60,47 @@ class DepartmentRepoImpl extends DepartmentRepo {
       RETURNING "departmentid", "name", "groupname", "modifieddate"
       """
     }
-    return q.updateReturning(DepartmentRow.`_rowParser`.exactlyOne()).runUnchecked(c)
+    return q.updateReturning(DepartmentRow.rowCodec.exactlyOne()).run(using c)
   }
 
   override def insertStreaming(
     unsaved: Iterator[DepartmentRow],
     batchSize: Int = 10000
-  )(using c: Connection): Long = streamingInsert.insertUnchecked(s"""COPY "humanresources"."department"("departmentid", "name", "groupname", "modifieddate") FROM STDIN""", batchSize, unsaved.toJavaIterator, c, DepartmentRow.pgText)
+  )(using c: Connection): Long = StreamingInsert.of(s"""COPY "humanresources"."department"("departmentid", "name", "groupname", "modifieddate") FROM STDIN""", batchSize, unsaved, DepartmentRow.pgText).run(using c)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
   override def insertUnsavedStreaming(
     unsaved: Iterator[DepartmentRowUnsaved],
     batchSize: Int = 10000
-  )(using c: Connection): Long = streamingInsert.insertUnchecked(s"""COPY "humanresources"."department"("name", "groupname", "departmentid", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved.toJavaIterator, c, DepartmentRowUnsaved.pgText)
+  )(using c: Connection): Long = StreamingInsert.of(s"""COPY "humanresources"."department"("name", "groupname", "departmentid", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved, DepartmentRowUnsaved.pgText).run(using c)
 
-  override def select: SelectBuilder[DepartmentFields, DepartmentRow] = SelectBuilder.of(""""humanresources"."department"""", DepartmentFields.structure, DepartmentRow.`_rowParser`, Dialect.POSTGRESQL)
+  override def select: SelectBuilder[DepartmentFields, DepartmentRow] = SelectBuilder.of(""""humanresources"."department"""", DepartmentFields.structure, DepartmentRow.rowCodec, Dialect.POSTGRESQL)
 
-  override def selectAll(using c: Connection): List[DepartmentRow] = {
+  override def selectAll(using c: ConnectionRead): List[DepartmentRow] = {
     sql"""select "departmentid", "name", "groupname", "modifieddate"
     from "humanresources"."department"
-    """.query(DepartmentRow.`_rowParser`.all()).runUnchecked(c)
+    """.query(DepartmentRow.rowCodec.all()).run(using c)
   }
 
-  override def selectById(departmentid: DepartmentId)(using c: Connection): Option[DepartmentRow] = {
+  override def selectById(departmentid: DepartmentId)(using c: ConnectionRead): Option[DepartmentRow] = {
     sql"""select "departmentid", "name", "groupname", "modifieddate"
     from "humanresources"."department"
-    where "departmentid" = ${Fragment.encode(DepartmentId.pgType, departmentid)}""".query(DepartmentRow.`_rowParser`.first()).runUnchecked(c)
+    where "departmentid" = ${Fragment.encode(DepartmentId.pgType, departmentid)}""".query(DepartmentRow.rowCodec.first()).run(using c)
   }
 
-  override def selectByIds(departmentids: Array[DepartmentId])(using c: Connection): List[DepartmentRow] = {
+  override def selectByIds(departmentids: List[DepartmentId])(using c: ConnectionRead): List[DepartmentRow] = {
     sql"""select "departmentid", "name", "groupname", "modifieddate"
     from "humanresources"."department"
-    where "departmentid" = ANY(${Fragment.encode(DepartmentId.pgTypeArray, departmentids)})""".query(DepartmentRow.`_rowParser`.all()).runUnchecked(c)
+    where "departmentid" = ANY(${Fragment.encode(DepartmentId.pgType.array, departmentids)})""".query(DepartmentRow.rowCodec.all()).run(using c)
   }
 
-  override def selectByIdsTracked(departmentids: Array[DepartmentId])(using c: Connection): Map[DepartmentId, DepartmentRow] = {
+  override def selectByIdsTracked(departmentids: List[DepartmentId])(using c: ConnectionRead): Map[DepartmentId, DepartmentRow] = {
     val ret: scala.collection.mutable.Map[DepartmentId, DepartmentRow] = scala.collection.mutable.Map.empty[DepartmentId, DepartmentRow]
     selectByIds(departmentids)(using c).foreach(row => ret.put(row.departmentid, row): @scala.annotation.nowarn)
     return ret.toMap
   }
 
-  override def update: UpdateBuilder[DepartmentFields, DepartmentRow] = UpdateBuilder.of(""""humanresources"."department"""", DepartmentFields.structure, DepartmentRow.`_rowParser`, Dialect.POSTGRESQL)
+  override def update: UpdateBuilder[DepartmentFields, DepartmentRow] = UpdateBuilder.of(""""humanresources"."department"""", DepartmentFields.structure, DepartmentRow.rowCodec, Dialect.POSTGRESQL)
 
   override def update(row: DepartmentRow)(using c: Connection): Boolean = {
     val departmentid: DepartmentId = row.departmentid
@@ -108,7 +108,7 @@ class DepartmentRepoImpl extends DepartmentRepo {
     set "name" = ${Fragment.encode(Name.pgType, row.name)}::varchar,
     "groupname" = ${Fragment.encode(Name.pgType, row.groupname)}::varchar,
     "modifieddate" = ${Fragment.encode(PgTypes.timestamp, row.modifieddate)}::timestamp
-    where "departmentid" = ${Fragment.encode(DepartmentId.pgType, departmentid)}""".update().runUnchecked(c) > 0
+    where "departmentid" = ${Fragment.encode(DepartmentId.pgType, departmentid)}""".update().run(using c) > 0
   }
 
   override def upsert(unsaved: DepartmentRow)(using c: Connection): DepartmentRow = {
@@ -120,8 +120,8 @@ class DepartmentRepoImpl extends DepartmentRepo {
     "groupname" = EXCLUDED."groupname",
     "modifieddate" = EXCLUDED."modifieddate"
     returning "departmentid", "name", "groupname", "modifieddate""""
-    .updateReturning(DepartmentRow.`_rowParser`.exactlyOne())
-    .runUnchecked(c)
+    .updateReturning(DepartmentRow.rowCodec.exactlyOne())
+    .run(using c)
   }
 
   override def upsertBatch(unsaved: Iterator[DepartmentRow])(using c: Connection): List[DepartmentRow] = {
@@ -133,8 +133,8 @@ class DepartmentRepoImpl extends DepartmentRepo {
     "groupname" = EXCLUDED."groupname",
     "modifieddate" = EXCLUDED."modifieddate"
     returning "departmentid", "name", "groupname", "modifieddate""""
-      .updateManyReturning(DepartmentRow.`_rowParser`, unsaved)
-    .runUnchecked(c)
+      .updateManyReturning(DepartmentRow.rowCodec, unsaved)
+    .run(using c)
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
@@ -142,8 +142,8 @@ class DepartmentRepoImpl extends DepartmentRepo {
     unsaved: Iterator[DepartmentRow],
     batchSize: Int = 10000
   )(using c: Connection): Int = {
-    sql"""create temporary table department_TEMP (like "humanresources"."department") on commit drop""".update().runUnchecked(c): @scala.annotation.nowarn
-    streamingInsert.insertUnchecked(s"""copy department_TEMP("departmentid", "name", "groupname", "modifieddate") from stdin""", batchSize, unsaved.toJavaIterator, c, DepartmentRow.pgText): @scala.annotation.nowarn
+    sql"""create temporary table department_TEMP (like "humanresources"."department") on commit drop""".update().run(using c): @scala.annotation.nowarn
+    StreamingInsert.of(s"""copy department_TEMP("departmentid", "name", "groupname", "modifieddate") from stdin""", batchSize, unsaved, DepartmentRow.pgText).run(using c): @scala.annotation.nowarn
     return sql"""insert into "humanresources"."department"("departmentid", "name", "groupname", "modifieddate")
     select * from department_TEMP
     on conflict ("departmentid")
@@ -152,6 +152,6 @@ class DepartmentRepoImpl extends DepartmentRepo {
     "groupname" = EXCLUDED."groupname",
     "modifieddate" = EXCLUDED."modifieddate"
     ;
-    drop table department_TEMP;""".update().runUnchecked(c)
+    drop table department_TEMP;""".update().run(using c)
   }
 }

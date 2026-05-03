@@ -11,17 +11,16 @@ import adventureworks.public.Phone
 import adventureworks.userdefined.FirstName
 import adventureworks.userdefined.LastName
 import adventureworks.userdefined.MiddleName
-import dev.typr.foundations.PgTypes
-import dev.typr.foundations.RowParser
+import dev.typr.dsl.FieldsBase
+import dev.typr.dsl.Path
+import dev.typr.dsl.SqlExpr.FieldLike
+import dev.typr.dslsc.RelationStructure
+import dev.typr.dslsc.SqlExpr
+import dev.typr.dslsc.SqlExpr.Field
+import dev.typr.dslsc.TupleExpr18
+import dev.typr.foundations.RowCodec
 import dev.typr.foundations.data.Xml
-import dev.typr.foundations.dsl.FieldsBase
-import dev.typr.foundations.dsl.Path
-import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.scala.RelationStructure
-import dev.typr.foundations.scala.ScalaDbTypes
-import dev.typr.foundations.scala.SqlExpr
-import dev.typr.foundations.scala.SqlExpr.Field
-import dev.typr.foundations.scala.TupleExpr18
+import dev.typr.foundationssc.PgTypes
 
 class VemployeeViewFields(val `_path`: java.util.List[Path]) extends TupleExpr18[BusinessentityId, String, /* user-picked */ FirstName, /* user-picked */ MiddleName, /* user-picked */ LastName, String, String, Phone, Name, String, Int, String, String, String, Name, String, Name, Xml] with RelationStructure[VemployeeViewFields, VemployeeViewRow]  with FieldsBase[VemployeeViewRow] {
   def businessentityid: Field[BusinessentityId, VemployeeViewRow] = {
@@ -32,7 +31,7 @@ class VemployeeViewFields(val `_path`: java.util.List[Path]) extends TupleExpr18
       None,
       None,
       (row, value) => row.copy(businessentityid = value),
-      BusinessentityId.pgType
+      BusinessentityId.pgType.underlying
     )
   }
 
@@ -44,7 +43,7 @@ class VemployeeViewFields(val `_path`: java.util.List[Path]) extends TupleExpr18
       None,
       None,
       (row, value) => row.copy(title = value),
-      PgTypes.text
+      PgTypes.text.underlying
     )
   }
 
@@ -56,7 +55,7 @@ class VemployeeViewFields(val `_path`: java.util.List[Path]) extends TupleExpr18
       None,
       None,
       (row, value) => row.copy(firstname = value),
-      FirstName.pgType
+      FirstName.pgType.underlying
     )
   }
 
@@ -68,7 +67,7 @@ class VemployeeViewFields(val `_path`: java.util.List[Path]) extends TupleExpr18
       None,
       None,
       (row, value) => row.copy(middlename = value),
-      MiddleName.pgType
+      MiddleName.pgType.underlying
     )
   }
 
@@ -80,7 +79,7 @@ class VemployeeViewFields(val `_path`: java.util.List[Path]) extends TupleExpr18
       None,
       None,
       (row, value) => row.copy(lastname = value),
-      LastName.pgType
+      LastName.pgType.underlying
     )
   }
 
@@ -92,7 +91,7 @@ class VemployeeViewFields(val `_path`: java.util.List[Path]) extends TupleExpr18
       None,
       None,
       (row, value) => row.copy(suffix = value),
-      PgTypes.text
+      PgTypes.text.underlying
     )
   }
 
@@ -104,7 +103,7 @@ class VemployeeViewFields(val `_path`: java.util.List[Path]) extends TupleExpr18
       None,
       None,
       (row, value) => row.copy(jobtitle = value),
-      PgTypes.text
+      PgTypes.text.underlying
     )
   }
 
@@ -116,7 +115,7 @@ class VemployeeViewFields(val `_path`: java.util.List[Path]) extends TupleExpr18
       None,
       None,
       (row, value) => row.copy(phonenumber = value),
-      Phone.pgType
+      Phone.pgType.underlying
     )
   }
 
@@ -128,7 +127,7 @@ class VemployeeViewFields(val `_path`: java.util.List[Path]) extends TupleExpr18
       None,
       None,
       (row, value) => row.copy(phonenumbertype = value),
-      Name.pgType
+      Name.pgType.underlying
     )
   }
 
@@ -140,7 +139,7 @@ class VemployeeViewFields(val `_path`: java.util.List[Path]) extends TupleExpr18
       None,
       None,
       (row, value) => row.copy(emailaddress = value),
-      PgTypes.text
+      PgTypes.text.underlying
     )
   }
 
@@ -152,7 +151,7 @@ class VemployeeViewFields(val `_path`: java.util.List[Path]) extends TupleExpr18
       None,
       None,
       (row, value) => row.copy(emailpromotion = value),
-      ScalaDbTypes.PgTypes.int4
+      PgTypes.int4.underlying
     )
   }
 
@@ -164,7 +163,7 @@ class VemployeeViewFields(val `_path`: java.util.List[Path]) extends TupleExpr18
       None,
       None,
       (row, value) => row.copy(addressline1 = value),
-      PgTypes.text
+      PgTypes.text.underlying
     )
   }
 
@@ -176,7 +175,7 @@ class VemployeeViewFields(val `_path`: java.util.List[Path]) extends TupleExpr18
       None,
       None,
       (row, value) => row.copy(addressline2 = value),
-      PgTypes.text
+      PgTypes.text.underlying
     )
   }
 
@@ -188,7 +187,7 @@ class VemployeeViewFields(val `_path`: java.util.List[Path]) extends TupleExpr18
       None,
       None,
       (row, value) => row.copy(city = value),
-      PgTypes.text
+      PgTypes.text.underlying
     )
   }
 
@@ -200,7 +199,7 @@ class VemployeeViewFields(val `_path`: java.util.List[Path]) extends TupleExpr18
       None,
       None,
       (row, value) => row.copy(stateprovincename = value),
-      Name.pgType
+      Name.pgType.underlying
     )
   }
 
@@ -212,7 +211,7 @@ class VemployeeViewFields(val `_path`: java.util.List[Path]) extends TupleExpr18
       None,
       None,
       (row, value) => row.copy(postalcode = value),
-      PgTypes.text
+      PgTypes.text.underlying
     )
   }
 
@@ -224,7 +223,7 @@ class VemployeeViewFields(val `_path`: java.util.List[Path]) extends TupleExpr18
       None,
       None,
       (row, value) => row.copy(countryregionname = value),
-      Name.pgType
+      Name.pgType.underlying
     )
   }
 
@@ -236,13 +235,13 @@ class VemployeeViewFields(val `_path`: java.util.List[Path]) extends TupleExpr18
       None,
       None,
       (row, value) => row.copy(additionalcontactinfo = value),
-      PgTypes.xml
+      PgTypes.xml.underlying
     )
   }
 
   override def columns: java.util.List[FieldLike[?, VemployeeViewRow]] = java.util.List.of(this.businessentityid.underlying, this.title.underlying, this.firstname.underlying, this.middlename.underlying, this.lastname.underlying, this.suffix.underlying, this.jobtitle.underlying, this.phonenumber.underlying, this.phonenumbertype.underlying, this.emailaddress.underlying, this.emailpromotion.underlying, this.addressline1.underlying, this.addressline2.underlying, this.city.underlying, this.stateprovincename.underlying, this.postalcode.underlying, this.countryregionname.underlying, this.additionalcontactinfo.underlying)
 
-  override def rowParser: RowParser[VemployeeViewRow] = VemployeeViewRow._rowParser.underlying
+  override def rowCodec: RowCodec[VemployeeViewRow] = VemployeeViewRow.rowCodec.underlying
 
   override def withPaths(`_path`: java.util.List[Path]): RelationStructure[VemployeeViewFields, VemployeeViewRow] = new VemployeeViewFields(`_path`)
 

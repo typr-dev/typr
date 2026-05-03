@@ -5,27 +5,23 @@
  */
 package adventureworks.public
 
-import dev.typr.foundations.PgRead
-import dev.typr.foundations.PgStruct
-import dev.typr.foundations.PgType
-import dev.typr.foundations.PgTypes
-import java.util.Optional
+import dev.typr.foundationskt.PgType
+import dev.typr.foundationskt.PgTypes
+import dev.typr.foundationskt.RowCodec
+import kotlin.collections.List
 
 /** PostgreSQL composite type: public.address */
 data class Address(
-  val street: String?,
-  val city: String?,
-  val zip: String?,
-  val country: String?
+  val street: kotlin.String?,
+  val city: kotlin.String?,
+  val zip: kotlin.String?,
+  val country: kotlin.String?
 ) {
   companion object {
-    val pgStruct: PgStruct<Address> =
-      PgStruct.builder<Address>("public.address").optField("street", PgTypes.text, { v: Address -> Optional.ofNullable(v.street) }).optField("city", PgTypes.text, { v: Address -> Optional.ofNullable(v.city) }).optField("zip", PgTypes.text, { v: Address -> Optional.ofNullable(v.zip) }).optField("country", PgTypes.text, { v: Address -> Optional.ofNullable(v.country) }).build({ arr -> Address(arr[0] as? String, arr[1] as? String, arr[2] as? String, arr[3] as? String) })
-
     val pgType: PgType<Address> =
-      pgStruct.asType()
+      PgTypes.compositeOf("public.address", RowCodec.namedBuilder<Address>().field("street", PgTypes.text.opt(), { v: Address -> v.street }).field("city", PgTypes.text.opt(), { v: Address -> v.city }).field("zip", PgTypes.text.opt(), { v: Address -> v.zip }).field("country", PgTypes.text.opt(), { v: Address -> v.country }).build({ t0, t1, t2, t3 -> Address(t0, t1, t2, t3) }))
 
-    val pgTypeArray: PgType<Array<Address>> =
-      pgType.array(PgRead.readCompositeArray(pgType.pgCompositeText(), { n -> arrayOfNulls<Address>(n) }), { n -> arrayOfNulls<Address>(n) })
+    val pgTypeArray: PgType<List<Address>> =
+      pgType.array()
   }
 }

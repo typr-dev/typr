@@ -29,7 +29,7 @@ data class CustomersRowUnsaved(
   /** Default: NULL
 
     */
-  val phone: Defaulted<String?> = UseDefault(),
+  val phone: Defaulted<kotlin.String?> = UseDefault(),
   /** Default: 'pending'
     * Points to [testdb.customer_status.CustomerStatusRow.statusCode]
     */
@@ -37,7 +37,7 @@ data class CustomersRowUnsaved(
   /** Default: 'bronze'
 
     */
-  val tier: Defaulted<String> = UseDefault(),
+  val tier: Defaulted<kotlin.String> = UseDefault(),
   /** Default: NULL
 
     */
@@ -49,7 +49,7 @@ data class CustomersRowUnsaved(
   /** Default: NULL
 
     */
-  val notes: Defaulted<String?> = UseDefault(),
+  val notes: Defaulted<kotlin.String?> = UseDefault(),
   /** Default: current_timestamp(6)
 
     */
@@ -64,12 +64,12 @@ data class CustomersRowUnsaved(
   @field:JsonProperty("last_login_at") val lastLoginAt: Defaulted<LocalDateTime?> = UseDefault()
 ) {
   fun toRow(
-    phoneDefault: () -> String?,
+    phoneDefault: () -> kotlin.String?,
     statusDefault: () -> CustomerStatusId,
-    tierDefault: () -> String,
+    tierDefault: () -> kotlin.String,
     preferencesDefault: () -> Json?,
     marketingFlagsDefault: () -> EmailMailPushSmsSet?,
-    notesDefault: () -> String?,
+    notesDefault: () -> kotlin.String?,
     createdAtDefault: () -> LocalDateTime,
     updatedAtDefault: () -> LocalDateTime,
     lastLoginAtDefault: () -> LocalDateTime?,

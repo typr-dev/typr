@@ -6,14 +6,15 @@
 package adventureworks.production.unitmeasure
 
 import adventureworks.public.Name
-import dev.typr.foundations.PgTypes
-import dev.typr.foundations.kotlin.DeleteBuilder
-import dev.typr.foundations.kotlin.Dialect
-import dev.typr.foundations.kotlin.Fragment
-import dev.typr.foundations.kotlin.SelectBuilder
-import dev.typr.foundations.kotlin.UpdateBuilder
-import dev.typr.foundations.streamingInsert
-import java.sql.Connection
+import dev.typr.dslkt.DeleteBuilder
+import dev.typr.dslkt.Dialect
+import dev.typr.dslkt.SelectBuilder
+import dev.typr.dslkt.UpdateBuilder
+import dev.typr.foundationskt.Connection
+import dev.typr.foundationskt.ConnectionRead
+import dev.typr.foundationskt.Fragment
+import dev.typr.foundationskt.PgTypes
+import dev.typr.foundationskt.StreamingInsert
 import java.util.ArrayList
 import kotlin.collections.Iterator
 import kotlin.collections.List
@@ -26,20 +27,20 @@ class UnitmeasureRepoImpl() : UnitmeasureRepo {
   override fun deleteById(
     unitmeasurecode: UnitmeasureId,
     c: Connection
-  ): Boolean = Fragment.interpolate(Fragment.lit("delete from \"production\".\"unitmeasure\" where \"unitmeasurecode\" = "), Fragment.encode(UnitmeasureId.pgType, unitmeasurecode), Fragment.lit("")).update().runUnchecked(c) > 0
+  ): kotlin.Boolean = Fragment.concat(Fragment.of("delete from \"production\".\"unitmeasure\" where \"unitmeasurecode\" = "), Fragment.encode(UnitmeasureId.pgType, unitmeasurecode), Fragment.of("")).update().run(c) > 0
 
   override fun deleteByIds(
-    unitmeasurecodes: Array<UnitmeasureId>,
+    unitmeasurecodes: List<UnitmeasureId>,
     c: Connection
-  ): Int = Fragment.interpolate(Fragment.lit("delete\nfrom \"production\".\"unitmeasure\"\nwhere \"unitmeasurecode\" = ANY("), Fragment.encode(UnitmeasureId.pgTypeArray, unitmeasurecodes), Fragment.lit(")"))
+  ): Int = Fragment.concat(Fragment.of("delete\nfrom \"production\".\"unitmeasure\"\nwhere \"unitmeasurecode\" = ANY("), Fragment.encode(UnitmeasureId.pgType.array(), unitmeasurecodes), Fragment.of(")"))
     .update()
-    .runUnchecked(c)
+    .run(c)
 
   override fun insert(
     unsaved: UnitmeasureRow,
     c: Connection
-  ): UnitmeasureRow = Fragment.interpolate(Fragment.lit("insert into \"production\".\"unitmeasure\"(\"unitmeasurecode\", \"name\", \"modifieddate\")\nvalues ("), Fragment.encode(UnitmeasureId.pgType, unsaved.unitmeasurecode), Fragment.lit("::bpchar, "), Fragment.encode(Name.pgType, unsaved.name), Fragment.lit("::varchar, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\nRETURNING \"unitmeasurecode\", \"name\", \"modifieddate\"\n"))
-    .updateReturning(UnitmeasureRow._rowParser.exactlyOne()).runUnchecked(c)
+  ): UnitmeasureRow = Fragment.concat(Fragment.of("insert into \"production\".\"unitmeasure\"(\"unitmeasurecode\", \"name\", \"modifieddate\")\nvalues ("), Fragment.encode(UnitmeasureId.pgType, unsaved.unitmeasurecode), Fragment.of("::bpchar, "), Fragment.encode(Name.pgType, unsaved.name), Fragment.of("::varchar, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.of("::timestamp)\nRETURNING \"unitmeasurecode\", \"name\", \"modifieddate\"\n"))
+    .updateReturning(UnitmeasureRow.rowCodec.exactlyOne()).run(c)
 
   override fun insert(
     unsaved: UnitmeasureRowUnsaved,
@@ -47,78 +48,78 @@ class UnitmeasureRepoImpl() : UnitmeasureRepo {
   ): UnitmeasureRow {
     val columns: ArrayList<Fragment> = ArrayList()
     val values: ArrayList<Fragment> = ArrayList()
-    columns.add(Fragment.lit("\"unitmeasurecode\""))
-    values.add(Fragment.interpolate(Fragment.encode(UnitmeasureId.pgType, unsaved.unitmeasurecode), Fragment.lit("::bpchar")))
-    columns.add(Fragment.lit("\"name\""))
-    values.add(Fragment.interpolate(Fragment.encode(Name.pgType, unsaved.name), Fragment.lit("::varchar")))
+    columns.add(Fragment.of("\"unitmeasurecode\""))
+    values.add(Fragment.concat(Fragment.encode(UnitmeasureId.pgType, unsaved.unitmeasurecode), Fragment.of("::bpchar")))
+    columns.add(Fragment.of("\"name\""))
+    values.add(Fragment.concat(Fragment.encode(Name.pgType, unsaved.name), Fragment.of("::varchar")))
     unsaved.modifieddate.visit(
       {  },
-      { value -> columns.add(Fragment.lit("\"modifieddate\""))
-      values.add(Fragment.interpolate(Fragment.encode(PgTypes.timestamp, value), Fragment.lit("::timestamp"))) }
+      { value -> columns.add(Fragment.of("\"modifieddate\""))
+      values.add(Fragment.concat(Fragment.encode(PgTypes.timestamp, value), Fragment.of("::timestamp"))) }
     );
-    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into \"production\".\"unitmeasure\"("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nRETURNING \"unitmeasurecode\", \"name\", \"modifieddate\"\n"))
-    return q.updateReturning(UnitmeasureRow._rowParser.exactlyOne()).runUnchecked(c)
+    val q: Fragment = Fragment.concat(Fragment.of("insert into \"production\".\"unitmeasure\"("), Fragment.comma(columns.toMutableList()), Fragment.of(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.of(")\nRETURNING \"unitmeasurecode\", \"name\", \"modifieddate\"\n"))
+    return q.updateReturning(UnitmeasureRow.rowCodec.exactlyOne()).run(c)
   }
 
   override fun insertStreaming(
     unsaved: Iterator<UnitmeasureRow>,
     batchSize: Int,
     c: Connection
-  ): Long = streamingInsert.insertUnchecked("COPY \"production\".\"unitmeasure\"(\"unitmeasurecode\", \"name\", \"modifieddate\") FROM STDIN", batchSize, unsaved, c, UnitmeasureRow.pgText)
+  ): kotlin.Long = StreamingInsert.of("COPY \"production\".\"unitmeasure\"(\"unitmeasurecode\", \"name\", \"modifieddate\") FROM STDIN", batchSize, unsaved, UnitmeasureRow.pgText).run(c)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
   override fun insertUnsavedStreaming(
     unsaved: Iterator<UnitmeasureRowUnsaved>,
     batchSize: Int,
     c: Connection
-  ): Long = streamingInsert.insertUnchecked("COPY \"production\".\"unitmeasure\"(\"unitmeasurecode\", \"name\", \"modifieddate\") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')", batchSize, unsaved, c, UnitmeasureRowUnsaved.pgText)
+  ): kotlin.Long = StreamingInsert.of("COPY \"production\".\"unitmeasure\"(\"unitmeasurecode\", \"name\", \"modifieddate\") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')", batchSize, unsaved, UnitmeasureRowUnsaved.pgText).run(c)
 
-  override fun select(): SelectBuilder<UnitmeasureFields, UnitmeasureRow> = SelectBuilder.of("\"production\".\"unitmeasure\"", UnitmeasureFields.structure, UnitmeasureRow._rowParser, Dialect.POSTGRESQL)
+  override fun select(): SelectBuilder<UnitmeasureFields, UnitmeasureRow> = SelectBuilder.of("\"production\".\"unitmeasure\"", UnitmeasureFields.structure, UnitmeasureRow.rowCodec, Dialect.POSTGRESQL)
 
-  override fun selectAll(c: Connection): List<UnitmeasureRow> = Fragment.interpolate(Fragment.lit("select \"unitmeasurecode\", \"name\", \"modifieddate\"\nfrom \"production\".\"unitmeasure\"\n")).query(UnitmeasureRow._rowParser.all()).runUnchecked(c)
+  override fun selectAll(c: ConnectionRead): List<UnitmeasureRow> = Fragment.concat(Fragment.of("select \"unitmeasurecode\", \"name\", \"modifieddate\"\nfrom \"production\".\"unitmeasure\"\n")).query(UnitmeasureRow.rowCodec.all()).run(c)
 
   override fun selectById(
     unitmeasurecode: UnitmeasureId,
-    c: Connection
-  ): UnitmeasureRow? = Fragment.interpolate(Fragment.lit("select \"unitmeasurecode\", \"name\", \"modifieddate\"\nfrom \"production\".\"unitmeasure\"\nwhere \"unitmeasurecode\" = "), Fragment.encode(UnitmeasureId.pgType, unitmeasurecode), Fragment.lit("")).query(UnitmeasureRow._rowParser.first()).runUnchecked(c)
+    c: ConnectionRead
+  ): UnitmeasureRow? = Fragment.concat(Fragment.of("select \"unitmeasurecode\", \"name\", \"modifieddate\"\nfrom \"production\".\"unitmeasure\"\nwhere \"unitmeasurecode\" = "), Fragment.encode(UnitmeasureId.pgType, unitmeasurecode), Fragment.of("")).query(UnitmeasureRow.rowCodec.first()).run(c)
 
   override fun selectByIds(
-    unitmeasurecodes: Array<UnitmeasureId>,
-    c: Connection
-  ): List<UnitmeasureRow> = Fragment.interpolate(Fragment.lit("select \"unitmeasurecode\", \"name\", \"modifieddate\"\nfrom \"production\".\"unitmeasure\"\nwhere \"unitmeasurecode\" = ANY("), Fragment.encode(UnitmeasureId.pgTypeArray, unitmeasurecodes), Fragment.lit(")")).query(UnitmeasureRow._rowParser.all()).runUnchecked(c)
+    unitmeasurecodes: List<UnitmeasureId>,
+    c: ConnectionRead
+  ): List<UnitmeasureRow> = Fragment.concat(Fragment.of("select \"unitmeasurecode\", \"name\", \"modifieddate\"\nfrom \"production\".\"unitmeasure\"\nwhere \"unitmeasurecode\" = ANY("), Fragment.encode(UnitmeasureId.pgType.array(), unitmeasurecodes), Fragment.of(")")).query(UnitmeasureRow.rowCodec.all()).run(c)
 
   override fun selectByIdsTracked(
-    unitmeasurecodes: Array<UnitmeasureId>,
-    c: Connection
+    unitmeasurecodes: List<UnitmeasureId>,
+    c: ConnectionRead
   ): Map<UnitmeasureId, UnitmeasureRow> {
     val ret: MutableMap<UnitmeasureId, UnitmeasureRow> = mutableMapOf<UnitmeasureId, UnitmeasureRow>()
     selectByIds(unitmeasurecodes, c).forEach({ row -> ret.put(row.unitmeasurecode, row) })
     return ret.toMap()
   }
 
-  override fun update(): UpdateBuilder<UnitmeasureFields, UnitmeasureRow> = UpdateBuilder.of("\"production\".\"unitmeasure\"", UnitmeasureFields.structure, UnitmeasureRow._rowParser, Dialect.POSTGRESQL)
+  override fun update(): UpdateBuilder<UnitmeasureFields, UnitmeasureRow> = UpdateBuilder.of("\"production\".\"unitmeasure\"", UnitmeasureFields.structure, UnitmeasureRow.rowCodec, Dialect.POSTGRESQL)
 
   override fun update(
     row: UnitmeasureRow,
     c: Connection
-  ): Boolean {
+  ): kotlin.Boolean {
     val unitmeasurecode: UnitmeasureId = row.unitmeasurecode
-    return Fragment.interpolate(Fragment.lit("update \"production\".\"unitmeasure\"\nset \"name\" = "), Fragment.encode(Name.pgType, row.name), Fragment.lit("::varchar,\n\"modifieddate\" = "), Fragment.encode(PgTypes.timestamp, row.modifieddate), Fragment.lit("::timestamp\nwhere \"unitmeasurecode\" = "), Fragment.encode(UnitmeasureId.pgType, unitmeasurecode), Fragment.lit("")).update().runUnchecked(c) > 0
+    return Fragment.concat(Fragment.of("update \"production\".\"unitmeasure\"\nset \"name\" = "), Fragment.encode(Name.pgType, row.name), Fragment.of("::varchar,\n\"modifieddate\" = "), Fragment.encode(PgTypes.timestamp, row.modifieddate), Fragment.of("::timestamp\nwhere \"unitmeasurecode\" = "), Fragment.encode(UnitmeasureId.pgType, unitmeasurecode), Fragment.of("")).update().run(c) > 0
   }
 
   override fun upsert(
     unsaved: UnitmeasureRow,
     c: Connection
-  ): UnitmeasureRow = Fragment.interpolate(Fragment.lit("insert into \"production\".\"unitmeasure\"(\"unitmeasurecode\", \"name\", \"modifieddate\")\nvalues ("), Fragment.encode(UnitmeasureId.pgType, unsaved.unitmeasurecode), Fragment.lit("::bpchar, "), Fragment.encode(Name.pgType, unsaved.name), Fragment.lit("::varchar, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("::timestamp)\non conflict (\"unitmeasurecode\")\ndo update set\n  \"name\" = EXCLUDED.\"name\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\nreturning \"unitmeasurecode\", \"name\", \"modifieddate\""))
-    .updateReturning(UnitmeasureRow._rowParser.exactlyOne())
-    .runUnchecked(c)
+  ): UnitmeasureRow = Fragment.concat(Fragment.of("insert into \"production\".\"unitmeasure\"(\"unitmeasurecode\", \"name\", \"modifieddate\")\nvalues ("), Fragment.encode(UnitmeasureId.pgType, unsaved.unitmeasurecode), Fragment.of("::bpchar, "), Fragment.encode(Name.pgType, unsaved.name), Fragment.of("::varchar, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.of("::timestamp)\non conflict (\"unitmeasurecode\")\ndo update set\n  \"name\" = EXCLUDED.\"name\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\nreturning \"unitmeasurecode\", \"name\", \"modifieddate\""))
+    .updateReturning(UnitmeasureRow.rowCodec.exactlyOne())
+    .run(c)
 
   override fun upsertBatch(
     unsaved: Iterator<UnitmeasureRow>,
     c: Connection
-  ): List<UnitmeasureRow> = Fragment.interpolate(Fragment.lit("insert into \"production\".\"unitmeasure\"(\"unitmeasurecode\", \"name\", \"modifieddate\")\nvalues (?::bpchar, ?::varchar, ?::timestamp)\non conflict (\"unitmeasurecode\")\ndo update set\n  \"name\" = EXCLUDED.\"name\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\nreturning \"unitmeasurecode\", \"name\", \"modifieddate\""))
-    .updateManyReturning(UnitmeasureRow._rowParser, unsaved)
-  .runUnchecked(c)
+  ): List<UnitmeasureRow> = Fragment.concat(Fragment.of("insert into \"production\".\"unitmeasure\"(\"unitmeasurecode\", \"name\", \"modifieddate\")\nvalues (?::bpchar, ?::varchar, ?::timestamp)\non conflict (\"unitmeasurecode\")\ndo update set\n  \"name\" = EXCLUDED.\"name\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\nreturning \"unitmeasurecode\", \"name\", \"modifieddate\""))
+    .updateManyReturning(UnitmeasureRow.rowCodec, unsaved)
+  .run(c)
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
   override fun upsertStreaming(
@@ -126,8 +127,8 @@ class UnitmeasureRepoImpl() : UnitmeasureRepo {
     batchSize: Int,
     c: Connection
   ): Int {
-    Fragment.interpolate(Fragment.lit("create temporary table unitmeasure_TEMP (like \"production\".\"unitmeasure\") on commit drop")).update().runUnchecked(c)
-    streamingInsert.insertUnchecked("copy unitmeasure_TEMP(\"unitmeasurecode\", \"name\", \"modifieddate\") from stdin", batchSize, unsaved, c, UnitmeasureRow.pgText)
-    return Fragment.interpolate(Fragment.lit("insert into \"production\".\"unitmeasure\"(\"unitmeasurecode\", \"name\", \"modifieddate\")\nselect * from unitmeasure_TEMP\non conflict (\"unitmeasurecode\")\ndo update set\n  \"name\" = EXCLUDED.\"name\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\n;\ndrop table unitmeasure_TEMP;")).update().runUnchecked(c)
+    Fragment.concat(Fragment.of("create temporary table unitmeasure_TEMP (like \"production\".\"unitmeasure\") on commit drop")).update().run(c)
+    StreamingInsert.of("copy unitmeasure_TEMP(\"unitmeasurecode\", \"name\", \"modifieddate\") from stdin", batchSize, unsaved, UnitmeasureRow.pgText).run(c)
+    return Fragment.concat(Fragment.of("insert into \"production\".\"unitmeasure\"(\"unitmeasurecode\", \"name\", \"modifieddate\")\nselect * from unitmeasure_TEMP\non conflict (\"unitmeasurecode\")\ndo update set\n  \"name\" = EXCLUDED.\"name\",\n\"modifieddate\" = EXCLUDED.\"modifieddate\"\n;\ndrop table unitmeasure_TEMP;")).update().run(c)
   }
 }

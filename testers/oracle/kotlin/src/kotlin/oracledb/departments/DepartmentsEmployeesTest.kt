@@ -56,7 +56,7 @@ class DepartmentsEmployeesTest {
             departmentsRepo.insert(DepartmentsRow("SALES", "SOUTH", "Sales South", null), c)
             departmentsRepo.insert(DepartmentsRow("FINANCE", "CENTRAL", "Finance", null), c)
 
-            val ids = arrayOf(
+            val ids = listOf(
                 DepartmentsId("SALES", "NORTH"),
                 DepartmentsId("SALES", "SOUTH"),
                 DepartmentsId("NONEXISTENT", "NONE")
@@ -75,7 +75,7 @@ class DepartmentsEmployeesTest {
             departmentsRepo.insert(DepartmentsRow("DEV", "WEST", "Development West", null), c)
             departmentsRepo.insert(DepartmentsRow("DEV", "EAST", "Development East", null), c)
 
-            val ids = arrayOf(
+            val ids = listOf(
                 DepartmentsId("DEV", "WEST"),
                 DepartmentsId("DEV", "EAST"),
                 DepartmentsId("MISSING", "NONE")
@@ -131,7 +131,7 @@ class DepartmentsEmployeesTest {
             departmentsRepo.insert(DepartmentsRow("DEL1", "R2", "Delete 2", null), c)
             departmentsRepo.insert(DepartmentsRow("DEL2", "R1", "Delete 3", null), c)
 
-            val ids = arrayOf(DepartmentsId("DEL1", "R1"), DepartmentsId("DEL1", "R2"))
+            val ids = listOf(DepartmentsId("DEL1", "R1"), DepartmentsId("DEL1", "R2"))
             val deletedCount = departmentsRepo.deleteByIds(ids, c)
 
             assertEquals(2, deletedCount)

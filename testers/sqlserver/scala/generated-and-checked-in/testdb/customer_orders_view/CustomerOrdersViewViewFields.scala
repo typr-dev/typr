@@ -5,17 +5,16 @@
  */
 package testdb.customer_orders_view
 
-import dev.typr.foundations.RowParser
-import dev.typr.foundations.SqlServerTypes
-import dev.typr.foundations.dsl.FieldsBase
-import dev.typr.foundations.dsl.Path
-import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.scala.RelationStructure
-import dev.typr.foundations.scala.ScalaDbTypes
-import dev.typr.foundations.scala.SqlExpr
-import dev.typr.foundations.scala.SqlExpr.Field
-import dev.typr.foundations.scala.SqlExpr.OptField
-import dev.typr.foundations.scala.TupleExpr6
+import dev.typr.dsl.FieldsBase
+import dev.typr.dsl.Path
+import dev.typr.dsl.SqlExpr.FieldLike
+import dev.typr.dslsc.RelationStructure
+import dev.typr.dslsc.SqlExpr
+import dev.typr.dslsc.SqlExpr.Field
+import dev.typr.dslsc.SqlExpr.OptField
+import dev.typr.dslsc.TupleExpr6
+import dev.typr.foundations.RowCodec
+import dev.typr.foundationssc.SqlServerTypes
 import java.time.LocalDateTime
 
 class CustomerOrdersViewViewFields(val `_path`: java.util.List[Path]) extends TupleExpr6[Int, String, String, Int, LocalDateTime, BigDecimal] with RelationStructure[CustomerOrdersViewViewFields, CustomerOrdersViewViewRow]  with FieldsBase[CustomerOrdersViewViewRow] {
@@ -27,7 +26,7 @@ class CustomerOrdersViewViewFields(val `_path`: java.util.List[Path]) extends Tu
       None,
       None,
       (row, value) => row.copy(customerId = value),
-      ScalaDbTypes.SqlServerTypes.int_
+      SqlServerTypes.int_.underlying
     )
   }
 
@@ -39,7 +38,7 @@ class CustomerOrdersViewViewFields(val `_path`: java.util.List[Path]) extends Tu
       None,
       None,
       (row, value) => row.copy(customerName = value),
-      SqlServerTypes.nvarchar
+      SqlServerTypes.nvarchar.underlying
     )
   }
 
@@ -51,7 +50,7 @@ class CustomerOrdersViewViewFields(val `_path`: java.util.List[Path]) extends Tu
       None,
       None,
       (row, value) => row.copy(customerEmail = value),
-      SqlServerTypes.nvarchar
+      SqlServerTypes.nvarchar.underlying
     )
   }
 
@@ -63,7 +62,7 @@ class CustomerOrdersViewViewFields(val `_path`: java.util.List[Path]) extends Tu
       None,
       None,
       (row, value) => row.copy(orderId = value),
-      ScalaDbTypes.SqlServerTypes.int_
+      SqlServerTypes.int_.underlying
     )
   }
 
@@ -75,7 +74,7 @@ class CustomerOrdersViewViewFields(val `_path`: java.util.List[Path]) extends Tu
       None,
       None,
       (row, value) => row.copy(orderDate = value),
-      SqlServerTypes.datetime2
+      SqlServerTypes.datetime2.underlying
     )
   }
 
@@ -87,13 +86,13 @@ class CustomerOrdersViewViewFields(val `_path`: java.util.List[Path]) extends Tu
       None,
       None,
       (row, value) => row.copy(orderTotal = value),
-      ScalaDbTypes.SqlServerTypes.money
+      SqlServerTypes.money.underlying
     )
   }
 
   override def columns: java.util.List[FieldLike[?, CustomerOrdersViewViewRow]] = java.util.List.of(this.customerId.underlying, this.customerName.underlying, this.customerEmail.underlying, this.orderId.underlying, this.orderDate.underlying, this.orderTotal.underlying)
 
-  override def rowParser: RowParser[CustomerOrdersViewViewRow] = CustomerOrdersViewViewRow._rowParser.underlying
+  override def rowCodec: RowCodec[CustomerOrdersViewViewRow] = CustomerOrdersViewViewRow.rowCodec.underlying
 
   override def withPaths(`_path`: java.util.List[Path]): RelationStructure[CustomerOrdersViewViewFields, CustomerOrdersViewViewRow] = new CustomerOrdersViewViewFields(`_path`)
 

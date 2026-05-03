@@ -5,17 +5,18 @@
  */
 package adventureworks.humanresources.employeedepartmenthistory
 
-import dev.typr.foundations.scala.DeleteBuilder
-import dev.typr.foundations.scala.SelectBuilder
-import dev.typr.foundations.scala.UpdateBuilder
-import java.sql.Connection
+import dev.typr.dslsc.DeleteBuilder
+import dev.typr.dslsc.SelectBuilder
+import dev.typr.dslsc.UpdateBuilder
+import dev.typr.foundationssc.Connection
+import dev.typr.foundationssc.ConnectionRead
 
 trait EmployeedepartmenthistoryRepo {
   def delete: DeleteBuilder[EmployeedepartmenthistoryFields, EmployeedepartmenthistoryRow]
 
   def deleteById(compositeId: EmployeedepartmenthistoryId)(using c: Connection): Boolean
 
-  def deleteByIds(compositeIds: Array[EmployeedepartmenthistoryId])(using c: Connection): Int
+  def deleteByIds(compositeIds: List[EmployeedepartmenthistoryId])(using c: Connection): Int
 
   def insert(unsaved: EmployeedepartmenthistoryRow)(using c: Connection): EmployeedepartmenthistoryRow
 
@@ -34,13 +35,13 @@ trait EmployeedepartmenthistoryRepo {
 
   def select: SelectBuilder[EmployeedepartmenthistoryFields, EmployeedepartmenthistoryRow]
 
-  def selectAll(using c: Connection): List[EmployeedepartmenthistoryRow]
+  def selectAll(using c: ConnectionRead): List[EmployeedepartmenthistoryRow]
 
-  def selectById(compositeId: EmployeedepartmenthistoryId)(using c: Connection): Option[EmployeedepartmenthistoryRow]
+  def selectById(compositeId: EmployeedepartmenthistoryId)(using c: ConnectionRead): Option[EmployeedepartmenthistoryRow]
 
-  def selectByIds(compositeIds: Array[EmployeedepartmenthistoryId])(using c: Connection): List[EmployeedepartmenthistoryRow]
+  def selectByIds(compositeIds: List[EmployeedepartmenthistoryId])(using c: ConnectionRead): List[EmployeedepartmenthistoryRow]
 
-  def selectByIdsTracked(compositeIds: Array[EmployeedepartmenthistoryId])(using c: Connection): Map[EmployeedepartmenthistoryId, EmployeedepartmenthistoryRow]
+  def selectByIdsTracked(compositeIds: List[EmployeedepartmenthistoryId])(using c: ConnectionRead): Map[EmployeedepartmenthistoryId, EmployeedepartmenthistoryRow]
 
   def update: UpdateBuilder[EmployeedepartmenthistoryFields, EmployeedepartmenthistoryRow]
 

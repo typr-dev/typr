@@ -4,6 +4,8 @@ import com.example.events.OrderCancelled
 import com.example.events.OrderEvents
 import com.example.events.OrderPlaced
 import com.example.events.OrderUpdated
+import com.example.events.PaymentCallback
+import com.example.events.PaymentCharged
 import io.confluent.kafka.serializers.KafkaAvroDeserializer
 import org.apache.avro.generic.GenericRecord
 import org.apache.kafka.common.serialization.Deserializer
@@ -32,6 +34,8 @@ class OrderEventsSerde extends Serde[OrderEvents] with Serializer[OrderEvents]  
       case e: OrderCancelled => new OrderCancelledSerde().serialize(topic, e)
       case e: OrderPlaced => new OrderPlacedSerde().serialize(topic, e)
       case e: OrderUpdated => new OrderUpdatedSerde().serialize(topic, e)
+      case e: PaymentCallback => new PaymentCallbackSerde().serialize(topic, e)
+      case e: PaymentCharged => new PaymentChargedSerde().serialize(topic, e)
     }
   }
 

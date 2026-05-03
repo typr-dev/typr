@@ -5,11 +5,11 @@
  */
 package oracledb.employees_by_department
 
-import java.sql.Connection
+import dev.typr.foundationssc.ConnectionRead
 
 trait EmployeesByDepartmentSqlRepo {
   def apply(
     deptCode: String,
     deptRegion: String
-  )(using c: Connection): List[EmployeesByDepartmentSqlRow]
+  )(using c: ConnectionRead): List[EmployeesByDepartmentSqlRow]
 }

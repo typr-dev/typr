@@ -5,13 +5,14 @@
  */
 package testdb.identity_params_test
 
-import dev.typr.foundations.Db2Types
-import dev.typr.foundations.kotlin.DeleteBuilder
-import dev.typr.foundations.kotlin.Dialect
-import dev.typr.foundations.kotlin.Fragment
-import dev.typr.foundations.kotlin.SelectBuilder
-import dev.typr.foundations.kotlin.UpdateBuilder
-import java.sql.Connection
+import dev.typr.dslkt.DeleteBuilder
+import dev.typr.dslkt.Dialect
+import dev.typr.dslkt.SelectBuilder
+import dev.typr.dslkt.UpdateBuilder
+import dev.typr.foundationskt.Connection
+import dev.typr.foundationskt.ConnectionRead
+import dev.typr.foundationskt.Db2Types
+import dev.typr.foundationskt.Fragment
 import java.util.ArrayList
 import kotlin.collections.Iterator
 import kotlin.collections.List
@@ -24,22 +25,22 @@ class IdentityParamsTestRepoImpl() : IdentityParamsTestRepo {
   override fun deleteById(
     id: IdentityParamsTestId,
     c: Connection
-  ): Boolean = Fragment.interpolate(Fragment.lit("delete from \"IDENTITY_PARAMS_TEST\" where \"ID\" = "), Fragment.encode(IdentityParamsTestId.db2Type, id), Fragment.lit("")).update().runUnchecked(c) > 0
+  ): kotlin.Boolean = Fragment.concat(Fragment.of("delete from \"IDENTITY_PARAMS_TEST\" where \"ID\" = "), Fragment.encode(IdentityParamsTestId.db2Type, id), Fragment.of("")).update().run(c) > 0
 
   override fun deleteByIds(
-    ids: Array<IdentityParamsTestId>,
+    ids: List<IdentityParamsTestId>,
     c: Connection
   ): Int {
     val fragments: ArrayList<Fragment> = ArrayList()
     for (id in ids) { fragments.add(Fragment.encode(IdentityParamsTestId.db2Type, id)) }
-    return Fragment.interpolate(Fragment.lit("delete from \"IDENTITY_PARAMS_TEST\" where \"ID\" in ("), Fragment.comma(fragments.toMutableList()), Fragment.lit(")")).update().runUnchecked(c)
+    return Fragment.concat(Fragment.of("delete from \"IDENTITY_PARAMS_TEST\" where \"ID\" in ("), Fragment.comma(fragments.toMutableList()), Fragment.of(")")).update().run(c)
   }
 
   override fun insert(
     unsaved: IdentityParamsTestRow,
     c: Connection
-  ): IdentityParamsTestRow = Fragment.interpolate(Fragment.lit("SELECT \"ID\", \"NAME\" FROM FINAL TABLE (INSERT INTO \"IDENTITY_PARAMS_TEST\"(\"NAME\")\nVALUES ("), Fragment.encode(Db2Types.varchar, unsaved.name), Fragment.lit("))\n"))
-    .updateReturning(IdentityParamsTestRow._rowParser.exactlyOne()).runUnchecked(c)
+  ): IdentityParamsTestRow = Fragment.concat(Fragment.of("SELECT \"ID\", \"NAME\" FROM FINAL TABLE (INSERT INTO \"IDENTITY_PARAMS_TEST\"(\"NAME\")\nVALUES ("), Fragment.encode(Db2Types.varchar, unsaved.name), Fragment.of("))\n"))
+    .updateReturning(IdentityParamsTestRow.rowCodec.exactlyOne()).run(c)
 
   override fun insert(
     unsaved: IdentityParamsTestRowUnsaved,
@@ -47,64 +48,64 @@ class IdentityParamsTestRepoImpl() : IdentityParamsTestRepo {
   ): IdentityParamsTestRow {
     val columns: ArrayList<Fragment> = ArrayList()
     val values: ArrayList<Fragment> = ArrayList()
-    columns.add(Fragment.lit("\"NAME\""))
-    values.add(Fragment.interpolate(Fragment.encode(Db2Types.varchar, unsaved.name), Fragment.lit("")))
-    val q: Fragment = Fragment.interpolate(Fragment.lit("SELECT \"ID\", \"NAME\" FROM FINAL TABLE (INSERT INTO \"IDENTITY_PARAMS_TEST\"("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nVALUES ("), Fragment.comma(values.toMutableList()), Fragment.lit("))\n"))
-    return q.updateReturning(IdentityParamsTestRow._rowParser.exactlyOne()).runUnchecked(c)
+    columns.add(Fragment.of("\"NAME\""))
+    values.add(Fragment.concat(Fragment.encode(Db2Types.varchar, unsaved.name), Fragment.of("")))
+    val q: Fragment = Fragment.concat(Fragment.of("SELECT \"ID\", \"NAME\" FROM FINAL TABLE (INSERT INTO \"IDENTITY_PARAMS_TEST\"("), Fragment.comma(columns.toMutableList()), Fragment.of(")\nVALUES ("), Fragment.comma(values.toMutableList()), Fragment.of("))\n"))
+    return q.updateReturning(IdentityParamsTestRow.rowCodec.exactlyOne()).run(c)
   }
 
-  override fun select(): SelectBuilder<IdentityParamsTestFields, IdentityParamsTestRow> = SelectBuilder.of("\"IDENTITY_PARAMS_TEST\"", IdentityParamsTestFields.structure, IdentityParamsTestRow._rowParser, Dialect.DB2)
+  override fun select(): SelectBuilder<IdentityParamsTestFields, IdentityParamsTestRow> = SelectBuilder.of("\"IDENTITY_PARAMS_TEST\"", IdentityParamsTestFields.structure, IdentityParamsTestRow.rowCodec, Dialect.DB2)
 
-  override fun selectAll(c: Connection): List<IdentityParamsTestRow> = Fragment.interpolate(Fragment.lit("select \"ID\", \"NAME\"\nfrom \"IDENTITY_PARAMS_TEST\"\n")).query(IdentityParamsTestRow._rowParser.all()).runUnchecked(c)
+  override fun selectAll(c: ConnectionRead): List<IdentityParamsTestRow> = Fragment.concat(Fragment.of("select \"ID\", \"NAME\"\nfrom \"IDENTITY_PARAMS_TEST\"\n")).query(IdentityParamsTestRow.rowCodec.all()).run(c)
 
   override fun selectById(
     id: IdentityParamsTestId,
-    c: Connection
-  ): IdentityParamsTestRow? = Fragment.interpolate(Fragment.lit("select \"ID\", \"NAME\"\nfrom \"IDENTITY_PARAMS_TEST\"\nwhere \"ID\" = "), Fragment.encode(IdentityParamsTestId.db2Type, id), Fragment.lit("")).query(IdentityParamsTestRow._rowParser.first()).runUnchecked(c)
+    c: ConnectionRead
+  ): IdentityParamsTestRow? = Fragment.concat(Fragment.of("select \"ID\", \"NAME\"\nfrom \"IDENTITY_PARAMS_TEST\"\nwhere \"ID\" = "), Fragment.encode(IdentityParamsTestId.db2Type, id), Fragment.of("")).query(IdentityParamsTestRow.rowCodec.first()).run(c)
 
   override fun selectByIds(
-    ids: Array<IdentityParamsTestId>,
-    c: Connection
+    ids: List<IdentityParamsTestId>,
+    c: ConnectionRead
   ): List<IdentityParamsTestRow> {
     val fragments: ArrayList<Fragment> = ArrayList()
     for (id in ids) { fragments.add(Fragment.encode(IdentityParamsTestId.db2Type, id)) }
-    return Fragment.interpolate(Fragment.lit("select \"ID\", \"NAME\" from \"IDENTITY_PARAMS_TEST\" where \"ID\" in ("), Fragment.comma(fragments.toMutableList()), Fragment.lit(")")).query(IdentityParamsTestRow._rowParser.all()).runUnchecked(c)
+    return Fragment.concat(Fragment.of("select \"ID\", \"NAME\" from \"IDENTITY_PARAMS_TEST\" where \"ID\" in ("), Fragment.comma(fragments.toMutableList()), Fragment.of(")")).query(IdentityParamsTestRow.rowCodec.all()).run(c)
   }
 
   override fun selectByIdsTracked(
-    ids: Array<IdentityParamsTestId>,
-    c: Connection
+    ids: List<IdentityParamsTestId>,
+    c: ConnectionRead
   ): Map<IdentityParamsTestId, IdentityParamsTestRow> {
     val ret: MutableMap<IdentityParamsTestId, IdentityParamsTestRow> = mutableMapOf<IdentityParamsTestId, IdentityParamsTestRow>()
     selectByIds(ids, c).forEach({ row -> ret.put(row.id, row) })
     return ret.toMap()
   }
 
-  override fun update(): UpdateBuilder<IdentityParamsTestFields, IdentityParamsTestRow> = UpdateBuilder.of("\"IDENTITY_PARAMS_TEST\"", IdentityParamsTestFields.structure, IdentityParamsTestRow._rowParser, Dialect.DB2)
+  override fun update(): UpdateBuilder<IdentityParamsTestFields, IdentityParamsTestRow> = UpdateBuilder.of("\"IDENTITY_PARAMS_TEST\"", IdentityParamsTestFields.structure, IdentityParamsTestRow.rowCodec, Dialect.DB2)
 
   override fun update(
     row: IdentityParamsTestRow,
     c: Connection
-  ): Boolean {
+  ): kotlin.Boolean {
     val id: IdentityParamsTestId = row.id
-    return Fragment.interpolate(Fragment.lit("update \"IDENTITY_PARAMS_TEST\"\nset \"NAME\" = "), Fragment.encode(Db2Types.varchar, row.name), Fragment.lit("\nwhere \"ID\" = "), Fragment.encode(IdentityParamsTestId.db2Type, id), Fragment.lit("")).update().runUnchecked(c) > 0
+    return Fragment.concat(Fragment.of("update \"IDENTITY_PARAMS_TEST\"\nset \"NAME\" = "), Fragment.encode(Db2Types.varchar, row.name), Fragment.of("\nwhere \"ID\" = "), Fragment.encode(IdentityParamsTestId.db2Type, id), Fragment.of("")).update().run(c) > 0
   }
 
   override fun upsert(
     unsaved: IdentityParamsTestRow,
     c: Connection
   ) {
-    Fragment.interpolate(Fragment.lit("MERGE INTO \"IDENTITY_PARAMS_TEST\" AS t\nUSING (VALUES ("), Fragment.encode(IdentityParamsTestId.db2Type, unsaved.id), Fragment.lit(", "), Fragment.encode(Db2Types.varchar, unsaved.name), Fragment.lit(")) AS s(\"ID\", \"NAME\")\nON t.\"ID\" = s.\"ID\"\nWHEN MATCHED THEN UPDATE SET \"NAME\" = s.\"NAME\"\nWHEN NOT MATCHED THEN INSERT (\"ID\", \"NAME\") VALUES ("), Fragment.encode(IdentityParamsTestId.db2Type, unsaved.id), Fragment.lit(", "), Fragment.encode(Db2Types.varchar, unsaved.name), Fragment.lit(")"))
+    Fragment.concat(Fragment.of("MERGE INTO \"IDENTITY_PARAMS_TEST\" AS t\nUSING (VALUES ("), Fragment.encode(IdentityParamsTestId.db2Type, unsaved.id), Fragment.of(", "), Fragment.encode(Db2Types.varchar, unsaved.name), Fragment.of(")) AS s(\"ID\", \"NAME\")\nON t.\"ID\" = s.\"ID\"\nWHEN MATCHED THEN UPDATE SET \"NAME\" = s.\"NAME\"\nWHEN NOT MATCHED THEN INSERT (\"ID\", \"NAME\") VALUES ("), Fragment.encode(IdentityParamsTestId.db2Type, unsaved.id), Fragment.of(", "), Fragment.encode(Db2Types.varchar, unsaved.name), Fragment.of(")"))
       .update()
-      .runUnchecked(c)
+      .run(c)
   }
 
   override fun upsertBatch(
     unsaved: Iterator<IdentityParamsTestRow>,
     c: Connection
   ) {
-    Fragment.interpolate(Fragment.lit("MERGE INTO \"IDENTITY_PARAMS_TEST\" AS t\nUSING (VALUES (?, ?)) AS s(\"ID\", \"NAME\")\nON t.\"ID\" = s.\"ID\"\nWHEN MATCHED THEN UPDATE SET \"NAME\" = s.\"NAME\"\nWHEN NOT MATCHED THEN INSERT (\"ID\", \"NAME\") VALUES (?, ?)"))
-      .updateMany(IdentityParamsTestRow._rowParser, unsaved)
-      .runUnchecked(c)
+    Fragment.concat(Fragment.of("MERGE INTO \"IDENTITY_PARAMS_TEST\" AS t\nUSING (VALUES (?, ?)) AS s(\"ID\", \"NAME\")\nON t.\"ID\" = s.\"ID\"\nWHEN MATCHED THEN UPDATE SET \"NAME\" = s.\"NAME\"\nWHEN NOT MATCHED THEN INSERT (\"ID\", \"NAME\") VALUES (?, ?)"))
+      .updateMany(IdentityParamsTestRow.rowCodec, unsaved)
+      .run(c)
   }
 }

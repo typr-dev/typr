@@ -5,9 +5,10 @@
  */
 package testdb
 
-import dev.typr.foundations.MariaType
-import dev.typr.foundations.MariaTypes
+import dev.typr.dslsc.Bijection
 import dev.typr.foundations.data.maria.MariaSet
+import dev.typr.foundationssc.MariaType
+import dev.typr.foundationssc.MariaTypes
 import scala.collection.immutable.Set
 
 /** MariaDB SET type with values: email, mail, push, sms */
@@ -33,7 +34,7 @@ object EmailMailPushSmsSet {
     }
   }
 
-  given mariaType: MariaType[EmailMailPushSmsSet] = MariaTypes.set.bimap((ms: MariaSet) => EmailMailPushSmsSet.fromString(ms.toCommaSeparated), (s: EmailMailPushSmsSet) => MariaSet.fromString(s.toCommaSeparated))
+  given mariaType: MariaType[EmailMailPushSmsSet] = MariaTypes.set.to(Bijection.of((ms: MariaSet) => EmailMailPushSmsSet.fromString(ms.toCommaSeparated), (s: EmailMailPushSmsSet) => MariaSet.fromString(s.toCommaSeparated)))
 
   def of(members: List[EmailMailPushSmsSetMember]): EmailMailPushSmsSet = EmailMailPushSmsSet(members.toSet)
 }

@@ -5,14 +5,14 @@
  */
 package testdb.customer_stats
 
-import dev.typr.foundations.kotlin.Dialect
-import dev.typr.foundations.kotlin.Fragment
-import dev.typr.foundations.kotlin.SelectBuilder
-import java.sql.Connection
+import dev.typr.dslkt.Dialect
+import dev.typr.dslkt.SelectBuilder
+import dev.typr.foundationskt.ConnectionRead
+import dev.typr.foundationskt.Fragment
 import kotlin.collections.List
 
 class CustomerStatsMVRepoImpl() : CustomerStatsMVRepo {
-  override fun select(): SelectBuilder<CustomerStatsMVFields, CustomerStatsMVRow> = SelectBuilder.of("\"CUSTOMER_STATS\"", CustomerStatsMVFields.structure, CustomerStatsMVRow._rowParser, Dialect.DB2)
+  override fun select(): SelectBuilder<CustomerStatsMVFields, CustomerStatsMVRow> = SelectBuilder.of("\"CUSTOMER_STATS\"", CustomerStatsMVFields.structure, CustomerStatsMVRow.rowCodec, Dialect.DB2)
 
-  override fun selectAll(c: Connection): List<CustomerStatsMVRow> = Fragment.interpolate(Fragment.lit("select \"CUSTOMER_ID\", \"CUSTOMER_NAME\", \"TOTAL_ORDERS\", \"TOTAL_REVENUE\"\nfrom \"CUSTOMER_STATS\"\n")).query(CustomerStatsMVRow._rowParser.all()).runUnchecked(c)
+  override fun selectAll(c: ConnectionRead): List<CustomerStatsMVRow> = Fragment.concat(Fragment.of("select \"CUSTOMER_ID\", \"CUSTOMER_NAME\", \"TOTAL_ORDERS\", \"TOTAL_REVENUE\"\nfrom \"CUSTOMER_STATS\"\n")).query(CustomerStatsMVRow.rowCodec.all()).run(c)
 }

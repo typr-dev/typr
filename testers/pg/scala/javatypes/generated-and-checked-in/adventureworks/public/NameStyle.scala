@@ -6,9 +6,9 @@
 package adventureworks.public
 
 import com.fasterxml.jackson.annotation.JsonValue
+import dev.typr.foundations.Bijection
 import dev.typr.foundations.PgType
 import dev.typr.foundations.PgTypes
-import dev.typr.foundations.dsl.Bijection
 
 /** Domain `public.NameStyle`
  * No constraint
@@ -16,9 +16,9 @@ import dev.typr.foundations.dsl.Bijection
 case class NameStyle(@JsonValue value: java.lang.Boolean)
 
 object NameStyle {
-  given bijection: Bijection[NameStyle, java.lang.Boolean] = Bijection.apply[NameStyle, java.lang.Boolean](_.value)(NameStyle.apply)
+  given bijection: Bijection[NameStyle, java.lang.Boolean] = Bijection.of[NameStyle, java.lang.Boolean](_.value, NameStyle.apply)
 
-  given pgType: PgType[NameStyle] = PgTypes.bool.bimap(NameStyle.apply, _.value).renamed(""""public"."NameStyle"""")
+  given pgType: PgType[NameStyle] = PgTypes.bool.to(Bijection.of(NameStyle.apply, _.value)).renamed(""""public"."NameStyle"""")
 
-  given pgTypeArray: PgType[Array[NameStyle]] = PgTypes.boolArray.bimap(xs => xs.map(NameStyle.apply), xs => xs.map(_.value)).renamed(""""public"."NameStyle"[]""")
+  given pgTypeArray: PgType[java.util.List[NameStyle]] = pgType.array
 }

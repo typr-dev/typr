@@ -6,11 +6,10 @@
 package testdb.precision_types_null
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import dev.typr.foundations.MariaTypes
+import dev.typr.dslsc.RowCodecs
 import dev.typr.foundations.Tuple.Tuple24
-import dev.typr.foundations.scala.DbTypeOps
-import dev.typr.foundations.scala.RowParser
-import dev.typr.foundations.scala.RowParsers
+import dev.typr.foundationssc.MariaTypes
+import dev.typr.foundationssc.RowCodec
 import java.time.LocalDateTime
 import java.time.LocalTime
 import testdb.customtypes.Defaulted
@@ -236,5 +235,5 @@ case class PrecisionTypesNullRow(
 }
 
 object PrecisionTypesNullRow {
-  val `_rowParser`: RowParser[PrecisionTypesNullRow] = RowParsers.of(PrecisionTypesNullId.mariaType, String10.mariaType.nullable, String20.mariaType.nullable, String50.mariaType.nullable, String100.mariaType.nullable, String255.mariaType.nullable, PaddedString10.mariaType.nullable, Decimal5_2.mariaType.nullable, Decimal10_2.mariaType.nullable, Decimal18_4.mariaType.nullable, Decimal8_2.mariaType.nullable, Decimal12_4.mariaType.nullable, Binary16.mariaType.nullable, Binary32.mariaType.nullable, Binary64.mariaType.nullable, MariaTypes.time.nullable, LocalTime3.mariaType.nullable, LocalTime6.mariaType.nullable, MariaTypes.datetime.nullable, LocalDateTime3.mariaType.nullable, LocalDateTime6.mariaType.nullable, MariaTypes.timestamp.nullable, LocalDateTime3.mariaType.nullable, LocalDateTime6.mariaType.nullable)(PrecisionTypesNullRow.apply)(row => Array[Any](row.id, row.string10, row.string20, row.string50, row.string100, row.string255, row.char10, row.decimal52, row.decimal102, row.decimal184, row.numeric82, row.numeric124, row.binary16, row.binary32, row.binary64, row.time0, row.time3, row.time6, row.datetime0, row.datetime3, row.datetime6, row.ts0, row.ts3, row.ts6))
+  val rowCodec: RowCodec[PrecisionTypesNullRow] = RowCodecs.of(PrecisionTypesNullId.mariaType, String10.mariaType.opt, String20.mariaType.opt, String50.mariaType.opt, String100.mariaType.opt, String255.mariaType.opt, PaddedString10.mariaType.opt, Decimal5_2.mariaType.opt, Decimal10_2.mariaType.opt, Decimal18_4.mariaType.opt, Decimal8_2.mariaType.opt, Decimal12_4.mariaType.opt, Binary16.mariaType.opt, Binary32.mariaType.opt, Binary64.mariaType.opt, MariaTypes.time.opt, LocalTime3.mariaType.opt, LocalTime6.mariaType.opt, MariaTypes.datetime.opt, LocalDateTime3.mariaType.opt, LocalDateTime6.mariaType.opt, MariaTypes.timestamp.opt, LocalDateTime3.mariaType.opt, LocalDateTime6.mariaType.opt)(PrecisionTypesNullRow.apply)(row => Array[Any](row.id, row.string10, row.string20, row.string50, row.string100, row.string255, row.char10, row.decimal52, row.decimal102, row.decimal184, row.numeric82, row.numeric124, row.binary16, row.binary32, row.binary64, row.time0, row.time3, row.time6, row.datetime0, row.datetime3, row.datetime6, row.ts0, row.ts3, row.ts6))
 }

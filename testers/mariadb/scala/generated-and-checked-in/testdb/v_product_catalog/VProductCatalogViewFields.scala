@@ -5,17 +5,16 @@
  */
 package testdb.v_product_catalog
 
-import dev.typr.foundations.MariaTypes
-import dev.typr.foundations.RowParser
-import dev.typr.foundations.dsl.FieldsBase
-import dev.typr.foundations.dsl.Path
-import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.scala.RelationStructure
-import dev.typr.foundations.scala.ScalaDbTypes
-import dev.typr.foundations.scala.SqlExpr
-import dev.typr.foundations.scala.SqlExpr.Field
-import dev.typr.foundations.scala.SqlExpr.OptField
-import dev.typr.foundations.scala.TupleExpr11
+import dev.typr.dsl.FieldsBase
+import dev.typr.dsl.Path
+import dev.typr.dsl.SqlExpr.FieldLike
+import dev.typr.dslsc.RelationStructure
+import dev.typr.dslsc.SqlExpr
+import dev.typr.dslsc.SqlExpr.Field
+import dev.typr.dslsc.SqlExpr.OptField
+import dev.typr.dslsc.TupleExpr11
+import dev.typr.foundations.RowCodec
+import dev.typr.foundationssc.MariaTypes
 import testdb.BestsellerClearanceFSet
 import testdb.products.ProductsId
 
@@ -28,7 +27,7 @@ class VProductCatalogViewFields(val `_path`: java.util.List[Path]) extends Tuple
       None,
       None,
       (row, value) => row.copy(productId = value),
-      ProductsId.mariaType
+      ProductsId.mariaType.underlying
     )
   }
 
@@ -40,7 +39,7 @@ class VProductCatalogViewFields(val `_path`: java.util.List[Path]) extends Tuple
       None,
       None,
       (row, value) => row.copy(sku = value),
-      MariaTypes.varchar
+      MariaTypes.varchar.underlying
     )
   }
 
@@ -52,7 +51,7 @@ class VProductCatalogViewFields(val `_path`: java.util.List[Path]) extends Tuple
       None,
       None,
       (row, value) => row.copy(name = value),
-      MariaTypes.varchar
+      MariaTypes.varchar.underlying
     )
   }
 
@@ -64,7 +63,7 @@ class VProductCatalogViewFields(val `_path`: java.util.List[Path]) extends Tuple
       None,
       None,
       (row, value) => row.copy(shortDescription = value),
-      MariaTypes.varchar
+      MariaTypes.varchar.underlying
     )
   }
 
@@ -76,7 +75,7 @@ class VProductCatalogViewFields(val `_path`: java.util.List[Path]) extends Tuple
       None,
       None,
       (row, value) => row.copy(basePrice = value),
-      ScalaDbTypes.MariaTypes.numeric
+      MariaTypes.numeric.underlying
     )
   }
 
@@ -88,7 +87,7 @@ class VProductCatalogViewFields(val `_path`: java.util.List[Path]) extends Tuple
       None,
       None,
       (row, value) => row.copy(status = value),
-      MariaTypes.text
+      MariaTypes.text.underlying
     )
   }
 
@@ -100,7 +99,7 @@ class VProductCatalogViewFields(val `_path`: java.util.List[Path]) extends Tuple
       None,
       None,
       (row, value) => row.copy(tags = value),
-      BestsellerClearanceFSet.mariaType
+      BestsellerClearanceFSet.mariaType.underlying
     )
   }
 
@@ -112,7 +111,7 @@ class VProductCatalogViewFields(val `_path`: java.util.List[Path]) extends Tuple
       None,
       None,
       (row, value) => row.copy(brandName = value),
-      MariaTypes.varchar
+      MariaTypes.varchar.underlying
     )
   }
 
@@ -124,7 +123,7 @@ class VProductCatalogViewFields(val `_path`: java.util.List[Path]) extends Tuple
       None,
       None,
       (row, value) => row.copy(availableQuantity = value),
-      ScalaDbTypes.MariaTypes.numeric
+      MariaTypes.numeric.underlying
     )
   }
 
@@ -136,7 +135,7 @@ class VProductCatalogViewFields(val `_path`: java.util.List[Path]) extends Tuple
       None,
       None,
       (row, value) => row.copy(avgRating = value),
-      ScalaDbTypes.MariaTypes.numeric
+      MariaTypes.numeric.underlying
     )
   }
 
@@ -148,13 +147,13 @@ class VProductCatalogViewFields(val `_path`: java.util.List[Path]) extends Tuple
       None,
       None,
       (row, value) => row.copy(reviewCount = value),
-      ScalaDbTypes.MariaTypes.bigint
+      MariaTypes.bigint.underlying
     )
   }
 
   override def columns: java.util.List[FieldLike[?, VProductCatalogViewRow]] = java.util.List.of(this.productId.underlying, this.sku.underlying, this.name.underlying, this.shortDescription.underlying, this.basePrice.underlying, this.status.underlying, this.tags.underlying, this.brandName.underlying, this.availableQuantity.underlying, this.avgRating.underlying, this.reviewCount.underlying)
 
-  override def rowParser: RowParser[VProductCatalogViewRow] = VProductCatalogViewRow._rowParser.underlying
+  override def rowCodec: RowCodec[VProductCatalogViewRow] = VProductCatalogViewRow.rowCodec.underlying
 
   override def withPaths(`_path`: java.util.List[Path]): RelationStructure[VProductCatalogViewFields, VProductCatalogViewRow] = new VProductCatalogViewFields(`_path`)
 

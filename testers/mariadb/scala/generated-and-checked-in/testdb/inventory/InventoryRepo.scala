@@ -5,10 +5,11 @@
  */
 package testdb.inventory
 
-import dev.typr.foundations.scala.DeleteBuilder
-import dev.typr.foundations.scala.SelectBuilder
-import dev.typr.foundations.scala.UpdateBuilder
-import java.sql.Connection
+import dev.typr.dslsc.DeleteBuilder
+import dev.typr.dslsc.SelectBuilder
+import dev.typr.dslsc.UpdateBuilder
+import dev.typr.foundationssc.Connection
+import dev.typr.foundationssc.ConnectionRead
 import testdb.products.ProductsId
 import testdb.warehouses.WarehousesId
 
@@ -17,7 +18,7 @@ trait InventoryRepo {
 
   def deleteById(inventoryId: InventoryId)(using c: Connection): Boolean
 
-  def deleteByIds(inventoryIds: Array[InventoryId])(using c: Connection): Int
+  def deleteByIds(inventoryIds: List[InventoryId])(using c: Connection): Int
 
   def insert(unsaved: InventoryRow)(using c: Connection): InventoryRow
 
@@ -25,18 +26,18 @@ trait InventoryRepo {
 
   def select: SelectBuilder[InventoryFields, InventoryRow]
 
-  def selectAll(using c: Connection): List[InventoryRow]
+  def selectAll(using c: ConnectionRead): List[InventoryRow]
 
-  def selectById(inventoryId: InventoryId)(using c: Connection): Option[InventoryRow]
+  def selectById(inventoryId: InventoryId)(using c: ConnectionRead): Option[InventoryRow]
 
-  def selectByIds(inventoryIds: Array[InventoryId])(using c: Connection): List[InventoryRow]
+  def selectByIds(inventoryIds: List[InventoryId])(using c: ConnectionRead): List[InventoryRow]
 
-  def selectByIdsTracked(inventoryIds: Array[InventoryId])(using c: Connection): Map[InventoryId, InventoryRow]
+  def selectByIdsTracked(inventoryIds: List[InventoryId])(using c: ConnectionRead): Map[InventoryId, InventoryRow]
 
   def selectByUniqueProductIdAndWarehouseId(
     productId: ProductsId,
     warehouseId: WarehousesId
-  )(using c: Connection): Option[InventoryRow]
+  )(using c: ConnectionRead): Option[InventoryRow]
 
   def update: UpdateBuilder[InventoryFields, InventoryRow]
 

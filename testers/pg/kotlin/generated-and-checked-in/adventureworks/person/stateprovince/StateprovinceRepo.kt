@@ -5,10 +5,11 @@
  */
 package adventureworks.person.stateprovince
 
-import dev.typr.foundations.kotlin.DeleteBuilder
-import dev.typr.foundations.kotlin.SelectBuilder
-import dev.typr.foundations.kotlin.UpdateBuilder
-import java.sql.Connection
+import dev.typr.dslkt.DeleteBuilder
+import dev.typr.dslkt.SelectBuilder
+import dev.typr.dslkt.UpdateBuilder
+import dev.typr.foundationskt.Connection
+import dev.typr.foundationskt.ConnectionRead
 import kotlin.collections.Iterator
 import kotlin.collections.List
 import kotlin.collections.Map
@@ -19,10 +20,10 @@ interface StateprovinceRepo {
   abstract fun deleteById(
     stateprovinceid: StateprovinceId,
     c: Connection
-  ): Boolean
+  ): kotlin.Boolean
 
   abstract fun deleteByIds(
-    stateprovinceids: Array<StateprovinceId>,
+    stateprovinceids: List<StateprovinceId>,
     c: Connection
   ): Int
 
@@ -40,32 +41,32 @@ interface StateprovinceRepo {
     unsaved: Iterator<StateprovinceRow>,
     batchSize: Int = 10000,
     c: Connection
-  ): Long
+  ): kotlin.Long
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
   abstract fun insertUnsavedStreaming(
     unsaved: Iterator<StateprovinceRowUnsaved>,
     batchSize: Int = 10000,
     c: Connection
-  ): Long
+  ): kotlin.Long
 
   abstract fun select(): SelectBuilder<StateprovinceFields, StateprovinceRow>
 
-  abstract fun selectAll(c: Connection): List<StateprovinceRow>
+  abstract fun selectAll(c: ConnectionRead): List<StateprovinceRow>
 
   abstract fun selectById(
     stateprovinceid: StateprovinceId,
-    c: Connection
+    c: ConnectionRead
   ): StateprovinceRow?
 
   abstract fun selectByIds(
-    stateprovinceids: Array<StateprovinceId>,
-    c: Connection
+    stateprovinceids: List<StateprovinceId>,
+    c: ConnectionRead
   ): List<StateprovinceRow>
 
   abstract fun selectByIdsTracked(
-    stateprovinceids: Array<StateprovinceId>,
-    c: Connection
+    stateprovinceids: List<StateprovinceId>,
+    c: ConnectionRead
   ): Map<StateprovinceId, StateprovinceRow>
 
   abstract fun update(): UpdateBuilder<StateprovinceFields, StateprovinceRow>
@@ -73,7 +74,7 @@ interface StateprovinceRepo {
   abstract fun update(
     row: StateprovinceRow,
     c: Connection
-  ): Boolean
+  ): kotlin.Boolean
 
   abstract fun upsert(
     unsaved: StateprovinceRow,

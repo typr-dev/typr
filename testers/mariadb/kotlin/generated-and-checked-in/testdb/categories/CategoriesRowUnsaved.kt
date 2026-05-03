@@ -13,9 +13,9 @@ import testdb.customtypes.Defaulted.UseDefault
 /** This class corresponds to a row in table `categories` which has not been persisted yet */
 data class CategoriesRowUnsaved(
   /**  */
-  val name: String,
+  val name: kotlin.String,
   /**  */
-  val slug: String,
+  val slug: kotlin.String,
   /** Default: NULL
     * Points to [testdb.categories.CategoriesRow.categoryId]
     */
@@ -23,19 +23,19 @@ data class CategoriesRowUnsaved(
   /** Default: NULL
 
     */
-  val description: Defaulted<String?> = UseDefault(),
+  val description: Defaulted<kotlin.String?> = UseDefault(),
   /** Default: NULL
 
     */
-  @field:JsonProperty("image_url") val imageUrl: Defaulted<String?> = UseDefault(),
+  @field:JsonProperty("image_url") val imageUrl: Defaulted<kotlin.String?> = UseDefault(),
   /** Default: 0
 
     */
-  @field:JsonProperty("sort_order") val sortOrder: Defaulted<Short> = UseDefault(),
+  @field:JsonProperty("sort_order") val sortOrder: Defaulted<kotlin.Short> = UseDefault(),
   /** Default: 1
 
     */
-  @field:JsonProperty("is_visible") val isVisible: Defaulted<Boolean> = UseDefault(),
+  @field:JsonProperty("is_visible") val isVisible: Defaulted<kotlin.Boolean> = UseDefault(),
   /** Default: NULL
 
     */
@@ -43,10 +43,10 @@ data class CategoriesRowUnsaved(
 ) {
   fun toRow(
     parentIdDefault: () -> CategoriesId?,
-    descriptionDefault: () -> String?,
-    imageUrlDefault: () -> String?,
-    sortOrderDefault: () -> Short,
-    isVisibleDefault: () -> Boolean,
+    descriptionDefault: () -> kotlin.String?,
+    imageUrlDefault: () -> kotlin.String?,
+    sortOrderDefault: () -> kotlin.Short,
+    isVisibleDefault: () -> kotlin.Boolean,
     metadataDefault: () -> Json?,
     categoryIdDefault: () -> CategoriesId
   ): CategoriesRow = CategoriesRow(categoryId = categoryIdDefault(), parentId = parentId.getOrElse(parentIdDefault), name = name, slug = slug, description = description.getOrElse(descriptionDefault), imageUrl = imageUrl.getOrElse(imageUrlDefault), sortOrder = sortOrder.getOrElse(sortOrderDefault), isVisible = isVisible.getOrElse(isVisibleDefault), metadata = metadata.getOrElse(metadataDefault))

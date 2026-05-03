@@ -8,10 +8,10 @@ package adventureworks.humanresources.employeedepartmenthistory
 import adventureworks.humanresources.department.DepartmentId
 import adventureworks.humanresources.shift.ShiftId
 import adventureworks.person.businessentity.BusinessentityId
-import dev.typr.foundations.PgTypes
+import dev.typr.dslkt.RowCodecs
 import dev.typr.foundations.Tuple.Tuple4
-import dev.typr.foundations.kotlin.RowParser
-import dev.typr.foundations.kotlin.RowParsers
+import dev.typr.foundationskt.PgTypes
+import dev.typr.foundationskt.RowCodec
 import java.time.LocalDate
 
 /** Type for the composite primary key of table `humanresources.employeedepartmenthistory` */
@@ -30,6 +30,6 @@ data class EmployeedepartmenthistoryId(
   override fun _4(): ShiftId = shiftid
 
   companion object {
-    val _rowParser: RowParser<EmployeedepartmenthistoryId> = RowParsers.of(BusinessentityId.pgType, PgTypes.date, DepartmentId.pgType, ShiftId.pgType, { t0, t1, t2, t3 -> EmployeedepartmenthistoryId(t0, t1, t2, t3) }, { row -> arrayOf<Any?>(row.businessentityid, row.startdate, row.departmentid, row.shiftid) })
+    val rowCodec: RowCodec<EmployeedepartmenthistoryId> = RowCodecs.of(BusinessentityId.pgType, PgTypes.date, DepartmentId.pgType, ShiftId.pgType, { t0: BusinessentityId, t1: LocalDate, t2: DepartmentId, t3: ShiftId -> EmployeedepartmenthistoryId(t0, t1, t2, t3) }, { row: EmployeedepartmenthistoryId -> arrayOf<Any?>(row.businessentityid, row.startdate, row.departmentid, row.shiftid) })
   }
 }

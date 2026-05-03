@@ -1,0 +1,66 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$defs": {
+    "Address": {
+      "type": "object",
+      "properties": {
+        "street": { "type": "string" },
+        "city": { "type": "string" },
+        "zipCode": { "type": "string" },
+        "country": { "type": "string" }
+      },
+      "required": ["street", "city", "country"]
+    },
+    "Person": {
+      "type": "object",
+      "properties": {
+        "firstName": { "type": "string" },
+        "lastName": { "type": "string" },
+        "email": { "type": "string", "format": "email" },
+        "age": { "type": "integer", "format": "int32", "minimum": 0, "maximum": 150 },
+        "birthDate": { "type": "string", "format": "date" },
+        "address": { "$ref": "#/$defs/Address" },
+        "phoneNumbers": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "tags": {
+          "type": "array",
+          "items": { "type": "string" },
+          "uniqueItems": true
+        }
+      },
+      "required": ["firstName", "lastName", "email"]
+    },
+    "Company": {
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "registrationNumber": { "type": "string" },
+        "employees": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/Person" }
+        },
+        "headquarters": { "$ref": "#/$defs/Address" },
+        "metadata": {
+          "type": "object",
+          "additionalProperties": { "type": "string" }
+        }
+      },
+      "required": ["name", "registrationNumber"]
+    },
+    "Status": {
+      "type": "string",
+      "enum": ["active", "inactive", "pending", "archived"]
+    },
+    "UserId": {
+      "type": "string",
+      "description": "A unique user identifier"
+    },
+    "OrderAmount": {
+      "type": "number",
+      "format": "decimal",
+      "description": "Order amount in currency units"
+    }
+  }
+}

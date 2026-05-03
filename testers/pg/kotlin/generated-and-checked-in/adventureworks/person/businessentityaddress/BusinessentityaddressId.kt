@@ -8,9 +8,9 @@ package adventureworks.person.businessentityaddress
 import adventureworks.person.address.AddressId
 import adventureworks.person.addresstype.AddresstypeId
 import adventureworks.person.businessentity.BusinessentityId
+import dev.typr.dslkt.RowCodecs
 import dev.typr.foundations.Tuple.Tuple3
-import dev.typr.foundations.kotlin.RowParser
-import dev.typr.foundations.kotlin.RowParsers
+import dev.typr.foundationskt.RowCodec
 
 /** Type for the composite primary key of table `person.businessentityaddress` */
 data class BusinessentityaddressId(
@@ -25,6 +25,6 @@ data class BusinessentityaddressId(
   override fun _3(): AddresstypeId = addresstypeid
 
   companion object {
-    val _rowParser: RowParser<BusinessentityaddressId> = RowParsers.of(BusinessentityId.pgType, AddressId.pgType, AddresstypeId.pgType, { t0, t1, t2 -> BusinessentityaddressId(t0, t1, t2) }, { row -> arrayOf<Any?>(row.businessentityid, row.addressid, row.addresstypeid) })
+    val rowCodec: RowCodec<BusinessentityaddressId> = RowCodecs.of(BusinessentityId.pgType, AddressId.pgType, AddresstypeId.pgType, { t0: BusinessentityId, t1: AddressId, t2: AddresstypeId -> BusinessentityaddressId(t0, t1, t2) }, { row: BusinessentityaddressId -> arrayOf<Any?>(row.businessentityid, row.addressid, row.addresstypeid) })
   }
 }

@@ -6,17 +6,18 @@
 package adventureworks.public.issue142_2
 
 import adventureworks.public.issue142.Issue142Id
-import dev.typr.foundations.dsl.DeleteBuilder
-import dev.typr.foundations.dsl.DeleteBuilderMock
-import dev.typr.foundations.dsl.DeleteParams
-import dev.typr.foundations.dsl.SelectBuilder
-import dev.typr.foundations.dsl.SelectBuilderMock
-import dev.typr.foundations.dsl.SelectParams
-import dev.typr.foundations.dsl.UpdateBuilder
-import dev.typr.foundations.dsl.UpdateBuilderMock
-import dev.typr.foundations.dsl.UpdateParams
+import dev.typr.dsl.DeleteBuilder
+import dev.typr.dsl.DeleteBuilderMock
+import dev.typr.dsl.DeleteParams
+import dev.typr.dsl.SelectBuilder
+import dev.typr.dsl.SelectBuilderMock
+import dev.typr.dsl.SelectParams
+import dev.typr.dsl.UpdateBuilder
+import dev.typr.dsl.UpdateBuilderMock
+import dev.typr.dsl.UpdateParams
+import dev.typr.foundations.Connection
+import dev.typr.foundations.ConnectionRead
 import java.lang.RuntimeException
-import java.sql.Connection
 import java.util.ArrayList
 import java.util.HashMap
 import java.util.Optional
@@ -28,9 +29,9 @@ case class Issue1422RepoMock(map: HashMap[Issue142Id, Issue1422Row] = new HashMa
 
   override def deleteById(tabellkode: Issue142Id)(using c: Connection): java.lang.Boolean = Optional.ofNullable(map.remove(tabellkode)).isPresent()
 
-  override def deleteByIds(tabellkodes: Array[Issue142Id])(using c: Connection): Integer = {
+  override def deleteByIds(tabellkodes: java.util.List[Issue142Id])(using c: Connection): Integer = {
     var count = 0
-    tabellkodes.foreach { id => if (Optional.ofNullable(map.remove(id)).isPresent()) {
+    tabellkodes.forEach { id => if (Optional.ofNullable(map.remove(id)).isPresent()) {
       count = count + 1
     } }
     return count
@@ -59,19 +60,19 @@ case class Issue1422RepoMock(map: HashMap[Issue142Id, Issue1422Row] = new HashMa
 
   override def select: SelectBuilder[Issue1422Fields, Issue1422Row] = SelectBuilderMock(Issue1422Fields.structure, () => new ArrayList(map.values()), SelectParams.empty())
 
-  override def selectAll(using c: Connection): java.util.List[Issue1422Row] = new ArrayList(map.values())
+  override def selectAll(using c: ConnectionRead): java.util.List[Issue1422Row] = new ArrayList(map.values())
 
-  override def selectById(tabellkode: Issue142Id)(using c: Connection): Optional[Issue1422Row] = Optional.ofNullable(map.get(tabellkode))
+  override def selectById(tabellkode: Issue142Id)(using c: ConnectionRead): Optional[Issue1422Row] = Optional.ofNullable(map.get(tabellkode))
 
-  override def selectByIds(tabellkodes: Array[Issue142Id])(using c: Connection): java.util.List[Issue1422Row] = {
+  override def selectByIds(tabellkodes: java.util.List[Issue142Id])(using c: ConnectionRead): java.util.List[Issue1422Row] = {
     val result = new ArrayList[Issue1422Row]()
-    tabellkodes.foreach { id => val opt = Optional.ofNullable(map.get(id)); if (opt.isPresent()) {
+    tabellkodes.forEach { id => val opt = Optional.ofNullable(map.get(id)); if (opt.isPresent()) {
       result.add(opt.get()): @scala.annotation.nowarn
     } }
     return result
   }
 
-  override def selectByIdsTracked(tabellkodes: Array[Issue142Id])(using c: Connection): java.util.Map[Issue142Id, Issue1422Row] = selectByIds(tabellkodes)(using c).stream().collect(Collectors.toMap((row: Issue1422Row) => row.tabellkode, Function.identity()))
+  override def selectByIdsTracked(tabellkodes: java.util.List[Issue142Id])(using c: ConnectionRead): java.util.Map[Issue142Id, Issue1422Row] = selectByIds(tabellkodes)(using c).stream().collect(Collectors.toMap((row: Issue1422Row) => row.tabellkode, Function.identity()))
 
   override def update: UpdateBuilder[Issue1422Fields, Issue1422Row] = UpdateBuilderMock(Issue1422Fields.structure, () => new ArrayList(map.values()), UpdateParams.empty(), row => row)
 

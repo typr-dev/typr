@@ -47,7 +47,7 @@ object TypoUnknownCitext {
     )
   }
 
-  given bijection: Bijection[TypoUnknownCitext, String] = Bijection.apply[TypoUnknownCitext, String](_.value)(TypoUnknownCitext.apply)
+  given bijection: Bijection[TypoUnknownCitext, String] = Bijection[TypoUnknownCitext, String](_.value)(TypoUnknownCitext.apply)
 
   given jdbcDecoder: JdbcDecoder[TypoUnknownCitext] = {
     JdbcDecoder[TypoUnknownCitext](

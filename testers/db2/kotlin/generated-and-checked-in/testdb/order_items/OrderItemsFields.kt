@@ -5,31 +5,30 @@
  */
 package testdb.order_items
 
-import dev.typr.foundations.Db2Types
-import dev.typr.foundations.RowParser
-import dev.typr.foundations.dsl.FieldsBase
-import dev.typr.foundations.dsl.Path
-import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.kotlin.ForeignKey
-import dev.typr.foundations.kotlin.KotlinDbTypes
-import dev.typr.foundations.kotlin.RelationStructure
-import dev.typr.foundations.kotlin.SqlExpr
-import dev.typr.foundations.kotlin.SqlExpr.Field
-import dev.typr.foundations.kotlin.SqlExpr.IdField
-import dev.typr.foundations.kotlin.TupleExpr
-import dev.typr.foundations.kotlin.TupleExpr5
+import dev.typr.dsl.FieldsBase
+import dev.typr.dsl.Path
+import dev.typr.dsl.SqlExpr.FieldLike
+import dev.typr.dslkt.ForeignKey
+import dev.typr.dslkt.RelationStructure
+import dev.typr.dslkt.SqlExpr
+import dev.typr.dslkt.SqlExpr.Field
+import dev.typr.dslkt.SqlExpr.IdField
+import dev.typr.dslkt.TupleExpr
+import dev.typr.dslkt.TupleExpr5
+import dev.typr.foundations.RowCodec
+import dev.typr.foundationskt.Db2Types
 import java.math.BigDecimal
 import kotlin.collections.List
 import testdb.orders.OrdersFields
 import testdb.orders.OrdersId
 import testdb.orders.OrdersRow
 
-data class OrderItemsFields(val _path: List<Path>) : TupleExpr5<OrdersId, Int, String, Int, BigDecimal>, RelationStructure<OrderItemsFields, OrderItemsRow>, FieldsBase<OrderItemsRow> {
+data class OrderItemsFields(val _path: List<Path>) : TupleExpr5<OrdersId, Int, kotlin.String, Int, BigDecimal>, RelationStructure<OrderItemsFields, OrderItemsRow>, FieldsBase<OrderItemsRow> {
   override fun _1(): SqlExpr<OrdersId> = orderId()
 
   override fun _2(): SqlExpr<Int> = itemNumber()
 
-  override fun _3(): SqlExpr<String> = productName()
+  override fun _3(): SqlExpr<kotlin.String> = productName()
 
   override fun _4(): SqlExpr<Int> = quantity()
 
@@ -39,23 +38,23 @@ data class OrderItemsFields(val _path: List<Path>) : TupleExpr5<OrdersId, Int, S
 
   override fun columns(): List<FieldLike<*, OrderItemsRow>> = listOf(this.orderId().underlying, this.itemNumber().underlying, this.productName().underlying, this.quantity().underlying, this.unitPrice().underlying)
 
-  fun compositeIdIn(compositeIds: List<OrderItemsId>): SqlExpr<Boolean> = TupleExpr.of(orderId(), itemNumber()).among(compositeIds)
+  fun compositeIdIn(compositeIds: List<OrderItemsId>): SqlExpr<kotlin.Boolean> = TupleExpr.of(orderId(), itemNumber()).among(compositeIds)
 
-  fun compositeIdIs(compositeId: OrderItemsId): SqlExpr<Boolean> = SqlExpr.all(orderId().isEqual(compositeId.orderId), itemNumber().isEqual(compositeId.itemNumber))
+  fun compositeIdIs(compositeId: OrderItemsId): SqlExpr<kotlin.Boolean> = SqlExpr.all(orderId().isEqual(compositeId.orderId), itemNumber().isEqual(compositeId.itemNumber))
 
   fun fkOrders(): ForeignKey<OrdersFields, OrdersRow> = ForeignKey.of<OrdersFields, OrdersRow>("FK_ORDER").withColumnPair<OrdersId>(orderId(), OrdersFields::orderId)
 
-  fun itemNumber(): IdField<Int, OrderItemsRow> = IdField<Int, OrderItemsRow>(_path, "ITEM_NUMBER", OrderItemsRow::itemNumber, null, null, { row, value -> row.copy(itemNumber = value) }, KotlinDbTypes.Db2Types.integer)
+  fun itemNumber(): IdField<Int, OrderItemsRow> = IdField<Int, OrderItemsRow>(_path, "ITEM_NUMBER", OrderItemsRow::itemNumber, null, null, { row, value -> row.copy(itemNumber = value) }, Db2Types.integer.underlying)
 
-  fun orderId(): IdField<OrdersId, OrderItemsRow> = IdField<OrdersId, OrderItemsRow>(_path, "ORDER_ID", OrderItemsRow::orderId, null, null, { row, value -> row.copy(orderId = value) }, OrdersId.db2Type)
+  fun orderId(): IdField<OrdersId, OrderItemsRow> = IdField<OrdersId, OrderItemsRow>(_path, "ORDER_ID", OrderItemsRow::orderId, null, null, { row, value -> row.copy(orderId = value) }, OrdersId.db2Type.underlying)
 
-  fun productName(): Field<String, OrderItemsRow> = Field<String, OrderItemsRow>(_path, "PRODUCT_NAME", OrderItemsRow::productName, null, null, { row, value -> row.copy(productName = value) }, Db2Types.varchar)
+  fun productName(): Field<kotlin.String, OrderItemsRow> = Field<kotlin.String, OrderItemsRow>(_path, "PRODUCT_NAME", OrderItemsRow::productName, null, null, { row, value -> row.copy(productName = value) }, Db2Types.varchar.underlying)
 
-  fun quantity(): Field<Int, OrderItemsRow> = Field<Int, OrderItemsRow>(_path, "QUANTITY", OrderItemsRow::quantity, null, null, { row, value -> row.copy(quantity = value) }, KotlinDbTypes.Db2Types.integer)
+  fun quantity(): Field<Int, OrderItemsRow> = Field<Int, OrderItemsRow>(_path, "QUANTITY", OrderItemsRow::quantity, null, null, { row, value -> row.copy(quantity = value) }, Db2Types.integer.underlying)
 
-  override fun rowParser(): RowParser<OrderItemsRow> = OrderItemsRow._rowParser.underlying
+  override fun rowCodec(): RowCodec<OrderItemsRow> = OrderItemsRow.rowCodec.underlying
 
-  fun unitPrice(): Field<BigDecimal, OrderItemsRow> = Field<BigDecimal, OrderItemsRow>(_path, "UNIT_PRICE", OrderItemsRow::unitPrice, null, null, { row, value -> row.copy(unitPrice = value) }, KotlinDbTypes.Db2Types.decimal)
+  fun unitPrice(): Field<BigDecimal, OrderItemsRow> = Field<BigDecimal, OrderItemsRow>(_path, "UNIT_PRICE", OrderItemsRow::unitPrice, null, null, { row, value -> row.copy(unitPrice = value) }, Db2Types.decimal.underlying)
 
   override fun withPaths(_path: List<Path>): RelationStructure<OrderItemsFields, OrderItemsRow> = OrderItemsFields(_path)
 

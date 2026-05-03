@@ -5,28 +5,27 @@
  */
 package testdb.order_details
 
-import dev.typr.foundations.DuckDbTypes
-import dev.typr.foundations.RowParser
-import dev.typr.foundations.dsl.FieldsBase
-import dev.typr.foundations.dsl.Path
-import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.kotlin.KotlinDbTypes
-import dev.typr.foundations.kotlin.RelationStructure
-import dev.typr.foundations.kotlin.SqlExpr
-import dev.typr.foundations.kotlin.SqlExpr.OptField
-import dev.typr.foundations.kotlin.TupleExpr7
+import dev.typr.dsl.FieldsBase
+import dev.typr.dsl.Path
+import dev.typr.dsl.SqlExpr.FieldLike
+import dev.typr.dslkt.RelationStructure
+import dev.typr.dslkt.SqlExpr
+import dev.typr.dslkt.SqlExpr.OptField
+import dev.typr.dslkt.TupleExpr7
+import dev.typr.foundations.RowCodec
+import dev.typr.foundationskt.DuckDbTypes
 import java.math.BigDecimal
 import java.time.LocalDate
 import kotlin.collections.List
 
-data class OrderDetailsViewFields(val _path: List<Path>) : TupleExpr7<Int, LocalDate, String, String, Int, BigDecimal, BigDecimal>, RelationStructure<OrderDetailsViewFields, OrderDetailsViewRow>, FieldsBase<OrderDetailsViewRow> {
+data class OrderDetailsViewFields(val _path: List<Path>) : TupleExpr7<Int, LocalDate, kotlin.String, kotlin.String, Int, BigDecimal, BigDecimal>, RelationStructure<OrderDetailsViewFields, OrderDetailsViewRow>, FieldsBase<OrderDetailsViewRow> {
   override fun _1(): SqlExpr<Int> = orderId()
 
   override fun _2(): SqlExpr<LocalDate> = orderDate()
 
-  override fun _3(): SqlExpr<String> = customerName()
+  override fun _3(): SqlExpr<kotlin.String> = customerName()
 
-  override fun _4(): SqlExpr<String> = productName()
+  override fun _4(): SqlExpr<kotlin.String> = productName()
 
   override fun _5(): SqlExpr<Int> = quantity()
 
@@ -38,21 +37,21 @@ data class OrderDetailsViewFields(val _path: List<Path>) : TupleExpr7<Int, Local
 
   override fun columns(): List<FieldLike<*, OrderDetailsViewRow>> = listOf(this.orderId().underlying, this.orderDate().underlying, this.customerName().underlying, this.productName().underlying, this.quantity().underlying, this.unitPrice().underlying, this.lineTotal().underlying)
 
-  fun customerName(): OptField<String, OrderDetailsViewRow> = OptField<String, OrderDetailsViewRow>(_path, "customer_name", OrderDetailsViewRow::customerName, null, null, { row, value -> row.copy(customerName = value) }, DuckDbTypes.varchar)
+  fun customerName(): OptField<kotlin.String, OrderDetailsViewRow> = OptField<kotlin.String, OrderDetailsViewRow>(_path, "customer_name", OrderDetailsViewRow::customerName, null, null, { row, value -> row.copy(customerName = value) }, DuckDbTypes.varchar.underlying)
 
-  fun lineTotal(): OptField<BigDecimal, OrderDetailsViewRow> = OptField<BigDecimal, OrderDetailsViewRow>(_path, "line_total", OrderDetailsViewRow::lineTotal, null, "DECIMAL(18,2)", { row, value -> row.copy(lineTotal = value) }, DuckDbTypes.numeric)
+  fun lineTotal(): OptField<BigDecimal, OrderDetailsViewRow> = OptField<BigDecimal, OrderDetailsViewRow>(_path, "line_total", OrderDetailsViewRow::lineTotal, null, "DECIMAL(18,2)", { row, value -> row.copy(lineTotal = value) }, DuckDbTypes.numeric.underlying)
 
-  fun orderDate(): OptField<LocalDate, OrderDetailsViewRow> = OptField<LocalDate, OrderDetailsViewRow>(_path, "order_date", OrderDetailsViewRow::orderDate, null, "DATE", { row, value -> row.copy(orderDate = value) }, DuckDbTypes.date)
+  fun orderDate(): OptField<LocalDate, OrderDetailsViewRow> = OptField<LocalDate, OrderDetailsViewRow>(_path, "order_date", OrderDetailsViewRow::orderDate, null, "DATE", { row, value -> row.copy(orderDate = value) }, DuckDbTypes.date.underlying)
 
-  fun orderId(): OptField<Int, OrderDetailsViewRow> = OptField<Int, OrderDetailsViewRow>(_path, "order_id", OrderDetailsViewRow::orderId, null, "INTEGER", { row, value -> row.copy(orderId = value) }, KotlinDbTypes.DuckDbTypes.integer)
+  fun orderId(): OptField<Int, OrderDetailsViewRow> = OptField<Int, OrderDetailsViewRow>(_path, "order_id", OrderDetailsViewRow::orderId, null, "INTEGER", { row, value -> row.copy(orderId = value) }, DuckDbTypes.integer.underlying)
 
-  fun productName(): OptField<String, OrderDetailsViewRow> = OptField<String, OrderDetailsViewRow>(_path, "product_name", OrderDetailsViewRow::productName, null, null, { row, value -> row.copy(productName = value) }, DuckDbTypes.varchar)
+  fun productName(): OptField<kotlin.String, OrderDetailsViewRow> = OptField<kotlin.String, OrderDetailsViewRow>(_path, "product_name", OrderDetailsViewRow::productName, null, null, { row, value -> row.copy(productName = value) }, DuckDbTypes.varchar.underlying)
 
-  fun quantity(): OptField<Int, OrderDetailsViewRow> = OptField<Int, OrderDetailsViewRow>(_path, "quantity", OrderDetailsViewRow::quantity, null, "INTEGER", { row, value -> row.copy(quantity = value) }, KotlinDbTypes.DuckDbTypes.integer)
+  fun quantity(): OptField<Int, OrderDetailsViewRow> = OptField<Int, OrderDetailsViewRow>(_path, "quantity", OrderDetailsViewRow::quantity, null, "INTEGER", { row, value -> row.copy(quantity = value) }, DuckDbTypes.integer.underlying)
 
-  override fun rowParser(): RowParser<OrderDetailsViewRow> = OrderDetailsViewRow._rowParser.underlying
+  override fun rowCodec(): RowCodec<OrderDetailsViewRow> = OrderDetailsViewRow.rowCodec.underlying
 
-  fun unitPrice(): OptField<BigDecimal, OrderDetailsViewRow> = OptField<BigDecimal, OrderDetailsViewRow>(_path, "unit_price", OrderDetailsViewRow::unitPrice, null, "DECIMAL(10,2)", { row, value -> row.copy(unitPrice = value) }, DuckDbTypes.numeric)
+  fun unitPrice(): OptField<BigDecimal, OrderDetailsViewRow> = OptField<BigDecimal, OrderDetailsViewRow>(_path, "unit_price", OrderDetailsViewRow::unitPrice, null, "DECIMAL(10,2)", { row, value -> row.copy(unitPrice = value) }, DuckDbTypes.numeric.underlying)
 
   override fun withPaths(_path: List<Path>): RelationStructure<OrderDetailsViewFields, OrderDetailsViewRow> = OrderDetailsViewFields(_path)
 

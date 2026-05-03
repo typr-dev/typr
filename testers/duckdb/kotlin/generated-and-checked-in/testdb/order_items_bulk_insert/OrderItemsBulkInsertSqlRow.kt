@@ -6,11 +6,10 @@
 package testdb.order_items_bulk_insert
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import dev.typr.foundations.DuckDbTypes
+import dev.typr.dslkt.RowCodecs
 import dev.typr.foundations.Tuple.Tuple4
-import dev.typr.foundations.kotlin.KotlinDbTypes
-import dev.typr.foundations.kotlin.RowParser
-import dev.typr.foundations.kotlin.RowParsers
+import dev.typr.foundationskt.DuckDbTypes
+import dev.typr.foundationskt.RowCodec
 import java.math.BigDecimal
 
 /** SQL file: order_items_bulk_insert.sql */
@@ -33,6 +32,6 @@ data class OrderItemsBulkInsertSqlRow(
   override fun _4(): BigDecimal = unitPrice
 
   companion object {
-    val _rowParser: RowParser<OrderItemsBulkInsertSqlRow> = RowParsers.of(KotlinDbTypes.DuckDbTypes.integer, KotlinDbTypes.DuckDbTypes.integer, KotlinDbTypes.DuckDbTypes.integer, DuckDbTypes.numeric, { t0, t1, t2, t3 -> OrderItemsBulkInsertSqlRow(t0, t1, t2, t3) }, { row -> arrayOf<Any?>(row.orderId, row.productId, row.quantity, row.unitPrice) })
+    val rowCodec: RowCodec<OrderItemsBulkInsertSqlRow> = RowCodecs.of(DuckDbTypes.integer, DuckDbTypes.integer, DuckDbTypes.integer, DuckDbTypes.numeric, { t0: Int, t1: Int, t2: Int, t3: BigDecimal -> OrderItemsBulkInsertSqlRow(t0, t1, t2, t3) }, { row: OrderItemsBulkInsertSqlRow -> arrayOf<Any?>(row.orderId, row.productId, row.quantity, row.unitPrice) })
   }
 }

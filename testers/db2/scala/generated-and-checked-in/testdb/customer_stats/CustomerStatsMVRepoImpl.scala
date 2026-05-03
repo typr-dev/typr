@@ -5,17 +5,17 @@
  */
 package testdb.customer_stats
 
-import dev.typr.foundations.scala.Dialect
-import dev.typr.foundations.scala.SelectBuilder
-import java.sql.Connection
-import dev.typr.foundations.scala.Fragment.sql
+import dev.typr.dslsc.Dialect
+import dev.typr.dslsc.SelectBuilder
+import dev.typr.foundationssc.ConnectionRead
+import dev.typr.foundationssc.Fragment.sql
 
 class CustomerStatsMVRepoImpl extends CustomerStatsMVRepo {
-  override def select: SelectBuilder[CustomerStatsMVFields, CustomerStatsMVRow] = SelectBuilder.of(""""CUSTOMER_STATS"""", CustomerStatsMVFields.structure, CustomerStatsMVRow.`_rowParser`, Dialect.DB2)
+  override def select: SelectBuilder[CustomerStatsMVFields, CustomerStatsMVRow] = SelectBuilder.of(""""CUSTOMER_STATS"""", CustomerStatsMVFields.structure, CustomerStatsMVRow.rowCodec, Dialect.DB2)
 
-  override def selectAll(using c: Connection): List[CustomerStatsMVRow] = {
+  override def selectAll(using c: ConnectionRead): List[CustomerStatsMVRow] = {
     sql"""select "CUSTOMER_ID", "CUSTOMER_NAME", "TOTAL_ORDERS", "TOTAL_REVENUE"
     from "CUSTOMER_STATS"
-    """.query(CustomerStatsMVRow.`_rowParser`.all()).runUnchecked(c)
+    """.query(CustomerStatsMVRow.rowCodec.all()).run(using c)
   }
 }

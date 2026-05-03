@@ -6,11 +6,11 @@
 package adventureworks.information_schema
 
 import com.fasterxml.jackson.annotation.JsonValue
-import dev.typr.foundations.PgType
-import dev.typr.foundations.PgTypes
-import dev.typr.foundations.internal.arrayMap
-import dev.typr.foundations.kotlin.Bijection
+import dev.typr.foundationskt.Bijection
+import dev.typr.foundationskt.PgType
+import dev.typr.foundationskt.PgTypes
 import java.time.Instant
+import kotlin.collections.List
 
 /** Domain `information_schema.time_stamp`
   * No constraint
@@ -21,9 +21,9 @@ data class TimeStamp(@field:JsonValue val value: Instant) {
       Bijection.of(TimeStamp::value, ::TimeStamp)
 
     val pgType: PgType<TimeStamp> =
-      PgTypes.timestamptz.bimap(::TimeStamp, TimeStamp::value).renamed("\"information_schema\".\"time_stamp\"")
+      PgType(PgTypes.timestamptz.to(Bijection.of(::TimeStamp, TimeStamp::value)).underlying.renamed("\"information_schema\".\"time_stamp\""))
 
-    val pgTypeArray: PgType<Array<TimeStamp>> =
-      PgTypes.timestamptzArray.bimap({ xs -> arrayMap.map(xs, ::TimeStamp, TimeStamp::class.java) }, { xs -> arrayMap.map(xs, TimeStamp::value, Instant::class.java) }).renamed("\"information_schema\".\"time_stamp\"[]")
+    val pgTypeArray: PgType<List<TimeStamp>> =
+      pgType.array()
   }
 }

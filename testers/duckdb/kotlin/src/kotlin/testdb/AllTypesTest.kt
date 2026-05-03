@@ -37,7 +37,7 @@ class AllTypesTest {
         LocalDate.of(2025, 1, 15),
         LocalTime.of(14, 30, 45),
         LocalDateTime.of(2025, 1, 15, 14, 30, 45),
-        OffsetDateTime.of(2025, 1, 15, 14, 30, 45, 0, ZoneOffset.UTC),
+        OffsetDateTime.of(2025, 1, 15, 14, 30, 45, 0, ZoneOffset.UTC).toInstant(),
         Duration.ofHours(2).plusMinutes(30),
         UUID.fromString("550e8400-e29b-41d4-a716-446655440000"),
         Json("{\"key\": \"value\"}"),

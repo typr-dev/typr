@@ -6,10 +6,10 @@
 package adventureworks.precisetypes
 
 import com.fasterxml.jackson.annotation.JsonValue
-import dev.typr.foundations.PgType
-import dev.typr.foundations.PgTypes
+import dev.typr.dslsc.Bijection
 import dev.typr.foundations.data.precise.StringN
-import dev.typr.foundations.scala.Bijection
+import dev.typr.foundationssc.PgType
+import dev.typr.foundationssc.PgTypes
 import java.lang.IllegalArgumentException
 
 case class String10 private(@JsonValue value: String) extends StringN {
@@ -17,7 +17,7 @@ case class String10 private(@JsonValue value: String) extends StringN {
 
   override def maxLength: Int = 10
 
-  override def semanticEquals(other: StringN): Boolean = (if (other == null) false else value == other.rawValue())
+  override def semanticEquals(other: StringN): Boolean = (if (other == null) false else (value == other.rawValue()))
 
   override def semanticHashCode: Int = value.hashCode()
 
@@ -27,13 +27,13 @@ case class String10 private(@JsonValue value: String) extends StringN {
 }
 
 object String10 {
-  given bijection: Bijection[String10, String] = Bijection.apply[String10, String](_.value)(String10.apply)
+  given bijection: Bijection[String10, String] = Bijection.of[String10, String](_.value, String10.apply)
 
   def of(value: String): Option[String10] = (if (value.length <= 10) Some(new String10(value)) else None)
 
-  given pgType: PgType[String10] = PgTypes.text.bimap(String10.apply, _.value)
+  given pgType: PgType[String10] = PgTypes.text.to(Bijection.of(String10.apply, _.value))
 
-  given pgTypeArray: PgType[Array[String10]] = PgTypes.textArray.bimap(xs => xs.map(String10.apply), xs => xs.map(_.value))
+  given pgTypeArray: PgType[List[String10]] = pgType.array
 
   def truncate(value: String): String10 = new String10((if (value.length <= 10) value else value.substring(0, 10)))
 

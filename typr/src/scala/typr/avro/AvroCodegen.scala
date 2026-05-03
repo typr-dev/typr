@@ -460,7 +460,9 @@ object AvroCodegen {
 
     // Generate typed producers
     // Skip for JSON wire format - producers use Avro/Kafka serialization
-    if (options.generateProducers && !isJsonWireFormat) {
+    // Skip when framework integration generates EventPublisher instead (e.g., Cats with fs2-kafka)
+    val hasFrameworkPublishers = options.frameworkIntegration.kafkaFramework.isDefined && options.generateKafkaEvents
+    if (options.generateProducers && !isJsonWireFormat && !hasFrameworkPublishers) {
       val producerCodegen = new ProducerCodegen(naming, lang, options)
 
       // Generate producers for standalone records (not in event groups)
@@ -485,9 +487,11 @@ object AvroCodegen {
       }
     }
 
-    // Generate typed consumers
+    // Generate typed consumers (poll-based wrapper for raw Kafka usage)
     // Skip for JSON wire format - consumers use Avro/Kafka deserialization
-    if (options.generateConsumers && !isJsonWireFormat) {
+    // Skip when a framework is set - frameworks provide their own consumer patterns via Listeners
+    val hasFramework = options.frameworkIntegration.kafkaFramework.isDefined
+    if (options.generateConsumers && !isJsonWireFormat && !hasFramework) {
       val consumerCodegen = new ConsumerCodegen(naming, lang, options)
 
       // Generate consumers for standalone records (not in event groups)
@@ -598,6 +602,8 @@ object AvroCodegen {
       }
 
       // Generate framework-specific Kafka RPC client/server (Phase 3)
+      // Note: Cats framework only generates the server - fs2-kafka doesn't have a built-in request-reply pattern
+      // like Spring's ReplyingKafkaTemplate, so clients need to be implemented manually.
       if (options.generateKafkaRpc && protocols.nonEmpty) {
         val kafkaRpcCodegen = new KafkaRpcCodegen(naming, lang, framework, typeMapper, jsonLibSupport, options.effectType)
 

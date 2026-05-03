@@ -6,16 +6,16 @@
 package testdb.payment_methods
 
 import com.fasterxml.jackson.annotation.JsonValue
-import dev.typr.foundations.MariaType
-import dev.typr.foundations.MariaTypes
+import dev.typr.dslsc.Bijection
 import dev.typr.foundations.data.Uint1
-import dev.typr.foundations.scala.Bijection
+import dev.typr.foundationssc.MariaType
+import dev.typr.foundationssc.MariaTypes
 
 /** Type for the primary key of table `payment_methods` */
 case class PaymentMethodsId(@JsonValue value: Uint1) extends scala.AnyVal
 
 object PaymentMethodsId {
-  given bijection: Bijection[PaymentMethodsId, Uint1] = Bijection.apply[PaymentMethodsId, Uint1](_.value)(PaymentMethodsId.apply)
+  given bijection: Bijection[PaymentMethodsId, Uint1] = Bijection.of[PaymentMethodsId, Uint1](_.value, PaymentMethodsId.apply)
 
-  given mariaType: MariaType[PaymentMethodsId] = MariaTypes.tinyintUnsigned.bimap(PaymentMethodsId.apply, _.value)
+  given mariaType: MariaType[PaymentMethodsId] = MariaTypes.tinyintUnsigned.to(Bijection.of(PaymentMethodsId.apply, _.value))
 }

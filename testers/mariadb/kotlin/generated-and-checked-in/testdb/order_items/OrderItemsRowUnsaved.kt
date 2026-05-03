@@ -25,9 +25,9 @@ data class OrderItemsRowUnsaved(
     */
   @field:JsonProperty("product_id") val productId: ProductsId,
   /**  */
-  val sku: String,
+  val sku: kotlin.String,
   /**  */
-  @field:JsonProperty("product_name") val productName: String,
+  @field:JsonProperty("product_name") val productName: kotlin.String,
   /**  */
   val quantity: Uint2,
   /**  */
@@ -45,7 +45,7 @@ data class OrderItemsRowUnsaved(
   /** Default: 'pending'
 
     */
-  @field:JsonProperty("fulfillment_status") val fulfillmentStatus: Defaulted<String> = UseDefault(),
+  @field:JsonProperty("fulfillment_status") val fulfillmentStatus: Defaulted<kotlin.String> = UseDefault(),
   /** Default: NULL
     * Points to [testdb.warehouses.WarehousesRow.warehouseId]
     */
@@ -53,14 +53,14 @@ data class OrderItemsRowUnsaved(
   /** Default: NULL
 
     */
-  val notes: Defaulted<String?> = UseDefault()
+  val notes: Defaulted<kotlin.String?> = UseDefault()
 ) {
   fun toRow(
     discountAmountDefault: () -> BigDecimal,
     taxAmountDefault: () -> BigDecimal,
-    fulfillmentStatusDefault: () -> String,
+    fulfillmentStatusDefault: () -> kotlin.String,
     warehouseIdDefault: () -> WarehousesId?,
-    notesDefault: () -> String?,
+    notesDefault: () -> kotlin.String?,
     itemIdDefault: () -> OrderItemsId
   ): OrderItemsRow = OrderItemsRow(itemId = itemIdDefault(), orderId = orderId, productId = productId, sku = sku, productName = productName, quantity = quantity, unitPrice = unitPrice, discountAmount = discountAmount.getOrElse(discountAmountDefault), taxAmount = taxAmount.getOrElse(taxAmountDefault), lineTotal = lineTotal, fulfillmentStatus = fulfillmentStatus.getOrElse(fulfillmentStatusDefault), warehouseId = warehouseId.getOrElse(warehouseIdDefault), notes = notes.getOrElse(notesDefault))
 }

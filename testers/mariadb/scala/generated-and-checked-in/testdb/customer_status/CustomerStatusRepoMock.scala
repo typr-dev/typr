@@ -5,17 +5,18 @@
  */
 package testdb.customer_status
 
-import dev.typr.foundations.scala.DeleteBuilder
-import dev.typr.foundations.scala.DeleteBuilderMock
-import dev.typr.foundations.scala.DeleteParams
-import dev.typr.foundations.scala.SelectBuilder
-import dev.typr.foundations.scala.SelectBuilderMock
-import dev.typr.foundations.scala.SelectParams
-import dev.typr.foundations.scala.UpdateBuilder
-import dev.typr.foundations.scala.UpdateBuilderMock
-import dev.typr.foundations.scala.UpdateParams
+import dev.typr.dslsc.DeleteBuilder
+import dev.typr.dslsc.DeleteBuilderMock
+import dev.typr.dslsc.DeleteParams
+import dev.typr.dslsc.SelectBuilder
+import dev.typr.dslsc.SelectBuilderMock
+import dev.typr.dslsc.SelectParams
+import dev.typr.dslsc.UpdateBuilder
+import dev.typr.dslsc.UpdateBuilderMock
+import dev.typr.dslsc.UpdateParams
+import dev.typr.foundationssc.Connection
+import dev.typr.foundationssc.ConnectionRead
 import java.lang.RuntimeException
-import java.sql.Connection
 
 case class CustomerStatusRepoMock(
   toRow: CustomerStatusRowUnsaved => CustomerStatusRow,
@@ -25,7 +26,7 @@ case class CustomerStatusRepoMock(
 
   override def deleteById(statusCode: CustomerStatusId)(using c: Connection): Boolean = map.remove(statusCode).isDefined
 
-  override def deleteByIds(statusCodes: Array[CustomerStatusId])(using c: Connection): Int = {
+  override def deleteByIds(statusCodes: List[CustomerStatusId])(using c: Connection): Int = {
     var count = 0
     statusCodes.foreach { id => if (map.remove(id).isDefined) {
       count = count + 1
@@ -45,13 +46,13 @@ case class CustomerStatusRepoMock(
 
   override def select: SelectBuilder[CustomerStatusFields, CustomerStatusRow] = SelectBuilderMock(CustomerStatusFields.structure, () => map.values.toList, SelectParams.empty())
 
-  override def selectAll(using c: Connection): List[CustomerStatusRow] = map.values.toList
+  override def selectAll(using c: ConnectionRead): List[CustomerStatusRow] = map.values.toList
 
-  override def selectById(statusCode: CustomerStatusId)(using c: Connection): Option[CustomerStatusRow] = map.get(statusCode)
+  override def selectById(statusCode: CustomerStatusId)(using c: ConnectionRead): Option[CustomerStatusRow] = map.get(statusCode)
 
-  override def selectByIds(statusCodes: Array[CustomerStatusId])(using c: Connection): List[CustomerStatusRow] = statusCodes.flatMap(map.get(_)).toList
+  override def selectByIds(statusCodes: List[CustomerStatusId])(using c: ConnectionRead): List[CustomerStatusRow] = statusCodes.flatMap(map.get(_)).toList
 
-  override def selectByIdsTracked(statusCodes: Array[CustomerStatusId])(using c: Connection): Map[CustomerStatusId, CustomerStatusRow] = selectByIds(statusCodes)(using c).map(x => (((row: CustomerStatusRow) => row.statusCode).apply(x), x)).toMap
+  override def selectByIdsTracked(statusCodes: List[CustomerStatusId])(using c: ConnectionRead): Map[CustomerStatusId, CustomerStatusRow] = selectByIds(statusCodes)(using c).map(x => (((row: CustomerStatusRow) => row.statusCode).apply(x), x)).toMap
 
   override def update: UpdateBuilder[CustomerStatusFields, CustomerStatusRow] = UpdateBuilderMock(CustomerStatusFields.structure, () => map.values.toList, UpdateParams.empty(), row => row)
 

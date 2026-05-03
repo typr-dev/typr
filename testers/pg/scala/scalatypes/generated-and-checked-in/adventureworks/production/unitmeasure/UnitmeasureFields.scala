@@ -6,16 +6,16 @@
 package adventureworks.production.unitmeasure
 
 import adventureworks.public.Name
-import dev.typr.foundations.PgTypes
-import dev.typr.foundations.RowParser
-import dev.typr.foundations.dsl.FieldsBase
-import dev.typr.foundations.dsl.Path
-import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.scala.RelationStructure
-import dev.typr.foundations.scala.SqlExpr
-import dev.typr.foundations.scala.SqlExpr.Field
-import dev.typr.foundations.scala.SqlExpr.IdField
-import dev.typr.foundations.scala.TupleExpr3
+import dev.typr.dsl.FieldsBase
+import dev.typr.dsl.Path
+import dev.typr.dsl.SqlExpr.FieldLike
+import dev.typr.dslsc.RelationStructure
+import dev.typr.dslsc.SqlExpr
+import dev.typr.dslsc.SqlExpr.Field
+import dev.typr.dslsc.SqlExpr.IdField
+import dev.typr.dslsc.TupleExpr3
+import dev.typr.foundations.RowCodec
+import dev.typr.foundationssc.PgTypes
 import java.time.LocalDateTime
 
 class UnitmeasureFields(val `_path`: java.util.List[Path]) extends TupleExpr3[UnitmeasureId, Name, LocalDateTime] with RelationStructure[UnitmeasureFields, UnitmeasureRow]  with FieldsBase[UnitmeasureRow] {
@@ -27,7 +27,7 @@ class UnitmeasureFields(val `_path`: java.util.List[Path]) extends TupleExpr3[Un
       None,
       Some("bpchar"),
       (row, value) => row.copy(unitmeasurecode = value),
-      UnitmeasureId.pgType
+      UnitmeasureId.pgType.underlying
     )
   }
 
@@ -39,7 +39,7 @@ class UnitmeasureFields(val `_path`: java.util.List[Path]) extends TupleExpr3[Un
       None,
       Some("varchar"),
       (row, value) => row.copy(name = value),
-      Name.pgType
+      Name.pgType.underlying
     )
   }
 
@@ -51,13 +51,13 @@ class UnitmeasureFields(val `_path`: java.util.List[Path]) extends TupleExpr3[Un
       None,
       Some("timestamp"),
       (row, value) => row.copy(modifieddate = value),
-      PgTypes.timestamp
+      PgTypes.timestamp.underlying
     )
   }
 
   override def columns: java.util.List[FieldLike[?, UnitmeasureRow]] = java.util.List.of(this.unitmeasurecode.underlying, this.name.underlying, this.modifieddate.underlying)
 
-  override def rowParser: RowParser[UnitmeasureRow] = UnitmeasureRow._rowParser.underlying
+  override def rowCodec: RowCodec[UnitmeasureRow] = UnitmeasureRow.rowCodec.underlying
 
   override def withPaths(`_path`: java.util.List[Path]): RelationStructure[UnitmeasureFields, UnitmeasureRow] = new UnitmeasureFields(`_path`)
 

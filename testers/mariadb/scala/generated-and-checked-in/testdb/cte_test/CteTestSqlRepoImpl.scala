@@ -5,11 +5,11 @@
  */
 package testdb.cte_test
 
-import java.sql.Connection
-import dev.typr.foundations.scala.Fragment.sql
+import dev.typr.foundationssc.ConnectionRead
+import dev.typr.foundationssc.Fragment.sql
 
 class CteTestSqlRepoImpl extends CteTestSqlRepo {
-  override def apply(using c: Connection): List[CteTestSqlRow] = {
+  override def apply(using c: ConnectionRead): List[CteTestSqlRow] = {
     sql"""-- Test CTE tracking
     WITH customer_totals AS (
         SELECT
@@ -42,6 +42,6 @@ class CteTestSqlRepoImpl extends CteTestSqlRepo {
     LEFT JOIN order_items oi ON o.order_id = oi.order_id
     LEFT JOIN products p ON oi.product_id = p.product_id
     LEFT JOIN brands b ON p.brand_id = b.brand_id
-    """.query(CteTestSqlRow.`_rowParser`.all()).runUnchecked(c)
+    """.query(CteTestSqlRow.rowCodec.all()).run(using c)
   }
 }

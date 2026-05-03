@@ -5,12 +5,12 @@
  */
 package testdb.find_customers_by_email
 
-import java.sql.Connection
+import dev.typr.foundationskt.ConnectionRead
 import kotlin.collections.List
 
 interface FindCustomersByEmailSqlRepo {
   abstract fun apply(
-    emailPattern: String,
-    c: Connection
+    emailPattern: kotlin.String,
+    c: ConnectionRead
   ): List<FindCustomersByEmailSqlRow>
 }

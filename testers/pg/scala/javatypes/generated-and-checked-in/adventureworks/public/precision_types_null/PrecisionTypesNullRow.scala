@@ -14,11 +14,11 @@ import adventureworks.precisetypes.String20
 import adventureworks.precisetypes.String255
 import adventureworks.precisetypes.String50
 import com.fasterxml.jackson.annotation.JsonProperty
+import dev.typr.dsl.RowCodecs
+import dev.typr.dsl.RowCodecs.Function25
 import dev.typr.foundations.PgText
 import dev.typr.foundations.PgTypes
-import dev.typr.foundations.RowParser
-import dev.typr.foundations.RowParsers
-import dev.typr.foundations.RowParsers.Function25
+import dev.typr.foundations.RowCodec
 import dev.typr.foundations.Tuple.Tuple25
 import java.time.Instant
 import java.time.LocalDateTime
@@ -139,8 +139,10 @@ case class PrecisionTypesNullRow(
 }
 
 object PrecisionTypesNullRow {
-  val `_rowParser`: RowParser[PrecisionTypesNullRow] = {
-    RowParsers.of(PrecisionTypesNullId.pgType, String10.pgType.opt(), String20.pgType.opt(), String50.pgType.opt(), String100.pgType.opt(), String255.pgType.opt(), PaddedString3.pgType.opt(), PaddedString10.pgType.opt(), PgTypes.numeric.opt(), PgTypes.numeric.opt(), PgTypes.numeric.opt(), PgTypes.numeric.opt(), PgTypes.numeric.opt(), PgTypes.timestamp.opt(), PgTypes.timestamp.opt(), PgTypes.timestamp.opt(), PgTypes.timestamptz.opt(), PgTypes.timestamptz.opt(), PgTypes.timestamptz.opt(), PgTypes.time.opt(), PgTypes.time.opt(), PgTypes.time.opt(), PgTypes.timetz.opt(), PgTypes.timetz.opt(), PgTypes.timetz.opt(), new Function25[PrecisionTypesNullId, Optional[String10], Optional[String20], Optional[String50], Optional[String100], Optional[String255], Optional[PaddedString3], Optional[PaddedString10], Optional[java.math.BigDecimal], Optional[java.math.BigDecimal], Optional[java.math.BigDecimal], Optional[java.math.BigDecimal], Optional[java.math.BigDecimal], Optional[LocalDateTime], Optional[LocalDateTime], Optional[LocalDateTime], Optional[Instant], Optional[Instant], Optional[Instant], Optional[LocalTime], Optional[LocalTime], Optional[LocalTime], Optional[OffsetTime], Optional[OffsetTime], Optional[OffsetTime], PrecisionTypesNullRow] {
+  given pgText: PgText[PrecisionTypesNullRow] = PgText.from(rowCodec)
+
+  val rowCodec: RowCodec[PrecisionTypesNullRow] = {
+    RowCodecs.of(PrecisionTypesNullId.pgType, String10.pgType.opt, String20.pgType.opt, String50.pgType.opt, String100.pgType.opt, String255.pgType.opt, PaddedString3.pgType.opt, PaddedString10.pgType.opt, PgTypes.numeric.opt, PgTypes.numeric.opt, PgTypes.numeric.opt, PgTypes.numeric.opt, PgTypes.numeric.opt, PgTypes.timestamp.opt, PgTypes.timestamp.opt, PgTypes.timestamp.opt, PgTypes.timestamptz.opt, PgTypes.timestamptz.opt, PgTypes.timestamptz.opt, PgTypes.time.opt, PgTypes.time.opt, PgTypes.time.opt, PgTypes.timetz.opt, PgTypes.timetz.opt, PgTypes.timetz.opt, new Function25[PrecisionTypesNullId, Optional[String10], Optional[String20], Optional[String50], Optional[String100], Optional[String255], Optional[PaddedString3], Optional[PaddedString10], Optional[java.math.BigDecimal], Optional[java.math.BigDecimal], Optional[java.math.BigDecimal], Optional[java.math.BigDecimal], Optional[java.math.BigDecimal], Optional[LocalDateTime], Optional[LocalDateTime], Optional[LocalDateTime], Optional[Instant], Optional[Instant], Optional[Instant], Optional[LocalTime], Optional[LocalTime], Optional[LocalTime], Optional[OffsetTime], Optional[OffsetTime], Optional[OffsetTime], PrecisionTypesNullRow] {
       override def apply(
         t0: PrecisionTypesNullId,
         t1: Optional[String10],
@@ -198,6 +200,4 @@ object PrecisionTypesNullRow {
       }
     }, row => Array[Any](row.id, row.string10, row.string20, row.string50, row.string100, row.string255, row.bpchar3, row.bpchar10, row.decimal52, row.decimal102, row.decimal184, row.numeric82, row.numeric124, row.timestamp0, row.timestamp3, row.timestamp6, row.timestamptz0, row.timestamptz3, row.timestamptz6, row.time0, row.time3, row.time6, row.timetz0, row.timetz3, row.timetz6))
   }
-
-  given pgText: PgText[PrecisionTypesNullRow] = PgText.from(`_rowParser`)
 }

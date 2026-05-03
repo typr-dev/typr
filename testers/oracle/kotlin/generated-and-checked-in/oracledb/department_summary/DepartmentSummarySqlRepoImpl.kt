@@ -5,10 +5,10 @@
  */
 package oracledb.department_summary
 
-import dev.typr.foundations.kotlin.Fragment
-import java.sql.Connection
+import dev.typr.foundationskt.ConnectionRead
+import dev.typr.foundationskt.Fragment
 import kotlin.collections.List
 
 class DepartmentSummarySqlRepoImpl() : DepartmentSummarySqlRepo {
-  override fun apply(c: Connection): List<DepartmentSummarySqlRow> = Fragment.interpolate(Fragment.lit("-- Get department summary with employee count\nSELECT\n    d.dept_code,\n    d.dept_region,\n    d.dept_name,\n    d.budget,\n    COUNT(e.emp_number) as employee_count\nFROM departments d\nLEFT JOIN employees e ON d.dept_code = e.dept_code AND d.dept_region = e.dept_region\nGROUP BY d.dept_code, d.dept_region, d.dept_name, d.budget\nORDER BY d.dept_code, d.dept_region\n")).query(DepartmentSummarySqlRow._rowParser.all()).runUnchecked(c)
+  override fun apply(c: ConnectionRead): List<DepartmentSummarySqlRow> = Fragment.concat(Fragment.of("-- Get department summary with employee count\nSELECT\n    d.dept_code,\n    d.dept_region,\n    d.dept_name,\n    d.budget,\n    COUNT(e.emp_number) as employee_count\nFROM departments d\nLEFT JOIN employees e ON d.dept_code = e.dept_code AND d.dept_region = e.dept_region\nGROUP BY d.dept_code, d.dept_region, d.dept_name, d.budget\nORDER BY d.dept_code, d.dept_region\n")).query(DepartmentSummarySqlRow.rowCodec.all()).run(c)
 }

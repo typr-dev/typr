@@ -6,9 +6,9 @@
 package adventureworks.information_schema
 
 import com.fasterxml.jackson.annotation.JsonValue
-import dev.typr.foundations.PgType
-import dev.typr.foundations.PgTypes
-import dev.typr.foundations.scala.Bijection
+import dev.typr.dslsc.Bijection
+import dev.typr.foundationssc.PgType
+import dev.typr.foundationssc.PgTypes
 
 /** Domain `information_schema.yes_or_no`
  * Constraint: CHECK (((VALUE)::text = ANY ((ARRAY['YES'::character varying, 'NO'::character varying])::text[])))
@@ -16,9 +16,9 @@ import dev.typr.foundations.scala.Bijection
 case class YesOrNo(@JsonValue value: String)
 
 object YesOrNo {
-  given bijection: Bijection[YesOrNo, String] = Bijection.apply[YesOrNo, String](_.value)(YesOrNo.apply)
+  given bijection: Bijection[YesOrNo, String] = Bijection.of[YesOrNo, String](_.value, YesOrNo.apply)
 
-  given pgType: PgType[YesOrNo] = PgTypes.text.bimap(YesOrNo.apply, _.value).renamed(""""information_schema"."yes_or_no"""")
+  given pgType: PgType[YesOrNo] = PgType(PgTypes.text.to(Bijection.of(YesOrNo.apply, _.value)).underlying.renamed(""""information_schema"."yes_or_no""""))
 
-  given pgTypeArray: PgType[Array[YesOrNo]] = PgTypes.textArray.bimap(xs => xs.map(YesOrNo.apply), xs => xs.map(_.value)).renamed(""""information_schema"."yes_or_no"[]""")
+  given pgTypeArray: PgType[List[YesOrNo]] = pgType.array
 }

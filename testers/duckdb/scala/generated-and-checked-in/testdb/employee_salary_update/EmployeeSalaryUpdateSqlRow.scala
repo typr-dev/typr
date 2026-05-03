@@ -6,12 +6,10 @@
 package testdb.employee_salary_update
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import dev.typr.foundations.DuckDbTypes
+import dev.typr.dslsc.RowCodecs
 import dev.typr.foundations.Tuple.Tuple7
-import dev.typr.foundations.scala.DbTypeOps
-import dev.typr.foundations.scala.RowParser
-import dev.typr.foundations.scala.RowParsers
-import dev.typr.foundations.scala.ScalaDbTypes
+import dev.typr.foundationssc.DuckDbTypes
+import dev.typr.foundationssc.RowCodec
 import java.time.LocalDate
 
 /** SQL file: employee_salary_update.sql */
@@ -47,5 +45,5 @@ case class EmployeeSalaryUpdateSqlRow(
 }
 
 object EmployeeSalaryUpdateSqlRow {
-  val `_rowParser`: RowParser[EmployeeSalaryUpdateSqlRow] = RowParsers.of(ScalaDbTypes.DuckDbTypes.integer, DuckDbTypes.varchar, DuckDbTypes.varchar, DuckDbTypes.varchar, DuckDbTypes.varchar, ScalaDbTypes.DuckDbTypes.numeric.nullable, DuckDbTypes.date)(EmployeeSalaryUpdateSqlRow.apply)(row => Array[Any](row.empNumber, row.empSuffix, row.deptCode, row.deptRegion, row.empName, row.salary, row.hireDate))
+  val rowCodec: RowCodec[EmployeeSalaryUpdateSqlRow] = RowCodecs.of(DuckDbTypes.integer, DuckDbTypes.varchar, DuckDbTypes.varchar, DuckDbTypes.varchar, DuckDbTypes.varchar, DuckDbTypes.numeric.opt, DuckDbTypes.date)(EmployeeSalaryUpdateSqlRow.apply)(row => Array[Any](row.empNumber, row.empSuffix, row.deptCode, row.deptRegion, row.empName, row.salary, row.hireDate))
 }

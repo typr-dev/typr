@@ -5,21 +5,20 @@
  */
 package adventureworks.update_person_returning
 
-import dev.typr.foundations.PgTypes
-import dev.typr.foundations.scala.DbTypeOps
-import dev.typr.foundations.scala.Fragment
-import java.sql.Connection
+import dev.typr.foundationssc.ConnectionRead
+import dev.typr.foundationssc.Fragment
+import dev.typr.foundationssc.PgTypes
 import java.time.LocalDateTime
-import dev.typr.foundations.scala.Fragment.sql
+import dev.typr.foundationssc.Fragment.sql
 
 class UpdatePersonReturningSqlRepoImpl extends UpdatePersonReturningSqlRepo {
   override def apply(
     suffix: /* nullability unknown */ Option[String],
     cutoff: /* nullability unknown */ Option[LocalDateTime]
-  )(using c: Connection): List[UpdatePersonReturningSqlRow] = {
+  )(using c: ConnectionRead): List[UpdatePersonReturningSqlRow] = {
     sql"""update person.person
-    set firstname = firstname || '-' || ${Fragment.encode(PgTypes.text.nullable, suffix)}
-    where modifieddate < ${Fragment.encode(PgTypes.timestamp.nullable, cutoff)}::timestamp
-    returning firstname, modifieddate""".query(UpdatePersonReturningSqlRow.`_rowParser`.all()).runUnchecked(c)
+    set firstname = firstname || '-' || ${Fragment.encode(PgTypes.text.opt, suffix)}
+    where modifieddate < ${Fragment.encode(PgTypes.timestamp.opt, cutoff)}::timestamp
+    returning firstname, modifieddate""".query(UpdatePersonReturningSqlRow.rowCodec.all()).run(using c)
   }
 }

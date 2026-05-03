@@ -5,16 +5,16 @@
  */
 package adventureworks.person.businessentity
 
-import dev.typr.foundations.PgTypes
-import dev.typr.foundations.RowParser
-import dev.typr.foundations.dsl.FieldsBase
-import dev.typr.foundations.dsl.Path
-import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.scala.RelationStructure
-import dev.typr.foundations.scala.SqlExpr
-import dev.typr.foundations.scala.SqlExpr.Field
-import dev.typr.foundations.scala.SqlExpr.IdField
-import dev.typr.foundations.scala.TupleExpr3
+import dev.typr.dsl.FieldsBase
+import dev.typr.dsl.Path
+import dev.typr.dsl.SqlExpr.FieldLike
+import dev.typr.dslsc.RelationStructure
+import dev.typr.dslsc.SqlExpr
+import dev.typr.dslsc.SqlExpr.Field
+import dev.typr.dslsc.SqlExpr.IdField
+import dev.typr.dslsc.TupleExpr3
+import dev.typr.foundations.RowCodec
+import dev.typr.foundationssc.PgTypes
 import java.time.LocalDateTime
 import java.util.UUID
 
@@ -27,7 +27,7 @@ class BusinessentityFields(val `_path`: java.util.List[Path]) extends TupleExpr3
       None,
       Some("int4"),
       (row, value) => row.copy(businessentityid = value),
-      BusinessentityId.pgType
+      BusinessentityId.pgType.underlying
     )
   }
 
@@ -39,7 +39,7 @@ class BusinessentityFields(val `_path`: java.util.List[Path]) extends TupleExpr3
       None,
       Some("uuid"),
       (row, value) => row.copy(rowguid = value),
-      PgTypes.uuid
+      PgTypes.uuid.underlying
     )
   }
 
@@ -51,13 +51,13 @@ class BusinessentityFields(val `_path`: java.util.List[Path]) extends TupleExpr3
       None,
       Some("timestamp"),
       (row, value) => row.copy(modifieddate = value),
-      PgTypes.timestamp
+      PgTypes.timestamp.underlying
     )
   }
 
   override def columns: java.util.List[FieldLike[?, BusinessentityRow]] = java.util.List.of(this.businessentityid.underlying, this.rowguid.underlying, this.modifieddate.underlying)
 
-  override def rowParser: RowParser[BusinessentityRow] = BusinessentityRow._rowParser.underlying
+  override def rowCodec: RowCodec[BusinessentityRow] = BusinessentityRow.rowCodec.underlying
 
   override def withPaths(`_path`: java.util.List[Path]): RelationStructure[BusinessentityFields, BusinessentityRow] = new BusinessentityFields(`_path`)
 

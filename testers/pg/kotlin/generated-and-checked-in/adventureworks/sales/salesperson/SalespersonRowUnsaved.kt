@@ -10,8 +10,7 @@ import adventureworks.customtypes.Defaulted.UseDefault
 import adventureworks.person.businessentity.BusinessentityId
 import adventureworks.sales.salesterritory.SalesterritoryId
 import dev.typr.foundations.PgText
-import dev.typr.foundations.PgTypes
-import dev.typr.foundations.kotlin.nullable
+import dev.typr.foundationskt.PgTypes
 import java.math.BigDecimal
 import java.time.LocalDateTime
 import java.util.UUID
@@ -66,22 +65,22 @@ data class SalespersonRowUnsaved(
 
   companion object {
     val pgText: PgText<SalespersonRowUnsaved> =
-      PgText.instance({ row, sb -> BusinessentityId.pgType.text().unsafeEncode(row.businessentityid, sb)
+      PgText.instance({ row, sb -> BusinessentityId.pgType.pgText().unsafeEncode(row.businessentityid, sb)
       sb.append(PgText.DELIMETER)
-      SalesterritoryId.pgType.nullable().text().unsafeEncode(row.territoryid, sb)
+      SalesterritoryId.pgType.opt().pgText().unsafeEncode(row.territoryid, sb)
       sb.append(PgText.DELIMETER)
-      PgTypes.numeric.nullable().text().unsafeEncode(row.salesquota, sb)
+      PgTypes.numeric.opt().pgText().unsafeEncode(row.salesquota, sb)
       sb.append(PgText.DELIMETER)
-      Defaulted.pgText(PgTypes.numeric.text()).unsafeEncode(row.bonus, sb)
+      Defaulted.pgText(PgTypes.numeric.pgText()).unsafeEncode(row.bonus, sb)
       sb.append(PgText.DELIMETER)
-      Defaulted.pgText(PgTypes.numeric.text()).unsafeEncode(row.commissionpct, sb)
+      Defaulted.pgText(PgTypes.numeric.pgText()).unsafeEncode(row.commissionpct, sb)
       sb.append(PgText.DELIMETER)
-      Defaulted.pgText(PgTypes.numeric.text()).unsafeEncode(row.salesytd, sb)
+      Defaulted.pgText(PgTypes.numeric.pgText()).unsafeEncode(row.salesytd, sb)
       sb.append(PgText.DELIMETER)
-      Defaulted.pgText(PgTypes.numeric.text()).unsafeEncode(row.saleslastyear, sb)
+      Defaulted.pgText(PgTypes.numeric.pgText()).unsafeEncode(row.saleslastyear, sb)
       sb.append(PgText.DELIMETER)
-      Defaulted.pgText(PgTypes.uuid.text()).unsafeEncode(row.rowguid, sb)
+      Defaulted.pgText(PgTypes.uuid.pgText()).unsafeEncode(row.rowguid, sb)
       sb.append(PgText.DELIMETER)
-      Defaulted.pgText(PgTypes.timestamp.text()).unsafeEncode(row.modifieddate, sb) })
+      Defaulted.pgText(PgTypes.timestamp.pgText()).unsafeEncode(row.modifieddate, sb) })
   }
 }

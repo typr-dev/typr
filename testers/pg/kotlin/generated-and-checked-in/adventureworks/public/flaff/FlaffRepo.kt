@@ -5,10 +5,11 @@
  */
 package adventureworks.public.flaff
 
-import dev.typr.foundations.kotlin.DeleteBuilder
-import dev.typr.foundations.kotlin.SelectBuilder
-import dev.typr.foundations.kotlin.UpdateBuilder
-import java.sql.Connection
+import dev.typr.dslkt.DeleteBuilder
+import dev.typr.dslkt.SelectBuilder
+import dev.typr.dslkt.UpdateBuilder
+import dev.typr.foundationskt.Connection
+import dev.typr.foundationskt.ConnectionRead
 import kotlin.collections.Iterator
 import kotlin.collections.List
 import kotlin.collections.Map
@@ -19,10 +20,10 @@ interface FlaffRepo {
   abstract fun deleteById(
     compositeId: FlaffId,
     c: Connection
-  ): Boolean
+  ): kotlin.Boolean
 
   abstract fun deleteByIds(
-    compositeIds: Array<FlaffId>,
+    compositeIds: List<FlaffId>,
     c: Connection
   ): Int
 
@@ -35,25 +36,25 @@ interface FlaffRepo {
     unsaved: Iterator<FlaffRow>,
     batchSize: Int = 10000,
     c: Connection
-  ): Long
+  ): kotlin.Long
 
   abstract fun select(): SelectBuilder<FlaffFields, FlaffRow>
 
-  abstract fun selectAll(c: Connection): List<FlaffRow>
+  abstract fun selectAll(c: ConnectionRead): List<FlaffRow>
 
   abstract fun selectById(
     compositeId: FlaffId,
-    c: Connection
+    c: ConnectionRead
   ): FlaffRow?
 
   abstract fun selectByIds(
-    compositeIds: Array<FlaffId>,
-    c: Connection
+    compositeIds: List<FlaffId>,
+    c: ConnectionRead
   ): List<FlaffRow>
 
   abstract fun selectByIdsTracked(
-    compositeIds: Array<FlaffId>,
-    c: Connection
+    compositeIds: List<FlaffId>,
+    c: ConnectionRead
   ): Map<FlaffId, FlaffRow>
 
   abstract fun update(): UpdateBuilder<FlaffFields, FlaffRow>
@@ -61,7 +62,7 @@ interface FlaffRepo {
   abstract fun update(
     row: FlaffRow,
     c: Connection
-  ): Boolean
+  ): kotlin.Boolean
 
   abstract fun upsert(
     unsaved: FlaffRow,

@@ -6,9 +6,9 @@
 package testdb.userdefined
 
 import com.fasterxml.jackson.annotation.JsonValue
-import dev.typr.foundations.MariaType
-import dev.typr.foundations.MariaTypes
-import dev.typr.foundations.scala.Bijection
+import dev.typr.dslsc.Bijection
+import dev.typr.foundationssc.MariaType
+import dev.typr.foundationssc.MariaTypes
 
 /** Shared type `Email`
  * Generated from TypeDefinitions matching
@@ -16,7 +16,7 @@ import dev.typr.foundations.scala.Bijection
 case class Email(@JsonValue value: String) extends scala.AnyVal
 
 object Email {
-  given bijection: Bijection[Email, String] = Bijection.apply[Email, String](_.value)(Email.apply)
+  given bijection: Bijection[Email, String] = Bijection.of[Email, String](_.value, Email.apply)
 
-  given mariaType: MariaType[Email] = MariaTypes.varchar.bimap(Email.apply, _.value)
+  given mariaType: MariaType[Email] = MariaTypes.varchar.to(Bijection.of(Email.apply, _.value))
 }

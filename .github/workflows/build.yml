@@ -17,7 +17,7 @@ jobs:
     if: "!contains(github.event.head_commit.message, 'ci skip')"
     steps:
       - uses: actions/checkout@v4
-      - uses: bleep-build/bleep-setup-action@0.0.1
+      - uses: bleep-build/bleep-setup-action@v0.0.3
       - uses: coursier/cache-action@v6
         with:
           extraFiles: bleep.yaml
@@ -33,7 +33,7 @@ jobs:
       PG_MAJOR: 16
     steps:
       - uses: actions/checkout@v4
-      - uses: bleep-build/bleep-setup-action@0.0.1
+      - uses: bleep-build/bleep-setup-action@v0.0.3
       - uses: coursier/cache-action@v6
         with:
           extraFiles: bleep.yaml
@@ -65,16 +65,10 @@ jobs:
         postgres-version: [12, 16]
     steps:
       - uses: actions/checkout@v4
-      - uses: bleep-build/bleep-setup-action@0.0.1
+      - uses: bleep-build/bleep-setup-action@v0.0.3
       - uses: coursier/cache-action@v6
         with:
           extraFiles: bleep.yaml
-
-      - name: Set up JDK
-        uses: actions/setup-java@v4
-        with:
-          java-version: '21'
-          distribution: 'temurin'
 
       - name: Start Postgres
         env:
@@ -118,18 +112,11 @@ jobs:
           CI: true
         run: bleep test testers/pg/java
 
-      - name: Run foundations-jdbc Postgres tests
-        env:
-          CI: true
-        run: bleep compile foundations-jdbc-test && bleep test foundations-jdbc-test --only PgTypeTest
-
-      - name: Sourcegen
-        run: bleep sourcegen
 
       - name: Run Kotlin Postgres tests
         env:
           CI: true
-        run: ./gradlew :testers:pg:kotlin:test
+        run: bleep test testers/pg/kotlin
 
   build-mariadb:
     runs-on: ubuntu-latest
@@ -137,16 +124,10 @@ jobs:
     if: "!contains(github.event.head_commit.message, 'ci skip')"
     steps:
       - uses: actions/checkout@v4
-      - uses: bleep-build/bleep-setup-action@0.0.1
+      - uses: bleep-build/bleep-setup-action@v0.0.3
       - uses: coursier/cache-action@v6
         with:
           extraFiles: bleep.yaml
-
-      - name: Set up JDK
-        uses: actions/setup-java@v4
-        with:
-          java-version: '21'
-          distribution: 'temurin'
 
       - name: Start MariaDB
         run: docker compose up -d mariadb
@@ -172,18 +153,11 @@ jobs:
           CI: true
         run: bleep test testers/mariadb/java
 
-      - name: Run foundations-jdbc MariaDB tests
-        env:
-          CI: true
-        run: bleep compile foundations-jdbc-test && bleep test foundations-jdbc-test --only MariaTypeTest
-
-      - name: Sourcegen
-        run: bleep sourcegen
 
       - name: Run MariaDB Kotlin tests
         env:
           CI: true
-        run: ./gradlew :testers:mariadb:kotlin:test
+        run: bleep test testers/mariadb/kotlin
 
   build-oracle:
     runs-on: ubuntu-latest
@@ -191,16 +165,10 @@ jobs:
     if: "!contains(github.event.head_commit.message, 'ci skip')"
     steps:
       - uses: actions/checkout@v4
-      - uses: bleep-build/bleep-setup-action@0.0.1
+      - uses: bleep-build/bleep-setup-action@v0.0.3
       - uses: coursier/cache-action@v6
         with:
           extraFiles: bleep.yaml
-
-      - name: Set up JDK
-        uses: actions/setup-java@v4
-        with:
-          java-version: '21'
-          distribution: 'temurin'
 
       - name: Start Oracle and wait for healthy
         run: |
@@ -220,18 +188,11 @@ jobs:
           CI: true
         run: bleep test testers/oracle/java
 
-      - name: Run foundations-jdbc Oracle tests
-        env:
-          CI: true
-        run: bleep compile foundations-jdbc-test && bleep test foundations-jdbc-test --only OracleTypeTest
-
-      - name: Sourcegen
-        run: bleep sourcegen
 
       - name: Run Oracle Kotlin tests
         env:
           CI: true
-        run: ./gradlew :testers:oracle:kotlin:test
+        run: bleep test testers/oracle/kotlin
 
   build-duckdb:
     runs-on: ubuntu-latest
@@ -239,16 +200,10 @@ jobs:
     if: "!contains(github.event.head_commit.message, 'ci skip')"
     steps:
       - uses: actions/checkout@v4
-      - uses: bleep-build/bleep-setup-action@0.0.1
+      - uses: bleep-build/bleep-setup-action@v0.0.3
       - uses: coursier/cache-action@v6
         with:
           extraFiles: bleep.yaml
-
-      - name: Set up JDK
-        uses: actions/setup-java@v4
-        with:
-          java-version: '21'
-          distribution: 'temurin'
 
       - name: Run DuckDB Scala tests
         env:
@@ -260,18 +215,11 @@ jobs:
           CI: true
         run: bleep test testers/duckdb/java
 
-      - name: Run foundations-jdbc DuckDB tests
-        env:
-          CI: true
-        run: bleep compile foundations-jdbc-test && bleep test foundations-jdbc-test --only DuckDbTypeTest
-
-      - name: Sourcegen
-        run: bleep sourcegen
 
       - name: Run DuckDB Kotlin tests
         env:
           CI: true
-        run: ./gradlew :testers:duckdb:kotlin:test
+        run: bleep test testers/duckdb/kotlin
 
   build-sqlserver:
     runs-on: ubuntu-latest
@@ -279,16 +227,10 @@ jobs:
     if: "!contains(github.event.head_commit.message, 'ci skip')"
     steps:
       - uses: actions/checkout@v4
-      - uses: bleep-build/bleep-setup-action@0.0.1
+      - uses: bleep-build/bleep-setup-action@v0.0.3
       - uses: coursier/cache-action@v6
         with:
           extraFiles: bleep.yaml
-
-      - name: Set up JDK
-        uses: actions/setup-java@v4
-        with:
-          java-version: '21'
-          distribution: 'temurin'
 
       - name: Start SQL Server and wait for healthy
         run: |
@@ -310,18 +252,11 @@ jobs:
           CI: true
         run: bleep test testers/sqlserver/java
 
-      - name: Run foundations-jdbc SQL Server tests
-        env:
-          CI: true
-        run: bleep compile foundations-jdbc-test && bleep test foundations-jdbc-test --only SqlServerTypeTest
-
-      - name: Sourcegen
-        run: bleep sourcegen
 
       - name: Run SQL Server Kotlin tests
         env:
           CI: true
-        run: ./gradlew :testers:sqlserver:kotlin:test
+        run: bleep test testers/sqlserver/kotlin
 
   build-db2:
     runs-on: ubuntu-latest
@@ -329,16 +264,10 @@ jobs:
     if: "!contains(github.event.head_commit.message, 'ci skip')"
     steps:
       - uses: actions/checkout@v4
-      - uses: bleep-build/bleep-setup-action@0.0.1
+      - uses: bleep-build/bleep-setup-action@v0.0.3
       - uses: coursier/cache-action@v6
         with:
           extraFiles: bleep.yaml
-
-      - name: Set up JDK
-        uses: actions/setup-java@v4
-        with:
-          java-version: '21'
-          distribution: 'temurin'
 
       - name: Start DB2 and wait for healthy
         run: |
@@ -360,18 +289,11 @@ jobs:
           CI: true
         run: bleep test testers/db2/java
 
-      - name: Run foundations-jdbc DB2 tests
-        env:
-          CI: true
-        run: bleep compile foundations-jdbc-test && bleep test foundations-jdbc-test --only Db2TypeTest
-
-      - name: Sourcegen
-        run: bleep sourcegen
 
       - name: Run DB2 Kotlin tests
         env:
           CI: true
-        run: ./gradlew :testers:db2:kotlin:test
+        run: bleep test testers/db2/kotlin
 
   build-openapi:
     runs-on: ubuntu-latest
@@ -379,16 +301,10 @@ jobs:
     if: "!contains(github.event.head_commit.message, 'ci skip')"
     steps:
       - uses: actions/checkout@v4
-      - uses: bleep-build/bleep-setup-action@0.0.1
+      - uses: bleep-build/bleep-setup-action@v0.0.3
       - uses: coursier/cache-action@v6
         with:
           extraFiles: bleep.yaml
-
-      - name: Set up JDK
-        uses: actions/setup-java@v4
-        with:
-          java-version: '21'
-          distribution: 'temurin'
 
       - name: Compile Scala OpenAPI testers
         run: |
@@ -401,44 +317,35 @@ jobs:
           bleep compile testers/openapi/java/quarkus
           bleep compile testers/openapi/java/spring
 
-      - name: Sourcegen
-        run: bleep sourcegen
-
-      - name: Compile Kotlin OpenAPI testers (via gradle)
-        run: |
-          ./gradlew :testers:openapi:kotlin:jaxrs:compileKotlin
-          ./gradlew :testers:openapi:kotlin:spring:compileKotlin
-          ./gradlew :testers:openapi:kotlin:quarkus:compileKotlin
+      - name: Compile Kotlin OpenAPI testers
+        run: bleep compile testers/openapi/kotlin/jaxrs testers/openapi/kotlin/spring testers/openapi/kotlin/quarkus
 
   build-docs:
     timeout-minutes: 20
     runs-on: ubuntu-latest
     if: "!contains(github.event.head_commit.message, 'ci skip')"
-    env:
-      PG_MAJOR: 16
     steps:
       - uses: actions/checkout@v4
-      - uses: bleep-build/bleep-setup-action@0.0.1
+      - uses: bleep-build/bleep-setup-action@v0.0.3
       - uses: coursier/cache-action@v6
         with:
           extraFiles: bleep.yaml
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: site/package-lock.json
 
-      - name: Start up Postgres
-        run: docker compose up -d postgres
+      - name: Generate showcase code (no DB connections needed)
+        run: bleep generate-showcase
 
-      - name: Wait for Postgres
-        run: |
-          for i in {1..30}; do
-            if docker compose exec -T postgres pg_isready -U postgres; then
-              echo "Postgres is ready"
-              break
-            fi
-            echo "Waiting for Postgres... ($i/30)"
-            sleep 2
-          done
+      - name: Install site dependencies
+        working-directory: site
+        run: npm ci
 
-      - name: Build docs
-        run: bleep generate-docs
+      - name: Build docusaurus site
+        working-directory: site
+        run: npm run build
 
   release:
     timeout-minutes: 15
@@ -447,7 +354,7 @@ jobs:
     if: "startsWith(github.ref, 'refs/tags/v')"
     steps:
       - uses: actions/checkout@v4
-      - uses: bleep-build/bleep-setup-action@0.0.1
+      - uses: bleep-build/bleep-setup-action@v0.0.3
       - uses: coursier/cache-action@v6
         with:
           extraFiles: bleep.yaml

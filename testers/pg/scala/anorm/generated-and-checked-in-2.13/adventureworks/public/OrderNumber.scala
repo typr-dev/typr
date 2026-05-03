@@ -24,7 +24,7 @@ object OrderNumber {
 
   implicit lazy val arrayToStatement: ToStatement[Array[OrderNumber]] = ToStatement.arrayToParameter(ParameterMetaData.StringParameterMetaData).contramap(_.map(_.value))
 
-  implicit lazy val bijection: Bijection[OrderNumber, String] = Bijection.apply[OrderNumber, String](_.value)(OrderNumber.apply)
+  implicit lazy val bijection: Bijection[OrderNumber, String] = Bijection[OrderNumber, String](_.value)(OrderNumber.apply)
 
   implicit lazy val column: Column[OrderNumber] = Column.columnToString.map(OrderNumber.apply)
 

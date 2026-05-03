@@ -8,9 +8,9 @@ package adventureworks.person_dynamic
 import adventureworks.userdefined.FirstName
 import adventureworks.userdefined.LastName
 import adventureworks.userdefined.MiddleName
+import dev.typr.dsl.RowCodecs
 import dev.typr.foundations.PgTypes
-import dev.typr.foundations.RowParser
-import dev.typr.foundations.RowParsers
+import dev.typr.foundations.RowCodec
 import dev.typr.foundations.Tuple.Tuple4
 import java.util.Optional
 
@@ -35,5 +35,5 @@ case class PersonDynamicSqlRow(
 }
 
 object PersonDynamicSqlRow {
-  val `_rowParser`: RowParser[PersonDynamicSqlRow] = RowParsers.of(PgTypes.text.opt(), FirstName.pgType, MiddleName.pgType.opt(), LastName.pgType, PersonDynamicSqlRow.apply, row => Array[Any](row.title, row.firstname, row.middlename, row.lastname))
+  val rowCodec: RowCodec[PersonDynamicSqlRow] = RowCodecs.of(PgTypes.text.opt, FirstName.pgType, MiddleName.pgType.opt, LastName.pgType, PersonDynamicSqlRow.apply, row => Array[Any](row.title, row.firstname, row.middlename, row.lastname))
 }

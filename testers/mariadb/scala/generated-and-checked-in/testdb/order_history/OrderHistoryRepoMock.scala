@@ -5,17 +5,18 @@
  */
 package testdb.order_history
 
-import dev.typr.foundations.scala.DeleteBuilder
-import dev.typr.foundations.scala.DeleteBuilderMock
-import dev.typr.foundations.scala.DeleteParams
-import dev.typr.foundations.scala.SelectBuilder
-import dev.typr.foundations.scala.SelectBuilderMock
-import dev.typr.foundations.scala.SelectParams
-import dev.typr.foundations.scala.UpdateBuilder
-import dev.typr.foundations.scala.UpdateBuilderMock
-import dev.typr.foundations.scala.UpdateParams
+import dev.typr.dslsc.DeleteBuilder
+import dev.typr.dslsc.DeleteBuilderMock
+import dev.typr.dslsc.DeleteParams
+import dev.typr.dslsc.SelectBuilder
+import dev.typr.dslsc.SelectBuilderMock
+import dev.typr.dslsc.SelectParams
+import dev.typr.dslsc.UpdateBuilder
+import dev.typr.dslsc.UpdateBuilderMock
+import dev.typr.dslsc.UpdateParams
+import dev.typr.foundationssc.Connection
+import dev.typr.foundationssc.ConnectionRead
 import java.lang.RuntimeException
-import java.sql.Connection
 
 case class OrderHistoryRepoMock(
   toRow: OrderHistoryRowUnsaved => OrderHistoryRow,
@@ -25,7 +26,7 @@ case class OrderHistoryRepoMock(
 
   override def deleteById(historyId: OrderHistoryId)(using c: Connection): Boolean = map.remove(historyId).isDefined
 
-  override def deleteByIds(historyIds: Array[OrderHistoryId])(using c: Connection): Int = {
+  override def deleteByIds(historyIds: List[OrderHistoryId])(using c: Connection): Int = {
     var count = 0
     historyIds.foreach { id => if (map.remove(id).isDefined) {
       count = count + 1
@@ -45,13 +46,13 @@ case class OrderHistoryRepoMock(
 
   override def select: SelectBuilder[OrderHistoryFields, OrderHistoryRow] = SelectBuilderMock(OrderHistoryFields.structure, () => map.values.toList, SelectParams.empty())
 
-  override def selectAll(using c: Connection): List[OrderHistoryRow] = map.values.toList
+  override def selectAll(using c: ConnectionRead): List[OrderHistoryRow] = map.values.toList
 
-  override def selectById(historyId: OrderHistoryId)(using c: Connection): Option[OrderHistoryRow] = map.get(historyId)
+  override def selectById(historyId: OrderHistoryId)(using c: ConnectionRead): Option[OrderHistoryRow] = map.get(historyId)
 
-  override def selectByIds(historyIds: Array[OrderHistoryId])(using c: Connection): List[OrderHistoryRow] = historyIds.flatMap(map.get(_)).toList
+  override def selectByIds(historyIds: List[OrderHistoryId])(using c: ConnectionRead): List[OrderHistoryRow] = historyIds.flatMap(map.get(_)).toList
 
-  override def selectByIdsTracked(historyIds: Array[OrderHistoryId])(using c: Connection): Map[OrderHistoryId, OrderHistoryRow] = selectByIds(historyIds)(using c).map(x => (((row: OrderHistoryRow) => row.historyId).apply(x), x)).toMap
+  override def selectByIdsTracked(historyIds: List[OrderHistoryId])(using c: ConnectionRead): Map[OrderHistoryId, OrderHistoryRow] = selectByIds(historyIds)(using c).map(x => (((row: OrderHistoryRow) => row.historyId).apply(x), x)).toMap
 
   override def update: UpdateBuilder[OrderHistoryFields, OrderHistoryRow] = UpdateBuilderMock(OrderHistoryFields.structure, () => map.values.toList, UpdateParams.empty(), row => row)
 

@@ -5,13 +5,14 @@
  */
 package adventureworks.public.title
 
-import dev.typr.foundations.kotlin.DeleteBuilder
-import dev.typr.foundations.kotlin.Dialect
-import dev.typr.foundations.kotlin.Fragment
-import dev.typr.foundations.kotlin.SelectBuilder
-import dev.typr.foundations.kotlin.UpdateBuilder
-import dev.typr.foundations.streamingInsert
-import java.sql.Connection
+import dev.typr.dslkt.DeleteBuilder
+import dev.typr.dslkt.Dialect
+import dev.typr.dslkt.SelectBuilder
+import dev.typr.dslkt.UpdateBuilder
+import dev.typr.foundationskt.Connection
+import dev.typr.foundationskt.ConnectionRead
+import dev.typr.foundationskt.Fragment
+import dev.typr.foundationskt.StreamingInsert
 import kotlin.collections.Iterator
 import kotlin.collections.List
 import kotlin.collections.Map
@@ -23,65 +24,65 @@ class TitleRepoImpl() : TitleRepo {
   override fun deleteById(
     code: TitleId,
     c: Connection
-  ): Boolean = Fragment.interpolate(Fragment.lit("delete from \"public\".\"title\" where \"code\" = "), Fragment.encode(TitleId.pgType, code), Fragment.lit("")).update().runUnchecked(c) > 0
+  ): kotlin.Boolean = Fragment.concat(Fragment.of("delete from \"public\".\"title\" where \"code\" = "), Fragment.encode(TitleId.pgType, code), Fragment.of("")).update().run(c) > 0
 
   override fun deleteByIds(
-    codes: Array<TitleId>,
+    codes: List<TitleId>,
     c: Connection
-  ): Int = Fragment.interpolate(Fragment.lit("delete\nfrom \"public\".\"title\"\nwhere \"code\" = ANY("), Fragment.encode(TitleId.pgTypeArray, codes), Fragment.lit(")"))
+  ): Int = Fragment.concat(Fragment.of("delete\nfrom \"public\".\"title\"\nwhere \"code\" = ANY("), Fragment.encode(TitleId.pgType.array(), codes), Fragment.of(")"))
     .update()
-    .runUnchecked(c)
+    .run(c)
 
   override fun insert(
     unsaved: TitleRow,
     c: Connection
-  ): TitleRow = Fragment.interpolate(Fragment.lit("insert into \"public\".\"title\"(\"code\")\nvalues ("), Fragment.encode(TitleId.pgType, unsaved.code), Fragment.lit(")\nRETURNING \"code\"\n"))
-    .updateReturning(TitleRow._rowParser.exactlyOne()).runUnchecked(c)
+  ): TitleRow = Fragment.concat(Fragment.of("insert into \"public\".\"title\"(\"code\")\nvalues ("), Fragment.encode(TitleId.pgType, unsaved.code), Fragment.of(")\nRETURNING \"code\"\n"))
+    .updateReturning(TitleRow.rowCodec.exactlyOne()).run(c)
 
   override fun insertStreaming(
     unsaved: Iterator<TitleRow>,
     batchSize: Int,
     c: Connection
-  ): Long = streamingInsert.insertUnchecked("COPY \"public\".\"title\"(\"code\") FROM STDIN", batchSize, unsaved, c, TitleRow.pgText)
+  ): kotlin.Long = StreamingInsert.of("COPY \"public\".\"title\"(\"code\") FROM STDIN", batchSize, unsaved, TitleRow.pgText).run(c)
 
-  override fun select(): SelectBuilder<TitleFields, TitleRow> = SelectBuilder.of("\"public\".\"title\"", TitleFields.structure, TitleRow._rowParser, Dialect.POSTGRESQL)
+  override fun select(): SelectBuilder<TitleFields, TitleRow> = SelectBuilder.of("\"public\".\"title\"", TitleFields.structure, TitleRow.rowCodec, Dialect.POSTGRESQL)
 
-  override fun selectAll(c: Connection): List<TitleRow> = Fragment.interpolate(Fragment.lit("select \"code\"\nfrom \"public\".\"title\"\n")).query(TitleRow._rowParser.all()).runUnchecked(c)
+  override fun selectAll(c: ConnectionRead): List<TitleRow> = Fragment.concat(Fragment.of("select \"code\"\nfrom \"public\".\"title\"\n")).query(TitleRow.rowCodec.all()).run(c)
 
   override fun selectById(
     code: TitleId,
-    c: Connection
-  ): TitleRow? = Fragment.interpolate(Fragment.lit("select \"code\"\nfrom \"public\".\"title\"\nwhere \"code\" = "), Fragment.encode(TitleId.pgType, code), Fragment.lit("")).query(TitleRow._rowParser.first()).runUnchecked(c)
+    c: ConnectionRead
+  ): TitleRow? = Fragment.concat(Fragment.of("select \"code\"\nfrom \"public\".\"title\"\nwhere \"code\" = "), Fragment.encode(TitleId.pgType, code), Fragment.of("")).query(TitleRow.rowCodec.first()).run(c)
 
   override fun selectByIds(
-    codes: Array<TitleId>,
-    c: Connection
-  ): List<TitleRow> = Fragment.interpolate(Fragment.lit("select \"code\"\nfrom \"public\".\"title\"\nwhere \"code\" = ANY("), Fragment.encode(TitleId.pgTypeArray, codes), Fragment.lit(")")).query(TitleRow._rowParser.all()).runUnchecked(c)
+    codes: List<TitleId>,
+    c: ConnectionRead
+  ): List<TitleRow> = Fragment.concat(Fragment.of("select \"code\"\nfrom \"public\".\"title\"\nwhere \"code\" = ANY("), Fragment.encode(TitleId.pgType.array(), codes), Fragment.of(")")).query(TitleRow.rowCodec.all()).run(c)
 
   override fun selectByIdsTracked(
-    codes: Array<TitleId>,
-    c: Connection
+    codes: List<TitleId>,
+    c: ConnectionRead
   ): Map<TitleId, TitleRow> {
     val ret: MutableMap<TitleId, TitleRow> = mutableMapOf<TitleId, TitleRow>()
     selectByIds(codes, c).forEach({ row -> ret.put(row.code, row) })
     return ret.toMap()
   }
 
-  override fun update(): UpdateBuilder<TitleFields, TitleRow> = UpdateBuilder.of("\"public\".\"title\"", TitleFields.structure, TitleRow._rowParser, Dialect.POSTGRESQL)
+  override fun update(): UpdateBuilder<TitleFields, TitleRow> = UpdateBuilder.of("\"public\".\"title\"", TitleFields.structure, TitleRow.rowCodec, Dialect.POSTGRESQL)
 
   override fun upsert(
     unsaved: TitleRow,
     c: Connection
-  ): TitleRow = Fragment.interpolate(Fragment.lit("insert into \"public\".\"title\"(\"code\")\nvalues ("), Fragment.encode(TitleId.pgType, unsaved.code), Fragment.lit(")\non conflict (\"code\")\ndo update set \"code\" = EXCLUDED.\"code\"\nreturning \"code\""))
-    .updateReturning(TitleRow._rowParser.exactlyOne())
-    .runUnchecked(c)
+  ): TitleRow = Fragment.concat(Fragment.of("insert into \"public\".\"title\"(\"code\")\nvalues ("), Fragment.encode(TitleId.pgType, unsaved.code), Fragment.of(")\non conflict (\"code\")\ndo update set \"code\" = EXCLUDED.\"code\"\nreturning \"code\""))
+    .updateReturning(TitleRow.rowCodec.exactlyOne())
+    .run(c)
 
   override fun upsertBatch(
     unsaved: Iterator<TitleRow>,
     c: Connection
-  ): List<TitleRow> = Fragment.interpolate(Fragment.lit("insert into \"public\".\"title\"(\"code\")\nvalues (?)\non conflict (\"code\")\ndo update set \"code\" = EXCLUDED.\"code\"\nreturning \"code\""))
-    .updateManyReturning(TitleRow._rowParser, unsaved)
-  .runUnchecked(c)
+  ): List<TitleRow> = Fragment.concat(Fragment.of("insert into \"public\".\"title\"(\"code\")\nvalues (?)\non conflict (\"code\")\ndo update set \"code\" = EXCLUDED.\"code\"\nreturning \"code\""))
+    .updateManyReturning(TitleRow.rowCodec, unsaved)
+  .run(c)
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
   override fun upsertStreaming(
@@ -89,8 +90,8 @@ class TitleRepoImpl() : TitleRepo {
     batchSize: Int,
     c: Connection
   ): Int {
-    Fragment.interpolate(Fragment.lit("create temporary table title_TEMP (like \"public\".\"title\") on commit drop")).update().runUnchecked(c)
-    streamingInsert.insertUnchecked("copy title_TEMP(\"code\") from stdin", batchSize, unsaved, c, TitleRow.pgText)
-    return Fragment.interpolate(Fragment.lit("insert into \"public\".\"title\"(\"code\")\nselect * from title_TEMP\non conflict (\"code\")\ndo nothing\n;\ndrop table title_TEMP;")).update().runUnchecked(c)
+    Fragment.concat(Fragment.of("create temporary table title_TEMP (like \"public\".\"title\") on commit drop")).update().run(c)
+    StreamingInsert.of("copy title_TEMP(\"code\") from stdin", batchSize, unsaved, TitleRow.pgText).run(c)
+    return Fragment.concat(Fragment.of("insert into \"public\".\"title\"(\"code\")\nselect * from title_TEMP\non conflict (\"code\")\ndo nothing\n;\ndrop table title_TEMP;")).update().run(c)
   }
 }

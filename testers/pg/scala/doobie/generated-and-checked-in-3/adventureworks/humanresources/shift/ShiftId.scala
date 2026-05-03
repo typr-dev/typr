@@ -21,7 +21,7 @@ object ShiftId {
 
   given arrayPut: Put[Array[ShiftId]] = adventureworks.IntegerArrayMeta.put.contramap(_.map(_.value))
 
-  given bijection: Bijection[ShiftId, Int] = Bijection.apply[ShiftId, Int](_.value)(ShiftId.apply)
+  given bijection: Bijection[ShiftId, Int] = Bijection[ShiftId, Int](_.value)(ShiftId.apply)
 
   given decoder: Decoder[ShiftId] = Decoder.decodeInt.map(ShiftId.apply)
 

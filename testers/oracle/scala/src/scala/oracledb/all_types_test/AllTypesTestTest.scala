@@ -29,8 +29,8 @@ class AllTypesTestTest extends AnyFunSuite {
       java.lang.Double.valueOf(2.5),
       java.time.LocalDateTime.of(2025, 6, 15, 10, 30, 0),
       java.time.LocalDateTime.of(2025, 6, 15, 10, 30, 45, 123000000),
-      java.time.OffsetDateTime.of(2025, 6, 15, 10, 30, 45, 0, java.time.ZoneOffset.ofHours(-5)),
-      java.time.OffsetDateTime.of(2025, 6, 15, 10, 30, 45, 0, java.time.ZoneOffset.UTC),
+      java.time.ZonedDateTime.of(2025, 6, 15, 10, 30, 45, 0, java.time.ZoneOffset.ofHours(-5)),
+      java.time.Instant.parse("2025-06-15T10:30:45Z"),
       new OracleIntervalYM(2, 6),
       new OracleIntervalDS(5, 12, 30, 45, 0),
       address,
@@ -39,8 +39,7 @@ class AllTypesTestTest extends AnyFunSuite {
   }
 
   test("insert and select all types struct") {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       val data = createTestStruct("Test1")
 
       val unsaved = new AllTypesTestRowUnsaved(
@@ -72,8 +71,7 @@ class AllTypesTestTest extends AnyFunSuite {
   }
 
   test("roundtrip all fields") {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       val original = createTestStruct("Roundtrip")
 
       val unsaved = new AllTypesTestRowUnsaved(
@@ -106,8 +104,7 @@ class AllTypesTestTest extends AnyFunSuite {
   }
 
   test("insert with null data") {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       val unsaved = new AllTypesTestRowUnsaved(
         "Null Data Test",
         java.util.Optional.empty[AllTypesStructNoLobs](),
@@ -125,8 +122,7 @@ class AllTypesTestTest extends AnyFunSuite {
   }
 
   test("insert with array") {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       val struct1 = createTestStruct("Array1")
       val struct2 = createTestStruct("Array2")
 
@@ -151,8 +147,7 @@ class AllTypesTestTest extends AnyFunSuite {
   }
 
   test("update data") {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       val original = createTestStruct("Original")
 
       val unsaved = new AllTypesTestRowUnsaved(
@@ -177,8 +172,7 @@ class AllTypesTestTest extends AnyFunSuite {
   }
 
   test("delete") {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       val unsaved = new AllTypesTestRowUnsaved(
         "To Delete",
         java.util.Optional.empty[AllTypesStructNoLobs](),

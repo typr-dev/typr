@@ -5,17 +5,17 @@
  */
 package testdb.department_employee_details
 
+import dev.typr.foundationskt.ConnectionRead
 import java.math.BigDecimal
-import java.sql.Connection
 import java.time.LocalDate
 import kotlin.collections.List
 
 interface DepartmentEmployeeDetailsSqlRepo {
   abstract fun apply(
-    deptCode: String?,
-    deptRegion: String?,
+    deptCode: kotlin.String?,
+    deptRegion: kotlin.String?,
     minSalary: BigDecimal?,
     hiredAfter: LocalDate?,
-    c: Connection
+    c: ConnectionRead
   ): List<DepartmentEmployeeDetailsSqlRow>
 }

@@ -8,61 +8,60 @@ package adventureworks.humanresources.employeedepartmenthistory
 import adventureworks.humanresources.department.DepartmentId
 import adventureworks.humanresources.shift.ShiftId
 import adventureworks.person.businessentity.BusinessentityId
-import dev.typr.foundations.PgTypes
-import dev.typr.foundations.scala.DbTypeOps
-import dev.typr.foundations.scala.DeleteBuilder
-import dev.typr.foundations.scala.Dialect
-import dev.typr.foundations.scala.Fragment
-import dev.typr.foundations.scala.ScalaIteratorOps
-import dev.typr.foundations.scala.SelectBuilder
-import dev.typr.foundations.scala.UpdateBuilder
-import dev.typr.foundations.streamingInsert
-import java.sql.Connection
+import dev.typr.dslsc.DeleteBuilder
+import dev.typr.dslsc.Dialect
+import dev.typr.dslsc.SelectBuilder
+import dev.typr.dslsc.UpdateBuilder
+import dev.typr.foundationssc.Connection
+import dev.typr.foundationssc.ConnectionRead
+import dev.typr.foundationssc.Fragment
+import dev.typr.foundationssc.PgTypes
+import dev.typr.foundationssc.StreamingInsert
 import java.time.LocalDate
 import scala.collection.mutable.ListBuffer
-import dev.typr.foundations.scala.Fragment.sql
+import dev.typr.foundationssc.Fragment.sql
 
 class EmployeedepartmenthistoryRepoImpl extends EmployeedepartmenthistoryRepo {
   override def delete: DeleteBuilder[EmployeedepartmenthistoryFields, EmployeedepartmenthistoryRow] = DeleteBuilder.of(""""humanresources"."employeedepartmenthistory"""", EmployeedepartmenthistoryFields.structure, Dialect.POSTGRESQL)
 
-  override def deleteById(compositeId: EmployeedepartmenthistoryId)(using c: Connection): Boolean = sql"""delete from "humanresources"."employeedepartmenthistory" where "businessentityid" = ${Fragment.encode(BusinessentityId.pgType, compositeId.businessentityid)} AND "startdate" = ${Fragment.encode(PgTypes.date, compositeId.startdate)} AND "departmentid" = ${Fragment.encode(DepartmentId.pgType, compositeId.departmentid)} AND "shiftid" = ${Fragment.encode(ShiftId.pgType, compositeId.shiftid)}""".update().runUnchecked(c) > 0
+  override def deleteById(compositeId: EmployeedepartmenthistoryId)(using c: Connection): Boolean = sql"""delete from "humanresources"."employeedepartmenthistory" where "businessentityid" = ${Fragment.encode(BusinessentityId.pgType, compositeId.businessentityid)} AND "startdate" = ${Fragment.encode(PgTypes.date, compositeId.startdate)} AND "departmentid" = ${Fragment.encode(DepartmentId.pgType, compositeId.departmentid)} AND "shiftid" = ${Fragment.encode(ShiftId.pgType, compositeId.shiftid)}""".update().run(using c) > 0
 
-  override def deleteByIds(compositeIds: Array[EmployeedepartmenthistoryId])(using c: Connection): Int = {
-    val businessentityid: Array[BusinessentityId] = compositeIds.map(_.businessentityid)
-    val startdate: Array[LocalDate] = compositeIds.map(_.startdate)
-    val departmentid: Array[DepartmentId] = compositeIds.map(_.departmentid)
-    val shiftid: Array[ShiftId] = compositeIds.map(_.shiftid)
+  override def deleteByIds(compositeIds: List[EmployeedepartmenthistoryId])(using c: Connection): Int = {
+    val businessentityid: List[BusinessentityId] = compositeIds.map(_.businessentityid).toList
+    val startdate: List[LocalDate] = compositeIds.map(_.startdate).toList
+    val departmentid: List[DepartmentId] = compositeIds.map(_.departmentid).toList
+    val shiftid: List[ShiftId] = compositeIds.map(_.shiftid).toList
     return sql"""delete
     from "humanresources"."employeedepartmenthistory"
     where ("businessentityid", "startdate", "departmentid", "shiftid")
-    in (select * from unnest(${Fragment.encode(BusinessentityId.pgTypeArray, businessentityid)}, ${Fragment.encode(PgTypes.dateArray, startdate)}, ${Fragment.encode(DepartmentId.pgTypeArray, departmentid)}, ${Fragment.encode(ShiftId.pgTypeArray, shiftid)}))
-    """.update().runUnchecked(c)
+    in (select * from unnest(${Fragment.encode(BusinessentityId.pgType.array, businessentityid)}, ${Fragment.encode(PgTypes.date.array, startdate)}, ${Fragment.encode(DepartmentId.pgType.array, departmentid)}, ${Fragment.encode(ShiftId.pgType.array, shiftid)}))
+    """.update().run(using c)
   }
 
   override def insert(unsaved: EmployeedepartmenthistoryRow)(using c: Connection): EmployeedepartmenthistoryRow = {
   sql"""insert into "humanresources"."employeedepartmenthistory"("businessentityid", "departmentid", "shiftid", "startdate", "enddate", "modifieddate")
-    values (${Fragment.encode(BusinessentityId.pgType, unsaved.businessentityid)}::int4, ${Fragment.encode(DepartmentId.pgType, unsaved.departmentid)}::int2, ${Fragment.encode(ShiftId.pgType, unsaved.shiftid)}::int2, ${Fragment.encode(PgTypes.date, unsaved.startdate)}::date, ${Fragment.encode(PgTypes.date.nullable, unsaved.enddate)}::date, ${Fragment.encode(PgTypes.timestamp, unsaved.modifieddate)}::timestamp)
+    values (${Fragment.encode(BusinessentityId.pgType, unsaved.businessentityid)}::int4, ${Fragment.encode(DepartmentId.pgType, unsaved.departmentid)}::int2, ${Fragment.encode(ShiftId.pgType, unsaved.shiftid)}::int2, ${Fragment.encode(PgTypes.date, unsaved.startdate)}::date, ${Fragment.encode(PgTypes.date.opt, unsaved.enddate)}::date, ${Fragment.encode(PgTypes.timestamp, unsaved.modifieddate)}::timestamp)
     RETURNING "businessentityid", "departmentid", "shiftid", "startdate", "enddate", "modifieddate"
     """
-    .updateReturning(EmployeedepartmenthistoryRow.`_rowParser`.exactlyOne()).runUnchecked(c)
+    .updateReturning(EmployeedepartmenthistoryRow.rowCodec.exactlyOne()).run(using c)
   }
 
   override def insert(unsaved: EmployeedepartmenthistoryRowUnsaved)(using c: Connection): EmployeedepartmenthistoryRow = {
     val columns: ListBuffer[Fragment] = ListBuffer()
     val values: ListBuffer[Fragment] = ListBuffer()
-    columns.addOne(Fragment.lit(""""businessentityid"""")): @scala.annotation.nowarn
+    columns.addOne(Fragment.of(""""businessentityid"""")): @scala.annotation.nowarn
     values.addOne(sql"${Fragment.encode(BusinessentityId.pgType, unsaved.businessentityid)}::int4"): @scala.annotation.nowarn
-    columns.addOne(Fragment.lit(""""departmentid"""")): @scala.annotation.nowarn
+    columns.addOne(Fragment.of(""""departmentid"""")): @scala.annotation.nowarn
     values.addOne(sql"${Fragment.encode(DepartmentId.pgType, unsaved.departmentid)}::int2"): @scala.annotation.nowarn
-    columns.addOne(Fragment.lit(""""shiftid"""")): @scala.annotation.nowarn
+    columns.addOne(Fragment.of(""""shiftid"""")): @scala.annotation.nowarn
     values.addOne(sql"${Fragment.encode(ShiftId.pgType, unsaved.shiftid)}::int2"): @scala.annotation.nowarn
-    columns.addOne(Fragment.lit(""""startdate"""")): @scala.annotation.nowarn
+    columns.addOne(Fragment.of(""""startdate"""")): @scala.annotation.nowarn
     values.addOne(sql"${Fragment.encode(PgTypes.date, unsaved.startdate)}::date"): @scala.annotation.nowarn
-    columns.addOne(Fragment.lit(""""enddate"""")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(PgTypes.date.nullable, unsaved.enddate)}::date"): @scala.annotation.nowarn
+    columns.addOne(Fragment.of(""""enddate"""")): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(PgTypes.date.opt, unsaved.enddate)}::date"): @scala.annotation.nowarn
     unsaved.modifieddate.visit(
       {  },
-      value => { columns.addOne(Fragment.lit(""""modifieddate"""")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(PgTypes.timestamp, value)}::timestamp"): @scala.annotation.nowarn }
+      value => { columns.addOne(Fragment.of(""""modifieddate"""")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(PgTypes.timestamp, value)}::timestamp"): @scala.annotation.nowarn }
     );
     val q: Fragment = {
       sql"""insert into "humanresources"."employeedepartmenthistory"(${Fragment.comma(columns)})
@@ -70,72 +69,72 @@ class EmployeedepartmenthistoryRepoImpl extends EmployeedepartmenthistoryRepo {
       RETURNING "businessentityid", "departmentid", "shiftid", "startdate", "enddate", "modifieddate"
       """
     }
-    return q.updateReturning(EmployeedepartmenthistoryRow.`_rowParser`.exactlyOne()).runUnchecked(c)
+    return q.updateReturning(EmployeedepartmenthistoryRow.rowCodec.exactlyOne()).run(using c)
   }
 
   override def insertStreaming(
     unsaved: Iterator[EmployeedepartmenthistoryRow],
     batchSize: Int = 10000
-  )(using c: Connection): Long = streamingInsert.insertUnchecked(s"""COPY "humanresources"."employeedepartmenthistory"("businessentityid", "departmentid", "shiftid", "startdate", "enddate", "modifieddate") FROM STDIN""", batchSize, unsaved.toJavaIterator, c, EmployeedepartmenthistoryRow.pgText)
+  )(using c: Connection): Long = StreamingInsert.of(s"""COPY "humanresources"."employeedepartmenthistory"("businessentityid", "departmentid", "shiftid", "startdate", "enddate", "modifieddate") FROM STDIN""", batchSize, unsaved, EmployeedepartmenthistoryRow.pgText).run(using c)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
   override def insertUnsavedStreaming(
     unsaved: Iterator[EmployeedepartmenthistoryRowUnsaved],
     batchSize: Int = 10000
-  )(using c: Connection): Long = streamingInsert.insertUnchecked(s"""COPY "humanresources"."employeedepartmenthistory"("businessentityid", "departmentid", "shiftid", "startdate", "enddate", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved.toJavaIterator, c, EmployeedepartmenthistoryRowUnsaved.pgText)
+  )(using c: Connection): Long = StreamingInsert.of(s"""COPY "humanresources"."employeedepartmenthistory"("businessentityid", "departmentid", "shiftid", "startdate", "enddate", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved, EmployeedepartmenthistoryRowUnsaved.pgText).run(using c)
 
-  override def select: SelectBuilder[EmployeedepartmenthistoryFields, EmployeedepartmenthistoryRow] = SelectBuilder.of(""""humanresources"."employeedepartmenthistory"""", EmployeedepartmenthistoryFields.structure, EmployeedepartmenthistoryRow.`_rowParser`, Dialect.POSTGRESQL)
+  override def select: SelectBuilder[EmployeedepartmenthistoryFields, EmployeedepartmenthistoryRow] = SelectBuilder.of(""""humanresources"."employeedepartmenthistory"""", EmployeedepartmenthistoryFields.structure, EmployeedepartmenthistoryRow.rowCodec, Dialect.POSTGRESQL)
 
-  override def selectAll(using c: Connection): List[EmployeedepartmenthistoryRow] = {
+  override def selectAll(using c: ConnectionRead): List[EmployeedepartmenthistoryRow] = {
     sql"""select "businessentityid", "departmentid", "shiftid", "startdate", "enddate", "modifieddate"
     from "humanresources"."employeedepartmenthistory"
-    """.query(EmployeedepartmenthistoryRow.`_rowParser`.all()).runUnchecked(c)
+    """.query(EmployeedepartmenthistoryRow.rowCodec.all()).run(using c)
   }
 
-  override def selectById(compositeId: EmployeedepartmenthistoryId)(using c: Connection): Option[EmployeedepartmenthistoryRow] = {
+  override def selectById(compositeId: EmployeedepartmenthistoryId)(using c: ConnectionRead): Option[EmployeedepartmenthistoryRow] = {
     sql"""select "businessentityid", "departmentid", "shiftid", "startdate", "enddate", "modifieddate"
     from "humanresources"."employeedepartmenthistory"
-    where "businessentityid" = ${Fragment.encode(BusinessentityId.pgType, compositeId.businessentityid)} AND "startdate" = ${Fragment.encode(PgTypes.date, compositeId.startdate)} AND "departmentid" = ${Fragment.encode(DepartmentId.pgType, compositeId.departmentid)} AND "shiftid" = ${Fragment.encode(ShiftId.pgType, compositeId.shiftid)}""".query(EmployeedepartmenthistoryRow.`_rowParser`.first()).runUnchecked(c)
+    where "businessentityid" = ${Fragment.encode(BusinessentityId.pgType, compositeId.businessentityid)} AND "startdate" = ${Fragment.encode(PgTypes.date, compositeId.startdate)} AND "departmentid" = ${Fragment.encode(DepartmentId.pgType, compositeId.departmentid)} AND "shiftid" = ${Fragment.encode(ShiftId.pgType, compositeId.shiftid)}""".query(EmployeedepartmenthistoryRow.rowCodec.first()).run(using c)
   }
 
-  override def selectByIds(compositeIds: Array[EmployeedepartmenthistoryId])(using c: Connection): List[EmployeedepartmenthistoryRow] = {
-    val businessentityid: Array[BusinessentityId] = compositeIds.map(_.businessentityid)
-    val startdate: Array[LocalDate] = compositeIds.map(_.startdate)
-    val departmentid: Array[DepartmentId] = compositeIds.map(_.departmentid)
-    val shiftid: Array[ShiftId] = compositeIds.map(_.shiftid)
+  override def selectByIds(compositeIds: List[EmployeedepartmenthistoryId])(using c: ConnectionRead): List[EmployeedepartmenthistoryRow] = {
+    val businessentityid: List[BusinessentityId] = compositeIds.map(_.businessentityid).toList
+    val startdate: List[LocalDate] = compositeIds.map(_.startdate).toList
+    val departmentid: List[DepartmentId] = compositeIds.map(_.departmentid).toList
+    val shiftid: List[ShiftId] = compositeIds.map(_.shiftid).toList
     return sql"""select "businessentityid", "departmentid", "shiftid", "startdate", "enddate", "modifieddate"
     from "humanresources"."employeedepartmenthistory"
     where ("businessentityid", "startdate", "departmentid", "shiftid")
-    in (select * from unnest(${Fragment.encode(BusinessentityId.pgTypeArray, businessentityid)}, ${Fragment.encode(PgTypes.dateArray, startdate)}, ${Fragment.encode(DepartmentId.pgTypeArray, departmentid)}, ${Fragment.encode(ShiftId.pgTypeArray, shiftid)}))
-    """.query(EmployeedepartmenthistoryRow.`_rowParser`.all()).runUnchecked(c)
+    in (select * from unnest(${Fragment.encode(BusinessentityId.pgType.array, businessentityid)}, ${Fragment.encode(PgTypes.date.array, startdate)}, ${Fragment.encode(DepartmentId.pgType.array, departmentid)}, ${Fragment.encode(ShiftId.pgType.array, shiftid)}))
+    """.query(EmployeedepartmenthistoryRow.rowCodec.all()).run(using c)
   }
 
-  override def selectByIdsTracked(compositeIds: Array[EmployeedepartmenthistoryId])(using c: Connection): Map[EmployeedepartmenthistoryId, EmployeedepartmenthistoryRow] = {
+  override def selectByIdsTracked(compositeIds: List[EmployeedepartmenthistoryId])(using c: ConnectionRead): Map[EmployeedepartmenthistoryId, EmployeedepartmenthistoryRow] = {
     val ret: scala.collection.mutable.Map[EmployeedepartmenthistoryId, EmployeedepartmenthistoryRow] = scala.collection.mutable.Map.empty[EmployeedepartmenthistoryId, EmployeedepartmenthistoryRow]
     selectByIds(compositeIds)(using c).foreach(row => ret.put(row.compositeId, row): @scala.annotation.nowarn)
     return ret.toMap
   }
 
-  override def update: UpdateBuilder[EmployeedepartmenthistoryFields, EmployeedepartmenthistoryRow] = UpdateBuilder.of(""""humanresources"."employeedepartmenthistory"""", EmployeedepartmenthistoryFields.structure, EmployeedepartmenthistoryRow.`_rowParser`, Dialect.POSTGRESQL)
+  override def update: UpdateBuilder[EmployeedepartmenthistoryFields, EmployeedepartmenthistoryRow] = UpdateBuilder.of(""""humanresources"."employeedepartmenthistory"""", EmployeedepartmenthistoryFields.structure, EmployeedepartmenthistoryRow.rowCodec, Dialect.POSTGRESQL)
 
   override def update(row: EmployeedepartmenthistoryRow)(using c: Connection): Boolean = {
     val compositeId: EmployeedepartmenthistoryId = row.compositeId
     return sql"""update "humanresources"."employeedepartmenthistory"
-    set "enddate" = ${Fragment.encode(PgTypes.date.nullable, row.enddate)}::date,
+    set "enddate" = ${Fragment.encode(PgTypes.date.opt, row.enddate)}::date,
     "modifieddate" = ${Fragment.encode(PgTypes.timestamp, row.modifieddate)}::timestamp
-    where "businessentityid" = ${Fragment.encode(BusinessentityId.pgType, compositeId.businessentityid)} AND "startdate" = ${Fragment.encode(PgTypes.date, compositeId.startdate)} AND "departmentid" = ${Fragment.encode(DepartmentId.pgType, compositeId.departmentid)} AND "shiftid" = ${Fragment.encode(ShiftId.pgType, compositeId.shiftid)}""".update().runUnchecked(c) > 0
+    where "businessentityid" = ${Fragment.encode(BusinessentityId.pgType, compositeId.businessentityid)} AND "startdate" = ${Fragment.encode(PgTypes.date, compositeId.startdate)} AND "departmentid" = ${Fragment.encode(DepartmentId.pgType, compositeId.departmentid)} AND "shiftid" = ${Fragment.encode(ShiftId.pgType, compositeId.shiftid)}""".update().run(using c) > 0
   }
 
   override def upsert(unsaved: EmployeedepartmenthistoryRow)(using c: Connection): EmployeedepartmenthistoryRow = {
   sql"""insert into "humanresources"."employeedepartmenthistory"("businessentityid", "departmentid", "shiftid", "startdate", "enddate", "modifieddate")
-    values (${Fragment.encode(BusinessentityId.pgType, unsaved.businessentityid)}::int4, ${Fragment.encode(DepartmentId.pgType, unsaved.departmentid)}::int2, ${Fragment.encode(ShiftId.pgType, unsaved.shiftid)}::int2, ${Fragment.encode(PgTypes.date, unsaved.startdate)}::date, ${Fragment.encode(PgTypes.date.nullable, unsaved.enddate)}::date, ${Fragment.encode(PgTypes.timestamp, unsaved.modifieddate)}::timestamp)
+    values (${Fragment.encode(BusinessentityId.pgType, unsaved.businessentityid)}::int4, ${Fragment.encode(DepartmentId.pgType, unsaved.departmentid)}::int2, ${Fragment.encode(ShiftId.pgType, unsaved.shiftid)}::int2, ${Fragment.encode(PgTypes.date, unsaved.startdate)}::date, ${Fragment.encode(PgTypes.date.opt, unsaved.enddate)}::date, ${Fragment.encode(PgTypes.timestamp, unsaved.modifieddate)}::timestamp)
     on conflict ("businessentityid", "startdate", "departmentid", "shiftid")
     do update set
       "enddate" = EXCLUDED."enddate",
     "modifieddate" = EXCLUDED."modifieddate"
     returning "businessentityid", "departmentid", "shiftid", "startdate", "enddate", "modifieddate""""
-    .updateReturning(EmployeedepartmenthistoryRow.`_rowParser`.exactlyOne())
-    .runUnchecked(c)
+    .updateReturning(EmployeedepartmenthistoryRow.rowCodec.exactlyOne())
+    .run(using c)
   }
 
   override def upsertBatch(unsaved: Iterator[EmployeedepartmenthistoryRow])(using c: Connection): List[EmployeedepartmenthistoryRow] = {
@@ -146,8 +145,8 @@ class EmployeedepartmenthistoryRepoImpl extends EmployeedepartmenthistoryRepo {
       "enddate" = EXCLUDED."enddate",
     "modifieddate" = EXCLUDED."modifieddate"
     returning "businessentityid", "departmentid", "shiftid", "startdate", "enddate", "modifieddate""""
-      .updateManyReturning(EmployeedepartmenthistoryRow.`_rowParser`, unsaved)
-    .runUnchecked(c)
+      .updateManyReturning(EmployeedepartmenthistoryRow.rowCodec, unsaved)
+    .run(using c)
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
@@ -155,8 +154,8 @@ class EmployeedepartmenthistoryRepoImpl extends EmployeedepartmenthistoryRepo {
     unsaved: Iterator[EmployeedepartmenthistoryRow],
     batchSize: Int = 10000
   )(using c: Connection): Int = {
-    sql"""create temporary table employeedepartmenthistory_TEMP (like "humanresources"."employeedepartmenthistory") on commit drop""".update().runUnchecked(c): @scala.annotation.nowarn
-    streamingInsert.insertUnchecked(s"""copy employeedepartmenthistory_TEMP("businessentityid", "departmentid", "shiftid", "startdate", "enddate", "modifieddate") from stdin""", batchSize, unsaved.toJavaIterator, c, EmployeedepartmenthistoryRow.pgText): @scala.annotation.nowarn
+    sql"""create temporary table employeedepartmenthistory_TEMP (like "humanresources"."employeedepartmenthistory") on commit drop""".update().run(using c): @scala.annotation.nowarn
+    StreamingInsert.of(s"""copy employeedepartmenthistory_TEMP("businessentityid", "departmentid", "shiftid", "startdate", "enddate", "modifieddate") from stdin""", batchSize, unsaved, EmployeedepartmenthistoryRow.pgText).run(using c): @scala.annotation.nowarn
     return sql"""insert into "humanresources"."employeedepartmenthistory"("businessentityid", "departmentid", "shiftid", "startdate", "enddate", "modifieddate")
     select * from employeedepartmenthistory_TEMP
     on conflict ("businessentityid", "startdate", "departmentid", "shiftid")
@@ -164,6 +163,6 @@ class EmployeedepartmenthistoryRepoImpl extends EmployeedepartmenthistoryRepo {
       "enddate" = EXCLUDED."enddate",
     "modifieddate" = EXCLUDED."modifieddate"
     ;
-    drop table employeedepartmenthistory_TEMP;""".update().runUnchecked(c)
+    drop table employeedepartmenthistory_TEMP;""".update().run(using c)
   }
 }

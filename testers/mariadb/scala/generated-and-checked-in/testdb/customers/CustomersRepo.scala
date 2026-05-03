@@ -5,10 +5,11 @@
  */
 package testdb.customers
 
-import dev.typr.foundations.scala.DeleteBuilder
-import dev.typr.foundations.scala.SelectBuilder
-import dev.typr.foundations.scala.UpdateBuilder
-import java.sql.Connection
+import dev.typr.dslsc.DeleteBuilder
+import dev.typr.dslsc.SelectBuilder
+import dev.typr.dslsc.UpdateBuilder
+import dev.typr.foundationssc.Connection
+import dev.typr.foundationssc.ConnectionRead
 import testdb.userdefined.Email
 
 trait CustomersRepo {
@@ -16,7 +17,7 @@ trait CustomersRepo {
 
   def deleteById(customerId: CustomersId)(using c: Connection): Boolean
 
-  def deleteByIds(customerIds: Array[CustomersId])(using c: Connection): Int
+  def deleteByIds(customerIds: List[CustomersId])(using c: Connection): Int
 
   def insert(unsaved: CustomersRow)(using c: Connection): CustomersRow
 
@@ -24,15 +25,15 @@ trait CustomersRepo {
 
   def select: SelectBuilder[CustomersFields, CustomersRow]
 
-  def selectAll(using c: Connection): List[CustomersRow]
+  def selectAll(using c: ConnectionRead): List[CustomersRow]
 
-  def selectById(customerId: CustomersId)(using c: Connection): Option[CustomersRow]
+  def selectById(customerId: CustomersId)(using c: ConnectionRead): Option[CustomersRow]
 
-  def selectByIds(customerIds: Array[CustomersId])(using c: Connection): List[CustomersRow]
+  def selectByIds(customerIds: List[CustomersId])(using c: ConnectionRead): List[CustomersRow]
 
-  def selectByIdsTracked(customerIds: Array[CustomersId])(using c: Connection): Map[CustomersId, CustomersRow]
+  def selectByIdsTracked(customerIds: List[CustomersId])(using c: ConnectionRead): Map[CustomersId, CustomersRow]
 
-  def selectByUniqueEmail(email: /* user-picked */ Email)(using c: Connection): Option[CustomersRow]
+  def selectByUniqueEmail(email: /* user-picked */ Email)(using c: ConnectionRead): Option[CustomersRow]
 
   def update: UpdateBuilder[CustomersFields, CustomersRow]
 

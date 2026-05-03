@@ -6,137 +6,138 @@
 package adventureworks.person.emailaddress
 
 import adventureworks.person.businessentity.BusinessentityId
+import dev.typr.dsl.DeleteBuilder
+import dev.typr.dsl.Dialect
+import dev.typr.dsl.SelectBuilder
+import dev.typr.dsl.UpdateBuilder
+import dev.typr.foundations.Connection
+import dev.typr.foundations.ConnectionRead
 import dev.typr.foundations.Fragment
 import dev.typr.foundations.PgTypes
-import dev.typr.foundations.dsl.DeleteBuilder
-import dev.typr.foundations.dsl.Dialect
-import dev.typr.foundations.dsl.SelectBuilder
-import dev.typr.foundations.dsl.UpdateBuilder
-import dev.typr.foundations.streamingInsert
-import java.sql.Connection
+import dev.typr.foundations.StreamingInsert
 import java.util.ArrayList
 import java.util.HashMap
 import java.util.Optional
-import dev.typr.foundations.Fragment.interpolate
+import dev.typr.foundations.Fragment.concat
 
 class EmailaddressRepoImpl extends EmailaddressRepo {
   override def delete: DeleteBuilder[EmailaddressFields, EmailaddressRow] = DeleteBuilder.of(""""person"."emailaddress"""", EmailaddressFields.structure, Dialect.POSTGRESQL)
 
-  override def deleteById(compositeId: EmailaddressId)(using c: Connection): java.lang.Boolean = interpolate(Fragment.lit("""delete from "person"."emailaddress" where "businessentityid" = """), Fragment.encode(BusinessentityId.pgType, compositeId.businessentityid), Fragment.lit(""" AND "emailaddressid" = """), Fragment.encode(PgTypes.int4, compositeId.emailaddressid), Fragment.lit("")).update().runUnchecked(c) > 0
+  override def deleteById(compositeId: EmailaddressId)(using c: Connection): java.lang.Boolean = concat(Fragment.of("""delete from "person"."emailaddress" where "businessentityid" = """), Fragment.encode(BusinessentityId.pgType, compositeId.businessentityid), Fragment.of(""" AND "emailaddressid" = """), Fragment.encode(PgTypes.int4, compositeId.emailaddressid), Fragment.of("")).update().run(c) > 0
 
-  override def deleteByIds(compositeIds: Array[EmailaddressId])(using c: Connection): Integer = {
-    val businessentityid: Array[BusinessentityId] = compositeIds.map(_.businessentityid)
-    val emailaddressid: Array[Integer] = compositeIds.map(_.emailaddressid)
-    return interpolate(Fragment.lit("""delete
+  override def deleteByIds(compositeIds: java.util.List[EmailaddressId])(using c: Connection): Integer = {
+    val businessentityid: java.util.List[BusinessentityId] = compositeIds.stream().map(_.businessentityid).toList()
+    val emailaddressid: java.util.List[Integer] = compositeIds.stream().map(_.emailaddressid).toList()
+    return concat(Fragment.of("""delete
     from "person"."emailaddress"
     where ("businessentityid", "emailaddressid")
-    in (select * from unnest("""), Fragment.encode(BusinessentityId.pgTypeArray, businessentityid), Fragment.lit(", "), Fragment.encode(PgTypes.int4Array, emailaddressid), Fragment.lit("""))
-    """)).update().runUnchecked(c)
+    in (select * from unnest("""), Fragment.encode(BusinessentityId.pgType.array(), businessentityid), Fragment.of(", "), Fragment.encode(PgTypes.int4.array(), emailaddressid), Fragment.of("""))
+    """)).update().run(c)
   }
 
   override def insert(unsaved: EmailaddressRow)(using c: Connection): EmailaddressRow = {
-  interpolate(Fragment.lit("""insert into "person"."emailaddress"("businessentityid", "emailaddressid", "emailaddress", "rowguid", "modifieddate")
-    values ("""), Fragment.encode(BusinessentityId.pgType, unsaved.businessentityid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.int4, unsaved.emailaddressid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.text.opt(), unsaved.emailaddress), Fragment.lit(", "), Fragment.encode(PgTypes.uuid, unsaved.rowguid), Fragment.lit("::uuid, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("""::timestamp)
+  concat(Fragment.of("""insert into "person"."emailaddress"("businessentityid", "emailaddressid", "emailaddress", "rowguid", "modifieddate")
+    values ("""), Fragment.encode(BusinessentityId.pgType, unsaved.businessentityid), Fragment.of("::int4, "), Fragment.encode(PgTypes.int4, unsaved.emailaddressid), Fragment.of("::int4, "), Fragment.encode(PgTypes.text.opt, unsaved.emailaddress), Fragment.of(", "), Fragment.encode(PgTypes.uuid, unsaved.rowguid), Fragment.of("::uuid, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.of("""::timestamp)
     RETURNING "businessentityid", "emailaddressid", "emailaddress", "rowguid", "modifieddate"
     """))
-    .updateReturning(EmailaddressRow.`_rowParser`.exactlyOne()).runUnchecked(c)
+    .updateReturning(EmailaddressRow.rowCodec.exactlyOne()).run(c)
   }
 
   override def insert(unsaved: EmailaddressRowUnsaved)(using c: Connection): EmailaddressRow = {
     val columns: ArrayList[Fragment] = new ArrayList()
     val values: ArrayList[Fragment] = new ArrayList()
-    columns.add(Fragment.lit(""""businessentityid"""")): @scala.annotation.nowarn
-    values.add(interpolate(Fragment.encode(BusinessentityId.pgType, unsaved.businessentityid), Fragment.lit("::int4"))): @scala.annotation.nowarn
-    columns.add(Fragment.lit(""""emailaddress"""")): @scala.annotation.nowarn
-    values.add(interpolate(Fragment.encode(PgTypes.text.opt(), unsaved.emailaddress), Fragment.lit(""))): @scala.annotation.nowarn
+    columns.add(Fragment.of(""""businessentityid"""")): @scala.annotation.nowarn
+    values.add(concat(Fragment.encode(BusinessentityId.pgType, unsaved.businessentityid), Fragment.of("::int4"))): @scala.annotation.nowarn
+    columns.add(Fragment.of(""""emailaddress"""")): @scala.annotation.nowarn
+    values.add(concat(Fragment.encode(PgTypes.text.opt, unsaved.emailaddress), Fragment.of(""))): @scala.annotation.nowarn
     unsaved.emailaddressid.visit(
       {  },
-      value => { columns.add(Fragment.lit(""""emailaddressid"""")): @scala.annotation.nowarn; values.add(interpolate(Fragment.encode(PgTypes.int4, value), Fragment.lit("::int4"))): @scala.annotation.nowarn }
+      value => { columns.add(Fragment.of(""""emailaddressid"""")): @scala.annotation.nowarn; values.add(concat(Fragment.encode(PgTypes.int4, value), Fragment.of("::int4"))): @scala.annotation.nowarn }
     );
     unsaved.rowguid.visit(
       {  },
-      value => { columns.add(Fragment.lit(""""rowguid"""")): @scala.annotation.nowarn; values.add(interpolate(Fragment.encode(PgTypes.uuid, value), Fragment.lit("::uuid"))): @scala.annotation.nowarn }
+      value => { columns.add(Fragment.of(""""rowguid"""")): @scala.annotation.nowarn; values.add(concat(Fragment.encode(PgTypes.uuid, value), Fragment.of("::uuid"))): @scala.annotation.nowarn }
     );
     unsaved.modifieddate.visit(
       {  },
-      value => { columns.add(Fragment.lit(""""modifieddate"""")): @scala.annotation.nowarn; values.add(interpolate(Fragment.encode(PgTypes.timestamp, value), Fragment.lit("::timestamp"))): @scala.annotation.nowarn }
+      value => { columns.add(Fragment.of(""""modifieddate"""")): @scala.annotation.nowarn; values.add(concat(Fragment.encode(PgTypes.timestamp, value), Fragment.of("::timestamp"))): @scala.annotation.nowarn }
     );
     val q: Fragment = {
-      interpolate(Fragment.lit("""insert into "person"."emailaddress"("""), Fragment.comma(columns), Fragment.lit(""")
-      values ("""), Fragment.comma(values), Fragment.lit(""")
+      concat(Fragment.of("""insert into "person"."emailaddress"("""), Fragment.comma(columns), Fragment.of(""")
+      values ("""), Fragment.comma(values), Fragment.of(""")
       RETURNING "businessentityid", "emailaddressid", "emailaddress", "rowguid", "modifieddate"
       """))
     }
-    return q.updateReturning(EmailaddressRow.`_rowParser`.exactlyOne()).runUnchecked(c)
+    return q.updateReturning(EmailaddressRow.rowCodec.exactlyOne()).run(c)
   }
 
   override def insertStreaming(
     unsaved: java.util.Iterator[EmailaddressRow],
     batchSize: Integer = 10000
-  )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "person"."emailaddress"("businessentityid", "emailaddressid", "emailaddress", "rowguid", "modifieddate") FROM STDIN""", batchSize, unsaved, c, EmailaddressRow.pgText)
+  )(using c: Connection): java.lang.Long = StreamingInsert.of(s"""COPY "person"."emailaddress"("businessentityid", "emailaddressid", "emailaddress", "rowguid", "modifieddate") FROM STDIN""", batchSize, unsaved, EmailaddressRow.pgText).run(c)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
   override def insertUnsavedStreaming(
     unsaved: java.util.Iterator[EmailaddressRowUnsaved],
     batchSize: Integer = 10000
-  )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "person"."emailaddress"("businessentityid", "emailaddress", "emailaddressid", "rowguid", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved, c, EmailaddressRowUnsaved.pgText)
+  )(using c: Connection): java.lang.Long = StreamingInsert.of(s"""COPY "person"."emailaddress"("businessentityid", "emailaddress", "emailaddressid", "rowguid", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved, EmailaddressRowUnsaved.pgText).run(c)
 
-  override def select: SelectBuilder[EmailaddressFields, EmailaddressRow] = SelectBuilder.of(""""person"."emailaddress"""", EmailaddressFields.structure, EmailaddressRow.`_rowParser`, Dialect.POSTGRESQL)
+  override def select: SelectBuilder[EmailaddressFields, EmailaddressRow] = SelectBuilder.of(""""person"."emailaddress"""", EmailaddressFields.structure, EmailaddressRow.rowCodec, Dialect.POSTGRESQL)
 
-  override def selectAll(using c: Connection): java.util.List[EmailaddressRow] = {
-    interpolate(Fragment.lit("""select "businessentityid", "emailaddressid", "emailaddress", "rowguid", "modifieddate"
+  override def selectAll(using c: ConnectionRead): java.util.List[EmailaddressRow] = {
+    concat(Fragment.of("""select "businessentityid", "emailaddressid", "emailaddress", "rowguid", "modifieddate"
     from "person"."emailaddress"
-    """)).query(EmailaddressRow.`_rowParser`.all()).runUnchecked(c)
+    """)).query(EmailaddressRow.rowCodec.all()).run(c)
   }
 
-  override def selectById(compositeId: EmailaddressId)(using c: Connection): Optional[EmailaddressRow] = {
-    interpolate(Fragment.lit("""select "businessentityid", "emailaddressid", "emailaddress", "rowguid", "modifieddate"
+  override def selectById(compositeId: EmailaddressId)(using c: ConnectionRead): Optional[EmailaddressRow] = {
+    concat(Fragment.of("""select "businessentityid", "emailaddressid", "emailaddress", "rowguid", "modifieddate"
     from "person"."emailaddress"
-    where "businessentityid" = """), Fragment.encode(BusinessentityId.pgType, compositeId.businessentityid), Fragment.lit(""" AND "emailaddressid" = """), Fragment.encode(PgTypes.int4, compositeId.emailaddressid), Fragment.lit("")).query(EmailaddressRow.`_rowParser`.first()).runUnchecked(c)
+    where "businessentityid" = """), Fragment.encode(BusinessentityId.pgType, compositeId.businessentityid), Fragment.of(""" AND "emailaddressid" = """), Fragment.encode(PgTypes.int4, compositeId.emailaddressid), Fragment.of("")).query(EmailaddressRow.rowCodec.first()).run(c)
   }
 
-  override def selectByIds(compositeIds: Array[EmailaddressId])(using c: Connection): java.util.List[EmailaddressRow] = {
-    val businessentityid: Array[BusinessentityId] = compositeIds.map(_.businessentityid)
-    val emailaddressid: Array[Integer] = compositeIds.map(_.emailaddressid)
-    return interpolate(Fragment.lit("""select "businessentityid", "emailaddressid", "emailaddress", "rowguid", "modifieddate"
+  override def selectByIds(compositeIds: java.util.List[EmailaddressId])(using c: ConnectionRead): java.util.List[EmailaddressRow] = {
+    val businessentityid: java.util.List[BusinessentityId] = compositeIds.stream().map(_.businessentityid).toList()
+    val emailaddressid: java.util.List[Integer] = compositeIds.stream().map(_.emailaddressid).toList()
+    return concat(Fragment.of("""select "businessentityid", "emailaddressid", "emailaddress", "rowguid", "modifieddate"
     from "person"."emailaddress"
     where ("businessentityid", "emailaddressid")
-    in (select * from unnest("""), Fragment.encode(BusinessentityId.pgTypeArray, businessentityid), Fragment.lit(", "), Fragment.encode(PgTypes.int4Array, emailaddressid), Fragment.lit("""))
-    """)).query(EmailaddressRow.`_rowParser`.all()).runUnchecked(c)
+    in (select * from unnest("""), Fragment.encode(BusinessentityId.pgType.array(), businessentityid), Fragment.of(", "), Fragment.encode(PgTypes.int4.array(), emailaddressid), Fragment.of("""))
+    """)).query(EmailaddressRow.rowCodec.all()).run(c)
   }
 
-  override def selectByIdsTracked(compositeIds: Array[EmailaddressId])(using c: Connection): java.util.Map[EmailaddressId, EmailaddressRow] = {
+  override def selectByIdsTracked(compositeIds: java.util.List[EmailaddressId])(using c: ConnectionRead): java.util.Map[EmailaddressId, EmailaddressRow] = {
     val ret: HashMap[EmailaddressId, EmailaddressRow] = new HashMap[EmailaddressId, EmailaddressRow]()
     selectByIds(compositeIds)(using c).forEach(row => ret.put(row.compositeId, row): @scala.annotation.nowarn)
     return ret
   }
 
-  override def update: UpdateBuilder[EmailaddressFields, EmailaddressRow] = UpdateBuilder.of(""""person"."emailaddress"""", EmailaddressFields.structure, EmailaddressRow.`_rowParser`, Dialect.POSTGRESQL)
+  override def update: UpdateBuilder[EmailaddressFields, EmailaddressRow] = UpdateBuilder.of(""""person"."emailaddress"""", EmailaddressFields.structure, EmailaddressRow.rowCodec, Dialect.POSTGRESQL)
 
   override def update(row: EmailaddressRow)(using c: Connection): java.lang.Boolean = {
     val compositeId: EmailaddressId = row.compositeId
-    return interpolate(Fragment.lit("""update "person"."emailaddress"
-    set "emailaddress" = """), Fragment.encode(PgTypes.text.opt(), row.emailaddress), Fragment.lit(""",
-    "rowguid" = """), Fragment.encode(PgTypes.uuid, row.rowguid), Fragment.lit("""::uuid,
-    "modifieddate" = """), Fragment.encode(PgTypes.timestamp, row.modifieddate), Fragment.lit("""::timestamp
-    where "businessentityid" = """), Fragment.encode(BusinessentityId.pgType, compositeId.businessentityid), Fragment.lit(""" AND "emailaddressid" = """), Fragment.encode(PgTypes.int4, compositeId.emailaddressid), Fragment.lit("")).update().runUnchecked(c) > 0
+    return concat(Fragment.of("""update "person"."emailaddress"
+    set "emailaddress" = """), Fragment.encode(PgTypes.text.opt, row.emailaddress), Fragment.of(""",
+    "rowguid" = """), Fragment.encode(PgTypes.uuid, row.rowguid), Fragment.of("""::uuid,
+    "modifieddate" = """), Fragment.encode(PgTypes.timestamp, row.modifieddate), Fragment.of("""::timestamp
+    where "businessentityid" = """), Fragment.encode(BusinessentityId.pgType, compositeId.businessentityid), Fragment.of(""" AND "emailaddressid" = """), Fragment.encode(PgTypes.int4, compositeId.emailaddressid), Fragment.of("")).update().run(c) > 0
   }
 
   override def upsert(unsaved: EmailaddressRow)(using c: Connection): EmailaddressRow = {
-  interpolate(Fragment.lit("""insert into "person"."emailaddress"("businessentityid", "emailaddressid", "emailaddress", "rowguid", "modifieddate")
-    values ("""), Fragment.encode(BusinessentityId.pgType, unsaved.businessentityid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.int4, unsaved.emailaddressid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.text.opt(), unsaved.emailaddress), Fragment.lit(", "), Fragment.encode(PgTypes.uuid, unsaved.rowguid), Fragment.lit("::uuid, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("""::timestamp)
+  concat(Fragment.of("""insert into "person"."emailaddress"("businessentityid", "emailaddressid", "emailaddress", "rowguid", "modifieddate")
+    values ("""), Fragment.encode(BusinessentityId.pgType, unsaved.businessentityid), Fragment.of("::int4, "), Fragment.encode(PgTypes.int4, unsaved.emailaddressid), Fragment.of("::int4, "), Fragment.encode(PgTypes.text.opt, unsaved.emailaddress), Fragment.of(", "), Fragment.encode(PgTypes.uuid, unsaved.rowguid), Fragment.of("::uuid, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.of("""::timestamp)
     on conflict ("businessentityid", "emailaddressid")
     do update set
       "emailaddress" = EXCLUDED."emailaddress",
     "rowguid" = EXCLUDED."rowguid",
     "modifieddate" = EXCLUDED."modifieddate"
     returning "businessentityid", "emailaddressid", "emailaddress", "rowguid", "modifieddate""""))
-    .updateReturning(EmailaddressRow.`_rowParser`.exactlyOne())
-    .runUnchecked(c)
+    .updateReturning(EmailaddressRow.rowCodec.exactlyOne())
+    .run(c)
   }
 
   override def upsertBatch(unsaved: java.util.Iterator[EmailaddressRow])(using c: Connection): java.util.List[EmailaddressRow] = {
-    interpolate(Fragment.lit("""insert into "person"."emailaddress"("businessentityid", "emailaddressid", "emailaddress", "rowguid", "modifieddate")
+    concat(Fragment.of("""insert into "person"."emailaddress"("businessentityid", "emailaddressid", "emailaddress", "rowguid", "modifieddate")
     values (?::int4, ?::int4, ?, ?::uuid, ?::timestamp)
     on conflict ("businessentityid", "emailaddressid")
     do update set
@@ -144,8 +145,8 @@ class EmailaddressRepoImpl extends EmailaddressRepo {
     "rowguid" = EXCLUDED."rowguid",
     "modifieddate" = EXCLUDED."modifieddate"
     returning "businessentityid", "emailaddressid", "emailaddress", "rowguid", "modifieddate""""))
-      .updateManyReturning(EmailaddressRow.`_rowParser`, unsaved)
-    .runUnchecked(c)
+      .updateManyReturning(EmailaddressRow.rowCodec, unsaved)
+    .run(c)
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
@@ -153,9 +154,9 @@ class EmailaddressRepoImpl extends EmailaddressRepo {
     unsaved: java.util.Iterator[EmailaddressRow],
     batchSize: Integer = 10000
   )(using c: Connection): Integer = {
-    interpolate(Fragment.lit("""create temporary table emailaddress_TEMP (like "person"."emailaddress") on commit drop""")).update().runUnchecked(c): @scala.annotation.nowarn
-    streamingInsert.insertUnchecked(s"""copy emailaddress_TEMP("businessentityid", "emailaddressid", "emailaddress", "rowguid", "modifieddate") from stdin""", batchSize, unsaved, c, EmailaddressRow.pgText): @scala.annotation.nowarn
-    return interpolate(Fragment.lit("""insert into "person"."emailaddress"("businessentityid", "emailaddressid", "emailaddress", "rowguid", "modifieddate")
+    concat(Fragment.of("""create temporary table emailaddress_TEMP (like "person"."emailaddress") on commit drop""")).update().run(c): @scala.annotation.nowarn
+    StreamingInsert.of(s"""copy emailaddress_TEMP("businessentityid", "emailaddressid", "emailaddress", "rowguid", "modifieddate") from stdin""", batchSize, unsaved, EmailaddressRow.pgText).run(c): @scala.annotation.nowarn
+    return concat(Fragment.of("""insert into "person"."emailaddress"("businessentityid", "emailaddressid", "emailaddress", "rowguid", "modifieddate")
     select * from emailaddress_TEMP
     on conflict ("businessentityid", "emailaddressid")
     do update set
@@ -163,6 +164,6 @@ class EmailaddressRepoImpl extends EmailaddressRepo {
     "rowguid" = EXCLUDED."rowguid",
     "modifieddate" = EXCLUDED."modifieddate"
     ;
-    drop table emailaddress_TEMP;""")).update().runUnchecked(c)
+    drop table emailaddress_TEMP;""")).update().run(c)
   }
 }

@@ -6,17 +6,17 @@
 package adventureworks.person_detail
 
 import adventureworks.person.businessentity.BusinessentityId
-import dev.typr.foundations.PgTypes
-import dev.typr.foundations.scala.Fragment
-import java.sql.Connection
+import dev.typr.foundationssc.ConnectionRead
+import dev.typr.foundationssc.Fragment
+import dev.typr.foundationssc.PgTypes
 import java.time.LocalDateTime
-import dev.typr.foundations.scala.Fragment.sql
+import dev.typr.foundationssc.Fragment.sql
 
 class PersonDetailSqlRepoImpl extends PersonDetailSqlRepo {
   override def apply(
     businessentityid: /* user-picked */ BusinessentityId,
     modifiedAfter: LocalDateTime
-  )(using c: Connection): List[PersonDetailSqlRow] = {
+  )(using c: ConnectionRead): List[PersonDetailSqlRow] = {
     sql"""SELECT s.businessentityid,
            p.title,
            p.firstname,
@@ -33,6 +33,6 @@ class PersonDetailSqlRepoImpl extends PersonDetailSqlRepo {
              JOIN person.businessentityaddress bea ON bea.businessentityid = s.businessentityid
              LEFT JOIN person.address a ON a.addressid = bea.addressid
     where s.businessentityid = ${Fragment.encode(BusinessentityId.pgType, businessentityid)}::int4
-      and p.modifieddate > ${Fragment.encode(PgTypes.timestamp, modifiedAfter)}::timestamp""".query(PersonDetailSqlRow.`_rowParser`.all()).runUnchecked(c)
+      and p.modifieddate > ${Fragment.encode(PgTypes.timestamp, modifiedAfter)}::timestamp""".query(PersonDetailSqlRow.rowCodec.all()).run(using c)
   }
 }

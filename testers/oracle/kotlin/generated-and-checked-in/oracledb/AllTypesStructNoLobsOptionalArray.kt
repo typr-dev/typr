@@ -5,12 +5,13 @@
  */
 package oracledb
 
-import dev.typr.foundations.OracleType
+import dev.typr.foundations.Bijection
 import dev.typr.foundations.OracleVArray
+import dev.typr.foundationskt.OracleType
 
 /** Oracle VARRAY Type: ALL_TYPES_STRUCT_NO_LOBS_OPTIONAL_ARRAY (max size: 10) */
 data class AllTypesStructNoLobsOptionalArray(val value: Array<AllTypesStructNoLobsOptional>) {
   companion object {
-    val oracleType: OracleType<AllTypesStructNoLobsOptionalArray> = OracleVArray.of("ALL_TYPES_STRUCT_NO_LOBS_OPTIONAL_ARRAY", 10, oracledb.AllTypesStructNoLobsOptional.oracleType).bimap({ list -> AllTypesStructNoLobsOptionalArray(list.toTypedArray()) }, { wrapper -> wrapper.value.asList() })
+    val oracleType: OracleType<AllTypesStructNoLobsOptionalArray> = OracleType(OracleVArray.of("ALL_TYPES_STRUCT_NO_LOBS_OPTIONAL_ARRAY", 10, oracledb.AllTypesStructNoLobsOptional.oracleType.underlying).to(Bijection.of({ list -> AllTypesStructNoLobsOptionalArray(list.toTypedArray()) }, { wrapper -> wrapper.value.asList() })))
   }
 }

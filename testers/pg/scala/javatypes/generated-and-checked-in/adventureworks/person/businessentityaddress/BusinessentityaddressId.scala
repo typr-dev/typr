@@ -8,8 +8,8 @@ package adventureworks.person.businessentityaddress
 import adventureworks.person.address.AddressId
 import adventureworks.person.addresstype.AddresstypeId
 import adventureworks.person.businessentity.BusinessentityId
-import dev.typr.foundations.RowParser
-import dev.typr.foundations.RowParsers
+import dev.typr.dsl.RowCodecs
+import dev.typr.foundations.RowCodec
 import dev.typr.foundations.Tuple.Tuple3
 
 /** Type for the composite primary key of table `person.businessentityaddress` */
@@ -26,5 +26,5 @@ case class BusinessentityaddressId(
 }
 
 object BusinessentityaddressId {
-  val `_rowParser`: RowParser[BusinessentityaddressId] = RowParsers.of(BusinessentityId.pgType, AddressId.pgType, AddresstypeId.pgType, BusinessentityaddressId.apply, row => Array[Any](row.businessentityid, row.addressid, row.addresstypeid))
+  val rowCodec: RowCodec[BusinessentityaddressId] = RowCodecs.of(BusinessentityId.pgType, AddressId.pgType, AddresstypeId.pgType, BusinessentityaddressId.apply, row => Array[Any](row.businessentityid, row.addressid, row.addresstypeid))
 }

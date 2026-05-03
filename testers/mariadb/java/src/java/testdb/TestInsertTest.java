@@ -13,7 +13,7 @@ import testdb.userdefined.LastName;
 
 /** Tests for TestInsert functionality - automatic random data generation for testing. */
 public class TestInsertTest {
-  private final TestInsert testInsert = new TestInsert(new Random(42));
+  private final TestInsert testInsert = new TestInsert(new Random(1705582192));
 
   @Test
   public void testMariatestIdentityInsert() {

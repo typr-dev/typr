@@ -5,17 +5,17 @@
  */
 package oracledb.customers
 
+import dev.typr.dsl.FieldsBase
+import dev.typr.dsl.Path
+import dev.typr.dsl.RelationStructure
+import dev.typr.dsl.SqlExpr
+import dev.typr.dsl.SqlExpr.Field
+import dev.typr.dsl.SqlExpr.FieldLike
+import dev.typr.dsl.SqlExpr.IdField
+import dev.typr.dsl.SqlExpr.OptField
+import dev.typr.dsl.TupleExpr.TupleExpr5
 import dev.typr.foundations.OracleTypes
-import dev.typr.foundations.RowParser
-import dev.typr.foundations.dsl.FieldsBase
-import dev.typr.foundations.dsl.Path
-import dev.typr.foundations.dsl.RelationStructure
-import dev.typr.foundations.dsl.SqlExpr
-import dev.typr.foundations.dsl.SqlExpr.Field
-import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.dsl.SqlExpr.IdField
-import dev.typr.foundations.dsl.SqlExpr.OptField
-import dev.typr.foundations.dsl.TupleExpr.TupleExpr5
+import dev.typr.foundations.RowCodec
 import java.time.LocalDateTime
 import java.util.Optional
 import oracledb.AddressT
@@ -84,7 +84,7 @@ class CustomersFields(val `_path`: java.util.List[Path]) extends TupleExpr5[Cust
 
   override def columns: java.util.List[FieldLike[?, CustomersRow]] = java.util.List.of(this.customerId, this.name, this.billingAddress, this.creditLimit, this.createdAt)
 
-  override def rowParser: RowParser[CustomersRow] = CustomersRow._rowParser
+  override def rowCodec: RowCodec[CustomersRow] = CustomersRow.rowCodec
 
   override def withPaths(`_path`: java.util.List[Path]): RelationStructure[CustomersFields, CustomersRow] = new CustomersFields(`_path`)
 

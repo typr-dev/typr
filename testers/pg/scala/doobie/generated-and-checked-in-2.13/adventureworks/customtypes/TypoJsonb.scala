@@ -33,7 +33,7 @@ object TypoJsonb {
                             }))
   }
 
-  implicit lazy val bijection: Bijection[TypoJsonb, String] = Bijection.apply[TypoJsonb, String](_.value)(TypoJsonb.apply)
+  implicit lazy val bijection: Bijection[TypoJsonb, String] = Bijection[TypoJsonb, String](_.value)(TypoJsonb.apply)
 
   implicit lazy val decoder: Decoder[TypoJsonb] = Decoder.decodeString.map(TypoJsonb.apply)
 

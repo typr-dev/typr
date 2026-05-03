@@ -9,27 +9,18 @@ package testdb
 
 /** Members of MariaDB SET type with values: all, brands, categories, customers, products */
 
-sealed abstract class AllBrandsCategoriesCSetMember(val value: java.lang.String)
+enum AllBrandsCategoriesCSetMember {
+  case all, brands, categories, customers, products
+  
+}
 
 object AllBrandsCategoriesCSetMember {
   
+  extension (e: AllBrandsCategoriesCSetMember) def value: java.lang.String = e.toString
   def apply(str: java.lang.String): scala.Either[java.lang.String, AllBrandsCategoriesCSetMember] =
-    ByName.get(str).toRight(s"'$str' does not match any of the following legal values: $Names")
-  def force(str: java.lang.String): AllBrandsCategoriesCSetMember =
-    apply(str) match {
-      case scala.Left(msg) => sys.error(msg)
-      case scala.Right(value) => value
-    }
-  case object all extends AllBrandsCategoriesCSetMember("all")
-
-  case object brands extends AllBrandsCategoriesCSetMember("brands")
-
-  case object categories extends AllBrandsCategoriesCSetMember("categories")
-
-  case object customers extends AllBrandsCategoriesCSetMember("customers")
-
-  case object products extends AllBrandsCategoriesCSetMember("products")
-  val All: scala.List[AllBrandsCategoriesCSetMember] = scala.List(all, brands, categories, customers, products)
-  val Names: java.lang.String = All.map(_.value).mkString(", ")
-  val ByName: scala.collection.immutable.Map[java.lang.String, AllBrandsCategoriesCSetMember] = All.map(x => (x.value, x)).toMap
+    scala.util.Try(AllBrandsCategoriesCSetMember.valueOf(str)).toEither.left.map(_ => s"'$str' does not match any of the following legal values: $Names")
+  def force(str: java.lang.String): AllBrandsCategoriesCSetMember = AllBrandsCategoriesCSetMember.valueOf(str)
+  val All: scala.List[AllBrandsCategoriesCSetMember] = values.toList
+  val Names: java.lang.String = All.map(_.toString).mkString(", ")
+  val ByName: scala.collection.immutable.Map[java.lang.String, AllBrandsCategoriesCSetMember] = All.map(x => (x.toString, x)).toMap
 }

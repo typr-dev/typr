@@ -27,7 +27,7 @@ object MiddleName {
 
   implicit lazy val arraySetter: Setter[Array[MiddleName]] = Name.arraySetter.contramap(_.map(_.value))
 
-  implicit lazy val bijection: Bijection[MiddleName, Name] = Bijection.apply[MiddleName, Name](_.value)(MiddleName.apply)
+  implicit lazy val bijection: Bijection[MiddleName, Name] = Bijection[MiddleName, Name](_.value)(MiddleName.apply)
 
   implicit lazy val jdbcDecoder: JdbcDecoder[MiddleName] = Name.jdbcDecoder.map(MiddleName.apply)
 

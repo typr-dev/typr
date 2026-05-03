@@ -6,10 +6,11 @@
 package adventureworks.sales.salesperson
 
 import adventureworks.person.businessentity.BusinessentityId
-import dev.typr.foundations.kotlin.DeleteBuilder
-import dev.typr.foundations.kotlin.SelectBuilder
-import dev.typr.foundations.kotlin.UpdateBuilder
-import java.sql.Connection
+import dev.typr.dslkt.DeleteBuilder
+import dev.typr.dslkt.SelectBuilder
+import dev.typr.dslkt.UpdateBuilder
+import dev.typr.foundationskt.Connection
+import dev.typr.foundationskt.ConnectionRead
 import kotlin.collections.Iterator
 import kotlin.collections.List
 import kotlin.collections.Map
@@ -20,10 +21,10 @@ interface SalespersonRepo {
   abstract fun deleteById(
     businessentityid: BusinessentityId,
     c: Connection
-  ): Boolean
+  ): kotlin.Boolean
 
   abstract fun deleteByIds(
-    businessentityids: Array<BusinessentityId>,
+    businessentityids: List<BusinessentityId>,
     c: Connection
   ): Int
 
@@ -41,32 +42,32 @@ interface SalespersonRepo {
     unsaved: Iterator<SalespersonRow>,
     batchSize: Int = 10000,
     c: Connection
-  ): Long
+  ): kotlin.Long
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
   abstract fun insertUnsavedStreaming(
     unsaved: Iterator<SalespersonRowUnsaved>,
     batchSize: Int = 10000,
     c: Connection
-  ): Long
+  ): kotlin.Long
 
   abstract fun select(): SelectBuilder<SalespersonFields, SalespersonRow>
 
-  abstract fun selectAll(c: Connection): List<SalespersonRow>
+  abstract fun selectAll(c: ConnectionRead): List<SalespersonRow>
 
   abstract fun selectById(
     businessentityid: BusinessentityId,
-    c: Connection
+    c: ConnectionRead
   ): SalespersonRow?
 
   abstract fun selectByIds(
-    businessentityids: Array<BusinessentityId>,
-    c: Connection
+    businessentityids: List<BusinessentityId>,
+    c: ConnectionRead
   ): List<SalespersonRow>
 
   abstract fun selectByIdsTracked(
-    businessentityids: Array<BusinessentityId>,
-    c: Connection
+    businessentityids: List<BusinessentityId>,
+    c: ConnectionRead
   ): Map<BusinessentityId, SalespersonRow>
 
   abstract fun update(): UpdateBuilder<SalespersonFields, SalespersonRow>
@@ -74,7 +75,7 @@ interface SalespersonRepo {
   abstract fun update(
     row: SalespersonRow,
     c: Connection
-  ): Boolean
+  ): kotlin.Boolean
 
   abstract fun upsert(
     unsaved: SalespersonRow,

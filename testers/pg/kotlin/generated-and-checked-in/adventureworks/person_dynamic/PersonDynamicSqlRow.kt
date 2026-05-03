@@ -8,24 +8,23 @@ package adventureworks.person_dynamic
 import adventureworks.userdefined.FirstName
 import adventureworks.userdefined.LastName
 import adventureworks.userdefined.MiddleName
-import dev.typr.foundations.PgTypes
+import dev.typr.dslkt.RowCodecs
 import dev.typr.foundations.Tuple.Tuple4
-import dev.typr.foundations.kotlin.RowParser
-import dev.typr.foundations.kotlin.RowParsers
-import dev.typr.foundations.kotlin.nullable
+import dev.typr.foundationskt.PgTypes
+import dev.typr.foundationskt.RowCodec
 
 /** SQL file: person_dynamic.sql */
 data class PersonDynamicSqlRow(
   /** Points to [adventureworks.person.person.PersonRow.title] */
-  val title: /* max 8 chars */ String?,
+  val title: /* max 8 chars */ kotlin.String?,
   /** Points to [adventureworks.person.person.PersonRow.firstname] */
   val firstname: /* user-picked */ FirstName,
   /** Points to [adventureworks.person.person.PersonRow.middlename] */
   val middlename: /* user-picked */ MiddleName?,
   /** Points to [adventureworks.person.person.PersonRow.lastname] */
   val lastname: /* user-picked */ LastName
-) : Tuple4</* max 8 chars */ String?, /* user-picked */ FirstName, /* user-picked */ MiddleName?, /* user-picked */ LastName> {
-  override fun _1(): /* max 8 chars */ String? = title
+) : Tuple4</* max 8 chars */ kotlin.String?, /* user-picked */ FirstName, /* user-picked */ MiddleName?, /* user-picked */ LastName> {
+  override fun _1(): /* max 8 chars */ kotlin.String? = title
 
   override fun _2(): /* user-picked */ FirstName = firstname
 
@@ -34,6 +33,6 @@ data class PersonDynamicSqlRow(
   override fun _4(): /* user-picked */ LastName = lastname
 
   companion object {
-    val _rowParser: RowParser<PersonDynamicSqlRow> = RowParsers.of(PgTypes.text.nullable(), FirstName.pgType, MiddleName.pgType.nullable(), LastName.pgType, { t0, t1, t2, t3 -> PersonDynamicSqlRow(t0, t1, t2, t3) }, { row -> arrayOf<Any?>(row.title, row.firstname, row.middlename, row.lastname) })
+    val rowCodec: RowCodec<PersonDynamicSqlRow> = RowCodecs.of(PgTypes.text.opt(), FirstName.pgType, MiddleName.pgType.opt(), LastName.pgType, { t0: /* max 8 chars */ kotlin.String?, t1: /* user-picked */ FirstName, t2: /* user-picked */ MiddleName?, t3: /* user-picked */ LastName -> PersonDynamicSqlRow(t0, t1, t2, t3) }, { row: PersonDynamicSqlRow -> arrayOf<Any?>(row.title, row.firstname, row.middlename, row.lastname) })
   }
 }

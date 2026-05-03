@@ -5,17 +5,18 @@
  */
 package adventureworks.humanresources.shift
 
-import dev.typr.foundations.kotlin.DeleteBuilder
-import dev.typr.foundations.kotlin.DeleteBuilderMock
-import dev.typr.foundations.kotlin.DeleteParams
-import dev.typr.foundations.kotlin.SelectBuilder
-import dev.typr.foundations.kotlin.SelectBuilderMock
-import dev.typr.foundations.kotlin.SelectParams
-import dev.typr.foundations.kotlin.UpdateBuilder
-import dev.typr.foundations.kotlin.UpdateBuilderMock
-import dev.typr.foundations.kotlin.UpdateParams
+import dev.typr.dslkt.DeleteBuilder
+import dev.typr.dslkt.DeleteBuilderMock
+import dev.typr.dslkt.DeleteParams
+import dev.typr.dslkt.SelectBuilder
+import dev.typr.dslkt.SelectBuilderMock
+import dev.typr.dslkt.SelectParams
+import dev.typr.dslkt.UpdateBuilder
+import dev.typr.dslkt.UpdateBuilderMock
+import dev.typr.dslkt.UpdateParams
+import dev.typr.foundationskt.Connection
+import dev.typr.foundationskt.ConnectionRead
 import java.lang.RuntimeException
-import java.sql.Connection
 import java.util.ArrayList
 import kotlin.collections.Iterator
 import kotlin.collections.List
@@ -31,10 +32,10 @@ data class ShiftRepoMock(
   override fun deleteById(
     shiftid: ShiftId,
     c: Connection
-  ): Boolean = map.remove(shiftid) != null
+  ): kotlin.Boolean = map.remove(shiftid) != null
 
   override fun deleteByIds(
-    shiftids: Array<ShiftId>,
+    shiftids: List<ShiftId>,
     c: Connection
   ): Int {
     var count = 0
@@ -66,7 +67,7 @@ data class ShiftRepoMock(
     unsaved: Iterator<ShiftRow>,
     batchSize: Int,
     c: Connection
-  ): Long {
+  ): kotlin.Long {
     var count = 0L
     while (unsaved.hasNext()) {
       val row = unsaved.next()
@@ -81,7 +82,7 @@ data class ShiftRepoMock(
     unsaved: Iterator<ShiftRowUnsaved>,
     batchSize: Int,
     c: Connection
-  ): Long {
+  ): kotlin.Long {
     var count = 0L
     while (unsaved.hasNext()) {
       val unsavedRow = unsaved.next()
@@ -94,16 +95,16 @@ data class ShiftRepoMock(
 
   override fun select(): SelectBuilder<ShiftFields, ShiftRow> = SelectBuilderMock(ShiftFields.structure, { map.values.toList() }, SelectParams.empty())
 
-  override fun selectAll(c: Connection): List<ShiftRow> = map.values.toList()
+  override fun selectAll(c: ConnectionRead): List<ShiftRow> = map.values.toList()
 
   override fun selectById(
     shiftid: ShiftId,
-    c: Connection
+    c: ConnectionRead
   ): ShiftRow? = map[shiftid]
 
   override fun selectByIds(
-    shiftids: Array<ShiftId>,
-    c: Connection
+    shiftids: List<ShiftId>,
+    c: ConnectionRead
   ): List<ShiftRow> {
     val result = ArrayList<ShiftRow>()
     for (id in shiftids) {
@@ -116,8 +117,8 @@ data class ShiftRepoMock(
   }
 
   override fun selectByIdsTracked(
-    shiftids: Array<ShiftId>,
-    c: Connection
+    shiftids: List<ShiftId>,
+    c: ConnectionRead
   ): Map<ShiftId, ShiftRow> = selectByIds(shiftids, c).associateBy({ row: ShiftRow -> row.shiftid })
 
   override fun update(): UpdateBuilder<ShiftFields, ShiftRow> = UpdateBuilderMock(ShiftFields.structure, { map.values.toList() }, UpdateParams.empty(), { row -> row })
@@ -125,7 +126,7 @@ data class ShiftRepoMock(
   override fun update(
     row: ShiftRow,
     c: Connection
-  ): Boolean {
+  ): kotlin.Boolean {
     val shouldUpdate = map[row.shiftid]?.takeIf({ oldRow -> (oldRow != row) }) != null
     if (shouldUpdate) {
       map[row.shiftid] = row

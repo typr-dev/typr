@@ -45,7 +45,7 @@ data class InventoryRowUnsaved(
   /** Default: NULL
 
     */
-  @field:JsonProperty("bin_location") val binLocation: Defaulted<String?> = UseDefault(),
+  @field:JsonProperty("bin_location") val binLocation: Defaulted<kotlin.String?> = UseDefault(),
   /** Default: NULL
 
     */
@@ -61,7 +61,7 @@ data class InventoryRowUnsaved(
     quantityOnOrderDefault: () -> Int,
     reorderPointDefault: () -> Int,
     reorderQuantityDefault: () -> Int,
-    binLocationDefault: () -> String?,
+    binLocationDefault: () -> kotlin.String?,
     lastCountedAtDefault: () -> LocalDateTime?,
     updatedAtDefault: () -> LocalDateTime,
     inventoryIdDefault: () -> InventoryId

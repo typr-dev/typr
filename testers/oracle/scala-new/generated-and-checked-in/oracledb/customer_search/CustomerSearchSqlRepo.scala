@@ -5,8 +5,8 @@
  */
 package oracledb.customer_search
 
-import java.sql.Connection
+import dev.typr.foundationssc.ConnectionRead
 
 trait CustomerSearchSqlRepo {
-  def apply(namePattern: String)(using c: Connection): List[CustomerSearchSqlRow]
+  def apply(namePattern: String)(using c: ConnectionRead): List[CustomerSearchSqlRow]
 }

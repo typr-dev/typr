@@ -21,7 +21,7 @@ import zio.json.JsonEncoder
 case class TypoVector(value: Array[Float])
 
 object TypoVector {
-  implicit lazy val bijection: Bijection[TypoVector, Array[Float]] = Bijection.apply[TypoVector, Array[Float]](_.value)(TypoVector.apply)
+  implicit lazy val bijection: Bijection[TypoVector, Array[Float]] = Bijection[TypoVector, Array[Float]](_.value)(TypoVector.apply)
 
   implicit lazy val jdbcDecoder: JdbcDecoder[TypoVector] = {
     JdbcDecoder[TypoVector](

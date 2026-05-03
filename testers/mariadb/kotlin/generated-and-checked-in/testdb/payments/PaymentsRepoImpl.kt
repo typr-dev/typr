@@ -5,15 +5,14 @@
  */
 package testdb.payments
 
-import dev.typr.foundations.MariaTypes
-import dev.typr.foundations.kotlin.DeleteBuilder
-import dev.typr.foundations.kotlin.Dialect
-import dev.typr.foundations.kotlin.Fragment
-import dev.typr.foundations.kotlin.KotlinDbTypes
-import dev.typr.foundations.kotlin.SelectBuilder
-import dev.typr.foundations.kotlin.UpdateBuilder
-import dev.typr.foundations.kotlin.nullable
-import java.sql.Connection
+import dev.typr.dslkt.DeleteBuilder
+import dev.typr.dslkt.Dialect
+import dev.typr.dslkt.SelectBuilder
+import dev.typr.dslkt.UpdateBuilder
+import dev.typr.foundationskt.Connection
+import dev.typr.foundationskt.ConnectionRead
+import dev.typr.foundationskt.Fragment
+import dev.typr.foundationskt.MariaTypes
 import java.util.ArrayList
 import kotlin.collections.Iterator
 import kotlin.collections.List
@@ -28,22 +27,22 @@ class PaymentsRepoImpl() : PaymentsRepo {
   override fun deleteById(
     paymentId: PaymentsId,
     c: Connection
-  ): Boolean = Fragment.interpolate(Fragment.lit("delete from `payments` where `payment_id` = "), Fragment.encode(PaymentsId.mariaType, paymentId), Fragment.lit("")).update().runUnchecked(c) > 0
+  ): kotlin.Boolean = Fragment.concat(Fragment.of("delete from `payments` where `payment_id` = "), Fragment.encode(PaymentsId.mariaType, paymentId), Fragment.of("")).update().run(c) > 0
 
   override fun deleteByIds(
-    paymentIds: Array<PaymentsId>,
+    paymentIds: List<PaymentsId>,
     c: Connection
   ): Int {
     val fragments: ArrayList<Fragment> = ArrayList()
     for (id in paymentIds) { fragments.add(Fragment.encode(PaymentsId.mariaType, id)) }
-    return Fragment.interpolate(Fragment.lit("delete from `payments` where `payment_id` in ("), Fragment.comma(fragments.toMutableList()), Fragment.lit(")")).update().runUnchecked(c)
+    return Fragment.concat(Fragment.of("delete from `payments` where `payment_id` in ("), Fragment.comma(fragments.toMutableList()), Fragment.of(")")).update().run(c)
   }
 
   override fun insert(
     unsaved: PaymentsRow,
     c: Connection
-  ): PaymentsRow = Fragment.interpolate(Fragment.lit("insert into `payments`(`order_id`, `method_id`, `transaction_id`, `amount`, `currency_code`, `status`, `processor_response`, `error_message`, `ip_address`, `created_at`, `processed_at`)\nvalues ("), Fragment.encode(OrdersId.mariaType, unsaved.orderId), Fragment.lit(", "), Fragment.encode(PaymentMethodsId.mariaType, unsaved.methodId), Fragment.lit(", "), Fragment.encode(MariaTypes.varchar.nullable(), unsaved.transactionId), Fragment.lit(", "), Fragment.encode(KotlinDbTypes.MariaTypes.numeric, unsaved.amount), Fragment.lit(", "), Fragment.encode(MariaTypes.char_, unsaved.currencyCode), Fragment.lit(", "), Fragment.encode(MariaTypes.text, unsaved.status), Fragment.lit(", "), Fragment.encode(MariaTypes.json.nullable(), unsaved.processorResponse), Fragment.lit(", "), Fragment.encode(MariaTypes.varchar.nullable(), unsaved.errorMessage), Fragment.lit(", "), Fragment.encode(MariaTypes.inet6.nullable(), unsaved.ipAddress), Fragment.lit(", "), Fragment.encode(MariaTypes.datetime, unsaved.createdAt), Fragment.lit(", "), Fragment.encode(MariaTypes.datetime.nullable(), unsaved.processedAt), Fragment.lit(")\nRETURNING `payment_id`, `order_id`, `method_id`, `transaction_id`, `amount`, `currency_code`, `status`, `processor_response`, `error_message`, `ip_address`, `created_at`, `processed_at`\n"))
-    .updateReturning(PaymentsRow._rowParser.exactlyOne()).runUnchecked(c)
+  ): PaymentsRow = Fragment.concat(Fragment.of("insert into `payments`(`order_id`, `method_id`, `transaction_id`, `amount`, `currency_code`, `status`, `processor_response`, `error_message`, `ip_address`, `created_at`, `processed_at`)\nvalues ("), Fragment.encode(OrdersId.mariaType, unsaved.orderId), Fragment.of(", "), Fragment.encode(PaymentMethodsId.mariaType, unsaved.methodId), Fragment.of(", "), Fragment.encode(MariaTypes.varchar.opt(), unsaved.transactionId), Fragment.of(", "), Fragment.encode(MariaTypes.numeric, unsaved.amount), Fragment.of(", "), Fragment.encode(MariaTypes.char_, unsaved.currencyCode), Fragment.of(", "), Fragment.encode(MariaTypes.text, unsaved.status), Fragment.of(", "), Fragment.encode(MariaTypes.json.opt(), unsaved.processorResponse), Fragment.of(", "), Fragment.encode(MariaTypes.varchar.opt(), unsaved.errorMessage), Fragment.of(", "), Fragment.encode(MariaTypes.inet6.opt(), unsaved.ipAddress), Fragment.of(", "), Fragment.encode(MariaTypes.datetime, unsaved.createdAt), Fragment.of(", "), Fragment.encode(MariaTypes.datetime.opt(), unsaved.processedAt), Fragment.of(")\nRETURNING `payment_id`, `order_id`, `method_id`, `transaction_id`, `amount`, `currency_code`, `status`, `processor_response`, `error_message`, `ip_address`, `created_at`, `processed_at`\n"))
+    .updateReturning(PaymentsRow.rowCodec.exactlyOne()).run(c)
 
   override fun insert(
     unsaved: PaymentsRowUnsaved,
@@ -51,104 +50,104 @@ class PaymentsRepoImpl() : PaymentsRepo {
   ): PaymentsRow {
     val columns: ArrayList<Fragment> = ArrayList()
     val values: ArrayList<Fragment> = ArrayList()
-    columns.add(Fragment.lit("`order_id`"))
-    values.add(Fragment.interpolate(Fragment.encode(OrdersId.mariaType, unsaved.orderId), Fragment.lit("")))
-    columns.add(Fragment.lit("`method_id`"))
-    values.add(Fragment.interpolate(Fragment.encode(PaymentMethodsId.mariaType, unsaved.methodId), Fragment.lit("")))
-    columns.add(Fragment.lit("`amount`"))
-    values.add(Fragment.interpolate(Fragment.encode(KotlinDbTypes.MariaTypes.numeric, unsaved.amount), Fragment.lit("")))
+    columns.add(Fragment.of("`order_id`"))
+    values.add(Fragment.concat(Fragment.encode(OrdersId.mariaType, unsaved.orderId), Fragment.of("")))
+    columns.add(Fragment.of("`method_id`"))
+    values.add(Fragment.concat(Fragment.encode(PaymentMethodsId.mariaType, unsaved.methodId), Fragment.of("")))
+    columns.add(Fragment.of("`amount`"))
+    values.add(Fragment.concat(Fragment.encode(MariaTypes.numeric, unsaved.amount), Fragment.of("")))
     unsaved.transactionId.visit(
       {  },
-      { value -> columns.add(Fragment.lit("`transaction_id`"))
-      values.add(Fragment.interpolate(Fragment.encode(MariaTypes.varchar.nullable(), value), Fragment.lit(""))) }
+      { value -> columns.add(Fragment.of("`transaction_id`"))
+      values.add(Fragment.concat(Fragment.encode(MariaTypes.varchar.opt(), value), Fragment.of(""))) }
     );
     unsaved.currencyCode.visit(
       {  },
-      { value -> columns.add(Fragment.lit("`currency_code`"))
-      values.add(Fragment.interpolate(Fragment.encode(MariaTypes.char_, value), Fragment.lit(""))) }
+      { value -> columns.add(Fragment.of("`currency_code`"))
+      values.add(Fragment.concat(Fragment.encode(MariaTypes.char_, value), Fragment.of(""))) }
     );
     unsaved.status.visit(
       {  },
-      { value -> columns.add(Fragment.lit("`status`"))
-      values.add(Fragment.interpolate(Fragment.encode(MariaTypes.text, value), Fragment.lit(""))) }
+      { value -> columns.add(Fragment.of("`status`"))
+      values.add(Fragment.concat(Fragment.encode(MariaTypes.text, value), Fragment.of(""))) }
     );
     unsaved.processorResponse.visit(
       {  },
-      { value -> columns.add(Fragment.lit("`processor_response`"))
-      values.add(Fragment.interpolate(Fragment.encode(MariaTypes.json.nullable(), value), Fragment.lit(""))) }
+      { value -> columns.add(Fragment.of("`processor_response`"))
+      values.add(Fragment.concat(Fragment.encode(MariaTypes.json.opt(), value), Fragment.of(""))) }
     );
     unsaved.errorMessage.visit(
       {  },
-      { value -> columns.add(Fragment.lit("`error_message`"))
-      values.add(Fragment.interpolate(Fragment.encode(MariaTypes.varchar.nullable(), value), Fragment.lit(""))) }
+      { value -> columns.add(Fragment.of("`error_message`"))
+      values.add(Fragment.concat(Fragment.encode(MariaTypes.varchar.opt(), value), Fragment.of(""))) }
     );
     unsaved.ipAddress.visit(
       {  },
-      { value -> columns.add(Fragment.lit("`ip_address`"))
-      values.add(Fragment.interpolate(Fragment.encode(MariaTypes.inet6.nullable(), value), Fragment.lit(""))) }
+      { value -> columns.add(Fragment.of("`ip_address`"))
+      values.add(Fragment.concat(Fragment.encode(MariaTypes.inet6.opt(), value), Fragment.of(""))) }
     );
     unsaved.createdAt.visit(
       {  },
-      { value -> columns.add(Fragment.lit("`created_at`"))
-      values.add(Fragment.interpolate(Fragment.encode(MariaTypes.datetime, value), Fragment.lit(""))) }
+      { value -> columns.add(Fragment.of("`created_at`"))
+      values.add(Fragment.concat(Fragment.encode(MariaTypes.datetime, value), Fragment.of(""))) }
     );
     unsaved.processedAt.visit(
       {  },
-      { value -> columns.add(Fragment.lit("`processed_at`"))
-      values.add(Fragment.interpolate(Fragment.encode(MariaTypes.datetime.nullable(), value), Fragment.lit(""))) }
+      { value -> columns.add(Fragment.of("`processed_at`"))
+      values.add(Fragment.concat(Fragment.encode(MariaTypes.datetime.opt(), value), Fragment.of(""))) }
     );
-    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into `payments`("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nRETURNING `payment_id`, `order_id`, `method_id`, `transaction_id`, `amount`, `currency_code`, `status`, `processor_response`, `error_message`, `ip_address`, `created_at`, `processed_at`\n"))
-    return q.updateReturning(PaymentsRow._rowParser.exactlyOne()).runUnchecked(c)
+    val q: Fragment = Fragment.concat(Fragment.of("insert into `payments`("), Fragment.comma(columns.toMutableList()), Fragment.of(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.of(")\nRETURNING `payment_id`, `order_id`, `method_id`, `transaction_id`, `amount`, `currency_code`, `status`, `processor_response`, `error_message`, `ip_address`, `created_at`, `processed_at`\n"))
+    return q.updateReturning(PaymentsRow.rowCodec.exactlyOne()).run(c)
   }
 
-  override fun select(): SelectBuilder<PaymentsFields, PaymentsRow> = SelectBuilder.of("`payments`", PaymentsFields.structure, PaymentsRow._rowParser, Dialect.MARIADB)
+  override fun select(): SelectBuilder<PaymentsFields, PaymentsRow> = SelectBuilder.of("`payments`", PaymentsFields.structure, PaymentsRow.rowCodec, Dialect.MARIADB)
 
-  override fun selectAll(c: Connection): List<PaymentsRow> = Fragment.interpolate(Fragment.lit("select `payment_id`, `order_id`, `method_id`, `transaction_id`, `amount`, `currency_code`, `status`, `processor_response`, `error_message`, `ip_address`, `created_at`, `processed_at`\nfrom `payments`\n")).query(PaymentsRow._rowParser.all()).runUnchecked(c)
+  override fun selectAll(c: ConnectionRead): List<PaymentsRow> = Fragment.concat(Fragment.of("select `payment_id`, `order_id`, `method_id`, `transaction_id`, `amount`, `currency_code`, `status`, `processor_response`, `error_message`, `ip_address`, `created_at`, `processed_at`\nfrom `payments`\n")).query(PaymentsRow.rowCodec.all()).run(c)
 
   override fun selectById(
     paymentId: PaymentsId,
-    c: Connection
-  ): PaymentsRow? = Fragment.interpolate(Fragment.lit("select `payment_id`, `order_id`, `method_id`, `transaction_id`, `amount`, `currency_code`, `status`, `processor_response`, `error_message`, `ip_address`, `created_at`, `processed_at`\nfrom `payments`\nwhere `payment_id` = "), Fragment.encode(PaymentsId.mariaType, paymentId), Fragment.lit("")).query(PaymentsRow._rowParser.first()).runUnchecked(c)
+    c: ConnectionRead
+  ): PaymentsRow? = Fragment.concat(Fragment.of("select `payment_id`, `order_id`, `method_id`, `transaction_id`, `amount`, `currency_code`, `status`, `processor_response`, `error_message`, `ip_address`, `created_at`, `processed_at`\nfrom `payments`\nwhere `payment_id` = "), Fragment.encode(PaymentsId.mariaType, paymentId), Fragment.of("")).query(PaymentsRow.rowCodec.first()).run(c)
 
   override fun selectByIds(
-    paymentIds: Array<PaymentsId>,
-    c: Connection
+    paymentIds: List<PaymentsId>,
+    c: ConnectionRead
   ): List<PaymentsRow> {
     val fragments: ArrayList<Fragment> = ArrayList()
     for (id in paymentIds) { fragments.add(Fragment.encode(PaymentsId.mariaType, id)) }
-    return Fragment.interpolate(Fragment.lit("select `payment_id`, `order_id`, `method_id`, `transaction_id`, `amount`, `currency_code`, `status`, `processor_response`, `error_message`, `ip_address`, `created_at`, `processed_at` from `payments` where `payment_id` in ("), Fragment.comma(fragments.toMutableList()), Fragment.lit(")")).query(PaymentsRow._rowParser.all()).runUnchecked(c)
+    return Fragment.concat(Fragment.of("select `payment_id`, `order_id`, `method_id`, `transaction_id`, `amount`, `currency_code`, `status`, `processor_response`, `error_message`, `ip_address`, `created_at`, `processed_at` from `payments` where `payment_id` in ("), Fragment.comma(fragments.toMutableList()), Fragment.of(")")).query(PaymentsRow.rowCodec.all()).run(c)
   }
 
   override fun selectByIdsTracked(
-    paymentIds: Array<PaymentsId>,
-    c: Connection
+    paymentIds: List<PaymentsId>,
+    c: ConnectionRead
   ): Map<PaymentsId, PaymentsRow> {
     val ret: MutableMap<PaymentsId, PaymentsRow> = mutableMapOf<PaymentsId, PaymentsRow>()
     selectByIds(paymentIds, c).forEach({ row -> ret.put(row.paymentId, row) })
     return ret.toMap()
   }
 
-  override fun update(): UpdateBuilder<PaymentsFields, PaymentsRow> = UpdateBuilder.of("`payments`", PaymentsFields.structure, PaymentsRow._rowParser, Dialect.MARIADB)
+  override fun update(): UpdateBuilder<PaymentsFields, PaymentsRow> = UpdateBuilder.of("`payments`", PaymentsFields.structure, PaymentsRow.rowCodec, Dialect.MARIADB)
 
   override fun update(
     row: PaymentsRow,
     c: Connection
-  ): Boolean {
+  ): kotlin.Boolean {
     val paymentId: PaymentsId = row.paymentId
-    return Fragment.interpolate(Fragment.lit("update `payments`\nset `order_id` = "), Fragment.encode(OrdersId.mariaType, row.orderId), Fragment.lit(",\n`method_id` = "), Fragment.encode(PaymentMethodsId.mariaType, row.methodId), Fragment.lit(",\n`transaction_id` = "), Fragment.encode(MariaTypes.varchar.nullable(), row.transactionId), Fragment.lit(",\n`amount` = "), Fragment.encode(KotlinDbTypes.MariaTypes.numeric, row.amount), Fragment.lit(",\n`currency_code` = "), Fragment.encode(MariaTypes.char_, row.currencyCode), Fragment.lit(",\n`status` = "), Fragment.encode(MariaTypes.text, row.status), Fragment.lit(",\n`processor_response` = "), Fragment.encode(MariaTypes.json.nullable(), row.processorResponse), Fragment.lit(",\n`error_message` = "), Fragment.encode(MariaTypes.varchar.nullable(), row.errorMessage), Fragment.lit(",\n`ip_address` = "), Fragment.encode(MariaTypes.inet6.nullable(), row.ipAddress), Fragment.lit(",\n`created_at` = "), Fragment.encode(MariaTypes.datetime, row.createdAt), Fragment.lit(",\n`processed_at` = "), Fragment.encode(MariaTypes.datetime.nullable(), row.processedAt), Fragment.lit("\nwhere `payment_id` = "), Fragment.encode(PaymentsId.mariaType, paymentId), Fragment.lit("")).update().runUnchecked(c) > 0
+    return Fragment.concat(Fragment.of("update `payments`\nset `order_id` = "), Fragment.encode(OrdersId.mariaType, row.orderId), Fragment.of(",\n`method_id` = "), Fragment.encode(PaymentMethodsId.mariaType, row.methodId), Fragment.of(",\n`transaction_id` = "), Fragment.encode(MariaTypes.varchar.opt(), row.transactionId), Fragment.of(",\n`amount` = "), Fragment.encode(MariaTypes.numeric, row.amount), Fragment.of(",\n`currency_code` = "), Fragment.encode(MariaTypes.char_, row.currencyCode), Fragment.of(",\n`status` = "), Fragment.encode(MariaTypes.text, row.status), Fragment.of(",\n`processor_response` = "), Fragment.encode(MariaTypes.json.opt(), row.processorResponse), Fragment.of(",\n`error_message` = "), Fragment.encode(MariaTypes.varchar.opt(), row.errorMessage), Fragment.of(",\n`ip_address` = "), Fragment.encode(MariaTypes.inet6.opt(), row.ipAddress), Fragment.of(",\n`created_at` = "), Fragment.encode(MariaTypes.datetime, row.createdAt), Fragment.of(",\n`processed_at` = "), Fragment.encode(MariaTypes.datetime.opt(), row.processedAt), Fragment.of("\nwhere `payment_id` = "), Fragment.encode(PaymentsId.mariaType, paymentId), Fragment.of("")).update().run(c) > 0
   }
 
   override fun upsert(
     unsaved: PaymentsRow,
     c: Connection
-  ): PaymentsRow = Fragment.interpolate(Fragment.lit("INSERT INTO `payments`(`payment_id`, `order_id`, `method_id`, `transaction_id`, `amount`, `currency_code`, `status`, `processor_response`, `error_message`, `ip_address`, `created_at`, `processed_at`)\nVALUES ("), Fragment.encode(PaymentsId.mariaType, unsaved.paymentId), Fragment.lit(", "), Fragment.encode(OrdersId.mariaType, unsaved.orderId), Fragment.lit(", "), Fragment.encode(PaymentMethodsId.mariaType, unsaved.methodId), Fragment.lit(", "), Fragment.encode(MariaTypes.varchar.nullable(), unsaved.transactionId), Fragment.lit(", "), Fragment.encode(KotlinDbTypes.MariaTypes.numeric, unsaved.amount), Fragment.lit(", "), Fragment.encode(MariaTypes.char_, unsaved.currencyCode), Fragment.lit(", "), Fragment.encode(MariaTypes.text, unsaved.status), Fragment.lit(", "), Fragment.encode(MariaTypes.json.nullable(), unsaved.processorResponse), Fragment.lit(", "), Fragment.encode(MariaTypes.varchar.nullable(), unsaved.errorMessage), Fragment.lit(", "), Fragment.encode(MariaTypes.inet6.nullable(), unsaved.ipAddress), Fragment.lit(", "), Fragment.encode(MariaTypes.datetime, unsaved.createdAt), Fragment.lit(", "), Fragment.encode(MariaTypes.datetime.nullable(), unsaved.processedAt), Fragment.lit(")\nON DUPLICATE KEY UPDATE `order_id` = VALUES(`order_id`),\n`method_id` = VALUES(`method_id`),\n`transaction_id` = VALUES(`transaction_id`),\n`amount` = VALUES(`amount`),\n`currency_code` = VALUES(`currency_code`),\n`status` = VALUES(`status`),\n`processor_response` = VALUES(`processor_response`),\n`error_message` = VALUES(`error_message`),\n`ip_address` = VALUES(`ip_address`),\n`created_at` = VALUES(`created_at`),\n`processed_at` = VALUES(`processed_at`)\nRETURNING `payment_id`, `order_id`, `method_id`, `transaction_id`, `amount`, `currency_code`, `status`, `processor_response`, `error_message`, `ip_address`, `created_at`, `processed_at`"))
-    .updateReturning(PaymentsRow._rowParser.exactlyOne())
-    .runUnchecked(c)
+  ): PaymentsRow = Fragment.concat(Fragment.of("INSERT INTO `payments`(`payment_id`, `order_id`, `method_id`, `transaction_id`, `amount`, `currency_code`, `status`, `processor_response`, `error_message`, `ip_address`, `created_at`, `processed_at`)\nVALUES ("), Fragment.encode(PaymentsId.mariaType, unsaved.paymentId), Fragment.of(", "), Fragment.encode(OrdersId.mariaType, unsaved.orderId), Fragment.of(", "), Fragment.encode(PaymentMethodsId.mariaType, unsaved.methodId), Fragment.of(", "), Fragment.encode(MariaTypes.varchar.opt(), unsaved.transactionId), Fragment.of(", "), Fragment.encode(MariaTypes.numeric, unsaved.amount), Fragment.of(", "), Fragment.encode(MariaTypes.char_, unsaved.currencyCode), Fragment.of(", "), Fragment.encode(MariaTypes.text, unsaved.status), Fragment.of(", "), Fragment.encode(MariaTypes.json.opt(), unsaved.processorResponse), Fragment.of(", "), Fragment.encode(MariaTypes.varchar.opt(), unsaved.errorMessage), Fragment.of(", "), Fragment.encode(MariaTypes.inet6.opt(), unsaved.ipAddress), Fragment.of(", "), Fragment.encode(MariaTypes.datetime, unsaved.createdAt), Fragment.of(", "), Fragment.encode(MariaTypes.datetime.opt(), unsaved.processedAt), Fragment.of(")\nON DUPLICATE KEY UPDATE `order_id` = VALUES(`order_id`),\n`method_id` = VALUES(`method_id`),\n`transaction_id` = VALUES(`transaction_id`),\n`amount` = VALUES(`amount`),\n`currency_code` = VALUES(`currency_code`),\n`status` = VALUES(`status`),\n`processor_response` = VALUES(`processor_response`),\n`error_message` = VALUES(`error_message`),\n`ip_address` = VALUES(`ip_address`),\n`created_at` = VALUES(`created_at`),\n`processed_at` = VALUES(`processed_at`)\nRETURNING `payment_id`, `order_id`, `method_id`, `transaction_id`, `amount`, `currency_code`, `status`, `processor_response`, `error_message`, `ip_address`, `created_at`, `processed_at`"))
+    .updateReturning(PaymentsRow.rowCodec.exactlyOne())
+    .run(c)
 
   override fun upsertBatch(
     unsaved: Iterator<PaymentsRow>,
     c: Connection
-  ): List<PaymentsRow> = Fragment.interpolate(Fragment.lit("INSERT INTO `payments`(`payment_id`, `order_id`, `method_id`, `transaction_id`, `amount`, `currency_code`, `status`, `processor_response`, `error_message`, `ip_address`, `created_at`, `processed_at`)\nVALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)\nON DUPLICATE KEY UPDATE `order_id` = VALUES(`order_id`),\n`method_id` = VALUES(`method_id`),\n`transaction_id` = VALUES(`transaction_id`),\n`amount` = VALUES(`amount`),\n`currency_code` = VALUES(`currency_code`),\n`status` = VALUES(`status`),\n`processor_response` = VALUES(`processor_response`),\n`error_message` = VALUES(`error_message`),\n`ip_address` = VALUES(`ip_address`),\n`created_at` = VALUES(`created_at`),\n`processed_at` = VALUES(`processed_at`)\nRETURNING `payment_id`, `order_id`, `method_id`, `transaction_id`, `amount`, `currency_code`, `status`, `processor_response`, `error_message`, `ip_address`, `created_at`, `processed_at`"))
-    .updateReturningEach(PaymentsRow._rowParser, unsaved)
-  .runUnchecked(c)
+  ): List<PaymentsRow> = Fragment.concat(Fragment.of("INSERT INTO `payments`(`payment_id`, `order_id`, `method_id`, `transaction_id`, `amount`, `currency_code`, `status`, `processor_response`, `error_message`, `ip_address`, `created_at`, `processed_at`)\nVALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)\nON DUPLICATE KEY UPDATE `order_id` = VALUES(`order_id`),\n`method_id` = VALUES(`method_id`),\n`transaction_id` = VALUES(`transaction_id`),\n`amount` = VALUES(`amount`),\n`currency_code` = VALUES(`currency_code`),\n`status` = VALUES(`status`),\n`processor_response` = VALUES(`processor_response`),\n`error_message` = VALUES(`error_message`),\n`ip_address` = VALUES(`ip_address`),\n`created_at` = VALUES(`created_at`),\n`processed_at` = VALUES(`processed_at`)\nRETURNING `payment_id`, `order_id`, `method_id`, `transaction_id`, `amount`, `currency_code`, `status`, `processor_response`, `error_message`, `ip_address`, `created_at`, `processed_at`"))
+    .updateReturningEach(PaymentsRow.rowCodec, unsaved)
+  .run(c)
 }

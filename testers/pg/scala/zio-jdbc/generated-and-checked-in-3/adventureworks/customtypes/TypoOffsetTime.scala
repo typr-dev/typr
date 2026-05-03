@@ -56,7 +56,7 @@ object TypoOffsetTime {
     )
   }
 
-  given bijection: Bijection[TypoOffsetTime, OffsetTime] = Bijection.apply[TypoOffsetTime, OffsetTime](_.value)(TypoOffsetTime.apply)
+  given bijection: Bijection[TypoOffsetTime, OffsetTime] = Bijection[TypoOffsetTime, OffsetTime](_.value)(TypoOffsetTime.apply)
 
   given jdbcDecoder: JdbcDecoder[TypoOffsetTime] = {
     JdbcDecoder[TypoOffsetTime](

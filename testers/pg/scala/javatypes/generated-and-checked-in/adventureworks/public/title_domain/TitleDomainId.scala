@@ -6,6 +6,7 @@
 package adventureworks.public.title_domain
 
 import adventureworks.public.ShortText
+import dev.typr.foundations.Bijection
 import dev.typr.foundations.PgType
 
 /** Type for the primary key of table `public.title_domain`. It has some known values: 
@@ -20,12 +21,12 @@ sealed abstract class TitleDomainId(val value: ShortText)
 object TitleDomainId {
   def apply(underlying: ShortText): TitleDomainId =
     ByName.getOrElse(underlying, Unknown(underlying))
-  given pgTypeArray: PgType[Array[TitleDomainId]] = {
-    ShortText.pgTypeArray
-      .bimap(xs => xs.map(TitleDomainId.apply), xs => xs.map(_.value))
+  given pgTypeArray: PgType[java.util.List[TitleDomainId]] = {
+    ShortText.pgType.array()
+      .to(Bijection.of(xs => xs.stream().map(TitleDomainId.apply).toList(), xs => xs.stream().map(_.value).toList()))
   }
 
-  given pgType: PgType[TitleDomainId] = ShortText.pgType.bimap(TitleDomainId.apply, _.value)
+  given pgType: PgType[TitleDomainId] = ShortText.pgType.to(Bijection.of(TitleDomainId.apply, _.value))
 
   def shortText(value: String): TitleDomainId = apply(new ShortText(value))
 

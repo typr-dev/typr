@@ -49,7 +49,7 @@ object TypoPolygon {
     )
   }
 
-  implicit lazy val bijection: Bijection[TypoPolygon, List[TypoPoint]] = Bijection.apply[TypoPolygon, List[TypoPoint]](_.points)(TypoPolygon.apply)
+  implicit lazy val bijection: Bijection[TypoPolygon, List[TypoPoint]] = Bijection[TypoPolygon, List[TypoPoint]](_.points)(TypoPolygon.apply)
 
   implicit lazy val jdbcDecoder: JdbcDecoder[TypoPolygon] = {
     JdbcDecoder[TypoPolygon](

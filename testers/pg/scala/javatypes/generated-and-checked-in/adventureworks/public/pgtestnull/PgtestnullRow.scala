@@ -7,11 +7,11 @@ package adventureworks.public.pgtestnull
 
 import adventureworks.public.Mydomain
 import adventureworks.public.Myenum
+import dev.typr.dsl.RowCodecs
+import dev.typr.dsl.RowCodecs.Function70
 import dev.typr.foundations.PgText
 import dev.typr.foundations.PgTypes
-import dev.typr.foundations.RowParser
-import dev.typr.foundations.RowParsers
-import dev.typr.foundations.RowParsers.Function70
+import dev.typr.foundations.RowCodec
 import dev.typr.foundations.Tuple.Tuple70
 import dev.typr.foundations.data.Inet
 import dev.typr.foundations.data.Int2Vector
@@ -75,40 +75,40 @@ case class PgtestnullRow(
   varchar: Optional[String],
   vector: Optional[Vector],
   xml: Optional[Xml],
-  boxes: Optional[Array[PGbox]],
-  bpchares: Optional[Array[/* bpchar */ String]],
-  chares: Optional[Array[/* bpchar */ String]],
-  circlees: Optional[Array[PGcircle]],
-  datees: Optional[Array[LocalDate]],
-  float4es: Optional[Array[java.lang.Float]],
-  float8es: Optional[Array[java.lang.Double]],
-  inetes: Optional[Array[Inet]],
-  int2es: Optional[Array[java.lang.Short]],
-  int2vectores: Optional[Array[Int2Vector]],
-  int4es: Optional[Array[Integer]],
-  int8es: Optional[Array[java.lang.Long]],
-  intervales: Optional[Array[PGInterval]],
-  jsones: Optional[Array[Json]],
-  jsonbes: Optional[Array[Jsonb]],
-  linees: Optional[Array[PGline]],
-  lseges: Optional[Array[PGlseg]],
-  moneyes: Optional[Array[Money]],
-  mydomaines: Optional[Array[Mydomain]],
-  myenumes: Optional[Array[Myenum]],
-  namees: Optional[Array[String]],
-  numerices: Optional[Array[java.math.BigDecimal]],
-  pathes: Optional[Array[PGpath]],
-  pointes: Optional[Array[PGpoint]],
-  polygones: Optional[Array[PGpolygon]],
-  textes: Optional[Array[String]],
-  timees: Optional[Array[LocalTime]],
-  timestampes: Optional[Array[LocalDateTime]],
-  timestampzes: Optional[Array[Instant]],
-  timezes: Optional[Array[OffsetTime]],
-  uuides: Optional[Array[UUID]],
-  varchares: Optional[Array[String]],
-  xmles: Optional[Array[Xml]]
-) extends Tuple70[Optional[java.lang.Boolean], Optional[PGbox], Optional[/* bpchar, max 3 chars */ String], Optional[Array[scala.Byte]], Optional[/* bpchar, max 1 chars */ String], Optional[PGcircle], Optional[LocalDate], Optional[java.lang.Float], Optional[java.lang.Double], Optional[java.util.Map[String, String]], Optional[Inet], Optional[java.lang.Short], Optional[Int2Vector], Optional[Integer], Optional[java.lang.Long], Optional[PGInterval], Optional[Json], Optional[Jsonb], Optional[PGline], Optional[PGlseg], Optional[Money], Optional[Mydomain], Optional[Myenum], Optional[String], Optional[java.math.BigDecimal], Optional[PGpath], Optional[PGpoint], Optional[PGpolygon], Optional[String], Optional[LocalTime], Optional[LocalDateTime], Optional[Instant], Optional[OffsetTime], Optional[UUID], Optional[String], Optional[Vector], Optional[Xml], Optional[Array[PGbox]], Optional[Array[/* bpchar */ String]], Optional[Array[/* bpchar */ String]], Optional[Array[PGcircle]], Optional[Array[LocalDate]], Optional[Array[java.lang.Float]], Optional[Array[java.lang.Double]], Optional[Array[Inet]], Optional[Array[java.lang.Short]], Optional[Array[Int2Vector]], Optional[Array[Integer]], Optional[Array[java.lang.Long]], Optional[Array[PGInterval]], Optional[Array[Json]], Optional[Array[Jsonb]], Optional[Array[PGline]], Optional[Array[PGlseg]], Optional[Array[Money]], Optional[Array[Mydomain]], Optional[Array[Myenum]], Optional[Array[String]], Optional[Array[java.math.BigDecimal]], Optional[Array[PGpath]], Optional[Array[PGpoint]], Optional[Array[PGpolygon]], Optional[Array[String]], Optional[Array[LocalTime]], Optional[Array[LocalDateTime]], Optional[Array[Instant]], Optional[Array[OffsetTime]], Optional[Array[UUID]], Optional[Array[String]], Optional[Array[Xml]]] {
+  boxes: Optional[java.util.List[PGbox]],
+  bpchares: Optional[java.util.List[/* bpchar */ String]],
+  chares: Optional[java.util.List[/* bpchar */ String]],
+  circlees: Optional[java.util.List[PGcircle]],
+  datees: Optional[java.util.List[LocalDate]],
+  float4es: Optional[java.util.List[java.lang.Float]],
+  float8es: Optional[java.util.List[java.lang.Double]],
+  inetes: Optional[java.util.List[Inet]],
+  int2es: Optional[java.util.List[java.lang.Short]],
+  int2vectores: Optional[java.util.List[Int2Vector]],
+  int4es: Optional[java.util.List[Integer]],
+  int8es: Optional[java.util.List[java.lang.Long]],
+  intervales: Optional[java.util.List[PGInterval]],
+  jsones: Optional[java.util.List[Json]],
+  jsonbes: Optional[java.util.List[Jsonb]],
+  linees: Optional[java.util.List[PGline]],
+  lseges: Optional[java.util.List[PGlseg]],
+  moneyes: Optional[java.util.List[Money]],
+  mydomaines: Optional[java.util.List[Mydomain]],
+  myenumes: Optional[java.util.List[Myenum]],
+  namees: Optional[java.util.List[String]],
+  numerices: Optional[java.util.List[java.math.BigDecimal]],
+  pathes: Optional[java.util.List[PGpath]],
+  pointes: Optional[java.util.List[PGpoint]],
+  polygones: Optional[java.util.List[PGpolygon]],
+  textes: Optional[java.util.List[String]],
+  timees: Optional[java.util.List[LocalTime]],
+  timestampes: Optional[java.util.List[LocalDateTime]],
+  timestampzes: Optional[java.util.List[Instant]],
+  timezes: Optional[java.util.List[OffsetTime]],
+  uuides: Optional[java.util.List[UUID]],
+  varchares: Optional[java.util.List[String]],
+  xmles: Optional[java.util.List[Xml]]
+) extends Tuple70[Optional[java.lang.Boolean], Optional[PGbox], Optional[/* bpchar, max 3 chars */ String], Optional[Array[scala.Byte]], Optional[/* bpchar, max 1 chars */ String], Optional[PGcircle], Optional[LocalDate], Optional[java.lang.Float], Optional[java.lang.Double], Optional[java.util.Map[String, String]], Optional[Inet], Optional[java.lang.Short], Optional[Int2Vector], Optional[Integer], Optional[java.lang.Long], Optional[PGInterval], Optional[Json], Optional[Jsonb], Optional[PGline], Optional[PGlseg], Optional[Money], Optional[Mydomain], Optional[Myenum], Optional[String], Optional[java.math.BigDecimal], Optional[PGpath], Optional[PGpoint], Optional[PGpolygon], Optional[String], Optional[LocalTime], Optional[LocalDateTime], Optional[Instant], Optional[OffsetTime], Optional[UUID], Optional[String], Optional[Vector], Optional[Xml], Optional[java.util.List[PGbox]], Optional[java.util.List[/* bpchar */ String]], Optional[java.util.List[/* bpchar */ String]], Optional[java.util.List[PGcircle]], Optional[java.util.List[LocalDate]], Optional[java.util.List[java.lang.Float]], Optional[java.util.List[java.lang.Double]], Optional[java.util.List[Inet]], Optional[java.util.List[java.lang.Short]], Optional[java.util.List[Int2Vector]], Optional[java.util.List[Integer]], Optional[java.util.List[java.lang.Long]], Optional[java.util.List[PGInterval]], Optional[java.util.List[Json]], Optional[java.util.List[Jsonb]], Optional[java.util.List[PGline]], Optional[java.util.List[PGlseg]], Optional[java.util.List[Money]], Optional[java.util.List[Mydomain]], Optional[java.util.List[Myenum]], Optional[java.util.List[String]], Optional[java.util.List[java.math.BigDecimal]], Optional[java.util.List[PGpath]], Optional[java.util.List[PGpoint]], Optional[java.util.List[PGpolygon]], Optional[java.util.List[String]], Optional[java.util.List[LocalTime]], Optional[java.util.List[LocalDateTime]], Optional[java.util.List[Instant]], Optional[java.util.List[OffsetTime]], Optional[java.util.List[UUID]], Optional[java.util.List[String]], Optional[java.util.List[Xml]]] {
   override def `_1`: Optional[java.lang.Boolean] = bool
 
   override def `_2`: Optional[PGbox] = box
@@ -183,76 +183,78 @@ case class PgtestnullRow(
 
   override def `_37`: Optional[Xml] = xml
 
-  override def `_38`: Optional[Array[PGbox]] = boxes
+  override def `_38`: Optional[java.util.List[PGbox]] = boxes
 
-  override def `_39`: Optional[Array[/* bpchar */ String]] = bpchares
+  override def `_39`: Optional[java.util.List[/* bpchar */ String]] = bpchares
 
-  override def `_40`: Optional[Array[/* bpchar */ String]] = chares
+  override def `_40`: Optional[java.util.List[/* bpchar */ String]] = chares
 
-  override def `_41`: Optional[Array[PGcircle]] = circlees
+  override def `_41`: Optional[java.util.List[PGcircle]] = circlees
 
-  override def `_42`: Optional[Array[LocalDate]] = datees
+  override def `_42`: Optional[java.util.List[LocalDate]] = datees
 
-  override def `_43`: Optional[Array[java.lang.Float]] = float4es
+  override def `_43`: Optional[java.util.List[java.lang.Float]] = float4es
 
-  override def `_44`: Optional[Array[java.lang.Double]] = float8es
+  override def `_44`: Optional[java.util.List[java.lang.Double]] = float8es
 
-  override def `_45`: Optional[Array[Inet]] = inetes
+  override def `_45`: Optional[java.util.List[Inet]] = inetes
 
-  override def `_46`: Optional[Array[java.lang.Short]] = int2es
+  override def `_46`: Optional[java.util.List[java.lang.Short]] = int2es
 
-  override def `_47`: Optional[Array[Int2Vector]] = int2vectores
+  override def `_47`: Optional[java.util.List[Int2Vector]] = int2vectores
 
-  override def `_48`: Optional[Array[Integer]] = int4es
+  override def `_48`: Optional[java.util.List[Integer]] = int4es
 
-  override def `_49`: Optional[Array[java.lang.Long]] = int8es
+  override def `_49`: Optional[java.util.List[java.lang.Long]] = int8es
 
-  override def `_50`: Optional[Array[PGInterval]] = intervales
+  override def `_50`: Optional[java.util.List[PGInterval]] = intervales
 
-  override def `_51`: Optional[Array[Json]] = jsones
+  override def `_51`: Optional[java.util.List[Json]] = jsones
 
-  override def `_52`: Optional[Array[Jsonb]] = jsonbes
+  override def `_52`: Optional[java.util.List[Jsonb]] = jsonbes
 
-  override def `_53`: Optional[Array[PGline]] = linees
+  override def `_53`: Optional[java.util.List[PGline]] = linees
 
-  override def `_54`: Optional[Array[PGlseg]] = lseges
+  override def `_54`: Optional[java.util.List[PGlseg]] = lseges
 
-  override def `_55`: Optional[Array[Money]] = moneyes
+  override def `_55`: Optional[java.util.List[Money]] = moneyes
 
-  override def `_56`: Optional[Array[Mydomain]] = mydomaines
+  override def `_56`: Optional[java.util.List[Mydomain]] = mydomaines
 
-  override def `_57`: Optional[Array[Myenum]] = myenumes
+  override def `_57`: Optional[java.util.List[Myenum]] = myenumes
 
-  override def `_58`: Optional[Array[String]] = namees
+  override def `_58`: Optional[java.util.List[String]] = namees
 
-  override def `_59`: Optional[Array[java.math.BigDecimal]] = numerices
+  override def `_59`: Optional[java.util.List[java.math.BigDecimal]] = numerices
 
-  override def `_60`: Optional[Array[PGpath]] = pathes
+  override def `_60`: Optional[java.util.List[PGpath]] = pathes
 
-  override def `_61`: Optional[Array[PGpoint]] = pointes
+  override def `_61`: Optional[java.util.List[PGpoint]] = pointes
 
-  override def `_62`: Optional[Array[PGpolygon]] = polygones
+  override def `_62`: Optional[java.util.List[PGpolygon]] = polygones
 
-  override def `_63`: Optional[Array[String]] = textes
+  override def `_63`: Optional[java.util.List[String]] = textes
 
-  override def `_64`: Optional[Array[LocalTime]] = timees
+  override def `_64`: Optional[java.util.List[LocalTime]] = timees
 
-  override def `_65`: Optional[Array[LocalDateTime]] = timestampes
+  override def `_65`: Optional[java.util.List[LocalDateTime]] = timestampes
 
-  override def `_66`: Optional[Array[Instant]] = timestampzes
+  override def `_66`: Optional[java.util.List[Instant]] = timestampzes
 
-  override def `_67`: Optional[Array[OffsetTime]] = timezes
+  override def `_67`: Optional[java.util.List[OffsetTime]] = timezes
 
-  override def `_68`: Optional[Array[UUID]] = uuides
+  override def `_68`: Optional[java.util.List[UUID]] = uuides
 
-  override def `_69`: Optional[Array[String]] = varchares
+  override def `_69`: Optional[java.util.List[String]] = varchares
 
-  override def `_70`: Optional[Array[Xml]] = xmles
+  override def `_70`: Optional[java.util.List[Xml]] = xmles
 }
 
 object PgtestnullRow {
-  val `_rowParser`: RowParser[PgtestnullRow] = {
-    RowParsers.of(PgTypes.bool.opt(), PgTypes.box.opt(), PgTypes.bpchar.opt(), PgTypes.bytea.opt(), PgTypes.bpchar.opt(), PgTypes.circle.opt(), PgTypes.date.opt(), PgTypes.float4.opt(), PgTypes.float8.opt(), PgTypes.hstore.opt(), PgTypes.inet.opt(), PgTypes.int2.opt(), PgTypes.int2vector.opt(), PgTypes.int4.opt(), PgTypes.int8.opt(), PgTypes.interval.opt(), PgTypes.json.opt(), PgTypes.jsonb.opt(), PgTypes.line.opt(), PgTypes.lseg.opt(), PgTypes.money.opt(), Mydomain.pgType.opt(), Myenum.pgType.opt(), PgTypes.name.opt(), PgTypes.numeric.opt(), PgTypes.path.opt(), PgTypes.point.opt(), PgTypes.polygon.opt(), PgTypes.text.opt(), PgTypes.time.opt(), PgTypes.timestamp.opt(), PgTypes.timestamptz.opt(), PgTypes.timetz.opt(), PgTypes.uuid.opt(), PgTypes.text.opt(), PgTypes.vector.opt(), PgTypes.xml.opt(), PgTypes.boxArray.opt(), PgTypes.bpcharArray.opt(), PgTypes.bpcharArray.opt(), PgTypes.circleArray.opt(), PgTypes.dateArray.opt(), PgTypes.float4Array.opt(), PgTypes.float8Array.opt(), PgTypes.inetArray.opt(), PgTypes.int2Array.opt(), PgTypes.int2vectorArray.opt(), PgTypes.int4Array.opt(), PgTypes.int8Array.opt(), PgTypes.intervalArray.opt(), PgTypes.jsonArray.opt(), PgTypes.jsonbArray.opt(), PgTypes.lineArray.opt(), PgTypes.lsegArray.opt(), PgTypes.moneyArray.opt(), Mydomain.pgTypeArray.opt(), Myenum.pgTypeArray.opt(), PgTypes.nameArray.opt(), PgTypes.numericArray.opt(), PgTypes.pathArray.opt(), PgTypes.pointArray.opt(), PgTypes.polygonArray.opt(), PgTypes.textArray.opt(), PgTypes.timeArray.opt(), PgTypes.timestampArray.opt(), PgTypes.timestamptzArray.opt(), PgTypes.timetzArray.opt(), PgTypes.uuidArray.opt(), PgTypes.textArray.opt(), PgTypes.xmlArray.opt(), new Function70[Optional[java.lang.Boolean], Optional[PGbox], Optional[/* bpchar, max 3 chars */ String], Optional[Array[scala.Byte]], Optional[/* bpchar, max 1 chars */ String], Optional[PGcircle], Optional[LocalDate], Optional[java.lang.Float], Optional[java.lang.Double], Optional[java.util.Map[String, String]], Optional[Inet], Optional[java.lang.Short], Optional[Int2Vector], Optional[Integer], Optional[java.lang.Long], Optional[PGInterval], Optional[Json], Optional[Jsonb], Optional[PGline], Optional[PGlseg], Optional[Money], Optional[Mydomain], Optional[Myenum], Optional[String], Optional[java.math.BigDecimal], Optional[PGpath], Optional[PGpoint], Optional[PGpolygon], Optional[String], Optional[LocalTime], Optional[LocalDateTime], Optional[Instant], Optional[OffsetTime], Optional[UUID], Optional[String], Optional[Vector], Optional[Xml], Optional[Array[PGbox]], Optional[Array[/* bpchar */ String]], Optional[Array[/* bpchar */ String]], Optional[Array[PGcircle]], Optional[Array[LocalDate]], Optional[Array[java.lang.Float]], Optional[Array[java.lang.Double]], Optional[Array[Inet]], Optional[Array[java.lang.Short]], Optional[Array[Int2Vector]], Optional[Array[Integer]], Optional[Array[java.lang.Long]], Optional[Array[PGInterval]], Optional[Array[Json]], Optional[Array[Jsonb]], Optional[Array[PGline]], Optional[Array[PGlseg]], Optional[Array[Money]], Optional[Array[Mydomain]], Optional[Array[Myenum]], Optional[Array[String]], Optional[Array[java.math.BigDecimal]], Optional[Array[PGpath]], Optional[Array[PGpoint]], Optional[Array[PGpolygon]], Optional[Array[String]], Optional[Array[LocalTime]], Optional[Array[LocalDateTime]], Optional[Array[Instant]], Optional[Array[OffsetTime]], Optional[Array[UUID]], Optional[Array[String]], Optional[Array[Xml]], PgtestnullRow] {
+  given pgText: PgText[PgtestnullRow] = PgText.from(rowCodec)
+
+  val rowCodec: RowCodec[PgtestnullRow] = {
+    RowCodecs.of(PgTypes.bool.opt, PgTypes.box.opt, PgTypes.bpchar.opt, PgTypes.bytea.opt, PgTypes.bpchar.opt, PgTypes.circle.opt, PgTypes.date.opt, PgTypes.float4.opt, PgTypes.float8.opt, PgTypes.hstore.opt, PgTypes.inet.opt, PgTypes.int2.opt, PgTypes.int2vector.opt, PgTypes.int4.opt, PgTypes.int8.opt, PgTypes.interval.opt, PgTypes.json.opt, PgTypes.jsonb.opt, PgTypes.line.opt, PgTypes.lseg.opt, PgTypes.money.opt, Mydomain.pgType.opt, Myenum.pgType.opt, PgTypes.name.opt, PgTypes.numeric.opt, PgTypes.path.opt, PgTypes.point.opt, PgTypes.polygon.opt, PgTypes.text.opt, PgTypes.time.opt, PgTypes.timestamp.opt, PgTypes.timestamptz.opt, PgTypes.timetz.opt, PgTypes.uuid.opt, PgTypes.text.opt, PgTypes.vector.opt, PgTypes.xml.opt, PgTypes.box.array().opt, PgTypes.bpchar.array().opt, PgTypes.bpchar.array().opt, PgTypes.circle.array().opt, PgTypes.date.array().opt, PgTypes.float4.array().opt, PgTypes.float8.array().opt, PgTypes.inet.array().opt, PgTypes.int2.array().opt, PgTypes.int2vector.array().opt, PgTypes.int4.array().opt, PgTypes.int8.array().opt, PgTypes.interval.array().opt, PgTypes.json.array().opt, PgTypes.jsonb.array().opt, PgTypes.line.array().opt, PgTypes.lseg.array().opt, PgTypes.money.array().opt, Mydomain.pgType.array().opt, Myenum.pgType.array().opt, PgTypes.name.array().opt, PgTypes.numeric.array().opt, PgTypes.path.array().opt, PgTypes.point.array().opt, PgTypes.polygon.array().opt, PgTypes.text.array().opt, PgTypes.time.array().opt, PgTypes.timestamp.array().opt, PgTypes.timestamptz.array().opt, PgTypes.timetz.array().opt, PgTypes.uuid.array().opt, PgTypes.text.array().opt, PgTypes.xml.array().opt, new Function70[Optional[java.lang.Boolean], Optional[PGbox], Optional[/* bpchar, max 3 chars */ String], Optional[Array[scala.Byte]], Optional[/* bpchar, max 1 chars */ String], Optional[PGcircle], Optional[LocalDate], Optional[java.lang.Float], Optional[java.lang.Double], Optional[java.util.Map[String, String]], Optional[Inet], Optional[java.lang.Short], Optional[Int2Vector], Optional[Integer], Optional[java.lang.Long], Optional[PGInterval], Optional[Json], Optional[Jsonb], Optional[PGline], Optional[PGlseg], Optional[Money], Optional[Mydomain], Optional[Myenum], Optional[String], Optional[java.math.BigDecimal], Optional[PGpath], Optional[PGpoint], Optional[PGpolygon], Optional[String], Optional[LocalTime], Optional[LocalDateTime], Optional[Instant], Optional[OffsetTime], Optional[UUID], Optional[String], Optional[Vector], Optional[Xml], Optional[java.util.List[PGbox]], Optional[java.util.List[/* bpchar */ String]], Optional[java.util.List[/* bpchar */ String]], Optional[java.util.List[PGcircle]], Optional[java.util.List[LocalDate]], Optional[java.util.List[java.lang.Float]], Optional[java.util.List[java.lang.Double]], Optional[java.util.List[Inet]], Optional[java.util.List[java.lang.Short]], Optional[java.util.List[Int2Vector]], Optional[java.util.List[Integer]], Optional[java.util.List[java.lang.Long]], Optional[java.util.List[PGInterval]], Optional[java.util.List[Json]], Optional[java.util.List[Jsonb]], Optional[java.util.List[PGline]], Optional[java.util.List[PGlseg]], Optional[java.util.List[Money]], Optional[java.util.List[Mydomain]], Optional[java.util.List[Myenum]], Optional[java.util.List[String]], Optional[java.util.List[java.math.BigDecimal]], Optional[java.util.List[PGpath]], Optional[java.util.List[PGpoint]], Optional[java.util.List[PGpolygon]], Optional[java.util.List[String]], Optional[java.util.List[LocalTime]], Optional[java.util.List[LocalDateTime]], Optional[java.util.List[Instant]], Optional[java.util.List[OffsetTime]], Optional[java.util.List[UUID]], Optional[java.util.List[String]], Optional[java.util.List[Xml]], PgtestnullRow] {
       override def apply(
         t0: Optional[java.lang.Boolean],
         t1: Optional[PGbox],
@@ -291,39 +293,39 @@ object PgtestnullRow {
         t34: Optional[String],
         t35: Optional[Vector],
         t36: Optional[Xml],
-        t37: Optional[Array[PGbox]],
-        t38: Optional[Array[/* bpchar */ String]],
-        t39: Optional[Array[/* bpchar */ String]],
-        t40: Optional[Array[PGcircle]],
-        t41: Optional[Array[LocalDate]],
-        t42: Optional[Array[java.lang.Float]],
-        t43: Optional[Array[java.lang.Double]],
-        t44: Optional[Array[Inet]],
-        t45: Optional[Array[java.lang.Short]],
-        t46: Optional[Array[Int2Vector]],
-        t47: Optional[Array[Integer]],
-        t48: Optional[Array[java.lang.Long]],
-        t49: Optional[Array[PGInterval]],
-        t50: Optional[Array[Json]],
-        t51: Optional[Array[Jsonb]],
-        t52: Optional[Array[PGline]],
-        t53: Optional[Array[PGlseg]],
-        t54: Optional[Array[Money]],
-        t55: Optional[Array[Mydomain]],
-        t56: Optional[Array[Myenum]],
-        t57: Optional[Array[String]],
-        t58: Optional[Array[java.math.BigDecimal]],
-        t59: Optional[Array[PGpath]],
-        t60: Optional[Array[PGpoint]],
-        t61: Optional[Array[PGpolygon]],
-        t62: Optional[Array[String]],
-        t63: Optional[Array[LocalTime]],
-        t64: Optional[Array[LocalDateTime]],
-        t65: Optional[Array[Instant]],
-        t66: Optional[Array[OffsetTime]],
-        t67: Optional[Array[UUID]],
-        t68: Optional[Array[String]],
-        t69: Optional[Array[Xml]]
+        t37: Optional[java.util.List[PGbox]],
+        t38: Optional[java.util.List[/* bpchar */ String]],
+        t39: Optional[java.util.List[/* bpchar */ String]],
+        t40: Optional[java.util.List[PGcircle]],
+        t41: Optional[java.util.List[LocalDate]],
+        t42: Optional[java.util.List[java.lang.Float]],
+        t43: Optional[java.util.List[java.lang.Double]],
+        t44: Optional[java.util.List[Inet]],
+        t45: Optional[java.util.List[java.lang.Short]],
+        t46: Optional[java.util.List[Int2Vector]],
+        t47: Optional[java.util.List[Integer]],
+        t48: Optional[java.util.List[java.lang.Long]],
+        t49: Optional[java.util.List[PGInterval]],
+        t50: Optional[java.util.List[Json]],
+        t51: Optional[java.util.List[Jsonb]],
+        t52: Optional[java.util.List[PGline]],
+        t53: Optional[java.util.List[PGlseg]],
+        t54: Optional[java.util.List[Money]],
+        t55: Optional[java.util.List[Mydomain]],
+        t56: Optional[java.util.List[Myenum]],
+        t57: Optional[java.util.List[String]],
+        t58: Optional[java.util.List[java.math.BigDecimal]],
+        t59: Optional[java.util.List[PGpath]],
+        t60: Optional[java.util.List[PGpoint]],
+        t61: Optional[java.util.List[PGpolygon]],
+        t62: Optional[java.util.List[String]],
+        t63: Optional[java.util.List[LocalTime]],
+        t64: Optional[java.util.List[LocalDateTime]],
+        t65: Optional[java.util.List[Instant]],
+        t66: Optional[java.util.List[OffsetTime]],
+        t67: Optional[java.util.List[UUID]],
+        t68: Optional[java.util.List[String]],
+        t69: Optional[java.util.List[Xml]]
       ): PgtestnullRow = {
         new PgtestnullRow(
           t0,
@@ -400,6 +402,4 @@ object PgtestnullRow {
       }
     }, row => Array[Any](row.bool, row.box, row.bpchar, row.bytea, row.char, row.circle, row.date, row.float4, row.float8, row.hstore, row.inet, row.int2, row.int2vector, row.int4, row.int8, row.interval, row.json, row.jsonb, row.line, row.lseg, row.money, row.mydomain, row.myenum, row.name, row.numeric, row.path, row.point, row.polygon, row.text, row.time, row.timestamp, row.timestampz, row.timez, row.uuid, row.varchar, row.vector, row.xml, row.boxes, row.bpchares, row.chares, row.circlees, row.datees, row.float4es, row.float8es, row.inetes, row.int2es, row.int2vectores, row.int4es, row.int8es, row.intervales, row.jsones, row.jsonbes, row.linees, row.lseges, row.moneyes, row.mydomaines, row.myenumes, row.namees, row.numerices, row.pathes, row.pointes, row.polygones, row.textes, row.timees, row.timestampes, row.timestampzes, row.timezes, row.uuides, row.varchares, row.xmles))
   }
-
-  given pgText: PgText[PgtestnullRow] = PgText.from(`_rowParser`)
 }

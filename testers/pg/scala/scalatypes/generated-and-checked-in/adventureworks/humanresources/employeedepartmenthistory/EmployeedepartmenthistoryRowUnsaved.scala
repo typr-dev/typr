@@ -11,8 +11,7 @@ import adventureworks.humanresources.department.DepartmentId
 import adventureworks.humanresources.shift.ShiftId
 import adventureworks.person.businessentity.BusinessentityId
 import dev.typr.foundations.PgText
-import dev.typr.foundations.PgTypes
-import dev.typr.foundations.scala.DbTypeOps
+import dev.typr.foundationssc.PgTypes
 import java.time.LocalDate
 import java.time.LocalDateTime
 
@@ -54,5 +53,5 @@ case class EmployeedepartmenthistoryRowUnsaved(
 }
 
 object EmployeedepartmenthistoryRowUnsaved {
-  given pgText: PgText[EmployeedepartmenthistoryRowUnsaved] = PgText.instance((row, sb) => { BusinessentityId.pgType.text.unsafeEncode(row.businessentityid, sb); sb.append(PgText.DELIMETER); DepartmentId.pgType.text.unsafeEncode(row.departmentid, sb); sb.append(PgText.DELIMETER); ShiftId.pgType.text.unsafeEncode(row.shiftid, sb); sb.append(PgText.DELIMETER); PgTypes.date.text.unsafeEncode(row.startdate, sb); sb.append(PgText.DELIMETER); PgTypes.date.nullable.text.unsafeEncode(row.enddate, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using PgTypes.timestamp.text).unsafeEncode(row.modifieddate, sb) })
+  given pgText: PgText[EmployeedepartmenthistoryRowUnsaved] = PgText.instance((row, sb) => { BusinessentityId.pgType.pgText().unsafeEncode(row.businessentityid, sb); sb.append(PgText.DELIMETER); DepartmentId.pgType.pgText().unsafeEncode(row.departmentid, sb); sb.append(PgText.DELIMETER); ShiftId.pgType.pgText().unsafeEncode(row.shiftid, sb); sb.append(PgText.DELIMETER); PgTypes.date.pgText().unsafeEncode(row.startdate, sb); sb.append(PgText.DELIMETER); PgTypes.date.opt.pgText().unsafeEncode(row.enddate, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using PgTypes.timestamp.pgText()).unsafeEncode(row.modifieddate, sb) })
 }

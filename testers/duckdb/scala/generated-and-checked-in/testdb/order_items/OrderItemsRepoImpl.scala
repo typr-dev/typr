@@ -5,50 +5,51 @@
  */
 package testdb.order_items
 
-import dev.typr.foundations.scala.DeleteBuilder
-import dev.typr.foundations.scala.Dialect
-import dev.typr.foundations.scala.Fragment
-import dev.typr.foundations.scala.ScalaDbTypes
-import dev.typr.foundations.scala.SelectBuilder
-import dev.typr.foundations.scala.UpdateBuilder
-import java.sql.Connection
+import dev.typr.dslsc.DeleteBuilder
+import dev.typr.dslsc.Dialect
+import dev.typr.dslsc.SelectBuilder
+import dev.typr.dslsc.UpdateBuilder
+import dev.typr.foundationssc.Connection
+import dev.typr.foundationssc.ConnectionRead
+import dev.typr.foundationssc.DuckDbTypes
+import dev.typr.foundationssc.Fragment
 import scala.collection.mutable.ListBuffer
-import dev.typr.foundations.scala.Fragment.sql
+import dev.typr.foundationssc.Fragment.sql
 
 class OrderItemsRepoImpl extends OrderItemsRepo {
   override def delete: DeleteBuilder[OrderItemsFields, OrderItemsRow] = DeleteBuilder.of(""""order_items"""", OrderItemsFields.structure, Dialect.DUCKDB)
 
-  override def deleteById(compositeId: OrderItemsId)(using c: Connection): Boolean = sql"""delete from "order_items" where "order_id" = ${Fragment.encode(ScalaDbTypes.DuckDbTypes.integer, compositeId.orderId)} AND "product_id" = ${Fragment.encode(ScalaDbTypes.DuckDbTypes.integer, compositeId.productId)}""".update().runUnchecked(c) > 0
+  override def deleteById(compositeId: OrderItemsId)(using c: Connection): Boolean = sql"""delete from "order_items" where "order_id" = ${Fragment.encode(DuckDbTypes.integer, compositeId.orderId)} AND "product_id" = ${Fragment.encode(DuckDbTypes.integer, compositeId.productId)}""".update().run(using c) > 0
 
-  override def deleteByIds(compositeIds: Array[OrderItemsId])(using c: Connection): Int = {
+  override def deleteByIds(compositeIds: List[OrderItemsId])(using c: Connection): Int = {
     val orClauses: ListBuffer[Fragment] = ListBuffer()
-    compositeIds.foreach { id => orClauses.addOne(Fragment.interpolate(Fragment.lit("("), Fragment.lit(""""order_id" = """), Fragment.encode(ScalaDbTypes.DuckDbTypes.integer, id.orderId), Fragment.lit(" AND "), Fragment.lit(""""product_id" = """), Fragment.encode(ScalaDbTypes.DuckDbTypes.integer, id.productId), Fragment.lit(")"))): @scala.annotation.nowarn }
-    return Fragment.interpolate(Fragment.lit("""delete
+    compositeIds.foreach { id => orClauses.addOne(Fragment.concat(Fragment.of("("), Fragment.of(""""order_id" = """), Fragment.encode(DuckDbTypes.integer, id.orderId), Fragment.of(" AND "), Fragment.of(""""product_id" = """), Fragment.encode(DuckDbTypes.integer, id.productId), Fragment.of(")"))): @scala.annotation.nowarn }
+    return Fragment.concat(Fragment.of("""delete
     from "order_items"
-    where """), Fragment.or(orClauses.toList), Fragment.lit("""
-    """)).update().runUnchecked(c)
+    where """), Fragment.or(orClauses.toList), Fragment.of("""
+    """)).update().run(using c)
   }
 
   override def insert(unsaved: OrderItemsRow)(using c: Connection): OrderItemsRow = {
   sql"""insert into "order_items"("order_id", "product_id", "quantity", "unit_price")
-    values (${Fragment.encode(ScalaDbTypes.DuckDbTypes.integer, unsaved.orderId)}, ${Fragment.encode(ScalaDbTypes.DuckDbTypes.integer, unsaved.productId)}, ${Fragment.encode(ScalaDbTypes.DuckDbTypes.integer, unsaved.quantity)}, ${Fragment.encode(ScalaDbTypes.DuckDbTypes.numeric, unsaved.unitPrice)})
+    values (${Fragment.encode(DuckDbTypes.integer, unsaved.orderId)}, ${Fragment.encode(DuckDbTypes.integer, unsaved.productId)}, ${Fragment.encode(DuckDbTypes.integer, unsaved.quantity)}, ${Fragment.encode(DuckDbTypes.numeric, unsaved.unitPrice)})
     RETURNING "order_id", "product_id", "quantity", "unit_price"
     """
-    .updateReturning(OrderItemsRow.`_rowParser`.exactlyOne()).runUnchecked(c)
+    .updateReturning(OrderItemsRow.rowCodec.exactlyOne()).run(using c)
   }
 
   override def insert(unsaved: OrderItemsRowUnsaved)(using c: Connection): OrderItemsRow = {
     val columns: ListBuffer[Fragment] = ListBuffer()
     val values: ListBuffer[Fragment] = ListBuffer()
-    columns.addOne(Fragment.lit(""""order_id"""")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(ScalaDbTypes.DuckDbTypes.integer, unsaved.orderId)}"): @scala.annotation.nowarn
-    columns.addOne(Fragment.lit(""""product_id"""")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(ScalaDbTypes.DuckDbTypes.integer, unsaved.productId)}"): @scala.annotation.nowarn
-    columns.addOne(Fragment.lit(""""unit_price"""")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(ScalaDbTypes.DuckDbTypes.numeric, unsaved.unitPrice)}"): @scala.annotation.nowarn
+    columns.addOne(Fragment.of(""""order_id"""")): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(DuckDbTypes.integer, unsaved.orderId)}"): @scala.annotation.nowarn
+    columns.addOne(Fragment.of(""""product_id"""")): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(DuckDbTypes.integer, unsaved.productId)}"): @scala.annotation.nowarn
+    columns.addOne(Fragment.of(""""unit_price"""")): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(DuckDbTypes.numeric, unsaved.unitPrice)}"): @scala.annotation.nowarn
     unsaved.quantity.visit(
       {  },
-      value => { columns.addOne(Fragment.lit(""""quantity"""")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(ScalaDbTypes.DuckDbTypes.integer, value)}"): @scala.annotation.nowarn }
+      value => { columns.addOne(Fragment.of(""""quantity"""")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(DuckDbTypes.integer, value)}"): @scala.annotation.nowarn }
     );
     val q: Fragment = {
       sql"""insert into "order_items"(${Fragment.comma(columns)})
@@ -56,58 +57,58 @@ class OrderItemsRepoImpl extends OrderItemsRepo {
       RETURNING "order_id", "product_id", "quantity", "unit_price"
       """
     }
-    return q.updateReturning(OrderItemsRow.`_rowParser`.exactlyOne()).runUnchecked(c)
+    return q.updateReturning(OrderItemsRow.rowCodec.exactlyOne()).run(using c)
   }
 
-  override def select: SelectBuilder[OrderItemsFields, OrderItemsRow] = SelectBuilder.of(""""order_items"""", OrderItemsFields.structure, OrderItemsRow.`_rowParser`, Dialect.DUCKDB)
+  override def select: SelectBuilder[OrderItemsFields, OrderItemsRow] = SelectBuilder.of(""""order_items"""", OrderItemsFields.structure, OrderItemsRow.rowCodec, Dialect.DUCKDB)
 
-  override def selectAll(using c: Connection): List[OrderItemsRow] = {
+  override def selectAll(using c: ConnectionRead): List[OrderItemsRow] = {
     sql"""select "order_id", "product_id", "quantity", "unit_price"
     from "order_items"
-    """.query(OrderItemsRow.`_rowParser`.all()).runUnchecked(c)
+    """.query(OrderItemsRow.rowCodec.all()).run(using c)
   }
 
-  override def selectById(compositeId: OrderItemsId)(using c: Connection): Option[OrderItemsRow] = {
+  override def selectById(compositeId: OrderItemsId)(using c: ConnectionRead): Option[OrderItemsRow] = {
     sql"""select "order_id", "product_id", "quantity", "unit_price"
     from "order_items"
-    where "order_id" = ${Fragment.encode(ScalaDbTypes.DuckDbTypes.integer, compositeId.orderId)} AND "product_id" = ${Fragment.encode(ScalaDbTypes.DuckDbTypes.integer, compositeId.productId)}""".query(OrderItemsRow.`_rowParser`.first()).runUnchecked(c)
+    where "order_id" = ${Fragment.encode(DuckDbTypes.integer, compositeId.orderId)} AND "product_id" = ${Fragment.encode(DuckDbTypes.integer, compositeId.productId)}""".query(OrderItemsRow.rowCodec.first()).run(using c)
   }
 
-  override def selectByIds(compositeIds: Array[OrderItemsId])(using c: Connection): List[OrderItemsRow] = {
+  override def selectByIds(compositeIds: List[OrderItemsId])(using c: ConnectionRead): List[OrderItemsRow] = {
     val orClauses: ListBuffer[Fragment] = ListBuffer()
-    compositeIds.foreach { id => orClauses.addOne(Fragment.interpolate(Fragment.lit("("), Fragment.lit(""""order_id" = """), Fragment.encode(ScalaDbTypes.DuckDbTypes.integer, id.orderId), Fragment.lit(" AND "), Fragment.lit(""""product_id" = """), Fragment.encode(ScalaDbTypes.DuckDbTypes.integer, id.productId), Fragment.lit(")"))): @scala.annotation.nowarn }
-    return Fragment.interpolate(Fragment.lit("""select "order_id", "product_id", "quantity", "unit_price"
+    compositeIds.foreach { id => orClauses.addOne(Fragment.concat(Fragment.of("("), Fragment.of(""""order_id" = """), Fragment.encode(DuckDbTypes.integer, id.orderId), Fragment.of(" AND "), Fragment.of(""""product_id" = """), Fragment.encode(DuckDbTypes.integer, id.productId), Fragment.of(")"))): @scala.annotation.nowarn }
+    return Fragment.concat(Fragment.of("""select "order_id", "product_id", "quantity", "unit_price"
     from "order_items"
-    where """), Fragment.or(orClauses.toList), Fragment.lit("""
-    """)).query(OrderItemsRow.`_rowParser`.all()).runUnchecked(c)
+    where """), Fragment.or(orClauses.toList), Fragment.of("""
+    """)).query(OrderItemsRow.rowCodec.all()).run(using c)
   }
 
-  override def selectByIdsTracked(compositeIds: Array[OrderItemsId])(using c: Connection): Map[OrderItemsId, OrderItemsRow] = {
+  override def selectByIdsTracked(compositeIds: List[OrderItemsId])(using c: ConnectionRead): Map[OrderItemsId, OrderItemsRow] = {
     val ret: scala.collection.mutable.Map[OrderItemsId, OrderItemsRow] = scala.collection.mutable.Map.empty[OrderItemsId, OrderItemsRow]
     selectByIds(compositeIds)(using c).foreach(row => ret.put(row.compositeId, row): @scala.annotation.nowarn)
     return ret.toMap
   }
 
-  override def update: UpdateBuilder[OrderItemsFields, OrderItemsRow] = UpdateBuilder.of(""""order_items"""", OrderItemsFields.structure, OrderItemsRow.`_rowParser`, Dialect.DUCKDB)
+  override def update: UpdateBuilder[OrderItemsFields, OrderItemsRow] = UpdateBuilder.of(""""order_items"""", OrderItemsFields.structure, OrderItemsRow.rowCodec, Dialect.DUCKDB)
 
   override def update(row: OrderItemsRow)(using c: Connection): Boolean = {
     val compositeId: OrderItemsId = row.compositeId
     return sql"""update "order_items"
-    set "quantity" = ${Fragment.encode(ScalaDbTypes.DuckDbTypes.integer, row.quantity)},
-    "unit_price" = ${Fragment.encode(ScalaDbTypes.DuckDbTypes.numeric, row.unitPrice)}
-    where "order_id" = ${Fragment.encode(ScalaDbTypes.DuckDbTypes.integer, compositeId.orderId)} AND "product_id" = ${Fragment.encode(ScalaDbTypes.DuckDbTypes.integer, compositeId.productId)}""".update().runUnchecked(c) > 0
+    set "quantity" = ${Fragment.encode(DuckDbTypes.integer, row.quantity)},
+    "unit_price" = ${Fragment.encode(DuckDbTypes.numeric, row.unitPrice)}
+    where "order_id" = ${Fragment.encode(DuckDbTypes.integer, compositeId.orderId)} AND "product_id" = ${Fragment.encode(DuckDbTypes.integer, compositeId.productId)}""".update().run(using c) > 0
   }
 
   override def upsert(unsaved: OrderItemsRow)(using c: Connection): OrderItemsRow = {
   sql"""INSERT INTO "order_items"("order_id", "product_id", "quantity", "unit_price")
-    VALUES (${Fragment.encode(ScalaDbTypes.DuckDbTypes.integer, unsaved.orderId)}, ${Fragment.encode(ScalaDbTypes.DuckDbTypes.integer, unsaved.productId)}, ${Fragment.encode(ScalaDbTypes.DuckDbTypes.integer, unsaved.quantity)}, ${Fragment.encode(ScalaDbTypes.DuckDbTypes.numeric, unsaved.unitPrice)})
+    VALUES (${Fragment.encode(DuckDbTypes.integer, unsaved.orderId)}, ${Fragment.encode(DuckDbTypes.integer, unsaved.productId)}, ${Fragment.encode(DuckDbTypes.integer, unsaved.quantity)}, ${Fragment.encode(DuckDbTypes.numeric, unsaved.unitPrice)})
     ON CONFLICT ("order_id", "product_id")
     DO UPDATE SET
       "quantity" = EXCLUDED."quantity",
     "unit_price" = EXCLUDED."unit_price"
     RETURNING "order_id", "product_id", "quantity", "unit_price""""
-    .updateReturning(OrderItemsRow.`_rowParser`.exactlyOne())
-    .runUnchecked(c)
+    .updateReturning(OrderItemsRow.rowCodec.exactlyOne())
+    .run(using c)
   }
 
   override def upsertBatch(unsaved: Iterator[OrderItemsRow])(using c: Connection): List[OrderItemsRow] = {
@@ -118,7 +119,7 @@ class OrderItemsRepoImpl extends OrderItemsRepo {
       "quantity" = EXCLUDED."quantity",
     "unit_price" = EXCLUDED."unit_price"
     RETURNING "order_id", "product_id", "quantity", "unit_price""""
-      .updateReturningEach(OrderItemsRow.`_rowParser`, unsaved)
-    .runUnchecked(c)
+      .updateReturningEach(OrderItemsRow.rowCodec, unsaved)
+    .run(using c)
   }
 }

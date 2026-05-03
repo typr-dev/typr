@@ -6,12 +6,11 @@
 package testdb.products
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import dev.typr.foundations.DuckDbTypes
+import dev.typr.dslkt.RowCodecs
 import dev.typr.foundations.Tuple.Tuple5
 import dev.typr.foundations.data.Json
-import dev.typr.foundations.kotlin.RowParser
-import dev.typr.foundations.kotlin.RowParsers
-import dev.typr.foundations.kotlin.nullable
+import dev.typr.foundationskt.DuckDbTypes
+import dev.typr.foundationskt.RowCodec
 import java.math.BigDecimal
 
 /** Table: products
@@ -19,16 +18,16 @@ import java.math.BigDecimal
   */
 data class ProductsRow(
   @field:JsonProperty("product_id") val productId: ProductsId,
-  val sku: String,
-  val name: String,
+  val sku: kotlin.String,
+  val name: kotlin.String,
   val price: BigDecimal,
   val metadata: Json?
-) : Tuple5<ProductsId, String, String, BigDecimal, Json?> {
+) : Tuple5<ProductsId, kotlin.String, kotlin.String, BigDecimal, Json?> {
   override fun _1(): ProductsId = productId
 
-  override fun _2(): String = sku
+  override fun _2(): kotlin.String = sku
 
-  override fun _3(): String = name
+  override fun _3(): kotlin.String = name
 
   override fun _4(): BigDecimal = price
 
@@ -37,6 +36,6 @@ data class ProductsRow(
   fun id(): ProductsId = productId
 
   companion object {
-    val _rowParser: RowParser<ProductsRow> = RowParsers.of(ProductsId.duckDbType, DuckDbTypes.varchar, DuckDbTypes.varchar, DuckDbTypes.numeric, DuckDbTypes.json.nullable(), { t0, t1, t2, t3, t4 -> ProductsRow(t0, t1, t2, t3, t4) }, { row -> arrayOf<Any?>(row.productId, row.sku, row.name, row.price, row.metadata) })
+    val rowCodec: RowCodec<ProductsRow> = RowCodecs.of(ProductsId.duckDbType, DuckDbTypes.varchar, DuckDbTypes.varchar, DuckDbTypes.numeric, DuckDbTypes.json.opt(), { t0: ProductsId, t1: kotlin.String, t2: kotlin.String, t3: BigDecimal, t4: Json? -> ProductsRow(t0, t1, t2, t3, t4) }, { row: ProductsRow -> arrayOf<Any?>(row.productId, row.sku, row.name, row.price, row.metadata) })
   }
 }

@@ -6,11 +6,11 @@
 package adventureworks.person.businessentity
 
 import adventureworks.customtypes.Defaulted
+import dev.typr.dslsc.RowCodecs
 import dev.typr.foundations.PgText
-import dev.typr.foundations.PgTypes
 import dev.typr.foundations.Tuple.Tuple3
-import dev.typr.foundations.scala.RowParser
-import dev.typr.foundations.scala.RowParsers
+import dev.typr.foundationssc.PgTypes
+import dev.typr.foundationssc.RowCodec
 import java.time.LocalDateTime
 import java.util.UUID
 
@@ -44,7 +44,7 @@ case class BusinessentityRow(
 }
 
 object BusinessentityRow {
-  val `_rowParser`: RowParser[BusinessentityRow] = RowParsers.of(BusinessentityId.pgType, PgTypes.uuid, PgTypes.timestamp)(BusinessentityRow.apply)(row => Array[Any](row.businessentityid, row.rowguid, row.modifieddate))
+  given pgText: PgText[BusinessentityRow] = PgText.from(rowCodec.underlying)
 
-  given pgText: PgText[BusinessentityRow] = PgText.from(`_rowParser`.underlying)
+  val rowCodec: RowCodec[BusinessentityRow] = RowCodecs.of(BusinessentityId.pgType, PgTypes.uuid, PgTypes.timestamp)(BusinessentityRow.apply)(row => Array[Any](row.businessentityid, row.rowguid, row.modifieddate))
 }

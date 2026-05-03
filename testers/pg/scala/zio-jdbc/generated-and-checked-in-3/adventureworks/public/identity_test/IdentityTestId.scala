@@ -24,7 +24,7 @@ object IdentityTestId {
 
   given arraySetter: Setter[Array[IdentityTestId]] = adventureworks.StringArraySetter.contramap(_.map(_.value))
 
-  given bijection: Bijection[IdentityTestId, String] = Bijection.apply[IdentityTestId, String](_.value)(IdentityTestId.apply)
+  given bijection: Bijection[IdentityTestId, String] = Bijection[IdentityTestId, String](_.value)(IdentityTestId.apply)
 
   given jdbcDecoder: JdbcDecoder[IdentityTestId] = JdbcDecoder.stringDecoder.map(IdentityTestId.apply)
 

@@ -6,10 +6,9 @@
 package testdb.distinct_type_test
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import dev.typr.dslkt.RowCodecs
 import dev.typr.foundations.Tuple.Tuple3
-import dev.typr.foundations.kotlin.RowParser
-import dev.typr.foundations.kotlin.RowParsers
-import dev.typr.foundations.kotlin.nullable
+import dev.typr.foundationskt.RowCodec
 import testdb.EmailAddress
 import testdb.MoneyAmount
 
@@ -31,6 +30,6 @@ data class DistinctTypeTestRow(
   fun toUnsavedRow(): DistinctTypeTestRowUnsaved = DistinctTypeTestRowUnsaved(email, balance)
 
   companion object {
-    val _rowParser: RowParser<DistinctTypeTestRow> = RowParsers.of(DistinctTypeTestId.db2Type, EmailAddress.db2Type, MoneyAmount.db2Type.nullable(), { t0, t1, t2 -> DistinctTypeTestRow(t0, t1, t2) }, { row -> arrayOf<Any?>(row.id, row.email, row.balance) })
+    val rowCodec: RowCodec<DistinctTypeTestRow> = RowCodecs.of(DistinctTypeTestId.db2Type, EmailAddress.db2Type, MoneyAmount.db2Type.opt(), { t0: DistinctTypeTestId, t1: EmailAddress, t2: MoneyAmount? -> DistinctTypeTestRow(t0, t1, t2) }, { row: DistinctTypeTestRow -> arrayOf<Any?>(row.id, row.email, row.balance) })
   }
 }

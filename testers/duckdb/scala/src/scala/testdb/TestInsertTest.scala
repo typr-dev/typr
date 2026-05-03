@@ -8,12 +8,10 @@ import scala.util.Random
 /** Tests for TestInsert functionality - automatic random data generation for testing.
   */
 class TestInsertTest {
-  private val testInsert = TestInsert(Random(42))
+  private val testInsert = TestInsert(Random(1169258584))
 
   @Test
-  def testCustomersInsert(): Unit = withConnection { c =>
-    given java.sql.Connection = c
-
+  def testCustomersInsert(): Unit = withConnection {
     val row = testInsert.Customers()
     assertNotNull(row)
     assertNotNull(row.customerId)
@@ -21,9 +19,7 @@ class TestInsertTest {
   }
 
   @Test
-  def testCustomersWithCustomization(): Unit = withConnection { c =>
-    given java.sql.Connection = c
-
+  def testCustomersWithCustomization(): Unit = withConnection {
     val row = testInsert.Customers(name = "Custom Name")
 
     assertNotNull(row)
@@ -31,9 +27,7 @@ class TestInsertTest {
   }
 
   @Test
-  def testDepartmentsInsert(): Unit = withConnection { c =>
-    given java.sql.Connection = c
-
+  def testDepartmentsInsert(): Unit = withConnection {
     val row = testInsert.Departments()
 
     assertNotNull(row)
@@ -43,9 +37,7 @@ class TestInsertTest {
   }
 
   @Test
-  def testProductsInsert(): Unit = withConnection { c =>
-    given java.sql.Connection = c
-
+  def testProductsInsert(): Unit = withConnection {
     val row = testInsert.Products()
 
     assertNotNull(row)
@@ -56,9 +48,7 @@ class TestInsertTest {
   }
 
   @Test
-  def testAllScalarTypesInsert(): Unit = withConnection { c =>
-    given java.sql.Connection = c
-
+  def testAllScalarTypesInsert(): Unit = withConnection {
     val row = testInsert.AllScalarTypes()
 
     assertNotNull(row)
@@ -67,9 +57,7 @@ class TestInsertTest {
   }
 
   @Test
-  def testEmployeesWithDepartmentFK(): Unit = withConnection { c =>
-    given java.sql.Connection = c
-
+  def testEmployeesWithDepartmentFK(): Unit = withConnection {
     val dept = testInsert.Departments()
 
     val emp = testInsert.Employees(deptCode = dept.deptCode, deptRegion = dept.deptRegion)
@@ -80,9 +68,7 @@ class TestInsertTest {
   }
 
   @Test
-  def testOrdersWithCustomerFK(): Unit = withConnection { c =>
-    given java.sql.Connection = c
-
+  def testOrdersWithCustomerFK(): Unit = withConnection {
     val customer = testInsert.Customers()
 
     val order = testInsert.Orders(customerId = customer.customerId.value)
@@ -92,9 +78,7 @@ class TestInsertTest {
   }
 
   @Test
-  def testMultipleInserts(): Unit = withConnection { c =>
-    given java.sql.Connection = c
-
+  def testMultipleInserts(): Unit = withConnection {
     val row1 = testInsert.Customers()
     val row2 = testInsert.Customers()
     val row3 = testInsert.Customers()
@@ -109,12 +93,10 @@ class TestInsertTest {
     val testInsert1 = TestInsert(Random(123))
     val testInsert2 = TestInsert(Random(123))
 
-    val row1 = withConnection { c =>
-      given java.sql.Connection = c
+    val row1 = withConnection {
       testInsert1.Customers()
     }
-    val row2 = withConnection { c =>
-      given java.sql.Connection = c
+    val row2 = withConnection {
       testInsert2.Customers()
     }
 
@@ -122,9 +104,7 @@ class TestInsertTest {
   }
 
   @Test
-  def testDepartmentsGeneratesValidData(): Unit = withConnection { c =>
-    given java.sql.Connection = c
-
+  def testDepartmentsGeneratesValidData(): Unit = withConnection {
     val row = testInsert.Departments()
 
     assertNotNull(row)

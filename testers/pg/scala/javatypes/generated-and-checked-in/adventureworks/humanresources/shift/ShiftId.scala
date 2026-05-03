@@ -6,17 +6,17 @@
 package adventureworks.humanresources.shift
 
 import com.fasterxml.jackson.annotation.JsonValue
+import dev.typr.foundations.Bijection
 import dev.typr.foundations.PgType
 import dev.typr.foundations.PgTypes
-import dev.typr.foundations.dsl.Bijection
 
 /** Type for the primary key of table `humanresources.shift` */
 case class ShiftId(@JsonValue value: Integer) extends scala.AnyVal
 
 object ShiftId {
-  given bijection: Bijection[ShiftId, Integer] = Bijection.apply[ShiftId, Integer](_.value)(ShiftId.apply)
+  given bijection: Bijection[ShiftId, Integer] = Bijection.of[ShiftId, Integer](_.value, ShiftId.apply)
 
-  given pgType: PgType[ShiftId] = PgTypes.int4.bimap(ShiftId.apply, _.value)
+  given pgType: PgType[ShiftId] = PgTypes.int4.to(Bijection.of(ShiftId.apply, _.value))
 
-  given pgTypeArray: PgType[Array[ShiftId]] = PgTypes.int4Array.bimap(xs => xs.map(ShiftId.apply), xs => xs.map(_.value))
+  given pgTypeArray: PgType[java.util.List[ShiftId]] = pgType.array
 }

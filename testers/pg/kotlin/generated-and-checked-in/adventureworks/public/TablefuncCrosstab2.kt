@@ -5,26 +5,22 @@
  */
 package adventureworks.public
 
-import dev.typr.foundations.PgRead
-import dev.typr.foundations.PgStruct
-import dev.typr.foundations.PgType
-import dev.typr.foundations.PgTypes
-import java.util.Optional
+import dev.typr.foundationskt.PgType
+import dev.typr.foundationskt.PgTypes
+import dev.typr.foundationskt.RowCodec
+import kotlin.collections.List
 
 /** PostgreSQL composite type: public.tablefunc_crosstab_2 */
 data class TablefuncCrosstab2(
-  val rowName: String?,
-  val category1: String?,
-  val category2: String?
+  val rowName: kotlin.String?,
+  val category1: kotlin.String?,
+  val category2: kotlin.String?
 ) {
   companion object {
-    val pgStruct: PgStruct<TablefuncCrosstab2> =
-      PgStruct.builder<TablefuncCrosstab2>("public.tablefunc_crosstab_2").optField("rowName", PgTypes.text, { v: TablefuncCrosstab2 -> Optional.ofNullable(v.rowName) }).optField("category1", PgTypes.text, { v: TablefuncCrosstab2 -> Optional.ofNullable(v.category1) }).optField("category2", PgTypes.text, { v: TablefuncCrosstab2 -> Optional.ofNullable(v.category2) }).build({ arr -> TablefuncCrosstab2(arr[0] as? String, arr[1] as? String, arr[2] as? String) })
-
     val pgType: PgType<TablefuncCrosstab2> =
-      pgStruct.asType()
+      PgTypes.compositeOf("public.tablefunc_crosstab_2", RowCodec.namedBuilder<TablefuncCrosstab2>().field("rowName", PgTypes.text.opt(), { v: TablefuncCrosstab2 -> v.rowName }).field("category1", PgTypes.text.opt(), { v: TablefuncCrosstab2 -> v.category1 }).field("category2", PgTypes.text.opt(), { v: TablefuncCrosstab2 -> v.category2 }).build({ t0, t1, t2 -> TablefuncCrosstab2(t0, t1, t2) }))
 
-    val pgTypeArray: PgType<Array<TablefuncCrosstab2>> =
-      pgType.array(PgRead.readCompositeArray(pgType.pgCompositeText(), { n -> arrayOfNulls<TablefuncCrosstab2>(n) }), { n -> arrayOfNulls<TablefuncCrosstab2>(n) })
+    val pgTypeArray: PgType<List<TablefuncCrosstab2>> =
+      pgType.array()
   }
 }

@@ -5,10 +5,11 @@
  */
 package adventureworks.public.identity_test
 
-import dev.typr.foundations.kotlin.DeleteBuilder
-import dev.typr.foundations.kotlin.SelectBuilder
-import dev.typr.foundations.kotlin.UpdateBuilder
-import java.sql.Connection
+import dev.typr.dslkt.DeleteBuilder
+import dev.typr.dslkt.SelectBuilder
+import dev.typr.dslkt.UpdateBuilder
+import dev.typr.foundationskt.Connection
+import dev.typr.foundationskt.ConnectionRead
 import kotlin.collections.Iterator
 import kotlin.collections.List
 import kotlin.collections.Map
@@ -19,10 +20,10 @@ interface IdentityTestRepo {
   abstract fun deleteById(
     name: IdentityTestId,
     c: Connection
-  ): Boolean
+  ): kotlin.Boolean
 
   abstract fun deleteByIds(
-    names: Array<IdentityTestId>,
+    names: List<IdentityTestId>,
     c: Connection
   ): Int
 
@@ -40,32 +41,32 @@ interface IdentityTestRepo {
     unsaved: Iterator<IdentityTestRow>,
     batchSize: Int = 10000,
     c: Connection
-  ): Long
+  ): kotlin.Long
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
   abstract fun insertUnsavedStreaming(
     unsaved: Iterator<IdentityTestRowUnsaved>,
     batchSize: Int = 10000,
     c: Connection
-  ): Long
+  ): kotlin.Long
 
   abstract fun select(): SelectBuilder<IdentityTestFields, IdentityTestRow>
 
-  abstract fun selectAll(c: Connection): List<IdentityTestRow>
+  abstract fun selectAll(c: ConnectionRead): List<IdentityTestRow>
 
   abstract fun selectById(
     name: IdentityTestId,
-    c: Connection
+    c: ConnectionRead
   ): IdentityTestRow?
 
   abstract fun selectByIds(
-    names: Array<IdentityTestId>,
-    c: Connection
+    names: List<IdentityTestId>,
+    c: ConnectionRead
   ): List<IdentityTestRow>
 
   abstract fun selectByIdsTracked(
-    names: Array<IdentityTestId>,
-    c: Connection
+    names: List<IdentityTestId>,
+    c: ConnectionRead
   ): Map<IdentityTestId, IdentityTestRow>
 
   abstract fun update(): UpdateBuilder<IdentityTestFields, IdentityTestRow>
@@ -73,7 +74,7 @@ interface IdentityTestRepo {
   abstract fun update(
     row: IdentityTestRow,
     c: Connection
-  ): Boolean
+  ): kotlin.Boolean
 
   abstract fun upsert(
     unsaved: IdentityTestRow,

@@ -6,16 +6,16 @@
 package adventureworks.humanresources.department
 
 import adventureworks.public.Name
-import dev.typr.foundations.PgTypes
-import dev.typr.foundations.RowParser
-import dev.typr.foundations.dsl.FieldsBase
-import dev.typr.foundations.dsl.Path
-import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.kotlin.RelationStructure
-import dev.typr.foundations.kotlin.SqlExpr
-import dev.typr.foundations.kotlin.SqlExpr.Field
-import dev.typr.foundations.kotlin.SqlExpr.IdField
-import dev.typr.foundations.kotlin.TupleExpr4
+import dev.typr.dsl.FieldsBase
+import dev.typr.dsl.Path
+import dev.typr.dsl.SqlExpr.FieldLike
+import dev.typr.dslkt.RelationStructure
+import dev.typr.dslkt.SqlExpr
+import dev.typr.dslkt.SqlExpr.Field
+import dev.typr.dslkt.SqlExpr.IdField
+import dev.typr.dslkt.TupleExpr4
+import dev.typr.foundations.RowCodec
+import dev.typr.foundationskt.PgTypes
 import java.time.LocalDateTime
 import kotlin.collections.List
 
@@ -32,15 +32,15 @@ data class DepartmentFields(val _path: List<Path>) : TupleExpr4<DepartmentId, Na
 
   override fun columns(): List<FieldLike<*, DepartmentRow>> = listOf(this.departmentid().underlying, this.name().underlying, this.groupname().underlying, this.modifieddate().underlying)
 
-  fun departmentid(): IdField<DepartmentId, DepartmentRow> = IdField<DepartmentId, DepartmentRow>(_path, "departmentid", DepartmentRow::departmentid, null, "int4", { row, value -> row.copy(departmentid = value) }, DepartmentId.pgType)
+  fun departmentid(): IdField<DepartmentId, DepartmentRow> = IdField<DepartmentId, DepartmentRow>(_path, "departmentid", DepartmentRow::departmentid, null, "int4", { row, value -> row.copy(departmentid = value) }, DepartmentId.pgType.underlying)
 
-  fun groupname(): Field<Name, DepartmentRow> = Field<Name, DepartmentRow>(_path, "groupname", DepartmentRow::groupname, null, "varchar", { row, value -> row.copy(groupname = value) }, Name.pgType)
+  fun groupname(): Field<Name, DepartmentRow> = Field<Name, DepartmentRow>(_path, "groupname", DepartmentRow::groupname, null, "varchar", { row, value -> row.copy(groupname = value) }, Name.pgType.underlying)
 
-  fun modifieddate(): Field<LocalDateTime, DepartmentRow> = Field<LocalDateTime, DepartmentRow>(_path, "modifieddate", DepartmentRow::modifieddate, null, "timestamp", { row, value -> row.copy(modifieddate = value) }, PgTypes.timestamp)
+  fun modifieddate(): Field<LocalDateTime, DepartmentRow> = Field<LocalDateTime, DepartmentRow>(_path, "modifieddate", DepartmentRow::modifieddate, null, "timestamp", { row, value -> row.copy(modifieddate = value) }, PgTypes.timestamp.underlying)
 
-  fun name(): Field<Name, DepartmentRow> = Field<Name, DepartmentRow>(_path, "name", DepartmentRow::name, null, "varchar", { row, value -> row.copy(name = value) }, Name.pgType)
+  fun name(): Field<Name, DepartmentRow> = Field<Name, DepartmentRow>(_path, "name", DepartmentRow::name, null, "varchar", { row, value -> row.copy(name = value) }, Name.pgType.underlying)
 
-  override fun rowParser(): RowParser<DepartmentRow> = DepartmentRow._rowParser.underlying
+  override fun rowCodec(): RowCodec<DepartmentRow> = DepartmentRow.rowCodec.underlying
 
   override fun withPaths(_path: List<Path>): RelationStructure<DepartmentFields, DepartmentRow> = DepartmentFields(_path)
 

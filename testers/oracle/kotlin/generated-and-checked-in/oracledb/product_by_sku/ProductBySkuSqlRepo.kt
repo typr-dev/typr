@@ -5,12 +5,12 @@
  */
 package oracledb.product_by_sku
 
-import java.sql.Connection
+import dev.typr.foundationskt.ConnectionRead
 import kotlin.collections.List
 
 interface ProductBySkuSqlRepo {
   abstract fun apply(
-    sku: String,
-    c: Connection
+    sku: kotlin.String,
+    c: ConnectionRead
   ): List<ProductBySkuSqlRow>
 }

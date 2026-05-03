@@ -5,17 +5,17 @@
  */
 package oracledb.products
 
+import dev.typr.dsl.FieldsBase
+import dev.typr.dsl.Path
+import dev.typr.dsl.RelationStructure
+import dev.typr.dsl.SqlExpr
+import dev.typr.dsl.SqlExpr.Field
+import dev.typr.dsl.SqlExpr.FieldLike
+import dev.typr.dsl.SqlExpr.IdField
+import dev.typr.dsl.SqlExpr.OptField
+import dev.typr.dsl.TupleExpr.TupleExpr5
 import dev.typr.foundations.OracleTypes
-import dev.typr.foundations.RowParser
-import dev.typr.foundations.dsl.FieldsBase
-import dev.typr.foundations.dsl.Path
-import dev.typr.foundations.dsl.RelationStructure
-import dev.typr.foundations.dsl.SqlExpr
-import dev.typr.foundations.dsl.SqlExpr.Field
-import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.dsl.SqlExpr.IdField
-import dev.typr.foundations.dsl.SqlExpr.OptField
-import dev.typr.foundations.dsl.TupleExpr.TupleExpr5
+import dev.typr.foundations.RowCodec
 import java.util.Optional
 import oracledb.MoneyT
 import oracledb.TagVarrayT
@@ -83,7 +83,7 @@ class ProductsFields(val `_path`: java.util.List[Path]) extends TupleExpr5[Produ
 
   override def columns: java.util.List[FieldLike[?, ProductsRow]] = java.util.List.of(this.productId, this.sku, this.name, this.price, this.tags)
 
-  override def rowParser: RowParser[ProductsRow] = ProductsRow._rowParser
+  override def rowCodec: RowCodec[ProductsRow] = ProductsRow.rowCodec
 
   override def withPaths(`_path`: java.util.List[Path]): RelationStructure[ProductsFields, ProductsRow] = new ProductsFields(`_path`)
 

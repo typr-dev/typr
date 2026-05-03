@@ -6,9 +6,9 @@
 package oracledb.precision_types_null
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import dev.typr.dsl.RowCodecs
 import dev.typr.foundations.OracleTypes
-import dev.typr.foundations.RowParser
-import dev.typr.foundations.RowParsers
+import dev.typr.foundations.RowCodec
 import dev.typr.foundations.Tuple.Tuple17
 import java.time.LocalDateTime
 import java.util.Optional
@@ -33,7 +33,7 @@ import oracledb.precisetypes.NonEmptyString50
  * Primary key: ID
  */
 case class PrecisionTypesNullRow(
-  /** Default: "TYPR"."ISEQ$$_72876".nextval */
+  /** Default: "TYPR"."ISEQ$$_72866".nextval */
   @JsonProperty("ID") id: PrecisionTypesNullId,
   @JsonProperty("STRING10") string10: Optional[NonEmptyString10],
   @JsonProperty("STRING20") string20: Optional[NonEmptyString20],
@@ -110,5 +110,5 @@ case class PrecisionTypesNullRow(
 }
 
 object PrecisionTypesNullRow {
-  val `_rowParser`: RowParser[PrecisionTypesNullRow] = RowParsers.of(PrecisionTypesNullId.oracleType, NonEmptyString10.oracleType.opt(), NonEmptyString20.oracleType.opt(), NonEmptyString50.oracleType.opt(), NonEmptyString100.oracleType.opt(), NonEmptyString255.oracleType.opt(), NonEmptyPaddedString10.oracleType.opt(), Decimal5_2.oracleType.opt(), Decimal10_2.oracleType.opt(), Decimal18_4.oracleType.opt(), Int5.oracleType.opt(), Int10.oracleType.opt(), Int18.oracleType.opt(), OracleTypes.timestamp.opt(), LocalDateTime3.oracleType.opt(), LocalDateTime6.oracleType.opt(), LocalDateTime9.oracleType.opt(), PrecisionTypesNullRow.apply, row => Array[Any](row.id, row.string10, row.string20, row.string50, row.string100, row.string255, row.char10, row.number52, row.number102, row.number184, row.number50, row.number100, row.number180, row.ts0, row.ts3, row.ts6, row.ts9))
+  val rowCodec: RowCodec[PrecisionTypesNullRow] = RowCodecs.of(PrecisionTypesNullId.oracleType, NonEmptyString10.oracleType.opt, NonEmptyString20.oracleType.opt, NonEmptyString50.oracleType.opt, NonEmptyString100.oracleType.opt, NonEmptyString255.oracleType.opt, NonEmptyPaddedString10.oracleType.opt, Decimal5_2.oracleType.opt, Decimal10_2.oracleType.opt, Decimal18_4.oracleType.opt, Int5.oracleType.opt, Int10.oracleType.opt, Int18.oracleType.opt, OracleTypes.timestamp.opt, LocalDateTime3.oracleType.opt, LocalDateTime6.oracleType.opt, LocalDateTime9.oracleType.opt, PrecisionTypesNullRow.apply, row => Array[Any](row.id, row.string10, row.string20, row.string50, row.string100, row.string255, row.char10, row.number52, row.number102, row.number184, row.number50, row.number100, row.number180, row.ts0, row.ts3, row.ts6, row.ts9))
 }

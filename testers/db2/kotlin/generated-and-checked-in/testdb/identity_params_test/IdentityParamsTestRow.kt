@@ -6,10 +6,10 @@
 package testdb.identity_params_test
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import dev.typr.foundations.Db2Types
+import dev.typr.dslkt.RowCodecs
 import dev.typr.foundations.Tuple.Tuple2
-import dev.typr.foundations.kotlin.RowParser
-import dev.typr.foundations.kotlin.RowParsers
+import dev.typr.foundationskt.Db2Types
+import dev.typr.foundationskt.RowCodec
 
 /** Table: IDENTITY_PARAMS_TEST
   * Primary key: ID
@@ -17,15 +17,15 @@ import dev.typr.foundations.kotlin.RowParsers
 data class IdentityParamsTestRow(
   /** Identity ALWAYS */
   @field:JsonProperty("ID") val id: IdentityParamsTestId,
-  @field:JsonProperty("NAME") val name: String
-) : Tuple2<IdentityParamsTestId, String> {
+  @field:JsonProperty("NAME") val name: kotlin.String
+) : Tuple2<IdentityParamsTestId, kotlin.String> {
   override fun _1(): IdentityParamsTestId = id
 
-  override fun _2(): String = name
+  override fun _2(): kotlin.String = name
 
   fun toUnsavedRow(): IdentityParamsTestRowUnsaved = IdentityParamsTestRowUnsaved(name)
 
   companion object {
-    val _rowParser: RowParser<IdentityParamsTestRow> = RowParsers.of(IdentityParamsTestId.db2Type, Db2Types.varchar, { t0, t1 -> IdentityParamsTestRow(t0, t1) }, { row -> arrayOf<Any?>(row.id, row.name) })
+    val rowCodec: RowCodec<IdentityParamsTestRow> = RowCodecs.of(IdentityParamsTestId.db2Type, Db2Types.varchar, { t0: IdentityParamsTestId, t1: kotlin.String -> IdentityParamsTestRow(t0, t1) }, { row: IdentityParamsTestRow -> arrayOf<Any?>(row.id, row.name) })
   }
 }

@@ -21,7 +21,7 @@ object DepartmentId {
 
   implicit lazy val arrayPut: Put[Array[DepartmentId]] = adventureworks.IntegerArrayMeta.put.contramap(_.map(_.value))
 
-  implicit lazy val bijection: Bijection[DepartmentId, Int] = Bijection.apply[DepartmentId, Int](_.value)(DepartmentId.apply)
+  implicit lazy val bijection: Bijection[DepartmentId, Int] = Bijection[DepartmentId, Int](_.value)(DepartmentId.apply)
 
   implicit lazy val decoder: Decoder[DepartmentId] = Decoder.decodeInt.map(DepartmentId.apply)
 

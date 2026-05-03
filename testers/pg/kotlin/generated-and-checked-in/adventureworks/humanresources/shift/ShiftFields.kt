@@ -6,16 +6,16 @@
 package adventureworks.humanresources.shift
 
 import adventureworks.public.Name
-import dev.typr.foundations.PgTypes
-import dev.typr.foundations.RowParser
-import dev.typr.foundations.dsl.FieldsBase
-import dev.typr.foundations.dsl.Path
-import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.kotlin.RelationStructure
-import dev.typr.foundations.kotlin.SqlExpr
-import dev.typr.foundations.kotlin.SqlExpr.Field
-import dev.typr.foundations.kotlin.SqlExpr.IdField
-import dev.typr.foundations.kotlin.TupleExpr5
+import dev.typr.dsl.FieldsBase
+import dev.typr.dsl.Path
+import dev.typr.dsl.SqlExpr.FieldLike
+import dev.typr.dslkt.RelationStructure
+import dev.typr.dslkt.SqlExpr
+import dev.typr.dslkt.SqlExpr.Field
+import dev.typr.dslkt.SqlExpr.IdField
+import dev.typr.dslkt.TupleExpr5
+import dev.typr.foundations.RowCodec
+import dev.typr.foundationskt.PgTypes
 import java.time.LocalDateTime
 import java.time.LocalTime
 import kotlin.collections.List
@@ -35,17 +35,17 @@ data class ShiftFields(val _path: List<Path>) : TupleExpr5<ShiftId, Name, LocalT
 
   override fun columns(): List<FieldLike<*, ShiftRow>> = listOf(this.shiftid().underlying, this.name().underlying, this.starttime().underlying, this.endtime().underlying, this.modifieddate().underlying)
 
-  fun endtime(): Field<LocalTime, ShiftRow> = Field<LocalTime, ShiftRow>(_path, "endtime", ShiftRow::endtime, null, "time", { row, value -> row.copy(endtime = value) }, PgTypes.time)
+  fun endtime(): Field<LocalTime, ShiftRow> = Field<LocalTime, ShiftRow>(_path, "endtime", ShiftRow::endtime, null, "time", { row, value -> row.copy(endtime = value) }, PgTypes.time.underlying)
 
-  fun modifieddate(): Field<LocalDateTime, ShiftRow> = Field<LocalDateTime, ShiftRow>(_path, "modifieddate", ShiftRow::modifieddate, null, "timestamp", { row, value -> row.copy(modifieddate = value) }, PgTypes.timestamp)
+  fun modifieddate(): Field<LocalDateTime, ShiftRow> = Field<LocalDateTime, ShiftRow>(_path, "modifieddate", ShiftRow::modifieddate, null, "timestamp", { row, value -> row.copy(modifieddate = value) }, PgTypes.timestamp.underlying)
 
-  fun name(): Field<Name, ShiftRow> = Field<Name, ShiftRow>(_path, "name", ShiftRow::name, null, "varchar", { row, value -> row.copy(name = value) }, Name.pgType)
+  fun name(): Field<Name, ShiftRow> = Field<Name, ShiftRow>(_path, "name", ShiftRow::name, null, "varchar", { row, value -> row.copy(name = value) }, Name.pgType.underlying)
 
-  override fun rowParser(): RowParser<ShiftRow> = ShiftRow._rowParser.underlying
+  override fun rowCodec(): RowCodec<ShiftRow> = ShiftRow.rowCodec.underlying
 
-  fun shiftid(): IdField<ShiftId, ShiftRow> = IdField<ShiftId, ShiftRow>(_path, "shiftid", ShiftRow::shiftid, null, "int4", { row, value -> row.copy(shiftid = value) }, ShiftId.pgType)
+  fun shiftid(): IdField<ShiftId, ShiftRow> = IdField<ShiftId, ShiftRow>(_path, "shiftid", ShiftRow::shiftid, null, "int4", { row, value -> row.copy(shiftid = value) }, ShiftId.pgType.underlying)
 
-  fun starttime(): Field<LocalTime, ShiftRow> = Field<LocalTime, ShiftRow>(_path, "starttime", ShiftRow::starttime, null, "time", { row, value -> row.copy(starttime = value) }, PgTypes.time)
+  fun starttime(): Field<LocalTime, ShiftRow> = Field<LocalTime, ShiftRow>(_path, "starttime", ShiftRow::starttime, null, "time", { row, value -> row.copy(starttime = value) }, PgTypes.time.underlying)
 
   override fun withPaths(_path: List<Path>): RelationStructure<ShiftFields, ShiftRow> = ShiftFields(_path)
 

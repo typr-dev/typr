@@ -5,18 +5,17 @@
  */
 package testdb.products
 
-import dev.typr.foundations.RowParser
-import dev.typr.foundations.SqlServerTypes
-import dev.typr.foundations.dsl.FieldsBase
-import dev.typr.foundations.dsl.Path
-import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.scala.RelationStructure
-import dev.typr.foundations.scala.ScalaDbTypes
-import dev.typr.foundations.scala.SqlExpr
-import dev.typr.foundations.scala.SqlExpr.Field
-import dev.typr.foundations.scala.SqlExpr.IdField
-import dev.typr.foundations.scala.SqlExpr.OptField
-import dev.typr.foundations.scala.TupleExpr4
+import dev.typr.dsl.FieldsBase
+import dev.typr.dsl.Path
+import dev.typr.dsl.SqlExpr.FieldLike
+import dev.typr.dslsc.RelationStructure
+import dev.typr.dslsc.SqlExpr
+import dev.typr.dslsc.SqlExpr.Field
+import dev.typr.dslsc.SqlExpr.IdField
+import dev.typr.dslsc.SqlExpr.OptField
+import dev.typr.dslsc.TupleExpr4
+import dev.typr.foundations.RowCodec
+import dev.typr.foundationssc.SqlServerTypes
 
 class ProductsFields(val `_path`: java.util.List[Path]) extends TupleExpr4[ProductsId, String, BigDecimal, String] with RelationStructure[ProductsFields, ProductsRow]  with FieldsBase[ProductsRow] {
   def productId: IdField[ProductsId, ProductsRow] = {
@@ -27,7 +26,7 @@ class ProductsFields(val `_path`: java.util.List[Path]) extends TupleExpr4[Produ
       None,
       None,
       (row, value) => row.copy(productId = value),
-      ProductsId.sqlServerType
+      ProductsId.sqlServerType.underlying
     )
   }
 
@@ -39,7 +38,7 @@ class ProductsFields(val `_path`: java.util.List[Path]) extends TupleExpr4[Produ
       None,
       None,
       (row, value) => row.copy(name = value),
-      SqlServerTypes.nvarchar
+      SqlServerTypes.nvarchar.underlying
     )
   }
 
@@ -51,7 +50,7 @@ class ProductsFields(val `_path`: java.util.List[Path]) extends TupleExpr4[Produ
       None,
       None,
       (row, value) => row.copy(price = value),
-      ScalaDbTypes.SqlServerTypes.money
+      SqlServerTypes.money.underlying
     )
   }
 
@@ -63,13 +62,13 @@ class ProductsFields(val `_path`: java.util.List[Path]) extends TupleExpr4[Produ
       None,
       None,
       (row, value) => row.copy(description = value),
-      SqlServerTypes.nvarchar
+      SqlServerTypes.nvarchar.underlying
     )
   }
 
   override def columns: java.util.List[FieldLike[?, ProductsRow]] = java.util.List.of(this.productId.underlying, this.name.underlying, this.price.underlying, this.description.underlying)
 
-  override def rowParser: RowParser[ProductsRow] = ProductsRow._rowParser.underlying
+  override def rowCodec: RowCodec[ProductsRow] = ProductsRow.rowCodec.underlying
 
   override def withPaths(`_path`: java.util.List[Path]): RelationStructure[ProductsFields, ProductsRow] = new ProductsFields(`_path`)
 

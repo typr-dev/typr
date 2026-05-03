@@ -5,11 +5,11 @@
  */
 package testdb.customer_summary
 
-import java.sql.Connection
-import dev.typr.foundations.scala.Fragment.sql
+import dev.typr.foundationssc.ConnectionRead
+import dev.typr.foundationssc.Fragment.sql
 
 class CustomerSummarySqlRepoImpl extends CustomerSummarySqlRepo {
-  override def apply(using c: Connection): List[CustomerSummarySqlRow] = {
+  override def apply(using c: ConnectionRead): List[CustomerSummarySqlRow] = {
     sql"""-- Customer summary with total orders
     SELECT c.customer_id, c.name, c.email,
            COUNT(o.order_id) as order_count,
@@ -17,6 +17,6 @@ class CustomerSummarySqlRepoImpl extends CustomerSummarySqlRepo {
     FROM customers c
     LEFT JOIN orders o ON c.customer_id = o.customer_id
     GROUP BY c.customer_id, c.name, c.email
-    """.query(CustomerSummarySqlRow.`_rowParser`.all()).runUnchecked(c)
+    """.query(CustomerSummarySqlRow.rowCodec.all()).run(using c)
   }
 }

@@ -5,14 +5,14 @@
  */
 package adventureworks.public.title_domain
 
-import dev.typr.foundations.RowParser
-import dev.typr.foundations.dsl.FieldsBase
-import dev.typr.foundations.dsl.Path
-import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.kotlin.RelationStructure
-import dev.typr.foundations.kotlin.SqlExpr
-import dev.typr.foundations.kotlin.SqlExpr.IdField
-import dev.typr.foundations.kotlin.TupleExpr1
+import dev.typr.dsl.FieldsBase
+import dev.typr.dsl.Path
+import dev.typr.dsl.SqlExpr.FieldLike
+import dev.typr.dslkt.RelationStructure
+import dev.typr.dslkt.SqlExpr
+import dev.typr.dslkt.SqlExpr.IdField
+import dev.typr.dslkt.TupleExpr1
+import dev.typr.foundations.RowCodec
 import kotlin.collections.List
 
 data class TitleDomainFields(val _path: List<Path>) : TupleExpr1<TitleDomainId>, RelationStructure<TitleDomainFields, TitleDomainRow>, FieldsBase<TitleDomainRow> {
@@ -20,11 +20,11 @@ data class TitleDomainFields(val _path: List<Path>) : TupleExpr1<TitleDomainId>,
 
   override fun _path(): List<Path> = _path
 
-  fun code(): IdField<TitleDomainId, TitleDomainRow> = IdField<TitleDomainId, TitleDomainRow>(_path, "code", TitleDomainRow::code, null, "text", { row, value -> row.copy(code = value) }, TitleDomainId.pgType)
+  fun code(): IdField<TitleDomainId, TitleDomainRow> = IdField<TitleDomainId, TitleDomainRow>(_path, "code", TitleDomainRow::code, null, "text", { row, value -> row.copy(code = value) }, TitleDomainId.pgType.underlying)
 
   override fun columns(): List<FieldLike<*, TitleDomainRow>> = listOf(this.code().underlying)
 
-  override fun rowParser(): RowParser<TitleDomainRow> = TitleDomainRow._rowParser.underlying
+  override fun rowCodec(): RowCodec<TitleDomainRow> = TitleDomainRow.rowCodec.underlying
 
   override fun withPaths(_path: List<Path>): RelationStructure<TitleDomainFields, TitleDomainRow> = TitleDomainFields(_path)
 

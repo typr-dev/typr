@@ -5,16 +5,16 @@
  */
 package testdb.distinct_type_test
 
-import dev.typr.foundations.RowParser
-import dev.typr.foundations.dsl.FieldsBase
-import dev.typr.foundations.dsl.Path
-import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.kotlin.RelationStructure
-import dev.typr.foundations.kotlin.SqlExpr
-import dev.typr.foundations.kotlin.SqlExpr.Field
-import dev.typr.foundations.kotlin.SqlExpr.IdField
-import dev.typr.foundations.kotlin.SqlExpr.OptField
-import dev.typr.foundations.kotlin.TupleExpr3
+import dev.typr.dsl.FieldsBase
+import dev.typr.dsl.Path
+import dev.typr.dsl.SqlExpr.FieldLike
+import dev.typr.dslkt.RelationStructure
+import dev.typr.dslkt.SqlExpr
+import dev.typr.dslkt.SqlExpr.Field
+import dev.typr.dslkt.SqlExpr.IdField
+import dev.typr.dslkt.SqlExpr.OptField
+import dev.typr.dslkt.TupleExpr3
+import dev.typr.foundations.RowCodec
 import kotlin.collections.List
 import testdb.EmailAddress
 import testdb.MoneyAmount
@@ -28,15 +28,15 @@ data class DistinctTypeTestFields(val _path: List<Path>) : TupleExpr3<DistinctTy
 
   override fun _path(): List<Path> = _path
 
-  fun balance(): OptField<MoneyAmount, DistinctTypeTestRow> = OptField<MoneyAmount, DistinctTypeTestRow>(_path, "BALANCE", DistinctTypeTestRow::balance, null, null, { row, value -> row.copy(balance = value) }, MoneyAmount.db2Type)
+  fun balance(): OptField<MoneyAmount, DistinctTypeTestRow> = OptField<MoneyAmount, DistinctTypeTestRow>(_path, "BALANCE", DistinctTypeTestRow::balance, null, null, { row, value -> row.copy(balance = value) }, MoneyAmount.db2Type.underlying)
 
   override fun columns(): List<FieldLike<*, DistinctTypeTestRow>> = listOf(this.id().underlying, this.email().underlying, this.balance().underlying)
 
-  fun email(): Field<EmailAddress, DistinctTypeTestRow> = Field<EmailAddress, DistinctTypeTestRow>(_path, "EMAIL", DistinctTypeTestRow::email, null, null, { row, value -> row.copy(email = value) }, EmailAddress.db2Type)
+  fun email(): Field<EmailAddress, DistinctTypeTestRow> = Field<EmailAddress, DistinctTypeTestRow>(_path, "EMAIL", DistinctTypeTestRow::email, null, null, { row, value -> row.copy(email = value) }, EmailAddress.db2Type.underlying)
 
-  fun id(): IdField<DistinctTypeTestId, DistinctTypeTestRow> = IdField<DistinctTypeTestId, DistinctTypeTestRow>(_path, "ID", DistinctTypeTestRow::id, null, null, { row, value -> row.copy(id = value) }, DistinctTypeTestId.db2Type)
+  fun id(): IdField<DistinctTypeTestId, DistinctTypeTestRow> = IdField<DistinctTypeTestId, DistinctTypeTestRow>(_path, "ID", DistinctTypeTestRow::id, null, null, { row, value -> row.copy(id = value) }, DistinctTypeTestId.db2Type.underlying)
 
-  override fun rowParser(): RowParser<DistinctTypeTestRow> = DistinctTypeTestRow._rowParser.underlying
+  override fun rowCodec(): RowCodec<DistinctTypeTestRow> = DistinctTypeTestRow.rowCodec.underlying
 
   override fun withPaths(_path: List<Path>): RelationStructure<DistinctTypeTestFields, DistinctTypeTestRow> = DistinctTypeTestFields(_path)
 

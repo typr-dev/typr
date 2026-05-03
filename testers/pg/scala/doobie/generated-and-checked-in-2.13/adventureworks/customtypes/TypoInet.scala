@@ -33,7 +33,7 @@ object TypoInet {
                             }))
   }
 
-  implicit lazy val bijection: Bijection[TypoInet, String] = Bijection.apply[TypoInet, String](_.value)(TypoInet.apply)
+  implicit lazy val bijection: Bijection[TypoInet, String] = Bijection[TypoInet, String](_.value)(TypoInet.apply)
 
   implicit lazy val decoder: Decoder[TypoInet] = Decoder.decodeString.map(TypoInet.apply)
 

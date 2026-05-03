@@ -47,7 +47,7 @@ object TypoMoney {
     )
   }
 
-  given bijection: Bijection[TypoMoney, BigDecimal] = Bijection.apply[TypoMoney, BigDecimal](_.value)(TypoMoney.apply)
+  given bijection: Bijection[TypoMoney, BigDecimal] = Bijection[TypoMoney, BigDecimal](_.value)(TypoMoney.apply)
 
   given jdbcDecoder: JdbcDecoder[TypoMoney] = {
     JdbcDecoder[TypoMoney](

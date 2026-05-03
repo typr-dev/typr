@@ -5,23 +5,22 @@
  */
 package testdb.customer_order_summary
 
-import dev.typr.foundations.Db2Types
-import dev.typr.foundations.RowParser
-import dev.typr.foundations.dsl.FieldsBase
-import dev.typr.foundations.dsl.Path
-import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.kotlin.KotlinDbTypes
-import dev.typr.foundations.kotlin.RelationStructure
-import dev.typr.foundations.kotlin.SqlExpr
-import dev.typr.foundations.kotlin.SqlExpr.Field
-import dev.typr.foundations.kotlin.TupleExpr4
+import dev.typr.dsl.FieldsBase
+import dev.typr.dsl.Path
+import dev.typr.dsl.SqlExpr.FieldLike
+import dev.typr.dslkt.RelationStructure
+import dev.typr.dslkt.SqlExpr
+import dev.typr.dslkt.SqlExpr.Field
+import dev.typr.dslkt.TupleExpr4
+import dev.typr.foundations.RowCodec
+import dev.typr.foundationskt.Db2Types
 import java.math.BigDecimal
 import kotlin.collections.List
 
-data class CustomerOrderSummaryViewFields(val _path: List<Path>) : TupleExpr4<Int, String, Int, BigDecimal>, RelationStructure<CustomerOrderSummaryViewFields, CustomerOrderSummaryViewRow>, FieldsBase<CustomerOrderSummaryViewRow> {
+data class CustomerOrderSummaryViewFields(val _path: List<Path>) : TupleExpr4<Int, kotlin.String, Int, BigDecimal>, RelationStructure<CustomerOrderSummaryViewFields, CustomerOrderSummaryViewRow>, FieldsBase<CustomerOrderSummaryViewRow> {
   override fun _1(): SqlExpr<Int> = customerId()
 
-  override fun _2(): SqlExpr<String> = name()
+  override fun _2(): SqlExpr<kotlin.String> = name()
 
   override fun _3(): SqlExpr<Int> = orderCount()
 
@@ -31,15 +30,15 @@ data class CustomerOrderSummaryViewFields(val _path: List<Path>) : TupleExpr4<In
 
   override fun columns(): List<FieldLike<*, CustomerOrderSummaryViewRow>> = listOf(this.customerId().underlying, this.name().underlying, this.orderCount().underlying, this.totalSpent().underlying)
 
-  fun customerId(): Field<Int, CustomerOrderSummaryViewRow> = Field<Int, CustomerOrderSummaryViewRow>(_path, "CUSTOMER_ID", CustomerOrderSummaryViewRow::customerId, null, null, { row, value -> row.copy(customerId = value) }, KotlinDbTypes.Db2Types.integer)
+  fun customerId(): Field<Int, CustomerOrderSummaryViewRow> = Field<Int, CustomerOrderSummaryViewRow>(_path, "CUSTOMER_ID", CustomerOrderSummaryViewRow::customerId, null, null, { row, value -> row.copy(customerId = value) }, Db2Types.integer.underlying)
 
-  fun name(): Field<String, CustomerOrderSummaryViewRow> = Field<String, CustomerOrderSummaryViewRow>(_path, "NAME", CustomerOrderSummaryViewRow::name, null, null, { row, value -> row.copy(name = value) }, Db2Types.varchar)
+  fun name(): Field<kotlin.String, CustomerOrderSummaryViewRow> = Field<kotlin.String, CustomerOrderSummaryViewRow>(_path, "NAME", CustomerOrderSummaryViewRow::name, null, null, { row, value -> row.copy(name = value) }, Db2Types.varchar.underlying)
 
-  fun orderCount(): Field<Int, CustomerOrderSummaryViewRow> = Field<Int, CustomerOrderSummaryViewRow>(_path, "ORDER_COUNT", CustomerOrderSummaryViewRow::orderCount, null, null, { row, value -> row.copy(orderCount = value) }, KotlinDbTypes.Db2Types.integer)
+  fun orderCount(): Field<Int, CustomerOrderSummaryViewRow> = Field<Int, CustomerOrderSummaryViewRow>(_path, "ORDER_COUNT", CustomerOrderSummaryViewRow::orderCount, null, null, { row, value -> row.copy(orderCount = value) }, Db2Types.integer.underlying)
 
-  override fun rowParser(): RowParser<CustomerOrderSummaryViewRow> = CustomerOrderSummaryViewRow._rowParser.underlying
+  override fun rowCodec(): RowCodec<CustomerOrderSummaryViewRow> = CustomerOrderSummaryViewRow.rowCodec.underlying
 
-  fun totalSpent(): Field<BigDecimal, CustomerOrderSummaryViewRow> = Field<BigDecimal, CustomerOrderSummaryViewRow>(_path, "TOTAL_SPENT", CustomerOrderSummaryViewRow::totalSpent, null, null, { row, value -> row.copy(totalSpent = value) }, KotlinDbTypes.Db2Types.decimal)
+  fun totalSpent(): Field<BigDecimal, CustomerOrderSummaryViewRow> = Field<BigDecimal, CustomerOrderSummaryViewRow>(_path, "TOTAL_SPENT", CustomerOrderSummaryViewRow::totalSpent, null, null, { row, value -> row.copy(totalSpent = value) }, Db2Types.decimal.underlying)
 
   override fun withPaths(_path: List<Path>): RelationStructure<CustomerOrderSummaryViewFields, CustomerOrderSummaryViewRow> = CustomerOrderSummaryViewFields(_path)
 

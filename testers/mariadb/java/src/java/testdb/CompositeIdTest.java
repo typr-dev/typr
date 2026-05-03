@@ -114,10 +114,9 @@ public class CompositeIdTest {
               new ProductCategoriesRowUnsaved(product.productId(), category3.categoryId()), c);
 
           var ids =
-              new ProductCategoriesId[] {
-                new ProductCategoriesId(product.productId(), category1.categoryId()),
-                new ProductCategoriesId(product.productId(), category3.categoryId())
-              };
+              java.util.List.of(
+                  new ProductCategoriesId(product.productId(), category1.categoryId()),
+                  new ProductCategoriesId(product.productId(), category3.categoryId()));
 
           var selected = productCategoriesRepo.selectByIds(ids, c);
           assertEquals(2, selected.size());
@@ -151,7 +150,7 @@ public class CompositeIdTest {
 
           var id1 = new ProductCategoriesId(product.productId(), category1.categoryId());
           var id2 = new ProductCategoriesId(product.productId(), category2.categoryId());
-          var ids = new ProductCategoriesId[] {id1, id2};
+          var ids = java.util.List.of(id1, id2);
 
           var tracked = productCategoriesRepo.selectByIdsTracked(ids, c);
 
@@ -231,10 +230,9 @@ public class CompositeIdTest {
               new ProductCategoriesRowUnsaved(product.productId(), category3.categoryId()), c);
 
           var idsToDelete =
-              new ProductCategoriesId[] {
-                new ProductCategoriesId(product.productId(), category1.categoryId()),
-                new ProductCategoriesId(product.productId(), category2.categoryId())
-              };
+              java.util.List.of(
+                  new ProductCategoriesId(product.productId(), category1.categoryId()),
+                  new ProductCategoriesId(product.productId(), category2.categoryId()));
 
           var count = productCategoriesRepo.deleteByIds(idsToDelete, c);
           assertEquals(2, (int) count);

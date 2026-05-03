@@ -30,6 +30,21 @@ data class Customer(
   }
 
   companion object {
+    @Throws(IOException::class)
+    fun parseFrom(input: CodedInputStream): Customer {
+      var customerId: CustomerId = CustomerId.valueOf("")
+      var name: kotlin.String = ""
+      var email: kotlin.String = ""
+      while (!input.isAtEnd()) {
+        val tag = input.readTag()
+        if (WireFormat.getTagFieldNumber(tag) == 1) { customerId = CustomerId.valueOf(input.readString()) }
+        else if (WireFormat.getTagFieldNumber(tag) == 2) { name = input.readString() }
+        else if (WireFormat.getTagFieldNumber(tag) == 3) { email = input.readString() }
+        else { input.skipField(tag) }
+      }
+      return Customer(customerId, name, email)
+    }
+
     val MARSHALLER: Marshaller<Customer> =
       object : Marshaller<Customer> {
         override fun stream(value: Customer): InputStream {
@@ -51,20 +66,5 @@ data class Customer(
           } 
         }
       }
-
-    @Throws(IOException::class)
-    fun parseFrom(input: CodedInputStream): Customer {
-      var customerId: CustomerId = CustomerId.valueOf("")
-      var name: kotlin.String = ""
-      var email: kotlin.String = ""
-      while (!input.isAtEnd()) {
-        val tag = input.readTag()
-        if (WireFormat.getTagFieldNumber(tag) == 1) { customerId = CustomerId.valueOf(input.readString()) }
-        else if (WireFormat.getTagFieldNumber(tag) == 2) { name = input.readString() }
-        else if (WireFormat.getTagFieldNumber(tag) == 3) { email = input.readString() }
-        else { input.skipField(tag) }
-      }
-      return Customer(customerId, name, email)
-    }
   }
 }

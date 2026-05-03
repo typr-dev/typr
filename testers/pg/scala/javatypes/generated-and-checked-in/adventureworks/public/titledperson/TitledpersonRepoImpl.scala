@@ -7,39 +7,40 @@ package adventureworks.public.titledperson
 
 import adventureworks.public.title.TitleId
 import adventureworks.public.title_domain.TitleDomainId
+import dev.typr.dsl.DeleteBuilder
+import dev.typr.dsl.Dialect
+import dev.typr.dsl.SelectBuilder
+import dev.typr.dsl.UpdateBuilder
+import dev.typr.foundations.Connection
+import dev.typr.foundations.ConnectionRead
 import dev.typr.foundations.Fragment
 import dev.typr.foundations.PgTypes
-import dev.typr.foundations.dsl.DeleteBuilder
-import dev.typr.foundations.dsl.Dialect
-import dev.typr.foundations.dsl.SelectBuilder
-import dev.typr.foundations.dsl.UpdateBuilder
-import dev.typr.foundations.streamingInsert
-import java.sql.Connection
-import dev.typr.foundations.Fragment.interpolate
+import dev.typr.foundations.StreamingInsert
+import dev.typr.foundations.Fragment.concat
 
 class TitledpersonRepoImpl extends TitledpersonRepo {
   override def delete: DeleteBuilder[TitledpersonFields, TitledpersonRow] = DeleteBuilder.of(""""public"."titledperson"""", TitledpersonFields.structure, Dialect.POSTGRESQL)
 
   override def insert(unsaved: TitledpersonRow)(using c: Connection): TitledpersonRow = {
-  interpolate(Fragment.lit("""insert into "public"."titledperson"("title_short", "title", "name")
-    values ("""), Fragment.encode(TitleDomainId.pgType, unsaved.titleShort), Fragment.lit("::text, "), Fragment.encode(TitleId.pgType, unsaved.title), Fragment.lit(", "), Fragment.encode(PgTypes.text, unsaved.name), Fragment.lit(""")
+  concat(Fragment.of("""insert into "public"."titledperson"("title_short", "title", "name")
+    values ("""), Fragment.encode(TitleDomainId.pgType, unsaved.titleShort), Fragment.of("::text, "), Fragment.encode(TitleId.pgType, unsaved.title), Fragment.of(", "), Fragment.encode(PgTypes.text, unsaved.name), Fragment.of(""")
     RETURNING "title_short", "title", "name"
     """))
-    .updateReturning(TitledpersonRow.`_rowParser`.exactlyOne()).runUnchecked(c)
+    .updateReturning(TitledpersonRow.rowCodec.exactlyOne()).run(c)
   }
 
   override def insertStreaming(
     unsaved: java.util.Iterator[TitledpersonRow],
     batchSize: Integer = 10000
-  )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "public"."titledperson"("title_short", "title", "name") FROM STDIN""", batchSize, unsaved, c, TitledpersonRow.pgText)
+  )(using c: Connection): java.lang.Long = StreamingInsert.of(s"""COPY "public"."titledperson"("title_short", "title", "name") FROM STDIN""", batchSize, unsaved, TitledpersonRow.pgText).run(c)
 
-  override def select: SelectBuilder[TitledpersonFields, TitledpersonRow] = SelectBuilder.of(""""public"."titledperson"""", TitledpersonFields.structure, TitledpersonRow.`_rowParser`, Dialect.POSTGRESQL)
+  override def select: SelectBuilder[TitledpersonFields, TitledpersonRow] = SelectBuilder.of(""""public"."titledperson"""", TitledpersonFields.structure, TitledpersonRow.rowCodec, Dialect.POSTGRESQL)
 
-  override def selectAll(using c: Connection): java.util.List[TitledpersonRow] = {
-    interpolate(Fragment.lit("""select "title_short", "title", "name"
+  override def selectAll(using c: ConnectionRead): java.util.List[TitledpersonRow] = {
+    concat(Fragment.of("""select "title_short", "title", "name"
     from "public"."titledperson"
-    """)).query(TitledpersonRow.`_rowParser`.all()).runUnchecked(c)
+    """)).query(TitledpersonRow.rowCodec.all()).run(c)
   }
 
-  override def update: UpdateBuilder[TitledpersonFields, TitledpersonRow] = UpdateBuilder.of(""""public"."titledperson"""", TitledpersonFields.structure, TitledpersonRow.`_rowParser`, Dialect.POSTGRESQL)
+  override def update: UpdateBuilder[TitledpersonFields, TitledpersonRow] = UpdateBuilder.of(""""public"."titledperson"""", TitledpersonFields.structure, TitledpersonRow.rowCodec, Dialect.POSTGRESQL)
 }

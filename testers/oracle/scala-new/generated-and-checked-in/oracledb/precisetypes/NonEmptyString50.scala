@@ -6,12 +6,12 @@
 package oracledb.precisetypes
 
 import com.fasterxml.jackson.annotation.JsonValue
-import dev.typr.foundations.OracleType
-import dev.typr.foundations.OracleTypes
+import dev.typr.dslsc.Bijection
+import dev.typr.dslsc.RowCodecs
 import dev.typr.foundations.data.precise.NonEmptyStringN
-import dev.typr.foundations.scala.Bijection
-import dev.typr.foundations.scala.RowParser
-import dev.typr.foundations.scala.RowParsers
+import dev.typr.foundationssc.OracleType
+import dev.typr.foundationssc.OracleTypes
+import dev.typr.foundationssc.RowCodec
 import java.lang.IllegalArgumentException
 
 case class NonEmptyString50 private(@JsonValue value: String) extends NonEmptyStringN {
@@ -19,7 +19,7 @@ case class NonEmptyString50 private(@JsonValue value: String) extends NonEmptySt
 
   override def maxLength: Int = 50
 
-  override def semanticEquals(other: NonEmptyStringN): Boolean = (if (other == null) false else value == other.rawValue())
+  override def semanticEquals(other: NonEmptyStringN): Boolean = (if (other == null) false else (value == other.rawValue()))
 
   override def semanticHashCode: Int = value.hashCode()
 
@@ -29,13 +29,13 @@ case class NonEmptyString50 private(@JsonValue value: String) extends NonEmptySt
 }
 
 object NonEmptyString50 {
-  given `_rowParser`: RowParser[NonEmptyString50] = RowParsers.of(OracleTypes.varchar2.bimap(NonEmptyString50.apply, _.value))(x => x)(id => Array[Any](id))
-
-  given bijection: Bijection[NonEmptyString50, String] = Bijection.apply[NonEmptyString50, String](_.value)(NonEmptyString50.apply)
+  given bijection: Bijection[NonEmptyString50, String] = Bijection.of[NonEmptyString50, String](_.value, NonEmptyString50.apply)
 
   def of(value: String): Option[NonEmptyString50] = (if (!value.isEmpty && value.length <= 50) Some(new NonEmptyString50(value)) else None)
 
-  given oracleType: OracleType[NonEmptyString50] = OracleTypes.varchar2.bimap(NonEmptyString50.apply, _.value)
+  given oracleType: OracleType[NonEmptyString50] = OracleTypes.varchar2.to(Bijection.of(NonEmptyString50.apply, _.value))
+
+  given rowCodec: RowCodec[NonEmptyString50] = RowCodecs.of(OracleTypes.varchar2.to(Bijection.of(NonEmptyString50.apply, _.value)))(x => x)(id => Array[Any](id))
 
   def truncate(value: String): NonEmptyString50 = new NonEmptyString50((if (value.length <= 50) value else value.substring(0, 50)))
 

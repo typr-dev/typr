@@ -6,10 +6,9 @@
 package adventureworks.public
 
 import com.fasterxml.jackson.annotation.JsonValue
-import dev.typr.foundations.PgType
-import dev.typr.foundations.PgTypes
-import dev.typr.foundations.scala.Bijection
-import dev.typr.foundations.scala.ScalaDbTypes
+import dev.typr.dslsc.Bijection
+import dev.typr.foundationssc.PgType
+import dev.typr.foundationssc.PgTypes
 
 /** Domain `public.NameStyle`
  * No constraint
@@ -17,9 +16,9 @@ import dev.typr.foundations.scala.ScalaDbTypes
 case class NameStyle(@JsonValue value: Boolean)
 
 object NameStyle {
-  given bijection: Bijection[NameStyle, Boolean] = Bijection.apply[NameStyle, Boolean](_.value)(NameStyle.apply)
+  given bijection: Bijection[NameStyle, Boolean] = Bijection.of[NameStyle, Boolean](_.value, NameStyle.apply)
 
-  given pgType: PgType[NameStyle] = ScalaDbTypes.PgTypes.bool.bimap(NameStyle.apply, _.value).renamed(""""public"."NameStyle"""")
+  given pgType: PgType[NameStyle] = PgType(PgTypes.bool.to(Bijection.of(NameStyle.apply, _.value)).underlying.renamed(""""public"."NameStyle""""))
 
-  given pgTypeArray: PgType[Array[NameStyle]] = PgTypes.boolArrayUnboxed.bimap(xs => xs.map(NameStyle.apply), xs => xs.map(_.value)).renamed(""""public"."NameStyle"[]""")
+  given pgTypeArray: PgType[List[NameStyle]] = pgType.array
 }

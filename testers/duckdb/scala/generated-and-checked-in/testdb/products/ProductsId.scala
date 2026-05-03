@@ -6,18 +6,17 @@
 package testdb.products
 
 import com.fasterxml.jackson.annotation.JsonValue
-import dev.typr.foundations.DuckDbType
-import dev.typr.foundations.DuckDbTypes
-import dev.typr.foundations.scala.Bijection
-import dev.typr.foundations.scala.ScalaDbTypes
+import dev.typr.dslsc.Bijection
+import dev.typr.foundationssc.DuckDbType
+import dev.typr.foundationssc.DuckDbTypes
 
 /** Type for the primary key of table `products` */
 case class ProductsId(@JsonValue value: Int) extends scala.AnyVal
 
 object ProductsId {
-  given bijection: Bijection[ProductsId, Int] = Bijection.apply[ProductsId, Int](_.value)(ProductsId.apply)
+  given bijection: Bijection[ProductsId, Int] = Bijection.of[ProductsId, Int](_.value, ProductsId.apply)
 
-  given duckDbType: DuckDbType[ProductsId] = ScalaDbTypes.DuckDbTypes.integer.bimap(ProductsId.apply, _.value)
+  given duckDbType: DuckDbType[ProductsId] = DuckDbTypes.integer.to(Bijection.of(ProductsId.apply, _.value))
 
-  given duckDbTypeArray: DuckDbType[Array[ProductsId]] = DuckDbTypes.integerArray.bimap(xs => xs.map(ProductsId.apply), xs => xs.map(_.value))
+  given duckDbTypeArray: DuckDbType[List[ProductsId]] = duckDbType.list
 }

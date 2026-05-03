@@ -5,15 +5,14 @@
  */
 package testdb.categories
 
-import dev.typr.foundations.MariaTypes
-import dev.typr.foundations.kotlin.DeleteBuilder
-import dev.typr.foundations.kotlin.Dialect
-import dev.typr.foundations.kotlin.Fragment
-import dev.typr.foundations.kotlin.KotlinDbTypes
-import dev.typr.foundations.kotlin.SelectBuilder
-import dev.typr.foundations.kotlin.UpdateBuilder
-import dev.typr.foundations.kotlin.nullable
-import java.sql.Connection
+import dev.typr.dslkt.DeleteBuilder
+import dev.typr.dslkt.Dialect
+import dev.typr.dslkt.SelectBuilder
+import dev.typr.dslkt.UpdateBuilder
+import dev.typr.foundationskt.Connection
+import dev.typr.foundationskt.ConnectionRead
+import dev.typr.foundationskt.Fragment
+import dev.typr.foundationskt.MariaTypes
 import java.util.ArrayList
 import kotlin.collections.Iterator
 import kotlin.collections.List
@@ -26,22 +25,22 @@ class CategoriesRepoImpl() : CategoriesRepo {
   override fun deleteById(
     categoryId: CategoriesId,
     c: Connection
-  ): Boolean = Fragment.interpolate(Fragment.lit("delete from `categories` where `category_id` = "), Fragment.encode(CategoriesId.mariaType, categoryId), Fragment.lit("")).update().runUnchecked(c) > 0
+  ): kotlin.Boolean = Fragment.concat(Fragment.of("delete from `categories` where `category_id` = "), Fragment.encode(CategoriesId.mariaType, categoryId), Fragment.of("")).update().run(c) > 0
 
   override fun deleteByIds(
-    categoryIds: Array<CategoriesId>,
+    categoryIds: List<CategoriesId>,
     c: Connection
   ): Int {
     val fragments: ArrayList<Fragment> = ArrayList()
     for (id in categoryIds) { fragments.add(Fragment.encode(CategoriesId.mariaType, id)) }
-    return Fragment.interpolate(Fragment.lit("delete from `categories` where `category_id` in ("), Fragment.comma(fragments.toMutableList()), Fragment.lit(")")).update().runUnchecked(c)
+    return Fragment.concat(Fragment.of("delete from `categories` where `category_id` in ("), Fragment.comma(fragments.toMutableList()), Fragment.of(")")).update().run(c)
   }
 
   override fun insert(
     unsaved: CategoriesRow,
     c: Connection
-  ): CategoriesRow = Fragment.interpolate(Fragment.lit("insert into `categories`(`parent_id`, `name`, `slug`, `description`, `image_url`, `sort_order`, `is_visible`, `metadata`)\nvalues ("), Fragment.encode(CategoriesId.mariaType.nullable(), unsaved.parentId), Fragment.lit(", "), Fragment.encode(MariaTypes.varchar, unsaved.name), Fragment.lit(", "), Fragment.encode(MariaTypes.varchar, unsaved.slug), Fragment.lit(", "), Fragment.encode(MariaTypes.mediumtext.nullable(), unsaved.description), Fragment.lit(", "), Fragment.encode(MariaTypes.varchar.nullable(), unsaved.imageUrl), Fragment.lit(", "), Fragment.encode(KotlinDbTypes.MariaTypes.smallint, unsaved.sortOrder), Fragment.lit(", "), Fragment.encode(KotlinDbTypes.MariaTypes.bool, unsaved.isVisible), Fragment.lit(", "), Fragment.encode(MariaTypes.json.nullable(), unsaved.metadata), Fragment.lit(")\nRETURNING `category_id`, `parent_id`, `name`, `slug`, `description`, `image_url`, `sort_order`, `is_visible`, `metadata`\n"))
-    .updateReturning(CategoriesRow._rowParser.exactlyOne()).runUnchecked(c)
+  ): CategoriesRow = Fragment.concat(Fragment.of("insert into `categories`(`parent_id`, `name`, `slug`, `description`, `image_url`, `sort_order`, `is_visible`, `metadata`)\nvalues ("), Fragment.encode(CategoriesId.mariaType.opt(), unsaved.parentId), Fragment.of(", "), Fragment.encode(MariaTypes.varchar, unsaved.name), Fragment.of(", "), Fragment.encode(MariaTypes.varchar, unsaved.slug), Fragment.of(", "), Fragment.encode(MariaTypes.mediumtext.opt(), unsaved.description), Fragment.of(", "), Fragment.encode(MariaTypes.varchar.opt(), unsaved.imageUrl), Fragment.of(", "), Fragment.encode(MariaTypes.smallint, unsaved.sortOrder), Fragment.of(", "), Fragment.encode(MariaTypes.bool, unsaved.isVisible), Fragment.of(", "), Fragment.encode(MariaTypes.json.opt(), unsaved.metadata), Fragment.of(")\nRETURNING `category_id`, `parent_id`, `name`, `slug`, `description`, `image_url`, `sort_order`, `is_visible`, `metadata`\n"))
+    .updateReturning(CategoriesRow.rowCodec.exactlyOne()).run(c)
 
   override fun insert(
     unsaved: CategoriesRowUnsaved,
@@ -49,65 +48,65 @@ class CategoriesRepoImpl() : CategoriesRepo {
   ): CategoriesRow {
     val columns: ArrayList<Fragment> = ArrayList()
     val values: ArrayList<Fragment> = ArrayList()
-    columns.add(Fragment.lit("`name`"))
-    values.add(Fragment.interpolate(Fragment.encode(MariaTypes.varchar, unsaved.name), Fragment.lit("")))
-    columns.add(Fragment.lit("`slug`"))
-    values.add(Fragment.interpolate(Fragment.encode(MariaTypes.varchar, unsaved.slug), Fragment.lit("")))
+    columns.add(Fragment.of("`name`"))
+    values.add(Fragment.concat(Fragment.encode(MariaTypes.varchar, unsaved.name), Fragment.of("")))
+    columns.add(Fragment.of("`slug`"))
+    values.add(Fragment.concat(Fragment.encode(MariaTypes.varchar, unsaved.slug), Fragment.of("")))
     unsaved.parentId.visit(
       {  },
-      { value -> columns.add(Fragment.lit("`parent_id`"))
-      values.add(Fragment.interpolate(Fragment.encode(CategoriesId.mariaType.nullable(), value), Fragment.lit(""))) }
+      { value -> columns.add(Fragment.of("`parent_id`"))
+      values.add(Fragment.concat(Fragment.encode(CategoriesId.mariaType.opt(), value), Fragment.of(""))) }
     );
     unsaved.description.visit(
       {  },
-      { value -> columns.add(Fragment.lit("`description`"))
-      values.add(Fragment.interpolate(Fragment.encode(MariaTypes.mediumtext.nullable(), value), Fragment.lit(""))) }
+      { value -> columns.add(Fragment.of("`description`"))
+      values.add(Fragment.concat(Fragment.encode(MariaTypes.mediumtext.opt(), value), Fragment.of(""))) }
     );
     unsaved.imageUrl.visit(
       {  },
-      { value -> columns.add(Fragment.lit("`image_url`"))
-      values.add(Fragment.interpolate(Fragment.encode(MariaTypes.varchar.nullable(), value), Fragment.lit(""))) }
+      { value -> columns.add(Fragment.of("`image_url`"))
+      values.add(Fragment.concat(Fragment.encode(MariaTypes.varchar.opt(), value), Fragment.of(""))) }
     );
     unsaved.sortOrder.visit(
       {  },
-      { value -> columns.add(Fragment.lit("`sort_order`"))
-      values.add(Fragment.interpolate(Fragment.encode(KotlinDbTypes.MariaTypes.smallint, value), Fragment.lit(""))) }
+      { value -> columns.add(Fragment.of("`sort_order`"))
+      values.add(Fragment.concat(Fragment.encode(MariaTypes.smallint, value), Fragment.of(""))) }
     );
     unsaved.isVisible.visit(
       {  },
-      { value -> columns.add(Fragment.lit("`is_visible`"))
-      values.add(Fragment.interpolate(Fragment.encode(KotlinDbTypes.MariaTypes.bool, value), Fragment.lit(""))) }
+      { value -> columns.add(Fragment.of("`is_visible`"))
+      values.add(Fragment.concat(Fragment.encode(MariaTypes.bool, value), Fragment.of(""))) }
     );
     unsaved.metadata.visit(
       {  },
-      { value -> columns.add(Fragment.lit("`metadata`"))
-      values.add(Fragment.interpolate(Fragment.encode(MariaTypes.json.nullable(), value), Fragment.lit(""))) }
+      { value -> columns.add(Fragment.of("`metadata`"))
+      values.add(Fragment.concat(Fragment.encode(MariaTypes.json.opt(), value), Fragment.of(""))) }
     );
-    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into `categories`("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nRETURNING `category_id`, `parent_id`, `name`, `slug`, `description`, `image_url`, `sort_order`, `is_visible`, `metadata`\n"))
-    return q.updateReturning(CategoriesRow._rowParser.exactlyOne()).runUnchecked(c)
+    val q: Fragment = Fragment.concat(Fragment.of("insert into `categories`("), Fragment.comma(columns.toMutableList()), Fragment.of(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.of(")\nRETURNING `category_id`, `parent_id`, `name`, `slug`, `description`, `image_url`, `sort_order`, `is_visible`, `metadata`\n"))
+    return q.updateReturning(CategoriesRow.rowCodec.exactlyOne()).run(c)
   }
 
-  override fun select(): SelectBuilder<CategoriesFields, CategoriesRow> = SelectBuilder.of("`categories`", CategoriesFields.structure, CategoriesRow._rowParser, Dialect.MARIADB)
+  override fun select(): SelectBuilder<CategoriesFields, CategoriesRow> = SelectBuilder.of("`categories`", CategoriesFields.structure, CategoriesRow.rowCodec, Dialect.MARIADB)
 
-  override fun selectAll(c: Connection): List<CategoriesRow> = Fragment.interpolate(Fragment.lit("select `category_id`, `parent_id`, `name`, `slug`, `description`, `image_url`, `sort_order`, `is_visible`, `metadata`\nfrom `categories`\n")).query(CategoriesRow._rowParser.all()).runUnchecked(c)
+  override fun selectAll(c: ConnectionRead): List<CategoriesRow> = Fragment.concat(Fragment.of("select `category_id`, `parent_id`, `name`, `slug`, `description`, `image_url`, `sort_order`, `is_visible`, `metadata`\nfrom `categories`\n")).query(CategoriesRow.rowCodec.all()).run(c)
 
   override fun selectById(
     categoryId: CategoriesId,
-    c: Connection
-  ): CategoriesRow? = Fragment.interpolate(Fragment.lit("select `category_id`, `parent_id`, `name`, `slug`, `description`, `image_url`, `sort_order`, `is_visible`, `metadata`\nfrom `categories`\nwhere `category_id` = "), Fragment.encode(CategoriesId.mariaType, categoryId), Fragment.lit("")).query(CategoriesRow._rowParser.first()).runUnchecked(c)
+    c: ConnectionRead
+  ): CategoriesRow? = Fragment.concat(Fragment.of("select `category_id`, `parent_id`, `name`, `slug`, `description`, `image_url`, `sort_order`, `is_visible`, `metadata`\nfrom `categories`\nwhere `category_id` = "), Fragment.encode(CategoriesId.mariaType, categoryId), Fragment.of("")).query(CategoriesRow.rowCodec.first()).run(c)
 
   override fun selectByIds(
-    categoryIds: Array<CategoriesId>,
-    c: Connection
+    categoryIds: List<CategoriesId>,
+    c: ConnectionRead
   ): List<CategoriesRow> {
     val fragments: ArrayList<Fragment> = ArrayList()
     for (id in categoryIds) { fragments.add(Fragment.encode(CategoriesId.mariaType, id)) }
-    return Fragment.interpolate(Fragment.lit("select `category_id`, `parent_id`, `name`, `slug`, `description`, `image_url`, `sort_order`, `is_visible`, `metadata` from `categories` where `category_id` in ("), Fragment.comma(fragments.toMutableList()), Fragment.lit(")")).query(CategoriesRow._rowParser.all()).runUnchecked(c)
+    return Fragment.concat(Fragment.of("select `category_id`, `parent_id`, `name`, `slug`, `description`, `image_url`, `sort_order`, `is_visible`, `metadata` from `categories` where `category_id` in ("), Fragment.comma(fragments.toMutableList()), Fragment.of(")")).query(CategoriesRow.rowCodec.all()).run(c)
   }
 
   override fun selectByIdsTracked(
-    categoryIds: Array<CategoriesId>,
-    c: Connection
+    categoryIds: List<CategoriesId>,
+    c: ConnectionRead
   ): Map<CategoriesId, CategoriesRow> {
     val ret: MutableMap<CategoriesId, CategoriesRow> = mutableMapOf<CategoriesId, CategoriesRow>()
     selectByIds(categoryIds, c).forEach({ row -> ret.put(row.categoryId, row) })
@@ -115,31 +114,31 @@ class CategoriesRepoImpl() : CategoriesRepo {
   }
 
   override fun selectByUniqueSlug(
-    slug: String,
-    c: Connection
-  ): CategoriesRow? = Fragment.interpolate(Fragment.lit("select `category_id`, `parent_id`, `name`, `slug`, `description`, `image_url`, `sort_order`, `is_visible`, `metadata`\nfrom `categories`\nwhere `slug` = "), Fragment.encode(MariaTypes.varchar, slug), Fragment.lit("\n")).query(CategoriesRow._rowParser.first()).runUnchecked(c)
+    slug: kotlin.String,
+    c: ConnectionRead
+  ): CategoriesRow? = Fragment.concat(Fragment.of("select `category_id`, `parent_id`, `name`, `slug`, `description`, `image_url`, `sort_order`, `is_visible`, `metadata`\nfrom `categories`\nwhere `slug` = "), Fragment.encode(MariaTypes.varchar, slug), Fragment.of("\n")).query(CategoriesRow.rowCodec.first()).run(c)
 
-  override fun update(): UpdateBuilder<CategoriesFields, CategoriesRow> = UpdateBuilder.of("`categories`", CategoriesFields.structure, CategoriesRow._rowParser, Dialect.MARIADB)
+  override fun update(): UpdateBuilder<CategoriesFields, CategoriesRow> = UpdateBuilder.of("`categories`", CategoriesFields.structure, CategoriesRow.rowCodec, Dialect.MARIADB)
 
   override fun update(
     row: CategoriesRow,
     c: Connection
-  ): Boolean {
+  ): kotlin.Boolean {
     val categoryId: CategoriesId = row.categoryId
-    return Fragment.interpolate(Fragment.lit("update `categories`\nset `parent_id` = "), Fragment.encode(CategoriesId.mariaType.nullable(), row.parentId), Fragment.lit(",\n`name` = "), Fragment.encode(MariaTypes.varchar, row.name), Fragment.lit(",\n`slug` = "), Fragment.encode(MariaTypes.varchar, row.slug), Fragment.lit(",\n`description` = "), Fragment.encode(MariaTypes.mediumtext.nullable(), row.description), Fragment.lit(",\n`image_url` = "), Fragment.encode(MariaTypes.varchar.nullable(), row.imageUrl), Fragment.lit(",\n`sort_order` = "), Fragment.encode(KotlinDbTypes.MariaTypes.smallint, row.sortOrder), Fragment.lit(",\n`is_visible` = "), Fragment.encode(KotlinDbTypes.MariaTypes.bool, row.isVisible), Fragment.lit(",\n`metadata` = "), Fragment.encode(MariaTypes.json.nullable(), row.metadata), Fragment.lit("\nwhere `category_id` = "), Fragment.encode(CategoriesId.mariaType, categoryId), Fragment.lit("")).update().runUnchecked(c) > 0
+    return Fragment.concat(Fragment.of("update `categories`\nset `parent_id` = "), Fragment.encode(CategoriesId.mariaType.opt(), row.parentId), Fragment.of(",\n`name` = "), Fragment.encode(MariaTypes.varchar, row.name), Fragment.of(",\n`slug` = "), Fragment.encode(MariaTypes.varchar, row.slug), Fragment.of(",\n`description` = "), Fragment.encode(MariaTypes.mediumtext.opt(), row.description), Fragment.of(",\n`image_url` = "), Fragment.encode(MariaTypes.varchar.opt(), row.imageUrl), Fragment.of(",\n`sort_order` = "), Fragment.encode(MariaTypes.smallint, row.sortOrder), Fragment.of(",\n`is_visible` = "), Fragment.encode(MariaTypes.bool, row.isVisible), Fragment.of(",\n`metadata` = "), Fragment.encode(MariaTypes.json.opt(), row.metadata), Fragment.of("\nwhere `category_id` = "), Fragment.encode(CategoriesId.mariaType, categoryId), Fragment.of("")).update().run(c) > 0
   }
 
   override fun upsert(
     unsaved: CategoriesRow,
     c: Connection
-  ): CategoriesRow = Fragment.interpolate(Fragment.lit("INSERT INTO `categories`(`category_id`, `parent_id`, `name`, `slug`, `description`, `image_url`, `sort_order`, `is_visible`, `metadata`)\nVALUES ("), Fragment.encode(CategoriesId.mariaType, unsaved.categoryId), Fragment.lit(", "), Fragment.encode(CategoriesId.mariaType.nullable(), unsaved.parentId), Fragment.lit(", "), Fragment.encode(MariaTypes.varchar, unsaved.name), Fragment.lit(", "), Fragment.encode(MariaTypes.varchar, unsaved.slug), Fragment.lit(", "), Fragment.encode(MariaTypes.mediumtext.nullable(), unsaved.description), Fragment.lit(", "), Fragment.encode(MariaTypes.varchar.nullable(), unsaved.imageUrl), Fragment.lit(", "), Fragment.encode(KotlinDbTypes.MariaTypes.smallint, unsaved.sortOrder), Fragment.lit(", "), Fragment.encode(KotlinDbTypes.MariaTypes.bool, unsaved.isVisible), Fragment.lit(", "), Fragment.encode(MariaTypes.json.nullable(), unsaved.metadata), Fragment.lit(")\nON DUPLICATE KEY UPDATE `parent_id` = VALUES(`parent_id`),\n`name` = VALUES(`name`),\n`slug` = VALUES(`slug`),\n`description` = VALUES(`description`),\n`image_url` = VALUES(`image_url`),\n`sort_order` = VALUES(`sort_order`),\n`is_visible` = VALUES(`is_visible`),\n`metadata` = VALUES(`metadata`)\nRETURNING `category_id`, `parent_id`, `name`, `slug`, `description`, `image_url`, `sort_order`, `is_visible`, `metadata`"))
-    .updateReturning(CategoriesRow._rowParser.exactlyOne())
-    .runUnchecked(c)
+  ): CategoriesRow = Fragment.concat(Fragment.of("INSERT INTO `categories`(`category_id`, `parent_id`, `name`, `slug`, `description`, `image_url`, `sort_order`, `is_visible`, `metadata`)\nVALUES ("), Fragment.encode(CategoriesId.mariaType, unsaved.categoryId), Fragment.of(", "), Fragment.encode(CategoriesId.mariaType.opt(), unsaved.parentId), Fragment.of(", "), Fragment.encode(MariaTypes.varchar, unsaved.name), Fragment.of(", "), Fragment.encode(MariaTypes.varchar, unsaved.slug), Fragment.of(", "), Fragment.encode(MariaTypes.mediumtext.opt(), unsaved.description), Fragment.of(", "), Fragment.encode(MariaTypes.varchar.opt(), unsaved.imageUrl), Fragment.of(", "), Fragment.encode(MariaTypes.smallint, unsaved.sortOrder), Fragment.of(", "), Fragment.encode(MariaTypes.bool, unsaved.isVisible), Fragment.of(", "), Fragment.encode(MariaTypes.json.opt(), unsaved.metadata), Fragment.of(")\nON DUPLICATE KEY UPDATE `parent_id` = VALUES(`parent_id`),\n`name` = VALUES(`name`),\n`slug` = VALUES(`slug`),\n`description` = VALUES(`description`),\n`image_url` = VALUES(`image_url`),\n`sort_order` = VALUES(`sort_order`),\n`is_visible` = VALUES(`is_visible`),\n`metadata` = VALUES(`metadata`)\nRETURNING `category_id`, `parent_id`, `name`, `slug`, `description`, `image_url`, `sort_order`, `is_visible`, `metadata`"))
+    .updateReturning(CategoriesRow.rowCodec.exactlyOne())
+    .run(c)
 
   override fun upsertBatch(
     unsaved: Iterator<CategoriesRow>,
     c: Connection
-  ): List<CategoriesRow> = Fragment.interpolate(Fragment.lit("INSERT INTO `categories`(`category_id`, `parent_id`, `name`, `slug`, `description`, `image_url`, `sort_order`, `is_visible`, `metadata`)\nVALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)\nON DUPLICATE KEY UPDATE `parent_id` = VALUES(`parent_id`),\n`name` = VALUES(`name`),\n`slug` = VALUES(`slug`),\n`description` = VALUES(`description`),\n`image_url` = VALUES(`image_url`),\n`sort_order` = VALUES(`sort_order`),\n`is_visible` = VALUES(`is_visible`),\n`metadata` = VALUES(`metadata`)\nRETURNING `category_id`, `parent_id`, `name`, `slug`, `description`, `image_url`, `sort_order`, `is_visible`, `metadata`"))
-    .updateReturningEach(CategoriesRow._rowParser, unsaved)
-  .runUnchecked(c)
+  ): List<CategoriesRow> = Fragment.concat(Fragment.of("INSERT INTO `categories`(`category_id`, `parent_id`, `name`, `slug`, `description`, `image_url`, `sort_order`, `is_visible`, `metadata`)\nVALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)\nON DUPLICATE KEY UPDATE `parent_id` = VALUES(`parent_id`),\n`name` = VALUES(`name`),\n`slug` = VALUES(`slug`),\n`description` = VALUES(`description`),\n`image_url` = VALUES(`image_url`),\n`sort_order` = VALUES(`sort_order`),\n`is_visible` = VALUES(`is_visible`),\n`metadata` = VALUES(`metadata`)\nRETURNING `category_id`, `parent_id`, `name`, `slug`, `description`, `image_url`, `sort_order`, `is_visible`, `metadata`"))
+    .updateReturningEach(CategoriesRow.rowCodec, unsaved)
+  .run(c)
 }

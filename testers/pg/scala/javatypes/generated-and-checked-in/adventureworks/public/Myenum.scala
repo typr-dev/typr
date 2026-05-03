@@ -5,6 +5,7 @@
  */
 package adventureworks.public
 
+import dev.typr.foundations.Bijection
 import dev.typr.foundations.PgType
 import dev.typr.foundations.PgTypes
 
@@ -14,32 +15,23 @@ import dev.typr.foundations.PgTypes
  *  - c
  */
 
-sealed abstract class Myenum(val value: java.lang.String)
+enum Myenum {
+  case a, b, c
+  
+}
 
 object Myenum {
-  given pgTypeArray: PgType[Array[Myenum]] = {
-    PgTypes.textArray
-      .bimap(xs => xs.map(Myenum.force), xs => xs.map(_.value))
-      .renamedDropPrecision("public.myenum")
+  given pgTypeArray: PgType[java.util.List[Myenum]] = {
+    PgTypes.text.array()
+      .to(Bijection.of(xs => xs.stream().map(Myenum.force).toList(), xs => xs.stream().map(_.value).toList())).renamedDropPrecision("public.myenum")
   }
 
-  given pgType: PgType[Myenum] = {
-    PgTypes.text.bimap(Myenum.force, _.value)
-      .renamedDropPrecision("public.myenum")
-  }
+  given pgType: PgType[Myenum] = PgTypes.text.to(Bijection.of(Myenum.force, _.value)).renamedDropPrecision("public.myenum")
+  extension (e: Myenum) def value: java.lang.String = e.toString
   def apply(str: java.lang.String): scala.Either[java.lang.String, Myenum] =
-    ByName.get(str).toRight(s"'$str' does not match any of the following legal values: $Names")
-  def force(str: java.lang.String): Myenum =
-    apply(str) match {
-      case scala.Left(msg) => sys.error(msg)
-      case scala.Right(value) => value
-    }
-  case object a extends Myenum("a")
-
-  case object b extends Myenum("b")
-
-  case object c extends Myenum("c")
-  val All: scala.List[Myenum] = scala.List(a, b, c)
-  val Names: java.lang.String = All.map(_.value).mkString(", ")
-  val ByName: scala.collection.immutable.Map[java.lang.String, Myenum] = All.map(x => (x.value, x)).toMap
+    scala.util.Try(Myenum.valueOf(str)).toEither.left.map(_ => s"'$str' does not match any of the following legal values: $Names")
+  def force(str: java.lang.String): Myenum = Myenum.valueOf(str)
+  val All: scala.List[Myenum] = values.toList
+  val Names: java.lang.String = All.map(_.toString).mkString(", ")
+  val ByName: scala.collection.immutable.Map[java.lang.String, Myenum] = All.map(x => (x.toString, x)).toMap
 }

@@ -5,14 +5,14 @@
  */
 package adventureworks.public.title
 
-import dev.typr.foundations.RowParser
-import dev.typr.foundations.dsl.FieldsBase
-import dev.typr.foundations.dsl.Path
-import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.kotlin.RelationStructure
-import dev.typr.foundations.kotlin.SqlExpr
-import dev.typr.foundations.kotlin.SqlExpr.IdField
-import dev.typr.foundations.kotlin.TupleExpr1
+import dev.typr.dsl.FieldsBase
+import dev.typr.dsl.Path
+import dev.typr.dsl.SqlExpr.FieldLike
+import dev.typr.dslkt.RelationStructure
+import dev.typr.dslkt.SqlExpr
+import dev.typr.dslkt.SqlExpr.IdField
+import dev.typr.dslkt.TupleExpr1
+import dev.typr.foundations.RowCodec
 import kotlin.collections.List
 
 data class TitleFields(val _path: List<Path>) : TupleExpr1<TitleId>, RelationStructure<TitleFields, TitleRow>, FieldsBase<TitleRow> {
@@ -20,11 +20,11 @@ data class TitleFields(val _path: List<Path>) : TupleExpr1<TitleId>, RelationStr
 
   override fun _path(): List<Path> = _path
 
-  fun code(): IdField<TitleId, TitleRow> = IdField<TitleId, TitleRow>(_path, "code", TitleRow::code, null, null, { row, value -> row.copy(code = value) }, TitleId.pgType)
+  fun code(): IdField<TitleId, TitleRow> = IdField<TitleId, TitleRow>(_path, "code", TitleRow::code, null, null, { row, value -> row.copy(code = value) }, TitleId.pgType.underlying)
 
   override fun columns(): List<FieldLike<*, TitleRow>> = listOf(this.code().underlying)
 
-  override fun rowParser(): RowParser<TitleRow> = TitleRow._rowParser.underlying
+  override fun rowCodec(): RowCodec<TitleRow> = TitleRow.rowCodec.underlying
 
   override fun withPaths(_path: List<Path>): RelationStructure<TitleFields, TitleRow> = TitleFields(_path)
 

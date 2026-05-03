@@ -36,7 +36,7 @@ object TypoShort {
 
   given arrayToStatement: ToStatement[Array[TypoShort]] = ToStatement[Array[TypoShort]]((s, index, v) => s.setArray(index, s.getConnection.createArrayOf("int2", v.map(v => v.value: java.lang.Short))))
 
-  given bijection: Bijection[TypoShort, Short] = Bijection.apply[TypoShort, Short](_.value)(TypoShort.apply)
+  given bijection: Bijection[TypoShort, Short] = Bijection[TypoShort, Short](_.value)(TypoShort.apply)
 
   given column: Column[TypoShort] = {
     Column.nonNull[TypoShort]((v1: Any, _) =>

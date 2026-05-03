@@ -5,13 +5,13 @@
  */
 package oracledb.product_by_sku
 
-import dev.typr.foundations.OracleTypes
-import dev.typr.foundations.scala.Fragment
-import java.sql.Connection
-import dev.typr.foundations.scala.Fragment.sql
+import dev.typr.foundationssc.ConnectionRead
+import dev.typr.foundationssc.Fragment
+import dev.typr.foundationssc.OracleTypes
+import dev.typr.foundationssc.Fragment.sql
 
 class ProductBySkuSqlRepoImpl extends ProductBySkuSqlRepo {
-  override def apply(sku: String)(using c: Connection): List[ProductBySkuSqlRow] = {
+  override def apply(sku: String)(using c: ConnectionRead): List[ProductBySkuSqlRow] = {
     sql"""-- Find product by SKU
     SELECT
         p.product_id,
@@ -21,6 +21,6 @@ class ProductBySkuSqlRepoImpl extends ProductBySkuSqlRepo {
         p.tags
     FROM products p
     WHERE p.sku = ${Fragment.encode(OracleTypes.varchar2, sku)}
-    """.query(ProductBySkuSqlRow.`_rowParser`.all()).runUnchecked(c)
+    """.query(ProductBySkuSqlRow.rowCodec.all()).run(using c)
   }
 }

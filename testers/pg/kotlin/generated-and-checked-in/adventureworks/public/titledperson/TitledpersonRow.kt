@@ -8,11 +8,11 @@ package adventureworks.public.titledperson
 import adventureworks.public.title.TitleId
 import adventureworks.public.title_domain.TitleDomainId
 import com.fasterxml.jackson.annotation.JsonProperty
+import dev.typr.dslkt.RowCodecs
 import dev.typr.foundations.PgText
-import dev.typr.foundations.PgTypes
 import dev.typr.foundations.Tuple.Tuple3
-import dev.typr.foundations.kotlin.RowParser
-import dev.typr.foundations.kotlin.RowParsers
+import dev.typr.foundationskt.PgTypes
+import dev.typr.foundationskt.RowCodec
 
 /** Table: public.titledperson */
 data class TitledpersonRow(
@@ -20,18 +20,18 @@ data class TitledpersonRow(
   @field:JsonProperty("title_short") val titleShort: TitleDomainId,
   /** Points to [adventureworks.public.title.TitleRow.code] */
   val title: TitleId,
-  val name: String
-) : Tuple3<TitleDomainId, TitleId, String> {
+  val name: kotlin.String
+) : Tuple3<TitleDomainId, TitleId, kotlin.String> {
   override fun _1(): TitleDomainId = titleShort
 
   override fun _2(): TitleId = title
 
-  override fun _3(): String = name
+  override fun _3(): kotlin.String = name
 
   companion object {
-    val _rowParser: RowParser<TitledpersonRow> = RowParsers.of(TitleDomainId.pgType, TitleId.pgType, PgTypes.text, { t0, t1, t2 -> TitledpersonRow(t0, t1, t2) }, { row -> arrayOf<Any?>(row.titleShort, row.title, row.name) })
+    val rowCodec: RowCodec<TitledpersonRow> = RowCodecs.of(TitleDomainId.pgType, TitleId.pgType, PgTypes.text, { t0: TitleDomainId, t1: TitleId, t2: kotlin.String -> TitledpersonRow(t0, t1, t2) }, { row: TitledpersonRow -> arrayOf<Any?>(row.titleShort, row.title, row.name) })
 
     val pgText: PgText<TitledpersonRow> =
-      PgText.from(_rowParser.underlying)
+      PgText.from(rowCodec.underlying)
   }
 }

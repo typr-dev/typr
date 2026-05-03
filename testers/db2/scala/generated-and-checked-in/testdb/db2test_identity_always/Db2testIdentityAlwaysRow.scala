@@ -6,10 +6,10 @@
 package testdb.db2test_identity_always
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import dev.typr.foundations.Db2Types
+import dev.typr.dslsc.RowCodecs
 import dev.typr.foundations.Tuple.Tuple2
-import dev.typr.foundations.scala.RowParser
-import dev.typr.foundations.scala.RowParsers
+import dev.typr.foundationssc.Db2Types
+import dev.typr.foundationssc.RowCodec
 
 /** Table: DB2TEST_IDENTITY_ALWAYS
  * Primary key: ID
@@ -27,5 +27,5 @@ case class Db2testIdentityAlwaysRow(
 }
 
 object Db2testIdentityAlwaysRow {
-  val `_rowParser`: RowParser[Db2testIdentityAlwaysRow] = RowParsers.of(Db2testIdentityAlwaysId.db2Type, Db2Types.varchar)(Db2testIdentityAlwaysRow.apply)(row => Array[Any](row.id, row.name))
+  val rowCodec: RowCodec[Db2testIdentityAlwaysRow] = RowCodecs.of(Db2testIdentityAlwaysId.db2Type, Db2Types.varchar)(Db2testIdentityAlwaysRow.apply)(row => Array[Any](row.id, row.name))
 }

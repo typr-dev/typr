@@ -6,12 +6,11 @@
 package testdb.order_details
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import dev.typr.foundations.MariaTypes
+import dev.typr.dslkt.RowCodecs
 import dev.typr.foundations.Tuple.Tuple17
 import dev.typr.foundations.data.Uint2
-import dev.typr.foundations.kotlin.KotlinDbTypes
-import dev.typr.foundations.kotlin.RowParser
-import dev.typr.foundations.kotlin.RowParsers
+import dev.typr.foundationskt.MariaTypes
+import dev.typr.foundationskt.RowCodec
 import java.math.BigDecimal
 import java.time.LocalDateTime
 import testdb.order_items.OrderItemsId
@@ -23,11 +22,11 @@ data class OrderDetailsSqlRow(
   /** Points to [testdb.orders.OrdersRow.orderId] */
   @field:JsonProperty("order_id") val orderId: OrdersId,
   /** Points to [testdb.orders.OrdersRow.orderNumber] */
-  @field:JsonProperty("order_number") val orderNumber: String,
+  @field:JsonProperty("order_number") val orderNumber: kotlin.String,
   /** Points to [testdb.orders.OrdersRow.orderStatus] */
-  @field:JsonProperty("order_status") val orderStatus: String,
+  @field:JsonProperty("order_status") val orderStatus: kotlin.String,
   /** Points to [testdb.orders.OrdersRow.paymentStatus] */
-  @field:JsonProperty("payment_status") val paymentStatus: String,
+  @field:JsonProperty("payment_status") val paymentStatus: kotlin.String,
   /** Points to [testdb.orders.OrdersRow.subtotal] */
   val subtotal: BigDecimal,
   /** Points to [testdb.orders.OrdersRow.shippingCost] */
@@ -45,16 +44,16 @@ data class OrderDetailsSqlRow(
   /** Points to [testdb.order_items.OrderItemsRow.productId] */
   @field:JsonProperty("product_id") val productId: ProductsId,
   /** Points to [testdb.order_items.OrderItemsRow.sku] */
-  val sku: String,
+  val sku: kotlin.String,
   /** Points to [testdb.order_items.OrderItemsRow.productName] */
-  @field:JsonProperty("product_name") val productName: String,
+  @field:JsonProperty("product_name") val productName: kotlin.String,
   /** Points to [testdb.order_items.OrderItemsRow.quantity] */
   val quantity: Uint2,
   /** Points to [testdb.order_items.OrderItemsRow.unitPrice] */
   @field:JsonProperty("unit_price") val unitPrice: BigDecimal,
   /** Points to [testdb.order_items.OrderItemsRow.lineTotal] */
   @field:JsonProperty("line_total") val lineTotal: BigDecimal
-) : Tuple17<OrdersId, String, String, String, BigDecimal, BigDecimal, BigDecimal, BigDecimal, BigDecimal, LocalDateTime, OrderItemsId, ProductsId, String, String, Uint2, BigDecimal, BigDecimal> {
+) : Tuple17<OrdersId, kotlin.String, kotlin.String, kotlin.String, BigDecimal, BigDecimal, BigDecimal, BigDecimal, BigDecimal, LocalDateTime, OrderItemsId, ProductsId, kotlin.String, kotlin.String, Uint2, BigDecimal, BigDecimal> {
   override fun _1(): OrdersId = orderId
 
   override fun _10(): LocalDateTime = orderedAt
@@ -63,9 +62,9 @@ data class OrderDetailsSqlRow(
 
   override fun _12(): ProductsId = productId
 
-  override fun _13(): String = sku
+  override fun _13(): kotlin.String = sku
 
-  override fun _14(): String = productName
+  override fun _14(): kotlin.String = productName
 
   override fun _15(): Uint2 = quantity
 
@@ -73,11 +72,11 @@ data class OrderDetailsSqlRow(
 
   override fun _17(): BigDecimal = lineTotal
 
-  override fun _2(): String = orderNumber
+  override fun _2(): kotlin.String = orderNumber
 
-  override fun _3(): String = orderStatus
+  override fun _3(): kotlin.String = orderStatus
 
-  override fun _4(): String = paymentStatus
+  override fun _4(): kotlin.String = paymentStatus
 
   override fun _5(): BigDecimal = subtotal
 
@@ -90,6 +89,6 @@ data class OrderDetailsSqlRow(
   override fun _9(): BigDecimal = totalAmount
 
   companion object {
-    val _rowParser: RowParser<OrderDetailsSqlRow> = RowParsers.of(OrdersId.mariaType, MariaTypes.varchar, MariaTypes.text, MariaTypes.text, KotlinDbTypes.MariaTypes.numeric, KotlinDbTypes.MariaTypes.numeric, KotlinDbTypes.MariaTypes.numeric, KotlinDbTypes.MariaTypes.numeric, KotlinDbTypes.MariaTypes.numeric, MariaTypes.datetime, OrderItemsId.mariaType, ProductsId.mariaType, MariaTypes.varchar, MariaTypes.varchar, MariaTypes.smallintUnsigned, KotlinDbTypes.MariaTypes.numeric, KotlinDbTypes.MariaTypes.numeric, { t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15, t16 -> OrderDetailsSqlRow(t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15, t16) }, { row -> arrayOf<Any?>(row.orderId, row.orderNumber, row.orderStatus, row.paymentStatus, row.subtotal, row.shippingCost, row.taxAmount, row.discountAmount, row.totalAmount, row.orderedAt, row.itemId, row.productId, row.sku, row.productName, row.quantity, row.unitPrice, row.lineTotal) })
+    val rowCodec: RowCodec<OrderDetailsSqlRow> = RowCodecs.of(OrdersId.mariaType, MariaTypes.varchar, MariaTypes.text, MariaTypes.text, MariaTypes.numeric, MariaTypes.numeric, MariaTypes.numeric, MariaTypes.numeric, MariaTypes.numeric, MariaTypes.datetime, OrderItemsId.mariaType, ProductsId.mariaType, MariaTypes.varchar, MariaTypes.varchar, MariaTypes.smallintUnsigned, MariaTypes.numeric, MariaTypes.numeric, { t0: OrdersId, t1: kotlin.String, t2: kotlin.String, t3: kotlin.String, t4: BigDecimal, t5: BigDecimal, t6: BigDecimal, t7: BigDecimal, t8: BigDecimal, t9: LocalDateTime, t10: OrderItemsId, t11: ProductsId, t12: kotlin.String, t13: kotlin.String, t14: Uint2, t15: BigDecimal, t16: BigDecimal -> OrderDetailsSqlRow(t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15, t16) }, { row: OrderDetailsSqlRow -> arrayOf<Any?>(row.orderId, row.orderNumber, row.orderStatus, row.paymentStatus, row.subtotal, row.shippingCost, row.taxAmount, row.discountAmount, row.totalAmount, row.orderedAt, row.itemId, row.productId, row.sku, row.productName, row.quantity, row.unitPrice, row.lineTotal) })
   }
 }

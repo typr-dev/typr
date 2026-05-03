@@ -21,7 +21,7 @@ object PrecisionTypesNullId {
 
   implicit lazy val arrayToStatement: ToStatement[Array[PrecisionTypesNullId]] = adventureworks.IntArrayToStatement.contramap(_.map(_.value))
 
-  implicit lazy val bijection: Bijection[PrecisionTypesNullId, Int] = Bijection.apply[PrecisionTypesNullId, Int](_.value)(PrecisionTypesNullId.apply)
+  implicit lazy val bijection: Bijection[PrecisionTypesNullId, Int] = Bijection[PrecisionTypesNullId, Int](_.value)(PrecisionTypesNullId.apply)
 
   implicit lazy val column: Column[PrecisionTypesNullId] = Column.columnToInt.map(PrecisionTypesNullId.apply)
 

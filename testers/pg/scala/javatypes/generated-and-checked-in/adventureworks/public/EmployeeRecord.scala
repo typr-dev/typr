@@ -5,10 +5,9 @@
  */
 package adventureworks.public
 
-import dev.typr.foundations.PgRead
-import dev.typr.foundations.PgStruct
 import dev.typr.foundations.PgType
 import dev.typr.foundations.PgTypes
+import dev.typr.foundations.RowCodec
 import java.time.LocalDate
 import java.util.Optional
 
@@ -22,9 +21,7 @@ case class EmployeeRecord(
 )
 
 object EmployeeRecord {
-  given pgStruct: PgStruct[EmployeeRecord] = PgStruct.builder[EmployeeRecord]("public.employee_record").optField("name", PersonName.pgType, (v: EmployeeRecord) => v.name).optField("contact", ContactInfo.pgType, (v: EmployeeRecord) => v.contact).optField("employeeId", PgTypes.int4, (v: EmployeeRecord) => v.employeeId).optField("salary", PgTypes.numeric, (v: EmployeeRecord) => v.salary).optField("hireDate", PgTypes.date, (v: EmployeeRecord) => v.hireDate).build(arr => EmployeeRecord(name = Optional.ofNullable(arr(0).asInstanceOf[PersonName]), contact = Optional.ofNullable(arr(1).asInstanceOf[ContactInfo]), employeeId = Optional.ofNullable(arr(2).asInstanceOf[Integer]), salary = Optional.ofNullable(arr(3).asInstanceOf[java.math.BigDecimal]), hireDate = Optional.ofNullable(arr(4).asInstanceOf[LocalDate])))
+  given pgType: PgType[EmployeeRecord] = PgTypes.compositeOf("public.employee_record", RowCodec.namedBuilder[EmployeeRecord]().field("name", PersonName.pgType.opt(), (v: EmployeeRecord) => v.name).field("contact", ContactInfo.pgType.opt(), (v: EmployeeRecord) => v.contact).field("employeeId", PgTypes.int4.opt(), (v: EmployeeRecord) => v.employeeId).field("salary", PgTypes.numeric.opt(), (v: EmployeeRecord) => v.salary).field("hireDate", PgTypes.date.opt(), (v: EmployeeRecord) => v.hireDate).build((t0, t1, t2, t3, t4) => EmployeeRecord(name = t0, contact = t1, employeeId = t2, salary = t3, hireDate = t4)))
 
-  given pgType: PgType[EmployeeRecord] = pgStruct.asType()
-
-  given pgTypeArray: PgType[Array[EmployeeRecord]] = pgType.array(PgRead.readCompositeArray(pgType.pgCompositeText(), n => new Array[EmployeeRecord](n)), n => new Array[EmployeeRecord](n))
+  given pgTypeArray: PgType[java.util.List[EmployeeRecord]] = pgType.array()
 }

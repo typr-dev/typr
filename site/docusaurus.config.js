@@ -1,10 +1,11 @@
 // @ts-check
 // Note: type annotations allow type checking and IDEs autocompletion
+const path = require('path');
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
-  title: "Typo",
-  tagline: "Type-safe code generation for Databases, OpenAPI, and Kafka/Avro",
+  title: "Typr",
+  tagline: "End-to-end type safety for Java, Kotlin, and Scala",
   url: "https://typo.oyvindberg.dev",
   baseUrl: "/",
   onBrokenLinks: "throw",
@@ -39,10 +40,10 @@ const config = {
       /** @type {import('@docusaurus/preset-classic').Options} */
       ({
         docs: {
-          id: 'db',
-          path: 'docs-db',
-          routeBasePath: 'db',
-          sidebarPath: require.resolve("./sidebars-db.js"),
+          id: 'typr',
+          path: 'docs-typr',
+          routeBasePath: 'typr',
+          sidebarPath: require.resolve("./sidebars-typr.js"),
         },
         theme: {
           customCss: require.resolve("./src/css/custom.css"),
@@ -52,33 +53,23 @@ const config = {
   ],
 
   plugins: [
-    [
-      '@docusaurus/plugin-content-docs',
-      {
-        id: 'api',
-        path: 'docs-api',
-        routeBasePath: 'api',
-        sidebarPath: require.resolve('./sidebars-api.js'),
-      },
-    ],
-    [
-      '@docusaurus/plugin-content-docs',
-      {
-        id: 'jdbc',
-        path: 'docs-jdbc',
-        routeBasePath: 'jdbc',
-        sidebarPath: require.resolve('./sidebars-jdbc.js'),
-      },
-    ],
-    [
-      '@docusaurus/plugin-content-docs',
-      {
-        id: 'events',
-        path: 'docs-avro',
-        routeBasePath: 'events',
-        sidebarPath: require.resolve('./sidebars-avro.js'),
-      },
-    ],
+    function rawLoaderPlugin() {
+      return {
+        name: 'raw-loader-plugin',
+        configureWebpack() {
+          return {
+            module: {
+              rules: [
+                {
+                  test: /\.(java|kt|scala)$/,
+                  type: 'asset/source',
+                },
+              ],
+            },
+          };
+        },
+      };
+    },
   ],
 
   clientModules: [
@@ -88,30 +79,25 @@ const config = {
   themeConfig:
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
     ({
+      announcementBar: {
+        id: 'under_development',
+        content: '🚧 <strong>Under Development</strong> — This site and product are launching early 2026.',
+        backgroundColor: '#7c3aed',
+        textColor: '#ffffff',
+        isCloseable: false,
+      },
       navbar: {
-        title: "Typo",
+        title: "Typr",
         logo: {
-          alt: "Typo",
+          alt: "Typr",
           src: "img/logo.svg",
         },
         items: [
           {
-            to: '/db/',
-            label: 'Typo DB',
+            to: '/typr/',
+            label: 'Docs',
             position: 'left',
-            activeBaseRegex: '/db/',
-          },
-          {
-            to: '/api/',
-            label: 'Typo API',
-            position: 'left',
-            activeBaseRegex: '/api/',
-          },
-          {
-            to: '/jdbc/',
-            label: 'Foundations JDBC',
-            position: 'left',
-            activeBaseRegex: '/jdbc/',
+            activeBaseRegex: '/typr/',
           },
           {to: 'blog', label: 'Blog', position: 'left'},
           {
@@ -125,19 +111,32 @@ const config = {
         style: "dark",
         links: [
           {
-            title: "Products",
+            title: "Product",
             items: [
               {
-                label: "Typo DB",
-                to: "/db/",
+                label: "Documentation",
+                to: "/typr/",
+              },
+            ],
+          },
+          {
+            title: "Boundaries",
+            items: [
+              {
+                label: "Databases",
+                to: "/typr/boundaries/databases/",
               },
               {
-                label: "Typo API",
-                to: "/api/",
+                label: "REST APIs",
+                to: "/typr/boundaries/apis/",
               },
               {
-                label: "Foundations JDBC",
-                to: "/jdbc/",
+                label: "Events (Avro/Kafka)",
+                to: "/typr/boundaries/events/",
+              },
+              {
+                label: "Unified Types",
+                to: "/typr/unified-types/",
               },
             ],
           },
@@ -145,8 +144,12 @@ const config = {
             title: "Links",
             items: [
               {
+                label: "Foundations JDBC",
+                href: "https://foundations.typr.dev",
+              },
+              {
                 label: "GitHub",
-                to: "https://github.com/oyvindberg/typr",
+                href: "https://github.com/oyvindberg/typr",
               },
             ],
           },

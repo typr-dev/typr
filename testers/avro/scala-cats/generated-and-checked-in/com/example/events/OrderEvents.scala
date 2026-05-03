@@ -17,6 +17,10 @@ object OrderEvents {
       return OrderPlaced.fromGenericRecord(record)
     }else if (record.getSchema().getFullName().equals("com.example.events.OrderUpdated")) {
       return OrderUpdated.fromGenericRecord(record)
+    }else if (record.getSchema().getFullName().equals("com.example.events.PaymentCallback")) {
+      return PaymentCallback.fromGenericRecord(record)
+    }else if (record.getSchema().getFullName().equals("com.example.events.PaymentCharged")) {
+      return PaymentCharged.fromGenericRecord(record)
     } else {
       throw new IllegalArgumentException("Unknown schema: " + record.getSchema().getFullName())
     }

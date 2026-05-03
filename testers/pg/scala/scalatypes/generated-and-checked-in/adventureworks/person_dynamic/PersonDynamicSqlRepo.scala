@@ -5,8 +5,8 @@
  */
 package adventureworks.person_dynamic
 
-import java.sql.Connection
+import dev.typr.foundationssc.ConnectionRead
 
 trait PersonDynamicSqlRepo {
-  def apply(firstName: Option[String])(using c: Connection): List[PersonDynamicSqlRow]
+  def apply(firstName: Option[String])(using c: ConnectionRead): List[PersonDynamicSqlRow]
 }

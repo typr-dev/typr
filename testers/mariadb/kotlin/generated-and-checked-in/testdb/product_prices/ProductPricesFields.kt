@@ -5,19 +5,18 @@
  */
 package testdb.product_prices
 
-import dev.typr.foundations.MariaTypes
-import dev.typr.foundations.RowParser
-import dev.typr.foundations.dsl.FieldsBase
-import dev.typr.foundations.dsl.Path
-import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.kotlin.ForeignKey
-import dev.typr.foundations.kotlin.KotlinDbTypes
-import dev.typr.foundations.kotlin.RelationStructure
-import dev.typr.foundations.kotlin.SqlExpr
-import dev.typr.foundations.kotlin.SqlExpr.Field
-import dev.typr.foundations.kotlin.SqlExpr.IdField
-import dev.typr.foundations.kotlin.SqlExpr.OptField
-import dev.typr.foundations.kotlin.TupleExpr7
+import dev.typr.dsl.FieldsBase
+import dev.typr.dsl.Path
+import dev.typr.dsl.SqlExpr.FieldLike
+import dev.typr.dslkt.ForeignKey
+import dev.typr.dslkt.RelationStructure
+import dev.typr.dslkt.SqlExpr
+import dev.typr.dslkt.SqlExpr.Field
+import dev.typr.dslkt.SqlExpr.IdField
+import dev.typr.dslkt.SqlExpr.OptField
+import dev.typr.dslkt.TupleExpr7
+import dev.typr.foundations.RowCodec
+import dev.typr.foundationskt.MariaTypes
 import java.math.BigDecimal
 import java.time.LocalDate
 import kotlin.collections.List
@@ -28,7 +27,7 @@ import testdb.products.ProductsFields
 import testdb.products.ProductsId
 import testdb.products.ProductsRow
 
-data class ProductPricesFields(val _path: List<Path>) : TupleExpr7<ProductPricesId, ProductsId, PriceTiersId, BigDecimal, String, LocalDate, LocalDate>, RelationStructure<ProductPricesFields, ProductPricesRow>, FieldsBase<ProductPricesRow> {
+data class ProductPricesFields(val _path: List<Path>) : TupleExpr7<ProductPricesId, ProductsId, PriceTiersId, BigDecimal, kotlin.String, LocalDate, LocalDate>, RelationStructure<ProductPricesFields, ProductPricesRow>, FieldsBase<ProductPricesRow> {
   override fun _1(): SqlExpr<ProductPricesId> = priceId()
 
   override fun _2(): SqlExpr<ProductsId> = productId()
@@ -37,7 +36,7 @@ data class ProductPricesFields(val _path: List<Path>) : TupleExpr7<ProductPrices
 
   override fun _4(): SqlExpr<BigDecimal> = price()
 
-  override fun _5(): SqlExpr<String> = currencyCode()
+  override fun _5(): SqlExpr<kotlin.String> = currencyCode()
 
   override fun _6(): SqlExpr<LocalDate> = validFrom()
 
@@ -47,25 +46,25 @@ data class ProductPricesFields(val _path: List<Path>) : TupleExpr7<ProductPrices
 
   override fun columns(): List<FieldLike<*, ProductPricesRow>> = listOf(this.priceId().underlying, this.productId().underlying, this.tierId().underlying, this.price().underlying, this.currencyCode().underlying, this.validFrom().underlying, this.validTo().underlying)
 
-  fun currencyCode(): Field<String, ProductPricesRow> = Field<String, ProductPricesRow>(_path, "currency_code", ProductPricesRow::currencyCode, null, null, { row, value -> row.copy(currencyCode = value) }, MariaTypes.char_)
+  fun currencyCode(): Field<kotlin.String, ProductPricesRow> = Field<kotlin.String, ProductPricesRow>(_path, "currency_code", ProductPricesRow::currencyCode, null, null, { row, value -> row.copy(currencyCode = value) }, MariaTypes.char_.underlying)
 
   fun fkPriceTiers(): ForeignKey<PriceTiersFields, PriceTiersRow> = ForeignKey.of<PriceTiersFields, PriceTiersRow>("fk_pp_tier").withColumnPair<PriceTiersId>(tierId(), PriceTiersFields::tierId)
 
   fun fkProducts(): ForeignKey<ProductsFields, ProductsRow> = ForeignKey.of<ProductsFields, ProductsRow>("fk_pp_product").withColumnPair<ProductsId>(productId(), ProductsFields::productId)
 
-  fun price(): Field<BigDecimal, ProductPricesRow> = Field<BigDecimal, ProductPricesRow>(_path, "price", ProductPricesRow::price, null, null, { row, value -> row.copy(price = value) }, KotlinDbTypes.MariaTypes.numeric)
+  fun price(): Field<BigDecimal, ProductPricesRow> = Field<BigDecimal, ProductPricesRow>(_path, "price", ProductPricesRow::price, null, null, { row, value -> row.copy(price = value) }, MariaTypes.numeric.underlying)
 
-  fun priceId(): IdField<ProductPricesId, ProductPricesRow> = IdField<ProductPricesId, ProductPricesRow>(_path, "price_id", ProductPricesRow::priceId, null, null, { row, value -> row.copy(priceId = value) }, ProductPricesId.mariaType)
+  fun priceId(): IdField<ProductPricesId, ProductPricesRow> = IdField<ProductPricesId, ProductPricesRow>(_path, "price_id", ProductPricesRow::priceId, null, null, { row, value -> row.copy(priceId = value) }, ProductPricesId.mariaType.underlying)
 
-  fun productId(): Field<ProductsId, ProductPricesRow> = Field<ProductsId, ProductPricesRow>(_path, "product_id", ProductPricesRow::productId, null, null, { row, value -> row.copy(productId = value) }, ProductsId.mariaType)
+  fun productId(): Field<ProductsId, ProductPricesRow> = Field<ProductsId, ProductPricesRow>(_path, "product_id", ProductPricesRow::productId, null, null, { row, value -> row.copy(productId = value) }, ProductsId.mariaType.underlying)
 
-  override fun rowParser(): RowParser<ProductPricesRow> = ProductPricesRow._rowParser.underlying
+  override fun rowCodec(): RowCodec<ProductPricesRow> = ProductPricesRow.rowCodec.underlying
 
-  fun tierId(): OptField<PriceTiersId, ProductPricesRow> = OptField<PriceTiersId, ProductPricesRow>(_path, "tier_id", ProductPricesRow::tierId, null, null, { row, value -> row.copy(tierId = value) }, PriceTiersId.mariaType)
+  fun tierId(): OptField<PriceTiersId, ProductPricesRow> = OptField<PriceTiersId, ProductPricesRow>(_path, "tier_id", ProductPricesRow::tierId, null, null, { row, value -> row.copy(tierId = value) }, PriceTiersId.mariaType.underlying)
 
-  fun validFrom(): Field<LocalDate, ProductPricesRow> = Field<LocalDate, ProductPricesRow>(_path, "valid_from", ProductPricesRow::validFrom, null, null, { row, value -> row.copy(validFrom = value) }, MariaTypes.date)
+  fun validFrom(): Field<LocalDate, ProductPricesRow> = Field<LocalDate, ProductPricesRow>(_path, "valid_from", ProductPricesRow::validFrom, null, null, { row, value -> row.copy(validFrom = value) }, MariaTypes.date.underlying)
 
-  fun validTo(): OptField<LocalDate, ProductPricesRow> = OptField<LocalDate, ProductPricesRow>(_path, "valid_to", ProductPricesRow::validTo, null, null, { row, value -> row.copy(validTo = value) }, MariaTypes.date)
+  fun validTo(): OptField<LocalDate, ProductPricesRow> = OptField<LocalDate, ProductPricesRow>(_path, "valid_to", ProductPricesRow::validTo, null, null, { row, value -> row.copy(validTo = value) }, MariaTypes.date.underlying)
 
   override fun withPaths(_path: List<Path>): RelationStructure<ProductPricesFields, ProductPricesRow> = ProductPricesFields(_path)
 

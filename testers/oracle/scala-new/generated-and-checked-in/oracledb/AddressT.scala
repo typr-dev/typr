@@ -6,9 +6,9 @@
 package oracledb
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import dev.typr.foundations.OracleObject
-import dev.typr.foundations.OracleType
-import dev.typr.foundations.OracleTypes
+import dev.typr.foundationssc.OracleType
+import dev.typr.foundationssc.OracleTypes
+import dev.typr.foundationssc.RowCodec
 
 /** Oracle Object Type: ADDRESS_T */
 case class AddressT(
@@ -18,5 +18,5 @@ case class AddressT(
 )
 
 object AddressT {
-  val oracleType: OracleType[AddressT] = OracleObject.builder[AddressT]("ADDRESS_T").addAttribute("STREET", OracleTypes.varchar2, _.street).addAttribute("CITY", OracleTypes.varchar2, _.city).addAttribute("LOCATION", oracledb.CoordinatesT.oracleType, _.location).build(attrs => new AddressT(attrs(0).asInstanceOf[String], attrs(1).asInstanceOf[String], attrs(2).asInstanceOf[CoordinatesT])).asType()
+  val oracleType: OracleType[AddressT] = OracleTypes.compositeOf("ADDRESS_T", RowCodec.namedBuilder[AddressT]().field("STREET", OracleTypes.varchar2)(_.street).field("CITY", OracleTypes.varchar2)(_.city).field("LOCATION", oracledb.CoordinatesT.oracleType)(_.location).build((t0, t1, t2) => AddressT(street = t0, city = t1, location = t2)))
 }

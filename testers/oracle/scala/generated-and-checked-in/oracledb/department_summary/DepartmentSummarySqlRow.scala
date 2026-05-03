@@ -6,9 +6,9 @@
 package oracledb.department_summary
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import dev.typr.dsl.RowCodecs
 import dev.typr.foundations.OracleTypes
-import dev.typr.foundations.RowParser
-import dev.typr.foundations.RowParsers
+import dev.typr.foundations.RowCodec
 import dev.typr.foundations.Tuple.Tuple5
 import dev.typr.foundations.data.Unknown
 import java.util.Optional
@@ -39,5 +39,5 @@ case class DepartmentSummarySqlRow(
 }
 
 object DepartmentSummarySqlRow {
-  val `_rowParser`: RowParser[DepartmentSummarySqlRow] = RowParsers.of(OracleTypes.varchar2, OracleTypes.varchar2, OracleTypes.varchar2, MoneyT.oracleType.opt(), OracleTypes.unknown.opt(), DepartmentSummarySqlRow.apply, row => Array[Any](row.deptCode, row.deptRegion, row.deptName, row.budget, row.employeeCount))
+  val rowCodec: RowCodec[DepartmentSummarySqlRow] = RowCodecs.of(OracleTypes.varchar2, OracleTypes.varchar2, OracleTypes.varchar2, MoneyT.oracleType.opt, OracleTypes.unknown.opt, DepartmentSummarySqlRow.apply, row => Array[Any](row.deptCode, row.deptRegion, row.deptName, row.budget, row.employeeCount))
 }

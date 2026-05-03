@@ -6,18 +6,18 @@
 package adventureworks.production.productmodel
 
 import adventureworks.public.Name
-import dev.typr.foundations.PgTypes
-import dev.typr.foundations.RowParser
+import dev.typr.dsl.FieldsBase
+import dev.typr.dsl.Path
+import dev.typr.dsl.SqlExpr.FieldLike
+import dev.typr.dslkt.RelationStructure
+import dev.typr.dslkt.SqlExpr
+import dev.typr.dslkt.SqlExpr.Field
+import dev.typr.dslkt.SqlExpr.IdField
+import dev.typr.dslkt.SqlExpr.OptField
+import dev.typr.dslkt.TupleExpr6
+import dev.typr.foundations.RowCodec
 import dev.typr.foundations.data.Xml
-import dev.typr.foundations.dsl.FieldsBase
-import dev.typr.foundations.dsl.Path
-import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.kotlin.RelationStructure
-import dev.typr.foundations.kotlin.SqlExpr
-import dev.typr.foundations.kotlin.SqlExpr.Field
-import dev.typr.foundations.kotlin.SqlExpr.IdField
-import dev.typr.foundations.kotlin.SqlExpr.OptField
-import dev.typr.foundations.kotlin.TupleExpr6
+import dev.typr.foundationskt.PgTypes
 import java.time.LocalDateTime
 import java.util.UUID
 import kotlin.collections.List
@@ -37,21 +37,21 @@ data class ProductmodelFields(val _path: List<Path>) : TupleExpr6<ProductmodelId
 
   override fun _path(): List<Path> = _path
 
-  fun catalogdescription(): OptField<Xml, ProductmodelRow> = OptField<Xml, ProductmodelRow>(_path, "catalogdescription", ProductmodelRow::catalogdescription, null, "xml", { row, value -> row.copy(catalogdescription = value) }, PgTypes.xml)
+  fun catalogdescription(): OptField<Xml, ProductmodelRow> = OptField<Xml, ProductmodelRow>(_path, "catalogdescription", ProductmodelRow::catalogdescription, null, "xml", { row, value -> row.copy(catalogdescription = value) }, PgTypes.xml.underlying)
 
   override fun columns(): List<FieldLike<*, ProductmodelRow>> = listOf(this.productmodelid().underlying, this.name().underlying, this.catalogdescription().underlying, this.instructions().underlying, this.rowguid().underlying, this.modifieddate().underlying)
 
-  fun instructions(): OptField<Xml, ProductmodelRow> = OptField<Xml, ProductmodelRow>(_path, "instructions", ProductmodelRow::instructions, null, "xml", { row, value -> row.copy(instructions = value) }, PgTypes.xml)
+  fun instructions(): OptField<Xml, ProductmodelRow> = OptField<Xml, ProductmodelRow>(_path, "instructions", ProductmodelRow::instructions, null, "xml", { row, value -> row.copy(instructions = value) }, PgTypes.xml.underlying)
 
-  fun modifieddate(): Field<LocalDateTime, ProductmodelRow> = Field<LocalDateTime, ProductmodelRow>(_path, "modifieddate", ProductmodelRow::modifieddate, null, "timestamp", { row, value -> row.copy(modifieddate = value) }, PgTypes.timestamp)
+  fun modifieddate(): Field<LocalDateTime, ProductmodelRow> = Field<LocalDateTime, ProductmodelRow>(_path, "modifieddate", ProductmodelRow::modifieddate, null, "timestamp", { row, value -> row.copy(modifieddate = value) }, PgTypes.timestamp.underlying)
 
-  fun name(): Field<Name, ProductmodelRow> = Field<Name, ProductmodelRow>(_path, "name", ProductmodelRow::name, null, "varchar", { row, value -> row.copy(name = value) }, Name.pgType)
+  fun name(): Field<Name, ProductmodelRow> = Field<Name, ProductmodelRow>(_path, "name", ProductmodelRow::name, null, "varchar", { row, value -> row.copy(name = value) }, Name.pgType.underlying)
 
-  fun productmodelid(): IdField<ProductmodelId, ProductmodelRow> = IdField<ProductmodelId, ProductmodelRow>(_path, "productmodelid", ProductmodelRow::productmodelid, null, "int4", { row, value -> row.copy(productmodelid = value) }, ProductmodelId.pgType)
+  fun productmodelid(): IdField<ProductmodelId, ProductmodelRow> = IdField<ProductmodelId, ProductmodelRow>(_path, "productmodelid", ProductmodelRow::productmodelid, null, "int4", { row, value -> row.copy(productmodelid = value) }, ProductmodelId.pgType.underlying)
 
-  override fun rowParser(): RowParser<ProductmodelRow> = ProductmodelRow._rowParser.underlying
+  override fun rowCodec(): RowCodec<ProductmodelRow> = ProductmodelRow.rowCodec.underlying
 
-  fun rowguid(): Field<UUID, ProductmodelRow> = Field<UUID, ProductmodelRow>(_path, "rowguid", ProductmodelRow::rowguid, null, "uuid", { row, value -> row.copy(rowguid = value) }, PgTypes.uuid)
+  fun rowguid(): Field<UUID, ProductmodelRow> = Field<UUID, ProductmodelRow>(_path, "rowguid", ProductmodelRow::rowguid, null, "uuid", { row, value -> row.copy(rowguid = value) }, PgTypes.uuid.underlying)
 
   override fun withPaths(_path: List<Path>): RelationStructure<ProductmodelFields, ProductmodelRow> = ProductmodelFields(_path)
 

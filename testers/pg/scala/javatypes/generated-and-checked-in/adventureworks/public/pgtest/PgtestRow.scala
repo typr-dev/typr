@@ -7,11 +7,11 @@ package adventureworks.public.pgtest
 
 import adventureworks.public.Mydomain
 import adventureworks.public.Myenum
+import dev.typr.dsl.RowCodecs
+import dev.typr.dsl.RowCodecs.Function70
 import dev.typr.foundations.PgText
 import dev.typr.foundations.PgTypes
-import dev.typr.foundations.RowParser
-import dev.typr.foundations.RowParsers
-import dev.typr.foundations.RowParsers.Function70
+import dev.typr.foundations.RowCodec
 import dev.typr.foundations.Tuple.Tuple70
 import dev.typr.foundations.data.Inet
 import dev.typr.foundations.data.Int2Vector
@@ -74,40 +74,40 @@ case class PgtestRow(
   varchar: String,
   vector: Vector,
   xml: Xml,
-  boxes: Array[PGbox],
-  bpchares: Array[/* bpchar */ String],
-  chares: Array[/* bpchar */ String],
-  circlees: Array[PGcircle],
-  datees: Array[LocalDate],
-  float4es: Array[java.lang.Float],
-  float8es: Array[java.lang.Double],
-  inetes: Array[Inet],
-  int2es: Array[java.lang.Short],
-  int2vectores: Array[Int2Vector],
-  int4es: Array[Integer],
-  int8es: Array[java.lang.Long],
-  intervales: Array[PGInterval],
-  jsones: Array[Json],
-  jsonbes: Array[Jsonb],
-  linees: Array[PGline],
-  lseges: Array[PGlseg],
-  moneyes: Array[Money],
-  mydomaines: Array[Mydomain],
-  myenumes: Array[Myenum],
-  namees: Array[String],
-  numerices: Array[java.math.BigDecimal],
-  pathes: Array[PGpath],
-  pointes: Array[PGpoint],
-  polygones: Array[PGpolygon],
-  textes: Array[String],
-  timees: Array[LocalTime],
-  timestampes: Array[LocalDateTime],
-  timestampzes: Array[Instant],
-  timezes: Array[OffsetTime],
-  uuides: Array[UUID],
-  varchares: Array[String],
-  xmles: Array[Xml]
-) extends Tuple70[java.lang.Boolean, PGbox, String, Array[scala.Byte], String, PGcircle, LocalDate, java.lang.Float, java.lang.Double, java.util.Map[String, String], Inet, java.lang.Short, Int2Vector, Integer, java.lang.Long, PGInterval, Json, Jsonb, PGline, PGlseg, Money, Mydomain, Myenum, String, java.math.BigDecimal, PGpath, PGpoint, PGpolygon, String, LocalTime, LocalDateTime, Instant, OffsetTime, UUID, String, Vector, Xml, Array[PGbox], Array[/* bpchar */ String], Array[/* bpchar */ String], Array[PGcircle], Array[LocalDate], Array[java.lang.Float], Array[java.lang.Double], Array[Inet], Array[java.lang.Short], Array[Int2Vector], Array[Integer], Array[java.lang.Long], Array[PGInterval], Array[Json], Array[Jsonb], Array[PGline], Array[PGlseg], Array[Money], Array[Mydomain], Array[Myenum], Array[String], Array[java.math.BigDecimal], Array[PGpath], Array[PGpoint], Array[PGpolygon], Array[String], Array[LocalTime], Array[LocalDateTime], Array[Instant], Array[OffsetTime], Array[UUID], Array[String], Array[Xml]] {
+  boxes: java.util.List[PGbox],
+  bpchares: java.util.List[/* bpchar */ String],
+  chares: java.util.List[/* bpchar */ String],
+  circlees: java.util.List[PGcircle],
+  datees: java.util.List[LocalDate],
+  float4es: java.util.List[java.lang.Float],
+  float8es: java.util.List[java.lang.Double],
+  inetes: java.util.List[Inet],
+  int2es: java.util.List[java.lang.Short],
+  int2vectores: java.util.List[Int2Vector],
+  int4es: java.util.List[Integer],
+  int8es: java.util.List[java.lang.Long],
+  intervales: java.util.List[PGInterval],
+  jsones: java.util.List[Json],
+  jsonbes: java.util.List[Jsonb],
+  linees: java.util.List[PGline],
+  lseges: java.util.List[PGlseg],
+  moneyes: java.util.List[Money],
+  mydomaines: java.util.List[Mydomain],
+  myenumes: java.util.List[Myenum],
+  namees: java.util.List[String],
+  numerices: java.util.List[java.math.BigDecimal],
+  pathes: java.util.List[PGpath],
+  pointes: java.util.List[PGpoint],
+  polygones: java.util.List[PGpolygon],
+  textes: java.util.List[String],
+  timees: java.util.List[LocalTime],
+  timestampes: java.util.List[LocalDateTime],
+  timestampzes: java.util.List[Instant],
+  timezes: java.util.List[OffsetTime],
+  uuides: java.util.List[UUID],
+  varchares: java.util.List[String],
+  xmles: java.util.List[Xml]
+) extends Tuple70[java.lang.Boolean, PGbox, String, Array[scala.Byte], String, PGcircle, LocalDate, java.lang.Float, java.lang.Double, java.util.Map[String, String], Inet, java.lang.Short, Int2Vector, Integer, java.lang.Long, PGInterval, Json, Jsonb, PGline, PGlseg, Money, Mydomain, Myenum, String, java.math.BigDecimal, PGpath, PGpoint, PGpolygon, String, LocalTime, LocalDateTime, Instant, OffsetTime, UUID, String, Vector, Xml, java.util.List[PGbox], java.util.List[/* bpchar */ String], java.util.List[/* bpchar */ String], java.util.List[PGcircle], java.util.List[LocalDate], java.util.List[java.lang.Float], java.util.List[java.lang.Double], java.util.List[Inet], java.util.List[java.lang.Short], java.util.List[Int2Vector], java.util.List[Integer], java.util.List[java.lang.Long], java.util.List[PGInterval], java.util.List[Json], java.util.List[Jsonb], java.util.List[PGline], java.util.List[PGlseg], java.util.List[Money], java.util.List[Mydomain], java.util.List[Myenum], java.util.List[String], java.util.List[java.math.BigDecimal], java.util.List[PGpath], java.util.List[PGpoint], java.util.List[PGpolygon], java.util.List[String], java.util.List[LocalTime], java.util.List[LocalDateTime], java.util.List[Instant], java.util.List[OffsetTime], java.util.List[UUID], java.util.List[String], java.util.List[Xml]] {
   override def `_1`: java.lang.Boolean = bool
 
   override def `_2`: PGbox = box
@@ -182,76 +182,78 @@ case class PgtestRow(
 
   override def `_37`: Xml = xml
 
-  override def `_38`: Array[PGbox] = boxes
+  override def `_38`: java.util.List[PGbox] = boxes
 
-  override def `_39`: Array[/* bpchar */ String] = bpchares
+  override def `_39`: java.util.List[/* bpchar */ String] = bpchares
 
-  override def `_40`: Array[/* bpchar */ String] = chares
+  override def `_40`: java.util.List[/* bpchar */ String] = chares
 
-  override def `_41`: Array[PGcircle] = circlees
+  override def `_41`: java.util.List[PGcircle] = circlees
 
-  override def `_42`: Array[LocalDate] = datees
+  override def `_42`: java.util.List[LocalDate] = datees
 
-  override def `_43`: Array[java.lang.Float] = float4es
+  override def `_43`: java.util.List[java.lang.Float] = float4es
 
-  override def `_44`: Array[java.lang.Double] = float8es
+  override def `_44`: java.util.List[java.lang.Double] = float8es
 
-  override def `_45`: Array[Inet] = inetes
+  override def `_45`: java.util.List[Inet] = inetes
 
-  override def `_46`: Array[java.lang.Short] = int2es
+  override def `_46`: java.util.List[java.lang.Short] = int2es
 
-  override def `_47`: Array[Int2Vector] = int2vectores
+  override def `_47`: java.util.List[Int2Vector] = int2vectores
 
-  override def `_48`: Array[Integer] = int4es
+  override def `_48`: java.util.List[Integer] = int4es
 
-  override def `_49`: Array[java.lang.Long] = int8es
+  override def `_49`: java.util.List[java.lang.Long] = int8es
 
-  override def `_50`: Array[PGInterval] = intervales
+  override def `_50`: java.util.List[PGInterval] = intervales
 
-  override def `_51`: Array[Json] = jsones
+  override def `_51`: java.util.List[Json] = jsones
 
-  override def `_52`: Array[Jsonb] = jsonbes
+  override def `_52`: java.util.List[Jsonb] = jsonbes
 
-  override def `_53`: Array[PGline] = linees
+  override def `_53`: java.util.List[PGline] = linees
 
-  override def `_54`: Array[PGlseg] = lseges
+  override def `_54`: java.util.List[PGlseg] = lseges
 
-  override def `_55`: Array[Money] = moneyes
+  override def `_55`: java.util.List[Money] = moneyes
 
-  override def `_56`: Array[Mydomain] = mydomaines
+  override def `_56`: java.util.List[Mydomain] = mydomaines
 
-  override def `_57`: Array[Myenum] = myenumes
+  override def `_57`: java.util.List[Myenum] = myenumes
 
-  override def `_58`: Array[String] = namees
+  override def `_58`: java.util.List[String] = namees
 
-  override def `_59`: Array[java.math.BigDecimal] = numerices
+  override def `_59`: java.util.List[java.math.BigDecimal] = numerices
 
-  override def `_60`: Array[PGpath] = pathes
+  override def `_60`: java.util.List[PGpath] = pathes
 
-  override def `_61`: Array[PGpoint] = pointes
+  override def `_61`: java.util.List[PGpoint] = pointes
 
-  override def `_62`: Array[PGpolygon] = polygones
+  override def `_62`: java.util.List[PGpolygon] = polygones
 
-  override def `_63`: Array[String] = textes
+  override def `_63`: java.util.List[String] = textes
 
-  override def `_64`: Array[LocalTime] = timees
+  override def `_64`: java.util.List[LocalTime] = timees
 
-  override def `_65`: Array[LocalDateTime] = timestampes
+  override def `_65`: java.util.List[LocalDateTime] = timestampes
 
-  override def `_66`: Array[Instant] = timestampzes
+  override def `_66`: java.util.List[Instant] = timestampzes
 
-  override def `_67`: Array[OffsetTime] = timezes
+  override def `_67`: java.util.List[OffsetTime] = timezes
 
-  override def `_68`: Array[UUID] = uuides
+  override def `_68`: java.util.List[UUID] = uuides
 
-  override def `_69`: Array[String] = varchares
+  override def `_69`: java.util.List[String] = varchares
 
-  override def `_70`: Array[Xml] = xmles
+  override def `_70`: java.util.List[Xml] = xmles
 }
 
 object PgtestRow {
-  val `_rowParser`: RowParser[PgtestRow] = {
-    RowParsers.of(PgTypes.bool, PgTypes.box, PgTypes.bpchar, PgTypes.bytea, PgTypes.bpchar, PgTypes.circle, PgTypes.date, PgTypes.float4, PgTypes.float8, PgTypes.hstore, PgTypes.inet, PgTypes.int2, PgTypes.int2vector, PgTypes.int4, PgTypes.int8, PgTypes.interval, PgTypes.json, PgTypes.jsonb, PgTypes.line, PgTypes.lseg, PgTypes.money, Mydomain.pgType, Myenum.pgType, PgTypes.name, PgTypes.numeric, PgTypes.path, PgTypes.point, PgTypes.polygon, PgTypes.text, PgTypes.time, PgTypes.timestamp, PgTypes.timestamptz, PgTypes.timetz, PgTypes.uuid, PgTypes.text, PgTypes.vector, PgTypes.xml, PgTypes.boxArray, PgTypes.bpcharArray, PgTypes.bpcharArray, PgTypes.circleArray, PgTypes.dateArray, PgTypes.float4Array, PgTypes.float8Array, PgTypes.inetArray, PgTypes.int2Array, PgTypes.int2vectorArray, PgTypes.int4Array, PgTypes.int8Array, PgTypes.intervalArray, PgTypes.jsonArray, PgTypes.jsonbArray, PgTypes.lineArray, PgTypes.lsegArray, PgTypes.moneyArray, Mydomain.pgTypeArray, Myenum.pgTypeArray, PgTypes.nameArray, PgTypes.numericArray, PgTypes.pathArray, PgTypes.pointArray, PgTypes.polygonArray, PgTypes.textArray, PgTypes.timeArray, PgTypes.timestampArray, PgTypes.timestamptzArray, PgTypes.timetzArray, PgTypes.uuidArray, PgTypes.textArray, PgTypes.xmlArray, new Function70[java.lang.Boolean, PGbox, String, Array[scala.Byte], String, PGcircle, LocalDate, java.lang.Float, java.lang.Double, java.util.Map[String, String], Inet, java.lang.Short, Int2Vector, Integer, java.lang.Long, PGInterval, Json, Jsonb, PGline, PGlseg, Money, Mydomain, Myenum, String, java.math.BigDecimal, PGpath, PGpoint, PGpolygon, String, LocalTime, LocalDateTime, Instant, OffsetTime, UUID, String, Vector, Xml, Array[PGbox], Array[/* bpchar */ String], Array[/* bpchar */ String], Array[PGcircle], Array[LocalDate], Array[java.lang.Float], Array[java.lang.Double], Array[Inet], Array[java.lang.Short], Array[Int2Vector], Array[Integer], Array[java.lang.Long], Array[PGInterval], Array[Json], Array[Jsonb], Array[PGline], Array[PGlseg], Array[Money], Array[Mydomain], Array[Myenum], Array[String], Array[java.math.BigDecimal], Array[PGpath], Array[PGpoint], Array[PGpolygon], Array[String], Array[LocalTime], Array[LocalDateTime], Array[Instant], Array[OffsetTime], Array[UUID], Array[String], Array[Xml], PgtestRow] {
+  given pgText: PgText[PgtestRow] = PgText.from(rowCodec)
+
+  val rowCodec: RowCodec[PgtestRow] = {
+    RowCodecs.of(PgTypes.bool, PgTypes.box, PgTypes.bpchar, PgTypes.bytea, PgTypes.bpchar, PgTypes.circle, PgTypes.date, PgTypes.float4, PgTypes.float8, PgTypes.hstore, PgTypes.inet, PgTypes.int2, PgTypes.int2vector, PgTypes.int4, PgTypes.int8, PgTypes.interval, PgTypes.json, PgTypes.jsonb, PgTypes.line, PgTypes.lseg, PgTypes.money, Mydomain.pgType, Myenum.pgType, PgTypes.name, PgTypes.numeric, PgTypes.path, PgTypes.point, PgTypes.polygon, PgTypes.text, PgTypes.time, PgTypes.timestamp, PgTypes.timestamptz, PgTypes.timetz, PgTypes.uuid, PgTypes.text, PgTypes.vector, PgTypes.xml, PgTypes.box.array(), PgTypes.bpchar.array(), PgTypes.bpchar.array(), PgTypes.circle.array(), PgTypes.date.array(), PgTypes.float4.array(), PgTypes.float8.array(), PgTypes.inet.array(), PgTypes.int2.array(), PgTypes.int2vector.array(), PgTypes.int4.array(), PgTypes.int8.array(), PgTypes.interval.array(), PgTypes.json.array(), PgTypes.jsonb.array(), PgTypes.line.array(), PgTypes.lseg.array(), PgTypes.money.array(), Mydomain.pgType.array(), Myenum.pgType.array(), PgTypes.name.array(), PgTypes.numeric.array(), PgTypes.path.array(), PgTypes.point.array(), PgTypes.polygon.array(), PgTypes.text.array(), PgTypes.time.array(), PgTypes.timestamp.array(), PgTypes.timestamptz.array(), PgTypes.timetz.array(), PgTypes.uuid.array(), PgTypes.text.array(), PgTypes.xml.array(), new Function70[java.lang.Boolean, PGbox, String, Array[scala.Byte], String, PGcircle, LocalDate, java.lang.Float, java.lang.Double, java.util.Map[String, String], Inet, java.lang.Short, Int2Vector, Integer, java.lang.Long, PGInterval, Json, Jsonb, PGline, PGlseg, Money, Mydomain, Myenum, String, java.math.BigDecimal, PGpath, PGpoint, PGpolygon, String, LocalTime, LocalDateTime, Instant, OffsetTime, UUID, String, Vector, Xml, java.util.List[PGbox], java.util.List[/* bpchar */ String], java.util.List[/* bpchar */ String], java.util.List[PGcircle], java.util.List[LocalDate], java.util.List[java.lang.Float], java.util.List[java.lang.Double], java.util.List[Inet], java.util.List[java.lang.Short], java.util.List[Int2Vector], java.util.List[Integer], java.util.List[java.lang.Long], java.util.List[PGInterval], java.util.List[Json], java.util.List[Jsonb], java.util.List[PGline], java.util.List[PGlseg], java.util.List[Money], java.util.List[Mydomain], java.util.List[Myenum], java.util.List[String], java.util.List[java.math.BigDecimal], java.util.List[PGpath], java.util.List[PGpoint], java.util.List[PGpolygon], java.util.List[String], java.util.List[LocalTime], java.util.List[LocalDateTime], java.util.List[Instant], java.util.List[OffsetTime], java.util.List[UUID], java.util.List[String], java.util.List[Xml], PgtestRow] {
       override def apply(
         t0: java.lang.Boolean,
         t1: PGbox,
@@ -290,39 +292,39 @@ object PgtestRow {
         t34: String,
         t35: Vector,
         t36: Xml,
-        t37: Array[PGbox],
-        t38: Array[/* bpchar */ String],
-        t39: Array[/* bpchar */ String],
-        t40: Array[PGcircle],
-        t41: Array[LocalDate],
-        t42: Array[java.lang.Float],
-        t43: Array[java.lang.Double],
-        t44: Array[Inet],
-        t45: Array[java.lang.Short],
-        t46: Array[Int2Vector],
-        t47: Array[Integer],
-        t48: Array[java.lang.Long],
-        t49: Array[PGInterval],
-        t50: Array[Json],
-        t51: Array[Jsonb],
-        t52: Array[PGline],
-        t53: Array[PGlseg],
-        t54: Array[Money],
-        t55: Array[Mydomain],
-        t56: Array[Myenum],
-        t57: Array[String],
-        t58: Array[java.math.BigDecimal],
-        t59: Array[PGpath],
-        t60: Array[PGpoint],
-        t61: Array[PGpolygon],
-        t62: Array[String],
-        t63: Array[LocalTime],
-        t64: Array[LocalDateTime],
-        t65: Array[Instant],
-        t66: Array[OffsetTime],
-        t67: Array[UUID],
-        t68: Array[String],
-        t69: Array[Xml]
+        t37: java.util.List[PGbox],
+        t38: java.util.List[/* bpchar */ String],
+        t39: java.util.List[/* bpchar */ String],
+        t40: java.util.List[PGcircle],
+        t41: java.util.List[LocalDate],
+        t42: java.util.List[java.lang.Float],
+        t43: java.util.List[java.lang.Double],
+        t44: java.util.List[Inet],
+        t45: java.util.List[java.lang.Short],
+        t46: java.util.List[Int2Vector],
+        t47: java.util.List[Integer],
+        t48: java.util.List[java.lang.Long],
+        t49: java.util.List[PGInterval],
+        t50: java.util.List[Json],
+        t51: java.util.List[Jsonb],
+        t52: java.util.List[PGline],
+        t53: java.util.List[PGlseg],
+        t54: java.util.List[Money],
+        t55: java.util.List[Mydomain],
+        t56: java.util.List[Myenum],
+        t57: java.util.List[String],
+        t58: java.util.List[java.math.BigDecimal],
+        t59: java.util.List[PGpath],
+        t60: java.util.List[PGpoint],
+        t61: java.util.List[PGpolygon],
+        t62: java.util.List[String],
+        t63: java.util.List[LocalTime],
+        t64: java.util.List[LocalDateTime],
+        t65: java.util.List[Instant],
+        t66: java.util.List[OffsetTime],
+        t67: java.util.List[UUID],
+        t68: java.util.List[String],
+        t69: java.util.List[Xml]
       ): PgtestRow = {
         new PgtestRow(
           t0,
@@ -399,6 +401,4 @@ object PgtestRow {
       }
     }, row => Array[Any](row.bool, row.box, row.bpchar, row.bytea, row.char, row.circle, row.date, row.float4, row.float8, row.hstore, row.inet, row.int2, row.int2vector, row.int4, row.int8, row.interval, row.json, row.jsonb, row.line, row.lseg, row.money, row.mydomain, row.myenum, row.name, row.numeric, row.path, row.point, row.polygon, row.text, row.time, row.timestamp, row.timestampz, row.timez, row.uuid, row.varchar, row.vector, row.xml, row.boxes, row.bpchares, row.chares, row.circlees, row.datees, row.float4es, row.float8es, row.inetes, row.int2es, row.int2vectores, row.int4es, row.int8es, row.intervales, row.jsones, row.jsonbes, row.linees, row.lseges, row.moneyes, row.mydomaines, row.myenumes, row.namees, row.numerices, row.pathes, row.pointes, row.polygones, row.textes, row.timees, row.timestampes, row.timestampzes, row.timezes, row.uuides, row.varchares, row.xmles))
   }
-
-  given pgText: PgText[PgtestRow] = PgText.from(`_rowParser`)
 }

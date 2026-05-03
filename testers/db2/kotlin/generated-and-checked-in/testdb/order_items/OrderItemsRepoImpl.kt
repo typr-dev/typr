@@ -5,14 +5,14 @@
  */
 package testdb.order_items
 
-import dev.typr.foundations.Db2Types
-import dev.typr.foundations.kotlin.DeleteBuilder
-import dev.typr.foundations.kotlin.Dialect
-import dev.typr.foundations.kotlin.Fragment
-import dev.typr.foundations.kotlin.KotlinDbTypes
-import dev.typr.foundations.kotlin.SelectBuilder
-import dev.typr.foundations.kotlin.UpdateBuilder
-import java.sql.Connection
+import dev.typr.dslkt.DeleteBuilder
+import dev.typr.dslkt.Dialect
+import dev.typr.dslkt.SelectBuilder
+import dev.typr.dslkt.UpdateBuilder
+import dev.typr.foundationskt.Connection
+import dev.typr.foundationskt.ConnectionRead
+import dev.typr.foundationskt.Db2Types
+import dev.typr.foundationskt.Fragment
 import java.util.ArrayList
 import kotlin.collections.Iterator
 import kotlin.collections.List
@@ -26,75 +26,75 @@ class OrderItemsRepoImpl() : OrderItemsRepo {
   override fun deleteById(
     compositeId: OrderItemsId,
     c: Connection
-  ): Boolean = Fragment.interpolate(Fragment.lit("delete from \"ORDER_ITEMS\" where \"ORDER_ID\" = "), Fragment.encode(OrdersId.db2Type, compositeId.orderId), Fragment.lit(" AND \"ITEM_NUMBER\" = "), Fragment.encode(KotlinDbTypes.Db2Types.integer, compositeId.itemNumber), Fragment.lit("")).update().runUnchecked(c) > 0
+  ): kotlin.Boolean = Fragment.concat(Fragment.of("delete from \"ORDER_ITEMS\" where \"ORDER_ID\" = "), Fragment.encode(OrdersId.db2Type, compositeId.orderId), Fragment.of(" AND \"ITEM_NUMBER\" = "), Fragment.encode(Db2Types.integer, compositeId.itemNumber), Fragment.of("")).update().run(c) > 0
 
   override fun deleteByIds(
-    compositeIds: Array<OrderItemsId>,
+    compositeIds: List<OrderItemsId>,
     c: Connection
   ): Int {
     val fragments: ArrayList<Fragment> = ArrayList()
-    for (id in compositeIds) { fragments.add(Fragment.interpolate(Fragment.lit("("), Fragment.encode(OrdersId.db2Type, id.orderId), Fragment.lit(", "), Fragment.encode(KotlinDbTypes.Db2Types.integer, id.itemNumber), Fragment.lit(")"))) }
-    return Fragment.interpolate(Fragment.lit("delete from \"ORDER_ITEMS\" where (\"ORDER_ID\", \"ITEM_NUMBER\") in ("), Fragment.comma(fragments.toMutableList()), Fragment.lit(")")).update().runUnchecked(c)
+    for (id in compositeIds) { fragments.add(Fragment.concat(Fragment.of("("), Fragment.encode(OrdersId.db2Type, id.orderId), Fragment.of(", "), Fragment.encode(Db2Types.integer, id.itemNumber), Fragment.of(")"))) }
+    return Fragment.concat(Fragment.of("delete from \"ORDER_ITEMS\" where (\"ORDER_ID\", \"ITEM_NUMBER\") in ("), Fragment.comma(fragments.toMutableList()), Fragment.of(")")).update().run(c)
   }
 
   override fun insert(
     unsaved: OrderItemsRow,
     c: Connection
-  ): OrderItemsRow = Fragment.interpolate(Fragment.lit("SELECT \"ORDER_ID\", \"ITEM_NUMBER\", \"PRODUCT_NAME\", \"QUANTITY\", \"UNIT_PRICE\" FROM FINAL TABLE (INSERT INTO \"ORDER_ITEMS\"(\"ORDER_ID\", \"ITEM_NUMBER\", \"PRODUCT_NAME\", \"QUANTITY\", \"UNIT_PRICE\")\nVALUES ("), Fragment.encode(OrdersId.db2Type, unsaved.orderId), Fragment.lit(", "), Fragment.encode(KotlinDbTypes.Db2Types.integer, unsaved.itemNumber), Fragment.lit(", "), Fragment.encode(Db2Types.varchar, unsaved.productName), Fragment.lit(", "), Fragment.encode(KotlinDbTypes.Db2Types.integer, unsaved.quantity), Fragment.lit(", "), Fragment.encode(KotlinDbTypes.Db2Types.decimal, unsaved.unitPrice), Fragment.lit("))\n"))
-    .updateReturning(OrderItemsRow._rowParser.exactlyOne()).runUnchecked(c)
+  ): OrderItemsRow = Fragment.concat(Fragment.of("SELECT \"ORDER_ID\", \"ITEM_NUMBER\", \"PRODUCT_NAME\", \"QUANTITY\", \"UNIT_PRICE\" FROM FINAL TABLE (INSERT INTO \"ORDER_ITEMS\"(\"ORDER_ID\", \"ITEM_NUMBER\", \"PRODUCT_NAME\", \"QUANTITY\", \"UNIT_PRICE\")\nVALUES ("), Fragment.encode(OrdersId.db2Type, unsaved.orderId), Fragment.of(", "), Fragment.encode(Db2Types.integer, unsaved.itemNumber), Fragment.of(", "), Fragment.encode(Db2Types.varchar, unsaved.productName), Fragment.of(", "), Fragment.encode(Db2Types.integer, unsaved.quantity), Fragment.of(", "), Fragment.encode(Db2Types.decimal, unsaved.unitPrice), Fragment.of("))\n"))
+    .updateReturning(OrderItemsRow.rowCodec.exactlyOne()).run(c)
 
-  override fun select(): SelectBuilder<OrderItemsFields, OrderItemsRow> = SelectBuilder.of("\"ORDER_ITEMS\"", OrderItemsFields.structure, OrderItemsRow._rowParser, Dialect.DB2)
+  override fun select(): SelectBuilder<OrderItemsFields, OrderItemsRow> = SelectBuilder.of("\"ORDER_ITEMS\"", OrderItemsFields.structure, OrderItemsRow.rowCodec, Dialect.DB2)
 
-  override fun selectAll(c: Connection): List<OrderItemsRow> = Fragment.interpolate(Fragment.lit("select \"ORDER_ID\", \"ITEM_NUMBER\", \"PRODUCT_NAME\", \"QUANTITY\", \"UNIT_PRICE\"\nfrom \"ORDER_ITEMS\"\n")).query(OrderItemsRow._rowParser.all()).runUnchecked(c)
+  override fun selectAll(c: ConnectionRead): List<OrderItemsRow> = Fragment.concat(Fragment.of("select \"ORDER_ID\", \"ITEM_NUMBER\", \"PRODUCT_NAME\", \"QUANTITY\", \"UNIT_PRICE\"\nfrom \"ORDER_ITEMS\"\n")).query(OrderItemsRow.rowCodec.all()).run(c)
 
   override fun selectById(
     compositeId: OrderItemsId,
-    c: Connection
-  ): OrderItemsRow? = Fragment.interpolate(Fragment.lit("select \"ORDER_ID\", \"ITEM_NUMBER\", \"PRODUCT_NAME\", \"QUANTITY\", \"UNIT_PRICE\"\nfrom \"ORDER_ITEMS\"\nwhere \"ORDER_ID\" = "), Fragment.encode(OrdersId.db2Type, compositeId.orderId), Fragment.lit(" AND \"ITEM_NUMBER\" = "), Fragment.encode(KotlinDbTypes.Db2Types.integer, compositeId.itemNumber), Fragment.lit("")).query(OrderItemsRow._rowParser.first()).runUnchecked(c)
+    c: ConnectionRead
+  ): OrderItemsRow? = Fragment.concat(Fragment.of("select \"ORDER_ID\", \"ITEM_NUMBER\", \"PRODUCT_NAME\", \"QUANTITY\", \"UNIT_PRICE\"\nfrom \"ORDER_ITEMS\"\nwhere \"ORDER_ID\" = "), Fragment.encode(OrdersId.db2Type, compositeId.orderId), Fragment.of(" AND \"ITEM_NUMBER\" = "), Fragment.encode(Db2Types.integer, compositeId.itemNumber), Fragment.of("")).query(OrderItemsRow.rowCodec.first()).run(c)
 
   override fun selectByIds(
-    compositeIds: Array<OrderItemsId>,
-    c: Connection
+    compositeIds: List<OrderItemsId>,
+    c: ConnectionRead
   ): List<OrderItemsRow> {
     val fragments: ArrayList<Fragment> = ArrayList()
-    for (id in compositeIds) { fragments.add(Fragment.interpolate(Fragment.lit("("), Fragment.encode(OrdersId.db2Type, id.orderId), Fragment.lit(", "), Fragment.encode(KotlinDbTypes.Db2Types.integer, id.itemNumber), Fragment.lit(")"))) }
-    return Fragment.interpolate(Fragment.lit("select \"ORDER_ID\", \"ITEM_NUMBER\", \"PRODUCT_NAME\", \"QUANTITY\", \"UNIT_PRICE\" from \"ORDER_ITEMS\" where (\"ORDER_ID\", \"ITEM_NUMBER\") in ("), Fragment.comma(fragments.toMutableList()), Fragment.lit(")")).query(OrderItemsRow._rowParser.all()).runUnchecked(c)
+    for (id in compositeIds) { fragments.add(Fragment.concat(Fragment.of("("), Fragment.encode(OrdersId.db2Type, id.orderId), Fragment.of(", "), Fragment.encode(Db2Types.integer, id.itemNumber), Fragment.of(")"))) }
+    return Fragment.concat(Fragment.of("select \"ORDER_ID\", \"ITEM_NUMBER\", \"PRODUCT_NAME\", \"QUANTITY\", \"UNIT_PRICE\" from \"ORDER_ITEMS\" where (\"ORDER_ID\", \"ITEM_NUMBER\") in ("), Fragment.comma(fragments.toMutableList()), Fragment.of(")")).query(OrderItemsRow.rowCodec.all()).run(c)
   }
 
   override fun selectByIdsTracked(
-    compositeIds: Array<OrderItemsId>,
-    c: Connection
+    compositeIds: List<OrderItemsId>,
+    c: ConnectionRead
   ): Map<OrderItemsId, OrderItemsRow> {
     val ret: MutableMap<OrderItemsId, OrderItemsRow> = mutableMapOf<OrderItemsId, OrderItemsRow>()
     selectByIds(compositeIds, c).forEach({ row -> ret.put(row.compositeId(), row) })
     return ret.toMap()
   }
 
-  override fun update(): UpdateBuilder<OrderItemsFields, OrderItemsRow> = UpdateBuilder.of("\"ORDER_ITEMS\"", OrderItemsFields.structure, OrderItemsRow._rowParser, Dialect.DB2)
+  override fun update(): UpdateBuilder<OrderItemsFields, OrderItemsRow> = UpdateBuilder.of("\"ORDER_ITEMS\"", OrderItemsFields.structure, OrderItemsRow.rowCodec, Dialect.DB2)
 
   override fun update(
     row: OrderItemsRow,
     c: Connection
-  ): Boolean {
+  ): kotlin.Boolean {
     val compositeId: OrderItemsId = row.compositeId()
-    return Fragment.interpolate(Fragment.lit("update \"ORDER_ITEMS\"\nset \"PRODUCT_NAME\" = "), Fragment.encode(Db2Types.varchar, row.productName), Fragment.lit(",\n\"QUANTITY\" = "), Fragment.encode(KotlinDbTypes.Db2Types.integer, row.quantity), Fragment.lit(",\n\"UNIT_PRICE\" = "), Fragment.encode(KotlinDbTypes.Db2Types.decimal, row.unitPrice), Fragment.lit("\nwhere \"ORDER_ID\" = "), Fragment.encode(OrdersId.db2Type, compositeId.orderId), Fragment.lit(" AND \"ITEM_NUMBER\" = "), Fragment.encode(KotlinDbTypes.Db2Types.integer, compositeId.itemNumber), Fragment.lit("")).update().runUnchecked(c) > 0
+    return Fragment.concat(Fragment.of("update \"ORDER_ITEMS\"\nset \"PRODUCT_NAME\" = "), Fragment.encode(Db2Types.varchar, row.productName), Fragment.of(",\n\"QUANTITY\" = "), Fragment.encode(Db2Types.integer, row.quantity), Fragment.of(",\n\"UNIT_PRICE\" = "), Fragment.encode(Db2Types.decimal, row.unitPrice), Fragment.of("\nwhere \"ORDER_ID\" = "), Fragment.encode(OrdersId.db2Type, compositeId.orderId), Fragment.of(" AND \"ITEM_NUMBER\" = "), Fragment.encode(Db2Types.integer, compositeId.itemNumber), Fragment.of("")).update().run(c) > 0
   }
 
   override fun upsert(
     unsaved: OrderItemsRow,
     c: Connection
   ) {
-    Fragment.interpolate(Fragment.lit("MERGE INTO \"ORDER_ITEMS\" AS t\nUSING (VALUES ("), Fragment.encode(OrdersId.db2Type, unsaved.orderId), Fragment.lit(", "), Fragment.encode(KotlinDbTypes.Db2Types.integer, unsaved.itemNumber), Fragment.lit(", "), Fragment.encode(Db2Types.varchar, unsaved.productName), Fragment.lit(", "), Fragment.encode(KotlinDbTypes.Db2Types.integer, unsaved.quantity), Fragment.lit(", "), Fragment.encode(KotlinDbTypes.Db2Types.decimal, unsaved.unitPrice), Fragment.lit(")) AS s(\"ORDER_ID\", \"ITEM_NUMBER\", \"PRODUCT_NAME\", \"QUANTITY\", \"UNIT_PRICE\")\nON t.\"ORDER_ID\" = s.\"ORDER_ID\" AND t.\"ITEM_NUMBER\" = s.\"ITEM_NUMBER\"\nWHEN MATCHED THEN UPDATE SET \"PRODUCT_NAME\" = s.\"PRODUCT_NAME\",\n\"QUANTITY\" = s.\"QUANTITY\",\n\"UNIT_PRICE\" = s.\"UNIT_PRICE\"\nWHEN NOT MATCHED THEN INSERT (\"ORDER_ID\", \"ITEM_NUMBER\", \"PRODUCT_NAME\", \"QUANTITY\", \"UNIT_PRICE\") VALUES ("), Fragment.encode(OrdersId.db2Type, unsaved.orderId), Fragment.lit(", "), Fragment.encode(KotlinDbTypes.Db2Types.integer, unsaved.itemNumber), Fragment.lit(", "), Fragment.encode(Db2Types.varchar, unsaved.productName), Fragment.lit(", "), Fragment.encode(KotlinDbTypes.Db2Types.integer, unsaved.quantity), Fragment.lit(", "), Fragment.encode(KotlinDbTypes.Db2Types.decimal, unsaved.unitPrice), Fragment.lit(")"))
+    Fragment.concat(Fragment.of("MERGE INTO \"ORDER_ITEMS\" AS t\nUSING (VALUES ("), Fragment.encode(OrdersId.db2Type, unsaved.orderId), Fragment.of(", "), Fragment.encode(Db2Types.integer, unsaved.itemNumber), Fragment.of(", "), Fragment.encode(Db2Types.varchar, unsaved.productName), Fragment.of(", "), Fragment.encode(Db2Types.integer, unsaved.quantity), Fragment.of(", "), Fragment.encode(Db2Types.decimal, unsaved.unitPrice), Fragment.of(")) AS s(\"ORDER_ID\", \"ITEM_NUMBER\", \"PRODUCT_NAME\", \"QUANTITY\", \"UNIT_PRICE\")\nON t.\"ORDER_ID\" = s.\"ORDER_ID\" AND t.\"ITEM_NUMBER\" = s.\"ITEM_NUMBER\"\nWHEN MATCHED THEN UPDATE SET \"PRODUCT_NAME\" = s.\"PRODUCT_NAME\",\n\"QUANTITY\" = s.\"QUANTITY\",\n\"UNIT_PRICE\" = s.\"UNIT_PRICE\"\nWHEN NOT MATCHED THEN INSERT (\"ORDER_ID\", \"ITEM_NUMBER\", \"PRODUCT_NAME\", \"QUANTITY\", \"UNIT_PRICE\") VALUES ("), Fragment.encode(OrdersId.db2Type, unsaved.orderId), Fragment.of(", "), Fragment.encode(Db2Types.integer, unsaved.itemNumber), Fragment.of(", "), Fragment.encode(Db2Types.varchar, unsaved.productName), Fragment.of(", "), Fragment.encode(Db2Types.integer, unsaved.quantity), Fragment.of(", "), Fragment.encode(Db2Types.decimal, unsaved.unitPrice), Fragment.of(")"))
       .update()
-      .runUnchecked(c)
+      .run(c)
   }
 
   override fun upsertBatch(
     unsaved: Iterator<OrderItemsRow>,
     c: Connection
   ) {
-    Fragment.interpolate(Fragment.lit("MERGE INTO \"ORDER_ITEMS\" AS t\nUSING (VALUES (?, ?, ?, ?, ?)) AS s(\"ORDER_ID\", \"ITEM_NUMBER\", \"PRODUCT_NAME\", \"QUANTITY\", \"UNIT_PRICE\")\nON t.\"ORDER_ID\" = s.\"ORDER_ID\" AND t.\"ITEM_NUMBER\" = s.\"ITEM_NUMBER\"\nWHEN MATCHED THEN UPDATE SET \"PRODUCT_NAME\" = s.\"PRODUCT_NAME\",\n\"QUANTITY\" = s.\"QUANTITY\",\n\"UNIT_PRICE\" = s.\"UNIT_PRICE\"\nWHEN NOT MATCHED THEN INSERT (\"ORDER_ID\", \"ITEM_NUMBER\", \"PRODUCT_NAME\", \"QUANTITY\", \"UNIT_PRICE\") VALUES (?, ?, ?, ?, ?)"))
-      .updateMany(OrderItemsRow._rowParser, unsaved)
-      .runUnchecked(c)
+    Fragment.concat(Fragment.of("MERGE INTO \"ORDER_ITEMS\" AS t\nUSING (VALUES (?, ?, ?, ?, ?)) AS s(\"ORDER_ID\", \"ITEM_NUMBER\", \"PRODUCT_NAME\", \"QUANTITY\", \"UNIT_PRICE\")\nON t.\"ORDER_ID\" = s.\"ORDER_ID\" AND t.\"ITEM_NUMBER\" = s.\"ITEM_NUMBER\"\nWHEN MATCHED THEN UPDATE SET \"PRODUCT_NAME\" = s.\"PRODUCT_NAME\",\n\"QUANTITY\" = s.\"QUANTITY\",\n\"UNIT_PRICE\" = s.\"UNIT_PRICE\"\nWHEN NOT MATCHED THEN INSERT (\"ORDER_ID\", \"ITEM_NUMBER\", \"PRODUCT_NAME\", \"QUANTITY\", \"UNIT_PRICE\") VALUES (?, ?, ?, ?, ?)"))
+      .updateMany(OrderItemsRow.rowCodec, unsaved)
+      .run(c)
   }
 }

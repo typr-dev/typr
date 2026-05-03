@@ -5,10 +5,11 @@
  */
 package oracledb.products
 
-import dev.typr.foundations.dsl.DeleteBuilder
-import dev.typr.foundations.dsl.SelectBuilder
-import dev.typr.foundations.dsl.UpdateBuilder
-import java.sql.Connection
+import dev.typr.dsl.DeleteBuilder
+import dev.typr.dsl.SelectBuilder
+import dev.typr.dsl.UpdateBuilder
+import dev.typr.foundations.Connection
+import dev.typr.foundations.ConnectionRead
 import java.util.Optional
 
 trait ProductsRepo {
@@ -16,7 +17,7 @@ trait ProductsRepo {
 
   def deleteById(productId: ProductsId)(using c: Connection): java.lang.Boolean
 
-  def deleteByIds(productIds: Array[ProductsId])(using c: Connection): Integer
+  def deleteByIds(productIds: java.util.List[ProductsId])(using c: Connection): Integer
 
   def insert(unsaved: ProductsRow)(using c: Connection): ProductsId
 
@@ -24,15 +25,15 @@ trait ProductsRepo {
 
   def select: SelectBuilder[ProductsFields, ProductsRow]
 
-  def selectAll(using c: Connection): java.util.List[ProductsRow]
+  def selectAll(using c: ConnectionRead): java.util.List[ProductsRow]
 
-  def selectById(productId: ProductsId)(using c: Connection): Optional[ProductsRow]
+  def selectById(productId: ProductsId)(using c: ConnectionRead): Optional[ProductsRow]
 
-  def selectByIds(productIds: Array[ProductsId])(using c: Connection): java.util.List[ProductsRow]
+  def selectByIds(productIds: java.util.List[ProductsId])(using c: ConnectionRead): java.util.List[ProductsRow]
 
-  def selectByIdsTracked(productIds: Array[ProductsId])(using c: Connection): java.util.Map[ProductsId, ProductsRow]
+  def selectByIdsTracked(productIds: java.util.List[ProductsId])(using c: ConnectionRead): java.util.Map[ProductsId, ProductsRow]
 
-  def selectByUniqueSku(sku: String)(using c: Connection): Optional[ProductsRow]
+  def selectByUniqueSku(sku: String)(using c: ConnectionRead): Optional[ProductsRow]
 
   def update: UpdateBuilder[ProductsFields, ProductsRow]
 

@@ -5,14 +5,14 @@
  */
 package testdb.shipping_carriers
 
-import dev.typr.foundations.MariaTypes
-import dev.typr.foundations.kotlin.DeleteBuilder
-import dev.typr.foundations.kotlin.Dialect
-import dev.typr.foundations.kotlin.Fragment
-import dev.typr.foundations.kotlin.SelectBuilder
-import dev.typr.foundations.kotlin.UpdateBuilder
-import dev.typr.foundations.kotlin.nullable
-import java.sql.Connection
+import dev.typr.dslkt.DeleteBuilder
+import dev.typr.dslkt.Dialect
+import dev.typr.dslkt.SelectBuilder
+import dev.typr.dslkt.UpdateBuilder
+import dev.typr.foundationskt.Connection
+import dev.typr.foundationskt.ConnectionRead
+import dev.typr.foundationskt.Fragment
+import dev.typr.foundationskt.MariaTypes
 import java.util.ArrayList
 import kotlin.collections.Iterator
 import kotlin.collections.List
@@ -26,22 +26,22 @@ class ShippingCarriersRepoImpl() : ShippingCarriersRepo {
   override fun deleteById(
     carrierId: ShippingCarriersId,
     c: Connection
-  ): Boolean = Fragment.interpolate(Fragment.lit("delete from `shipping_carriers` where `carrier_id` = "), Fragment.encode(ShippingCarriersId.mariaType, carrierId), Fragment.lit("")).update().runUnchecked(c) > 0
+  ): kotlin.Boolean = Fragment.concat(Fragment.of("delete from `shipping_carriers` where `carrier_id` = "), Fragment.encode(ShippingCarriersId.mariaType, carrierId), Fragment.of("")).update().run(c) > 0
 
   override fun deleteByIds(
-    carrierIds: Array<ShippingCarriersId>,
+    carrierIds: List<ShippingCarriersId>,
     c: Connection
   ): Int {
     val fragments: ArrayList<Fragment> = ArrayList()
     for (id in carrierIds) { fragments.add(Fragment.encode(ShippingCarriersId.mariaType, id)) }
-    return Fragment.interpolate(Fragment.lit("delete from `shipping_carriers` where `carrier_id` in ("), Fragment.comma(fragments.toMutableList()), Fragment.lit(")")).update().runUnchecked(c)
+    return Fragment.concat(Fragment.of("delete from `shipping_carriers` where `carrier_id` in ("), Fragment.comma(fragments.toMutableList()), Fragment.of(")")).update().run(c)
   }
 
   override fun insert(
     unsaved: ShippingCarriersRow,
     c: Connection
-  ): ShippingCarriersRow = Fragment.interpolate(Fragment.lit("insert into `shipping_carriers`(`code`, `name`, `tracking_url_template`, `api_config`, `is_active`)\nvalues ("), Fragment.encode(MariaTypes.varchar, unsaved.code), Fragment.lit(", "), Fragment.encode(MariaTypes.varchar, unsaved.name), Fragment.lit(", "), Fragment.encode(MariaTypes.varchar.nullable(), unsaved.trackingUrlTemplate), Fragment.lit(", "), Fragment.encode(MariaTypes.json.nullable(), unsaved.apiConfig), Fragment.lit(", "), Fragment.encode(IsActive.mariaType, unsaved.isActive), Fragment.lit(")\nRETURNING `carrier_id`, `code`, `name`, `tracking_url_template`, `api_config`, `is_active`\n"))
-    .updateReturning(ShippingCarriersRow._rowParser.exactlyOne()).runUnchecked(c)
+  ): ShippingCarriersRow = Fragment.concat(Fragment.of("insert into `shipping_carriers`(`code`, `name`, `tracking_url_template`, `api_config`, `is_active`)\nvalues ("), Fragment.encode(MariaTypes.varchar, unsaved.code), Fragment.of(", "), Fragment.encode(MariaTypes.varchar, unsaved.name), Fragment.of(", "), Fragment.encode(MariaTypes.varchar.opt(), unsaved.trackingUrlTemplate), Fragment.of(", "), Fragment.encode(MariaTypes.json.opt(), unsaved.apiConfig), Fragment.of(", "), Fragment.encode(IsActive.mariaType, unsaved.isActive), Fragment.of(")\nRETURNING `carrier_id`, `code`, `name`, `tracking_url_template`, `api_config`, `is_active`\n"))
+    .updateReturning(ShippingCarriersRow.rowCodec.exactlyOne()).run(c)
 
   override fun insert(
     unsaved: ShippingCarriersRowUnsaved,
@@ -49,50 +49,50 @@ class ShippingCarriersRepoImpl() : ShippingCarriersRepo {
   ): ShippingCarriersRow {
     val columns: ArrayList<Fragment> = ArrayList()
     val values: ArrayList<Fragment> = ArrayList()
-    columns.add(Fragment.lit("`code`"))
-    values.add(Fragment.interpolate(Fragment.encode(MariaTypes.varchar, unsaved.code), Fragment.lit("")))
-    columns.add(Fragment.lit("`name`"))
-    values.add(Fragment.interpolate(Fragment.encode(MariaTypes.varchar, unsaved.name), Fragment.lit("")))
+    columns.add(Fragment.of("`code`"))
+    values.add(Fragment.concat(Fragment.encode(MariaTypes.varchar, unsaved.code), Fragment.of("")))
+    columns.add(Fragment.of("`name`"))
+    values.add(Fragment.concat(Fragment.encode(MariaTypes.varchar, unsaved.name), Fragment.of("")))
     unsaved.trackingUrlTemplate.visit(
       {  },
-      { value -> columns.add(Fragment.lit("`tracking_url_template`"))
-      values.add(Fragment.interpolate(Fragment.encode(MariaTypes.varchar.nullable(), value), Fragment.lit(""))) }
+      { value -> columns.add(Fragment.of("`tracking_url_template`"))
+      values.add(Fragment.concat(Fragment.encode(MariaTypes.varchar.opt(), value), Fragment.of(""))) }
     );
     unsaved.apiConfig.visit(
       {  },
-      { value -> columns.add(Fragment.lit("`api_config`"))
-      values.add(Fragment.interpolate(Fragment.encode(MariaTypes.json.nullable(), value), Fragment.lit(""))) }
+      { value -> columns.add(Fragment.of("`api_config`"))
+      values.add(Fragment.concat(Fragment.encode(MariaTypes.json.opt(), value), Fragment.of(""))) }
     );
     unsaved.isActive.visit(
       {  },
-      { value -> columns.add(Fragment.lit("`is_active`"))
-      values.add(Fragment.interpolate(Fragment.encode(IsActive.mariaType, value), Fragment.lit(""))) }
+      { value -> columns.add(Fragment.of("`is_active`"))
+      values.add(Fragment.concat(Fragment.encode(IsActive.mariaType, value), Fragment.of(""))) }
     );
-    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into `shipping_carriers`("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nRETURNING `carrier_id`, `code`, `name`, `tracking_url_template`, `api_config`, `is_active`\n"))
-    return q.updateReturning(ShippingCarriersRow._rowParser.exactlyOne()).runUnchecked(c)
+    val q: Fragment = Fragment.concat(Fragment.of("insert into `shipping_carriers`("), Fragment.comma(columns.toMutableList()), Fragment.of(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.of(")\nRETURNING `carrier_id`, `code`, `name`, `tracking_url_template`, `api_config`, `is_active`\n"))
+    return q.updateReturning(ShippingCarriersRow.rowCodec.exactlyOne()).run(c)
   }
 
-  override fun select(): SelectBuilder<ShippingCarriersFields, ShippingCarriersRow> = SelectBuilder.of("`shipping_carriers`", ShippingCarriersFields.structure, ShippingCarriersRow._rowParser, Dialect.MARIADB)
+  override fun select(): SelectBuilder<ShippingCarriersFields, ShippingCarriersRow> = SelectBuilder.of("`shipping_carriers`", ShippingCarriersFields.structure, ShippingCarriersRow.rowCodec, Dialect.MARIADB)
 
-  override fun selectAll(c: Connection): List<ShippingCarriersRow> = Fragment.interpolate(Fragment.lit("select `carrier_id`, `code`, `name`, `tracking_url_template`, `api_config`, `is_active`\nfrom `shipping_carriers`\n")).query(ShippingCarriersRow._rowParser.all()).runUnchecked(c)
+  override fun selectAll(c: ConnectionRead): List<ShippingCarriersRow> = Fragment.concat(Fragment.of("select `carrier_id`, `code`, `name`, `tracking_url_template`, `api_config`, `is_active`\nfrom `shipping_carriers`\n")).query(ShippingCarriersRow.rowCodec.all()).run(c)
 
   override fun selectById(
     carrierId: ShippingCarriersId,
-    c: Connection
-  ): ShippingCarriersRow? = Fragment.interpolate(Fragment.lit("select `carrier_id`, `code`, `name`, `tracking_url_template`, `api_config`, `is_active`\nfrom `shipping_carriers`\nwhere `carrier_id` = "), Fragment.encode(ShippingCarriersId.mariaType, carrierId), Fragment.lit("")).query(ShippingCarriersRow._rowParser.first()).runUnchecked(c)
+    c: ConnectionRead
+  ): ShippingCarriersRow? = Fragment.concat(Fragment.of("select `carrier_id`, `code`, `name`, `tracking_url_template`, `api_config`, `is_active`\nfrom `shipping_carriers`\nwhere `carrier_id` = "), Fragment.encode(ShippingCarriersId.mariaType, carrierId), Fragment.of("")).query(ShippingCarriersRow.rowCodec.first()).run(c)
 
   override fun selectByIds(
-    carrierIds: Array<ShippingCarriersId>,
-    c: Connection
+    carrierIds: List<ShippingCarriersId>,
+    c: ConnectionRead
   ): List<ShippingCarriersRow> {
     val fragments: ArrayList<Fragment> = ArrayList()
     for (id in carrierIds) { fragments.add(Fragment.encode(ShippingCarriersId.mariaType, id)) }
-    return Fragment.interpolate(Fragment.lit("select `carrier_id`, `code`, `name`, `tracking_url_template`, `api_config`, `is_active` from `shipping_carriers` where `carrier_id` in ("), Fragment.comma(fragments.toMutableList()), Fragment.lit(")")).query(ShippingCarriersRow._rowParser.all()).runUnchecked(c)
+    return Fragment.concat(Fragment.of("select `carrier_id`, `code`, `name`, `tracking_url_template`, `api_config`, `is_active` from `shipping_carriers` where `carrier_id` in ("), Fragment.comma(fragments.toMutableList()), Fragment.of(")")).query(ShippingCarriersRow.rowCodec.all()).run(c)
   }
 
   override fun selectByIdsTracked(
-    carrierIds: Array<ShippingCarriersId>,
-    c: Connection
+    carrierIds: List<ShippingCarriersId>,
+    c: ConnectionRead
   ): Map<ShippingCarriersId, ShippingCarriersRow> {
     val ret: MutableMap<ShippingCarriersId, ShippingCarriersRow> = mutableMapOf<ShippingCarriersId, ShippingCarriersRow>()
     selectByIds(carrierIds, c).forEach({ row -> ret.put(row.carrierId, row) })
@@ -100,31 +100,31 @@ class ShippingCarriersRepoImpl() : ShippingCarriersRepo {
   }
 
   override fun selectByUniqueCode(
-    code: String,
-    c: Connection
-  ): ShippingCarriersRow? = Fragment.interpolate(Fragment.lit("select `carrier_id`, `code`, `name`, `tracking_url_template`, `api_config`, `is_active`\nfrom `shipping_carriers`\nwhere `code` = "), Fragment.encode(MariaTypes.varchar, code), Fragment.lit("\n")).query(ShippingCarriersRow._rowParser.first()).runUnchecked(c)
+    code: kotlin.String,
+    c: ConnectionRead
+  ): ShippingCarriersRow? = Fragment.concat(Fragment.of("select `carrier_id`, `code`, `name`, `tracking_url_template`, `api_config`, `is_active`\nfrom `shipping_carriers`\nwhere `code` = "), Fragment.encode(MariaTypes.varchar, code), Fragment.of("\n")).query(ShippingCarriersRow.rowCodec.first()).run(c)
 
-  override fun update(): UpdateBuilder<ShippingCarriersFields, ShippingCarriersRow> = UpdateBuilder.of("`shipping_carriers`", ShippingCarriersFields.structure, ShippingCarriersRow._rowParser, Dialect.MARIADB)
+  override fun update(): UpdateBuilder<ShippingCarriersFields, ShippingCarriersRow> = UpdateBuilder.of("`shipping_carriers`", ShippingCarriersFields.structure, ShippingCarriersRow.rowCodec, Dialect.MARIADB)
 
   override fun update(
     row: ShippingCarriersRow,
     c: Connection
-  ): Boolean {
+  ): kotlin.Boolean {
     val carrierId: ShippingCarriersId = row.carrierId
-    return Fragment.interpolate(Fragment.lit("update `shipping_carriers`\nset `code` = "), Fragment.encode(MariaTypes.varchar, row.code), Fragment.lit(",\n`name` = "), Fragment.encode(MariaTypes.varchar, row.name), Fragment.lit(",\n`tracking_url_template` = "), Fragment.encode(MariaTypes.varchar.nullable(), row.trackingUrlTemplate), Fragment.lit(",\n`api_config` = "), Fragment.encode(MariaTypes.json.nullable(), row.apiConfig), Fragment.lit(",\n`is_active` = "), Fragment.encode(IsActive.mariaType, row.isActive), Fragment.lit("\nwhere `carrier_id` = "), Fragment.encode(ShippingCarriersId.mariaType, carrierId), Fragment.lit("")).update().runUnchecked(c) > 0
+    return Fragment.concat(Fragment.of("update `shipping_carriers`\nset `code` = "), Fragment.encode(MariaTypes.varchar, row.code), Fragment.of(",\n`name` = "), Fragment.encode(MariaTypes.varchar, row.name), Fragment.of(",\n`tracking_url_template` = "), Fragment.encode(MariaTypes.varchar.opt(), row.trackingUrlTemplate), Fragment.of(",\n`api_config` = "), Fragment.encode(MariaTypes.json.opt(), row.apiConfig), Fragment.of(",\n`is_active` = "), Fragment.encode(IsActive.mariaType, row.isActive), Fragment.of("\nwhere `carrier_id` = "), Fragment.encode(ShippingCarriersId.mariaType, carrierId), Fragment.of("")).update().run(c) > 0
   }
 
   override fun upsert(
     unsaved: ShippingCarriersRow,
     c: Connection
-  ): ShippingCarriersRow = Fragment.interpolate(Fragment.lit("INSERT INTO `shipping_carriers`(`carrier_id`, `code`, `name`, `tracking_url_template`, `api_config`, `is_active`)\nVALUES ("), Fragment.encode(ShippingCarriersId.mariaType, unsaved.carrierId), Fragment.lit(", "), Fragment.encode(MariaTypes.varchar, unsaved.code), Fragment.lit(", "), Fragment.encode(MariaTypes.varchar, unsaved.name), Fragment.lit(", "), Fragment.encode(MariaTypes.varchar.nullable(), unsaved.trackingUrlTemplate), Fragment.lit(", "), Fragment.encode(MariaTypes.json.nullable(), unsaved.apiConfig), Fragment.lit(", "), Fragment.encode(IsActive.mariaType, unsaved.isActive), Fragment.lit(")\nON DUPLICATE KEY UPDATE `code` = VALUES(`code`),\n`name` = VALUES(`name`),\n`tracking_url_template` = VALUES(`tracking_url_template`),\n`api_config` = VALUES(`api_config`),\n`is_active` = VALUES(`is_active`)\nRETURNING `carrier_id`, `code`, `name`, `tracking_url_template`, `api_config`, `is_active`"))
-    .updateReturning(ShippingCarriersRow._rowParser.exactlyOne())
-    .runUnchecked(c)
+  ): ShippingCarriersRow = Fragment.concat(Fragment.of("INSERT INTO `shipping_carriers`(`carrier_id`, `code`, `name`, `tracking_url_template`, `api_config`, `is_active`)\nVALUES ("), Fragment.encode(ShippingCarriersId.mariaType, unsaved.carrierId), Fragment.of(", "), Fragment.encode(MariaTypes.varchar, unsaved.code), Fragment.of(", "), Fragment.encode(MariaTypes.varchar, unsaved.name), Fragment.of(", "), Fragment.encode(MariaTypes.varchar.opt(), unsaved.trackingUrlTemplate), Fragment.of(", "), Fragment.encode(MariaTypes.json.opt(), unsaved.apiConfig), Fragment.of(", "), Fragment.encode(IsActive.mariaType, unsaved.isActive), Fragment.of(")\nON DUPLICATE KEY UPDATE `code` = VALUES(`code`),\n`name` = VALUES(`name`),\n`tracking_url_template` = VALUES(`tracking_url_template`),\n`api_config` = VALUES(`api_config`),\n`is_active` = VALUES(`is_active`)\nRETURNING `carrier_id`, `code`, `name`, `tracking_url_template`, `api_config`, `is_active`"))
+    .updateReturning(ShippingCarriersRow.rowCodec.exactlyOne())
+    .run(c)
 
   override fun upsertBatch(
     unsaved: Iterator<ShippingCarriersRow>,
     c: Connection
-  ): List<ShippingCarriersRow> = Fragment.interpolate(Fragment.lit("INSERT INTO `shipping_carriers`(`carrier_id`, `code`, `name`, `tracking_url_template`, `api_config`, `is_active`)\nVALUES (?, ?, ?, ?, ?, ?)\nON DUPLICATE KEY UPDATE `code` = VALUES(`code`),\n`name` = VALUES(`name`),\n`tracking_url_template` = VALUES(`tracking_url_template`),\n`api_config` = VALUES(`api_config`),\n`is_active` = VALUES(`is_active`)\nRETURNING `carrier_id`, `code`, `name`, `tracking_url_template`, `api_config`, `is_active`"))
-    .updateReturningEach(ShippingCarriersRow._rowParser, unsaved)
-  .runUnchecked(c)
+  ): List<ShippingCarriersRow> = Fragment.concat(Fragment.of("INSERT INTO `shipping_carriers`(`carrier_id`, `code`, `name`, `tracking_url_template`, `api_config`, `is_active`)\nVALUES (?, ?, ?, ?, ?, ?)\nON DUPLICATE KEY UPDATE `code` = VALUES(`code`),\n`name` = VALUES(`name`),\n`tracking_url_template` = VALUES(`tracking_url_template`),\n`api_config` = VALUES(`api_config`),\n`is_active` = VALUES(`is_active`)\nRETURNING `carrier_id`, `code`, `name`, `tracking_url_template`, `api_config`, `is_active`"))
+    .updateReturningEach(ShippingCarriersRow.rowCodec, unsaved)
+  .run(c)
 }

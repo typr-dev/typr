@@ -7,8 +7,8 @@ package adventureworks.userdefined
 
 import adventureworks.public.Name
 import com.fasterxml.jackson.annotation.JsonValue
+import dev.typr.foundations.Bijection
 import dev.typr.foundations.PgType
-import dev.typr.foundations.dsl.Bijection
 
 /** Shared type `LastName`
  * Generated from TypeDefinitions matching
@@ -16,9 +16,9 @@ import dev.typr.foundations.dsl.Bijection
 case class LastName(@JsonValue value: Name) extends scala.AnyVal
 
 object LastName {
-  given bijection: Bijection[LastName, Name] = Bijection.apply[LastName, Name](_.value)(LastName.apply)
+  given bijection: Bijection[LastName, Name] = Bijection.of[LastName, Name](_.value, LastName.apply)
 
-  given pgType: PgType[LastName] = Name.pgType.bimap(LastName.apply, _.value)
+  given pgType: PgType[LastName] = Name.pgType.to(Bijection.of(LastName.apply, _.value))
 
-  given pgTypeArray: PgType[Array[LastName]] = Name.pgTypeArray.bimap(xs => xs.map(LastName.apply), xs => xs.map(_.value))
+  given pgTypeArray: PgType[java.util.List[LastName]] = pgType.array
 }

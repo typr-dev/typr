@@ -11,15 +11,13 @@ import scala.util.Random
 /** Tests for SQL script generated repositories. These tests exercise the typed query classes generated from SQL files in sql-scripts/db2/.
   */
 class SqlScriptTest {
-  private val testInsert = TestInsert(Random(42))
+  private val testInsert = TestInsert(Random(1874089758))
   private val customerOrdersRepo = CustomerOrdersSqlRepoImpl()
   private val customerSummaryRepo = CustomerSummarySqlRepoImpl()
   private val ordersByCustomerRepo = OrdersByCustomerSqlRepoImpl()
 
   @Test
-  def testCustomerOrders(): Unit = withConnection { c =>
-    given java.sql.Connection = c
-
+  def testCustomerOrders(): Unit = withConnection {
     val customer = testInsert.Customers()
     val _ = testInsert.Orders(customer.customerId, totalAmount = Some(BigDecimal("150.00")))
 
@@ -30,9 +28,7 @@ class SqlScriptTest {
   }
 
   @Test
-  def testCustomerOrdersMultiple(): Unit = withConnection { c =>
-    given java.sql.Connection = c
-
+  def testCustomerOrdersMultiple(): Unit = withConnection {
     val customer = testInsert.Customers()
     val _ = testInsert.Orders(customer.customerId)
     val _ = testInsert.Orders(customer.customerId)
@@ -44,9 +40,7 @@ class SqlScriptTest {
   }
 
   @Test
-  def testCustomerSummary(): Unit = withConnection { c =>
-    given java.sql.Connection = c
-
+  def testCustomerSummary(): Unit = withConnection {
     val customer = testInsert.Customers()
     val _ = testInsert.Orders(customer.customerId, totalAmount = Some(BigDecimal("100.00")))
     val _ = testInsert.Orders(customer.customerId, totalAmount = Some(BigDecimal("200.00")))
@@ -60,9 +54,7 @@ class SqlScriptTest {
   }
 
   @Test
-  def testCustomerSummaryNoOrders(): Unit = withConnection { c =>
-    given java.sql.Connection = c
-
+  def testCustomerSummaryNoOrders(): Unit = withConnection {
     val customer = testInsert.Customers()
 
     val results = customerSummaryRepo.apply
@@ -75,9 +67,7 @@ class SqlScriptTest {
   }
 
   @Test
-  def testOrdersByCustomer(): Unit = withConnection { c =>
-    given java.sql.Connection = c
-
+  def testOrdersByCustomer(): Unit = withConnection {
     val customer = testInsert.Customers()
     val order1 = testInsert.Orders(customer.customerId)
     val order2 = testInsert.Orders(customer.customerId)

@@ -6,38 +6,36 @@
 package testdb.cte_test
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import dev.typr.foundations.MariaTypes
+import dev.typr.dslkt.RowCodecs
 import dev.typr.foundations.Tuple.Tuple6
 import dev.typr.foundations.data.Uint8
-import dev.typr.foundations.kotlin.KotlinDbTypes
-import dev.typr.foundations.kotlin.RowParser
-import dev.typr.foundations.kotlin.RowParsers
-import dev.typr.foundations.kotlin.nullable
+import dev.typr.foundationskt.MariaTypes
+import dev.typr.foundationskt.RowCodec
 import java.math.BigDecimal
 
 /** SQL file: cte_test.sql */
 data class CteTestSqlRow(
   @field:JsonProperty("customer_id") val customerId: Uint8,
-  val email: String,
-  @field:JsonProperty("first_name") val firstName: String,
-  @field:JsonProperty("order_count") val orderCount: Long,
+  val email: kotlin.String,
+  @field:JsonProperty("first_name") val firstName: kotlin.String,
+  @field:JsonProperty("order_count") val orderCount: kotlin.Long,
   @field:JsonProperty("total_spent") val totalSpent: BigDecimal,
   /** Points to [testdb.brands.BrandsRow.name] */
-  @field:JsonProperty("favorite_brand") val favoriteBrand: String?
-) : Tuple6<Uint8, String, String, Long, BigDecimal, String?> {
+  @field:JsonProperty("favorite_brand") val favoriteBrand: kotlin.String?
+) : Tuple6<Uint8, kotlin.String, kotlin.String, kotlin.Long, BigDecimal, kotlin.String?> {
   override fun _1(): Uint8 = customerId
 
-  override fun _2(): String = email
+  override fun _2(): kotlin.String = email
 
-  override fun _3(): String = firstName
+  override fun _3(): kotlin.String = firstName
 
-  override fun _4(): Long = orderCount
+  override fun _4(): kotlin.Long = orderCount
 
   override fun _5(): BigDecimal = totalSpent
 
-  override fun _6(): String? = favoriteBrand
+  override fun _6(): kotlin.String? = favoriteBrand
 
   companion object {
-    val _rowParser: RowParser<CteTestSqlRow> = RowParsers.of(MariaTypes.bigintUnsigned, MariaTypes.varchar, MariaTypes.varchar, KotlinDbTypes.MariaTypes.bigint, KotlinDbTypes.MariaTypes.numeric, MariaTypes.varchar.nullable(), { t0, t1, t2, t3, t4, t5 -> CteTestSqlRow(t0, t1, t2, t3, t4, t5) }, { row -> arrayOf<Any?>(row.customerId, row.email, row.firstName, row.orderCount, row.totalSpent, row.favoriteBrand) })
+    val rowCodec: RowCodec<CteTestSqlRow> = RowCodecs.of(MariaTypes.bigintUnsigned, MariaTypes.varchar, MariaTypes.varchar, MariaTypes.bigint, MariaTypes.numeric, MariaTypes.varchar.opt(), { t0: Uint8, t1: kotlin.String, t2: kotlin.String, t3: kotlin.Long, t4: BigDecimal, t5: kotlin.String? -> CteTestSqlRow(t0, t1, t2, t3, t4, t5) }, { row: CteTestSqlRow -> arrayOf<Any?>(row.customerId, row.email, row.firstName, row.orderCount, row.totalSpent, row.favoriteBrand) })
   }
 }

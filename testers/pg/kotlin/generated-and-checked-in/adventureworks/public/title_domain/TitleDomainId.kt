@@ -6,8 +6,9 @@
 package adventureworks.public.title_domain
 
 import adventureworks.public.ShortText
-import dev.typr.foundations.PgType
-import dev.typr.foundations.internal.arrayMap
+import dev.typr.foundationskt.Bijection
+import dev.typr.foundationskt.PgType
+import kotlin.collections.List
 
 sealed interface TitleDomainId {
     val value: ShortText
@@ -28,11 +29,11 @@ sealed interface TitleDomainId {
     companion object {
         fun apply(str: ShortText): TitleDomainId =
             Known.ByName[str] ?: Unknown(str)
-        val pgTypeArray: PgType<Array<TitleDomainId>> =
-          ShortText.pgTypeArray
-            .bimap({ xs -> arrayMap.map(xs, TitleDomainId::apply, TitleDomainId::class.java) }, { xs -> arrayMap.map(xs, TitleDomainId::value, ShortText::class.java) })
+        val pgTypeArray: PgType<List<TitleDomainId>> =
+          ShortText.pgType.array()
+            .to(Bijection.of({ xs -> xs.map(TitleDomainId::apply) }, { xs -> xs.map(TitleDomainId::value) }))
         val pgType: PgType<TitleDomainId> =
-          ShortText.pgType.bimap(TitleDomainId::apply, TitleDomainId::value)
-        fun shortText(value: String): TitleDomainId = apply(ShortText(value))
+          ShortText.pgType.to(Bijection.of(TitleDomainId::apply, TitleDomainId::value))
+        fun shortText(value: kotlin.String): TitleDomainId = apply(ShortText(value))
     }
 }

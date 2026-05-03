@@ -5,10 +5,11 @@
  */
 package testdb.shipments
 
-import dev.typr.foundations.kotlin.DeleteBuilder
-import dev.typr.foundations.kotlin.SelectBuilder
-import dev.typr.foundations.kotlin.UpdateBuilder
-import java.sql.Connection
+import dev.typr.dslkt.DeleteBuilder
+import dev.typr.dslkt.SelectBuilder
+import dev.typr.dslkt.UpdateBuilder
+import dev.typr.foundationskt.Connection
+import dev.typr.foundationskt.ConnectionRead
 import kotlin.collections.Iterator
 import kotlin.collections.List
 import kotlin.collections.Map
@@ -19,10 +20,10 @@ interface ShipmentsRepo {
   abstract fun deleteById(
     shipmentId: ShipmentsId,
     c: Connection
-  ): Boolean
+  ): kotlin.Boolean
 
   abstract fun deleteByIds(
-    shipmentIds: Array<ShipmentsId>,
+    shipmentIds: List<ShipmentsId>,
     c: Connection
   ): Int
 
@@ -38,21 +39,21 @@ interface ShipmentsRepo {
 
   abstract fun select(): SelectBuilder<ShipmentsFields, ShipmentsRow>
 
-  abstract fun selectAll(c: Connection): List<ShipmentsRow>
+  abstract fun selectAll(c: ConnectionRead): List<ShipmentsRow>
 
   abstract fun selectById(
     shipmentId: ShipmentsId,
-    c: Connection
+    c: ConnectionRead
   ): ShipmentsRow?
 
   abstract fun selectByIds(
-    shipmentIds: Array<ShipmentsId>,
-    c: Connection
+    shipmentIds: List<ShipmentsId>,
+    c: ConnectionRead
   ): List<ShipmentsRow>
 
   abstract fun selectByIdsTracked(
-    shipmentIds: Array<ShipmentsId>,
-    c: Connection
+    shipmentIds: List<ShipmentsId>,
+    c: ConnectionRead
   ): Map<ShipmentsId, ShipmentsRow>
 
   abstract fun update(): UpdateBuilder<ShipmentsFields, ShipmentsRow>
@@ -60,7 +61,7 @@ interface ShipmentsRepo {
   abstract fun update(
     row: ShipmentsRow,
     c: Connection
-  ): Boolean
+  ): kotlin.Boolean
 
   abstract fun upsert(
     unsaved: ShipmentsRow,

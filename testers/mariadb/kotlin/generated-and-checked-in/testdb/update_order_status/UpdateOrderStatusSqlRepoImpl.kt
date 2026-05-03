@@ -5,15 +5,15 @@
  */
 package testdb.update_order_status
 
-import dev.typr.foundations.MariaTypes
-import dev.typr.foundations.kotlin.Fragment
-import java.sql.Connection
+import dev.typr.foundationskt.Connection
+import dev.typr.foundationskt.Fragment
+import dev.typr.foundationskt.MariaTypes
 import testdb.orders.OrdersId
 
 class UpdateOrderStatusSqlRepoImpl() : UpdateOrderStatusSqlRepo {
   override fun apply(
-    newStatus: String,
+    newStatus: kotlin.String,
     orderId: /* user-picked */ OrdersId,
     c: Connection
-  ): Int = Fragment.interpolate(Fragment.lit("-- Update order status\nUPDATE orders\nSET order_status = "), Fragment.encode(MariaTypes.varchar, newStatus), Fragment.lit(",\n    confirmed_at = CASE WHEN "), Fragment.encode(MariaTypes.varchar, newStatus), Fragment.lit(" = 'confirmed' THEN NOW(6) ELSE confirmed_at END,\n    shipped_at = CASE WHEN "), Fragment.encode(MariaTypes.varchar, newStatus), Fragment.lit(" = 'shipped' THEN NOW(6) ELSE shipped_at END,\n    delivered_at = CASE WHEN "), Fragment.encode(MariaTypes.varchar, newStatus), Fragment.lit(" = 'delivered' THEN NOW(6) ELSE delivered_at END\nWHERE order_id = "), Fragment.encode(OrdersId.mariaType, orderId), Fragment.lit("\n")).update().runUnchecked(c)
+  ): Int = Fragment.concat(Fragment.of("-- Update order status\nUPDATE orders\nSET order_status = "), Fragment.encode(MariaTypes.varchar, newStatus), Fragment.of(",\n    confirmed_at = CASE WHEN "), Fragment.encode(MariaTypes.varchar, newStatus), Fragment.of(" = 'confirmed' THEN NOW(6) ELSE confirmed_at END,\n    shipped_at = CASE WHEN "), Fragment.encode(MariaTypes.varchar, newStatus), Fragment.of(" = 'shipped' THEN NOW(6) ELSE shipped_at END,\n    delivered_at = CASE WHEN "), Fragment.encode(MariaTypes.varchar, newStatus), Fragment.of(" = 'delivered' THEN NOW(6) ELSE delivered_at END\nWHERE order_id = "), Fragment.encode(OrdersId.mariaType, orderId), Fragment.of("\n")).update().run(c)
 }

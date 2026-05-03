@@ -5,10 +5,10 @@
  */
 package testdb.mariatest_unique
 
-import dev.typr.foundations.MariaTypes
+import dev.typr.dslsc.RowCodecs
 import dev.typr.foundations.Tuple.Tuple4
-import dev.typr.foundations.scala.RowParser
-import dev.typr.foundations.scala.RowParsers
+import dev.typr.foundationssc.MariaTypes
+import dev.typr.foundationssc.RowCodec
 import testdb.userdefined.Email
 
 /** Table: mariatest_unique
@@ -38,5 +38,5 @@ case class MariatestUniqueRow(
 }
 
 object MariatestUniqueRow {
-  val `_rowParser`: RowParser[MariatestUniqueRow] = RowParsers.of(MariatestUniqueId.mariaType, Email.mariaType, MariaTypes.varchar, MariaTypes.varchar)(MariatestUniqueRow.apply)(row => Array[Any](row.id, row.email, row.code, row.category))
+  val rowCodec: RowCodec[MariatestUniqueRow] = RowCodecs.of(MariatestUniqueId.mariaType, Email.mariaType, MariaTypes.varchar, MariaTypes.varchar)(MariatestUniqueRow.apply)(row => Array[Any](row.id, row.email, row.code, row.category))
 }

@@ -5,59 +5,59 @@
  */
 package testdb.brands
 
-import dev.typr.foundations.MariaTypes
-import dev.typr.foundations.scala.DbTypeOps
-import dev.typr.foundations.scala.DeleteBuilder
-import dev.typr.foundations.scala.Dialect
-import dev.typr.foundations.scala.Fragment
-import dev.typr.foundations.scala.SelectBuilder
-import dev.typr.foundations.scala.UpdateBuilder
-import java.sql.Connection
+import dev.typr.dslsc.DeleteBuilder
+import dev.typr.dslsc.Dialect
+import dev.typr.dslsc.SelectBuilder
+import dev.typr.dslsc.UpdateBuilder
+import dev.typr.foundationssc.Connection
+import dev.typr.foundationssc.ConnectionRead
+import dev.typr.foundationssc.Fragment
+import dev.typr.foundationssc.MariaTypes
 import scala.collection.mutable.ListBuffer
 import testdb.userdefined.IsActive
-import dev.typr.foundations.scala.Fragment.sql
+import dev.typr.foundationssc.Fragment.sql
 
 class BrandsRepoImpl extends BrandsRepo {
   override def delete: DeleteBuilder[BrandsFields, BrandsRow] = DeleteBuilder.of("`brands`", BrandsFields.structure, Dialect.MARIADB)
 
-  override def deleteById(brandId: BrandsId)(using c: Connection): Boolean = sql"delete from `brands` where `brand_id` = ${Fragment.encode(BrandsId.mariaType, brandId)}".update().runUnchecked(c) > 0
+  override def deleteById(brandId: BrandsId)(using c: Connection): Boolean = sql"delete from `brands` where `brand_id` = ${Fragment.encode(BrandsId.mariaType, brandId)}".update().run(using c) > 0
 
-  override def deleteByIds(brandIds: Array[BrandsId])(using c: Connection): Int = {
+  override def deleteByIds(brandIds: List[BrandsId])(using c: Connection): Int = {
     val fragments: ListBuffer[Fragment] = ListBuffer()
     brandIds.foreach { id => fragments.addOne(Fragment.encode(BrandsId.mariaType, id)): @scala.annotation.nowarn }
-    return Fragment.interpolate(Fragment.lit("delete from `brands` where `brand_id` in ("), Fragment.comma(fragments), Fragment.lit(")")).update().runUnchecked(c)
+    return Fragment.concat(Fragment.of("delete from `brands` where `brand_id` in ("), Fragment.comma(fragments), Fragment.of(")")).update().run(using c)
   }
 
   override def insert(unsaved: BrandsRow)(using c: Connection): BrandsRow = {
   sql"""insert into `brands`(`name`, `slug`, `logo_blob`, `website_url`, `country_of_origin`, `is_active`)
-    values (${Fragment.encode(MariaTypes.varchar, unsaved.name)}, ${Fragment.encode(MariaTypes.varchar, unsaved.slug)}, ${Fragment.encode(MariaTypes.mediumblob.nullable, unsaved.logoBlob)}, ${Fragment.encode(MariaTypes.varchar.nullable, unsaved.websiteUrl)}, ${Fragment.encode(MariaTypes.char_.nullable, unsaved.countryOfOrigin)}, ${Fragment.encode(IsActive.mariaType, unsaved.isActive)})
+    values (${Fragment.encode(MariaTypes.varchar, unsaved.name)}, ${Fragment.encode(MariaTypes.varchar, unsaved.slug)}, ${Fragment.encode(MariaTypes.mediumblob.opt, unsaved.logoBlob)}, ${Fragment.encode(MariaTypes.varchar.opt, unsaved.websiteUrl)}, ${Fragment.encode(MariaTypes.char_.opt, unsaved.countryOfOrigin)}, ${Fragment.encode(IsActive.mariaType, unsaved.isActive)})
     RETURNING `brand_id`, `name`, `slug`, `logo_blob`, `website_url`, `country_of_origin`, `is_active`
     """
-    .updateReturning(BrandsRow.`_rowParser`.exactlyOne()).runUnchecked(c)
+    .updateReturning(BrandsRow.rowCodec.exactlyOne()).run(using c)
   }
 
   override def insert(unsaved: BrandsRowUnsaved)(using c: Connection): BrandsRow = {
     val columns: ListBuffer[Fragment] = ListBuffer()
     val values: ListBuffer[Fragment] = ListBuffer()
-    columns.addOne(Fragment.lit("`name`")): @scala.annotation.nowarn
+    columns.addOne(Fragment.of("`name`")): @scala.annotation.nowarn
     values.addOne(sql"${Fragment.encode(MariaTypes.varchar, unsaved.name)}"): @scala.annotation.nowarn
-    columns.addOne(Fragment.lit("`slug`")): @scala.annotation.nowarn
+    columns.addOne(Fragment.of("`slug`")): @scala.annotation.nowarn
     values.addOne(sql"${Fragment.encode(MariaTypes.varchar, unsaved.slug)}"): @scala.annotation.nowarn
     unsaved.logoBlob.visit(
       {  },
-      value => { columns.addOne(Fragment.lit("`logo_blob`")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(MariaTypes.mediumblob.nullable, value)}"): @scala.annotation.nowarn }
+      value => { columns.addOne(Fragment.of("`logo_blob`")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(MariaTypes.mediumblob.opt, value)}"): @scala.annotation.nowarn }
     );
     unsaved.websiteUrl.visit(
       {  },
-      value => { columns.addOne(Fragment.lit("`website_url`")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(MariaTypes.varchar.nullable, value)}"): @scala.annotation.nowarn }
+      value => { columns.addOne(Fragment.of("`website_url`")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(MariaTypes.varchar.opt, value)}"): @scala.annotation.nowarn }
     );
     unsaved.countryOfOrigin.visit(
       {  },
-      value => { columns.addOne(Fragment.lit("`country_of_origin`")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(MariaTypes.char_.nullable, value)}"): @scala.annotation.nowarn }
+      value => { columns.addOne(Fragment.of("`country_of_origin`")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(MariaTypes.char_.opt, value)}"): @scala.annotation.nowarn }
     );
     unsaved.isActive.visit(
       {  },
-      value => { columns.addOne(Fragment.lit("`is_active`")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(IsActive.mariaType, value)}"): @scala.annotation.nowarn }
+      value => { columns.addOne(Fragment.of("`is_active`")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(IsActive.mariaType, value)}"): @scala.annotation.nowarn }
     );
     val q: Fragment = {
       sql"""insert into `brands`(${Fragment.comma(columns)})
@@ -65,59 +65,59 @@ class BrandsRepoImpl extends BrandsRepo {
       RETURNING `brand_id`, `name`, `slug`, `logo_blob`, `website_url`, `country_of_origin`, `is_active`
       """
     }
-    return q.updateReturning(BrandsRow.`_rowParser`.exactlyOne()).runUnchecked(c)
+    return q.updateReturning(BrandsRow.rowCodec.exactlyOne()).run(using c)
   }
 
-  override def select: SelectBuilder[BrandsFields, BrandsRow] = SelectBuilder.of("`brands`", BrandsFields.structure, BrandsRow.`_rowParser`, Dialect.MARIADB)
+  override def select: SelectBuilder[BrandsFields, BrandsRow] = SelectBuilder.of("`brands`", BrandsFields.structure, BrandsRow.rowCodec, Dialect.MARIADB)
 
-  override def selectAll(using c: Connection): List[BrandsRow] = {
+  override def selectAll(using c: ConnectionRead): List[BrandsRow] = {
     sql"""select `brand_id`, `name`, `slug`, `logo_blob`, `website_url`, `country_of_origin`, `is_active`
     from `brands`
-    """.query(BrandsRow.`_rowParser`.all()).runUnchecked(c)
+    """.query(BrandsRow.rowCodec.all()).run(using c)
   }
 
-  override def selectById(brandId: BrandsId)(using c: Connection): Option[BrandsRow] = {
+  override def selectById(brandId: BrandsId)(using c: ConnectionRead): Option[BrandsRow] = {
     sql"""select `brand_id`, `name`, `slug`, `logo_blob`, `website_url`, `country_of_origin`, `is_active`
     from `brands`
-    where `brand_id` = ${Fragment.encode(BrandsId.mariaType, brandId)}""".query(BrandsRow.`_rowParser`.first()).runUnchecked(c)
+    where `brand_id` = ${Fragment.encode(BrandsId.mariaType, brandId)}""".query(BrandsRow.rowCodec.first()).run(using c)
   }
 
-  override def selectByIds(brandIds: Array[BrandsId])(using c: Connection): List[BrandsRow] = {
+  override def selectByIds(brandIds: List[BrandsId])(using c: ConnectionRead): List[BrandsRow] = {
     val fragments: ListBuffer[Fragment] = ListBuffer()
     brandIds.foreach { id => fragments.addOne(Fragment.encode(BrandsId.mariaType, id)): @scala.annotation.nowarn }
-    return Fragment.interpolate(Fragment.lit("select `brand_id`, `name`, `slug`, `logo_blob`, `website_url`, `country_of_origin`, `is_active` from `brands` where `brand_id` in ("), Fragment.comma(fragments), Fragment.lit(")")).query(BrandsRow.`_rowParser`.all()).runUnchecked(c)
+    return Fragment.concat(Fragment.of("select `brand_id`, `name`, `slug`, `logo_blob`, `website_url`, `country_of_origin`, `is_active` from `brands` where `brand_id` in ("), Fragment.comma(fragments), Fragment.of(")")).query(BrandsRow.rowCodec.all()).run(using c)
   }
 
-  override def selectByIdsTracked(brandIds: Array[BrandsId])(using c: Connection): Map[BrandsId, BrandsRow] = {
+  override def selectByIdsTracked(brandIds: List[BrandsId])(using c: ConnectionRead): Map[BrandsId, BrandsRow] = {
     val ret: scala.collection.mutable.Map[BrandsId, BrandsRow] = scala.collection.mutable.Map.empty[BrandsId, BrandsRow]
     selectByIds(brandIds)(using c).foreach(row => ret.put(row.brandId, row): @scala.annotation.nowarn)
     return ret.toMap
   }
 
-  override def selectByUniqueSlug(slug: String)(using c: Connection): Option[BrandsRow] = {
+  override def selectByUniqueSlug(slug: String)(using c: ConnectionRead): Option[BrandsRow] = {
     sql"""select `brand_id`, `name`, `slug`, `logo_blob`, `website_url`, `country_of_origin`, `is_active`
     from `brands`
     where `slug` = ${Fragment.encode(MariaTypes.varchar, slug)}
-    """.query(BrandsRow.`_rowParser`.first()).runUnchecked(c)
+    """.query(BrandsRow.rowCodec.first()).run(using c)
   }
 
-  override def update: UpdateBuilder[BrandsFields, BrandsRow] = UpdateBuilder.of("`brands`", BrandsFields.structure, BrandsRow.`_rowParser`, Dialect.MARIADB)
+  override def update: UpdateBuilder[BrandsFields, BrandsRow] = UpdateBuilder.of("`brands`", BrandsFields.structure, BrandsRow.rowCodec, Dialect.MARIADB)
 
   override def update(row: BrandsRow)(using c: Connection): Boolean = {
     val brandId: BrandsId = row.brandId
     return sql"""update `brands`
     set `name` = ${Fragment.encode(MariaTypes.varchar, row.name)},
     `slug` = ${Fragment.encode(MariaTypes.varchar, row.slug)},
-    `logo_blob` = ${Fragment.encode(MariaTypes.mediumblob.nullable, row.logoBlob)},
-    `website_url` = ${Fragment.encode(MariaTypes.varchar.nullable, row.websiteUrl)},
-    `country_of_origin` = ${Fragment.encode(MariaTypes.char_.nullable, row.countryOfOrigin)},
+    `logo_blob` = ${Fragment.encode(MariaTypes.mediumblob.opt, row.logoBlob)},
+    `website_url` = ${Fragment.encode(MariaTypes.varchar.opt, row.websiteUrl)},
+    `country_of_origin` = ${Fragment.encode(MariaTypes.char_.opt, row.countryOfOrigin)},
     `is_active` = ${Fragment.encode(IsActive.mariaType, row.isActive)}
-    where `brand_id` = ${Fragment.encode(BrandsId.mariaType, brandId)}""".update().runUnchecked(c) > 0
+    where `brand_id` = ${Fragment.encode(BrandsId.mariaType, brandId)}""".update().run(using c) > 0
   }
 
   override def upsert(unsaved: BrandsRow)(using c: Connection): BrandsRow = {
   sql"""INSERT INTO `brands`(`brand_id`, `name`, `slug`, `logo_blob`, `website_url`, `country_of_origin`, `is_active`)
-    VALUES (${Fragment.encode(BrandsId.mariaType, unsaved.brandId)}, ${Fragment.encode(MariaTypes.varchar, unsaved.name)}, ${Fragment.encode(MariaTypes.varchar, unsaved.slug)}, ${Fragment.encode(MariaTypes.mediumblob.nullable, unsaved.logoBlob)}, ${Fragment.encode(MariaTypes.varchar.nullable, unsaved.websiteUrl)}, ${Fragment.encode(MariaTypes.char_.nullable, unsaved.countryOfOrigin)}, ${Fragment.encode(IsActive.mariaType, unsaved.isActive)})
+    VALUES (${Fragment.encode(BrandsId.mariaType, unsaved.brandId)}, ${Fragment.encode(MariaTypes.varchar, unsaved.name)}, ${Fragment.encode(MariaTypes.varchar, unsaved.slug)}, ${Fragment.encode(MariaTypes.mediumblob.opt, unsaved.logoBlob)}, ${Fragment.encode(MariaTypes.varchar.opt, unsaved.websiteUrl)}, ${Fragment.encode(MariaTypes.char_.opt, unsaved.countryOfOrigin)}, ${Fragment.encode(IsActive.mariaType, unsaved.isActive)})
     ON DUPLICATE KEY UPDATE `name` = VALUES(`name`),
     `slug` = VALUES(`slug`),
     `logo_blob` = VALUES(`logo_blob`),
@@ -125,8 +125,8 @@ class BrandsRepoImpl extends BrandsRepo {
     `country_of_origin` = VALUES(`country_of_origin`),
     `is_active` = VALUES(`is_active`)
     RETURNING `brand_id`, `name`, `slug`, `logo_blob`, `website_url`, `country_of_origin`, `is_active`"""
-    .updateReturning(BrandsRow.`_rowParser`.exactlyOne())
-    .runUnchecked(c)
+    .updateReturning(BrandsRow.rowCodec.exactlyOne())
+    .run(using c)
   }
 
   override def upsertBatch(unsaved: Iterator[BrandsRow])(using c: Connection): List[BrandsRow] = {
@@ -139,7 +139,7 @@ class BrandsRepoImpl extends BrandsRepo {
     `country_of_origin` = VALUES(`country_of_origin`),
     `is_active` = VALUES(`is_active`)
     RETURNING `brand_id`, `name`, `slug`, `logo_blob`, `website_url`, `country_of_origin`, `is_active`"""
-      .updateReturningEach(BrandsRow.`_rowParser`, unsaved)
-    .runUnchecked(c)
+      .updateReturningEach(BrandsRow.rowCodec, unsaved)
+    .run(using c)
   }
 }

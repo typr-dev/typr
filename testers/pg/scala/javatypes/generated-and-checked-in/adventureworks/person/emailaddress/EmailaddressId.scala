@@ -6,9 +6,9 @@
 package adventureworks.person.emailaddress
 
 import adventureworks.person.businessentity.BusinessentityId
+import dev.typr.dsl.RowCodecs
 import dev.typr.foundations.PgTypes
-import dev.typr.foundations.RowParser
-import dev.typr.foundations.RowParsers
+import dev.typr.foundations.RowCodec
 import dev.typr.foundations.Tuple.Tuple2
 
 /** Type for the composite primary key of table `person.emailaddress` */
@@ -22,5 +22,5 @@ case class EmailaddressId(
 }
 
 object EmailaddressId {
-  val `_rowParser`: RowParser[EmailaddressId] = RowParsers.of(BusinessentityId.pgType, PgTypes.int4, EmailaddressId.apply, row => Array[Any](row.businessentityid, row.emailaddressid))
+  val rowCodec: RowCodec[EmailaddressId] = RowCodecs.of(BusinessentityId.pgType, PgTypes.int4, EmailaddressId.apply, row => Array[Any](row.businessentityid, row.emailaddressid))
 }

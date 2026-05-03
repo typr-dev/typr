@@ -30,7 +30,7 @@ object TypoUUID {
       .contramap(_.map(v => v.value))
   }
 
-  given bijection: Bijection[TypoUUID, UUID] = Bijection.apply[TypoUUID, UUID](_.value)(TypoUUID.apply)
+  given bijection: Bijection[TypoUUID, UUID] = Bijection[TypoUUID, UUID](_.value)(TypoUUID.apply)
 
   given decoder: Decoder[TypoUUID] = Decoder.decodeUUID.map(TypoUUID.apply)
 

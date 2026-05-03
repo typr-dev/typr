@@ -6,10 +6,10 @@
 package adventureworks.production.productcosthistory
 
 import adventureworks.production.product.ProductId
-import dev.typr.foundations.PgTypes
+import dev.typr.dslkt.RowCodecs
 import dev.typr.foundations.Tuple.Tuple2
-import dev.typr.foundations.kotlin.RowParser
-import dev.typr.foundations.kotlin.RowParsers
+import dev.typr.foundationskt.PgTypes
+import dev.typr.foundationskt.RowCodec
 import java.time.LocalDateTime
 
 /** Type for the composite primary key of table `production.productcosthistory` */
@@ -22,6 +22,6 @@ data class ProductcosthistoryId(
   override fun _2(): LocalDateTime = startdate
 
   companion object {
-    val _rowParser: RowParser<ProductcosthistoryId> = RowParsers.of(ProductId.pgType, PgTypes.timestamp, { t0, t1 -> ProductcosthistoryId(t0, t1) }, { row -> arrayOf<Any?>(row.productid, row.startdate) })
+    val rowCodec: RowCodec<ProductcosthistoryId> = RowCodecs.of(ProductId.pgType, PgTypes.timestamp, { t0: ProductId, t1: LocalDateTime -> ProductcosthistoryId(t0, t1) }, { row: ProductcosthistoryId -> arrayOf<Any?>(row.productid, row.startdate) })
   }
 }

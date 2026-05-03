@@ -9,8 +9,7 @@ class ProductsTest extends AnyFunSuite {
   val repo: ProductsRepoImpl = new ProductsRepoImpl
 
   test("insert product with varray tags") {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       val price = new MoneyT(new java.math.BigDecimal("99.99"), "USD")
       val tags = new TagVarrayT(Array("electronics", "gadget", "new"))
       val uniqueSku = s"PROD-${System.currentTimeMillis()}"
@@ -35,8 +34,7 @@ class ProductsTest extends AnyFunSuite {
   }
 
   test("insert product without tags") {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       val price = new MoneyT(new java.math.BigDecimal("49.99"), "EUR")
 
       val unsaved = new ProductsRowUnsaved(
@@ -56,8 +54,7 @@ class ProductsTest extends AnyFunSuite {
   }
 
   test("varray roundtrip") {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       val tagArray = Array("tag1", "tag2", "tag3", "tag4", "tag5")
       val tags = new TagVarrayT(tagArray)
       val price = new MoneyT(new java.math.BigDecimal("199.99"), "USD")
@@ -80,8 +77,7 @@ class ProductsTest extends AnyFunSuite {
   }
 
   test("update tags") {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       val originalTags = new TagVarrayT(Array("old", "tags"))
       val price = new MoneyT(new java.math.BigDecimal("99.99"), "USD")
 
@@ -108,8 +104,7 @@ class ProductsTest extends AnyFunSuite {
   }
 
   test("update price") {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       val originalPrice = new MoneyT(new java.math.BigDecimal("100.00"), "USD")
       val unsaved = new ProductsRowUnsaved(
         "PROD-PRICE",
@@ -134,8 +129,7 @@ class ProductsTest extends AnyFunSuite {
   }
 
   test("varray with single element") {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       val tags = new TagVarrayT(Array("single"))
       val price = new MoneyT(new java.math.BigDecimal("10.00"), "USD")
 
@@ -156,8 +150,7 @@ class ProductsTest extends AnyFunSuite {
   }
 
   test("varray with max size") {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       val maxTags = Array(
         "tag1",
         "tag2",
@@ -198,8 +191,7 @@ class ProductsTest extends AnyFunSuite {
   }
 
   test("delete product") {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       val price = new MoneyT(new java.math.BigDecimal("99.99"), "USD")
       val unsaved = new ProductsRowUnsaved(
         "PROD-DELETE",
@@ -220,8 +212,7 @@ class ProductsTest extends AnyFunSuite {
   }
 
   test("select all") {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       val price1 = new MoneyT(new java.math.BigDecimal("10.00"), "USD")
       val price2 = new MoneyT(new java.math.BigDecimal("20.00"), "EUR")
 
@@ -250,8 +241,7 @@ class ProductsTest extends AnyFunSuite {
   }
 
   test("clear tags") {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       val originalTags = new TagVarrayT(Array("tag1", "tag2"))
       val price = new MoneyT(new java.math.BigDecimal("50.00"), "USD")
 

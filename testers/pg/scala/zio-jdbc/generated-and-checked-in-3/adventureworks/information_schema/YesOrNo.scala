@@ -27,7 +27,7 @@ object YesOrNo {
 
   given arraySetter: Setter[Array[YesOrNo]] = adventureworks.StringArraySetter.contramap(_.map(_.value))
 
-  given bijection: Bijection[YesOrNo, String] = Bijection.apply[YesOrNo, String](_.value)(YesOrNo.apply)
+  given bijection: Bijection[YesOrNo, String] = Bijection[YesOrNo, String](_.value)(YesOrNo.apply)
 
   given jdbcDecoder: JdbcDecoder[YesOrNo] = JdbcDecoder.stringDecoder.map(YesOrNo.apply)
 

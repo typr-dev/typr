@@ -6,11 +6,11 @@
 package adventureworks.public.users
 
 import com.fasterxml.jackson.annotation.JsonValue
-import dev.typr.foundations.PgType
-import dev.typr.foundations.PgTypes
-import dev.typr.foundations.internal.arrayMap
-import dev.typr.foundations.kotlin.Bijection
+import dev.typr.foundationskt.Bijection
+import dev.typr.foundationskt.PgType
+import dev.typr.foundationskt.PgTypes
 import java.util.UUID
+import kotlin.collections.List
 
 /** Type for the primary key of table `public.users` */
 data class UsersId(@field:JsonValue val value: UUID) {
@@ -23,9 +23,9 @@ data class UsersId(@field:JsonValue val value: UUID) {
       Bijection.of(UsersId::value, ::UsersId)
 
     val pgType: PgType<UsersId> =
-      PgTypes.uuid.bimap(::UsersId, UsersId::value)
+      PgTypes.uuid.to(Bijection.of(::UsersId, UsersId::value))
 
-    val pgTypeArray: PgType<Array<UsersId>> =
-      PgTypes.uuidArray.bimap({ xs -> arrayMap.map(xs, ::UsersId, UsersId::class.java) }, { xs -> arrayMap.map(xs, UsersId::value, UUID::class.java) })
+    val pgTypeArray: PgType<List<UsersId>> =
+      pgType.array()
   }
 }

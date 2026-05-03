@@ -6,12 +6,10 @@
 package testdb.customer_orders_summary
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import dev.typr.foundations.SqlServerTypes
+import dev.typr.dslkt.RowCodecs
 import dev.typr.foundations.Tuple.Tuple7
-import dev.typr.foundations.kotlin.KotlinDbTypes
-import dev.typr.foundations.kotlin.RowParser
-import dev.typr.foundations.kotlin.RowParsers
-import dev.typr.foundations.kotlin.nullable
+import dev.typr.foundationskt.RowCodec
+import dev.typr.foundationskt.SqlServerTypes
 import java.math.BigDecimal
 import java.time.LocalDateTime
 import testdb.customers.CustomersId
@@ -23,7 +21,7 @@ data class CustomerOrdersSummarySqlRow(
   /** Points to [testdb.customers.CustomersRow.customerId] */
   @field:JsonProperty("customer_id") val customerId: CustomersId,
   /** Points to [testdb.customers.CustomersRow.name] */
-  @field:JsonProperty("customer_name") val customerName: String,
+  @field:JsonProperty("customer_name") val customerName: kotlin.String,
   /** Points to [testdb.customers.CustomersRow.email] */
   @field:JsonProperty("customer_email") val customerEmail: /* user-picked */ Email,
   /** Points to [testdb.orders.OrdersRow.orderId] */
@@ -34,10 +32,10 @@ data class CustomerOrdersSummarySqlRow(
   @field:JsonProperty("avg_order_amount") val avgOrderAmount: BigDecimal?,
   /** Points to [testdb.orders.OrdersRow.orderDate] */
   @field:JsonProperty("last_order_date") val lastOrderDate: LocalDateTime?
-) : Tuple7<CustomersId, String, /* user-picked */ Email, OrdersId?, BigDecimal?, BigDecimal?, LocalDateTime?> {
+) : Tuple7<CustomersId, kotlin.String, /* user-picked */ Email, OrdersId?, BigDecimal?, BigDecimal?, LocalDateTime?> {
   override fun _1(): CustomersId = customerId
 
-  override fun _2(): String = customerName
+  override fun _2(): kotlin.String = customerName
 
   override fun _3(): /* user-picked */ Email = customerEmail
 
@@ -50,6 +48,6 @@ data class CustomerOrdersSummarySqlRow(
   override fun _7(): LocalDateTime? = lastOrderDate
 
   companion object {
-    val _rowParser: RowParser<CustomerOrdersSummarySqlRow> = RowParsers.of(CustomersId.sqlServerType, SqlServerTypes.nvarchar, Email.sqlServerType, OrdersId.sqlServerType.nullable(), KotlinDbTypes.SqlServerTypes.money.nullable(), KotlinDbTypes.SqlServerTypes.money.nullable(), SqlServerTypes.datetime2.nullable(), { t0, t1, t2, t3, t4, t5, t6 -> CustomerOrdersSummarySqlRow(t0, t1, t2, t3, t4, t5, t6) }, { row -> arrayOf<Any?>(row.customerId, row.customerName, row.customerEmail, row.orderCount, row.totalSpent, row.avgOrderAmount, row.lastOrderDate) })
+    val rowCodec: RowCodec<CustomerOrdersSummarySqlRow> = RowCodecs.of(CustomersId.sqlServerType, SqlServerTypes.nvarchar, Email.sqlServerType, OrdersId.sqlServerType.opt(), SqlServerTypes.money.opt(), SqlServerTypes.money.opt(), SqlServerTypes.datetime2.opt(), { t0: CustomersId, t1: kotlin.String, t2: /* user-picked */ Email, t3: OrdersId?, t4: BigDecimal?, t5: BigDecimal?, t6: LocalDateTime? -> CustomerOrdersSummarySqlRow(t0, t1, t2, t3, t4, t5, t6) }, { row: CustomerOrdersSummarySqlRow -> arrayOf<Any?>(row.customerId, row.customerName, row.customerEmail, row.orderCount, row.totalSpent, row.avgOrderAmount, row.lastOrderDate) })
   }
 }

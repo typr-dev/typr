@@ -6,11 +6,11 @@
 package adventureworks.person.businessentity
 
 import adventureworks.customtypes.Defaulted
+import dev.typr.dslkt.RowCodecs
 import dev.typr.foundations.PgText
-import dev.typr.foundations.PgTypes
 import dev.typr.foundations.Tuple.Tuple3
-import dev.typr.foundations.kotlin.RowParser
-import dev.typr.foundations.kotlin.RowParsers
+import dev.typr.foundationskt.PgTypes
+import dev.typr.foundationskt.RowCodec
 import java.time.LocalDateTime
 import java.util.UUID
 
@@ -43,9 +43,9 @@ data class BusinessentityRow(
   ): BusinessentityRowUnsaved = BusinessentityRowUnsaved(businessentityid, rowguid, modifieddate)
 
   companion object {
-    val _rowParser: RowParser<BusinessentityRow> = RowParsers.of(BusinessentityId.pgType, PgTypes.uuid, PgTypes.timestamp, { t0, t1, t2 -> BusinessentityRow(t0, t1, t2) }, { row -> arrayOf<Any?>(row.businessentityid, row.rowguid, row.modifieddate) })
+    val rowCodec: RowCodec<BusinessentityRow> = RowCodecs.of(BusinessentityId.pgType, PgTypes.uuid, PgTypes.timestamp, { t0: BusinessentityId, t1: UUID, t2: LocalDateTime -> BusinessentityRow(t0, t1, t2) }, { row: BusinessentityRow -> arrayOf<Any?>(row.businessentityid, row.rowguid, row.modifieddate) })
 
     val pgText: PgText<BusinessentityRow> =
-      PgText.from(_rowParser.underlying)
+      PgText.from(rowCodec.underlying)
   }
 }

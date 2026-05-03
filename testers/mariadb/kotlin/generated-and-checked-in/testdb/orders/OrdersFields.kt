@@ -5,20 +5,19 @@
  */
 package testdb.orders
 
-import dev.typr.foundations.MariaTypes
-import dev.typr.foundations.RowParser
+import dev.typr.dsl.FieldsBase
+import dev.typr.dsl.Path
+import dev.typr.dsl.SqlExpr.FieldLike
+import dev.typr.dslkt.ForeignKey
+import dev.typr.dslkt.RelationStructure
+import dev.typr.dslkt.SqlExpr
+import dev.typr.dslkt.SqlExpr.Field
+import dev.typr.dslkt.SqlExpr.IdField
+import dev.typr.dslkt.SqlExpr.OptField
+import dev.typr.dslkt.TupleExpr22
+import dev.typr.foundations.RowCodec
 import dev.typr.foundations.data.maria.Inet6
-import dev.typr.foundations.dsl.FieldsBase
-import dev.typr.foundations.dsl.Path
-import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.kotlin.ForeignKey
-import dev.typr.foundations.kotlin.KotlinDbTypes
-import dev.typr.foundations.kotlin.RelationStructure
-import dev.typr.foundations.kotlin.SqlExpr
-import dev.typr.foundations.kotlin.SqlExpr.Field
-import dev.typr.foundations.kotlin.SqlExpr.IdField
-import dev.typr.foundations.kotlin.SqlExpr.OptField
-import dev.typr.foundations.kotlin.TupleExpr22
+import dev.typr.foundationskt.MariaTypes
 import java.math.BigDecimal
 import java.time.LocalDateTime
 import kotlin.collections.List
@@ -32,7 +31,7 @@ import testdb.promotions.PromotionsFields
 import testdb.promotions.PromotionsId
 import testdb.promotions.PromotionsRow
 
-data class OrdersFields(val _path: List<Path>) : TupleExpr22<OrdersId, String, CustomersId, String, String, CustomerAddressesId, CustomerAddressesId, BigDecimal, BigDecimal, BigDecimal, BigDecimal, BigDecimal, String, PromotionsId, String, String, Inet6, String, LocalDateTime, LocalDateTime, LocalDateTime, LocalDateTime>, RelationStructure<OrdersFields, OrdersRow>, FieldsBase<OrdersRow> {
+data class OrdersFields(val _path: List<Path>) : TupleExpr22<OrdersId, kotlin.String, CustomersId, kotlin.String, kotlin.String, CustomerAddressesId, CustomerAddressesId, BigDecimal, BigDecimal, BigDecimal, BigDecimal, BigDecimal, kotlin.String, PromotionsId, kotlin.String, kotlin.String, Inet6, kotlin.String, LocalDateTime, LocalDateTime, LocalDateTime, LocalDateTime>, RelationStructure<OrdersFields, OrdersRow>, FieldsBase<OrdersRow> {
   override fun _1(): SqlExpr<OrdersId> = orderId()
 
   override fun _10(): SqlExpr<BigDecimal> = taxAmount()
@@ -41,21 +40,21 @@ data class OrdersFields(val _path: List<Path>) : TupleExpr22<OrdersId, String, C
 
   override fun _12(): SqlExpr<BigDecimal> = totalAmount()
 
-  override fun _13(): SqlExpr<String> = currencyCode()
+  override fun _13(): SqlExpr<kotlin.String> = currencyCode()
 
   override fun _14(): SqlExpr<PromotionsId> = promotionId()
 
-  override fun _15(): SqlExpr<String> = notes()
+  override fun _15(): SqlExpr<kotlin.String> = notes()
 
-  override fun _16(): SqlExpr<String> = internalNotes()
+  override fun _16(): SqlExpr<kotlin.String> = internalNotes()
 
   override fun _17(): SqlExpr<Inet6> = ipAddress()
 
-  override fun _18(): SqlExpr<String> = userAgent()
+  override fun _18(): SqlExpr<kotlin.String> = userAgent()
 
   override fun _19(): SqlExpr<LocalDateTime> = orderedAt()
 
-  override fun _2(): SqlExpr<String> = orderNumber()
+  override fun _2(): SqlExpr<kotlin.String> = orderNumber()
 
   override fun _20(): SqlExpr<LocalDateTime> = confirmedAt()
 
@@ -65,9 +64,9 @@ data class OrdersFields(val _path: List<Path>) : TupleExpr22<OrdersId, String, C
 
   override fun _3(): SqlExpr<CustomersId> = customerId()
 
-  override fun _4(): SqlExpr<String> = orderStatus()
+  override fun _4(): SqlExpr<kotlin.String> = orderStatus()
 
-  override fun _5(): SqlExpr<String> = paymentStatus()
+  override fun _5(): SqlExpr<kotlin.String> = paymentStatus()
 
   override fun _6(): SqlExpr<CustomerAddressesId> = shippingAddressId()
 
@@ -79,19 +78,19 @@ data class OrdersFields(val _path: List<Path>) : TupleExpr22<OrdersId, String, C
 
   override fun _path(): List<Path> = _path
 
-  fun billingAddressId(): OptField<CustomerAddressesId, OrdersRow> = OptField<CustomerAddressesId, OrdersRow>(_path, "billing_address_id", OrdersRow::billingAddressId, null, null, { row, value -> row.copy(billingAddressId = value) }, CustomerAddressesId.mariaType)
+  fun billingAddressId(): OptField<CustomerAddressesId, OrdersRow> = OptField<CustomerAddressesId, OrdersRow>(_path, "billing_address_id", OrdersRow::billingAddressId, null, null, { row, value -> row.copy(billingAddressId = value) }, CustomerAddressesId.mariaType.underlying)
 
   override fun columns(): List<FieldLike<*, OrdersRow>> = listOf(this.orderId().underlying, this.orderNumber().underlying, this.customerId().underlying, this.orderStatus().underlying, this.paymentStatus().underlying, this.shippingAddressId().underlying, this.billingAddressId().underlying, this.subtotal().underlying, this.shippingCost().underlying, this.taxAmount().underlying, this.discountAmount().underlying, this.totalAmount().underlying, this.currencyCode().underlying, this.promotionId().underlying, this.notes().underlying, this.internalNotes().underlying, this.ipAddress().underlying, this.userAgent().underlying, this.orderedAt().underlying, this.confirmedAt().underlying, this.shippedAt().underlying, this.deliveredAt().underlying)
 
-  fun confirmedAt(): OptField<LocalDateTime, OrdersRow> = OptField<LocalDateTime, OrdersRow>(_path, "confirmed_at", OrdersRow::confirmedAt, null, null, { row, value -> row.copy(confirmedAt = value) }, MariaTypes.datetime)
+  fun confirmedAt(): OptField<LocalDateTime, OrdersRow> = OptField<LocalDateTime, OrdersRow>(_path, "confirmed_at", OrdersRow::confirmedAt, null, null, { row, value -> row.copy(confirmedAt = value) }, MariaTypes.datetime.underlying)
 
-  fun currencyCode(): Field<String, OrdersRow> = Field<String, OrdersRow>(_path, "currency_code", OrdersRow::currencyCode, null, null, { row, value -> row.copy(currencyCode = value) }, MariaTypes.char_)
+  fun currencyCode(): Field<kotlin.String, OrdersRow> = Field<kotlin.String, OrdersRow>(_path, "currency_code", OrdersRow::currencyCode, null, null, { row, value -> row.copy(currencyCode = value) }, MariaTypes.char_.underlying)
 
-  fun customerId(): Field<CustomersId, OrdersRow> = Field<CustomersId, OrdersRow>(_path, "customer_id", OrdersRow::customerId, null, null, { row, value -> row.copy(customerId = value) }, CustomersId.mariaType)
+  fun customerId(): Field<CustomersId, OrdersRow> = Field<CustomersId, OrdersRow>(_path, "customer_id", OrdersRow::customerId, null, null, { row, value -> row.copy(customerId = value) }, CustomersId.mariaType.underlying)
 
-  fun deliveredAt(): OptField<LocalDateTime, OrdersRow> = OptField<LocalDateTime, OrdersRow>(_path, "delivered_at", OrdersRow::deliveredAt, null, null, { row, value -> row.copy(deliveredAt = value) }, MariaTypes.datetime)
+  fun deliveredAt(): OptField<LocalDateTime, OrdersRow> = OptField<LocalDateTime, OrdersRow>(_path, "delivered_at", OrdersRow::deliveredAt, null, null, { row, value -> row.copy(deliveredAt = value) }, MariaTypes.datetime.underlying)
 
-  fun discountAmount(): Field<BigDecimal, OrdersRow> = Field<BigDecimal, OrdersRow>(_path, "discount_amount", OrdersRow::discountAmount, null, null, { row, value -> row.copy(discountAmount = value) }, KotlinDbTypes.MariaTypes.numeric)
+  fun discountAmount(): Field<BigDecimal, OrdersRow> = Field<BigDecimal, OrdersRow>(_path, "discount_amount", OrdersRow::discountAmount, null, null, { row, value -> row.copy(discountAmount = value) }, MariaTypes.numeric.underlying)
 
   fun fkCustomerAddressesBillingAddressId(): ForeignKey<CustomerAddressesFields, CustomerAddressesRow> = ForeignKey.of<CustomerAddressesFields, CustomerAddressesRow>("fk_order_billing_addr").withColumnPair<CustomerAddressesId>(billingAddressId(), CustomerAddressesFields::addressId)
 
@@ -101,39 +100,39 @@ data class OrdersFields(val _path: List<Path>) : TupleExpr22<OrdersId, String, C
 
   fun fkPromotions(): ForeignKey<PromotionsFields, PromotionsRow> = ForeignKey.of<PromotionsFields, PromotionsRow>("fk_order_promotion").withColumnPair<PromotionsId>(promotionId(), PromotionsFields::promotionId)
 
-  fun internalNotes(): OptField<String, OrdersRow> = OptField<String, OrdersRow>(_path, "internal_notes", OrdersRow::internalNotes, null, null, { row, value -> row.copy(internalNotes = value) }, MariaTypes.mediumtext)
+  fun internalNotes(): OptField<kotlin.String, OrdersRow> = OptField<kotlin.String, OrdersRow>(_path, "internal_notes", OrdersRow::internalNotes, null, null, { row, value -> row.copy(internalNotes = value) }, MariaTypes.mediumtext.underlying)
 
-  fun ipAddress(): OptField<Inet6, OrdersRow> = OptField<Inet6, OrdersRow>(_path, "ip_address", OrdersRow::ipAddress, null, null, { row, value -> row.copy(ipAddress = value) }, MariaTypes.inet6)
+  fun ipAddress(): OptField<Inet6, OrdersRow> = OptField<Inet6, OrdersRow>(_path, "ip_address", OrdersRow::ipAddress, null, null, { row, value -> row.copy(ipAddress = value) }, MariaTypes.inet6.underlying)
 
-  fun notes(): OptField<String, OrdersRow> = OptField<String, OrdersRow>(_path, "notes", OrdersRow::notes, null, null, { row, value -> row.copy(notes = value) }, MariaTypes.text)
+  fun notes(): OptField<kotlin.String, OrdersRow> = OptField<kotlin.String, OrdersRow>(_path, "notes", OrdersRow::notes, null, null, { row, value -> row.copy(notes = value) }, MariaTypes.text.underlying)
 
-  fun orderId(): IdField<OrdersId, OrdersRow> = IdField<OrdersId, OrdersRow>(_path, "order_id", OrdersRow::orderId, null, null, { row, value -> row.copy(orderId = value) }, OrdersId.mariaType)
+  fun orderId(): IdField<OrdersId, OrdersRow> = IdField<OrdersId, OrdersRow>(_path, "order_id", OrdersRow::orderId, null, null, { row, value -> row.copy(orderId = value) }, OrdersId.mariaType.underlying)
 
-  fun orderNumber(): Field<String, OrdersRow> = Field<String, OrdersRow>(_path, "order_number", OrdersRow::orderNumber, null, null, { row, value -> row.copy(orderNumber = value) }, MariaTypes.varchar)
+  fun orderNumber(): Field<kotlin.String, OrdersRow> = Field<kotlin.String, OrdersRow>(_path, "order_number", OrdersRow::orderNumber, null, null, { row, value -> row.copy(orderNumber = value) }, MariaTypes.varchar.underlying)
 
-  fun orderStatus(): Field<String, OrdersRow> = Field<String, OrdersRow>(_path, "order_status", OrdersRow::orderStatus, null, null, { row, value -> row.copy(orderStatus = value) }, MariaTypes.text)
+  fun orderStatus(): Field<kotlin.String, OrdersRow> = Field<kotlin.String, OrdersRow>(_path, "order_status", OrdersRow::orderStatus, null, null, { row, value -> row.copy(orderStatus = value) }, MariaTypes.text.underlying)
 
-  fun orderedAt(): Field<LocalDateTime, OrdersRow> = Field<LocalDateTime, OrdersRow>(_path, "ordered_at", OrdersRow::orderedAt, null, null, { row, value -> row.copy(orderedAt = value) }, MariaTypes.datetime)
+  fun orderedAt(): Field<LocalDateTime, OrdersRow> = Field<LocalDateTime, OrdersRow>(_path, "ordered_at", OrdersRow::orderedAt, null, null, { row, value -> row.copy(orderedAt = value) }, MariaTypes.datetime.underlying)
 
-  fun paymentStatus(): Field<String, OrdersRow> = Field<String, OrdersRow>(_path, "payment_status", OrdersRow::paymentStatus, null, null, { row, value -> row.copy(paymentStatus = value) }, MariaTypes.text)
+  fun paymentStatus(): Field<kotlin.String, OrdersRow> = Field<kotlin.String, OrdersRow>(_path, "payment_status", OrdersRow::paymentStatus, null, null, { row, value -> row.copy(paymentStatus = value) }, MariaTypes.text.underlying)
 
-  fun promotionId(): OptField<PromotionsId, OrdersRow> = OptField<PromotionsId, OrdersRow>(_path, "promotion_id", OrdersRow::promotionId, null, null, { row, value -> row.copy(promotionId = value) }, PromotionsId.mariaType)
+  fun promotionId(): OptField<PromotionsId, OrdersRow> = OptField<PromotionsId, OrdersRow>(_path, "promotion_id", OrdersRow::promotionId, null, null, { row, value -> row.copy(promotionId = value) }, PromotionsId.mariaType.underlying)
 
-  override fun rowParser(): RowParser<OrdersRow> = OrdersRow._rowParser.underlying
+  override fun rowCodec(): RowCodec<OrdersRow> = OrdersRow.rowCodec.underlying
 
-  fun shippedAt(): OptField<LocalDateTime, OrdersRow> = OptField<LocalDateTime, OrdersRow>(_path, "shipped_at", OrdersRow::shippedAt, null, null, { row, value -> row.copy(shippedAt = value) }, MariaTypes.datetime)
+  fun shippedAt(): OptField<LocalDateTime, OrdersRow> = OptField<LocalDateTime, OrdersRow>(_path, "shipped_at", OrdersRow::shippedAt, null, null, { row, value -> row.copy(shippedAt = value) }, MariaTypes.datetime.underlying)
 
-  fun shippingAddressId(): OptField<CustomerAddressesId, OrdersRow> = OptField<CustomerAddressesId, OrdersRow>(_path, "shipping_address_id", OrdersRow::shippingAddressId, null, null, { row, value -> row.copy(shippingAddressId = value) }, CustomerAddressesId.mariaType)
+  fun shippingAddressId(): OptField<CustomerAddressesId, OrdersRow> = OptField<CustomerAddressesId, OrdersRow>(_path, "shipping_address_id", OrdersRow::shippingAddressId, null, null, { row, value -> row.copy(shippingAddressId = value) }, CustomerAddressesId.mariaType.underlying)
 
-  fun shippingCost(): Field<BigDecimal, OrdersRow> = Field<BigDecimal, OrdersRow>(_path, "shipping_cost", OrdersRow::shippingCost, null, null, { row, value -> row.copy(shippingCost = value) }, KotlinDbTypes.MariaTypes.numeric)
+  fun shippingCost(): Field<BigDecimal, OrdersRow> = Field<BigDecimal, OrdersRow>(_path, "shipping_cost", OrdersRow::shippingCost, null, null, { row, value -> row.copy(shippingCost = value) }, MariaTypes.numeric.underlying)
 
-  fun subtotal(): Field<BigDecimal, OrdersRow> = Field<BigDecimal, OrdersRow>(_path, "subtotal", OrdersRow::subtotal, null, null, { row, value -> row.copy(subtotal = value) }, KotlinDbTypes.MariaTypes.numeric)
+  fun subtotal(): Field<BigDecimal, OrdersRow> = Field<BigDecimal, OrdersRow>(_path, "subtotal", OrdersRow::subtotal, null, null, { row, value -> row.copy(subtotal = value) }, MariaTypes.numeric.underlying)
 
-  fun taxAmount(): Field<BigDecimal, OrdersRow> = Field<BigDecimal, OrdersRow>(_path, "tax_amount", OrdersRow::taxAmount, null, null, { row, value -> row.copy(taxAmount = value) }, KotlinDbTypes.MariaTypes.numeric)
+  fun taxAmount(): Field<BigDecimal, OrdersRow> = Field<BigDecimal, OrdersRow>(_path, "tax_amount", OrdersRow::taxAmount, null, null, { row, value -> row.copy(taxAmount = value) }, MariaTypes.numeric.underlying)
 
-  fun totalAmount(): Field<BigDecimal, OrdersRow> = Field<BigDecimal, OrdersRow>(_path, "total_amount", OrdersRow::totalAmount, null, null, { row, value -> row.copy(totalAmount = value) }, KotlinDbTypes.MariaTypes.numeric)
+  fun totalAmount(): Field<BigDecimal, OrdersRow> = Field<BigDecimal, OrdersRow>(_path, "total_amount", OrdersRow::totalAmount, null, null, { row, value -> row.copy(totalAmount = value) }, MariaTypes.numeric.underlying)
 
-  fun userAgent(): OptField<String, OrdersRow> = OptField<String, OrdersRow>(_path, "user_agent", OrdersRow::userAgent, null, null, { row, value -> row.copy(userAgent = value) }, MariaTypes.varchar)
+  fun userAgent(): OptField<kotlin.String, OrdersRow> = OptField<kotlin.String, OrdersRow>(_path, "user_agent", OrdersRow::userAgent, null, null, { row, value -> row.copy(userAgent = value) }, MariaTypes.varchar.underlying)
 
   override fun withPaths(_path: List<Path>): RelationStructure<OrdersFields, OrdersRow> = OrdersFields(_path)
 

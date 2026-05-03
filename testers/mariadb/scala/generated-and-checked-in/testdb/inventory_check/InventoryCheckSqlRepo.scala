@@ -7,12 +7,12 @@ package testdb.inventory_check
 
 import dev.typr.foundations.data.Uint1
 import dev.typr.foundations.data.Uint8
-import java.sql.Connection
+import dev.typr.foundationssc.ConnectionRead
 
 trait InventoryCheckSqlRepo {
   def apply(
     warehouseId: Option[Uint1],
     productId: Option[Uint8],
     lowStockOnly: Option[Boolean]
-  )(using c: Connection): List[InventoryCheckSqlRow]
+  )(using c: ConnectionRead): List[InventoryCheckSqlRow]
 }

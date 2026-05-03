@@ -5,9 +5,9 @@
  */
 package testdb.cte_test
 
-import java.sql.Connection
+import dev.typr.foundationskt.ConnectionRead
 import kotlin.collections.List
 
 interface CteTestSqlRepo {
-  abstract fun apply(c: Connection): List<CteTestSqlRow>
+  abstract fun apply(c: ConnectionRead): List<CteTestSqlRow>
 }

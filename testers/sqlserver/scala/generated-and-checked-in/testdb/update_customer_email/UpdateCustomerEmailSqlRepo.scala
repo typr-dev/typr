@@ -5,7 +5,7 @@
  */
 package testdb.update_customer_email
 
-import java.sql.Connection
+import dev.typr.foundationssc.Connection
 
 trait UpdateCustomerEmailSqlRepo {
   def apply(

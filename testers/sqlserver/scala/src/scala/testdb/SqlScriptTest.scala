@@ -11,14 +11,12 @@ import scala.util.Random
 /** Tests for SQL script generated repositories. These tests exercise the typed query classes generated from SQL files in sql-scripts/sqlserver/.
   */
 class SqlScriptTest {
-  private val testInsert = TestInsert(Random(42))
+  private val testInsert = TestInsert(Random(165599952))
   private val ordersSummaryRepo = CustomerOrdersSummarySqlRepoImpl()
   private val findByEmailRepo = FindCustomersByEmailSqlRepoImpl()
 
   @Test
-  def testCustomerOrdersSummaryNoFilters(): Unit = withConnection { c =>
-    given java.sql.Connection = c
-
+  def testCustomerOrdersSummaryNoFilters(): Unit = withConnection {
     val customer = testInsert.Customers(name = "Summary Test")
     val _ = testInsert.Orders(customer.customerId, totalAmount = BigDecimal("150.00"))
 
@@ -31,9 +29,7 @@ class SqlScriptTest {
   }
 
   @Test
-  def testCustomerOrdersSummaryWithNamePattern(): Unit = withConnection { c =>
-    given java.sql.Connection = c
-
+  def testCustomerOrdersSummaryWithNamePattern(): Unit = withConnection {
     val customer = testInsert.Customers(name = "PatternMatch Customer")
     val _ = testInsert.Orders(customer.customerId)
 
@@ -44,9 +40,7 @@ class SqlScriptTest {
   }
 
   @Test
-  def testCustomerOrdersSummaryWithMinTotal(): Unit = withConnection { c =>
-    given java.sql.Connection = c
-
+  def testCustomerOrdersSummaryWithMinTotal(): Unit = withConnection {
     val bigSpender = testInsert.Customers(name = "Big Spender")
     val _ = testInsert.Orders(bigSpender.customerId, totalAmount = BigDecimal("1000.00"))
 
@@ -60,9 +54,7 @@ class SqlScriptTest {
   }
 
   @Test
-  def testFindCustomersByEmail(): Unit = withConnection { c =>
-    given java.sql.Connection = c
-
+  def testFindCustomersByEmail(): Unit = withConnection {
     val customer = testInsert.Customers(email = Email("unique-sqlserver-test@example.com"))
 
     val results = findByEmailRepo("%unique-sqlserver-test%")
@@ -72,9 +64,7 @@ class SqlScriptTest {
   }
 
   @Test
-  def testFindCustomersByEmailNoMatch(): Unit = withConnection { c =>
-    given java.sql.Connection = c
-
+  def testFindCustomersByEmailNoMatch(): Unit = withConnection {
     val _ = testInsert.Customers()
 
     val results = findByEmailRepo("%nonexistent-email-pattern%")
@@ -83,9 +73,7 @@ class SqlScriptTest {
   }
 
   @Test
-  def testOrderSummaryMultipleOrders(): Unit = withConnection { c =>
-    given java.sql.Connection = c
-
+  def testOrderSummaryMultipleOrders(): Unit = withConnection {
     val customer = testInsert.Customers(name = "Multi Order Customer")
 
     val _ = testInsert.Orders(customer.customerId, totalAmount = BigDecimal("100.00"))

@@ -27,7 +27,7 @@ object NameStyle {
 
   implicit lazy val arraySetter: Setter[Array[NameStyle]] = adventureworks.BooleanArraySetter.contramap(_.map(_.value))
 
-  implicit lazy val bijection: Bijection[NameStyle, Boolean] = Bijection.apply[NameStyle, Boolean](_.value)(NameStyle.apply)
+  implicit lazy val bijection: Bijection[NameStyle, Boolean] = Bijection[NameStyle, Boolean](_.value)(NameStyle.apply)
 
   implicit lazy val jdbcDecoder: JdbcDecoder[NameStyle] = JdbcDecoder.booleanDecoder.map(NameStyle.apply)
 

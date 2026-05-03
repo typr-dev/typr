@@ -7,8 +7,15 @@ package adventureworks.public.pgtest
 
 import adventureworks.public.Mydomain
 import adventureworks.public.Myenum
+import dev.typr.dsl.FieldsBase
+import dev.typr.dsl.Path
+import dev.typr.dsl.RelationStructure
+import dev.typr.dsl.SqlExpr
+import dev.typr.dsl.SqlExpr.Field
+import dev.typr.dsl.SqlExpr.FieldLike
+import dev.typr.dsl.TupleExpr.TupleExpr70
 import dev.typr.foundations.PgTypes
-import dev.typr.foundations.RowParser
+import dev.typr.foundations.RowCodec
 import dev.typr.foundations.data.Inet
 import dev.typr.foundations.data.Int2Vector
 import dev.typr.foundations.data.Json
@@ -16,13 +23,6 @@ import dev.typr.foundations.data.Jsonb
 import dev.typr.foundations.data.Money
 import dev.typr.foundations.data.Vector
 import dev.typr.foundations.data.Xml
-import dev.typr.foundations.dsl.FieldsBase
-import dev.typr.foundations.dsl.Path
-import dev.typr.foundations.dsl.RelationStructure
-import dev.typr.foundations.dsl.SqlExpr
-import dev.typr.foundations.dsl.SqlExpr.Field
-import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.dsl.TupleExpr.TupleExpr70
 import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -39,7 +39,7 @@ import org.postgresql.geometric.PGpoint
 import org.postgresql.geometric.PGpolygon
 import org.postgresql.util.PGInterval
 
-class PgtestFields(val `_path`: java.util.List[Path]) extends TupleExpr70[java.lang.Boolean, PGbox, String, Array[scala.Byte], String, PGcircle, LocalDate, java.lang.Float, java.lang.Double, java.util.Map[String, String], Inet, java.lang.Short, Int2Vector, Integer, java.lang.Long, PGInterval, Json, Jsonb, PGline, PGlseg, Money, Mydomain, Myenum, String, java.math.BigDecimal, PGpath, PGpoint, PGpolygon, String, LocalTime, LocalDateTime, Instant, OffsetTime, UUID, String, Vector, Xml, Array[PGbox], Array[/* bpchar */ String], Array[/* bpchar */ String], Array[PGcircle], Array[LocalDate], Array[java.lang.Float], Array[java.lang.Double], Array[Inet], Array[java.lang.Short], Array[Int2Vector], Array[Integer], Array[java.lang.Long], Array[PGInterval], Array[Json], Array[Jsonb], Array[PGline], Array[PGlseg], Array[Money], Array[Mydomain], Array[Myenum], Array[String], Array[java.math.BigDecimal], Array[PGpath], Array[PGpoint], Array[PGpolygon], Array[String], Array[LocalTime], Array[LocalDateTime], Array[Instant], Array[OffsetTime], Array[UUID], Array[String], Array[Xml]] with RelationStructure[PgtestFields, PgtestRow]  with FieldsBase[PgtestRow] {
+class PgtestFields(val `_path`: java.util.List[Path]) extends TupleExpr70[java.lang.Boolean, PGbox, String, Array[scala.Byte], String, PGcircle, LocalDate, java.lang.Float, java.lang.Double, java.util.Map[String, String], Inet, java.lang.Short, Int2Vector, Integer, java.lang.Long, PGInterval, Json, Jsonb, PGline, PGlseg, Money, Mydomain, Myenum, String, java.math.BigDecimal, PGpath, PGpoint, PGpolygon, String, LocalTime, LocalDateTime, Instant, OffsetTime, UUID, String, Vector, Xml, java.util.List[PGbox], java.util.List[/* bpchar */ String], java.util.List[/* bpchar */ String], java.util.List[PGcircle], java.util.List[LocalDate], java.util.List[java.lang.Float], java.util.List[java.lang.Double], java.util.List[Inet], java.util.List[java.lang.Short], java.util.List[Int2Vector], java.util.List[Integer], java.util.List[java.lang.Long], java.util.List[PGInterval], java.util.List[Json], java.util.List[Jsonb], java.util.List[PGline], java.util.List[PGlseg], java.util.List[Money], java.util.List[Mydomain], java.util.List[Myenum], java.util.List[String], java.util.List[java.math.BigDecimal], java.util.List[PGpath], java.util.List[PGpoint], java.util.List[PGpolygon], java.util.List[String], java.util.List[LocalTime], java.util.List[LocalDateTime], java.util.List[Instant], java.util.List[OffsetTime], java.util.List[UUID], java.util.List[String], java.util.List[Xml]] with RelationStructure[PgtestFields, PgtestRow]  with FieldsBase[PgtestRow] {
   def bool: Field[java.lang.Boolean, PgtestRow] = {
     new Field[java.lang.Boolean, PgtestRow](
       _path,
@@ -484,405 +484,405 @@ class PgtestFields(val `_path`: java.util.List[Path]) extends TupleExpr70[java.l
     )
   }
 
-  def boxes: Field[Array[PGbox], PgtestRow] = {
-    new Field[Array[PGbox], PgtestRow](
+  def boxes: Field[java.util.List[PGbox], PgtestRow] = {
+    new Field[java.util.List[PGbox], PgtestRow](
       _path,
       "boxes",
       _.boxes,
       Optional.empty(),
       Optional.of("box[]"),
       (row, value) => row.copy(boxes = value),
-      PgTypes.boxArray
+      PgTypes.box.array()
     )
   }
 
-  def bpchares: Field[Array[/* bpchar */ String], PgtestRow] = {
-    new Field[Array[/* bpchar */ String], PgtestRow](
+  def bpchares: Field[java.util.List[/* bpchar */ String], PgtestRow] = {
+    new Field[java.util.List[/* bpchar */ String], PgtestRow](
       _path,
       "bpchares",
       _.bpchares,
       Optional.empty(),
       Optional.of("bpchar[]"),
       (row, value) => row.copy(bpchares = value),
-      PgTypes.bpcharArray
+      PgTypes.bpchar.array()
     )
   }
 
-  def chares: Field[Array[/* bpchar */ String], PgtestRow] = {
-    new Field[Array[/* bpchar */ String], PgtestRow](
+  def chares: Field[java.util.List[/* bpchar */ String], PgtestRow] = {
+    new Field[java.util.List[/* bpchar */ String], PgtestRow](
       _path,
       "chares",
       _.chares,
       Optional.empty(),
       Optional.of("bpchar[]"),
       (row, value) => row.copy(chares = value),
-      PgTypes.bpcharArray
+      PgTypes.bpchar.array()
     )
   }
 
-  def circlees: Field[Array[PGcircle], PgtestRow] = {
-    new Field[Array[PGcircle], PgtestRow](
+  def circlees: Field[java.util.List[PGcircle], PgtestRow] = {
+    new Field[java.util.List[PGcircle], PgtestRow](
       _path,
       "circlees",
       _.circlees,
       Optional.empty(),
       Optional.of("circle[]"),
       (row, value) => row.copy(circlees = value),
-      PgTypes.circleArray
+      PgTypes.circle.array()
     )
   }
 
-  def datees: Field[Array[LocalDate], PgtestRow] = {
-    new Field[Array[LocalDate], PgtestRow](
+  def datees: Field[java.util.List[LocalDate], PgtestRow] = {
+    new Field[java.util.List[LocalDate], PgtestRow](
       _path,
       "datees",
       _.datees,
       Optional.empty(),
       Optional.of("date[]"),
       (row, value) => row.copy(datees = value),
-      PgTypes.dateArray
+      PgTypes.date.array()
     )
   }
 
-  def float4es: Field[Array[java.lang.Float], PgtestRow] = {
-    new Field[Array[java.lang.Float], PgtestRow](
+  def float4es: Field[java.util.List[java.lang.Float], PgtestRow] = {
+    new Field[java.util.List[java.lang.Float], PgtestRow](
       _path,
       "float4es",
       _.float4es,
       Optional.empty(),
       Optional.of("float4[]"),
       (row, value) => row.copy(float4es = value),
-      PgTypes.float4Array
+      PgTypes.float4.array()
     )
   }
 
-  def float8es: Field[Array[java.lang.Double], PgtestRow] = {
-    new Field[Array[java.lang.Double], PgtestRow](
+  def float8es: Field[java.util.List[java.lang.Double], PgtestRow] = {
+    new Field[java.util.List[java.lang.Double], PgtestRow](
       _path,
       "float8es",
       _.float8es,
       Optional.empty(),
       Optional.of("float8[]"),
       (row, value) => row.copy(float8es = value),
-      PgTypes.float8Array
+      PgTypes.float8.array()
     )
   }
 
-  def inetes: Field[Array[Inet], PgtestRow] = {
-    new Field[Array[Inet], PgtestRow](
+  def inetes: Field[java.util.List[Inet], PgtestRow] = {
+    new Field[java.util.List[Inet], PgtestRow](
       _path,
       "inetes",
       _.inetes,
       Optional.empty(),
       Optional.of("inet[]"),
       (row, value) => row.copy(inetes = value),
-      PgTypes.inetArray
+      PgTypes.inet.array()
     )
   }
 
-  def int2es: Field[Array[java.lang.Short], PgtestRow] = {
-    new Field[Array[java.lang.Short], PgtestRow](
+  def int2es: Field[java.util.List[java.lang.Short], PgtestRow] = {
+    new Field[java.util.List[java.lang.Short], PgtestRow](
       _path,
       "int2es",
       _.int2es,
       Optional.empty(),
       Optional.of("int2[]"),
       (row, value) => row.copy(int2es = value),
-      PgTypes.int2Array
+      PgTypes.int2.array()
     )
   }
 
-  def int2vectores: Field[Array[Int2Vector], PgtestRow] = {
-    new Field[Array[Int2Vector], PgtestRow](
+  def int2vectores: Field[java.util.List[Int2Vector], PgtestRow] = {
+    new Field[java.util.List[Int2Vector], PgtestRow](
       _path,
       "int2vectores",
       _.int2vectores,
       Optional.empty(),
       Optional.of("int2vector[]"),
       (row, value) => row.copy(int2vectores = value),
-      PgTypes.int2vectorArray
+      PgTypes.int2vector.array()
     )
   }
 
-  def int4es: Field[Array[Integer], PgtestRow] = {
-    new Field[Array[Integer], PgtestRow](
+  def int4es: Field[java.util.List[Integer], PgtestRow] = {
+    new Field[java.util.List[Integer], PgtestRow](
       _path,
       "int4es",
       _.int4es,
       Optional.empty(),
       Optional.of("int4[]"),
       (row, value) => row.copy(int4es = value),
-      PgTypes.int4Array
+      PgTypes.int4.array()
     )
   }
 
-  def int8es: Field[Array[java.lang.Long], PgtestRow] = {
-    new Field[Array[java.lang.Long], PgtestRow](
+  def int8es: Field[java.util.List[java.lang.Long], PgtestRow] = {
+    new Field[java.util.List[java.lang.Long], PgtestRow](
       _path,
       "int8es",
       _.int8es,
       Optional.empty(),
       Optional.of("int8[]"),
       (row, value) => row.copy(int8es = value),
-      PgTypes.int8Array
+      PgTypes.int8.array()
     )
   }
 
-  def intervales: Field[Array[PGInterval], PgtestRow] = {
-    new Field[Array[PGInterval], PgtestRow](
+  def intervales: Field[java.util.List[PGInterval], PgtestRow] = {
+    new Field[java.util.List[PGInterval], PgtestRow](
       _path,
       "intervales",
       _.intervales,
       Optional.empty(),
       Optional.of("interval[]"),
       (row, value) => row.copy(intervales = value),
-      PgTypes.intervalArray
+      PgTypes.interval.array()
     )
   }
 
-  def jsones: Field[Array[Json], PgtestRow] = {
-    new Field[Array[Json], PgtestRow](
+  def jsones: Field[java.util.List[Json], PgtestRow] = {
+    new Field[java.util.List[Json], PgtestRow](
       _path,
       "jsones",
       _.jsones,
       Optional.empty(),
       Optional.of("json[]"),
       (row, value) => row.copy(jsones = value),
-      PgTypes.jsonArray
+      PgTypes.json.array()
     )
   }
 
-  def jsonbes: Field[Array[Jsonb], PgtestRow] = {
-    new Field[Array[Jsonb], PgtestRow](
+  def jsonbes: Field[java.util.List[Jsonb], PgtestRow] = {
+    new Field[java.util.List[Jsonb], PgtestRow](
       _path,
       "jsonbes",
       _.jsonbes,
       Optional.empty(),
       Optional.of("jsonb[]"),
       (row, value) => row.copy(jsonbes = value),
-      PgTypes.jsonbArray
+      PgTypes.jsonb.array()
     )
   }
 
-  def linees: Field[Array[PGline], PgtestRow] = {
-    new Field[Array[PGline], PgtestRow](
+  def linees: Field[java.util.List[PGline], PgtestRow] = {
+    new Field[java.util.List[PGline], PgtestRow](
       _path,
       "linees",
       _.linees,
       Optional.empty(),
       Optional.of("line[]"),
       (row, value) => row.copy(linees = value),
-      PgTypes.lineArray
+      PgTypes.line.array()
     )
   }
 
-  def lseges: Field[Array[PGlseg], PgtestRow] = {
-    new Field[Array[PGlseg], PgtestRow](
+  def lseges: Field[java.util.List[PGlseg], PgtestRow] = {
+    new Field[java.util.List[PGlseg], PgtestRow](
       _path,
       "lseges",
       _.lseges,
       Optional.empty(),
       Optional.of("lseg[]"),
       (row, value) => row.copy(lseges = value),
-      PgTypes.lsegArray
+      PgTypes.lseg.array()
     )
   }
 
-  def moneyes: Field[Array[Money], PgtestRow] = {
-    new Field[Array[Money], PgtestRow](
+  def moneyes: Field[java.util.List[Money], PgtestRow] = {
+    new Field[java.util.List[Money], PgtestRow](
       _path,
       "moneyes",
       _.moneyes,
       Optional.of("numeric[]"),
       Optional.of("money[]"),
       (row, value) => row.copy(moneyes = value),
-      PgTypes.moneyArray
+      PgTypes.money.array()
     )
   }
 
-  def mydomaines: Field[Array[Mydomain], PgtestRow] = {
-    new Field[Array[Mydomain], PgtestRow](
+  def mydomaines: Field[java.util.List[Mydomain], PgtestRow] = {
+    new Field[java.util.List[Mydomain], PgtestRow](
       _path,
       "mydomaines",
       _.mydomaines,
       Optional.of("text[]"),
       Optional.of("mydomain[]"),
       (row, value) => row.copy(mydomaines = value),
-      Mydomain.pgTypeArray
+      Mydomain.pgType.array()
     )
   }
 
-  def myenumes: Field[Array[Myenum], PgtestRow] = {
-    new Field[Array[Myenum], PgtestRow](
+  def myenumes: Field[java.util.List[Myenum], PgtestRow] = {
+    new Field[java.util.List[Myenum], PgtestRow](
       _path,
       "myenumes",
       _.myenumes,
       Optional.empty(),
       Optional.of("myenum[]"),
       (row, value) => row.copy(myenumes = value),
-      Myenum.pgTypeArray
+      Myenum.pgType.array()
     )
   }
 
-  def namees: Field[Array[String], PgtestRow] = {
-    new Field[Array[String], PgtestRow](
+  def namees: Field[java.util.List[String], PgtestRow] = {
+    new Field[java.util.List[String], PgtestRow](
       _path,
       "namees",
       _.namees,
       Optional.empty(),
       Optional.of("name[]"),
       (row, value) => row.copy(namees = value),
-      PgTypes.nameArray
+      PgTypes.name.array()
     )
   }
 
-  def numerices: Field[Array[java.math.BigDecimal], PgtestRow] = {
-    new Field[Array[java.math.BigDecimal], PgtestRow](
+  def numerices: Field[java.util.List[java.math.BigDecimal], PgtestRow] = {
+    new Field[java.util.List[java.math.BigDecimal], PgtestRow](
       _path,
       "numerices",
       _.numerices,
       Optional.empty(),
       Optional.of("numeric[]"),
       (row, value) => row.copy(numerices = value),
-      PgTypes.numericArray
+      PgTypes.numeric.array()
     )
   }
 
-  def pathes: Field[Array[PGpath], PgtestRow] = {
-    new Field[Array[PGpath], PgtestRow](
+  def pathes: Field[java.util.List[PGpath], PgtestRow] = {
+    new Field[java.util.List[PGpath], PgtestRow](
       _path,
       "pathes",
       _.pathes,
       Optional.empty(),
       Optional.of("path[]"),
       (row, value) => row.copy(pathes = value),
-      PgTypes.pathArray
+      PgTypes.path.array()
     )
   }
 
-  def pointes: Field[Array[PGpoint], PgtestRow] = {
-    new Field[Array[PGpoint], PgtestRow](
+  def pointes: Field[java.util.List[PGpoint], PgtestRow] = {
+    new Field[java.util.List[PGpoint], PgtestRow](
       _path,
       "pointes",
       _.pointes,
       Optional.empty(),
       Optional.of("point[]"),
       (row, value) => row.copy(pointes = value),
-      PgTypes.pointArray
+      PgTypes.point.array()
     )
   }
 
-  def polygones: Field[Array[PGpolygon], PgtestRow] = {
-    new Field[Array[PGpolygon], PgtestRow](
+  def polygones: Field[java.util.List[PGpolygon], PgtestRow] = {
+    new Field[java.util.List[PGpolygon], PgtestRow](
       _path,
       "polygones",
       _.polygones,
       Optional.empty(),
       Optional.of("polygon[]"),
       (row, value) => row.copy(polygones = value),
-      PgTypes.polygonArray
+      PgTypes.polygon.array()
     )
   }
 
-  def textes: Field[Array[String], PgtestRow] = {
-    new Field[Array[String], PgtestRow](
+  def textes: Field[java.util.List[String], PgtestRow] = {
+    new Field[java.util.List[String], PgtestRow](
       _path,
       "textes",
       _.textes,
       Optional.empty(),
       Optional.of("text[]"),
       (row, value) => row.copy(textes = value),
-      PgTypes.textArray
+      PgTypes.text.array()
     )
   }
 
-  def timees: Field[Array[LocalTime], PgtestRow] = {
-    new Field[Array[LocalTime], PgtestRow](
+  def timees: Field[java.util.List[LocalTime], PgtestRow] = {
+    new Field[java.util.List[LocalTime], PgtestRow](
       _path,
       "timees",
       _.timees,
       Optional.empty(),
       Optional.of("time[]"),
       (row, value) => row.copy(timees = value),
-      PgTypes.timeArray
+      PgTypes.time.array()
     )
   }
 
-  def timestampes: Field[Array[LocalDateTime], PgtestRow] = {
-    new Field[Array[LocalDateTime], PgtestRow](
+  def timestampes: Field[java.util.List[LocalDateTime], PgtestRow] = {
+    new Field[java.util.List[LocalDateTime], PgtestRow](
       _path,
       "timestampes",
       _.timestampes,
       Optional.empty(),
       Optional.of("timestamp[]"),
       (row, value) => row.copy(timestampes = value),
-      PgTypes.timestampArray
+      PgTypes.timestamp.array()
     )
   }
 
-  def timestampzes: Field[Array[Instant], PgtestRow] = {
-    new Field[Array[Instant], PgtestRow](
+  def timestampzes: Field[java.util.List[Instant], PgtestRow] = {
+    new Field[java.util.List[Instant], PgtestRow](
       _path,
       "timestampzes",
       _.timestampzes,
       Optional.empty(),
       Optional.of("timestamptz[]"),
       (row, value) => row.copy(timestampzes = value),
-      PgTypes.timestamptzArray
+      PgTypes.timestamptz.array()
     )
   }
 
-  def timezes: Field[Array[OffsetTime], PgtestRow] = {
-    new Field[Array[OffsetTime], PgtestRow](
+  def timezes: Field[java.util.List[OffsetTime], PgtestRow] = {
+    new Field[java.util.List[OffsetTime], PgtestRow](
       _path,
       "timezes",
       _.timezes,
       Optional.empty(),
       Optional.of("timetz[]"),
       (row, value) => row.copy(timezes = value),
-      PgTypes.timetzArray
+      PgTypes.timetz.array()
     )
   }
 
-  def uuides: Field[Array[UUID], PgtestRow] = {
-    new Field[Array[UUID], PgtestRow](
+  def uuides: Field[java.util.List[UUID], PgtestRow] = {
+    new Field[java.util.List[UUID], PgtestRow](
       _path,
       "uuides",
       _.uuides,
       Optional.empty(),
       Optional.of("uuid[]"),
       (row, value) => row.copy(uuides = value),
-      PgTypes.uuidArray
+      PgTypes.uuid.array()
     )
   }
 
-  def varchares: Field[Array[String], PgtestRow] = {
-    new Field[Array[String], PgtestRow](
+  def varchares: Field[java.util.List[String], PgtestRow] = {
+    new Field[java.util.List[String], PgtestRow](
       _path,
       "varchares",
       _.varchares,
       Optional.empty(),
       Optional.of("varchar[]"),
       (row, value) => row.copy(varchares = value),
-      PgTypes.textArray
+      PgTypes.text.array()
     )
   }
 
-  def xmles: Field[Array[Xml], PgtestRow] = {
-    new Field[Array[Xml], PgtestRow](
+  def xmles: Field[java.util.List[Xml], PgtestRow] = {
+    new Field[java.util.List[Xml], PgtestRow](
       _path,
       "xmles",
       _.xmles,
       Optional.empty(),
       Optional.of("xml[]"),
       (row, value) => row.copy(xmles = value),
-      PgTypes.xmlArray
+      PgTypes.xml.array()
     )
   }
 
   override def columns: java.util.List[FieldLike[?, PgtestRow]] = java.util.List.of(this.bool, this.box, this.bpchar, this.bytea, this.char, this.circle, this.date, this.float4, this.float8, this.hstore, this.inet, this.int2, this.int2vector, this.int4, this.int8, this.interval, this.json, this.jsonb, this.line, this.lseg, this.money, this.mydomain, this.myenum, this.name, this.numeric, this.path, this.point, this.polygon, this.text, this.time, this.timestamp, this.timestampz, this.timez, this.uuid, this.varchar, this.vector, this.xml, this.boxes, this.bpchares, this.chares, this.circlees, this.datees, this.float4es, this.float8es, this.inetes, this.int2es, this.int2vectores, this.int4es, this.int8es, this.intervales, this.jsones, this.jsonbes, this.linees, this.lseges, this.moneyes, this.mydomaines, this.myenumes, this.namees, this.numerices, this.pathes, this.pointes, this.polygones, this.textes, this.timees, this.timestampes, this.timestampzes, this.timezes, this.uuides, this.varchares, this.xmles)
 
-  override def rowParser: RowParser[PgtestRow] = PgtestRow._rowParser
+  override def rowCodec: RowCodec[PgtestRow] = PgtestRow.rowCodec
 
   override def withPaths(`_path`: java.util.List[Path]): RelationStructure[PgtestFields, PgtestRow] = new PgtestFields(`_path`)
 
@@ -960,71 +960,71 @@ class PgtestFields(val `_path`: java.util.List[Path]) extends TupleExpr70[java.l
 
   override def `_37`: SqlExpr[Xml] = xml
 
-  override def `_38`: SqlExpr[Array[PGbox]] = boxes
+  override def `_38`: SqlExpr[java.util.List[PGbox]] = boxes
 
-  override def `_39`: SqlExpr[Array[/* bpchar */ String]] = bpchares
+  override def `_39`: SqlExpr[java.util.List[/* bpchar */ String]] = bpchares
 
-  override def `_40`: SqlExpr[Array[/* bpchar */ String]] = chares
+  override def `_40`: SqlExpr[java.util.List[/* bpchar */ String]] = chares
 
-  override def `_41`: SqlExpr[Array[PGcircle]] = circlees
+  override def `_41`: SqlExpr[java.util.List[PGcircle]] = circlees
 
-  override def `_42`: SqlExpr[Array[LocalDate]] = datees
+  override def `_42`: SqlExpr[java.util.List[LocalDate]] = datees
 
-  override def `_43`: SqlExpr[Array[java.lang.Float]] = float4es
+  override def `_43`: SqlExpr[java.util.List[java.lang.Float]] = float4es
 
-  override def `_44`: SqlExpr[Array[java.lang.Double]] = float8es
+  override def `_44`: SqlExpr[java.util.List[java.lang.Double]] = float8es
 
-  override def `_45`: SqlExpr[Array[Inet]] = inetes
+  override def `_45`: SqlExpr[java.util.List[Inet]] = inetes
 
-  override def `_46`: SqlExpr[Array[java.lang.Short]] = int2es
+  override def `_46`: SqlExpr[java.util.List[java.lang.Short]] = int2es
 
-  override def `_47`: SqlExpr[Array[Int2Vector]] = int2vectores
+  override def `_47`: SqlExpr[java.util.List[Int2Vector]] = int2vectores
 
-  override def `_48`: SqlExpr[Array[Integer]] = int4es
+  override def `_48`: SqlExpr[java.util.List[Integer]] = int4es
 
-  override def `_49`: SqlExpr[Array[java.lang.Long]] = int8es
+  override def `_49`: SqlExpr[java.util.List[java.lang.Long]] = int8es
 
-  override def `_50`: SqlExpr[Array[PGInterval]] = intervales
+  override def `_50`: SqlExpr[java.util.List[PGInterval]] = intervales
 
-  override def `_51`: SqlExpr[Array[Json]] = jsones
+  override def `_51`: SqlExpr[java.util.List[Json]] = jsones
 
-  override def `_52`: SqlExpr[Array[Jsonb]] = jsonbes
+  override def `_52`: SqlExpr[java.util.List[Jsonb]] = jsonbes
 
-  override def `_53`: SqlExpr[Array[PGline]] = linees
+  override def `_53`: SqlExpr[java.util.List[PGline]] = linees
 
-  override def `_54`: SqlExpr[Array[PGlseg]] = lseges
+  override def `_54`: SqlExpr[java.util.List[PGlseg]] = lseges
 
-  override def `_55`: SqlExpr[Array[Money]] = moneyes
+  override def `_55`: SqlExpr[java.util.List[Money]] = moneyes
 
-  override def `_56`: SqlExpr[Array[Mydomain]] = mydomaines
+  override def `_56`: SqlExpr[java.util.List[Mydomain]] = mydomaines
 
-  override def `_57`: SqlExpr[Array[Myenum]] = myenumes
+  override def `_57`: SqlExpr[java.util.List[Myenum]] = myenumes
 
-  override def `_58`: SqlExpr[Array[String]] = namees
+  override def `_58`: SqlExpr[java.util.List[String]] = namees
 
-  override def `_59`: SqlExpr[Array[java.math.BigDecimal]] = numerices
+  override def `_59`: SqlExpr[java.util.List[java.math.BigDecimal]] = numerices
 
-  override def `_60`: SqlExpr[Array[PGpath]] = pathes
+  override def `_60`: SqlExpr[java.util.List[PGpath]] = pathes
 
-  override def `_61`: SqlExpr[Array[PGpoint]] = pointes
+  override def `_61`: SqlExpr[java.util.List[PGpoint]] = pointes
 
-  override def `_62`: SqlExpr[Array[PGpolygon]] = polygones
+  override def `_62`: SqlExpr[java.util.List[PGpolygon]] = polygones
 
-  override def `_63`: SqlExpr[Array[String]] = textes
+  override def `_63`: SqlExpr[java.util.List[String]] = textes
 
-  override def `_64`: SqlExpr[Array[LocalTime]] = timees
+  override def `_64`: SqlExpr[java.util.List[LocalTime]] = timees
 
-  override def `_65`: SqlExpr[Array[LocalDateTime]] = timestampes
+  override def `_65`: SqlExpr[java.util.List[LocalDateTime]] = timestampes
 
-  override def `_66`: SqlExpr[Array[Instant]] = timestampzes
+  override def `_66`: SqlExpr[java.util.List[Instant]] = timestampzes
 
-  override def `_67`: SqlExpr[Array[OffsetTime]] = timezes
+  override def `_67`: SqlExpr[java.util.List[OffsetTime]] = timezes
 
-  override def `_68`: SqlExpr[Array[UUID]] = uuides
+  override def `_68`: SqlExpr[java.util.List[UUID]] = uuides
 
-  override def `_69`: SqlExpr[Array[String]] = varchares
+  override def `_69`: SqlExpr[java.util.List[String]] = varchares
 
-  override def `_70`: SqlExpr[Array[Xml]] = xmles
+  override def `_70`: SqlExpr[java.util.List[Xml]] = xmles
 }
 
 object PgtestFields {

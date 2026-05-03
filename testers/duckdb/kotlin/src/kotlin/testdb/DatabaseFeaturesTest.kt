@@ -21,7 +21,7 @@ import java.util.UUID
  * Tests for DuckDB-specific features: enums, special types, and views.
  */
 class DatabaseFeaturesTest {
-    private val testInsert = TestInsert(Random(42))
+    private val testInsert = TestInsert(Random(1877479655))
     private val allTypesRepo = AllScalarTypesRepoImpl()
     private val customersRepo = CustomersRepoImpl()
     private val customerOrdersViewRepo = CustomerOrdersViewRepoImpl()
@@ -138,7 +138,7 @@ class DatabaseFeaturesTest {
     @Test
     fun testTimestampWithTimezone() {
         DuckDbTestHelper.run { c ->
-            val timestamptz = OffsetDateTime.of(2025, 6, 15, 14, 30, 45, 0, ZoneOffset.ofHours(-5))
+            val timestamptz = OffsetDateTime.of(2025, 6, 15, 14, 30, 45, 0, ZoneOffset.ofHours(-5)).toInstant()
             val row = testInsert.AllScalarTypes(
                 colNotNull = "timestamptz_test",
                 colTimestamptz = timestamptz,

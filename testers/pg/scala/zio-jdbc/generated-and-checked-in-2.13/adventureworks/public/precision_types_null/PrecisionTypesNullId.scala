@@ -24,7 +24,7 @@ object PrecisionTypesNullId {
 
   implicit lazy val arraySetter: Setter[Array[PrecisionTypesNullId]] = adventureworks.IntArraySetter.contramap(_.map(_.value))
 
-  implicit lazy val bijection: Bijection[PrecisionTypesNullId, Int] = Bijection.apply[PrecisionTypesNullId, Int](_.value)(PrecisionTypesNullId.apply)
+  implicit lazy val bijection: Bijection[PrecisionTypesNullId, Int] = Bijection[PrecisionTypesNullId, Int](_.value)(PrecisionTypesNullId.apply)
 
   implicit lazy val jdbcDecoder: JdbcDecoder[PrecisionTypesNullId] = JdbcDecoder.intDecoder.map(PrecisionTypesNullId.apply)
 

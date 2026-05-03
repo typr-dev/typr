@@ -27,7 +27,7 @@ object Phone {
 
   given arraySetter: Setter[Array[Phone]] = adventureworks.StringArraySetter.contramap(_.map(_.value))
 
-  given bijection: Bijection[Phone, String] = Bijection.apply[Phone, String](_.value)(Phone.apply)
+  given bijection: Bijection[Phone, String] = Bijection[Phone, String](_.value)(Phone.apply)
 
   given jdbcDecoder: JdbcDecoder[Phone] = JdbcDecoder.stringDecoder.map(Phone.apply)
 

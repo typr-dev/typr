@@ -5,30 +5,29 @@
  */
 package testdb.delete_old_orders
 
-import dev.typr.foundations.DuckDbTypes
-import dev.typr.foundations.scala.DbTypeOps
-import dev.typr.foundations.scala.Fragment
-import java.sql.Connection
+import dev.typr.foundationssc.ConnectionRead
+import dev.typr.foundationssc.DuckDbTypes
+import dev.typr.foundationssc.Fragment
 import java.time.LocalDate
-import dev.typr.foundations.scala.Fragment.sql
+import dev.typr.foundationssc.Fragment.sql
 
 class DeleteOldOrdersSqlRepoImpl extends DeleteOldOrdersSqlRepo {
   override def apply(
     cutoffDate: LocalDate,
     status: Option[String]
-  )(using c: Connection): List[DeleteOldOrdersSqlRow] = {
+  )(using c: ConnectionRead): List[DeleteOldOrdersSqlRow] = {
     sql"""-- Delete old orders and return what was deleted
     -- Tests: DELETE with RETURNING, date comparisons, status filtering
   
     DELETE FROM orders
     WHERE
         order_date < CAST(${Fragment.encode(DuckDbTypes.date, cutoffDate)} AS DATE)
-        AND (${Fragment.encode(DuckDbTypes.text.nullable, status)} IS NULL OR status = CAST(${Fragment.encode(DuckDbTypes.text.nullable, status)} AS VARCHAR))
+        AND (${Fragment.encode(DuckDbTypes.text.opt, status)} IS NULL OR status = CAST(${Fragment.encode(DuckDbTypes.text.opt, status)} AS VARCHAR))
     RETURNING
         order_id,
         customer_id,
         order_date,
         total_amount,
-        status""".query(DeleteOldOrdersSqlRow.`_rowParser`.all()).runUnchecked(c)
+        status""".query(DeleteOldOrdersSqlRow.rowCodec.all()).run(using c)
   }
 }

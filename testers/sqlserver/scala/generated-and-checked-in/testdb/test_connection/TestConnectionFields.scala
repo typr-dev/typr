@@ -5,17 +5,17 @@
  */
 package testdb.test_connection
 
-import dev.typr.foundations.RowParser
-import dev.typr.foundations.SqlServerTypes
-import dev.typr.foundations.dsl.FieldsBase
-import dev.typr.foundations.dsl.Path
-import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.scala.RelationStructure
-import dev.typr.foundations.scala.SqlExpr
-import dev.typr.foundations.scala.SqlExpr.Field
-import dev.typr.foundations.scala.SqlExpr.IdField
-import dev.typr.foundations.scala.SqlExpr.OptField
-import dev.typr.foundations.scala.TupleExpr3
+import dev.typr.dsl.FieldsBase
+import dev.typr.dsl.Path
+import dev.typr.dsl.SqlExpr.FieldLike
+import dev.typr.dslsc.RelationStructure
+import dev.typr.dslsc.SqlExpr
+import dev.typr.dslsc.SqlExpr.Field
+import dev.typr.dslsc.SqlExpr.IdField
+import dev.typr.dslsc.SqlExpr.OptField
+import dev.typr.dslsc.TupleExpr3
+import dev.typr.foundations.RowCodec
+import dev.typr.foundationssc.SqlServerTypes
 import java.time.LocalDateTime
 
 class TestConnectionFields(val `_path`: java.util.List[Path]) extends TupleExpr3[TestConnectionId, String, LocalDateTime] with RelationStructure[TestConnectionFields, TestConnectionRow]  with FieldsBase[TestConnectionRow] {
@@ -27,7 +27,7 @@ class TestConnectionFields(val `_path`: java.util.List[Path]) extends TupleExpr3
       None,
       None,
       (row, value) => row.copy(id = value),
-      TestConnectionId.sqlServerType
+      TestConnectionId.sqlServerType.underlying
     )
   }
 
@@ -39,7 +39,7 @@ class TestConnectionFields(val `_path`: java.util.List[Path]) extends TupleExpr3
       None,
       None,
       (row, value) => row.copy(message = value),
-      SqlServerTypes.nvarchar
+      SqlServerTypes.nvarchar.underlying
     )
   }
 
@@ -51,13 +51,13 @@ class TestConnectionFields(val `_path`: java.util.List[Path]) extends TupleExpr3
       None,
       None,
       (row, value) => row.copy(createdAt = value),
-      SqlServerTypes.datetime2
+      SqlServerTypes.datetime2.underlying
     )
   }
 
   override def columns: java.util.List[FieldLike[?, TestConnectionRow]] = java.util.List.of(this.id.underlying, this.message.underlying, this.createdAt.underlying)
 
-  override def rowParser: RowParser[TestConnectionRow] = TestConnectionRow._rowParser.underlying
+  override def rowCodec: RowCodec[TestConnectionRow] = TestConnectionRow.rowCodec.underlying
 
   override def withPaths(`_path`: java.util.List[Path]): RelationStructure[TestConnectionFields, TestConnectionRow] = new TestConnectionFields(`_path`)
 

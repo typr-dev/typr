@@ -5,16 +5,16 @@
  */
 package oracledb.customer_products
 
+import dev.typr.dsl.FieldsBase
+import dev.typr.dsl.Path
+import dev.typr.dsl.RelationStructure
+import dev.typr.dsl.SqlExpr
+import dev.typr.dsl.SqlExpr.Field
+import dev.typr.dsl.SqlExpr.FieldLike
+import dev.typr.dsl.SqlExpr.OptField
+import dev.typr.dsl.TupleExpr.TupleExpr6
 import dev.typr.foundations.OracleTypes
-import dev.typr.foundations.RowParser
-import dev.typr.foundations.dsl.FieldsBase
-import dev.typr.foundations.dsl.Path
-import dev.typr.foundations.dsl.RelationStructure
-import dev.typr.foundations.dsl.SqlExpr
-import dev.typr.foundations.dsl.SqlExpr.Field
-import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.dsl.SqlExpr.OptField
-import dev.typr.foundations.dsl.TupleExpr.TupleExpr6
+import dev.typr.foundations.RowCodec
 import java.util.Optional
 import oracledb.AddressT
 import oracledb.MoneyT
@@ -94,7 +94,7 @@ class CustomerProductsViewFields(val `_path`: java.util.List[Path]) extends Tupl
 
   override def columns: java.util.List[FieldLike[?, CustomerProductsViewRow]] = java.util.List.of(this.customerId, this.customerName, this.billingAddress, this.productId, this.productName, this.price)
 
-  override def rowParser: RowParser[CustomerProductsViewRow] = CustomerProductsViewRow._rowParser
+  override def rowCodec: RowCodec[CustomerProductsViewRow] = CustomerProductsViewRow.rowCodec
 
   override def withPaths(`_path`: java.util.List[Path]): RelationStructure[CustomerProductsViewFields, CustomerProductsViewRow] = new CustomerProductsViewFields(`_path`)
 

@@ -47,5 +47,5 @@ case class ProductsubcategoryRowUnsaved(
 }
 
 object ProductsubcategoryRowUnsaved {
-  given pgText: PgText[ProductsubcategoryRowUnsaved] = PgText.instance((row, sb) => { ProductcategoryId.pgType.text.unsafeEncode(row.productcategoryid, sb); sb.append(PgText.DELIMETER); Name.pgType.text.unsafeEncode(row.name, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using ProductsubcategoryId.pgType.text).unsafeEncode(row.productsubcategoryid, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using PgTypes.uuid.text).unsafeEncode(row.rowguid, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using PgTypes.timestamp.text).unsafeEncode(row.modifieddate, sb) })
+  given pgText: PgText[ProductsubcategoryRowUnsaved] = PgText.instance((row, sb) => { ProductcategoryId.pgType.pgText().unsafeEncode(row.productcategoryid, sb); sb.append(PgText.DELIMETER); Name.pgType.pgText().unsafeEncode(row.name, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using ProductsubcategoryId.pgType.pgText()).unsafeEncode(row.productsubcategoryid, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using PgTypes.uuid.pgText()).unsafeEncode(row.rowguid, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using PgTypes.timestamp.pgText()).unsafeEncode(row.modifieddate, sb) })
 }

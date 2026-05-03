@@ -5,9 +5,10 @@
  */
 package testdb
 
-import dev.typr.foundations.MariaType
-import dev.typr.foundations.MariaTypes
+import dev.typr.dslsc.Bijection
 import dev.typr.foundations.data.maria.MariaSet
+import dev.typr.foundationssc.MariaType
+import dev.typr.foundationssc.MariaTypes
 import scala.collection.immutable.Set
 
 /** MariaDB SET type with values: bestseller, clearance, featured, new, sale */
@@ -33,7 +34,7 @@ object BestsellerClearanceFSet {
     }
   }
 
-  given mariaType: MariaType[BestsellerClearanceFSet] = MariaTypes.set.bimap((ms: MariaSet) => BestsellerClearanceFSet.fromString(ms.toCommaSeparated), (s: BestsellerClearanceFSet) => MariaSet.fromString(s.toCommaSeparated))
+  given mariaType: MariaType[BestsellerClearanceFSet] = MariaTypes.set.to(Bijection.of((ms: MariaSet) => BestsellerClearanceFSet.fromString(ms.toCommaSeparated), (s: BestsellerClearanceFSet) => MariaSet.fromString(s.toCommaSeparated)))
 
   def of(members: List[BestsellerClearanceFSetMember]): BestsellerClearanceFSet = BestsellerClearanceFSet(members.toSet)
 }

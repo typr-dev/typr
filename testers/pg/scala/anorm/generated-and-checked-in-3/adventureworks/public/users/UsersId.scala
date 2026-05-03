@@ -22,7 +22,7 @@ object UsersId {
 
   given arrayToStatement: ToStatement[Array[UsersId]] = TypoUUID.arrayToStatement.contramap(_.map(_.value))
 
-  given bijection: Bijection[UsersId, TypoUUID] = Bijection.apply[UsersId, TypoUUID](_.value)(UsersId.apply)
+  given bijection: Bijection[UsersId, TypoUUID] = Bijection[UsersId, TypoUUID](_.value)(UsersId.apply)
 
   given column: Column[UsersId] = TypoUUID.column.map(UsersId.apply)
 

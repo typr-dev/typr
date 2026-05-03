@@ -1,6 +1,6 @@
 package testdb
 
-import dev.typr.foundations.dsl.Bijection
+import dev.typr.foundations.Bijection
 import org.junit.Assert._
 import org.junit.Test
 import testdb.customers._
@@ -14,9 +14,7 @@ class DSLTest {
   private val customersRepo = CustomersRepoImpl()
 
   @Test
-  def testSelectWithWhere(): Unit = withConnection { c =>
-    given java.sql.Connection = c
-
+  def testSelectWithWhere(): Unit = withConnection {
     val _ = customersRepo.insert(
       CustomersRow(
         CustomersId(5001),
@@ -36,9 +34,7 @@ class DSLTest {
   }
 
   @Test
-  def testSelectWithOrderBy(): Unit = withConnection { c =>
-    given java.sql.Connection = c
-
+  def testSelectWithOrderBy(): Unit = withConnection {
     val _ = customersRepo.insert(
       CustomersRow(
         CustomersId(5002),
@@ -77,9 +73,7 @@ class DSLTest {
   }
 
   @Test
-  def testSelectWithOrderByDesc(): Unit = withConnection { c =>
-    given java.sql.Connection = c
-
+  def testSelectWithOrderByDesc(): Unit = withConnection {
     val _ = customersRepo.insert(
       CustomersRow(
         CustomersId(5005),
@@ -120,9 +114,7 @@ class DSLTest {
   }
 
   @Test
-  def testSelectWithLimit(): Unit = withConnection { c =>
-    given java.sql.Connection = c
-
+  def testSelectWithLimit(): Unit = withConnection {
     for (i <- 0 until 10) {
       val _ = customersRepo.insert(
         CustomersRow(
@@ -144,9 +136,7 @@ class DSLTest {
   }
 
   @Test
-  def testSelectWithOffset(): Unit = withConnection { c =>
-    given java.sql.Connection = c
-
+  def testSelectWithOffset(): Unit = withConnection {
     val _ = customersRepo.insert(
       CustomersRow(
         CustomersId(5200),
@@ -197,9 +187,7 @@ class DSLTest {
   }
 
   @Test
-  def testSelectWithCount(): Unit = withConnection { c =>
-    given java.sql.Connection = c
-
+  def testSelectWithCount(): Unit = withConnection {
     val _ = customersRepo.insert(
       CustomersRow(
         CustomersId(5300),
@@ -236,9 +224,7 @@ class DSLTest {
   }
 
   @Test
-  def testSelectWithLike(): Unit = withConnection { c =>
-    given java.sql.Connection = c
-
+  def testSelectWithLike(): Unit = withConnection {
     val _ = customersRepo.insert(
       CustomersRow(
         CustomersId(5400),
@@ -275,9 +261,7 @@ class DSLTest {
   }
 
   @Test
-  def testSelectWithIn(): Unit = withConnection { c =>
-    given java.sql.Connection = c
-
+  def testSelectWithIn(): Unit = withConnection {
     val c1 = customersRepo.insert(
       CustomersRow(
         CustomersId(5500),
@@ -314,9 +298,7 @@ class DSLTest {
   }
 
   @Test
-  def testSelectWithGreaterThan(): Unit = withConnection { c =>
-    given java.sql.Connection = c
-
+  def testSelectWithGreaterThan(): Unit = withConnection {
     val c1 = customersRepo.insert(
       CustomersRow(
         CustomersId(5600),
@@ -354,9 +336,7 @@ class DSLTest {
   }
 
   @Test
-  def testSelectWithProjection(): Unit = withConnection { c =>
-    given java.sql.Connection = c
-
+  def testSelectWithProjection(): Unit = withConnection {
     val _ = customersRepo.insert(
       CustomersRow(
         CustomersId(5700),

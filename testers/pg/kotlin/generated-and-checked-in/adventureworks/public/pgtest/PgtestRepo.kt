@@ -5,10 +5,11 @@
  */
 package adventureworks.public.pgtest
 
-import dev.typr.foundations.kotlin.DeleteBuilder
-import dev.typr.foundations.kotlin.SelectBuilder
-import dev.typr.foundations.kotlin.UpdateBuilder
-import java.sql.Connection
+import dev.typr.dslkt.DeleteBuilder
+import dev.typr.dslkt.SelectBuilder
+import dev.typr.dslkt.UpdateBuilder
+import dev.typr.foundationskt.Connection
+import dev.typr.foundationskt.ConnectionRead
 import kotlin.collections.Iterator
 import kotlin.collections.List
 
@@ -24,11 +25,11 @@ interface PgtestRepo {
     unsaved: Iterator<PgtestRow>,
     batchSize: Int = 10000,
     c: Connection
-  ): Long
+  ): kotlin.Long
 
   abstract fun select(): SelectBuilder<PgtestFields, PgtestRow>
 
-  abstract fun selectAll(c: Connection): List<PgtestRow>
+  abstract fun selectAll(c: ConnectionRead): List<PgtestRow>
 
   abstract fun update(): UpdateBuilder<PgtestFields, PgtestRow>
 }

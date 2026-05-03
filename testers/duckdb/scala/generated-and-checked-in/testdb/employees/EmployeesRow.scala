@@ -6,12 +6,10 @@
 package testdb.employees
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import dev.typr.foundations.DuckDbTypes
+import dev.typr.dslsc.RowCodecs
 import dev.typr.foundations.Tuple.Tuple7
-import dev.typr.foundations.scala.DbTypeOps
-import dev.typr.foundations.scala.RowParser
-import dev.typr.foundations.scala.RowParsers
-import dev.typr.foundations.scala.ScalaDbTypes
+import dev.typr.foundationssc.DuckDbTypes
+import dev.typr.foundationssc.RowCodec
 import java.time.LocalDate
 import testdb.customtypes.Defaulted
 
@@ -60,8 +58,6 @@ case class EmployeesRow(
 }
 
 object EmployeesRow {
-  val `_rowParser`: RowParser[EmployeesRow] = RowParsers.of(ScalaDbTypes.DuckDbTypes.integer, DuckDbTypes.varchar, DuckDbTypes.varchar, DuckDbTypes.varchar, DuckDbTypes.varchar, ScalaDbTypes.DuckDbTypes.numeric.nullable, DuckDbTypes.date)(EmployeesRow.apply)(row => Array[Any](row.empNumber, row.empSuffix, row.deptCode, row.deptRegion, row.empName, row.salary, row.hireDate))
-
   def apply(
     compositeId: EmployeesId,
     deptCode: String,
@@ -80,4 +76,6 @@ object EmployeesRow {
       hireDate
     )
   }
+
+  val rowCodec: RowCodec[EmployeesRow] = RowCodecs.of(DuckDbTypes.integer, DuckDbTypes.varchar, DuckDbTypes.varchar, DuckDbTypes.varchar, DuckDbTypes.varchar, DuckDbTypes.numeric.opt, DuckDbTypes.date)(EmployeesRow.apply)(row => Array[Any](row.empNumber, row.empSuffix, row.deptCode, row.deptRegion, row.empName, row.salary, row.hireDate))
 }

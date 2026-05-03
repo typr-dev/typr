@@ -6,29 +6,27 @@
 package testdb.customer_orders_view
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import dev.typr.foundations.SqlServerTypes
+import dev.typr.dslkt.RowCodecs
 import dev.typr.foundations.Tuple.Tuple6
-import dev.typr.foundations.kotlin.KotlinDbTypes
-import dev.typr.foundations.kotlin.RowParser
-import dev.typr.foundations.kotlin.RowParsers
-import dev.typr.foundations.kotlin.nullable
+import dev.typr.foundationskt.RowCodec
+import dev.typr.foundationskt.SqlServerTypes
 import java.math.BigDecimal
 import java.time.LocalDateTime
 
 /** View: customer_orders_view */
 data class CustomerOrdersViewViewRow(
   @field:JsonProperty("customer_id") val customerId: Int,
-  @field:JsonProperty("customer_name") val customerName: String,
-  @field:JsonProperty("customer_email") val customerEmail: String,
+  @field:JsonProperty("customer_name") val customerName: kotlin.String,
+  @field:JsonProperty("customer_email") val customerEmail: kotlin.String,
   @field:JsonProperty("order_id") val orderId: Int,
   @field:JsonProperty("order_date") val orderDate: LocalDateTime?,
   @field:JsonProperty("order_total") val orderTotal: BigDecimal
-) : Tuple6<Int, String, String, Int, LocalDateTime?, BigDecimal> {
+) : Tuple6<Int, kotlin.String, kotlin.String, Int, LocalDateTime?, BigDecimal> {
   override fun _1(): Int = customerId
 
-  override fun _2(): String = customerName
+  override fun _2(): kotlin.String = customerName
 
-  override fun _3(): String = customerEmail
+  override fun _3(): kotlin.String = customerEmail
 
   override fun _4(): Int = orderId
 
@@ -37,6 +35,6 @@ data class CustomerOrdersViewViewRow(
   override fun _6(): BigDecimal = orderTotal
 
   companion object {
-    val _rowParser: RowParser<CustomerOrdersViewViewRow> = RowParsers.of(KotlinDbTypes.SqlServerTypes.int_, SqlServerTypes.nvarchar, SqlServerTypes.nvarchar, KotlinDbTypes.SqlServerTypes.int_, SqlServerTypes.datetime2.nullable(), KotlinDbTypes.SqlServerTypes.money, { t0, t1, t2, t3, t4, t5 -> CustomerOrdersViewViewRow(t0, t1, t2, t3, t4, t5) }, { row -> arrayOf<Any?>(row.customerId, row.customerName, row.customerEmail, row.orderId, row.orderDate, row.orderTotal) })
+    val rowCodec: RowCodec<CustomerOrdersViewViewRow> = RowCodecs.of(SqlServerTypes.int_, SqlServerTypes.nvarchar, SqlServerTypes.nvarchar, SqlServerTypes.int_, SqlServerTypes.datetime2.opt(), SqlServerTypes.money, { t0: Int, t1: kotlin.String, t2: kotlin.String, t3: Int, t4: LocalDateTime?, t5: BigDecimal -> CustomerOrdersViewViewRow(t0, t1, t2, t3, t4, t5) }, { row: CustomerOrdersViewViewRow -> arrayOf<Any?>(row.customerId, row.customerName, row.customerEmail, row.orderId, row.orderDate, row.orderTotal) })
   }
 }

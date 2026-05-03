@@ -12,7 +12,8 @@ import adventureworks.{DomainInsertImpl, TestInsert, WithConnection}
 import org.junit.Assert.*
 import org.junit.Test
 
-import java.sql.Connection
+import dev.typr.foundations.Connection
+
 import java.util.Random
 
 case class PersonWithAddresses(person: PersonRow, addresses: Map[Name, AddressRow])

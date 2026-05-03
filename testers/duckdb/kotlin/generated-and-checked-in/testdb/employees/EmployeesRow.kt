@@ -6,12 +6,10 @@
 package testdb.employees
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import dev.typr.foundations.DuckDbTypes
+import dev.typr.dslkt.RowCodecs
 import dev.typr.foundations.Tuple.Tuple7
-import dev.typr.foundations.kotlin.KotlinDbTypes
-import dev.typr.foundations.kotlin.RowParser
-import dev.typr.foundations.kotlin.RowParsers
-import dev.typr.foundations.kotlin.nullable
+import dev.typr.foundationskt.DuckDbTypes
+import dev.typr.foundationskt.RowCodec
 import java.math.BigDecimal
 import java.time.LocalDate
 import testdb.customtypes.Defaulted
@@ -21,23 +19,23 @@ import testdb.customtypes.Defaulted
   */
 data class EmployeesRow(
   @field:JsonProperty("emp_number") val empNumber: Int,
-  @field:JsonProperty("emp_suffix") val empSuffix: String,
-  @field:JsonProperty("dept_code") val deptCode: String,
-  @field:JsonProperty("dept_region") val deptRegion: String,
-  @field:JsonProperty("emp_name") val empName: String,
+  @field:JsonProperty("emp_suffix") val empSuffix: kotlin.String,
+  @field:JsonProperty("dept_code") val deptCode: kotlin.String,
+  @field:JsonProperty("dept_region") val deptRegion: kotlin.String,
+  @field:JsonProperty("emp_name") val empName: kotlin.String,
   val salary: BigDecimal?,
   /** Default: current_date */
   @field:JsonProperty("hire_date") val hireDate: LocalDate
-) : Tuple7<Int, String, String, String, String, BigDecimal?, LocalDate> {
+) : Tuple7<Int, kotlin.String, kotlin.String, kotlin.String, kotlin.String, BigDecimal?, LocalDate> {
   override fun _1(): Int = empNumber
 
-  override fun _2(): String = empSuffix
+  override fun _2(): kotlin.String = empSuffix
 
-  override fun _3(): String = deptCode
+  override fun _3(): kotlin.String = deptCode
 
-  override fun _4(): String = deptRegion
+  override fun _4(): kotlin.String = deptRegion
 
-  override fun _5(): String = empName
+  override fun _5(): kotlin.String = empName
 
   override fun _6(): BigDecimal? = salary
 
@@ -50,13 +48,13 @@ data class EmployeesRow(
   fun toUnsavedRow(hireDate: Defaulted<LocalDate> = Defaulted.Provided(this.hireDate)): EmployeesRowUnsaved = EmployeesRowUnsaved(empNumber, empSuffix, deptCode, deptRegion, empName, salary, hireDate)
 
   companion object {
-    val _rowParser: RowParser<EmployeesRow> = RowParsers.of(KotlinDbTypes.DuckDbTypes.integer, DuckDbTypes.varchar, DuckDbTypes.varchar, DuckDbTypes.varchar, DuckDbTypes.varchar, DuckDbTypes.numeric.nullable(), DuckDbTypes.date, { t0, t1, t2, t3, t4, t5, t6 -> EmployeesRow(t0, t1, t2, t3, t4, t5, t6) }, { row -> arrayOf<Any?>(row.empNumber, row.empSuffix, row.deptCode, row.deptRegion, row.empName, row.salary, row.hireDate) })
+    val rowCodec: RowCodec<EmployeesRow> = RowCodecs.of(DuckDbTypes.integer, DuckDbTypes.varchar, DuckDbTypes.varchar, DuckDbTypes.varchar, DuckDbTypes.varchar, DuckDbTypes.numeric.opt(), DuckDbTypes.date, { t0: Int, t1: kotlin.String, t2: kotlin.String, t3: kotlin.String, t4: kotlin.String, t5: BigDecimal?, t6: LocalDate -> EmployeesRow(t0, t1, t2, t3, t4, t5, t6) }, { row: EmployeesRow -> arrayOf<Any?>(row.empNumber, row.empSuffix, row.deptCode, row.deptRegion, row.empName, row.salary, row.hireDate) })
 
     fun apply(
       compositeId: EmployeesId,
-      deptCode: String,
-      deptRegion: String,
-      empName: String,
+      deptCode: kotlin.String,
+      deptRegion: kotlin.String,
+      empName: kotlin.String,
       salary: BigDecimal?,
       hireDate: LocalDate
     ): EmployeesRow = EmployeesRow(compositeId.empNumber, compositeId.empSuffix, deptCode, deptRegion, empName, salary, hireDate)

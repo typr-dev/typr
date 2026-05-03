@@ -5,12 +5,12 @@
  */
 package testdb.order_summary_by_customer
 
-import java.sql.Connection
+import dev.typr.foundationssc.ConnectionRead
 
 trait OrderSummaryByCustomerSqlRepo {
   def apply(
-    customerIds: Option[Array[Int]],
+    customerIds: Option[List[Int]],
     minTotal: Option[BigDecimal],
     minOrderCount: Option[Int]
-  )(using c: Connection): List[OrderSummaryByCustomerSqlRow]
+  )(using c: ConnectionRead): List[OrderSummaryByCustomerSqlRow]
 }

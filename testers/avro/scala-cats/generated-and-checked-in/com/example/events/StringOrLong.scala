@@ -1,5 +1,7 @@
 package com.example.events
 
+import com.example.events.StringOrLong.LongValue
+import com.example.events.StringOrLong.StringValue
 import java.lang.UnsupportedOperationException
 
 /** Union type for: string | long */

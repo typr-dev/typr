@@ -6,11 +6,11 @@
 package oracledb.all_types_test
 
 import com.fasterxml.jackson.annotation.JsonValue
-import dev.typr.foundations.OracleType
-import dev.typr.foundations.kotlin.Bijection
-import dev.typr.foundations.kotlin.KotlinDbTypes
-import dev.typr.foundations.kotlin.RowParser
-import dev.typr.foundations.kotlin.RowParsers
+import dev.typr.dslkt.RowCodecs
+import dev.typr.foundationskt.Bijection
+import dev.typr.foundationskt.OracleType
+import dev.typr.foundationskt.OracleTypes
+import dev.typr.foundationskt.RowCodec
 import java.math.BigDecimal
 
 /** Type for the primary key of table `ALL_TYPES_TEST` */
@@ -20,13 +20,13 @@ data class AllTypesTestId(@field:JsonValue val value: BigDecimal) {
   }
 
   companion object {
-    val _rowParser: RowParser<AllTypesTestId> =
-      RowParsers.of(KotlinDbTypes.OracleTypes.number.bimap(::AllTypesTestId, AllTypesTestId::value), { x -> x }, { id -> arrayOf<Any?>(id) })
-
     val bijection: Bijection<AllTypesTestId, BigDecimal> =
       Bijection.of(AllTypesTestId::value, ::AllTypesTestId)
 
     val oracleType: OracleType<AllTypesTestId> =
-      KotlinDbTypes.OracleTypes.number.bimap(::AllTypesTestId, AllTypesTestId::value)
+      OracleTypes.number.to(Bijection.of(::AllTypesTestId, AllTypesTestId::value))
+
+    val rowCodec: RowCodec<AllTypesTestId> =
+      RowCodecs.of(OracleTypes.number.to(Bijection.of(::AllTypesTestId, AllTypesTestId::value)), { x -> x }, { id -> arrayOf<Any?>(id) })
   }
 }

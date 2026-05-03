@@ -5,21 +5,21 @@
  */
 package adventureworks.update_person_returning
 
+import dev.typr.foundations.ConnectionRead
 import dev.typr.foundations.Fragment
 import dev.typr.foundations.PgTypes
-import java.sql.Connection
 import java.time.LocalDateTime
 import java.util.Optional
-import dev.typr.foundations.Fragment.interpolate
+import dev.typr.foundations.Fragment.concat
 
 class UpdatePersonReturningSqlRepoImpl extends UpdatePersonReturningSqlRepo {
   override def apply(
     suffix: /* nullability unknown */ Optional[String],
     cutoff: /* nullability unknown */ Optional[LocalDateTime]
-  )(using c: Connection): java.util.List[UpdatePersonReturningSqlRow] = {
-    interpolate(Fragment.lit("""update person.person
-    set firstname = firstname || '-' || """), Fragment.encode(PgTypes.text.opt(), suffix), Fragment.lit("""
-    where modifieddate < """), Fragment.encode(PgTypes.timestamp.opt(), cutoff), Fragment.lit("""::timestamp
-    returning firstname, modifieddate""")).query(UpdatePersonReturningSqlRow.`_rowParser`.all()).runUnchecked(c)
+  )(using c: ConnectionRead): java.util.List[UpdatePersonReturningSqlRow] = {
+    concat(Fragment.of("""update person.person
+    set firstname = firstname || '-' || """), Fragment.encode(PgTypes.text.opt, suffix), Fragment.of("""
+    where modifieddate < """), Fragment.encode(PgTypes.timestamp.opt, cutoff), Fragment.of("""::timestamp
+    returning firstname, modifieddate""")).query(UpdatePersonReturningSqlRow.rowCodec.all()).run(c)
   }
 }

@@ -6,12 +6,12 @@
 package oracledb.precisetypes
 
 import com.fasterxml.jackson.annotation.JsonValue
+import dev.typr.dsl.RowCodecs
+import dev.typr.foundations.Bijection
 import dev.typr.foundations.OracleType
 import dev.typr.foundations.OracleTypes
-import dev.typr.foundations.RowParser
-import dev.typr.foundations.RowParsers
+import dev.typr.foundations.RowCodec
 import dev.typr.foundations.data.precise.LocalDateTimeN
-import dev.typr.foundations.dsl.Bijection
 import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
 
@@ -20,7 +20,7 @@ case class LocalDateTime3 private(@JsonValue value: LocalDateTime) extends Local
 
   override def fractionalSecondsPrecision: scala.Int = 3
 
-  override def semanticEquals(other: LocalDateTimeN): scala.Boolean = (if (other == null) false else value == other.rawValue())
+  override def semanticEquals(other: LocalDateTimeN): scala.Boolean = (if (other == null) false else (value == other.rawValue()))
 
   override def semanticHashCode: scala.Int = value.hashCode()
 
@@ -30,13 +30,13 @@ case class LocalDateTime3 private(@JsonValue value: LocalDateTime) extends Local
 }
 
 object LocalDateTime3 {
-  given `_rowParser`: RowParser[LocalDateTime3] = RowParsers.of(OracleTypes.timestamp.bimap(LocalDateTime3.apply, _.value), x => x, id => Array[Any](id))
-
-  given bijection: Bijection[LocalDateTime3, LocalDateTime] = Bijection.apply[LocalDateTime3, LocalDateTime](_.value)(LocalDateTime3.apply)
+  given bijection: Bijection[LocalDateTime3, LocalDateTime] = Bijection.of[LocalDateTime3, LocalDateTime](_.value, LocalDateTime3.apply)
 
   def now: LocalDateTime3 = new LocalDateTime3(LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS))
 
   def of(value: LocalDateTime): LocalDateTime3 = new LocalDateTime3(value.truncatedTo(ChronoUnit.MILLIS))
 
-  given oracleType: OracleType[LocalDateTime3] = OracleTypes.timestamp.bimap(LocalDateTime3.apply, _.value)
+  given oracleType: OracleType[LocalDateTime3] = OracleTypes.timestamp.to(Bijection.of(LocalDateTime3.apply, _.value))
+
+  given rowCodec: RowCodec[LocalDateTime3] = RowCodecs.of(OracleTypes.timestamp.to(Bijection.of(LocalDateTime3.apply, _.value)), x => x, id => Array[Any](id))
 }

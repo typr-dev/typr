@@ -5,10 +5,11 @@
  */
 package adventureworks.production.productcosthistory
 
-import dev.typr.foundations.dsl.DeleteBuilder
-import dev.typr.foundations.dsl.SelectBuilder
-import dev.typr.foundations.dsl.UpdateBuilder
-import java.sql.Connection
+import dev.typr.dsl.DeleteBuilder
+import dev.typr.dsl.SelectBuilder
+import dev.typr.dsl.UpdateBuilder
+import dev.typr.foundations.Connection
+import dev.typr.foundations.ConnectionRead
 import java.util.Optional
 
 trait ProductcosthistoryRepo {
@@ -16,7 +17,7 @@ trait ProductcosthistoryRepo {
 
   def deleteById(compositeId: ProductcosthistoryId)(using c: Connection): java.lang.Boolean
 
-  def deleteByIds(compositeIds: Array[ProductcosthistoryId])(using c: Connection): Integer
+  def deleteByIds(compositeIds: java.util.List[ProductcosthistoryId])(using c: Connection): Integer
 
   def insert(unsaved: ProductcosthistoryRow)(using c: Connection): ProductcosthistoryRow
 
@@ -35,13 +36,13 @@ trait ProductcosthistoryRepo {
 
   def select: SelectBuilder[ProductcosthistoryFields, ProductcosthistoryRow]
 
-  def selectAll(using c: Connection): java.util.List[ProductcosthistoryRow]
+  def selectAll(using c: ConnectionRead): java.util.List[ProductcosthistoryRow]
 
-  def selectById(compositeId: ProductcosthistoryId)(using c: Connection): Optional[ProductcosthistoryRow]
+  def selectById(compositeId: ProductcosthistoryId)(using c: ConnectionRead): Optional[ProductcosthistoryRow]
 
-  def selectByIds(compositeIds: Array[ProductcosthistoryId])(using c: Connection): java.util.List[ProductcosthistoryRow]
+  def selectByIds(compositeIds: java.util.List[ProductcosthistoryId])(using c: ConnectionRead): java.util.List[ProductcosthistoryRow]
 
-  def selectByIdsTracked(compositeIds: Array[ProductcosthistoryId])(using c: Connection): java.util.Map[ProductcosthistoryId, ProductcosthistoryRow]
+  def selectByIdsTracked(compositeIds: java.util.List[ProductcosthistoryId])(using c: ConnectionRead): java.util.Map[ProductcosthistoryId, ProductcosthistoryRow]
 
   def update: UpdateBuilder[ProductcosthistoryFields, ProductcosthistoryRow]
 

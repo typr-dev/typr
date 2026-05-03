@@ -2,8 +2,8 @@ package adventureworks.production.product;
 
 import adventureworks.SnapshotTest;
 import adventureworks.public_.Name;
+import dev.typr.dsl.SqlExpr;
 import dev.typr.foundations.PgTypes;
-import dev.typr.foundations.dsl.SqlExpr;
 import java.math.BigDecimal;
 import java.util.Optional;
 import org.junit.Test;

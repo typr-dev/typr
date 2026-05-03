@@ -5,10 +5,11 @@
  */
 package adventureworks.production.product
 
-import dev.typr.foundations.dsl.DeleteBuilder
-import dev.typr.foundations.dsl.SelectBuilder
-import dev.typr.foundations.dsl.UpdateBuilder
-import java.sql.Connection
+import dev.typr.dsl.DeleteBuilder
+import dev.typr.dsl.SelectBuilder
+import dev.typr.dsl.UpdateBuilder
+import dev.typr.foundations.Connection
+import dev.typr.foundations.ConnectionRead
 import java.util.Optional
 
 trait ProductRepo {
@@ -16,7 +17,7 @@ trait ProductRepo {
 
   def deleteById(productid: ProductId)(using c: Connection): java.lang.Boolean
 
-  def deleteByIds(productids: Array[ProductId])(using c: Connection): Integer
+  def deleteByIds(productids: java.util.List[ProductId])(using c: Connection): Integer
 
   def insert(unsaved: ProductRow)(using c: Connection): ProductRow
 
@@ -35,13 +36,13 @@ trait ProductRepo {
 
   def select: SelectBuilder[ProductFields, ProductRow]
 
-  def selectAll(using c: Connection): java.util.List[ProductRow]
+  def selectAll(using c: ConnectionRead): java.util.List[ProductRow]
 
-  def selectById(productid: ProductId)(using c: Connection): Optional[ProductRow]
+  def selectById(productid: ProductId)(using c: ConnectionRead): Optional[ProductRow]
 
-  def selectByIds(productids: Array[ProductId])(using c: Connection): java.util.List[ProductRow]
+  def selectByIds(productids: java.util.List[ProductId])(using c: ConnectionRead): java.util.List[ProductRow]
 
-  def selectByIdsTracked(productids: Array[ProductId])(using c: Connection): java.util.Map[ProductId, ProductRow]
+  def selectByIdsTracked(productids: java.util.List[ProductId])(using c: ConnectionRead): java.util.Map[ProductId, ProductRow]
 
   def update: UpdateBuilder[ProductFields, ProductRow]
 

@@ -5,10 +5,11 @@
  */
 package testdb.precision_types_null
 
-import dev.typr.foundations.kotlin.DeleteBuilder
-import dev.typr.foundations.kotlin.SelectBuilder
-import dev.typr.foundations.kotlin.UpdateBuilder
-import java.sql.Connection
+import dev.typr.dslkt.DeleteBuilder
+import dev.typr.dslkt.SelectBuilder
+import dev.typr.dslkt.UpdateBuilder
+import dev.typr.foundationskt.Connection
+import dev.typr.foundationskt.ConnectionRead
 import kotlin.collections.Iterator
 import kotlin.collections.List
 import kotlin.collections.Map
@@ -19,10 +20,10 @@ interface PrecisionTypesNullRepo {
   abstract fun deleteById(
     id: PrecisionTypesNullId,
     c: Connection
-  ): Boolean
+  ): kotlin.Boolean
 
   abstract fun deleteByIds(
-    ids: Array<PrecisionTypesNullId>,
+    ids: List<PrecisionTypesNullId>,
     c: Connection
   ): Int
 
@@ -33,21 +34,21 @@ interface PrecisionTypesNullRepo {
 
   abstract fun select(): SelectBuilder<PrecisionTypesNullFields, PrecisionTypesNullRow>
 
-  abstract fun selectAll(c: Connection): List<PrecisionTypesNullRow>
+  abstract fun selectAll(c: ConnectionRead): List<PrecisionTypesNullRow>
 
   abstract fun selectById(
     id: PrecisionTypesNullId,
-    c: Connection
+    c: ConnectionRead
   ): PrecisionTypesNullRow?
 
   abstract fun selectByIds(
-    ids: Array<PrecisionTypesNullId>,
-    c: Connection
+    ids: List<PrecisionTypesNullId>,
+    c: ConnectionRead
   ): List<PrecisionTypesNullRow>
 
   abstract fun selectByIdsTracked(
-    ids: Array<PrecisionTypesNullId>,
-    c: Connection
+    ids: List<PrecisionTypesNullId>,
+    c: ConnectionRead
   ): Map<PrecisionTypesNullId, PrecisionTypesNullRow>
 
   abstract fun update(): UpdateBuilder<PrecisionTypesNullFields, PrecisionTypesNullRow>
@@ -55,7 +56,7 @@ interface PrecisionTypesNullRepo {
   abstract fun update(
     row: PrecisionTypesNullRow,
     c: Connection
-  ): Boolean
+  ): kotlin.Boolean
 
   abstract fun upsert(
     unsaved: PrecisionTypesNullRow,

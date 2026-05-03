@@ -5,25 +5,26 @@
  */
 package adventureworks.public
 
-import dev.typr.foundations.PgType
-import dev.typr.foundations.PgTypes
-import dev.typr.foundations.internal.arrayMap
+import dev.typr.foundationskt.Bijection
+import dev.typr.foundationskt.PgType
+import dev.typr.foundationskt.PgTypes
+import kotlin.collections.List
 
 enum class Myenum(val value: kotlin.String) {
     a("a"),
     b("b"),
     c("c");
 
+    
+
     companion object {
         val Names: kotlin.String = entries.joinToString(", ") { it.value }
         val ByName: kotlin.collections.Map<kotlin.String, Myenum> = entries.associateBy { it.value }
-        val pgTypeArray: PgType<Array<Myenum>> =
-          PgTypes.textArray
-              .bimap({ xs -> arrayMap.map(xs, Myenum::force, Myenum::class.java) }, { xs -> arrayMap.map(xs, Myenum::value, String::class.java) })
-            .renamedDropPrecision("public.myenum")
+        val pgTypeArray: PgType<List<Myenum>> =
+          PgType(PgTypes.text.array()
+            .to(Bijection.of({ xs -> xs.map(Myenum::force) }, { xs -> xs.map(Myenum::value) })).underlying.renamedDropPrecision("public.myenum"))
         val pgType: PgType<Myenum> =
-          PgTypes.text.bimap(Myenum::force, Myenum::value)
-            .renamedDropPrecision("public.myenum")
+          PgType(PgTypes.text.to(Bijection.of(Myenum::force, Myenum::value)).underlying.renamedDropPrecision("public.myenum"))
 
         fun force(str: kotlin.String): Myenum =
             ByName[str] ?: throw RuntimeException("'$str' does not match any of the following legal values: $Names")

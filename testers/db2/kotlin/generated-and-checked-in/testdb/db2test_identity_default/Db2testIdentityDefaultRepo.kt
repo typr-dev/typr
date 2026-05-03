@@ -5,10 +5,11 @@
  */
 package testdb.db2test_identity_default
 
-import dev.typr.foundations.kotlin.DeleteBuilder
-import dev.typr.foundations.kotlin.SelectBuilder
-import dev.typr.foundations.kotlin.UpdateBuilder
-import java.sql.Connection
+import dev.typr.dslkt.DeleteBuilder
+import dev.typr.dslkt.SelectBuilder
+import dev.typr.dslkt.UpdateBuilder
+import dev.typr.foundationskt.Connection
+import dev.typr.foundationskt.ConnectionRead
 import kotlin.collections.Iterator
 import kotlin.collections.List
 import kotlin.collections.Map
@@ -19,10 +20,10 @@ interface Db2testIdentityDefaultRepo {
   abstract fun deleteById(
     id: Db2testIdentityDefaultId,
     c: Connection
-  ): Boolean
+  ): kotlin.Boolean
 
   abstract fun deleteByIds(
-    ids: Array<Db2testIdentityDefaultId>,
+    ids: List<Db2testIdentityDefaultId>,
     c: Connection
   ): Int
 
@@ -38,21 +39,21 @@ interface Db2testIdentityDefaultRepo {
 
   abstract fun select(): SelectBuilder<Db2testIdentityDefaultFields, Db2testIdentityDefaultRow>
 
-  abstract fun selectAll(c: Connection): List<Db2testIdentityDefaultRow>
+  abstract fun selectAll(c: ConnectionRead): List<Db2testIdentityDefaultRow>
 
   abstract fun selectById(
     id: Db2testIdentityDefaultId,
-    c: Connection
+    c: ConnectionRead
   ): Db2testIdentityDefaultRow?
 
   abstract fun selectByIds(
-    ids: Array<Db2testIdentityDefaultId>,
-    c: Connection
+    ids: List<Db2testIdentityDefaultId>,
+    c: ConnectionRead
   ): List<Db2testIdentityDefaultRow>
 
   abstract fun selectByIdsTracked(
-    ids: Array<Db2testIdentityDefaultId>,
-    c: Connection
+    ids: List<Db2testIdentityDefaultId>,
+    c: ConnectionRead
   ): Map<Db2testIdentityDefaultId, Db2testIdentityDefaultRow>
 
   abstract fun update(): UpdateBuilder<Db2testIdentityDefaultFields, Db2testIdentityDefaultRow>
@@ -60,7 +61,7 @@ interface Db2testIdentityDefaultRepo {
   abstract fun update(
     row: Db2testIdentityDefaultRow,
     c: Connection
-  ): Boolean
+  ): kotlin.Boolean
 
   abstract fun upsert(
     unsaved: Db2testIdentityDefaultRow,

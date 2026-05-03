@@ -5,17 +5,18 @@
  */
 package testdb.identity_params_test
 
-import dev.typr.foundations.scala.DeleteBuilder
-import dev.typr.foundations.scala.SelectBuilder
-import dev.typr.foundations.scala.UpdateBuilder
-import java.sql.Connection
+import dev.typr.dslsc.DeleteBuilder
+import dev.typr.dslsc.SelectBuilder
+import dev.typr.dslsc.UpdateBuilder
+import dev.typr.foundationssc.Connection
+import dev.typr.foundationssc.ConnectionRead
 
 trait IdentityParamsTestRepo {
   def delete: DeleteBuilder[IdentityParamsTestFields, IdentityParamsTestRow]
 
   def deleteById(id: IdentityParamsTestId)(using c: Connection): Boolean
 
-  def deleteByIds(ids: Array[IdentityParamsTestId])(using c: Connection): Int
+  def deleteByIds(ids: List[IdentityParamsTestId])(using c: Connection): Int
 
   def insert(unsaved: IdentityParamsTestRow)(using c: Connection): IdentityParamsTestRow
 
@@ -23,13 +24,13 @@ trait IdentityParamsTestRepo {
 
   def select: SelectBuilder[IdentityParamsTestFields, IdentityParamsTestRow]
 
-  def selectAll(using c: Connection): List[IdentityParamsTestRow]
+  def selectAll(using c: ConnectionRead): List[IdentityParamsTestRow]
 
-  def selectById(id: IdentityParamsTestId)(using c: Connection): Option[IdentityParamsTestRow]
+  def selectById(id: IdentityParamsTestId)(using c: ConnectionRead): Option[IdentityParamsTestRow]
 
-  def selectByIds(ids: Array[IdentityParamsTestId])(using c: Connection): List[IdentityParamsTestRow]
+  def selectByIds(ids: List[IdentityParamsTestId])(using c: ConnectionRead): List[IdentityParamsTestRow]
 
-  def selectByIdsTracked(ids: Array[IdentityParamsTestId])(using c: Connection): Map[IdentityParamsTestId, IdentityParamsTestRow]
+  def selectByIdsTracked(ids: List[IdentityParamsTestId])(using c: ConnectionRead): Map[IdentityParamsTestId, IdentityParamsTestRow]
 
   def update: UpdateBuilder[IdentityParamsTestFields, IdentityParamsTestRow]
 

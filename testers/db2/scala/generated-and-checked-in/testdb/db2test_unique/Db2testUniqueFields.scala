@@ -5,16 +5,16 @@
  */
 package testdb.db2test_unique
 
-import dev.typr.foundations.Db2Types
-import dev.typr.foundations.RowParser
-import dev.typr.foundations.dsl.FieldsBase
-import dev.typr.foundations.dsl.Path
-import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.scala.RelationStructure
-import dev.typr.foundations.scala.SqlExpr
-import dev.typr.foundations.scala.SqlExpr.Field
-import dev.typr.foundations.scala.SqlExpr.IdField
-import dev.typr.foundations.scala.TupleExpr4
+import dev.typr.dsl.FieldsBase
+import dev.typr.dsl.Path
+import dev.typr.dsl.SqlExpr.FieldLike
+import dev.typr.dslsc.RelationStructure
+import dev.typr.dslsc.SqlExpr
+import dev.typr.dslsc.SqlExpr.Field
+import dev.typr.dslsc.SqlExpr.IdField
+import dev.typr.dslsc.TupleExpr4
+import dev.typr.foundations.RowCodec
+import dev.typr.foundationssc.Db2Types
 
 class Db2testUniqueFields(val `_path`: java.util.List[Path]) extends TupleExpr4[Db2testUniqueId, String, String, String] with RelationStructure[Db2testUniqueFields, Db2testUniqueRow]  with FieldsBase[Db2testUniqueRow] {
   def id: IdField[Db2testUniqueId, Db2testUniqueRow] = {
@@ -25,7 +25,7 @@ class Db2testUniqueFields(val `_path`: java.util.List[Path]) extends TupleExpr4[
       None,
       None,
       (row, value) => row.copy(id = value),
-      Db2testUniqueId.db2Type
+      Db2testUniqueId.db2Type.underlying
     )
   }
 
@@ -37,7 +37,7 @@ class Db2testUniqueFields(val `_path`: java.util.List[Path]) extends TupleExpr4[
       None,
       None,
       (row, value) => row.copy(email = value),
-      Db2Types.varchar
+      Db2Types.varchar.underlying
     )
   }
 
@@ -49,7 +49,7 @@ class Db2testUniqueFields(val `_path`: java.util.List[Path]) extends TupleExpr4[
       None,
       None,
       (row, value) => row.copy(code = value),
-      Db2Types.varchar
+      Db2Types.varchar.underlying
     )
   }
 
@@ -61,13 +61,13 @@ class Db2testUniqueFields(val `_path`: java.util.List[Path]) extends TupleExpr4[
       None,
       None,
       (row, value) => row.copy(category = value),
-      Db2Types.varchar
+      Db2Types.varchar.underlying
     )
   }
 
   override def columns: java.util.List[FieldLike[?, Db2testUniqueRow]] = java.util.List.of(this.id.underlying, this.email.underlying, this.code.underlying, this.category.underlying)
 
-  override def rowParser: RowParser[Db2testUniqueRow] = Db2testUniqueRow._rowParser.underlying
+  override def rowCodec: RowCodec[Db2testUniqueRow] = Db2testUniqueRow.rowCodec.underlying
 
   override def withPaths(`_path`: java.util.List[Path]): RelationStructure[Db2testUniqueFields, Db2testUniqueRow] = new Db2testUniqueFields(`_path`)
 

@@ -5,14 +5,14 @@
  */
 package testdb.test_connection
 
-import dev.typr.foundations.SqlServerTypes
-import dev.typr.foundations.kotlin.DeleteBuilder
-import dev.typr.foundations.kotlin.Dialect
-import dev.typr.foundations.kotlin.Fragment
-import dev.typr.foundations.kotlin.SelectBuilder
-import dev.typr.foundations.kotlin.UpdateBuilder
-import dev.typr.foundations.kotlin.nullable
-import java.sql.Connection
+import dev.typr.dslkt.DeleteBuilder
+import dev.typr.dslkt.Dialect
+import dev.typr.dslkt.SelectBuilder
+import dev.typr.dslkt.UpdateBuilder
+import dev.typr.foundationskt.Connection
+import dev.typr.foundationskt.ConnectionRead
+import dev.typr.foundationskt.Fragment
+import dev.typr.foundationskt.SqlServerTypes
 import java.util.ArrayList
 import kotlin.collections.Iterator
 import kotlin.collections.List
@@ -25,22 +25,22 @@ class TestConnectionRepoImpl() : TestConnectionRepo {
   override fun deleteById(
     id: TestConnectionId,
     c: Connection
-  ): Boolean = Fragment.interpolate(Fragment.lit("delete from [test_connection] where [id] = "), Fragment.encode(TestConnectionId.sqlServerType, id), Fragment.lit("")).update().runUnchecked(c) > 0
+  ): kotlin.Boolean = Fragment.concat(Fragment.of("delete from [test_connection] where [id] = "), Fragment.encode(TestConnectionId.sqlServerType, id), Fragment.of("")).update().run(c) > 0
 
   override fun deleteByIds(
-    ids: Array<TestConnectionId>,
+    ids: List<TestConnectionId>,
     c: Connection
   ): Int {
     val fragments: ArrayList<Fragment> = ArrayList()
     for (id in ids) { fragments.add(Fragment.encode(TestConnectionId.sqlServerType, id)) }
-    return Fragment.interpolate(Fragment.lit("delete from [test_connection] where [id] in ("), Fragment.comma(fragments.toMutableList()), Fragment.lit(")")).update().runUnchecked(c)
+    return Fragment.concat(Fragment.of("delete from [test_connection] where [id] in ("), Fragment.comma(fragments.toMutableList()), Fragment.of(")")).update().run(c)
   }
 
   override fun insert(
     unsaved: TestConnectionRow,
     c: Connection
-  ): TestConnectionRow = Fragment.interpolate(Fragment.lit("insert into [test_connection]([message], [created_at])\nOUTPUT INSERTED.[id], INSERTED.[message], INSERTED.[created_at]\nvalues ("), Fragment.encode(SqlServerTypes.nvarchar, unsaved.message), Fragment.lit(", "), Fragment.encode(SqlServerTypes.datetime2.nullable(), unsaved.createdAt), Fragment.lit(")\n"))
-    .updateReturning(TestConnectionRow._rowParser.exactlyOne()).runUnchecked(c)
+  ): TestConnectionRow = Fragment.concat(Fragment.of("insert into [test_connection]([message], [created_at])\nOUTPUT INSERTED.[id], INSERTED.[message], INSERTED.[created_at]\nvalues ("), Fragment.encode(SqlServerTypes.nvarchar, unsaved.message), Fragment.of(", "), Fragment.encode(SqlServerTypes.datetime2.opt(), unsaved.createdAt), Fragment.of(")\n"))
+    .updateReturning(TestConnectionRow.rowCodec.exactlyOne()).run(c)
 
   override fun insert(
     unsaved: TestConnectionRowUnsaved,
@@ -48,65 +48,65 @@ class TestConnectionRepoImpl() : TestConnectionRepo {
   ): TestConnectionRow {
     val columns: ArrayList<Fragment> = ArrayList()
     val values: ArrayList<Fragment> = ArrayList()
-    columns.add(Fragment.lit("[message]"))
-    values.add(Fragment.interpolate(Fragment.encode(SqlServerTypes.nvarchar, unsaved.message), Fragment.lit("")))
+    columns.add(Fragment.of("[message]"))
+    values.add(Fragment.concat(Fragment.encode(SqlServerTypes.nvarchar, unsaved.message), Fragment.of("")))
     unsaved.createdAt.visit(
       {  },
-      { value -> columns.add(Fragment.lit("[created_at]"))
-      values.add(Fragment.interpolate(Fragment.encode(SqlServerTypes.datetime2.nullable(), value), Fragment.lit(""))) }
+      { value -> columns.add(Fragment.of("[created_at]"))
+      values.add(Fragment.concat(Fragment.encode(SqlServerTypes.datetime2.opt(), value), Fragment.of(""))) }
     );
-    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into [test_connection]("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nOUTPUT INSERTED.[id], INSERTED.[message], INSERTED.[created_at]\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\n"))
-    return q.updateReturning(TestConnectionRow._rowParser.exactlyOne()).runUnchecked(c)
+    val q: Fragment = Fragment.concat(Fragment.of("insert into [test_connection]("), Fragment.comma(columns.toMutableList()), Fragment.of(")\nOUTPUT INSERTED.[id], INSERTED.[message], INSERTED.[created_at]\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.of(")\n"))
+    return q.updateReturning(TestConnectionRow.rowCodec.exactlyOne()).run(c)
   }
 
-  override fun select(): SelectBuilder<TestConnectionFields, TestConnectionRow> = SelectBuilder.of("[test_connection]", TestConnectionFields.structure, TestConnectionRow._rowParser, Dialect.SQLSERVER)
+  override fun select(): SelectBuilder<TestConnectionFields, TestConnectionRow> = SelectBuilder.of("[test_connection]", TestConnectionFields.structure, TestConnectionRow.rowCodec, Dialect.SQLSERVER)
 
-  override fun selectAll(c: Connection): List<TestConnectionRow> = Fragment.interpolate(Fragment.lit("select [id], [message], [created_at]\nfrom [test_connection]\n")).query(TestConnectionRow._rowParser.all()).runUnchecked(c)
+  override fun selectAll(c: ConnectionRead): List<TestConnectionRow> = Fragment.concat(Fragment.of("select [id], [message], [created_at]\nfrom [test_connection]\n")).query(TestConnectionRow.rowCodec.all()).run(c)
 
   override fun selectById(
     id: TestConnectionId,
-    c: Connection
-  ): TestConnectionRow? = Fragment.interpolate(Fragment.lit("select [id], [message], [created_at]\nfrom [test_connection]\nwhere [id] = "), Fragment.encode(TestConnectionId.sqlServerType, id), Fragment.lit("")).query(TestConnectionRow._rowParser.first()).runUnchecked(c)
+    c: ConnectionRead
+  ): TestConnectionRow? = Fragment.concat(Fragment.of("select [id], [message], [created_at]\nfrom [test_connection]\nwhere [id] = "), Fragment.encode(TestConnectionId.sqlServerType, id), Fragment.of("")).query(TestConnectionRow.rowCodec.first()).run(c)
 
   override fun selectByIds(
-    ids: Array<TestConnectionId>,
-    c: Connection
+    ids: List<TestConnectionId>,
+    c: ConnectionRead
   ): List<TestConnectionRow> {
     val fragments: ArrayList<Fragment> = ArrayList()
     for (id in ids) { fragments.add(Fragment.encode(TestConnectionId.sqlServerType, id)) }
-    return Fragment.interpolate(Fragment.lit("select [id], [message], [created_at] from [test_connection] where [id] in ("), Fragment.comma(fragments.toMutableList()), Fragment.lit(")")).query(TestConnectionRow._rowParser.all()).runUnchecked(c)
+    return Fragment.concat(Fragment.of("select [id], [message], [created_at] from [test_connection] where [id] in ("), Fragment.comma(fragments.toMutableList()), Fragment.of(")")).query(TestConnectionRow.rowCodec.all()).run(c)
   }
 
   override fun selectByIdsTracked(
-    ids: Array<TestConnectionId>,
-    c: Connection
+    ids: List<TestConnectionId>,
+    c: ConnectionRead
   ): Map<TestConnectionId, TestConnectionRow> {
     val ret: MutableMap<TestConnectionId, TestConnectionRow> = mutableMapOf<TestConnectionId, TestConnectionRow>()
     selectByIds(ids, c).forEach({ row -> ret.put(row.id, row) })
     return ret.toMap()
   }
 
-  override fun update(): UpdateBuilder<TestConnectionFields, TestConnectionRow> = UpdateBuilder.of("[test_connection]", TestConnectionFields.structure, TestConnectionRow._rowParser, Dialect.SQLSERVER)
+  override fun update(): UpdateBuilder<TestConnectionFields, TestConnectionRow> = UpdateBuilder.of("[test_connection]", TestConnectionFields.structure, TestConnectionRow.rowCodec, Dialect.SQLSERVER)
 
   override fun update(
     row: TestConnectionRow,
     c: Connection
-  ): Boolean {
+  ): kotlin.Boolean {
     val id: TestConnectionId = row.id
-    return Fragment.interpolate(Fragment.lit("update [test_connection]\nset [message] = "), Fragment.encode(SqlServerTypes.nvarchar, row.message), Fragment.lit(",\n[created_at] = "), Fragment.encode(SqlServerTypes.datetime2.nullable(), row.createdAt), Fragment.lit("\nwhere [id] = "), Fragment.encode(TestConnectionId.sqlServerType, id), Fragment.lit("")).update().runUnchecked(c) > 0
+    return Fragment.concat(Fragment.of("update [test_connection]\nset [message] = "), Fragment.encode(SqlServerTypes.nvarchar, row.message), Fragment.of(",\n[created_at] = "), Fragment.encode(SqlServerTypes.datetime2.opt(), row.createdAt), Fragment.of("\nwhere [id] = "), Fragment.encode(TestConnectionId.sqlServerType, id), Fragment.of("")).update().run(c) > 0
   }
 
   override fun upsert(
     unsaved: TestConnectionRow,
     c: Connection
-  ): TestConnectionRow = Fragment.interpolate(Fragment.lit("MERGE INTO [test_connection] AS target\nUSING (VALUES ("), Fragment.encode(TestConnectionId.sqlServerType, unsaved.id), Fragment.lit(", "), Fragment.encode(SqlServerTypes.nvarchar, unsaved.message), Fragment.lit(", "), Fragment.encode(SqlServerTypes.datetime2.nullable(), unsaved.createdAt), Fragment.lit(")) AS source([id], [message], [created_at])\nON target.[id] = source.[id]\nWHEN MATCHED THEN UPDATE SET [message] = source.[message],\n[created_at] = source.[created_at]\nWHEN NOT MATCHED THEN INSERT ([id], [message], [created_at]) VALUES ("), Fragment.encode(TestConnectionId.sqlServerType, unsaved.id), Fragment.lit(", "), Fragment.encode(SqlServerTypes.nvarchar, unsaved.message), Fragment.lit(", "), Fragment.encode(SqlServerTypes.datetime2.nullable(), unsaved.createdAt), Fragment.lit(")\nOUTPUT INSERTED.[id], INSERTED.[message], INSERTED.[created_at];"))
-    .updateReturning(TestConnectionRow._rowParser.exactlyOne())
-    .runUnchecked(c)
+  ): TestConnectionRow = Fragment.concat(Fragment.of("MERGE INTO [test_connection] AS target\nUSING (VALUES ("), Fragment.encode(TestConnectionId.sqlServerType, unsaved.id), Fragment.of(", "), Fragment.encode(SqlServerTypes.nvarchar, unsaved.message), Fragment.of(", "), Fragment.encode(SqlServerTypes.datetime2.opt(), unsaved.createdAt), Fragment.of(")) AS source([id], [message], [created_at])\nON target.[id] = source.[id]\nWHEN MATCHED THEN UPDATE SET [message] = source.[message],\n[created_at] = source.[created_at]\nWHEN NOT MATCHED THEN INSERT ([id], [message], [created_at]) VALUES ("), Fragment.encode(TestConnectionId.sqlServerType, unsaved.id), Fragment.of(", "), Fragment.encode(SqlServerTypes.nvarchar, unsaved.message), Fragment.of(", "), Fragment.encode(SqlServerTypes.datetime2.opt(), unsaved.createdAt), Fragment.of(")\nOUTPUT INSERTED.[id], INSERTED.[message], INSERTED.[created_at];"))
+    .updateReturning(TestConnectionRow.rowCodec.exactlyOne())
+    .run(c)
 
   override fun upsertBatch(
     unsaved: Iterator<TestConnectionRow>,
     c: Connection
-  ): List<TestConnectionRow> = Fragment.interpolate(Fragment.lit("MERGE INTO [test_connection] AS target\nUSING (VALUES (?, ?, ?)) AS source([id], [message], [created_at])\nON target.[id] = source.[id]\nWHEN MATCHED THEN UPDATE SET [message] = source.[message],\n[created_at] = source.[created_at]\nWHEN NOT MATCHED THEN INSERT ([id], [message], [created_at]) VALUES (?, ?, ?)\nOUTPUT INSERTED.[id], INSERTED.[message], INSERTED.[created_at];"))
-    .updateReturningEach(TestConnectionRow._rowParser, unsaved)
-  .runUnchecked(c)
+  ): List<TestConnectionRow> = Fragment.concat(Fragment.of("MERGE INTO [test_connection] AS target\nUSING (VALUES (?, ?, ?)) AS source([id], [message], [created_at])\nON target.[id] = source.[id]\nWHEN MATCHED THEN UPDATE SET [message] = source.[message],\n[created_at] = source.[created_at]\nWHEN NOT MATCHED THEN INSERT ([id], [message], [created_at]) VALUES (?, ?, ?)\nOUTPUT INSERTED.[id], INSERTED.[message], INSERTED.[created_at];"))
+    .updateReturningEach(TestConnectionRow.rowCodec, unsaved)
+  .run(c)
 }

@@ -5,19 +5,17 @@
  */
 package testdb.order_summary_by_customer
 
-import dev.typr.foundations.DuckDbTypes
-import dev.typr.foundations.kotlin.Fragment
-import dev.typr.foundations.kotlin.KotlinDbTypes
-import dev.typr.foundations.kotlin.nullable
+import dev.typr.foundationskt.ConnectionRead
+import dev.typr.foundationskt.DuckDbTypes
+import dev.typr.foundationskt.Fragment
 import java.math.BigDecimal
-import java.sql.Connection
 import kotlin.collections.List
 
 class OrderSummaryByCustomerSqlRepoImpl() : OrderSummaryByCustomerSqlRepo {
   override fun apply(
-    customerIds: Array<Int>?,
+    customerIds: List<Int>?,
     minTotal: BigDecimal?,
     minOrderCount: Int?,
-    c: Connection
-  ): List<OrderSummaryByCustomerSqlRow> = Fragment.interpolate(Fragment.lit("-- Order summary with aggregations and complex joins\n-- Tests: aggregations, GROUP BY, HAVING, multiple joins, type-safe IDs in WHERE\n\nSELECT\n    c.customer_id,\n    c.name AS customer_name,\n    c.email,\n    c.priority,\n    COUNT(DISTINCT o.order_id) AS order_count,\n    COALESCE(SUM(o.total_amount), 0.0) AS total_spent,\n    MAX(o.order_date) AS last_order_date,\n    MIN(o.order_date) AS first_order_date,\n    COALESCE(AVG(o.total_amount), 0.0) AS avg_order_amount\nFROM customers c\nLEFT JOIN orders o ON c.customer_id = o.customer_id\nWHERE\n    ("), Fragment.encode(DuckDbTypes.integerArray.nullable(), customerIds), Fragment.lit(" IS NULL OR c.customer_id = ANY(CAST("), Fragment.encode(DuckDbTypes.integerArray.nullable(), customerIds), Fragment.lit(" AS INTEGER[])))\n    AND ("), Fragment.encode(DuckDbTypes.numeric.nullable(), minTotal), Fragment.lit(" IS NULL OR c.customer_id IN (\n        SELECT customer_id\n        FROM orders\n        GROUP BY customer_id\n        HAVING SUM(total_amount) >= CAST("), Fragment.encode(DuckDbTypes.numeric.nullable(), minTotal), Fragment.lit(" AS DECIMAL)\n    ))\nGROUP BY c.customer_id, c.name, c.email, c.priority\nHAVING\n    ("), Fragment.encode(KotlinDbTypes.DuckDbTypes.integer.nullable(), minOrderCount), Fragment.lit(" IS NULL OR COUNT(DISTINCT o.order_id) >= CAST("), Fragment.encode(KotlinDbTypes.DuckDbTypes.integer.nullable(), minOrderCount), Fragment.lit(" AS INTEGER))\nORDER BY total_spent DESC, customer_name")).query(OrderSummaryByCustomerSqlRow._rowParser.all()).runUnchecked(c)
+    c: ConnectionRead
+  ): List<OrderSummaryByCustomerSqlRow> = Fragment.concat(Fragment.of("-- Order summary with aggregations and complex joins\n-- Tests: aggregations, GROUP BY, HAVING, multiple joins, type-safe IDs in WHERE\n\nSELECT\n    c.customer_id,\n    c.name AS customer_name,\n    c.email,\n    c.priority,\n    COUNT(DISTINCT o.order_id) AS order_count,\n    COALESCE(SUM(o.total_amount), 0.0) AS total_spent,\n    MAX(o.order_date) AS last_order_date,\n    MIN(o.order_date) AS first_order_date,\n    COALESCE(AVG(o.total_amount), 0.0) AS avg_order_amount\nFROM customers c\nLEFT JOIN orders o ON c.customer_id = o.customer_id\nWHERE\n    ("), Fragment.encode(DuckDbTypes.integer.list().opt(), customerIds), Fragment.of(" IS NULL OR c.customer_id = ANY(CAST("), Fragment.encode(DuckDbTypes.integer.list().opt(), customerIds), Fragment.of(" AS INTEGER[])))\n    AND ("), Fragment.encode(DuckDbTypes.numeric.opt(), minTotal), Fragment.of(" IS NULL OR c.customer_id IN (\n        SELECT customer_id\n        FROM orders\n        GROUP BY customer_id\n        HAVING SUM(total_amount) >= CAST("), Fragment.encode(DuckDbTypes.numeric.opt(), minTotal), Fragment.of(" AS DECIMAL)\n    ))\nGROUP BY c.customer_id, c.name, c.email, c.priority\nHAVING\n    ("), Fragment.encode(DuckDbTypes.integer.opt(), minOrderCount), Fragment.of(" IS NULL OR COUNT(DISTINCT o.order_id) >= CAST("), Fragment.encode(DuckDbTypes.integer.opt(), minOrderCount), Fragment.of(" AS INTEGER))\nORDER BY total_spent DESC, customer_name")).query(OrderSummaryByCustomerSqlRow.rowCodec.all()).run(c)
 }

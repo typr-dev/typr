@@ -5,17 +5,18 @@
  */
 package adventureworks.production.productcategory
 
-import dev.typr.foundations.dsl.DeleteBuilder
-import dev.typr.foundations.dsl.DeleteBuilderMock
-import dev.typr.foundations.dsl.DeleteParams
-import dev.typr.foundations.dsl.SelectBuilder
-import dev.typr.foundations.dsl.SelectBuilderMock
-import dev.typr.foundations.dsl.SelectParams
-import dev.typr.foundations.dsl.UpdateBuilder
-import dev.typr.foundations.dsl.UpdateBuilderMock
-import dev.typr.foundations.dsl.UpdateParams
+import dev.typr.dsl.DeleteBuilder
+import dev.typr.dsl.DeleteBuilderMock
+import dev.typr.dsl.DeleteParams
+import dev.typr.dsl.SelectBuilder
+import dev.typr.dsl.SelectBuilderMock
+import dev.typr.dsl.SelectParams
+import dev.typr.dsl.UpdateBuilder
+import dev.typr.dsl.UpdateBuilderMock
+import dev.typr.dsl.UpdateParams
+import dev.typr.foundations.Connection
+import dev.typr.foundations.ConnectionRead
 import java.lang.RuntimeException
-import java.sql.Connection
 import java.util.ArrayList
 import java.util.HashMap
 import java.util.Optional
@@ -30,9 +31,9 @@ case class ProductcategoryRepoMock(
 
   override def deleteById(productcategoryid: ProductcategoryId)(using c: Connection): java.lang.Boolean = Optional.ofNullable(map.remove(productcategoryid)).isPresent()
 
-  override def deleteByIds(productcategoryids: Array[ProductcategoryId])(using c: Connection): Integer = {
+  override def deleteByIds(productcategoryids: java.util.List[ProductcategoryId])(using c: Connection): Integer = {
     var count = 0
-    productcategoryids.foreach { id => if (Optional.ofNullable(map.remove(id)).isPresent()) {
+    productcategoryids.forEach { id => if (Optional.ofNullable(map.remove(id)).isPresent()) {
       count = count + 1
     } }
     return count
@@ -78,19 +79,19 @@ case class ProductcategoryRepoMock(
 
   override def select: SelectBuilder[ProductcategoryFields, ProductcategoryRow] = SelectBuilderMock(ProductcategoryFields.structure, () => new ArrayList(map.values()), SelectParams.empty())
 
-  override def selectAll(using c: Connection): java.util.List[ProductcategoryRow] = new ArrayList(map.values())
+  override def selectAll(using c: ConnectionRead): java.util.List[ProductcategoryRow] = new ArrayList(map.values())
 
-  override def selectById(productcategoryid: ProductcategoryId)(using c: Connection): Optional[ProductcategoryRow] = Optional.ofNullable(map.get(productcategoryid))
+  override def selectById(productcategoryid: ProductcategoryId)(using c: ConnectionRead): Optional[ProductcategoryRow] = Optional.ofNullable(map.get(productcategoryid))
 
-  override def selectByIds(productcategoryids: Array[ProductcategoryId])(using c: Connection): java.util.List[ProductcategoryRow] = {
+  override def selectByIds(productcategoryids: java.util.List[ProductcategoryId])(using c: ConnectionRead): java.util.List[ProductcategoryRow] = {
     val result = new ArrayList[ProductcategoryRow]()
-    productcategoryids.foreach { id => val opt = Optional.ofNullable(map.get(id)); if (opt.isPresent()) {
+    productcategoryids.forEach { id => val opt = Optional.ofNullable(map.get(id)); if (opt.isPresent()) {
       result.add(opt.get()): @scala.annotation.nowarn
     } }
     return result
   }
 
-  override def selectByIdsTracked(productcategoryids: Array[ProductcategoryId])(using c: Connection): java.util.Map[ProductcategoryId, ProductcategoryRow] = selectByIds(productcategoryids)(using c).stream().collect(Collectors.toMap((row: ProductcategoryRow) => row.productcategoryid, Function.identity()))
+  override def selectByIdsTracked(productcategoryids: java.util.List[ProductcategoryId])(using c: ConnectionRead): java.util.Map[ProductcategoryId, ProductcategoryRow] = selectByIds(productcategoryids)(using c).stream().collect(Collectors.toMap((row: ProductcategoryRow) => row.productcategoryid, Function.identity()))
 
   override def update: UpdateBuilder[ProductcategoryFields, ProductcategoryRow] = UpdateBuilderMock(ProductcategoryFields.structure, () => new ArrayList(map.values()), UpdateParams.empty(), row => row)
 

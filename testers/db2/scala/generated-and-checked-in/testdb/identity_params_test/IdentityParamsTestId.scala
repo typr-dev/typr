@@ -6,15 +6,15 @@
 package testdb.identity_params_test
 
 import com.fasterxml.jackson.annotation.JsonValue
-import dev.typr.foundations.Db2Type
-import dev.typr.foundations.scala.Bijection
-import dev.typr.foundations.scala.ScalaDbTypes
+import dev.typr.dslsc.Bijection
+import dev.typr.foundationssc.Db2Type
+import dev.typr.foundationssc.Db2Types
 
 /** Type for the primary key of table `IDENTITY_PARAMS_TEST` */
 case class IdentityParamsTestId(@JsonValue value: Int) extends scala.AnyVal
 
 object IdentityParamsTestId {
-  given bijection: Bijection[IdentityParamsTestId, Int] = Bijection.apply[IdentityParamsTestId, Int](_.value)(IdentityParamsTestId.apply)
+  given bijection: Bijection[IdentityParamsTestId, Int] = Bijection.of[IdentityParamsTestId, Int](_.value, IdentityParamsTestId.apply)
 
-  given db2Type: Db2Type[IdentityParamsTestId] = ScalaDbTypes.Db2Types.integer.bimap(IdentityParamsTestId.apply, _.value)
+  given db2Type: Db2Type[IdentityParamsTestId] = Db2Types.integer.to(Bijection.of(IdentityParamsTestId.apply, _.value))
 }

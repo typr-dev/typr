@@ -8,7 +8,6 @@ package adventureworks.public.pgtestnull
 import adventureworks.public.Mydomain
 import adventureworks.public.Myenum
 import dev.typr.foundations.PgText
-import dev.typr.foundations.PgTypes
 import dev.typr.foundations.Tuple.Tuple70
 import dev.typr.foundations.data.Inet
 import dev.typr.foundations.data.Int2Vector
@@ -17,10 +16,8 @@ import dev.typr.foundations.data.Jsonb
 import dev.typr.foundations.data.Money
 import dev.typr.foundations.data.Vector
 import dev.typr.foundations.data.Xml
-import dev.typr.foundations.kotlin.KotlinDbTypes
-import dev.typr.foundations.kotlin.RowParser
-import dev.typr.foundations.kotlin.RowParsers
-import dev.typr.foundations.kotlin.nullable
+import dev.typr.foundationskt.PgTypes
+import dev.typr.foundationskt.RowCodec
 import java.math.BigDecimal
 import java.time.Instant
 import java.time.LocalDate
@@ -28,6 +25,7 @@ import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.OffsetTime
 import java.util.UUID
+import kotlin.collections.List
 import kotlin.collections.Map
 import org.postgresql.geometric.PGbox
 import org.postgresql.geometric.PGcircle
@@ -40,21 +38,21 @@ import org.postgresql.util.PGInterval
 
 /** Table: public.pgtestnull */
 data class PgtestnullRow(
-  val bool: Boolean?,
+  val bool: kotlin.Boolean?,
   val box: PGbox?,
-  val bpchar: /* bpchar, max 3 chars */ String?,
+  val bpchar: /* bpchar, max 3 chars */ kotlin.String?,
   val bytea: ByteArray?,
-  val char: /* bpchar, max 1 chars */ String?,
+  val char: /* bpchar, max 1 chars */ kotlin.String?,
   val circle: PGcircle?,
   val date: LocalDate?,
-  val float4: Float?,
-  val float8: Double?,
-  val hstore: Map<String, String>?,
+  val float4: kotlin.Float?,
+  val float8: kotlin.Double?,
+  val hstore: Map<kotlin.String, kotlin.String>?,
   val inet: Inet?,
-  val int2: Short?,
+  val int2: kotlin.Short?,
   val int2vector: Int2Vector?,
   val int4: Int?,
-  val int8: Long?,
+  val int8: kotlin.Long?,
   val interval: PGInterval?,
   val json: Json?,
   val jsonb: Jsonb?,
@@ -63,67 +61,67 @@ data class PgtestnullRow(
   val money: Money?,
   val mydomain: Mydomain?,
   val myenum: Myenum?,
-  val name: String?,
+  val name: kotlin.String?,
   val numeric: BigDecimal?,
   val path: PGpath?,
   val point: PGpoint?,
   val polygon: PGpolygon?,
-  val text: String?,
+  val text: kotlin.String?,
   val time: LocalTime?,
   val timestamp: LocalDateTime?,
   val timestampz: Instant?,
   val timez: OffsetTime?,
   val uuid: UUID?,
-  val varchar: String?,
+  val varchar: kotlin.String?,
   val vector: Vector?,
   val xml: Xml?,
-  val boxes: Array<PGbox>?,
-  val bpchares: Array</* bpchar */ String>?,
-  val chares: Array</* bpchar */ String>?,
-  val circlees: Array<PGcircle>?,
-  val datees: Array<LocalDate>?,
-  val float4es: Array<Float>?,
-  val float8es: Array<Double>?,
-  val inetes: Array<Inet>?,
-  val int2es: Array<Short>?,
-  val int2vectores: Array<Int2Vector>?,
-  val int4es: Array<Int>?,
-  val int8es: Array<Long>?,
-  val intervales: Array<PGInterval>?,
-  val jsones: Array<Json>?,
-  val jsonbes: Array<Jsonb>?,
-  val linees: Array<PGline>?,
-  val lseges: Array<PGlseg>?,
-  val moneyes: Array<Money>?,
-  val mydomaines: Array<Mydomain>?,
-  val myenumes: Array<Myenum>?,
-  val namees: Array<String>?,
-  val numerices: Array<BigDecimal>?,
-  val pathes: Array<PGpath>?,
-  val pointes: Array<PGpoint>?,
-  val polygones: Array<PGpolygon>?,
-  val textes: Array<String>?,
-  val timees: Array<LocalTime>?,
-  val timestampes: Array<LocalDateTime>?,
-  val timestampzes: Array<Instant>?,
-  val timezes: Array<OffsetTime>?,
-  val uuides: Array<UUID>?,
-  val varchares: Array<String>?,
-  val xmles: Array<Xml>?
-) : Tuple70<Boolean?, PGbox?, /* bpchar, max 3 chars */ String?, ByteArray?, /* bpchar, max 1 chars */ String?, PGcircle?, LocalDate?, Float?, Double?, Map<String, String>?, Inet?, Short?, Int2Vector?, Int?, Long?, PGInterval?, Json?, Jsonb?, PGline?, PGlseg?, Money?, Mydomain?, Myenum?, String?, BigDecimal?, PGpath?, PGpoint?, PGpolygon?, String?, LocalTime?, LocalDateTime?, Instant?, OffsetTime?, UUID?, String?, Vector?, Xml?, Array<PGbox>?, Array</* bpchar */ String>?, Array</* bpchar */ String>?, Array<PGcircle>?, Array<LocalDate>?, Array<Float>?, Array<Double>?, Array<Inet>?, Array<Short>?, Array<Int2Vector>?, Array<Int>?, Array<Long>?, Array<PGInterval>?, Array<Json>?, Array<Jsonb>?, Array<PGline>?, Array<PGlseg>?, Array<Money>?, Array<Mydomain>?, Array<Myenum>?, Array<String>?, Array<BigDecimal>?, Array<PGpath>?, Array<PGpoint>?, Array<PGpolygon>?, Array<String>?, Array<LocalTime>?, Array<LocalDateTime>?, Array<Instant>?, Array<OffsetTime>?, Array<UUID>?, Array<String>?, Array<Xml>?> {
-  override fun _1(): Boolean? = bool
+  val boxes: List<PGbox>?,
+  val bpchares: List</* bpchar */ kotlin.String>?,
+  val chares: List</* bpchar */ kotlin.String>?,
+  val circlees: List<PGcircle>?,
+  val datees: List<LocalDate>?,
+  val float4es: List<kotlin.Float>?,
+  val float8es: List<kotlin.Double>?,
+  val inetes: List<Inet>?,
+  val int2es: List<kotlin.Short>?,
+  val int2vectores: List<Int2Vector>?,
+  val int4es: List<Int>?,
+  val int8es: List<kotlin.Long>?,
+  val intervales: List<PGInterval>?,
+  val jsones: List<Json>?,
+  val jsonbes: List<Jsonb>?,
+  val linees: List<PGline>?,
+  val lseges: List<PGlseg>?,
+  val moneyes: List<Money>?,
+  val mydomaines: List<Mydomain>?,
+  val myenumes: List<Myenum>?,
+  val namees: List<kotlin.String>?,
+  val numerices: List<BigDecimal>?,
+  val pathes: List<PGpath>?,
+  val pointes: List<PGpoint>?,
+  val polygones: List<PGpolygon>?,
+  val textes: List<kotlin.String>?,
+  val timees: List<LocalTime>?,
+  val timestampes: List<LocalDateTime>?,
+  val timestampzes: List<Instant>?,
+  val timezes: List<OffsetTime>?,
+  val uuides: List<UUID>?,
+  val varchares: List<kotlin.String>?,
+  val xmles: List<Xml>?
+) : Tuple70<kotlin.Boolean?, PGbox?, /* bpchar, max 3 chars */ kotlin.String?, ByteArray?, /* bpchar, max 1 chars */ kotlin.String?, PGcircle?, LocalDate?, kotlin.Float?, kotlin.Double?, Map<kotlin.String, kotlin.String>?, Inet?, kotlin.Short?, Int2Vector?, Int?, kotlin.Long?, PGInterval?, Json?, Jsonb?, PGline?, PGlseg?, Money?, Mydomain?, Myenum?, kotlin.String?, BigDecimal?, PGpath?, PGpoint?, PGpolygon?, kotlin.String?, LocalTime?, LocalDateTime?, Instant?, OffsetTime?, UUID?, kotlin.String?, Vector?, Xml?, List<PGbox>?, List</* bpchar */ kotlin.String>?, List</* bpchar */ kotlin.String>?, List<PGcircle>?, List<LocalDate>?, List<kotlin.Float>?, List<kotlin.Double>?, List<Inet>?, List<kotlin.Short>?, List<Int2Vector>?, List<Int>?, List<kotlin.Long>?, List<PGInterval>?, List<Json>?, List<Jsonb>?, List<PGline>?, List<PGlseg>?, List<Money>?, List<Mydomain>?, List<Myenum>?, List<kotlin.String>?, List<BigDecimal>?, List<PGpath>?, List<PGpoint>?, List<PGpolygon>?, List<kotlin.String>?, List<LocalTime>?, List<LocalDateTime>?, List<Instant>?, List<OffsetTime>?, List<UUID>?, List<kotlin.String>?, List<Xml>?> {
+  override fun _1(): kotlin.Boolean? = bool
 
-  override fun _10(): Map<String, String>? = hstore
+  override fun _10(): Map<kotlin.String, kotlin.String>? = hstore
 
   override fun _11(): Inet? = inet
 
-  override fun _12(): Short? = int2
+  override fun _12(): kotlin.Short? = int2
 
   override fun _13(): Int2Vector? = int2vector
 
   override fun _14(): Int? = int4
 
-  override fun _15(): Long? = int8
+  override fun _15(): kotlin.Long? = int8
 
   override fun _16(): PGInterval? = interval
 
@@ -143,7 +141,7 @@ data class PgtestnullRow(
 
   override fun _23(): Myenum? = myenum
 
-  override fun _24(): String? = name
+  override fun _24(): kotlin.String? = name
 
   override fun _25(): BigDecimal? = numeric
 
@@ -153,9 +151,9 @@ data class PgtestnullRow(
 
   override fun _28(): PGpolygon? = polygon
 
-  override fun _29(): String? = text
+  override fun _29(): kotlin.String? = text
 
-  override fun _3(): /* bpchar, max 3 chars */ String? = bpchar
+  override fun _3(): /* bpchar, max 3 chars */ kotlin.String? = bpchar
 
   override fun _30(): LocalTime? = time
 
@@ -167,94 +165,94 @@ data class PgtestnullRow(
 
   override fun _34(): UUID? = uuid
 
-  override fun _35(): String? = varchar
+  override fun _35(): kotlin.String? = varchar
 
   override fun _36(): Vector? = vector
 
   override fun _37(): Xml? = xml
 
-  override fun _38(): Array<PGbox>? = boxes
+  override fun _38(): List<PGbox>? = boxes
 
-  override fun _39(): Array</* bpchar */ String>? = bpchares
+  override fun _39(): List</* bpchar */ kotlin.String>? = bpchares
 
   override fun _4(): ByteArray? = bytea
 
-  override fun _40(): Array</* bpchar */ String>? = chares
+  override fun _40(): List</* bpchar */ kotlin.String>? = chares
 
-  override fun _41(): Array<PGcircle>? = circlees
+  override fun _41(): List<PGcircle>? = circlees
 
-  override fun _42(): Array<LocalDate>? = datees
+  override fun _42(): List<LocalDate>? = datees
 
-  override fun _43(): Array<Float>? = float4es
+  override fun _43(): List<kotlin.Float>? = float4es
 
-  override fun _44(): Array<Double>? = float8es
+  override fun _44(): List<kotlin.Double>? = float8es
 
-  override fun _45(): Array<Inet>? = inetes
+  override fun _45(): List<Inet>? = inetes
 
-  override fun _46(): Array<Short>? = int2es
+  override fun _46(): List<kotlin.Short>? = int2es
 
-  override fun _47(): Array<Int2Vector>? = int2vectores
+  override fun _47(): List<Int2Vector>? = int2vectores
 
-  override fun _48(): Array<Int>? = int4es
+  override fun _48(): List<Int>? = int4es
 
-  override fun _49(): Array<Long>? = int8es
+  override fun _49(): List<kotlin.Long>? = int8es
 
-  override fun _5(): /* bpchar, max 1 chars */ String? = char
+  override fun _5(): /* bpchar, max 1 chars */ kotlin.String? = char
 
-  override fun _50(): Array<PGInterval>? = intervales
+  override fun _50(): List<PGInterval>? = intervales
 
-  override fun _51(): Array<Json>? = jsones
+  override fun _51(): List<Json>? = jsones
 
-  override fun _52(): Array<Jsonb>? = jsonbes
+  override fun _52(): List<Jsonb>? = jsonbes
 
-  override fun _53(): Array<PGline>? = linees
+  override fun _53(): List<PGline>? = linees
 
-  override fun _54(): Array<PGlseg>? = lseges
+  override fun _54(): List<PGlseg>? = lseges
 
-  override fun _55(): Array<Money>? = moneyes
+  override fun _55(): List<Money>? = moneyes
 
-  override fun _56(): Array<Mydomain>? = mydomaines
+  override fun _56(): List<Mydomain>? = mydomaines
 
-  override fun _57(): Array<Myenum>? = myenumes
+  override fun _57(): List<Myenum>? = myenumes
 
-  override fun _58(): Array<String>? = namees
+  override fun _58(): List<kotlin.String>? = namees
 
-  override fun _59(): Array<BigDecimal>? = numerices
+  override fun _59(): List<BigDecimal>? = numerices
 
   override fun _6(): PGcircle? = circle
 
-  override fun _60(): Array<PGpath>? = pathes
+  override fun _60(): List<PGpath>? = pathes
 
-  override fun _61(): Array<PGpoint>? = pointes
+  override fun _61(): List<PGpoint>? = pointes
 
-  override fun _62(): Array<PGpolygon>? = polygones
+  override fun _62(): List<PGpolygon>? = polygones
 
-  override fun _63(): Array<String>? = textes
+  override fun _63(): List<kotlin.String>? = textes
 
-  override fun _64(): Array<LocalTime>? = timees
+  override fun _64(): List<LocalTime>? = timees
 
-  override fun _65(): Array<LocalDateTime>? = timestampes
+  override fun _65(): List<LocalDateTime>? = timestampes
 
-  override fun _66(): Array<Instant>? = timestampzes
+  override fun _66(): List<Instant>? = timestampzes
 
-  override fun _67(): Array<OffsetTime>? = timezes
+  override fun _67(): List<OffsetTime>? = timezes
 
-  override fun _68(): Array<UUID>? = uuides
+  override fun _68(): List<UUID>? = uuides
 
-  override fun _69(): Array<String>? = varchares
+  override fun _69(): List<kotlin.String>? = varchares
 
   override fun _7(): LocalDate? = date
 
-  override fun _70(): Array<Xml>? = xmles
+  override fun _70(): List<Xml>? = xmles
 
-  override fun _8(): Float? = float4
+  override fun _8(): kotlin.Float? = float4
 
-  override fun _9(): Double? = float8
+  override fun _9(): kotlin.Double? = float8
 
   companion object {
-    val _rowParser: RowParser<PgtestnullRow> = RowParsers.of(KotlinDbTypes.PgTypes.bool.nullable(), PgTypes.box.nullable(), PgTypes.bpchar.nullable(), PgTypes.bytea.nullable(), PgTypes.bpchar.nullable(), PgTypes.circle.nullable(), PgTypes.date.nullable(), KotlinDbTypes.PgTypes.float4.nullable(), KotlinDbTypes.PgTypes.float8.nullable(), KotlinDbTypes.PgTypes.hstore.nullable(), PgTypes.inet.nullable(), KotlinDbTypes.PgTypes.int2.nullable(), PgTypes.int2vector.nullable(), KotlinDbTypes.PgTypes.int4.nullable(), KotlinDbTypes.PgTypes.int8.nullable(), PgTypes.interval.nullable(), PgTypes.json.nullable(), PgTypes.jsonb.nullable(), PgTypes.line.nullable(), PgTypes.lseg.nullable(), PgTypes.money.nullable(), Mydomain.pgType.nullable(), Myenum.pgType.nullable(), PgTypes.name.nullable(), PgTypes.numeric.nullable(), PgTypes.path.nullable(), PgTypes.point.nullable(), PgTypes.polygon.nullable(), PgTypes.text.nullable(), PgTypes.time.nullable(), PgTypes.timestamp.nullable(), PgTypes.timestamptz.nullable(), PgTypes.timetz.nullable(), PgTypes.uuid.nullable(), PgTypes.text.nullable(), PgTypes.vector.nullable(), PgTypes.xml.nullable(), PgTypes.boxArray.nullable(), PgTypes.bpcharArray.nullable(), PgTypes.bpcharArray.nullable(), PgTypes.circleArray.nullable(), PgTypes.dateArray.nullable(), PgTypes.float4Array.nullable(), PgTypes.float8Array.nullable(), PgTypes.inetArray.nullable(), PgTypes.int2Array.nullable(), PgTypes.int2vectorArray.nullable(), PgTypes.int4Array.nullable(), PgTypes.int8Array.nullable(), PgTypes.intervalArray.nullable(), PgTypes.jsonArray.nullable(), PgTypes.jsonbArray.nullable(), PgTypes.lineArray.nullable(), PgTypes.lsegArray.nullable(), PgTypes.moneyArray.nullable(), Mydomain.pgTypeArray.nullable(), Myenum.pgTypeArray.nullable(), PgTypes.nameArray.nullable(), PgTypes.numericArray.nullable(), PgTypes.pathArray.nullable(), PgTypes.pointArray.nullable(), PgTypes.polygonArray.nullable(), PgTypes.textArray.nullable(), PgTypes.timeArray.nullable(), PgTypes.timestampArray.nullable(), PgTypes.timestamptzArray.nullable(), PgTypes.timetzArray.nullable(), PgTypes.uuidArray.nullable(), PgTypes.textArray.nullable(), PgTypes.xmlArray.nullable(), { t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15, t16, t17, t18, t19, t20, t21, t22, t23, t24, t25, t26, t27, t28, t29, t30, t31, t32, t33, t34, t35, t36, t37, t38, t39, t40, t41, t42, t43, t44, t45, t46, t47, t48, t49, t50, t51, t52, t53, t54, t55, t56, t57, t58, t59, t60, t61, t62, t63, t64, t65, t66, t67, t68, t69 -> PgtestnullRow(t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15, t16, t17, t18, t19, t20, t21, t22, t23, t24, t25, t26, t27, t28, t29, t30, t31, t32, t33, t34, t35, t36, t37, t38, t39, t40, t41, t42, t43, t44, t45, t46, t47, t48, t49, t50, t51, t52, t53, t54, t55, t56, t57, t58, t59, t60, t61, t62, t63, t64, t65, t66, t67, t68, t69) }, { row -> arrayOf<Any?>(row.bool, row.box, row.bpchar, row.bytea, row.char, row.circle, row.date, row.float4, row.float8, row.hstore, row.inet, row.int2, row.int2vector, row.int4, row.int8, row.interval, row.json, row.jsonb, row.line, row.lseg, row.money, row.mydomain, row.myenum, row.name, row.numeric, row.path, row.point, row.polygon, row.text, row.time, row.timestamp, row.timestampz, row.timez, row.uuid, row.varchar, row.vector, row.xml, row.boxes, row.bpchares, row.chares, row.circlees, row.datees, row.float4es, row.float8es, row.inetes, row.int2es, row.int2vectores, row.int4es, row.int8es, row.intervales, row.jsones, row.jsonbes, row.linees, row.lseges, row.moneyes, row.mydomaines, row.myenumes, row.namees, row.numerices, row.pathes, row.pointes, row.polygones, row.textes, row.timees, row.timestampes, row.timestampzes, row.timezes, row.uuides, row.varchares, row.xmles) })
+    val rowCodec: RowCodec<PgtestnullRow> = RowCodec(dev.typr.foundations.RowCodec.create(listOf(PgTypes.bool.opt().underlying, PgTypes.box.opt().underlying, PgTypes.bpchar.opt().underlying, PgTypes.bytea.opt().underlying, PgTypes.bpchar.opt().underlying, PgTypes.circle.opt().underlying, PgTypes.date.opt().underlying, PgTypes.float4.opt().underlying, PgTypes.float8.opt().underlying, PgTypes.hstore.opt().underlying, PgTypes.inet.opt().underlying, PgTypes.int2.opt().underlying, PgTypes.int2vector.opt().underlying, PgTypes.int4.opt().underlying, PgTypes.int8.opt().underlying, PgTypes.interval.opt().underlying, PgTypes.json.opt().underlying, PgTypes.jsonb.opt().underlying, PgTypes.line.opt().underlying, PgTypes.lseg.opt().underlying, PgTypes.money.opt().underlying, Mydomain.pgType.opt().underlying, Myenum.pgType.opt().underlying, PgTypes.name.opt().underlying, PgTypes.numeric.opt().underlying, PgTypes.path.opt().underlying, PgTypes.point.opt().underlying, PgTypes.polygon.opt().underlying, PgTypes.text.opt().underlying, PgTypes.time.opt().underlying, PgTypes.timestamp.opt().underlying, PgTypes.timestamptz.opt().underlying, PgTypes.timetz.opt().underlying, PgTypes.uuid.opt().underlying, PgTypes.text.opt().underlying, PgTypes.vector.opt().underlying, PgTypes.xml.opt().underlying, PgTypes.box.array().opt().underlying, PgTypes.bpchar.array().opt().underlying, PgTypes.bpchar.array().opt().underlying, PgTypes.circle.array().opt().underlying, PgTypes.date.array().opt().underlying, PgTypes.float4.array().opt().underlying, PgTypes.float8.array().opt().underlying, PgTypes.inet.array().opt().underlying, PgTypes.int2.array().opt().underlying, PgTypes.int2vector.array().opt().underlying, PgTypes.int4.array().opt().underlying, PgTypes.int8.array().opt().underlying, PgTypes.interval.array().opt().underlying, PgTypes.json.array().opt().underlying, PgTypes.jsonb.array().opt().underlying, PgTypes.line.array().opt().underlying, PgTypes.lseg.array().opt().underlying, PgTypes.money.array().opt().underlying, Mydomain.pgType.array().opt().underlying, Myenum.pgType.array().opt().underlying, PgTypes.name.array().opt().underlying, PgTypes.numeric.array().opt().underlying, PgTypes.path.array().opt().underlying, PgTypes.point.array().opt().underlying, PgTypes.polygon.array().opt().underlying, PgTypes.text.array().opt().underlying, PgTypes.time.array().opt().underlying, PgTypes.timestamp.array().opt().underlying, PgTypes.timestamptz.array().opt().underlying, PgTypes.timetz.array().opt().underlying, PgTypes.uuid.array().opt().underlying, PgTypes.text.array().opt().underlying, PgTypes.xml.array().opt().underlying), { a -> PgtestnullRow(a[0] as kotlin.Boolean?, a[1] as PGbox?, a[2] as /* bpchar, max 3 chars */ kotlin.String?, a[3] as ByteArray?, a[4] as /* bpchar, max 1 chars */ kotlin.String?, a[5] as PGcircle?, a[6] as LocalDate?, a[7] as kotlin.Float?, a[8] as kotlin.Double?, a[9] as Map<kotlin.String, kotlin.String>?, a[10] as Inet?, a[11] as kotlin.Short?, a[12] as Int2Vector?, a[13] as Int?, a[14] as kotlin.Long?, a[15] as PGInterval?, a[16] as Json?, a[17] as Jsonb?, a[18] as PGline?, a[19] as PGlseg?, a[20] as Money?, a[21] as Mydomain?, a[22] as Myenum?, a[23] as kotlin.String?, a[24] as BigDecimal?, a[25] as PGpath?, a[26] as PGpoint?, a[27] as PGpolygon?, a[28] as kotlin.String?, a[29] as LocalTime?, a[30] as LocalDateTime?, a[31] as Instant?, a[32] as OffsetTime?, a[33] as UUID?, a[34] as kotlin.String?, a[35] as Vector?, a[36] as Xml?, a[37] as List<PGbox>?, a[38] as List</* bpchar */ kotlin.String>?, a[39] as List</* bpchar */ kotlin.String>?, a[40] as List<PGcircle>?, a[41] as List<LocalDate>?, a[42] as List<kotlin.Float>?, a[43] as List<kotlin.Double>?, a[44] as List<Inet>?, a[45] as List<kotlin.Short>?, a[46] as List<Int2Vector>?, a[47] as List<Int>?, a[48] as List<kotlin.Long>?, a[49] as List<PGInterval>?, a[50] as List<Json>?, a[51] as List<Jsonb>?, a[52] as List<PGline>?, a[53] as List<PGlseg>?, a[54] as List<Money>?, a[55] as List<Mydomain>?, a[56] as List<Myenum>?, a[57] as List<kotlin.String>?, a[58] as List<BigDecimal>?, a[59] as List<PGpath>?, a[60] as List<PGpoint>?, a[61] as List<PGpolygon>?, a[62] as List<kotlin.String>?, a[63] as List<LocalTime>?, a[64] as List<LocalDateTime>?, a[65] as List<Instant>?, a[66] as List<OffsetTime>?, a[67] as List<UUID>?, a[68] as List<kotlin.String>?, a[69] as List<Xml>?) }, { row: PgtestnullRow -> arrayOf<Any?>(row.bool, row.box, row.bpchar, row.bytea, row.char, row.circle, row.date, row.float4, row.float8, row.hstore, row.inet, row.int2, row.int2vector, row.int4, row.int8, row.interval, row.json, row.jsonb, row.line, row.lseg, row.money, row.mydomain, row.myenum, row.name, row.numeric, row.path, row.point, row.polygon, row.text, row.time, row.timestamp, row.timestampz, row.timez, row.uuid, row.varchar, row.vector, row.xml, row.boxes, row.bpchares, row.chares, row.circlees, row.datees, row.float4es, row.float8es, row.inetes, row.int2es, row.int2vectores, row.int4es, row.int8es, row.intervales, row.jsones, row.jsonbes, row.linees, row.lseges, row.moneyes, row.mydomaines, row.myenumes, row.namees, row.numerices, row.pathes, row.pointes, row.polygones, row.textes, row.timees, row.timestampes, row.timestampzes, row.timezes, row.uuides, row.varchares, row.xmles) }))
 
     val pgText: PgText<PgtestnullRow> =
-      PgText.from(_rowParser.underlying)
+      PgText.from(rowCodec.underlying)
   }
 }

@@ -111,11 +111,10 @@ public class CompositeIdsTest extends SnapshotTest {
                   c);
 
           var wanted =
-              new ProductcosthistoryId[] {
-                ph1.compositeId(),
-                ph2.compositeId(),
-                new ProductcosthistoryId(new ProductId(9999), ph3.compositeId().startdate())
-              };
+              java.util.List.of(
+                  ph1.compositeId(),
+                  ph2.compositeId(),
+                  new ProductcosthistoryId(new ProductId(9999), ph3.compositeId().startdate()));
 
           var selected =
               repo.selectByIds(wanted, c).stream()

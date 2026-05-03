@@ -6,27 +6,26 @@
 package testdb.departments
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import dev.typr.foundations.DuckDbTypes
+import dev.typr.dslkt.RowCodecs
 import dev.typr.foundations.Tuple.Tuple4
-import dev.typr.foundations.kotlin.RowParser
-import dev.typr.foundations.kotlin.RowParsers
-import dev.typr.foundations.kotlin.nullable
+import dev.typr.foundationskt.DuckDbTypes
+import dev.typr.foundationskt.RowCodec
 import java.math.BigDecimal
 
 /** Table: departments
   * Composite primary key: dept_code, dept_region
   */
 data class DepartmentsRow(
-  @field:JsonProperty("dept_code") val deptCode: String,
-  @field:JsonProperty("dept_region") val deptRegion: String,
-  @field:JsonProperty("dept_name") val deptName: String,
+  @field:JsonProperty("dept_code") val deptCode: kotlin.String,
+  @field:JsonProperty("dept_region") val deptRegion: kotlin.String,
+  @field:JsonProperty("dept_name") val deptName: kotlin.String,
   val budget: BigDecimal?
-) : Tuple4<String, String, String, BigDecimal?> {
-  override fun _1(): String = deptCode
+) : Tuple4<kotlin.String, kotlin.String, kotlin.String, BigDecimal?> {
+  override fun _1(): kotlin.String = deptCode
 
-  override fun _2(): String = deptRegion
+  override fun _2(): kotlin.String = deptRegion
 
-  override fun _3(): String = deptName
+  override fun _3(): kotlin.String = deptName
 
   override fun _4(): BigDecimal? = budget
 
@@ -35,11 +34,11 @@ data class DepartmentsRow(
   fun id(): DepartmentsId = this.compositeId()
 
   companion object {
-    val _rowParser: RowParser<DepartmentsRow> = RowParsers.of(DuckDbTypes.varchar, DuckDbTypes.varchar, DuckDbTypes.varchar, DuckDbTypes.numeric.nullable(), { t0, t1, t2, t3 -> DepartmentsRow(t0, t1, t2, t3) }, { row -> arrayOf<Any?>(row.deptCode, row.deptRegion, row.deptName, row.budget) })
+    val rowCodec: RowCodec<DepartmentsRow> = RowCodecs.of(DuckDbTypes.varchar, DuckDbTypes.varchar, DuckDbTypes.varchar, DuckDbTypes.numeric.opt(), { t0: kotlin.String, t1: kotlin.String, t2: kotlin.String, t3: BigDecimal? -> DepartmentsRow(t0, t1, t2, t3) }, { row: DepartmentsRow -> arrayOf<Any?>(row.deptCode, row.deptRegion, row.deptName, row.budget) })
 
     fun apply(
       compositeId: DepartmentsId,
-      deptName: String,
+      deptName: kotlin.String,
       budget: BigDecimal?
     ): DepartmentsRow = DepartmentsRow(compositeId.deptCode, compositeId.deptRegion, deptName, budget)
   }

@@ -8,10 +8,10 @@ package adventureworks.humanresources.employeedepartmenthistory
 import adventureworks.humanresources.department.DepartmentId
 import adventureworks.humanresources.shift.ShiftId
 import adventureworks.person.businessentity.BusinessentityId
-import dev.typr.foundations.PgTypes
+import dev.typr.dslsc.RowCodecs
 import dev.typr.foundations.Tuple.Tuple4
-import dev.typr.foundations.scala.RowParser
-import dev.typr.foundations.scala.RowParsers
+import dev.typr.foundationssc.PgTypes
+import dev.typr.foundationssc.RowCodec
 import java.time.LocalDate
 
 /** Type for the composite primary key of table `humanresources.employeedepartmenthistory` */
@@ -31,5 +31,5 @@ case class EmployeedepartmenthistoryId(
 }
 
 object EmployeedepartmenthistoryId {
-  val `_rowParser`: RowParser[EmployeedepartmenthistoryId] = RowParsers.of(BusinessentityId.pgType, PgTypes.date, DepartmentId.pgType, ShiftId.pgType)(EmployeedepartmenthistoryId.apply)(row => Array[Any](row.businessentityid, row.startdate, row.departmentid, row.shiftid))
+  val rowCodec: RowCodec[EmployeedepartmenthistoryId] = RowCodecs.of(BusinessentityId.pgType, PgTypes.date, DepartmentId.pgType, ShiftId.pgType)(EmployeedepartmenthistoryId.apply)(row => Array[Any](row.businessentityid, row.startdate, row.departmentid, row.shiftid))
 }

@@ -6,29 +6,29 @@
 package adventureworks.person.addresstype
 
 import adventureworks.public.Name
-import dev.typr.foundations.PgTypes
-import dev.typr.foundations.scala.DeleteBuilder
-import dev.typr.foundations.scala.Dialect
-import dev.typr.foundations.scala.Fragment
-import dev.typr.foundations.scala.ScalaIteratorOps
-import dev.typr.foundations.scala.SelectBuilder
-import dev.typr.foundations.scala.UpdateBuilder
-import dev.typr.foundations.streamingInsert
-import java.sql.Connection
+import dev.typr.dslsc.DeleteBuilder
+import dev.typr.dslsc.Dialect
+import dev.typr.dslsc.SelectBuilder
+import dev.typr.dslsc.UpdateBuilder
+import dev.typr.foundationssc.Connection
+import dev.typr.foundationssc.ConnectionRead
+import dev.typr.foundationssc.Fragment
+import dev.typr.foundationssc.PgTypes
+import dev.typr.foundationssc.StreamingInsert
 import scala.collection.mutable.ListBuffer
-import dev.typr.foundations.scala.Fragment.sql
+import dev.typr.foundationssc.Fragment.sql
 
 class AddresstypeRepoImpl extends AddresstypeRepo {
   override def delete: DeleteBuilder[AddresstypeFields, AddresstypeRow] = DeleteBuilder.of(""""person"."addresstype"""", AddresstypeFields.structure, Dialect.POSTGRESQL)
 
-  override def deleteById(addresstypeid: AddresstypeId)(using c: Connection): Boolean = sql"""delete from "person"."addresstype" where "addresstypeid" = ${Fragment.encode(AddresstypeId.pgType, addresstypeid)}""".update().runUnchecked(c) > 0
+  override def deleteById(addresstypeid: AddresstypeId)(using c: Connection): Boolean = sql"""delete from "person"."addresstype" where "addresstypeid" = ${Fragment.encode(AddresstypeId.pgType, addresstypeid)}""".update().run(using c) > 0
 
-  override def deleteByIds(addresstypeids: Array[AddresstypeId])(using c: Connection): Int = {
+  override def deleteByIds(addresstypeids: List[AddresstypeId])(using c: Connection): Int = {
     sql"""delete
     from "person"."addresstype"
-    where "addresstypeid" = ANY(${Fragment.encode(AddresstypeId.pgTypeArray, addresstypeids)})"""
+    where "addresstypeid" = ANY(${Fragment.encode(AddresstypeId.pgType.array, addresstypeids)})"""
       .update()
-      .runUnchecked(c)
+      .run(using c)
   }
 
   override def insert(unsaved: AddresstypeRow)(using c: Connection): AddresstypeRow = {
@@ -36,25 +36,25 @@ class AddresstypeRepoImpl extends AddresstypeRepo {
     values (${Fragment.encode(AddresstypeId.pgType, unsaved.addresstypeid)}::int4, ${Fragment.encode(Name.pgType, unsaved.name)}::varchar, ${Fragment.encode(PgTypes.uuid, unsaved.rowguid)}::uuid, ${Fragment.encode(PgTypes.timestamp, unsaved.modifieddate)}::timestamp)
     RETURNING "addresstypeid", "name", "rowguid", "modifieddate"
     """
-    .updateReturning(AddresstypeRow.`_rowParser`.exactlyOne()).runUnchecked(c)
+    .updateReturning(AddresstypeRow.rowCodec.exactlyOne()).run(using c)
   }
 
   override def insert(unsaved: AddresstypeRowUnsaved)(using c: Connection): AddresstypeRow = {
     val columns: ListBuffer[Fragment] = ListBuffer()
     val values: ListBuffer[Fragment] = ListBuffer()
-    columns.addOne(Fragment.lit(""""name"""")): @scala.annotation.nowarn
+    columns.addOne(Fragment.of(""""name"""")): @scala.annotation.nowarn
     values.addOne(sql"${Fragment.encode(Name.pgType, unsaved.name)}::varchar"): @scala.annotation.nowarn
     unsaved.addresstypeid.visit(
       {  },
-      value => { columns.addOne(Fragment.lit(""""addresstypeid"""")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(AddresstypeId.pgType, value)}::int4"): @scala.annotation.nowarn }
+      value => { columns.addOne(Fragment.of(""""addresstypeid"""")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(AddresstypeId.pgType, value)}::int4"): @scala.annotation.nowarn }
     );
     unsaved.rowguid.visit(
       {  },
-      value => { columns.addOne(Fragment.lit(""""rowguid"""")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(PgTypes.uuid, value)}::uuid"): @scala.annotation.nowarn }
+      value => { columns.addOne(Fragment.of(""""rowguid"""")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(PgTypes.uuid, value)}::uuid"): @scala.annotation.nowarn }
     );
     unsaved.modifieddate.visit(
       {  },
-      value => { columns.addOne(Fragment.lit(""""modifieddate"""")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(PgTypes.timestamp, value)}::timestamp"): @scala.annotation.nowarn }
+      value => { columns.addOne(Fragment.of(""""modifieddate"""")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(PgTypes.timestamp, value)}::timestamp"): @scala.annotation.nowarn }
     );
     val q: Fragment = {
       sql"""insert into "person"."addresstype"(${Fragment.comma(columns)})
@@ -62,47 +62,47 @@ class AddresstypeRepoImpl extends AddresstypeRepo {
       RETURNING "addresstypeid", "name", "rowguid", "modifieddate"
       """
     }
-    return q.updateReturning(AddresstypeRow.`_rowParser`.exactlyOne()).runUnchecked(c)
+    return q.updateReturning(AddresstypeRow.rowCodec.exactlyOne()).run(using c)
   }
 
   override def insertStreaming(
     unsaved: Iterator[AddresstypeRow],
     batchSize: Int = 10000
-  )(using c: Connection): Long = streamingInsert.insertUnchecked(s"""COPY "person"."addresstype"("addresstypeid", "name", "rowguid", "modifieddate") FROM STDIN""", batchSize, unsaved.toJavaIterator, c, AddresstypeRow.pgText)
+  )(using c: Connection): Long = StreamingInsert.of(s"""COPY "person"."addresstype"("addresstypeid", "name", "rowguid", "modifieddate") FROM STDIN""", batchSize, unsaved, AddresstypeRow.pgText).run(using c)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
   override def insertUnsavedStreaming(
     unsaved: Iterator[AddresstypeRowUnsaved],
     batchSize: Int = 10000
-  )(using c: Connection): Long = streamingInsert.insertUnchecked(s"""COPY "person"."addresstype"("name", "addresstypeid", "rowguid", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved.toJavaIterator, c, AddresstypeRowUnsaved.pgText)
+  )(using c: Connection): Long = StreamingInsert.of(s"""COPY "person"."addresstype"("name", "addresstypeid", "rowguid", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved, AddresstypeRowUnsaved.pgText).run(using c)
 
-  override def select: SelectBuilder[AddresstypeFields, AddresstypeRow] = SelectBuilder.of(""""person"."addresstype"""", AddresstypeFields.structure, AddresstypeRow.`_rowParser`, Dialect.POSTGRESQL)
+  override def select: SelectBuilder[AddresstypeFields, AddresstypeRow] = SelectBuilder.of(""""person"."addresstype"""", AddresstypeFields.structure, AddresstypeRow.rowCodec, Dialect.POSTGRESQL)
 
-  override def selectAll(using c: Connection): List[AddresstypeRow] = {
+  override def selectAll(using c: ConnectionRead): List[AddresstypeRow] = {
     sql"""select "addresstypeid", "name", "rowguid", "modifieddate"
     from "person"."addresstype"
-    """.query(AddresstypeRow.`_rowParser`.all()).runUnchecked(c)
+    """.query(AddresstypeRow.rowCodec.all()).run(using c)
   }
 
-  override def selectById(addresstypeid: AddresstypeId)(using c: Connection): Option[AddresstypeRow] = {
+  override def selectById(addresstypeid: AddresstypeId)(using c: ConnectionRead): Option[AddresstypeRow] = {
     sql"""select "addresstypeid", "name", "rowguid", "modifieddate"
     from "person"."addresstype"
-    where "addresstypeid" = ${Fragment.encode(AddresstypeId.pgType, addresstypeid)}""".query(AddresstypeRow.`_rowParser`.first()).runUnchecked(c)
+    where "addresstypeid" = ${Fragment.encode(AddresstypeId.pgType, addresstypeid)}""".query(AddresstypeRow.rowCodec.first()).run(using c)
   }
 
-  override def selectByIds(addresstypeids: Array[AddresstypeId])(using c: Connection): List[AddresstypeRow] = {
+  override def selectByIds(addresstypeids: List[AddresstypeId])(using c: ConnectionRead): List[AddresstypeRow] = {
     sql"""select "addresstypeid", "name", "rowguid", "modifieddate"
     from "person"."addresstype"
-    where "addresstypeid" = ANY(${Fragment.encode(AddresstypeId.pgTypeArray, addresstypeids)})""".query(AddresstypeRow.`_rowParser`.all()).runUnchecked(c)
+    where "addresstypeid" = ANY(${Fragment.encode(AddresstypeId.pgType.array, addresstypeids)})""".query(AddresstypeRow.rowCodec.all()).run(using c)
   }
 
-  override def selectByIdsTracked(addresstypeids: Array[AddresstypeId])(using c: Connection): Map[AddresstypeId, AddresstypeRow] = {
+  override def selectByIdsTracked(addresstypeids: List[AddresstypeId])(using c: ConnectionRead): Map[AddresstypeId, AddresstypeRow] = {
     val ret: scala.collection.mutable.Map[AddresstypeId, AddresstypeRow] = scala.collection.mutable.Map.empty[AddresstypeId, AddresstypeRow]
     selectByIds(addresstypeids)(using c).foreach(row => ret.put(row.addresstypeid, row): @scala.annotation.nowarn)
     return ret.toMap
   }
 
-  override def update: UpdateBuilder[AddresstypeFields, AddresstypeRow] = UpdateBuilder.of(""""person"."addresstype"""", AddresstypeFields.structure, AddresstypeRow.`_rowParser`, Dialect.POSTGRESQL)
+  override def update: UpdateBuilder[AddresstypeFields, AddresstypeRow] = UpdateBuilder.of(""""person"."addresstype"""", AddresstypeFields.structure, AddresstypeRow.rowCodec, Dialect.POSTGRESQL)
 
   override def update(row: AddresstypeRow)(using c: Connection): Boolean = {
     val addresstypeid: AddresstypeId = row.addresstypeid
@@ -110,7 +110,7 @@ class AddresstypeRepoImpl extends AddresstypeRepo {
     set "name" = ${Fragment.encode(Name.pgType, row.name)}::varchar,
     "rowguid" = ${Fragment.encode(PgTypes.uuid, row.rowguid)}::uuid,
     "modifieddate" = ${Fragment.encode(PgTypes.timestamp, row.modifieddate)}::timestamp
-    where "addresstypeid" = ${Fragment.encode(AddresstypeId.pgType, addresstypeid)}""".update().runUnchecked(c) > 0
+    where "addresstypeid" = ${Fragment.encode(AddresstypeId.pgType, addresstypeid)}""".update().run(using c) > 0
   }
 
   override def upsert(unsaved: AddresstypeRow)(using c: Connection): AddresstypeRow = {
@@ -122,8 +122,8 @@ class AddresstypeRepoImpl extends AddresstypeRepo {
     "rowguid" = EXCLUDED."rowguid",
     "modifieddate" = EXCLUDED."modifieddate"
     returning "addresstypeid", "name", "rowguid", "modifieddate""""
-    .updateReturning(AddresstypeRow.`_rowParser`.exactlyOne())
-    .runUnchecked(c)
+    .updateReturning(AddresstypeRow.rowCodec.exactlyOne())
+    .run(using c)
   }
 
   override def upsertBatch(unsaved: Iterator[AddresstypeRow])(using c: Connection): List[AddresstypeRow] = {
@@ -135,8 +135,8 @@ class AddresstypeRepoImpl extends AddresstypeRepo {
     "rowguid" = EXCLUDED."rowguid",
     "modifieddate" = EXCLUDED."modifieddate"
     returning "addresstypeid", "name", "rowguid", "modifieddate""""
-      .updateManyReturning(AddresstypeRow.`_rowParser`, unsaved)
-    .runUnchecked(c)
+      .updateManyReturning(AddresstypeRow.rowCodec, unsaved)
+    .run(using c)
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
@@ -144,8 +144,8 @@ class AddresstypeRepoImpl extends AddresstypeRepo {
     unsaved: Iterator[AddresstypeRow],
     batchSize: Int = 10000
   )(using c: Connection): Int = {
-    sql"""create temporary table addresstype_TEMP (like "person"."addresstype") on commit drop""".update().runUnchecked(c): @scala.annotation.nowarn
-    streamingInsert.insertUnchecked(s"""copy addresstype_TEMP("addresstypeid", "name", "rowguid", "modifieddate") from stdin""", batchSize, unsaved.toJavaIterator, c, AddresstypeRow.pgText): @scala.annotation.nowarn
+    sql"""create temporary table addresstype_TEMP (like "person"."addresstype") on commit drop""".update().run(using c): @scala.annotation.nowarn
+    StreamingInsert.of(s"""copy addresstype_TEMP("addresstypeid", "name", "rowguid", "modifieddate") from stdin""", batchSize, unsaved, AddresstypeRow.pgText).run(using c): @scala.annotation.nowarn
     return sql"""insert into "person"."addresstype"("addresstypeid", "name", "rowguid", "modifieddate")
     select * from addresstype_TEMP
     on conflict ("addresstypeid")
@@ -154,6 +154,6 @@ class AddresstypeRepoImpl extends AddresstypeRepo {
     "rowguid" = EXCLUDED."rowguid",
     "modifieddate" = EXCLUDED."modifieddate"
     ;
-    drop table addresstype_TEMP;""".update().runUnchecked(c)
+    drop table addresstype_TEMP;""".update().run(using c)
   }
 }

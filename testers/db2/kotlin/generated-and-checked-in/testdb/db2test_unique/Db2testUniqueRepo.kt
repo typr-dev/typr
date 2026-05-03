@@ -5,10 +5,11 @@
  */
 package testdb.db2test_unique
 
-import dev.typr.foundations.kotlin.DeleteBuilder
-import dev.typr.foundations.kotlin.SelectBuilder
-import dev.typr.foundations.kotlin.UpdateBuilder
-import java.sql.Connection
+import dev.typr.dslkt.DeleteBuilder
+import dev.typr.dslkt.SelectBuilder
+import dev.typr.dslkt.UpdateBuilder
+import dev.typr.foundationskt.Connection
+import dev.typr.foundationskt.ConnectionRead
 import kotlin.collections.Iterator
 import kotlin.collections.List
 import kotlin.collections.Map
@@ -19,10 +20,10 @@ interface Db2testUniqueRepo {
   abstract fun deleteById(
     id: Db2testUniqueId,
     c: Connection
-  ): Boolean
+  ): kotlin.Boolean
 
   abstract fun deleteByIds(
-    ids: Array<Db2testUniqueId>,
+    ids: List<Db2testUniqueId>,
     c: Connection
   ): Int
 
@@ -38,32 +39,32 @@ interface Db2testUniqueRepo {
 
   abstract fun select(): SelectBuilder<Db2testUniqueFields, Db2testUniqueRow>
 
-  abstract fun selectAll(c: Connection): List<Db2testUniqueRow>
+  abstract fun selectAll(c: ConnectionRead): List<Db2testUniqueRow>
 
   abstract fun selectById(
     id: Db2testUniqueId,
-    c: Connection
+    c: ConnectionRead
   ): Db2testUniqueRow?
 
   abstract fun selectByIds(
-    ids: Array<Db2testUniqueId>,
-    c: Connection
+    ids: List<Db2testUniqueId>,
+    c: ConnectionRead
   ): List<Db2testUniqueRow>
 
   abstract fun selectByIdsTracked(
-    ids: Array<Db2testUniqueId>,
-    c: Connection
+    ids: List<Db2testUniqueId>,
+    c: ConnectionRead
   ): Map<Db2testUniqueId, Db2testUniqueRow>
 
   abstract fun selectByUniqueCodeAndCategory(
-    code: String,
-    category: String,
-    c: Connection
+    code: kotlin.String,
+    category: kotlin.String,
+    c: ConnectionRead
   ): Db2testUniqueRow?
 
   abstract fun selectByUniqueEmail(
-    email: String,
-    c: Connection
+    email: kotlin.String,
+    c: ConnectionRead
   ): Db2testUniqueRow?
 
   abstract fun update(): UpdateBuilder<Db2testUniqueFields, Db2testUniqueRow>
@@ -71,7 +72,7 @@ interface Db2testUniqueRepo {
   abstract fun update(
     row: Db2testUniqueRow,
     c: Connection
-  ): Boolean
+  ): kotlin.Boolean
 
   abstract fun upsert(
     unsaved: Db2testUniqueRow,

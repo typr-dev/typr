@@ -1,14 +1,14 @@
 package testdb;
 
+import dev.typr.foundations.Connection;
+import dev.typr.foundations.ConnectionRead;
+import dev.typr.foundations.SqlConsumer;
+import dev.typr.foundations.SqlFunction;
 import dev.typr.foundations.Transactor;
 import dev.typr.foundations.connect.ConnectionSettings;
+import dev.typr.foundations.connect.SqlServerConfig;
+import dev.typr.foundations.connect.SqlServerEncrypt;
 import dev.typr.foundations.connect.TransactionIsolation;
-import dev.typr.foundations.connect.sqlserver.SqlServerConfig;
-import dev.typr.foundations.connect.sqlserver.SqlServerEncrypt;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.function.Consumer;
-import java.util.function.Function;
 
 public class SqlServerTestHelper {
   private static final SqlServerConfig CONFIG =
@@ -19,26 +19,22 @@ public class SqlServerTestHelper {
   // SQL Server uses pessimistic locking by default, which causes deadlocks when
   // multiple tests run in parallel and access the same tables. READ_UNCOMMITTED
   // prevents lock contention. Since tests rollback anyway, dirty reads are fine.
-  private static final Transactor TRANSACTOR =
-      CONFIG.transactor(
-          ConnectionSettings.builder()
-              .transactionIsolation(TransactionIsolation.READ_UNCOMMITTED)
-              .build(),
-          Transactor.testStrategy());
+  private static final ConnectionSettings SETTINGS =
+      ConnectionSettings.builder()
+          .transactionIsolation(TransactionIsolation.READ_UNCOMMITTED)
+          .build();
 
-  public static <T> T apply(Function<Connection, T> f) {
-    try {
-      return TRANSACTOR.execute(conn -> f.apply(conn));
-    } catch (SQLException e) {
-      throw new RuntimeException(e);
-    }
+  private static final Transactor TRANSACTOR = Transactor.create(CONFIG, SETTINGS).rollbackOnly();
+
+  public static <T> T apply(SqlFunction<Connection, T> f) {
+    return TRANSACTOR.transact(f);
   }
 
-  public static void run(Consumer<Connection> f) {
-    try {
-      TRANSACTOR.executeVoid(conn -> f.accept(conn));
-    } catch (SQLException e) {
-      throw new RuntimeException(e);
-    }
+  public static void run(SqlConsumer<Connection> f) {
+    TRANSACTOR.transactVoid(f);
+  }
+
+  public static <T> T applyRead(SqlFunction<ConnectionRead, T> f) {
+    return TRANSACTOR.transactRead(f);
   }
 }

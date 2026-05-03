@@ -1,0 +1,33 @@
+{
+  "type": "record",
+  "name": "PaymentCharged",
+  "namespace": "com.example.events",
+  "doc": "Event emitted when a payment is successfully charged",
+  "fields": [
+    {
+      "name": "orderId",
+      "type": {"type": "string", "logicalType": "uuid"},
+      "doc": "Unique identifier for the order"
+    },
+    {
+      "name": "paymentId",
+      "type": "string",
+      "doc": "Payment provider's payment ID"
+    },
+    {
+      "name": "transactionId",
+      "type": "string",
+      "doc": "Payment provider's transaction ID"
+    },
+    {
+      "name": "amount",
+      "type": "long",
+      "doc": "Amount charged in smallest currency unit"
+    },
+    {
+      "name": "paidAt",
+      "type": {"type": "long", "logicalType": "timestamp-millis"},
+      "doc": "When the payment was charged"
+    }
+  ]
+}

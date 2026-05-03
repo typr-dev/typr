@@ -24,7 +24,7 @@ object BusinessentityId {
 
   given arraySetter: Setter[Array[BusinessentityId]] = adventureworks.IntArraySetter.contramap(_.map(_.value))
 
-  given bijection: Bijection[BusinessentityId, Int] = Bijection.apply[BusinessentityId, Int](_.value)(BusinessentityId.apply)
+  given bijection: Bijection[BusinessentityId, Int] = Bijection[BusinessentityId, Int](_.value)(BusinessentityId.apply)
 
   given jdbcDecoder: JdbcDecoder[BusinessentityId] = JdbcDecoder.intDecoder.map(BusinessentityId.apply)
 

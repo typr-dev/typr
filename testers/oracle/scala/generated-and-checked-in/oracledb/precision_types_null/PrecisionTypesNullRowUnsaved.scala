@@ -44,7 +44,7 @@ case class PrecisionTypesNullRowUnsaved(
   @JsonProperty("TS3") ts3: Optional[LocalDateTime3] = Optional.empty(),
   @JsonProperty("TS6") ts6: Optional[LocalDateTime6] = Optional.empty(),
   @JsonProperty("TS9") ts9: Optional[LocalDateTime9] = Optional.empty(),
-  /** Default: "TYPR"."ISEQ$$_72876".nextval */
+  /** Default: "TYPR"."ISEQ$$_72866".nextval */
   @JsonProperty("ID") id: Defaulted[PrecisionTypesNullId] = new UseDefault()
 ) {
   def toRow(idDefault: => PrecisionTypesNullId): PrecisionTypesNullRow = {

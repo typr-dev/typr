@@ -6,23 +6,23 @@
 package adventureworks.information_schema
 
 import com.fasterxml.jackson.annotation.JsonValue
-import dev.typr.foundations.PgType
-import dev.typr.foundations.PgTypes
-import dev.typr.foundations.internal.arrayMap
-import dev.typr.foundations.kotlin.Bijection
+import dev.typr.foundationskt.Bijection
+import dev.typr.foundationskt.PgType
+import dev.typr.foundationskt.PgTypes
+import kotlin.collections.List
 
 /** Domain `information_schema.yes_or_no`
   * Constraint: CHECK (((VALUE)::text = ANY ((ARRAY['YES'::character varying, 'NO'::character varying])::text[])))
   */
-data class YesOrNo(@field:JsonValue val value: String) {
+data class YesOrNo(@field:JsonValue val value: kotlin.String) {
   companion object {
-    val bijection: Bijection<YesOrNo, String> =
+    val bijection: Bijection<YesOrNo, kotlin.String> =
       Bijection.of(YesOrNo::value, ::YesOrNo)
 
     val pgType: PgType<YesOrNo> =
-      PgTypes.text.bimap(::YesOrNo, YesOrNo::value).renamed("\"information_schema\".\"yes_or_no\"")
+      PgType(PgTypes.text.to(Bijection.of(::YesOrNo, YesOrNo::value)).underlying.renamed("\"information_schema\".\"yes_or_no\""))
 
-    val pgTypeArray: PgType<Array<YesOrNo>> =
-      PgTypes.textArray.bimap({ xs -> arrayMap.map(xs, ::YesOrNo, YesOrNo::class.java) }, { xs -> arrayMap.map(xs, YesOrNo::value, String::class.java) }).renamed("\"information_schema\".\"yes_or_no\"[]")
+    val pgTypeArray: PgType<List<YesOrNo>> =
+      pgType.array()
   }
 }

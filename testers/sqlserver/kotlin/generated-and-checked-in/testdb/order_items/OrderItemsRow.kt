@@ -6,10 +6,10 @@
 package testdb.order_items
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import dev.typr.dslkt.RowCodecs
 import dev.typr.foundations.Tuple.Tuple5
-import dev.typr.foundations.kotlin.KotlinDbTypes
-import dev.typr.foundations.kotlin.RowParser
-import dev.typr.foundations.kotlin.RowParsers
+import dev.typr.foundationskt.RowCodec
+import dev.typr.foundationskt.SqlServerTypes
 import java.math.BigDecimal
 import testdb.orders.OrdersId
 import testdb.products.ProductsId
@@ -42,6 +42,6 @@ data class OrderItemsRow(
   fun toUnsavedRow(): OrderItemsRowUnsaved = OrderItemsRowUnsaved(orderId, productId, quantity, price)
 
   companion object {
-    val _rowParser: RowParser<OrderItemsRow> = RowParsers.of(OrderItemsId.sqlServerType, OrdersId.sqlServerType, ProductsId.sqlServerType, KotlinDbTypes.SqlServerTypes.int_, KotlinDbTypes.SqlServerTypes.money, { t0, t1, t2, t3, t4 -> OrderItemsRow(t0, t1, t2, t3, t4) }, { row -> arrayOf<Any?>(row.orderItemId, row.orderId, row.productId, row.quantity, row.price) })
+    val rowCodec: RowCodec<OrderItemsRow> = RowCodecs.of(OrderItemsId.sqlServerType, OrdersId.sqlServerType, ProductsId.sqlServerType, SqlServerTypes.int_, SqlServerTypes.money, { t0: OrderItemsId, t1: OrdersId, t2: ProductsId, t3: Int, t4: BigDecimal -> OrderItemsRow(t0, t1, t2, t3, t4) }, { row: OrderItemsRow -> arrayOf<Any?>(row.orderItemId, row.orderId, row.productId, row.quantity, row.price) })
   }
 }

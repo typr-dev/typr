@@ -10,9 +10,7 @@ import adventureworks.customtypes.Defaulted.UseDefault
 import adventureworks.person.businessentity.BusinessentityId
 import adventureworks.sales.salesterritory.SalesterritoryId
 import dev.typr.foundations.PgText
-import dev.typr.foundations.PgTypes
-import dev.typr.foundations.scala.DbTypeOps
-import dev.typr.foundations.scala.ScalaDbTypes
+import dev.typr.foundationssc.PgTypes
 import java.time.LocalDateTime
 import java.util.UUID
 
@@ -78,5 +76,5 @@ case class SalespersonRowUnsaved(
 }
 
 object SalespersonRowUnsaved {
-  given pgText: PgText[SalespersonRowUnsaved] = PgText.instance((row, sb) => { BusinessentityId.pgType.text.unsafeEncode(row.businessentityid, sb); sb.append(PgText.DELIMETER); SalesterritoryId.pgType.nullable.text.unsafeEncode(row.territoryid, sb); sb.append(PgText.DELIMETER); ScalaDbTypes.PgTypes.numeric.nullable.text.unsafeEncode(row.salesquota, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using ScalaDbTypes.PgTypes.numeric.text).unsafeEncode(row.bonus, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using ScalaDbTypes.PgTypes.numeric.text).unsafeEncode(row.commissionpct, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using ScalaDbTypes.PgTypes.numeric.text).unsafeEncode(row.salesytd, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using ScalaDbTypes.PgTypes.numeric.text).unsafeEncode(row.saleslastyear, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using PgTypes.uuid.text).unsafeEncode(row.rowguid, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using PgTypes.timestamp.text).unsafeEncode(row.modifieddate, sb) })
+  given pgText: PgText[SalespersonRowUnsaved] = PgText.instance((row, sb) => { BusinessentityId.pgType.pgText().unsafeEncode(row.businessentityid, sb); sb.append(PgText.DELIMETER); SalesterritoryId.pgType.opt.pgText().unsafeEncode(row.territoryid, sb); sb.append(PgText.DELIMETER); PgTypes.numeric.opt.pgText().unsafeEncode(row.salesquota, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using PgTypes.numeric.pgText()).unsafeEncode(row.bonus, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using PgTypes.numeric.pgText()).unsafeEncode(row.commissionpct, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using PgTypes.numeric.pgText()).unsafeEncode(row.salesytd, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using PgTypes.numeric.pgText()).unsafeEncode(row.saleslastyear, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using PgTypes.uuid.pgText()).unsafeEncode(row.rowguid, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using PgTypes.timestamp.pgText()).unsafeEncode(row.modifieddate, sb) })
 }

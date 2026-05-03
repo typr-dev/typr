@@ -27,7 +27,7 @@ object ShortText {
 
   implicit lazy val arraySetter: Setter[Array[ShortText]] = adventureworks.StringArraySetter.contramap(_.map(_.value))
 
-  implicit lazy val bijection: Bijection[ShortText, String] = Bijection.apply[ShortText, String](_.value)(ShortText.apply)
+  implicit lazy val bijection: Bijection[ShortText, String] = Bijection[ShortText, String](_.value)(ShortText.apply)
 
   implicit lazy val jdbcDecoder: JdbcDecoder[ShortText] = JdbcDecoder.stringDecoder.map(ShortText.apply)
 

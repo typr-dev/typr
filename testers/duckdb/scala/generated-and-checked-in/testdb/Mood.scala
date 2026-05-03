@@ -5,8 +5,9 @@
  */
 package testdb
 
-import dev.typr.foundations.DuckDbType
-import dev.typr.foundations.DuckDbTypes
+import dev.typr.dslsc.Bijection
+import dev.typr.foundationssc.DuckDbType
+import dev.typr.foundationssc.DuckDbTypes
 
 /** Enum `mood`
  *  - happy
@@ -14,32 +15,23 @@ import dev.typr.foundations.DuckDbTypes
  *  - neutral
  */
 
-sealed abstract class Mood(val value: java.lang.String)
+enum Mood {
+  case happy, sad, neutral
+  
+}
 
 object Mood {
-  given duckDbTypeArray: DuckDbType[Array[Mood]] = {
-    DuckDbTypes.varcharArray
-      .bimap(xs => xs.map(Mood.force), xs => xs.map(_.value))
-      .renamedDropPrecision("mood")
+  given duckDbTypeArray: DuckDbType[List[Mood]] = {
+    DuckDbType(DuckDbTypes.text.list
+      .to(Bijection.of(xs => xs.map(Mood.force).toList, xs => xs.map(_.value).toList)).underlying.renamedDropPrecision("mood"))
   }
 
-  given duckDbType: DuckDbType[Mood] = {
-    DuckDbTypes.text.bimap(Mood.force, _.value)
-      .renamedDropPrecision("mood")
-  }
+  given duckDbType: DuckDbType[Mood] = DuckDbType(DuckDbTypes.text.to(Bijection.of(Mood.force, _.value)).underlying.renamedDropPrecision("mood"))
+  extension (e: Mood) def value: java.lang.String = e.toString
   def apply(str: java.lang.String): scala.Either[java.lang.String, Mood] =
-    ByName.get(str).toRight(s"'$str' does not match any of the following legal values: $Names")
-  def force(str: java.lang.String): Mood =
-    apply(str) match {
-      case scala.Left(msg) => sys.error(msg)
-      case scala.Right(value) => value
-    }
-  case object happy extends Mood("happy")
-
-  case object sad extends Mood("sad")
-
-  case object neutral extends Mood("neutral")
-  val All: scala.List[Mood] = scala.List(happy, sad, neutral)
-  val Names: java.lang.String = All.map(_.value).mkString(", ")
-  val ByName: scala.collection.immutable.Map[java.lang.String, Mood] = All.map(x => (x.value, x)).toMap
+    scala.util.Try(Mood.valueOf(str)).toEither.left.map(_ => s"'$str' does not match any of the following legal values: $Names")
+  def force(str: java.lang.String): Mood = Mood.valueOf(str)
+  val All: scala.List[Mood] = values.toList
+  val Names: java.lang.String = All.map(_.toString).mkString(", ")
+  val ByName: scala.collection.immutable.Map[java.lang.String, Mood] = All.map(x => (x.toString, x)).toMap
 }

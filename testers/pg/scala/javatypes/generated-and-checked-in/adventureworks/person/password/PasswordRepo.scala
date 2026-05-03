@@ -6,10 +6,11 @@
 package adventureworks.person.password
 
 import adventureworks.person.businessentity.BusinessentityId
-import dev.typr.foundations.dsl.DeleteBuilder
-import dev.typr.foundations.dsl.SelectBuilder
-import dev.typr.foundations.dsl.UpdateBuilder
-import java.sql.Connection
+import dev.typr.dsl.DeleteBuilder
+import dev.typr.dsl.SelectBuilder
+import dev.typr.dsl.UpdateBuilder
+import dev.typr.foundations.Connection
+import dev.typr.foundations.ConnectionRead
 import java.util.Optional
 
 trait PasswordRepo {
@@ -17,7 +18,7 @@ trait PasswordRepo {
 
   def deleteById(businessentityid: BusinessentityId)(using c: Connection): java.lang.Boolean
 
-  def deleteByIds(businessentityids: Array[BusinessentityId])(using c: Connection): Integer
+  def deleteByIds(businessentityids: java.util.List[BusinessentityId])(using c: Connection): Integer
 
   def insert(unsaved: PasswordRow)(using c: Connection): PasswordRow
 
@@ -36,13 +37,13 @@ trait PasswordRepo {
 
   def select: SelectBuilder[PasswordFields, PasswordRow]
 
-  def selectAll(using c: Connection): java.util.List[PasswordRow]
+  def selectAll(using c: ConnectionRead): java.util.List[PasswordRow]
 
-  def selectById(businessentityid: BusinessentityId)(using c: Connection): Optional[PasswordRow]
+  def selectById(businessentityid: BusinessentityId)(using c: ConnectionRead): Optional[PasswordRow]
 
-  def selectByIds(businessentityids: Array[BusinessentityId])(using c: Connection): java.util.List[PasswordRow]
+  def selectByIds(businessentityids: java.util.List[BusinessentityId])(using c: ConnectionRead): java.util.List[PasswordRow]
 
-  def selectByIdsTracked(businessentityids: Array[BusinessentityId])(using c: Connection): java.util.Map[BusinessentityId, PasswordRow]
+  def selectByIdsTracked(businessentityids: java.util.List[BusinessentityId])(using c: ConnectionRead): java.util.Map[BusinessentityId, PasswordRow]
 
   def update: UpdateBuilder[PasswordFields, PasswordRow]
 

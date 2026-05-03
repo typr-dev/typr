@@ -16,7 +16,7 @@ import scala.util.Random
 /** Tests for SQL script generated repositories. These tests exercise the typed query classes generated from SQL files in sql-scripts/duckdb/.
   */
 class SqlScriptTest {
-  private val testInsert = TestInsert(Random(42))
+  private val testInsert = TestInsert(Random(1733657855))
   private val customerSearchRepo = CustomerSearchSqlRepoImpl()
   private val orderSummaryRepo = OrderSummaryByCustomerSqlRepoImpl()
   private val productSummaryRepo = ProductSummarySqlRepoImpl()
@@ -24,9 +24,7 @@ class SqlScriptTest {
   private val empSalaryUpdateRepo = EmployeeSalaryUpdateSqlRepoImpl()
 
   @Test
-  def testCustomerSearchWithNamePattern(): Unit = withConnection { c =>
-    given java.sql.Connection = c
-
+  def testCustomerSearchWithNamePattern(): Unit = withConnection {
     val customer = testInsert.Customers(name = "ScalaSearchMe Customer")
 
     val results = customerSearchRepo(
@@ -42,9 +40,7 @@ class SqlScriptTest {
   }
 
   @Test
-  def testCustomerSearchWithEmailPattern(): Unit = withConnection { c =>
-    given java.sql.Connection = c
-
+  def testCustomerSearchWithEmailPattern(): Unit = withConnection {
     val customer = testInsert.Customers(email = Some(Email("unique-scala-search@example.com")))
 
     val results = customerSearchRepo(
@@ -60,9 +56,7 @@ class SqlScriptTest {
   }
 
   @Test
-  def testCustomerSearchWithPriorityFilter(): Unit = withConnection { c =>
-    given java.sql.Connection = c
-
+  def testCustomerSearchWithPriorityFilter(): Unit = withConnection {
     val highPriorityCustomer = testInsert.Customers(priority = Defaulted.Provided(Some(Priority.high)))
 
     val results = customerSearchRepo(
@@ -78,9 +72,7 @@ class SqlScriptTest {
   }
 
   @Test
-  def testCustomerSearchWithDateFilter(): Unit = withConnection { c =>
-    given java.sql.Connection = c
-
+  def testCustomerSearchWithDateFilter(): Unit = withConnection {
     val _ = testInsert.Customers()
     val yesterday = LocalDateTime.now().minusDays(1)
 
@@ -96,9 +88,7 @@ class SqlScriptTest {
   }
 
   @Test
-  def testCustomerSearchWithMaxResults(): Unit = withConnection { c =>
-    given java.sql.Connection = c
-
+  def testCustomerSearchWithMaxResults(): Unit = withConnection {
     for (i <- 0 until 5) {
       val _ = testInsert.Customers(name = s"ScalaLimitTest$i")
     }
@@ -115,9 +105,7 @@ class SqlScriptTest {
   }
 
   @Test
-  def testOrderSummaryByCustomerNoFilters(): Unit = withConnection { c =>
-    given java.sql.Connection = c
-
+  def testOrderSummaryByCustomerNoFilters(): Unit = withConnection {
     val customer = testInsert.Customers()
     val _ = testInsert.Orders(customerId = customer.customerId.value, totalAmount = Some(BigDecimal("150.00")))
 
@@ -134,15 +122,13 @@ class SqlScriptTest {
   }
 
   @Test
-  def testOrderSummaryByCustomerIds(): Unit = withConnection { c =>
-    given java.sql.Connection = c
-
+  def testOrderSummaryByCustomerIds(): Unit = withConnection {
     val customer1 = testInsert.Customers()
     val customer2 = testInsert.Customers()
     val _ = testInsert.Orders(customerId = customer1.customerId.value)
     val _ = testInsert.Orders(customerId = customer2.customerId.value)
 
-    val ids = Array(customer1.customerId.value, customer2.customerId.value)
+    val ids = List(customer1.customerId.value, customer2.customerId.value)
     val results = orderSummaryRepo(
       customerIds = Some(ids),
       minTotal = None,
@@ -153,9 +139,7 @@ class SqlScriptTest {
   }
 
   @Test
-  def testOrderSummaryWithMinTotal(): Unit = withConnection { c =>
-    given java.sql.Connection = c
-
+  def testOrderSummaryWithMinTotal(): Unit = withConnection {
     val bigSpender = testInsert.Customers()
     val _ = testInsert.Orders(customerId = bigSpender.customerId.value, totalAmount = Some(BigDecimal("1000.00")))
 
@@ -173,9 +157,7 @@ class SqlScriptTest {
   }
 
   @Test
-  def testOrderSummaryWithMinOrderCount(): Unit = withConnection { c =>
-    given java.sql.Connection = c
-
+  def testOrderSummaryWithMinOrderCount(): Unit = withConnection {
     val frequentBuyer = testInsert.Customers()
     for (_ <- 0 until 3) {
       val _ = testInsert.Orders(customerId = frequentBuyer.customerId.value)
@@ -191,9 +173,7 @@ class SqlScriptTest {
   }
 
   @Test
-  def testProductSummary(): Unit = withConnection { c =>
-    given java.sql.Connection = c
-
+  def testProductSummary(): Unit = withConnection {
     val _ = testInsert.Products()
 
     val results = productSummaryRepo.apply
@@ -202,9 +182,7 @@ class SqlScriptTest {
   }
 
   @Test
-  def testDepartmentEmployeeDetails(): Unit = withConnection { c =>
-    given java.sql.Connection = c
-
+  def testDepartmentEmployeeDetails(): Unit = withConnection {
     val dept = testInsert.Departments()
     val _ = testInsert.Employees(deptCode = dept.deptCode, deptRegion = dept.deptRegion)
 
@@ -219,9 +197,7 @@ class SqlScriptTest {
   }
 
   @Test
-  def testEmployeeSalaryUpdate(): Unit = withConnection { c =>
-    given java.sql.Connection = c
-
+  def testEmployeeSalaryUpdate(): Unit = withConnection {
     val dept = testInsert.Departments()
     val emp = testInsert.Employees(
       deptCode = dept.deptCode,

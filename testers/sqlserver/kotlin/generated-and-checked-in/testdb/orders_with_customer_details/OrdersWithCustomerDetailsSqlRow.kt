@@ -6,12 +6,10 @@
 package testdb.orders_with_customer_details
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import dev.typr.foundations.SqlServerTypes
+import dev.typr.dslkt.RowCodecs
 import dev.typr.foundations.Tuple.Tuple6
-import dev.typr.foundations.kotlin.KotlinDbTypes
-import dev.typr.foundations.kotlin.RowParser
-import dev.typr.foundations.kotlin.RowParsers
-import dev.typr.foundations.kotlin.nullable
+import dev.typr.foundationskt.RowCodec
+import dev.typr.foundationskt.SqlServerTypes
 import java.math.BigDecimal
 import java.time.LocalDateTime
 import testdb.customers.CustomersId
@@ -29,10 +27,10 @@ data class OrdersWithCustomerDetailsSqlRow(
   /** Points to [testdb.customers.CustomersRow.customerId] */
   @field:JsonProperty("customer_id") val customerId: CustomersId,
   /** Points to [testdb.customers.CustomersRow.name] */
-  @field:JsonProperty("customer_name") val customerName: String,
+  @field:JsonProperty("customer_name") val customerName: kotlin.String,
   /** Points to [testdb.customers.CustomersRow.email] */
   @field:JsonProperty("customer_email") val customerEmail: /* user-picked */ Email
-) : Tuple6<OrdersId, LocalDateTime?, BigDecimal, CustomersId, String, /* user-picked */ Email> {
+) : Tuple6<OrdersId, LocalDateTime?, BigDecimal, CustomersId, kotlin.String, /* user-picked */ Email> {
   override fun _1(): OrdersId = orderId
 
   override fun _2(): LocalDateTime? = orderDate
@@ -41,11 +39,11 @@ data class OrdersWithCustomerDetailsSqlRow(
 
   override fun _4(): CustomersId = customerId
 
-  override fun _5(): String = customerName
+  override fun _5(): kotlin.String = customerName
 
   override fun _6(): /* user-picked */ Email = customerEmail
 
   companion object {
-    val _rowParser: RowParser<OrdersWithCustomerDetailsSqlRow> = RowParsers.of(OrdersId.sqlServerType, SqlServerTypes.datetime2.nullable(), KotlinDbTypes.SqlServerTypes.money, CustomersId.sqlServerType, SqlServerTypes.nvarchar, Email.sqlServerType, { t0, t1, t2, t3, t4, t5 -> OrdersWithCustomerDetailsSqlRow(t0, t1, t2, t3, t4, t5) }, { row -> arrayOf<Any?>(row.orderId, row.orderDate, row.totalAmount, row.customerId, row.customerName, row.customerEmail) })
+    val rowCodec: RowCodec<OrdersWithCustomerDetailsSqlRow> = RowCodecs.of(OrdersId.sqlServerType, SqlServerTypes.datetime2.opt(), SqlServerTypes.money, CustomersId.sqlServerType, SqlServerTypes.nvarchar, Email.sqlServerType, { t0: OrdersId, t1: LocalDateTime?, t2: BigDecimal, t3: CustomersId, t4: kotlin.String, t5: /* user-picked */ Email -> OrdersWithCustomerDetailsSqlRow(t0, t1, t2, t3, t4, t5) }, { row: OrdersWithCustomerDetailsSqlRow -> arrayOf<Any?>(row.orderId, row.orderDate, row.totalAmount, row.customerId, row.customerName, row.customerEmail) })
   }
 }

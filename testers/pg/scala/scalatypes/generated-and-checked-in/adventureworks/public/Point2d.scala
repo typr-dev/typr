@@ -5,11 +5,9 @@
  */
 package adventureworks.public
 
-import dev.typr.foundations.PgRead
-import dev.typr.foundations.PgStruct
-import dev.typr.foundations.PgType
-import dev.typr.foundations.scala.ScalaDbTypes
-import scala.jdk.OptionConverters.RichOption
+import dev.typr.foundationssc.PgType
+import dev.typr.foundationssc.PgTypes
+import dev.typr.foundationssc.RowCodec
 
 /** PostgreSQL composite type: public.point_2d */
 case class Point2d(
@@ -18,9 +16,7 @@ case class Point2d(
 )
 
 object Point2d {
-  given pgStruct: PgStruct[Point2d] = PgStruct.builder[Point2d]("public.point_2d").optField("x", ScalaDbTypes.PgTypes.float8, (v: Point2d) => v.x.asJava).optField("y", ScalaDbTypes.PgTypes.float8, (v: Point2d) => v.y.asJava).build(arr => Point2d(x = Option(arr(0).asInstanceOf[Double]), y = Option(arr(1).asInstanceOf[Double])))
+  given pgType: PgType[Point2d] = PgTypes.compositeOf("public.point_2d", RowCodec.namedBuilder[Point2d]().field("x", PgTypes.float8.opt)((v: Point2d) => v.x).field("y", PgTypes.float8.opt)((v: Point2d) => v.y).build((t0, t1) => Point2d(x = t0, y = t1)))
 
-  given pgType: PgType[Point2d] = pgStruct.asType()
-
-  given pgTypeArray: PgType[Array[Point2d]] = pgType.array(PgRead.readCompositeArray(pgType.pgCompositeText(), n => new Array[Point2d](n)), n => new Array[Point2d](n))
+  given pgTypeArray: PgType[scala.collection.immutable.List[Point2d]] = pgType.array
 }

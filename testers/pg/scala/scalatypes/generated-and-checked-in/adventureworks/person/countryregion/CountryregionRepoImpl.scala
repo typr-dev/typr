@@ -6,29 +6,29 @@
 package adventureworks.person.countryregion
 
 import adventureworks.public.Name
-import dev.typr.foundations.PgTypes
-import dev.typr.foundations.scala.DeleteBuilder
-import dev.typr.foundations.scala.Dialect
-import dev.typr.foundations.scala.Fragment
-import dev.typr.foundations.scala.ScalaIteratorOps
-import dev.typr.foundations.scala.SelectBuilder
-import dev.typr.foundations.scala.UpdateBuilder
-import dev.typr.foundations.streamingInsert
-import java.sql.Connection
+import dev.typr.dslsc.DeleteBuilder
+import dev.typr.dslsc.Dialect
+import dev.typr.dslsc.SelectBuilder
+import dev.typr.dslsc.UpdateBuilder
+import dev.typr.foundationssc.Connection
+import dev.typr.foundationssc.ConnectionRead
+import dev.typr.foundationssc.Fragment
+import dev.typr.foundationssc.PgTypes
+import dev.typr.foundationssc.StreamingInsert
 import scala.collection.mutable.ListBuffer
-import dev.typr.foundations.scala.Fragment.sql
+import dev.typr.foundationssc.Fragment.sql
 
 class CountryregionRepoImpl extends CountryregionRepo {
   override def delete: DeleteBuilder[CountryregionFields, CountryregionRow] = DeleteBuilder.of(""""person"."countryregion"""", CountryregionFields.structure, Dialect.POSTGRESQL)
 
-  override def deleteById(countryregioncode: CountryregionId)(using c: Connection): Boolean = sql"""delete from "person"."countryregion" where "countryregioncode" = ${Fragment.encode(CountryregionId.pgType, countryregioncode)}""".update().runUnchecked(c) > 0
+  override def deleteById(countryregioncode: CountryregionId)(using c: Connection): Boolean = sql"""delete from "person"."countryregion" where "countryregioncode" = ${Fragment.encode(CountryregionId.pgType, countryregioncode)}""".update().run(using c) > 0
 
-  override def deleteByIds(countryregioncodes: Array[CountryregionId])(using c: Connection): Int = {
+  override def deleteByIds(countryregioncodes: List[CountryregionId])(using c: Connection): Int = {
     sql"""delete
     from "person"."countryregion"
-    where "countryregioncode" = ANY(${Fragment.encode(CountryregionId.pgTypeArray, countryregioncodes)})"""
+    where "countryregioncode" = ANY(${Fragment.encode(CountryregionId.pgType.array, countryregioncodes)})"""
       .update()
-      .runUnchecked(c)
+      .run(using c)
   }
 
   override def insert(unsaved: CountryregionRow)(using c: Connection): CountryregionRow = {
@@ -36,19 +36,19 @@ class CountryregionRepoImpl extends CountryregionRepo {
     values (${Fragment.encode(CountryregionId.pgType, unsaved.countryregioncode)}, ${Fragment.encode(Name.pgType, unsaved.name)}::varchar, ${Fragment.encode(PgTypes.timestamp, unsaved.modifieddate)}::timestamp)
     RETURNING "countryregioncode", "name", "modifieddate"
     """
-    .updateReturning(CountryregionRow.`_rowParser`.exactlyOne()).runUnchecked(c)
+    .updateReturning(CountryregionRow.rowCodec.exactlyOne()).run(using c)
   }
 
   override def insert(unsaved: CountryregionRowUnsaved)(using c: Connection): CountryregionRow = {
     val columns: ListBuffer[Fragment] = ListBuffer()
     val values: ListBuffer[Fragment] = ListBuffer()
-    columns.addOne(Fragment.lit(""""countryregioncode"""")): @scala.annotation.nowarn
+    columns.addOne(Fragment.of(""""countryregioncode"""")): @scala.annotation.nowarn
     values.addOne(sql"${Fragment.encode(CountryregionId.pgType, unsaved.countryregioncode)}"): @scala.annotation.nowarn
-    columns.addOne(Fragment.lit(""""name"""")): @scala.annotation.nowarn
+    columns.addOne(Fragment.of(""""name"""")): @scala.annotation.nowarn
     values.addOne(sql"${Fragment.encode(Name.pgType, unsaved.name)}::varchar"): @scala.annotation.nowarn
     unsaved.modifieddate.visit(
       {  },
-      value => { columns.addOne(Fragment.lit(""""modifieddate"""")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(PgTypes.timestamp, value)}::timestamp"): @scala.annotation.nowarn }
+      value => { columns.addOne(Fragment.of(""""modifieddate"""")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(PgTypes.timestamp, value)}::timestamp"): @scala.annotation.nowarn }
     );
     val q: Fragment = {
       sql"""insert into "person"."countryregion"(${Fragment.comma(columns)})
@@ -56,54 +56,54 @@ class CountryregionRepoImpl extends CountryregionRepo {
       RETURNING "countryregioncode", "name", "modifieddate"
       """
     }
-    return q.updateReturning(CountryregionRow.`_rowParser`.exactlyOne()).runUnchecked(c)
+    return q.updateReturning(CountryregionRow.rowCodec.exactlyOne()).run(using c)
   }
 
   override def insertStreaming(
     unsaved: Iterator[CountryregionRow],
     batchSize: Int = 10000
-  )(using c: Connection): Long = streamingInsert.insertUnchecked(s"""COPY "person"."countryregion"("countryregioncode", "name", "modifieddate") FROM STDIN""", batchSize, unsaved.toJavaIterator, c, CountryregionRow.pgText)
+  )(using c: Connection): Long = StreamingInsert.of(s"""COPY "person"."countryregion"("countryregioncode", "name", "modifieddate") FROM STDIN""", batchSize, unsaved, CountryregionRow.pgText).run(using c)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
   override def insertUnsavedStreaming(
     unsaved: Iterator[CountryregionRowUnsaved],
     batchSize: Int = 10000
-  )(using c: Connection): Long = streamingInsert.insertUnchecked(s"""COPY "person"."countryregion"("countryregioncode", "name", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved.toJavaIterator, c, CountryregionRowUnsaved.pgText)
+  )(using c: Connection): Long = StreamingInsert.of(s"""COPY "person"."countryregion"("countryregioncode", "name", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved, CountryregionRowUnsaved.pgText).run(using c)
 
-  override def select: SelectBuilder[CountryregionFields, CountryregionRow] = SelectBuilder.of(""""person"."countryregion"""", CountryregionFields.structure, CountryregionRow.`_rowParser`, Dialect.POSTGRESQL)
+  override def select: SelectBuilder[CountryregionFields, CountryregionRow] = SelectBuilder.of(""""person"."countryregion"""", CountryregionFields.structure, CountryregionRow.rowCodec, Dialect.POSTGRESQL)
 
-  override def selectAll(using c: Connection): List[CountryregionRow] = {
+  override def selectAll(using c: ConnectionRead): List[CountryregionRow] = {
     sql"""select "countryregioncode", "name", "modifieddate"
     from "person"."countryregion"
-    """.query(CountryregionRow.`_rowParser`.all()).runUnchecked(c)
+    """.query(CountryregionRow.rowCodec.all()).run(using c)
   }
 
-  override def selectById(countryregioncode: CountryregionId)(using c: Connection): Option[CountryregionRow] = {
+  override def selectById(countryregioncode: CountryregionId)(using c: ConnectionRead): Option[CountryregionRow] = {
     sql"""select "countryregioncode", "name", "modifieddate"
     from "person"."countryregion"
-    where "countryregioncode" = ${Fragment.encode(CountryregionId.pgType, countryregioncode)}""".query(CountryregionRow.`_rowParser`.first()).runUnchecked(c)
+    where "countryregioncode" = ${Fragment.encode(CountryregionId.pgType, countryregioncode)}""".query(CountryregionRow.rowCodec.first()).run(using c)
   }
 
-  override def selectByIds(countryregioncodes: Array[CountryregionId])(using c: Connection): List[CountryregionRow] = {
+  override def selectByIds(countryregioncodes: List[CountryregionId])(using c: ConnectionRead): List[CountryregionRow] = {
     sql"""select "countryregioncode", "name", "modifieddate"
     from "person"."countryregion"
-    where "countryregioncode" = ANY(${Fragment.encode(CountryregionId.pgTypeArray, countryregioncodes)})""".query(CountryregionRow.`_rowParser`.all()).runUnchecked(c)
+    where "countryregioncode" = ANY(${Fragment.encode(CountryregionId.pgType.array, countryregioncodes)})""".query(CountryregionRow.rowCodec.all()).run(using c)
   }
 
-  override def selectByIdsTracked(countryregioncodes: Array[CountryregionId])(using c: Connection): Map[CountryregionId, CountryregionRow] = {
+  override def selectByIdsTracked(countryregioncodes: List[CountryregionId])(using c: ConnectionRead): Map[CountryregionId, CountryregionRow] = {
     val ret: scala.collection.mutable.Map[CountryregionId, CountryregionRow] = scala.collection.mutable.Map.empty[CountryregionId, CountryregionRow]
     selectByIds(countryregioncodes)(using c).foreach(row => ret.put(row.countryregioncode, row): @scala.annotation.nowarn)
     return ret.toMap
   }
 
-  override def update: UpdateBuilder[CountryregionFields, CountryregionRow] = UpdateBuilder.of(""""person"."countryregion"""", CountryregionFields.structure, CountryregionRow.`_rowParser`, Dialect.POSTGRESQL)
+  override def update: UpdateBuilder[CountryregionFields, CountryregionRow] = UpdateBuilder.of(""""person"."countryregion"""", CountryregionFields.structure, CountryregionRow.rowCodec, Dialect.POSTGRESQL)
 
   override def update(row: CountryregionRow)(using c: Connection): Boolean = {
     val countryregioncode: CountryregionId = row.countryregioncode
     return sql"""update "person"."countryregion"
     set "name" = ${Fragment.encode(Name.pgType, row.name)}::varchar,
     "modifieddate" = ${Fragment.encode(PgTypes.timestamp, row.modifieddate)}::timestamp
-    where "countryregioncode" = ${Fragment.encode(CountryregionId.pgType, countryregioncode)}""".update().runUnchecked(c) > 0
+    where "countryregioncode" = ${Fragment.encode(CountryregionId.pgType, countryregioncode)}""".update().run(using c) > 0
   }
 
   override def upsert(unsaved: CountryregionRow)(using c: Connection): CountryregionRow = {
@@ -114,8 +114,8 @@ class CountryregionRepoImpl extends CountryregionRepo {
       "name" = EXCLUDED."name",
     "modifieddate" = EXCLUDED."modifieddate"
     returning "countryregioncode", "name", "modifieddate""""
-    .updateReturning(CountryregionRow.`_rowParser`.exactlyOne())
-    .runUnchecked(c)
+    .updateReturning(CountryregionRow.rowCodec.exactlyOne())
+    .run(using c)
   }
 
   override def upsertBatch(unsaved: Iterator[CountryregionRow])(using c: Connection): List[CountryregionRow] = {
@@ -126,8 +126,8 @@ class CountryregionRepoImpl extends CountryregionRepo {
       "name" = EXCLUDED."name",
     "modifieddate" = EXCLUDED."modifieddate"
     returning "countryregioncode", "name", "modifieddate""""
-      .updateManyReturning(CountryregionRow.`_rowParser`, unsaved)
-    .runUnchecked(c)
+      .updateManyReturning(CountryregionRow.rowCodec, unsaved)
+    .run(using c)
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
@@ -135,8 +135,8 @@ class CountryregionRepoImpl extends CountryregionRepo {
     unsaved: Iterator[CountryregionRow],
     batchSize: Int = 10000
   )(using c: Connection): Int = {
-    sql"""create temporary table countryregion_TEMP (like "person"."countryregion") on commit drop""".update().runUnchecked(c): @scala.annotation.nowarn
-    streamingInsert.insertUnchecked(s"""copy countryregion_TEMP("countryregioncode", "name", "modifieddate") from stdin""", batchSize, unsaved.toJavaIterator, c, CountryregionRow.pgText): @scala.annotation.nowarn
+    sql"""create temporary table countryregion_TEMP (like "person"."countryregion") on commit drop""".update().run(using c): @scala.annotation.nowarn
+    StreamingInsert.of(s"""copy countryregion_TEMP("countryregioncode", "name", "modifieddate") from stdin""", batchSize, unsaved, CountryregionRow.pgText).run(using c): @scala.annotation.nowarn
     return sql"""insert into "person"."countryregion"("countryregioncode", "name", "modifieddate")
     select * from countryregion_TEMP
     on conflict ("countryregioncode")
@@ -144,6 +144,6 @@ class CountryregionRepoImpl extends CountryregionRepo {
       "name" = EXCLUDED."name",
     "modifieddate" = EXCLUDED."modifieddate"
     ;
-    drop table countryregion_TEMP;""".update().runUnchecked(c)
+    drop table countryregion_TEMP;""".update().run(using c)
   }
 }

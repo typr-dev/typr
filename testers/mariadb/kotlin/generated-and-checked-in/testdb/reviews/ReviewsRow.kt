@@ -6,14 +6,13 @@
 package testdb.reviews
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import dev.typr.foundations.MariaTypes
+import dev.typr.dslkt.RowCodecs
 import dev.typr.foundations.Tuple.Tuple18
 import dev.typr.foundations.data.Json
 import dev.typr.foundations.data.Uint1
 import dev.typr.foundations.data.Uint4
-import dev.typr.foundations.kotlin.RowParser
-import dev.typr.foundations.kotlin.RowParsers
-import dev.typr.foundations.kotlin.nullable
+import dev.typr.foundationskt.MariaTypes
+import dev.typr.foundationskt.RowCodec
 import java.time.LocalDateTime
 import testdb.customers.CustomersId
 import testdb.customtypes.Defaulted
@@ -48,11 +47,11 @@ data class ReviewsRow(
   /** 
     * Default: NULL
     */
-  val title: String?,
+  val title: kotlin.String?,
   /** 
     * Default: NULL
     */
-  val content: String?,
+  val content: kotlin.String?,
   /** 
     * Default: NULL
     */
@@ -84,7 +83,7 @@ data class ReviewsRow(
   /** 
     * Default: NULL
     */
-  @field:JsonProperty("admin_response") val adminResponse: String?,
+  @field:JsonProperty("admin_response") val adminResponse: kotlin.String?,
   /** 
     * Default: NULL
     */
@@ -97,7 +96,7 @@ data class ReviewsRow(
     * Default: current_timestamp(6)
     */
   @field:JsonProperty("updated_at") val updatedAt: LocalDateTime
-) : Tuple18<ReviewsId, ProductsId, CustomersId, OrderItemsId?, Uint1, String?, String?, Json?, Json?, Json?, /* user-picked */ IsVerifiedPurchase, /* user-picked */ IsApproved, Uint4, Uint4, String?, LocalDateTime?, LocalDateTime, LocalDateTime> {
+) : Tuple18<ReviewsId, ProductsId, CustomersId, OrderItemsId?, Uint1, kotlin.String?, kotlin.String?, Json?, Json?, Json?, /* user-picked */ IsVerifiedPurchase, /* user-picked */ IsApproved, Uint4, Uint4, kotlin.String?, LocalDateTime?, LocalDateTime, LocalDateTime> {
   override fun _1(): ReviewsId = reviewId
 
   override fun _10(): Json? = images
@@ -110,7 +109,7 @@ data class ReviewsRow(
 
   override fun _14(): Uint4 = unhelpfulVotes
 
-  override fun _15(): String? = adminResponse
+  override fun _15(): kotlin.String? = adminResponse
 
   override fun _16(): LocalDateTime? = respondedAt
 
@@ -126,9 +125,9 @@ data class ReviewsRow(
 
   override fun _5(): Uint1 = rating
 
-  override fun _6(): String? = title
+  override fun _6(): kotlin.String? = title
 
-  override fun _7(): String? = content
+  override fun _7(): kotlin.String? = content
 
   override fun _8(): Json? = pros
 
@@ -138,8 +137,8 @@ data class ReviewsRow(
 
   fun toUnsavedRow(
     orderItemId: Defaulted<OrderItemsId?> = Defaulted.Provided(this.orderItemId),
-    title: Defaulted<String?> = Defaulted.Provided(this.title),
-    content: Defaulted<String?> = Defaulted.Provided(this.content),
+    title: Defaulted<kotlin.String?> = Defaulted.Provided(this.title),
+    content: Defaulted<kotlin.String?> = Defaulted.Provided(this.content),
     pros: Defaulted<Json?> = Defaulted.Provided(this.pros),
     cons: Defaulted<Json?> = Defaulted.Provided(this.cons),
     images: Defaulted<Json?> = Defaulted.Provided(this.images),
@@ -147,13 +146,13 @@ data class ReviewsRow(
     isApproved: Defaulted</* user-picked */ IsApproved> = Defaulted.Provided(this.isApproved),
     helpfulVotes: Defaulted<Uint4> = Defaulted.Provided(this.helpfulVotes),
     unhelpfulVotes: Defaulted<Uint4> = Defaulted.Provided(this.unhelpfulVotes),
-    adminResponse: Defaulted<String?> = Defaulted.Provided(this.adminResponse),
+    adminResponse: Defaulted<kotlin.String?> = Defaulted.Provided(this.adminResponse),
     respondedAt: Defaulted<LocalDateTime?> = Defaulted.Provided(this.respondedAt),
     createdAt: Defaulted<LocalDateTime> = Defaulted.Provided(this.createdAt),
     updatedAt: Defaulted<LocalDateTime> = Defaulted.Provided(this.updatedAt)
   ): ReviewsRowUnsaved = ReviewsRowUnsaved(productId, customerId, rating, orderItemId, title, content, pros, cons, images, isVerifiedPurchase, isApproved, helpfulVotes, unhelpfulVotes, adminResponse, respondedAt, createdAt, updatedAt)
 
   companion object {
-    val _rowParser: RowParser<ReviewsRow> = RowParsers.of(ReviewsId.mariaType, ProductsId.mariaType, CustomersId.mariaType, OrderItemsId.mariaType.nullable(), MariaTypes.tinyintUnsigned, MariaTypes.varchar.nullable(), MariaTypes.text.nullable(), MariaTypes.json.nullable(), MariaTypes.json.nullable(), MariaTypes.json.nullable(), IsVerifiedPurchase.mariaType, IsApproved.mariaType, MariaTypes.intUnsigned, MariaTypes.intUnsigned, MariaTypes.text.nullable(), MariaTypes.datetime.nullable(), MariaTypes.datetime, MariaTypes.datetime, { t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15, t16, t17 -> ReviewsRow(t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15, t16, t17) }, { row -> arrayOf<Any?>(row.reviewId, row.productId, row.customerId, row.orderItemId, row.rating, row.title, row.content, row.pros, row.cons, row.images, row.isVerifiedPurchase, row.isApproved, row.helpfulVotes, row.unhelpfulVotes, row.adminResponse, row.respondedAt, row.createdAt, row.updatedAt) })
+    val rowCodec: RowCodec<ReviewsRow> = RowCodecs.of(ReviewsId.mariaType, ProductsId.mariaType, CustomersId.mariaType, OrderItemsId.mariaType.opt(), MariaTypes.tinyintUnsigned, MariaTypes.varchar.opt(), MariaTypes.text.opt(), MariaTypes.json.opt(), MariaTypes.json.opt(), MariaTypes.json.opt(), IsVerifiedPurchase.mariaType, IsApproved.mariaType, MariaTypes.intUnsigned, MariaTypes.intUnsigned, MariaTypes.text.opt(), MariaTypes.datetime.opt(), MariaTypes.datetime, MariaTypes.datetime, { t0: ReviewsId, t1: ProductsId, t2: CustomersId, t3: OrderItemsId?, t4: Uint1, t5: kotlin.String?, t6: kotlin.String?, t7: Json?, t8: Json?, t9: Json?, t10: /* user-picked */ IsVerifiedPurchase, t11: /* user-picked */ IsApproved, t12: Uint4, t13: Uint4, t14: kotlin.String?, t15: LocalDateTime?, t16: LocalDateTime, t17: LocalDateTime -> ReviewsRow(t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15, t16, t17) }, { row: ReviewsRow -> arrayOf<Any?>(row.reviewId, row.productId, row.customerId, row.orderItemId, row.rating, row.title, row.content, row.pros, row.cons, row.images, row.isVerifiedPurchase, row.isApproved, row.helpfulVotes, row.unhelpfulVotes, row.adminResponse, row.respondedAt, row.createdAt, row.updatedAt) })
   }
 }

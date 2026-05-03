@@ -34,7 +34,7 @@ object TypoXml {
                             }))
   }
 
-  implicit lazy val bijection: Bijection[TypoXml, String] = Bijection.apply[TypoXml, String](_.value)(TypoXml.apply)
+  implicit lazy val bijection: Bijection[TypoXml, String] = Bijection[TypoXml, String](_.value)(TypoXml.apply)
 
   implicit lazy val decoder: Decoder[TypoXml] = Decoder.decodeString.map(TypoXml.apply)
 

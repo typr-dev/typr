@@ -6,10 +6,10 @@
 package testdb.audit_log
 
 import com.fasterxml.jackson.annotation.JsonValue
-import dev.typr.foundations.MariaType
-import dev.typr.foundations.MariaTypes
 import dev.typr.foundations.data.Uint8
-import dev.typr.foundations.kotlin.Bijection
+import dev.typr.foundationskt.Bijection
+import dev.typr.foundationskt.MariaType
+import dev.typr.foundationskt.MariaTypes
 
 /** Type for the primary key of table `audit_log` */
 data class AuditLogId(@field:JsonValue val value: Uint8) {
@@ -22,6 +22,6 @@ data class AuditLogId(@field:JsonValue val value: Uint8) {
       Bijection.of(AuditLogId::value, ::AuditLogId)
 
     val mariaType: MariaType<AuditLogId> =
-      MariaTypes.bigintUnsigned.bimap(::AuditLogId, AuditLogId::value)
+      MariaTypes.bigintUnsigned.to(Bijection.of(::AuditLogId, AuditLogId::value))
   }
 }

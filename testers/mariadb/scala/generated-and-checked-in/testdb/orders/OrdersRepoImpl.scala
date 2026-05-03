@@ -5,118 +5,117 @@
  */
 package testdb.orders
 
-import dev.typr.foundations.MariaTypes
-import dev.typr.foundations.scala.DbTypeOps
-import dev.typr.foundations.scala.DeleteBuilder
-import dev.typr.foundations.scala.Dialect
-import dev.typr.foundations.scala.Fragment
-import dev.typr.foundations.scala.ScalaDbTypes
-import dev.typr.foundations.scala.SelectBuilder
-import dev.typr.foundations.scala.UpdateBuilder
-import java.sql.Connection
+import dev.typr.dslsc.DeleteBuilder
+import dev.typr.dslsc.Dialect
+import dev.typr.dslsc.SelectBuilder
+import dev.typr.dslsc.UpdateBuilder
+import dev.typr.foundationssc.Connection
+import dev.typr.foundationssc.ConnectionRead
+import dev.typr.foundationssc.Fragment
+import dev.typr.foundationssc.MariaTypes
 import scala.collection.mutable.ListBuffer
 import testdb.customer_addresses.CustomerAddressesId
 import testdb.customers.CustomersId
 import testdb.promotions.PromotionsId
-import dev.typr.foundations.scala.Fragment.sql
+import dev.typr.foundationssc.Fragment.sql
 
 class OrdersRepoImpl extends OrdersRepo {
   override def delete: DeleteBuilder[OrdersFields, OrdersRow] = DeleteBuilder.of("`orders`", OrdersFields.structure, Dialect.MARIADB)
 
-  override def deleteById(orderId: OrdersId)(using c: Connection): Boolean = sql"delete from `orders` where `order_id` = ${Fragment.encode(OrdersId.mariaType, orderId)}".update().runUnchecked(c) > 0
+  override def deleteById(orderId: OrdersId)(using c: Connection): Boolean = sql"delete from `orders` where `order_id` = ${Fragment.encode(OrdersId.mariaType, orderId)}".update().run(using c) > 0
 
-  override def deleteByIds(orderIds: Array[OrdersId])(using c: Connection): Int = {
+  override def deleteByIds(orderIds: List[OrdersId])(using c: Connection): Int = {
     val fragments: ListBuffer[Fragment] = ListBuffer()
     orderIds.foreach { id => fragments.addOne(Fragment.encode(OrdersId.mariaType, id)): @scala.annotation.nowarn }
-    return Fragment.interpolate(Fragment.lit("delete from `orders` where `order_id` in ("), Fragment.comma(fragments), Fragment.lit(")")).update().runUnchecked(c)
+    return Fragment.concat(Fragment.of("delete from `orders` where `order_id` in ("), Fragment.comma(fragments), Fragment.of(")")).update().run(using c)
   }
 
   override def insert(unsaved: OrdersRow)(using c: Connection): OrdersRow = {
   sql"""insert into `orders`(`order_number`, `customer_id`, `order_status`, `payment_status`, `shipping_address_id`, `billing_address_id`, `subtotal`, `shipping_cost`, `tax_amount`, `discount_amount`, `total_amount`, `currency_code`, `promotion_id`, `notes`, `internal_notes`, `ip_address`, `user_agent`, `ordered_at`, `confirmed_at`, `shipped_at`, `delivered_at`)
-    values (${Fragment.encode(MariaTypes.varchar, unsaved.orderNumber)}, ${Fragment.encode(CustomersId.mariaType, unsaved.customerId)}, ${Fragment.encode(MariaTypes.text, unsaved.orderStatus)}, ${Fragment.encode(MariaTypes.text, unsaved.paymentStatus)}, ${Fragment.encode(CustomerAddressesId.mariaType.nullable, unsaved.shippingAddressId)}, ${Fragment.encode(CustomerAddressesId.mariaType.nullable, unsaved.billingAddressId)}, ${Fragment.encode(ScalaDbTypes.MariaTypes.numeric, unsaved.subtotal)}, ${Fragment.encode(ScalaDbTypes.MariaTypes.numeric, unsaved.shippingCost)}, ${Fragment.encode(ScalaDbTypes.MariaTypes.numeric, unsaved.taxAmount)}, ${Fragment.encode(ScalaDbTypes.MariaTypes.numeric, unsaved.discountAmount)}, ${Fragment.encode(ScalaDbTypes.MariaTypes.numeric, unsaved.totalAmount)}, ${Fragment.encode(MariaTypes.char_, unsaved.currencyCode)}, ${Fragment.encode(PromotionsId.mariaType.nullable, unsaved.promotionId)}, ${Fragment.encode(MariaTypes.text.nullable, unsaved.notes)}, ${Fragment.encode(MariaTypes.mediumtext.nullable, unsaved.internalNotes)}, ${Fragment.encode(MariaTypes.inet6.nullable, unsaved.ipAddress)}, ${Fragment.encode(MariaTypes.varchar.nullable, unsaved.userAgent)}, ${Fragment.encode(MariaTypes.datetime, unsaved.orderedAt)}, ${Fragment.encode(MariaTypes.datetime.nullable, unsaved.confirmedAt)}, ${Fragment.encode(MariaTypes.datetime.nullable, unsaved.shippedAt)}, ${Fragment.encode(MariaTypes.datetime.nullable, unsaved.deliveredAt)})
+    values (${Fragment.encode(MariaTypes.varchar, unsaved.orderNumber)}, ${Fragment.encode(CustomersId.mariaType, unsaved.customerId)}, ${Fragment.encode(MariaTypes.text, unsaved.orderStatus)}, ${Fragment.encode(MariaTypes.text, unsaved.paymentStatus)}, ${Fragment.encode(CustomerAddressesId.mariaType.opt, unsaved.shippingAddressId)}, ${Fragment.encode(CustomerAddressesId.mariaType.opt, unsaved.billingAddressId)}, ${Fragment.encode(MariaTypes.numeric, unsaved.subtotal)}, ${Fragment.encode(MariaTypes.numeric, unsaved.shippingCost)}, ${Fragment.encode(MariaTypes.numeric, unsaved.taxAmount)}, ${Fragment.encode(MariaTypes.numeric, unsaved.discountAmount)}, ${Fragment.encode(MariaTypes.numeric, unsaved.totalAmount)}, ${Fragment.encode(MariaTypes.char_, unsaved.currencyCode)}, ${Fragment.encode(PromotionsId.mariaType.opt, unsaved.promotionId)}, ${Fragment.encode(MariaTypes.text.opt, unsaved.notes)}, ${Fragment.encode(MariaTypes.mediumtext.opt, unsaved.internalNotes)}, ${Fragment.encode(MariaTypes.inet6.opt, unsaved.ipAddress)}, ${Fragment.encode(MariaTypes.varchar.opt, unsaved.userAgent)}, ${Fragment.encode(MariaTypes.datetime, unsaved.orderedAt)}, ${Fragment.encode(MariaTypes.datetime.opt, unsaved.confirmedAt)}, ${Fragment.encode(MariaTypes.datetime.opt, unsaved.shippedAt)}, ${Fragment.encode(MariaTypes.datetime.opt, unsaved.deliveredAt)})
     RETURNING `order_id`, `order_number`, `customer_id`, `order_status`, `payment_status`, `shipping_address_id`, `billing_address_id`, `subtotal`, `shipping_cost`, `tax_amount`, `discount_amount`, `total_amount`, `currency_code`, `promotion_id`, `notes`, `internal_notes`, `ip_address`, `user_agent`, `ordered_at`, `confirmed_at`, `shipped_at`, `delivered_at`
     """
-    .updateReturning(OrdersRow.`_rowParser`.exactlyOne()).runUnchecked(c)
+    .updateReturning(OrdersRow.rowCodec.exactlyOne()).run(using c)
   }
 
   override def insert(unsaved: OrdersRowUnsaved)(using c: Connection): OrdersRow = {
     val columns: ListBuffer[Fragment] = ListBuffer()
     val values: ListBuffer[Fragment] = ListBuffer()
-    columns.addOne(Fragment.lit("`order_number`")): @scala.annotation.nowarn
+    columns.addOne(Fragment.of("`order_number`")): @scala.annotation.nowarn
     values.addOne(sql"${Fragment.encode(MariaTypes.varchar, unsaved.orderNumber)}"): @scala.annotation.nowarn
-    columns.addOne(Fragment.lit("`customer_id`")): @scala.annotation.nowarn
+    columns.addOne(Fragment.of("`customer_id`")): @scala.annotation.nowarn
     values.addOne(sql"${Fragment.encode(CustomersId.mariaType, unsaved.customerId)}"): @scala.annotation.nowarn
-    columns.addOne(Fragment.lit("`subtotal`")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(ScalaDbTypes.MariaTypes.numeric, unsaved.subtotal)}"): @scala.annotation.nowarn
-    columns.addOne(Fragment.lit("`total_amount`")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(ScalaDbTypes.MariaTypes.numeric, unsaved.totalAmount)}"): @scala.annotation.nowarn
+    columns.addOne(Fragment.of("`subtotal`")): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(MariaTypes.numeric, unsaved.subtotal)}"): @scala.annotation.nowarn
+    columns.addOne(Fragment.of("`total_amount`")): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(MariaTypes.numeric, unsaved.totalAmount)}"): @scala.annotation.nowarn
     unsaved.orderStatus.visit(
       {  },
-      value => { columns.addOne(Fragment.lit("`order_status`")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(MariaTypes.text, value)}"): @scala.annotation.nowarn }
+      value => { columns.addOne(Fragment.of("`order_status`")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(MariaTypes.text, value)}"): @scala.annotation.nowarn }
     );
     unsaved.paymentStatus.visit(
       {  },
-      value => { columns.addOne(Fragment.lit("`payment_status`")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(MariaTypes.text, value)}"): @scala.annotation.nowarn }
+      value => { columns.addOne(Fragment.of("`payment_status`")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(MariaTypes.text, value)}"): @scala.annotation.nowarn }
     );
     unsaved.shippingAddressId.visit(
       {  },
-      value => { columns.addOne(Fragment.lit("`shipping_address_id`")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(CustomerAddressesId.mariaType.nullable, value)}"): @scala.annotation.nowarn }
+      value => { columns.addOne(Fragment.of("`shipping_address_id`")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(CustomerAddressesId.mariaType.opt, value)}"): @scala.annotation.nowarn }
     );
     unsaved.billingAddressId.visit(
       {  },
-      value => { columns.addOne(Fragment.lit("`billing_address_id`")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(CustomerAddressesId.mariaType.nullable, value)}"): @scala.annotation.nowarn }
+      value => { columns.addOne(Fragment.of("`billing_address_id`")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(CustomerAddressesId.mariaType.opt, value)}"): @scala.annotation.nowarn }
     );
     unsaved.shippingCost.visit(
       {  },
-      value => { columns.addOne(Fragment.lit("`shipping_cost`")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(ScalaDbTypes.MariaTypes.numeric, value)}"): @scala.annotation.nowarn }
+      value => { columns.addOne(Fragment.of("`shipping_cost`")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(MariaTypes.numeric, value)}"): @scala.annotation.nowarn }
     );
     unsaved.taxAmount.visit(
       {  },
-      value => { columns.addOne(Fragment.lit("`tax_amount`")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(ScalaDbTypes.MariaTypes.numeric, value)}"): @scala.annotation.nowarn }
+      value => { columns.addOne(Fragment.of("`tax_amount`")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(MariaTypes.numeric, value)}"): @scala.annotation.nowarn }
     );
     unsaved.discountAmount.visit(
       {  },
-      value => { columns.addOne(Fragment.lit("`discount_amount`")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(ScalaDbTypes.MariaTypes.numeric, value)}"): @scala.annotation.nowarn }
+      value => { columns.addOne(Fragment.of("`discount_amount`")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(MariaTypes.numeric, value)}"): @scala.annotation.nowarn }
     );
     unsaved.currencyCode.visit(
       {  },
-      value => { columns.addOne(Fragment.lit("`currency_code`")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(MariaTypes.char_, value)}"): @scala.annotation.nowarn }
+      value => { columns.addOne(Fragment.of("`currency_code`")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(MariaTypes.char_, value)}"): @scala.annotation.nowarn }
     );
     unsaved.promotionId.visit(
       {  },
-      value => { columns.addOne(Fragment.lit("`promotion_id`")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(PromotionsId.mariaType.nullable, value)}"): @scala.annotation.nowarn }
+      value => { columns.addOne(Fragment.of("`promotion_id`")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(PromotionsId.mariaType.opt, value)}"): @scala.annotation.nowarn }
     );
     unsaved.notes.visit(
       {  },
-      value => { columns.addOne(Fragment.lit("`notes`")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(MariaTypes.text.nullable, value)}"): @scala.annotation.nowarn }
+      value => { columns.addOne(Fragment.of("`notes`")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(MariaTypes.text.opt, value)}"): @scala.annotation.nowarn }
     );
     unsaved.internalNotes.visit(
       {  },
-      value => { columns.addOne(Fragment.lit("`internal_notes`")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(MariaTypes.mediumtext.nullable, value)}"): @scala.annotation.nowarn }
+      value => { columns.addOne(Fragment.of("`internal_notes`")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(MariaTypes.mediumtext.opt, value)}"): @scala.annotation.nowarn }
     );
     unsaved.ipAddress.visit(
       {  },
-      value => { columns.addOne(Fragment.lit("`ip_address`")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(MariaTypes.inet6.nullable, value)}"): @scala.annotation.nowarn }
+      value => { columns.addOne(Fragment.of("`ip_address`")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(MariaTypes.inet6.opt, value)}"): @scala.annotation.nowarn }
     );
     unsaved.userAgent.visit(
       {  },
-      value => { columns.addOne(Fragment.lit("`user_agent`")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(MariaTypes.varchar.nullable, value)}"): @scala.annotation.nowarn }
+      value => { columns.addOne(Fragment.of("`user_agent`")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(MariaTypes.varchar.opt, value)}"): @scala.annotation.nowarn }
     );
     unsaved.orderedAt.visit(
       {  },
-      value => { columns.addOne(Fragment.lit("`ordered_at`")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(MariaTypes.datetime, value)}"): @scala.annotation.nowarn }
+      value => { columns.addOne(Fragment.of("`ordered_at`")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(MariaTypes.datetime, value)}"): @scala.annotation.nowarn }
     );
     unsaved.confirmedAt.visit(
       {  },
-      value => { columns.addOne(Fragment.lit("`confirmed_at`")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(MariaTypes.datetime.nullable, value)}"): @scala.annotation.nowarn }
+      value => { columns.addOne(Fragment.of("`confirmed_at`")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(MariaTypes.datetime.opt, value)}"): @scala.annotation.nowarn }
     );
     unsaved.shippedAt.visit(
       {  },
-      value => { columns.addOne(Fragment.lit("`shipped_at`")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(MariaTypes.datetime.nullable, value)}"): @scala.annotation.nowarn }
+      value => { columns.addOne(Fragment.of("`shipped_at`")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(MariaTypes.datetime.opt, value)}"): @scala.annotation.nowarn }
     );
     unsaved.deliveredAt.visit(
       {  },
-      value => { columns.addOne(Fragment.lit("`delivered_at`")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(MariaTypes.datetime.nullable, value)}"): @scala.annotation.nowarn }
+      value => { columns.addOne(Fragment.of("`delivered_at`")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(MariaTypes.datetime.opt, value)}"): @scala.annotation.nowarn }
     );
     val q: Fragment = {
       sql"""insert into `orders`(${Fragment.comma(columns)})
@@ -124,43 +123,43 @@ class OrdersRepoImpl extends OrdersRepo {
       RETURNING `order_id`, `order_number`, `customer_id`, `order_status`, `payment_status`, `shipping_address_id`, `billing_address_id`, `subtotal`, `shipping_cost`, `tax_amount`, `discount_amount`, `total_amount`, `currency_code`, `promotion_id`, `notes`, `internal_notes`, `ip_address`, `user_agent`, `ordered_at`, `confirmed_at`, `shipped_at`, `delivered_at`
       """
     }
-    return q.updateReturning(OrdersRow.`_rowParser`.exactlyOne()).runUnchecked(c)
+    return q.updateReturning(OrdersRow.rowCodec.exactlyOne()).run(using c)
   }
 
-  override def select: SelectBuilder[OrdersFields, OrdersRow] = SelectBuilder.of("`orders`", OrdersFields.structure, OrdersRow.`_rowParser`, Dialect.MARIADB)
+  override def select: SelectBuilder[OrdersFields, OrdersRow] = SelectBuilder.of("`orders`", OrdersFields.structure, OrdersRow.rowCodec, Dialect.MARIADB)
 
-  override def selectAll(using c: Connection): List[OrdersRow] = {
+  override def selectAll(using c: ConnectionRead): List[OrdersRow] = {
     sql"""select `order_id`, `order_number`, `customer_id`, `order_status`, `payment_status`, `shipping_address_id`, `billing_address_id`, `subtotal`, `shipping_cost`, `tax_amount`, `discount_amount`, `total_amount`, `currency_code`, `promotion_id`, `notes`, `internal_notes`, `ip_address`, `user_agent`, `ordered_at`, `confirmed_at`, `shipped_at`, `delivered_at`
     from `orders`
-    """.query(OrdersRow.`_rowParser`.all()).runUnchecked(c)
+    """.query(OrdersRow.rowCodec.all()).run(using c)
   }
 
-  override def selectById(orderId: OrdersId)(using c: Connection): Option[OrdersRow] = {
+  override def selectById(orderId: OrdersId)(using c: ConnectionRead): Option[OrdersRow] = {
     sql"""select `order_id`, `order_number`, `customer_id`, `order_status`, `payment_status`, `shipping_address_id`, `billing_address_id`, `subtotal`, `shipping_cost`, `tax_amount`, `discount_amount`, `total_amount`, `currency_code`, `promotion_id`, `notes`, `internal_notes`, `ip_address`, `user_agent`, `ordered_at`, `confirmed_at`, `shipped_at`, `delivered_at`
     from `orders`
-    where `order_id` = ${Fragment.encode(OrdersId.mariaType, orderId)}""".query(OrdersRow.`_rowParser`.first()).runUnchecked(c)
+    where `order_id` = ${Fragment.encode(OrdersId.mariaType, orderId)}""".query(OrdersRow.rowCodec.first()).run(using c)
   }
 
-  override def selectByIds(orderIds: Array[OrdersId])(using c: Connection): List[OrdersRow] = {
+  override def selectByIds(orderIds: List[OrdersId])(using c: ConnectionRead): List[OrdersRow] = {
     val fragments: ListBuffer[Fragment] = ListBuffer()
     orderIds.foreach { id => fragments.addOne(Fragment.encode(OrdersId.mariaType, id)): @scala.annotation.nowarn }
-    return Fragment.interpolate(Fragment.lit("select `order_id`, `order_number`, `customer_id`, `order_status`, `payment_status`, `shipping_address_id`, `billing_address_id`, `subtotal`, `shipping_cost`, `tax_amount`, `discount_amount`, `total_amount`, `currency_code`, `promotion_id`, `notes`, `internal_notes`, `ip_address`, `user_agent`, `ordered_at`, `confirmed_at`, `shipped_at`, `delivered_at` from `orders` where `order_id` in ("), Fragment.comma(fragments), Fragment.lit(")")).query(OrdersRow.`_rowParser`.all()).runUnchecked(c)
+    return Fragment.concat(Fragment.of("select `order_id`, `order_number`, `customer_id`, `order_status`, `payment_status`, `shipping_address_id`, `billing_address_id`, `subtotal`, `shipping_cost`, `tax_amount`, `discount_amount`, `total_amount`, `currency_code`, `promotion_id`, `notes`, `internal_notes`, `ip_address`, `user_agent`, `ordered_at`, `confirmed_at`, `shipped_at`, `delivered_at` from `orders` where `order_id` in ("), Fragment.comma(fragments), Fragment.of(")")).query(OrdersRow.rowCodec.all()).run(using c)
   }
 
-  override def selectByIdsTracked(orderIds: Array[OrdersId])(using c: Connection): Map[OrdersId, OrdersRow] = {
+  override def selectByIdsTracked(orderIds: List[OrdersId])(using c: ConnectionRead): Map[OrdersId, OrdersRow] = {
     val ret: scala.collection.mutable.Map[OrdersId, OrdersRow] = scala.collection.mutable.Map.empty[OrdersId, OrdersRow]
     selectByIds(orderIds)(using c).foreach(row => ret.put(row.orderId, row): @scala.annotation.nowarn)
     return ret.toMap
   }
 
-  override def selectByUniqueOrderNumber(orderNumber: String)(using c: Connection): Option[OrdersRow] = {
+  override def selectByUniqueOrderNumber(orderNumber: String)(using c: ConnectionRead): Option[OrdersRow] = {
     sql"""select `order_id`, `order_number`, `customer_id`, `order_status`, `payment_status`, `shipping_address_id`, `billing_address_id`, `subtotal`, `shipping_cost`, `tax_amount`, `discount_amount`, `total_amount`, `currency_code`, `promotion_id`, `notes`, `internal_notes`, `ip_address`, `user_agent`, `ordered_at`, `confirmed_at`, `shipped_at`, `delivered_at`
     from `orders`
     where `order_number` = ${Fragment.encode(MariaTypes.varchar, orderNumber)}
-    """.query(OrdersRow.`_rowParser`.first()).runUnchecked(c)
+    """.query(OrdersRow.rowCodec.first()).run(using c)
   }
 
-  override def update: UpdateBuilder[OrdersFields, OrdersRow] = UpdateBuilder.of("`orders`", OrdersFields.structure, OrdersRow.`_rowParser`, Dialect.MARIADB)
+  override def update: UpdateBuilder[OrdersFields, OrdersRow] = UpdateBuilder.of("`orders`", OrdersFields.structure, OrdersRow.rowCodec, Dialect.MARIADB)
 
   override def update(row: OrdersRow)(using c: Connection): Boolean = {
     val orderId: OrdersId = row.orderId
@@ -169,29 +168,29 @@ class OrdersRepoImpl extends OrdersRepo {
     `customer_id` = ${Fragment.encode(CustomersId.mariaType, row.customerId)},
     `order_status` = ${Fragment.encode(MariaTypes.text, row.orderStatus)},
     `payment_status` = ${Fragment.encode(MariaTypes.text, row.paymentStatus)},
-    `shipping_address_id` = ${Fragment.encode(CustomerAddressesId.mariaType.nullable, row.shippingAddressId)},
-    `billing_address_id` = ${Fragment.encode(CustomerAddressesId.mariaType.nullable, row.billingAddressId)},
-    `subtotal` = ${Fragment.encode(ScalaDbTypes.MariaTypes.numeric, row.subtotal)},
-    `shipping_cost` = ${Fragment.encode(ScalaDbTypes.MariaTypes.numeric, row.shippingCost)},
-    `tax_amount` = ${Fragment.encode(ScalaDbTypes.MariaTypes.numeric, row.taxAmount)},
-    `discount_amount` = ${Fragment.encode(ScalaDbTypes.MariaTypes.numeric, row.discountAmount)},
-    `total_amount` = ${Fragment.encode(ScalaDbTypes.MariaTypes.numeric, row.totalAmount)},
+    `shipping_address_id` = ${Fragment.encode(CustomerAddressesId.mariaType.opt, row.shippingAddressId)},
+    `billing_address_id` = ${Fragment.encode(CustomerAddressesId.mariaType.opt, row.billingAddressId)},
+    `subtotal` = ${Fragment.encode(MariaTypes.numeric, row.subtotal)},
+    `shipping_cost` = ${Fragment.encode(MariaTypes.numeric, row.shippingCost)},
+    `tax_amount` = ${Fragment.encode(MariaTypes.numeric, row.taxAmount)},
+    `discount_amount` = ${Fragment.encode(MariaTypes.numeric, row.discountAmount)},
+    `total_amount` = ${Fragment.encode(MariaTypes.numeric, row.totalAmount)},
     `currency_code` = ${Fragment.encode(MariaTypes.char_, row.currencyCode)},
-    `promotion_id` = ${Fragment.encode(PromotionsId.mariaType.nullable, row.promotionId)},
-    `notes` = ${Fragment.encode(MariaTypes.text.nullable, row.notes)},
-    `internal_notes` = ${Fragment.encode(MariaTypes.mediumtext.nullable, row.internalNotes)},
-    `ip_address` = ${Fragment.encode(MariaTypes.inet6.nullable, row.ipAddress)},
-    `user_agent` = ${Fragment.encode(MariaTypes.varchar.nullable, row.userAgent)},
+    `promotion_id` = ${Fragment.encode(PromotionsId.mariaType.opt, row.promotionId)},
+    `notes` = ${Fragment.encode(MariaTypes.text.opt, row.notes)},
+    `internal_notes` = ${Fragment.encode(MariaTypes.mediumtext.opt, row.internalNotes)},
+    `ip_address` = ${Fragment.encode(MariaTypes.inet6.opt, row.ipAddress)},
+    `user_agent` = ${Fragment.encode(MariaTypes.varchar.opt, row.userAgent)},
     `ordered_at` = ${Fragment.encode(MariaTypes.datetime, row.orderedAt)},
-    `confirmed_at` = ${Fragment.encode(MariaTypes.datetime.nullable, row.confirmedAt)},
-    `shipped_at` = ${Fragment.encode(MariaTypes.datetime.nullable, row.shippedAt)},
-    `delivered_at` = ${Fragment.encode(MariaTypes.datetime.nullable, row.deliveredAt)}
-    where `order_id` = ${Fragment.encode(OrdersId.mariaType, orderId)}""".update().runUnchecked(c) > 0
+    `confirmed_at` = ${Fragment.encode(MariaTypes.datetime.opt, row.confirmedAt)},
+    `shipped_at` = ${Fragment.encode(MariaTypes.datetime.opt, row.shippedAt)},
+    `delivered_at` = ${Fragment.encode(MariaTypes.datetime.opt, row.deliveredAt)}
+    where `order_id` = ${Fragment.encode(OrdersId.mariaType, orderId)}""".update().run(using c) > 0
   }
 
   override def upsert(unsaved: OrdersRow)(using c: Connection): OrdersRow = {
   sql"""INSERT INTO `orders`(`order_id`, `order_number`, `customer_id`, `order_status`, `payment_status`, `shipping_address_id`, `billing_address_id`, `subtotal`, `shipping_cost`, `tax_amount`, `discount_amount`, `total_amount`, `currency_code`, `promotion_id`, `notes`, `internal_notes`, `ip_address`, `user_agent`, `ordered_at`, `confirmed_at`, `shipped_at`, `delivered_at`)
-    VALUES (${Fragment.encode(OrdersId.mariaType, unsaved.orderId)}, ${Fragment.encode(MariaTypes.varchar, unsaved.orderNumber)}, ${Fragment.encode(CustomersId.mariaType, unsaved.customerId)}, ${Fragment.encode(MariaTypes.text, unsaved.orderStatus)}, ${Fragment.encode(MariaTypes.text, unsaved.paymentStatus)}, ${Fragment.encode(CustomerAddressesId.mariaType.nullable, unsaved.shippingAddressId)}, ${Fragment.encode(CustomerAddressesId.mariaType.nullable, unsaved.billingAddressId)}, ${Fragment.encode(ScalaDbTypes.MariaTypes.numeric, unsaved.subtotal)}, ${Fragment.encode(ScalaDbTypes.MariaTypes.numeric, unsaved.shippingCost)}, ${Fragment.encode(ScalaDbTypes.MariaTypes.numeric, unsaved.taxAmount)}, ${Fragment.encode(ScalaDbTypes.MariaTypes.numeric, unsaved.discountAmount)}, ${Fragment.encode(ScalaDbTypes.MariaTypes.numeric, unsaved.totalAmount)}, ${Fragment.encode(MariaTypes.char_, unsaved.currencyCode)}, ${Fragment.encode(PromotionsId.mariaType.nullable, unsaved.promotionId)}, ${Fragment.encode(MariaTypes.text.nullable, unsaved.notes)}, ${Fragment.encode(MariaTypes.mediumtext.nullable, unsaved.internalNotes)}, ${Fragment.encode(MariaTypes.inet6.nullable, unsaved.ipAddress)}, ${Fragment.encode(MariaTypes.varchar.nullable, unsaved.userAgent)}, ${Fragment.encode(MariaTypes.datetime, unsaved.orderedAt)}, ${Fragment.encode(MariaTypes.datetime.nullable, unsaved.confirmedAt)}, ${Fragment.encode(MariaTypes.datetime.nullable, unsaved.shippedAt)}, ${Fragment.encode(MariaTypes.datetime.nullable, unsaved.deliveredAt)})
+    VALUES (${Fragment.encode(OrdersId.mariaType, unsaved.orderId)}, ${Fragment.encode(MariaTypes.varchar, unsaved.orderNumber)}, ${Fragment.encode(CustomersId.mariaType, unsaved.customerId)}, ${Fragment.encode(MariaTypes.text, unsaved.orderStatus)}, ${Fragment.encode(MariaTypes.text, unsaved.paymentStatus)}, ${Fragment.encode(CustomerAddressesId.mariaType.opt, unsaved.shippingAddressId)}, ${Fragment.encode(CustomerAddressesId.mariaType.opt, unsaved.billingAddressId)}, ${Fragment.encode(MariaTypes.numeric, unsaved.subtotal)}, ${Fragment.encode(MariaTypes.numeric, unsaved.shippingCost)}, ${Fragment.encode(MariaTypes.numeric, unsaved.taxAmount)}, ${Fragment.encode(MariaTypes.numeric, unsaved.discountAmount)}, ${Fragment.encode(MariaTypes.numeric, unsaved.totalAmount)}, ${Fragment.encode(MariaTypes.char_, unsaved.currencyCode)}, ${Fragment.encode(PromotionsId.mariaType.opt, unsaved.promotionId)}, ${Fragment.encode(MariaTypes.text.opt, unsaved.notes)}, ${Fragment.encode(MariaTypes.mediumtext.opt, unsaved.internalNotes)}, ${Fragment.encode(MariaTypes.inet6.opt, unsaved.ipAddress)}, ${Fragment.encode(MariaTypes.varchar.opt, unsaved.userAgent)}, ${Fragment.encode(MariaTypes.datetime, unsaved.orderedAt)}, ${Fragment.encode(MariaTypes.datetime.opt, unsaved.confirmedAt)}, ${Fragment.encode(MariaTypes.datetime.opt, unsaved.shippedAt)}, ${Fragment.encode(MariaTypes.datetime.opt, unsaved.deliveredAt)})
     ON DUPLICATE KEY UPDATE `order_number` = VALUES(`order_number`),
     `customer_id` = VALUES(`customer_id`),
     `order_status` = VALUES(`order_status`),
@@ -214,8 +213,8 @@ class OrdersRepoImpl extends OrdersRepo {
     `shipped_at` = VALUES(`shipped_at`),
     `delivered_at` = VALUES(`delivered_at`)
     RETURNING `order_id`, `order_number`, `customer_id`, `order_status`, `payment_status`, `shipping_address_id`, `billing_address_id`, `subtotal`, `shipping_cost`, `tax_amount`, `discount_amount`, `total_amount`, `currency_code`, `promotion_id`, `notes`, `internal_notes`, `ip_address`, `user_agent`, `ordered_at`, `confirmed_at`, `shipped_at`, `delivered_at`"""
-    .updateReturning(OrdersRow.`_rowParser`.exactlyOne())
-    .runUnchecked(c)
+    .updateReturning(OrdersRow.rowCodec.exactlyOne())
+    .run(using c)
   }
 
   override def upsertBatch(unsaved: Iterator[OrdersRow])(using c: Connection): List[OrdersRow] = {
@@ -243,7 +242,7 @@ class OrdersRepoImpl extends OrdersRepo {
     `shipped_at` = VALUES(`shipped_at`),
     `delivered_at` = VALUES(`delivered_at`)
     RETURNING `order_id`, `order_number`, `customer_id`, `order_status`, `payment_status`, `shipping_address_id`, `billing_address_id`, `subtotal`, `shipping_cost`, `tax_amount`, `discount_amount`, `total_amount`, `currency_code`, `promotion_id`, `notes`, `internal_notes`, `ip_address`, `user_agent`, `ordered_at`, `confirmed_at`, `shipped_at`, `delivered_at`"""
-      .updateReturningEach(OrdersRow.`_rowParser`, unsaved)
-    .runUnchecked(c)
+      .updateReturningEach(OrdersRow.rowCodec, unsaved)
+    .run(using c)
   }
 }

@@ -6,18 +6,18 @@
 package adventureworks.production.productmodel
 
 import adventureworks.public.Name
-import dev.typr.foundations.PgTypes
-import dev.typr.foundations.RowParser
+import dev.typr.dsl.FieldsBase
+import dev.typr.dsl.Path
+import dev.typr.dsl.SqlExpr.FieldLike
+import dev.typr.dslsc.RelationStructure
+import dev.typr.dslsc.SqlExpr
+import dev.typr.dslsc.SqlExpr.Field
+import dev.typr.dslsc.SqlExpr.IdField
+import dev.typr.dslsc.SqlExpr.OptField
+import dev.typr.dslsc.TupleExpr6
+import dev.typr.foundations.RowCodec
 import dev.typr.foundations.data.Xml
-import dev.typr.foundations.dsl.FieldsBase
-import dev.typr.foundations.dsl.Path
-import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.scala.RelationStructure
-import dev.typr.foundations.scala.SqlExpr
-import dev.typr.foundations.scala.SqlExpr.Field
-import dev.typr.foundations.scala.SqlExpr.IdField
-import dev.typr.foundations.scala.SqlExpr.OptField
-import dev.typr.foundations.scala.TupleExpr6
+import dev.typr.foundationssc.PgTypes
 import java.time.LocalDateTime
 import java.util.UUID
 
@@ -30,7 +30,7 @@ class ProductmodelFields(val `_path`: java.util.List[Path]) extends TupleExpr6[P
       None,
       Some("int4"),
       (row, value) => row.copy(productmodelid = value),
-      ProductmodelId.pgType
+      ProductmodelId.pgType.underlying
     )
   }
 
@@ -42,7 +42,7 @@ class ProductmodelFields(val `_path`: java.util.List[Path]) extends TupleExpr6[P
       None,
       Some("varchar"),
       (row, value) => row.copy(name = value),
-      Name.pgType
+      Name.pgType.underlying
     )
   }
 
@@ -54,7 +54,7 @@ class ProductmodelFields(val `_path`: java.util.List[Path]) extends TupleExpr6[P
       None,
       Some("xml"),
       (row, value) => row.copy(catalogdescription = value),
-      PgTypes.xml
+      PgTypes.xml.underlying
     )
   }
 
@@ -66,7 +66,7 @@ class ProductmodelFields(val `_path`: java.util.List[Path]) extends TupleExpr6[P
       None,
       Some("xml"),
       (row, value) => row.copy(instructions = value),
-      PgTypes.xml
+      PgTypes.xml.underlying
     )
   }
 
@@ -78,7 +78,7 @@ class ProductmodelFields(val `_path`: java.util.List[Path]) extends TupleExpr6[P
       None,
       Some("uuid"),
       (row, value) => row.copy(rowguid = value),
-      PgTypes.uuid
+      PgTypes.uuid.underlying
     )
   }
 
@@ -90,13 +90,13 @@ class ProductmodelFields(val `_path`: java.util.List[Path]) extends TupleExpr6[P
       None,
       Some("timestamp"),
       (row, value) => row.copy(modifieddate = value),
-      PgTypes.timestamp
+      PgTypes.timestamp.underlying
     )
   }
 
   override def columns: java.util.List[FieldLike[?, ProductmodelRow]] = java.util.List.of(this.productmodelid.underlying, this.name.underlying, this.catalogdescription.underlying, this.instructions.underlying, this.rowguid.underlying, this.modifieddate.underlying)
 
-  override def rowParser: RowParser[ProductmodelRow] = ProductmodelRow._rowParser.underlying
+  override def rowCodec: RowCodec[ProductmodelRow] = ProductmodelRow.rowCodec.underlying
 
   override def withPaths(`_path`: java.util.List[Path]): RelationStructure[ProductmodelFields, ProductmodelRow] = new ProductmodelFields(`_path`)
 

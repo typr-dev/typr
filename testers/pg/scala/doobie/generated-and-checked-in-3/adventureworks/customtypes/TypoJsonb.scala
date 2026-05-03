@@ -33,7 +33,7 @@ object TypoJsonb {
                             }))
   }
 
-  given bijection: Bijection[TypoJsonb, String] = Bijection.apply[TypoJsonb, String](_.value)(TypoJsonb.apply)
+  given bijection: Bijection[TypoJsonb, String] = Bijection[TypoJsonb, String](_.value)(TypoJsonb.apply)
 
   given decoder: Decoder[TypoJsonb] = Decoder.decodeString.map(TypoJsonb.apply)
 

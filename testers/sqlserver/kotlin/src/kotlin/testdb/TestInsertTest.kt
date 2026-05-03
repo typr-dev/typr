@@ -10,7 +10,7 @@ import java.util.Random
  * Tests for the TestInsert helper class that generates random test data.
  */
 class TestInsertTest {
-    private val testInsert = TestInsert(Random(42))
+    private val testInsert = TestInsert(Random(446674718))
 
     @Test
     fun testCustomersInsert() {

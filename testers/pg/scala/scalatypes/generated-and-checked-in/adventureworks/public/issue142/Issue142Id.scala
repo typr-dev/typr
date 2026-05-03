@@ -5,8 +5,9 @@
  */
 package adventureworks.public.issue142
 
-import dev.typr.foundations.PgType
-import dev.typr.foundations.PgTypes
+import dev.typr.dslsc.Bijection
+import dev.typr.foundationssc.PgType
+import dev.typr.foundationssc.PgTypes
 
 /** Type for the primary key of table `public.issue142`. It has some known values: 
  *  - aa
@@ -18,12 +19,12 @@ sealed abstract class Issue142Id(val value: String)
 object Issue142Id {
   def apply(underlying: String): Issue142Id =
     ByName.getOrElse(underlying, Unknown(underlying))
-  given pgTypeArray: PgType[Array[Issue142Id]] = {
-    PgTypes.textArray
-      .bimap(xs => xs.map(Issue142Id.apply), xs => xs.map(_.value))
+  given pgTypeArray: PgType[List[Issue142Id]] = {
+    PgTypes.text.array
+      .to(Bijection.of(xs => xs.map(Issue142Id.apply).toList, xs => xs.map(_.value).toList))
   }
 
-  given pgType: PgType[Issue142Id] = PgTypes.text.bimap(Issue142Id.apply, _.value)
+  given pgType: PgType[Issue142Id] = PgTypes.text.to(Bijection.of(Issue142Id.apply, _.value))
 
   case object aa extends Issue142Id("aa")
 

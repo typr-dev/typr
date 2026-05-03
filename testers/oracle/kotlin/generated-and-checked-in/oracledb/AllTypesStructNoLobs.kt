@@ -6,37 +6,37 @@
 package oracledb
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import dev.typr.foundations.OracleObject
-import dev.typr.foundations.OracleType
-import dev.typr.foundations.OracleTypes
 import dev.typr.foundations.data.OracleIntervalDS
 import dev.typr.foundations.data.OracleIntervalYM
-import dev.typr.foundations.kotlin.KotlinDbTypes
+import dev.typr.foundationskt.OracleType
+import dev.typr.foundationskt.OracleTypes
+import dev.typr.foundationskt.RowCodec
 import java.math.BigDecimal
+import java.time.Instant
 import java.time.LocalDateTime
-import java.time.OffsetDateTime
+import java.time.ZonedDateTime
 
 /** Oracle Object Type: ALL_TYPES_STRUCT_NO_LOBS */
 data class AllTypesStructNoLobs(
-  @field:JsonProperty("VARCHAR_FIELD") val varcharField: String,
-  @field:JsonProperty("NVARCHAR_FIELD") val nvarcharField: String,
-  @field:JsonProperty("CHAR_FIELD") val charField: String,
-  @field:JsonProperty("NCHAR_FIELD") val ncharField: String,
+  @field:JsonProperty("VARCHAR_FIELD") val varcharField: kotlin.String,
+  @field:JsonProperty("NVARCHAR_FIELD") val nvarcharField: kotlin.String,
+  @field:JsonProperty("CHAR_FIELD") val charField: kotlin.String,
+  @field:JsonProperty("NCHAR_FIELD") val ncharField: kotlin.String,
   @field:JsonProperty("NUMBER_FIELD") val numberField: BigDecimal,
   @field:JsonProperty("NUMBER_INT_FIELD") val numberIntField: BigDecimal,
   @field:JsonProperty("NUMBER_LONG_FIELD") val numberLongField: BigDecimal,
-  @field:JsonProperty("BINARY_FLOAT_FIELD") val binaryFloatField: Float,
-  @field:JsonProperty("BINARY_DOUBLE_FIELD") val binaryDoubleField: Double,
+  @field:JsonProperty("BINARY_FLOAT_FIELD") val binaryFloatField: kotlin.Float,
+  @field:JsonProperty("BINARY_DOUBLE_FIELD") val binaryDoubleField: kotlin.Double,
   @field:JsonProperty("DATE_FIELD") val dateField: LocalDateTime,
   @field:JsonProperty("TIMESTAMP_FIELD") val timestampField: LocalDateTime,
-  @field:JsonProperty("TIMESTAMP_TZ_FIELD") val timestampTzField: OffsetDateTime,
-  @field:JsonProperty("TIMESTAMP_LTZ_FIELD") val timestampLtzField: OffsetDateTime,
+  @field:JsonProperty("TIMESTAMP_TZ_FIELD") val timestampTzField: ZonedDateTime,
+  @field:JsonProperty("TIMESTAMP_LTZ_FIELD") val timestampLtzField: Instant,
   @field:JsonProperty("INTERVAL_YM_FIELD") val intervalYmField: OracleIntervalYM,
   @field:JsonProperty("INTERVAL_DS_FIELD") val intervalDsField: OracleIntervalDS,
   @field:JsonProperty("NESTED_OBJECT_FIELD") val nestedObjectField: AddressT,
   @field:JsonProperty("VARRAY_FIELD") val varrayField: PhoneList
 ) {
   companion object {
-    val oracleType: OracleType<AllTypesStructNoLobs> = OracleObject.builder<AllTypesStructNoLobs>("ALL_TYPES_STRUCT_NO_LOBS").addAttribute("VARCHAR_FIELD", OracleTypes.varchar2, AllTypesStructNoLobs::varcharField).addAttribute("NVARCHAR_FIELD", OracleTypes.nvarchar2, AllTypesStructNoLobs::nvarcharField).addAttribute("CHAR_FIELD", OracleTypes.char_, AllTypesStructNoLobs::charField).addAttribute("NCHAR_FIELD", OracleTypes.nchar, AllTypesStructNoLobs::ncharField).addAttribute("NUMBER_FIELD", KotlinDbTypes.OracleTypes.number, AllTypesStructNoLobs::numberField).addAttribute("NUMBER_INT_FIELD", KotlinDbTypes.OracleTypes.number, AllTypesStructNoLobs::numberIntField).addAttribute("NUMBER_LONG_FIELD", KotlinDbTypes.OracleTypes.number, AllTypesStructNoLobs::numberLongField).addAttribute("BINARY_FLOAT_FIELD", KotlinDbTypes.OracleTypes.binaryFloat, AllTypesStructNoLobs::binaryFloatField).addAttribute("BINARY_DOUBLE_FIELD", KotlinDbTypes.OracleTypes.binaryDouble, AllTypesStructNoLobs::binaryDoubleField).addAttribute("DATE_FIELD", OracleTypes.date, AllTypesStructNoLobs::dateField).addAttribute("TIMESTAMP_FIELD", OracleTypes.timestamp, AllTypesStructNoLobs::timestampField).addAttribute("TIMESTAMP_TZ_FIELD", OracleTypes.timestampWithTimeZone, AllTypesStructNoLobs::timestampTzField).addAttribute("TIMESTAMP_LTZ_FIELD", OracleTypes.timestampWithLocalTimeZone, AllTypesStructNoLobs::timestampLtzField).addAttribute("INTERVAL_YM_FIELD", OracleTypes.intervalYearToMonth, AllTypesStructNoLobs::intervalYmField).addAttribute("INTERVAL_DS_FIELD", OracleTypes.intervalDayToSecond, AllTypesStructNoLobs::intervalDsField).addAttribute("NESTED_OBJECT_FIELD", oracledb.AddressT.oracleType, AllTypesStructNoLobs::nestedObjectField).addAttribute("VARRAY_FIELD", oracledb.PhoneList.oracleType, AllTypesStructNoLobs::varrayField).build({ attrs -> AllTypesStructNoLobs((attrs[0] as String), (attrs[1] as String), (attrs[2] as String), (attrs[3] as String), (attrs[4] as BigDecimal), (attrs[5] as BigDecimal), (attrs[6] as BigDecimal), (attrs[7] as Float), (attrs[8] as Double), (attrs[9] as LocalDateTime), (attrs[10] as LocalDateTime), (attrs[11] as OffsetDateTime), (attrs[12] as OffsetDateTime), (attrs[13] as OracleIntervalYM), (attrs[14] as OracleIntervalDS), (attrs[15] as AddressT), (attrs[16] as PhoneList)) }).asType()
+    val oracleType: OracleType<AllTypesStructNoLobs> = OracleTypes.compositeOf("ALL_TYPES_STRUCT_NO_LOBS", RowCodec.namedBuilder<AllTypesStructNoLobs>().field("VARCHAR_FIELD", OracleTypes.varchar2, AllTypesStructNoLobs::varcharField).field("NVARCHAR_FIELD", OracleTypes.nvarchar2, AllTypesStructNoLobs::nvarcharField).field("CHAR_FIELD", OracleTypes.char_, AllTypesStructNoLobs::charField).field("NCHAR_FIELD", OracleTypes.nchar, AllTypesStructNoLobs::ncharField).field("NUMBER_FIELD", OracleTypes.number, AllTypesStructNoLobs::numberField).field("NUMBER_INT_FIELD", OracleTypes.number, AllTypesStructNoLobs::numberIntField).field("NUMBER_LONG_FIELD", OracleTypes.number, AllTypesStructNoLobs::numberLongField).field("BINARY_FLOAT_FIELD", OracleTypes.binaryFloat, AllTypesStructNoLobs::binaryFloatField).field("BINARY_DOUBLE_FIELD", OracleTypes.binaryDouble, AllTypesStructNoLobs::binaryDoubleField).field("DATE_FIELD", OracleTypes.date, AllTypesStructNoLobs::dateField).field("TIMESTAMP_FIELD", OracleTypes.timestamp, AllTypesStructNoLobs::timestampField).field("TIMESTAMP_TZ_FIELD", OracleTypes.timestampWithTimeZone, AllTypesStructNoLobs::timestampTzField).field("TIMESTAMP_LTZ_FIELD", OracleTypes.timestampWithLocalTimeZone, AllTypesStructNoLobs::timestampLtzField).field("INTERVAL_YM_FIELD", OracleTypes.intervalYearToMonth, AllTypesStructNoLobs::intervalYmField).field("INTERVAL_DS_FIELD", OracleTypes.intervalDayToSecond, AllTypesStructNoLobs::intervalDsField).field("NESTED_OBJECT_FIELD", oracledb.AddressT.oracleType, AllTypesStructNoLobs::nestedObjectField).field("VARRAY_FIELD", oracledb.PhoneList.oracleType, AllTypesStructNoLobs::varrayField).build({ t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15, t16 -> AllTypesStructNoLobs(t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15, t16) }))
   }
 }

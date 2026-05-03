@@ -5,12 +5,12 @@
  */
 package testdb.order_items_bulk_insert
 
-import dev.typr.foundations.scala.Fragment
-import dev.typr.foundations.scala.ScalaDbTypes
-import java.sql.Connection
+import dev.typr.foundationssc.ConnectionRead
+import dev.typr.foundationssc.DuckDbTypes
+import dev.typr.foundationssc.Fragment
 import testdb.orders.OrdersId
 import testdb.products.ProductsId
-import dev.typr.foundations.scala.Fragment.sql
+import dev.typr.foundationssc.Fragment.sql
 
 class OrderItemsBulkInsertSqlRepoImpl extends OrderItemsBulkInsertSqlRepo {
   override def apply(
@@ -18,7 +18,7 @@ class OrderItemsBulkInsertSqlRepoImpl extends OrderItemsBulkInsertSqlRepo {
     productId: /* user-picked */ ProductsId,
     quantity: Int,
     unitPrice: BigDecimal
-  )(using c: Connection): List[OrderItemsBulkInsertSqlRow] = {
+  )(using c: ConnectionRead): List[OrderItemsBulkInsertSqlRow] = {
     sql"""-- Insert order items with composite key handling
     -- Tests: composite primary key in INSERT, foreign key types, RETURNING with composite key
   
@@ -26,13 +26,13 @@ class OrderItemsBulkInsertSqlRepoImpl extends OrderItemsBulkInsertSqlRepo {
     VALUES (
         CAST(${Fragment.encode(OrdersId.duckDbType, orderId)} AS INTEGER),
         CAST(${Fragment.encode(ProductsId.duckDbType, productId)} AS INTEGER),
-        CAST(${Fragment.encode(ScalaDbTypes.DuckDbTypes.integer, quantity)} AS INTEGER),
-        CAST(${Fragment.encode(ScalaDbTypes.DuckDbTypes.numeric, unitPrice)} AS DECIMAL)
+        CAST(${Fragment.encode(DuckDbTypes.integer, quantity)} AS INTEGER),
+        CAST(${Fragment.encode(DuckDbTypes.numeric, unitPrice)} AS DECIMAL)
     )
     RETURNING
         order_id,
         product_id,
         quantity,
-        unit_price""".query(OrderItemsBulkInsertSqlRow.`_rowParser`.all()).runUnchecked(c)
+        unit_price""".query(OrderItemsBulkInsertSqlRow.rowCodec.all()).run(using c)
   }
 }

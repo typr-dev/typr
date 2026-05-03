@@ -11,19 +11,18 @@ import adventureworks.public.Phone
 import adventureworks.userdefined.FirstName
 import adventureworks.userdefined.LastName
 import adventureworks.userdefined.MiddleName
-import dev.typr.foundations.PgTypes
+import dev.typr.dslkt.RowCodecs
 import dev.typr.foundations.Tuple.Tuple18
 import dev.typr.foundations.data.Xml
-import dev.typr.foundations.kotlin.KotlinDbTypes
-import dev.typr.foundations.kotlin.RowParser
-import dev.typr.foundations.kotlin.RowParsers
+import dev.typr.foundationskt.PgTypes
+import dev.typr.foundationskt.RowCodec
 
 /** View: humanresources.vemployee */
 data class VemployeeViewRow(
   /** Points to [adventureworks.humanresources.employee.EmployeeRow.businessentityid] */
   val businessentityid: BusinessentityId,
   /** Points to [adventureworks.person.person.PersonRow.title] */
-  val title: String,
+  val title: kotlin.String,
   /** Points to [adventureworks.person.person.PersonRow.firstname] */
   val firstname: /* user-picked */ FirstName,
   /** Points to [adventureworks.person.person.PersonRow.middlename] */
@@ -31,53 +30,53 @@ data class VemployeeViewRow(
   /** Points to [adventureworks.person.person.PersonRow.lastname] */
   val lastname: /* user-picked */ LastName,
   /** Points to [adventureworks.person.person.PersonRow.suffix] */
-  val suffix: String,
+  val suffix: kotlin.String,
   /** Points to [adventureworks.humanresources.employee.EmployeeRow.jobtitle] */
-  val jobtitle: String,
+  val jobtitle: kotlin.String,
   /** Points to [adventureworks.person.personphone.PersonphoneRow.phonenumber] */
   val phonenumber: Phone,
   /** Points to [adventureworks.person.phonenumbertype.PhonenumbertypeRow.name] */
   val phonenumbertype: Name,
   /** Points to [adventureworks.person.emailaddress.EmailaddressRow.emailaddress] */
-  val emailaddress: String,
+  val emailaddress: kotlin.String,
   /** Points to [adventureworks.person.person.PersonRow.emailpromotion] */
   val emailpromotion: Int,
   /** Points to [adventureworks.person.address.AddressRow.addressline1] */
-  val addressline1: String,
+  val addressline1: kotlin.String,
   /** Points to [adventureworks.person.address.AddressRow.addressline2] */
-  val addressline2: String,
+  val addressline2: kotlin.String,
   /** Points to [adventureworks.person.address.AddressRow.city] */
-  val city: String,
+  val city: kotlin.String,
   /** Points to [adventureworks.person.stateprovince.StateprovinceRow.name] */
   val stateprovincename: Name,
   /** Points to [adventureworks.person.address.AddressRow.postalcode] */
-  val postalcode: String,
+  val postalcode: kotlin.String,
   /** Points to [adventureworks.person.countryregion.CountryregionRow.name] */
   val countryregionname: Name,
   /** Points to [adventureworks.person.person.PersonRow.additionalcontactinfo] */
   val additionalcontactinfo: Xml
-) : Tuple18<BusinessentityId, String, /* user-picked */ FirstName, /* user-picked */ MiddleName, /* user-picked */ LastName, String, String, Phone, Name, String, Int, String, String, String, Name, String, Name, Xml> {
+) : Tuple18<BusinessentityId, kotlin.String, /* user-picked */ FirstName, /* user-picked */ MiddleName, /* user-picked */ LastName, kotlin.String, kotlin.String, Phone, Name, kotlin.String, Int, kotlin.String, kotlin.String, kotlin.String, Name, kotlin.String, Name, Xml> {
   override fun _1(): BusinessentityId = businessentityid
 
-  override fun _10(): String = emailaddress
+  override fun _10(): kotlin.String = emailaddress
 
   override fun _11(): Int = emailpromotion
 
-  override fun _12(): String = addressline1
+  override fun _12(): kotlin.String = addressline1
 
-  override fun _13(): String = addressline2
+  override fun _13(): kotlin.String = addressline2
 
-  override fun _14(): String = city
+  override fun _14(): kotlin.String = city
 
   override fun _15(): Name = stateprovincename
 
-  override fun _16(): String = postalcode
+  override fun _16(): kotlin.String = postalcode
 
   override fun _17(): Name = countryregionname
 
   override fun _18(): Xml = additionalcontactinfo
 
-  override fun _2(): String = title
+  override fun _2(): kotlin.String = title
 
   override fun _3(): /* user-picked */ FirstName = firstname
 
@@ -85,15 +84,15 @@ data class VemployeeViewRow(
 
   override fun _5(): /* user-picked */ LastName = lastname
 
-  override fun _6(): String = suffix
+  override fun _6(): kotlin.String = suffix
 
-  override fun _7(): String = jobtitle
+  override fun _7(): kotlin.String = jobtitle
 
   override fun _8(): Phone = phonenumber
 
   override fun _9(): Name = phonenumbertype
 
   companion object {
-    val _rowParser: RowParser<VemployeeViewRow> = RowParsers.of(BusinessentityId.pgType, PgTypes.text, FirstName.pgType, MiddleName.pgType, LastName.pgType, PgTypes.text, PgTypes.text, Phone.pgType, Name.pgType, PgTypes.text, KotlinDbTypes.PgTypes.int4, PgTypes.text, PgTypes.text, PgTypes.text, Name.pgType, PgTypes.text, Name.pgType, PgTypes.xml, { t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15, t16, t17 -> VemployeeViewRow(t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15, t16, t17) }, { row -> arrayOf<Any?>(row.businessentityid, row.title, row.firstname, row.middlename, row.lastname, row.suffix, row.jobtitle, row.phonenumber, row.phonenumbertype, row.emailaddress, row.emailpromotion, row.addressline1, row.addressline2, row.city, row.stateprovincename, row.postalcode, row.countryregionname, row.additionalcontactinfo) })
+    val rowCodec: RowCodec<VemployeeViewRow> = RowCodecs.of(BusinessentityId.pgType, PgTypes.text, FirstName.pgType, MiddleName.pgType, LastName.pgType, PgTypes.text, PgTypes.text, Phone.pgType, Name.pgType, PgTypes.text, PgTypes.int4, PgTypes.text, PgTypes.text, PgTypes.text, Name.pgType, PgTypes.text, Name.pgType, PgTypes.xml, { t0: BusinessentityId, t1: kotlin.String, t2: /* user-picked */ FirstName, t3: /* user-picked */ MiddleName, t4: /* user-picked */ LastName, t5: kotlin.String, t6: kotlin.String, t7: Phone, t8: Name, t9: kotlin.String, t10: Int, t11: kotlin.String, t12: kotlin.String, t13: kotlin.String, t14: Name, t15: kotlin.String, t16: Name, t17: Xml -> VemployeeViewRow(t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15, t16, t17) }, { row: VemployeeViewRow -> arrayOf<Any?>(row.businessentityid, row.title, row.firstname, row.middlename, row.lastname, row.suffix, row.jobtitle, row.phonenumber, row.phonenumbertype, row.emailaddress, row.emailpromotion, row.addressline1, row.addressline2, row.city, row.stateprovincename, row.postalcode, row.countryregionname, row.additionalcontactinfo) })
   }
 }

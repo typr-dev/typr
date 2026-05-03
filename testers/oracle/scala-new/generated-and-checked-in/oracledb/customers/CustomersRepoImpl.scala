@@ -5,111 +5,111 @@
  */
 package oracledb.customers
 
-import dev.typr.foundations.OracleTypes
-import dev.typr.foundations.scala.DbTypeOps
-import dev.typr.foundations.scala.DeleteBuilder
-import dev.typr.foundations.scala.Dialect
-import dev.typr.foundations.scala.Fragment
-import dev.typr.foundations.scala.SelectBuilder
-import dev.typr.foundations.scala.UpdateBuilder
-import java.sql.Connection
+import dev.typr.dslsc.DeleteBuilder
+import dev.typr.dslsc.Dialect
+import dev.typr.dslsc.SelectBuilder
+import dev.typr.dslsc.UpdateBuilder
+import dev.typr.foundationssc.Connection
+import dev.typr.foundationssc.ConnectionRead
+import dev.typr.foundationssc.Fragment
+import dev.typr.foundationssc.OracleTypes
 import oracledb.AddressT
 import oracledb.MoneyT
 import scala.collection.mutable.ListBuffer
-import dev.typr.foundations.scala.Fragment.sql
+import dev.typr.foundationssc.Fragment.sql
 
 class CustomersRepoImpl extends CustomersRepo {
   override def delete: DeleteBuilder[CustomersFields, CustomersRow] = DeleteBuilder.of(""""CUSTOMERS"""", CustomersFields.structure, Dialect.ORACLE)
 
-  override def deleteById(customerId: CustomersId)(using c: Connection): Boolean = sql"""delete from "CUSTOMERS" where "CUSTOMER_ID" = ${Fragment.encode(CustomersId.oracleType, customerId)}""".update().runUnchecked(c) > 0
+  override def deleteById(customerId: CustomersId)(using c: Connection): Boolean = sql"""delete from "CUSTOMERS" where "CUSTOMER_ID" = ${Fragment.encode(CustomersId.oracleType, customerId)}""".update().run(using c) > 0
 
-  override def deleteByIds(customerIds: Array[CustomersId])(using c: Connection): Int = {
+  override def deleteByIds(customerIds: List[CustomersId])(using c: Connection): Int = {
     val fragments: ListBuffer[Fragment] = ListBuffer()
     customerIds.foreach { id => fragments.addOne(Fragment.encode(CustomersId.oracleType, id)): @scala.annotation.nowarn }
-    return Fragment.interpolate(Fragment.lit("""delete from "CUSTOMERS" where "CUSTOMER_ID" in ("""), Fragment.comma(fragments), Fragment.lit(")")).update().runUnchecked(c)
+    return Fragment.concat(Fragment.of("""delete from "CUSTOMERS" where "CUSTOMER_ID" in ("""), Fragment.comma(fragments), Fragment.of(")")).update().run(using c)
   }
 
   override def insert(unsaved: CustomersRow)(using c: Connection): CustomersId = {
   sql"""insert into "CUSTOMERS"("CUSTOMER_ID", "NAME", "BILLING_ADDRESS", "CREDIT_LIMIT", "CREATED_AT")
-    values (${Fragment.encode(CustomersId.oracleType, unsaved.customerId)}, ${Fragment.encode(OracleTypes.varchar2, unsaved.name)}, ${Fragment.encode(AddressT.oracleType, unsaved.billingAddress)}, ${Fragment.encode(MoneyT.oracleType.nullable, unsaved.creditLimit)}, ${Fragment.encode(OracleTypes.timestamp, unsaved.createdAt)})
+    values (${Fragment.encode(CustomersId.oracleType, unsaved.customerId)}, ${Fragment.encode(OracleTypes.varchar2, unsaved.name)}, ${Fragment.encode(AddressT.oracleType, unsaved.billingAddress)}, ${Fragment.encode(MoneyT.oracleType.opt, unsaved.creditLimit)}, ${Fragment.encode(OracleTypes.timestamp, unsaved.createdAt)})
     """
-    .updateReturningGeneratedKeys(Array[String]("CUSTOMER_ID"), CustomersId.`_rowParser`.exactlyOne()).runUnchecked(c)
+    .updateReturningGeneratedKeys(Array[String]("CUSTOMER_ID"), CustomersId.rowCodec.exactlyOne()).run(using c)
   }
 
   override def insert(unsaved: CustomersRowUnsaved)(using c: Connection): CustomersId = {
     val columns: ListBuffer[Fragment] = ListBuffer()
     val values: ListBuffer[Fragment] = ListBuffer()
-    columns.addOne(Fragment.lit(""""NAME"""")): @scala.annotation.nowarn
+    columns.addOne(Fragment.of(""""NAME"""")): @scala.annotation.nowarn
     values.addOne(sql"${Fragment.encode(OracleTypes.varchar2, unsaved.name)}"): @scala.annotation.nowarn
-    columns.addOne(Fragment.lit(""""BILLING_ADDRESS"""")): @scala.annotation.nowarn
+    columns.addOne(Fragment.of(""""BILLING_ADDRESS"""")): @scala.annotation.nowarn
     values.addOne(sql"${Fragment.encode(AddressT.oracleType, unsaved.billingAddress)}"): @scala.annotation.nowarn
-    columns.addOne(Fragment.lit(""""CREDIT_LIMIT"""")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(MoneyT.oracleType.nullable, unsaved.creditLimit)}"): @scala.annotation.nowarn
+    columns.addOne(Fragment.of(""""CREDIT_LIMIT"""")): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(MoneyT.oracleType.opt, unsaved.creditLimit)}"): @scala.annotation.nowarn
     unsaved.customerId.visit(
       {  },
-      value => { columns.addOne(Fragment.lit(""""CUSTOMER_ID"""")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(CustomersId.oracleType, value)}"): @scala.annotation.nowarn }
+      value => { columns.addOne(Fragment.of(""""CUSTOMER_ID"""")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(CustomersId.oracleType, value)}"): @scala.annotation.nowarn }
     );
     unsaved.createdAt.visit(
       {  },
-      value => { columns.addOne(Fragment.lit(""""CREATED_AT"""")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(OracleTypes.timestamp, value)}"): @scala.annotation.nowarn }
+      value => { columns.addOne(Fragment.of(""""CREATED_AT"""")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(OracleTypes.timestamp, value)}"): @scala.annotation.nowarn }
     );
     val q: Fragment = {
       sql"""insert into "CUSTOMERS"(${Fragment.comma(columns)})
       values (${Fragment.comma(values)})
       """
     }
-    return q.updateReturningGeneratedKeys(Array[String]("CUSTOMER_ID"), CustomersId.`_rowParser`.exactlyOne()).runUnchecked(c)
+    return q.updateReturningGeneratedKeys(Array[String]("CUSTOMER_ID"), CustomersId.rowCodec.exactlyOne()).run(using c)
   }
 
-  override def select: SelectBuilder[CustomersFields, CustomersRow] = SelectBuilder.of(""""CUSTOMERS"""", CustomersFields.structure, CustomersRow.`_rowParser`, Dialect.ORACLE)
+  override def select: SelectBuilder[CustomersFields, CustomersRow] = SelectBuilder.of(""""CUSTOMERS"""", CustomersFields.structure, CustomersRow.rowCodec, Dialect.ORACLE)
 
-  override def selectAll(using c: Connection): List[CustomersRow] = {
+  override def selectAll(using c: ConnectionRead): List[CustomersRow] = {
     sql"""select "CUSTOMER_ID", "NAME", "BILLING_ADDRESS", "CREDIT_LIMIT", "CREATED_AT"
     from "CUSTOMERS"
-    """.query(CustomersRow.`_rowParser`.all()).runUnchecked(c)
+    """.query(CustomersRow.rowCodec.all()).run(using c)
   }
 
-  override def selectById(customerId: CustomersId)(using c: Connection): Option[CustomersRow] = {
+  override def selectById(customerId: CustomersId)(using c: ConnectionRead): Option[CustomersRow] = {
     sql"""select "CUSTOMER_ID", "NAME", "BILLING_ADDRESS", "CREDIT_LIMIT", "CREATED_AT"
     from "CUSTOMERS"
-    where "CUSTOMER_ID" = ${Fragment.encode(CustomersId.oracleType, customerId)}""".query(CustomersRow.`_rowParser`.first()).runUnchecked(c)
+    where "CUSTOMER_ID" = ${Fragment.encode(CustomersId.oracleType, customerId)}""".query(CustomersRow.rowCodec.first()).run(using c)
   }
 
-  override def selectByIds(customerIds: Array[CustomersId])(using c: Connection): List[CustomersRow] = {
+  override def selectByIds(customerIds: List[CustomersId])(using c: ConnectionRead): List[CustomersRow] = {
     val fragments: ListBuffer[Fragment] = ListBuffer()
     customerIds.foreach { id => fragments.addOne(Fragment.encode(CustomersId.oracleType, id)): @scala.annotation.nowarn }
-    return Fragment.interpolate(Fragment.lit("""select "CUSTOMER_ID", "NAME", "BILLING_ADDRESS", "CREDIT_LIMIT", "CREATED_AT" from "CUSTOMERS" where "CUSTOMER_ID" in ("""), Fragment.comma(fragments), Fragment.lit(")")).query(CustomersRow.`_rowParser`.all()).runUnchecked(c)
+    return Fragment.concat(Fragment.of("""select "CUSTOMER_ID", "NAME", "BILLING_ADDRESS", "CREDIT_LIMIT", "CREATED_AT" from "CUSTOMERS" where "CUSTOMER_ID" in ("""), Fragment.comma(fragments), Fragment.of(")")).query(CustomersRow.rowCodec.all()).run(using c)
   }
 
-  override def selectByIdsTracked(customerIds: Array[CustomersId])(using c: Connection): Map[CustomersId, CustomersRow] = {
+  override def selectByIdsTracked(customerIds: List[CustomersId])(using c: ConnectionRead): Map[CustomersId, CustomersRow] = {
     val ret: scala.collection.mutable.Map[CustomersId, CustomersRow] = scala.collection.mutable.Map.empty[CustomersId, CustomersRow]
     selectByIds(customerIds)(using c).foreach(row => ret.put(row.customerId, row): @scala.annotation.nowarn)
     return ret.toMap
   }
 
-  override def update: UpdateBuilder[CustomersFields, CustomersRow] = UpdateBuilder.of(""""CUSTOMERS"""", CustomersFields.structure, CustomersRow.`_rowParser`, Dialect.ORACLE)
+  override def update: UpdateBuilder[CustomersFields, CustomersRow] = UpdateBuilder.of(""""CUSTOMERS"""", CustomersFields.structure, CustomersRow.rowCodec, Dialect.ORACLE)
 
   override def update(row: CustomersRow)(using c: Connection): Boolean = {
     val customerId: CustomersId = row.customerId
     return sql"""update "CUSTOMERS"
     set "NAME" = ${Fragment.encode(OracleTypes.varchar2, row.name)},
     "BILLING_ADDRESS" = ${Fragment.encode(AddressT.oracleType, row.billingAddress)},
-    "CREDIT_LIMIT" = ${Fragment.encode(MoneyT.oracleType.nullable, row.creditLimit)},
+    "CREDIT_LIMIT" = ${Fragment.encode(MoneyT.oracleType.opt, row.creditLimit)},
     "CREATED_AT" = ${Fragment.encode(OracleTypes.timestamp, row.createdAt)}
-    where "CUSTOMER_ID" = ${Fragment.encode(CustomersId.oracleType, customerId)}""".update().runUnchecked(c) > 0
+    where "CUSTOMER_ID" = ${Fragment.encode(CustomersId.oracleType, customerId)}""".update().run(using c) > 0
   }
 
   override def upsert(unsaved: CustomersRow)(using c: Connection): Unit = {
     sql"""MERGE INTO "CUSTOMERS" t
-    USING (SELECT ${Fragment.encode(CustomersId.oracleType, unsaved.customerId)}, ${Fragment.encode(OracleTypes.varchar2, unsaved.name)}, ${Fragment.encode(AddressT.oracleType, unsaved.billingAddress)}, ${Fragment.encode(MoneyT.oracleType.nullable, unsaved.creditLimit)}, ${Fragment.encode(OracleTypes.timestamp, unsaved.createdAt)} FROM DUAL) s
+    USING (SELECT ${Fragment.encode(CustomersId.oracleType, unsaved.customerId)}, ${Fragment.encode(OracleTypes.varchar2, unsaved.name)}, ${Fragment.encode(AddressT.oracleType, unsaved.billingAddress)}, ${Fragment.encode(MoneyT.oracleType.opt, unsaved.creditLimit)}, ${Fragment.encode(OracleTypes.timestamp, unsaved.createdAt)} FROM DUAL) s
     ON (t."CUSTOMER_ID" = s."CUSTOMER_ID")
     WHEN MATCHED THEN UPDATE SET t."NAME" = s."NAME",
     t."BILLING_ADDRESS" = s."BILLING_ADDRESS",
     t."CREDIT_LIMIT" = s."CREDIT_LIMIT",
     t."CREATED_AT" = s."CREATED_AT"
-    WHEN NOT MATCHED THEN INSERT ("CUSTOMER_ID", "NAME", "BILLING_ADDRESS", "CREDIT_LIMIT", "CREATED_AT") VALUES (${Fragment.encode(CustomersId.oracleType, unsaved.customerId)}, ${Fragment.encode(OracleTypes.varchar2, unsaved.name)}, ${Fragment.encode(AddressT.oracleType, unsaved.billingAddress)}, ${Fragment.encode(MoneyT.oracleType.nullable, unsaved.creditLimit)}, ${Fragment.encode(OracleTypes.timestamp, unsaved.createdAt)})"""
+    WHEN NOT MATCHED THEN INSERT ("CUSTOMER_ID", "NAME", "BILLING_ADDRESS", "CREDIT_LIMIT", "CREATED_AT") VALUES (${Fragment.encode(CustomersId.oracleType, unsaved.customerId)}, ${Fragment.encode(OracleTypes.varchar2, unsaved.name)}, ${Fragment.encode(AddressT.oracleType, unsaved.billingAddress)}, ${Fragment.encode(MoneyT.oracleType.opt, unsaved.creditLimit)}, ${Fragment.encode(OracleTypes.timestamp, unsaved.createdAt)})"""
       .update()
-      .runUnchecked(c): @scala.annotation.nowarn
+      .run(using c): @scala.annotation.nowarn
   }
 
   override def upsertBatch(unsaved: Iterator[CustomersRow])(using c: Connection): Unit = {
@@ -121,7 +121,7 @@ class CustomersRepoImpl extends CustomersRepo {
     t."CREDIT_LIMIT" = s."CREDIT_LIMIT",
     t."CREATED_AT" = s."CREATED_AT"
     WHEN NOT MATCHED THEN INSERT ("CUSTOMER_ID", "NAME", "BILLING_ADDRESS", "CREDIT_LIMIT", "CREATED_AT") VALUES (?, ?, ?, ?, ?)"""
-      .updateMany(CustomersRow.`_rowParser`, unsaved)
-      .runUnchecked(c): @scala.annotation.nowarn
+      .updateMany(CustomersRow.rowCodec, unsaved)
+      .run(using c): @scala.annotation.nowarn
   }
 }

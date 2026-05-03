@@ -6,17 +6,17 @@
 package oracledb.precisetypes
 
 import com.fasterxml.jackson.annotation.JsonValue
-import dev.typr.foundations.OracleType
-import dev.typr.foundations.OracleTypes
+import dev.typr.dslkt.RowCodecs
 import dev.typr.foundations.data.precise.NonEmptyStringN
-import dev.typr.foundations.kotlin.Bijection
-import dev.typr.foundations.kotlin.RowParser
-import dev.typr.foundations.kotlin.RowParsers
+import dev.typr.foundationskt.Bijection
+import dev.typr.foundationskt.OracleType
+import dev.typr.foundationskt.OracleTypes
+import dev.typr.foundationskt.RowCodec
 import java.lang.IllegalArgumentException
 
 @kotlin.ConsistentCopyVisibility
-data class NonEmptyString20 private constructor(@field:JsonValue val value: String) : NonEmptyStringN {
-  override fun equals(other: Any?): Boolean {
+data class NonEmptyString20 private constructor(@field:JsonValue val value: kotlin.String) : NonEmptyStringN {
+  override fun equals(other: Any?): kotlin.Boolean {
     if (this === other) return true
     if (other !is NonEmptyStringN) return false
     return value == other.rawValue()
@@ -26,31 +26,20 @@ data class NonEmptyString20 private constructor(@field:JsonValue val value: Stri
 
   override fun maxLength(): Int = 20
 
-  override fun rawValue(): String = value
+  override fun rawValue(): kotlin.String = value
 
-  override fun semanticEquals(other: NonEmptyStringN): Boolean = if (other == null) false else value == other.rawValue()
+  override fun semanticEquals(other: NonEmptyStringN): kotlin.Boolean = if (other == null) false else (value == other.rawValue())
 
   override fun semanticHashCode(): Int = value.hashCode()
 
   override fun toString(): kotlin.String {
-    return value.toString()
+    return value
   }
 
   companion object {
-    val _rowParser: RowParser<NonEmptyString20> =
-      RowParsers.of(OracleTypes.varchar2.bimap(::NonEmptyString20, NonEmptyString20::value), { x -> x }, { id -> arrayOf<Any?>(id) })
+    fun of(value: kotlin.String): NonEmptyString20? = if (!value.isEmpty() && value.length <= 20) NonEmptyString20(value) else null
 
-    val bijection: Bijection<NonEmptyString20, String> =
-      Bijection.of(NonEmptyString20::value, ::NonEmptyString20)
-
-    fun of(value: String): NonEmptyString20? = if (!value.isEmpty() && value.length <= 20) NonEmptyString20(value) else null
-
-    val oracleType: OracleType<NonEmptyString20> =
-      OracleTypes.varchar2.bimap(::NonEmptyString20, NonEmptyString20::value)
-
-    fun truncate(value: String): NonEmptyString20 = NonEmptyString20(if (value.length <= 20) value else value.substring(0, 20))
-
-    fun unsafeForce(value: String): NonEmptyString20 {
+    fun unsafeForce(value: kotlin.String): NonEmptyString20 {
       if (value.isEmpty()) {
         throw IllegalArgumentException("Value must not be null or empty")
       }
@@ -59,5 +48,16 @@ data class NonEmptyString20 private constructor(@field:JsonValue val value: Stri
       }
       return NonEmptyString20(value)
     }
+
+    fun truncate(value: kotlin.String): NonEmptyString20 = NonEmptyString20(if (value.length <= 20) value else value.substring(0, 20))
+
+    val bijection: Bijection<NonEmptyString20, kotlin.String> =
+      Bijection.of(NonEmptyString20::value, ::NonEmptyString20)
+
+    val oracleType: OracleType<NonEmptyString20> =
+      OracleTypes.varchar2.to(Bijection.of(::NonEmptyString20, NonEmptyString20::value))
+
+    val rowCodec: RowCodec<NonEmptyString20> =
+      RowCodecs.of(OracleTypes.varchar2.to(Bijection.of(::NonEmptyString20, NonEmptyString20::value)), { x -> x }, { id -> arrayOf<Any?>(id) })
   }
 }

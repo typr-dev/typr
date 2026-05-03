@@ -6,16 +6,16 @@
 package adventureworks.person.addresstype
 
 import adventureworks.public.Name
+import dev.typr.dsl.FieldsBase
+import dev.typr.dsl.Path
+import dev.typr.dsl.RelationStructure
+import dev.typr.dsl.SqlExpr
+import dev.typr.dsl.SqlExpr.Field
+import dev.typr.dsl.SqlExpr.FieldLike
+import dev.typr.dsl.SqlExpr.IdField
+import dev.typr.dsl.TupleExpr.TupleExpr4
 import dev.typr.foundations.PgTypes
-import dev.typr.foundations.RowParser
-import dev.typr.foundations.dsl.FieldsBase
-import dev.typr.foundations.dsl.Path
-import dev.typr.foundations.dsl.RelationStructure
-import dev.typr.foundations.dsl.SqlExpr
-import dev.typr.foundations.dsl.SqlExpr.Field
-import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.dsl.SqlExpr.IdField
-import dev.typr.foundations.dsl.TupleExpr.TupleExpr4
+import dev.typr.foundations.RowCodec
 import java.time.LocalDateTime
 import java.util.Optional
 import java.util.UUID
@@ -71,7 +71,7 @@ class AddresstypeFields(val `_path`: java.util.List[Path]) extends TupleExpr4[Ad
 
   override def columns: java.util.List[FieldLike[?, AddresstypeRow]] = java.util.List.of(this.addresstypeid, this.name, this.rowguid, this.modifieddate)
 
-  override def rowParser: RowParser[AddresstypeRow] = AddresstypeRow._rowParser
+  override def rowCodec: RowCodec[AddresstypeRow] = AddresstypeRow.rowCodec
 
   override def withPaths(`_path`: java.util.List[Path]): RelationStructure[AddresstypeFields, AddresstypeRow] = new AddresstypeFields(`_path`)
 

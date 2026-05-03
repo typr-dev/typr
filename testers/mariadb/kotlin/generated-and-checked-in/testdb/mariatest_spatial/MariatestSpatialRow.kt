@@ -6,10 +6,10 @@
 package testdb.mariatest_spatial
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import dev.typr.foundations.MariaTypes
+import dev.typr.dslkt.RowCodecs
 import dev.typr.foundations.Tuple.Tuple9
-import dev.typr.foundations.kotlin.RowParser
-import dev.typr.foundations.kotlin.RowParsers
+import dev.typr.foundationskt.MariaTypes
+import dev.typr.foundationskt.RowCodec
 import org.mariadb.jdbc.type.Geometry
 import org.mariadb.jdbc.type.GeometryCollection
 import org.mariadb.jdbc.type.LineString
@@ -65,6 +65,6 @@ data class MariatestSpatialRow(
   fun toUnsavedRow(): MariatestSpatialRowUnsaved = MariatestSpatialRowUnsaved(geometryCol, pointCol, linestringCol, polygonCol, multipointCol, multilinestringCol, multipolygonCol, geometrycollectionCol)
 
   companion object {
-    val _rowParser: RowParser<MariatestSpatialRow> = RowParsers.of(MariatestSpatialId.mariaType, MariaTypes.geometry, MariaTypes.point, MariaTypes.linestring, MariaTypes.polygon, MariaTypes.multipoint, MariaTypes.multilinestring, MariaTypes.multipolygon, MariaTypes.geometrycollection, { t0, t1, t2, t3, t4, t5, t6, t7, t8 -> MariatestSpatialRow(t0, t1, t2, t3, t4, t5, t6, t7, t8) }, { row -> arrayOf<Any?>(row.id, row.geometryCol, row.pointCol, row.linestringCol, row.polygonCol, row.multipointCol, row.multilinestringCol, row.multipolygonCol, row.geometrycollectionCol) })
+    val rowCodec: RowCodec<MariatestSpatialRow> = RowCodecs.of(MariatestSpatialId.mariaType, MariaTypes.geometry, MariaTypes.point, MariaTypes.linestring, MariaTypes.polygon, MariaTypes.multipoint, MariaTypes.multilinestring, MariaTypes.multipolygon, MariaTypes.geometrycollection, { t0: MariatestSpatialId, t1: Geometry, t2: Point, t3: LineString, t4: Polygon, t5: MultiPoint, t6: MultiLineString, t7: MultiPolygon, t8: GeometryCollection -> MariatestSpatialRow(t0, t1, t2, t3, t4, t5, t6, t7, t8) }, { row: MariatestSpatialRow -> arrayOf<Any?>(row.id, row.geometryCol, row.pointCol, row.linestringCol, row.polygonCol, row.multipointCol, row.multilinestringCol, row.multipolygonCol, row.geometrycollectionCol) })
   }
 }

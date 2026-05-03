@@ -14,11 +14,10 @@ class SqlScriptTest extends AnyFunSuite {
   val productSearchRepo: ProductSearchSqlRepoImpl = new ProductSearchSqlRepoImpl
   val customerOrdersRepo: CustomerOrdersSqlRepoImpl = new CustomerOrdersSqlRepoImpl
   val simpleCustomerLookupRepo: SimpleCustomerLookupSqlRepoImpl = new SimpleCustomerLookupSqlRepoImpl
-  val testInsert: TestInsert = new TestInsert(new Random(42))
+  val testInsert: TestInsert = new TestInsert(new Random(619373640))
 
   test("productSearchWithNoFilters") {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       // Insert test products first
       val _ = testInsert.CustomerStatus()
       val brand = testInsert.Brands()
@@ -40,8 +39,7 @@ class SqlScriptTest extends AnyFunSuite {
   }
 
   test("productSearchWithBrandFilter") {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       val _ = testInsert.CustomerStatus()
       val brand1 = testInsert.Brands()
       val brand2 = testInsert.Brands()
@@ -67,8 +65,7 @@ class SqlScriptTest extends AnyFunSuite {
   }
 
   test("productSearchWithPriceRange") {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       val _ = testInsert.CustomerStatus()
       val brand = testInsert.Brands()
       val _ = testInsert.Products(brandId = new Defaulted.Provided(Some(brand.brandId)), basePrice = BigDecimal("50.00"))
@@ -92,8 +89,7 @@ class SqlScriptTest extends AnyFunSuite {
   }
 
   test("productSearchWithLimit") {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       val _ = testInsert.CustomerStatus()
       val brand = testInsert.Brands()
       for (_ <- 0 until 5) {
@@ -109,8 +105,7 @@ class SqlScriptTest extends AnyFunSuite {
   }
 
   test("simpleCustomerLookup") {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       // Create a customer
       val _ = testInsert.CustomerStatus()
       val customer = testInsert.Customers(passwordHash = Array[Byte](1, 2, 3))
@@ -127,8 +122,7 @@ class SqlScriptTest extends AnyFunSuite {
   }
 
   test("customerOrders") {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       // Create dependencies
       val _ = testInsert.CustomerStatus()
       val customer = testInsert.Customers(passwordHash = Array[Byte](1, 2, 3))

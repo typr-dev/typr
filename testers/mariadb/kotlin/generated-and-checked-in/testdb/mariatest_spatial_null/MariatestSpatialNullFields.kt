@@ -5,16 +5,16 @@
  */
 package testdb.mariatest_spatial_null
 
-import dev.typr.foundations.MariaTypes
-import dev.typr.foundations.RowParser
-import dev.typr.foundations.dsl.FieldsBase
-import dev.typr.foundations.dsl.Path
-import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.kotlin.RelationStructure
-import dev.typr.foundations.kotlin.SqlExpr
-import dev.typr.foundations.kotlin.SqlExpr.IdField
-import dev.typr.foundations.kotlin.SqlExpr.OptField
-import dev.typr.foundations.kotlin.TupleExpr9
+import dev.typr.dsl.FieldsBase
+import dev.typr.dsl.Path
+import dev.typr.dsl.SqlExpr.FieldLike
+import dev.typr.dslkt.RelationStructure
+import dev.typr.dslkt.SqlExpr
+import dev.typr.dslkt.SqlExpr.IdField
+import dev.typr.dslkt.SqlExpr.OptField
+import dev.typr.dslkt.TupleExpr9
+import dev.typr.foundations.RowCodec
+import dev.typr.foundationskt.MariaTypes
 import kotlin.collections.List
 import org.mariadb.jdbc.type.Geometry
 import org.mariadb.jdbc.type.GeometryCollection
@@ -48,25 +48,25 @@ data class MariatestSpatialNullFields(val _path: List<Path>) : TupleExpr9<Mariat
 
   override fun columns(): List<FieldLike<*, MariatestSpatialNullRow>> = listOf(this.id().underlying, this.geometryCol().underlying, this.pointCol().underlying, this.linestringCol().underlying, this.polygonCol().underlying, this.multipointCol().underlying, this.multilinestringCol().underlying, this.multipolygonCol().underlying, this.geometrycollectionCol().underlying)
 
-  fun geometryCol(): OptField<Geometry, MariatestSpatialNullRow> = OptField<Geometry, MariatestSpatialNullRow>(_path, "geometry_col", MariatestSpatialNullRow::geometryCol, null, null, { row, value -> row.copy(geometryCol = value) }, MariaTypes.geometry)
+  fun geometryCol(): OptField<Geometry, MariatestSpatialNullRow> = OptField<Geometry, MariatestSpatialNullRow>(_path, "geometry_col", MariatestSpatialNullRow::geometryCol, null, null, { row, value -> row.copy(geometryCol = value) }, MariaTypes.geometry.underlying)
 
-  fun geometrycollectionCol(): OptField<GeometryCollection, MariatestSpatialNullRow> = OptField<GeometryCollection, MariatestSpatialNullRow>(_path, "geometrycollection_col", MariatestSpatialNullRow::geometrycollectionCol, null, null, { row, value -> row.copy(geometrycollectionCol = value) }, MariaTypes.geometrycollection)
+  fun geometrycollectionCol(): OptField<GeometryCollection, MariatestSpatialNullRow> = OptField<GeometryCollection, MariatestSpatialNullRow>(_path, "geometrycollection_col", MariatestSpatialNullRow::geometrycollectionCol, null, null, { row, value -> row.copy(geometrycollectionCol = value) }, MariaTypes.geometrycollection.underlying)
 
-  fun id(): IdField<MariatestSpatialNullId, MariatestSpatialNullRow> = IdField<MariatestSpatialNullId, MariatestSpatialNullRow>(_path, "id", MariatestSpatialNullRow::id, null, null, { row, value -> row.copy(id = value) }, MariatestSpatialNullId.mariaType)
+  fun id(): IdField<MariatestSpatialNullId, MariatestSpatialNullRow> = IdField<MariatestSpatialNullId, MariatestSpatialNullRow>(_path, "id", MariatestSpatialNullRow::id, null, null, { row, value -> row.copy(id = value) }, MariatestSpatialNullId.mariaType.underlying)
 
-  fun linestringCol(): OptField<LineString, MariatestSpatialNullRow> = OptField<LineString, MariatestSpatialNullRow>(_path, "linestring_col", MariatestSpatialNullRow::linestringCol, null, null, { row, value -> row.copy(linestringCol = value) }, MariaTypes.linestring)
+  fun linestringCol(): OptField<LineString, MariatestSpatialNullRow> = OptField<LineString, MariatestSpatialNullRow>(_path, "linestring_col", MariatestSpatialNullRow::linestringCol, null, null, { row, value -> row.copy(linestringCol = value) }, MariaTypes.linestring.underlying)
 
-  fun multilinestringCol(): OptField<MultiLineString, MariatestSpatialNullRow> = OptField<MultiLineString, MariatestSpatialNullRow>(_path, "multilinestring_col", MariatestSpatialNullRow::multilinestringCol, null, null, { row, value -> row.copy(multilinestringCol = value) }, MariaTypes.multilinestring)
+  fun multilinestringCol(): OptField<MultiLineString, MariatestSpatialNullRow> = OptField<MultiLineString, MariatestSpatialNullRow>(_path, "multilinestring_col", MariatestSpatialNullRow::multilinestringCol, null, null, { row, value -> row.copy(multilinestringCol = value) }, MariaTypes.multilinestring.underlying)
 
-  fun multipointCol(): OptField<MultiPoint, MariatestSpatialNullRow> = OptField<MultiPoint, MariatestSpatialNullRow>(_path, "multipoint_col", MariatestSpatialNullRow::multipointCol, null, null, { row, value -> row.copy(multipointCol = value) }, MariaTypes.multipoint)
+  fun multipointCol(): OptField<MultiPoint, MariatestSpatialNullRow> = OptField<MultiPoint, MariatestSpatialNullRow>(_path, "multipoint_col", MariatestSpatialNullRow::multipointCol, null, null, { row, value -> row.copy(multipointCol = value) }, MariaTypes.multipoint.underlying)
 
-  fun multipolygonCol(): OptField<MultiPolygon, MariatestSpatialNullRow> = OptField<MultiPolygon, MariatestSpatialNullRow>(_path, "multipolygon_col", MariatestSpatialNullRow::multipolygonCol, null, null, { row, value -> row.copy(multipolygonCol = value) }, MariaTypes.multipolygon)
+  fun multipolygonCol(): OptField<MultiPolygon, MariatestSpatialNullRow> = OptField<MultiPolygon, MariatestSpatialNullRow>(_path, "multipolygon_col", MariatestSpatialNullRow::multipolygonCol, null, null, { row, value -> row.copy(multipolygonCol = value) }, MariaTypes.multipolygon.underlying)
 
-  fun pointCol(): OptField<Point, MariatestSpatialNullRow> = OptField<Point, MariatestSpatialNullRow>(_path, "point_col", MariatestSpatialNullRow::pointCol, null, null, { row, value -> row.copy(pointCol = value) }, MariaTypes.point)
+  fun pointCol(): OptField<Point, MariatestSpatialNullRow> = OptField<Point, MariatestSpatialNullRow>(_path, "point_col", MariatestSpatialNullRow::pointCol, null, null, { row, value -> row.copy(pointCol = value) }, MariaTypes.point.underlying)
 
-  fun polygonCol(): OptField<Polygon, MariatestSpatialNullRow> = OptField<Polygon, MariatestSpatialNullRow>(_path, "polygon_col", MariatestSpatialNullRow::polygonCol, null, null, { row, value -> row.copy(polygonCol = value) }, MariaTypes.polygon)
+  fun polygonCol(): OptField<Polygon, MariatestSpatialNullRow> = OptField<Polygon, MariatestSpatialNullRow>(_path, "polygon_col", MariatestSpatialNullRow::polygonCol, null, null, { row, value -> row.copy(polygonCol = value) }, MariaTypes.polygon.underlying)
 
-  override fun rowParser(): RowParser<MariatestSpatialNullRow> = MariatestSpatialNullRow._rowParser.underlying
+  override fun rowCodec(): RowCodec<MariatestSpatialNullRow> = MariatestSpatialNullRow.rowCodec.underlying
 
   override fun withPaths(_path: List<Path>): RelationStructure<MariatestSpatialNullFields, MariatestSpatialNullRow> = MariatestSpatialNullFields(_path)
 

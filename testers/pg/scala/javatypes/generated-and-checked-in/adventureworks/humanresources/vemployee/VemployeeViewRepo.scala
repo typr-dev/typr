@@ -5,11 +5,11 @@
  */
 package adventureworks.humanresources.vemployee
 
-import dev.typr.foundations.dsl.SelectBuilder
-import java.sql.Connection
+import dev.typr.dsl.SelectBuilder
+import dev.typr.foundations.ConnectionRead
 
 trait VemployeeViewRepo {
   def select: SelectBuilder[VemployeeViewFields, VemployeeViewRow]
 
-  def selectAll(using c: Connection): java.util.List[VemployeeViewRow]
+  def selectAll(using c: ConnectionRead): java.util.List[VemployeeViewRow]
 }

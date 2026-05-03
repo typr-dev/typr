@@ -5,17 +5,17 @@
  */
 package testdb.update_customer_priority
 
-import dev.typr.foundations.scala.Fragment
-import java.sql.Connection
+import dev.typr.foundationssc.ConnectionRead
+import dev.typr.foundationssc.Fragment
 import testdb.Priority
 import testdb.customers.CustomersId
-import dev.typr.foundations.scala.Fragment.sql
+import dev.typr.foundationssc.Fragment.sql
 
 class UpdateCustomerPrioritySqlRepoImpl extends UpdateCustomerPrioritySqlRepo {
   override def apply(
     newPriority: /* user-picked */ Priority,
     customerId: /* user-picked */ CustomersId
-  )(using c: Connection): List[UpdateCustomerPrioritySqlRow] = {
+  )(using c: ConnectionRead): List[UpdateCustomerPrioritySqlRow] = {
     sql"""-- Update customer priority based on spending and return updated rows
     -- Tests: UPDATE with RETURNING, enum parameters
   
@@ -27,6 +27,6 @@ class UpdateCustomerPrioritySqlRepoImpl extends UpdateCustomerPrioritySqlRepo {
         name,
         email,
         created_at,
-        priority""".query(UpdateCustomerPrioritySqlRow.`_rowParser`.all()).runUnchecked(c)
+        priority""".query(UpdateCustomerPrioritySqlRow.rowCodec.all()).run(using c)
   }
 }

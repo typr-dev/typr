@@ -7,8 +7,7 @@ class IdentityTest extends AnyFunSuite {
   val repo: MariatestIdentityRepoImpl = new MariatestIdentityRepoImpl
 
   test("autoIncrementInsert") {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       val unsaved = MariatestIdentityRowUnsaved("First Row")
       val inserted = repo.insert(unsaved)
 
@@ -26,8 +25,7 @@ class IdentityTest extends AnyFunSuite {
   }
 
   test("selectById") {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       val unsaved = MariatestIdentityRowUnsaved("Select Test")
       val inserted = repo.insert(unsaved)
 
@@ -39,8 +37,7 @@ class IdentityTest extends AnyFunSuite {
   }
 
   test("update") {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       val unsaved = MariatestIdentityRowUnsaved("Original Name")
       val inserted = repo.insert(unsaved)
 
@@ -54,8 +51,7 @@ class IdentityTest extends AnyFunSuite {
   }
 
   test("delete") {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       val unsaved = MariatestIdentityRowUnsaved("To Delete")
       val inserted = repo.insert(unsaved)
 
@@ -68,8 +64,7 @@ class IdentityTest extends AnyFunSuite {
   }
 
   test("upsert") {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       val unsaved = MariatestIdentityRowUnsaved("Upsert Test")
       val inserted = repo.insert(unsaved)
 
@@ -85,8 +80,7 @@ class IdentityTest extends AnyFunSuite {
   }
 
   test("selectAll") {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       val _ = repo.insert(MariatestIdentityRowUnsaved("Row A"))
       val _ = repo.insert(MariatestIdentityRowUnsaved("Row B"))
       val _ = repo.insert(MariatestIdentityRowUnsaved("Row C"))
@@ -97,8 +91,7 @@ class IdentityTest extends AnyFunSuite {
   }
 
   test("toUnsavedRow") {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       val unsaved = MariatestIdentityRowUnsaved("Test Name")
       val inserted = repo.insert(unsaved)
 

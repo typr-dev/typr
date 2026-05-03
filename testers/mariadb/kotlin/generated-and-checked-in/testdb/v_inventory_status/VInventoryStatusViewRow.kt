@@ -6,12 +6,10 @@
 package testdb.v_inventory_status
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import dev.typr.foundations.MariaTypes
+import dev.typr.dslkt.RowCodecs
 import dev.typr.foundations.Tuple.Tuple14
-import dev.typr.foundations.kotlin.KotlinDbTypes
-import dev.typr.foundations.kotlin.RowParser
-import dev.typr.foundations.kotlin.RowParsers
-import dev.typr.foundations.kotlin.nullable
+import dev.typr.foundationskt.MariaTypes
+import dev.typr.foundationskt.RowCodec
 import java.time.LocalDateTime
 import testdb.products.ProductsId
 import testdb.warehouses.WarehousesId
@@ -28,11 +26,11 @@ data class VInventoryStatusViewRow(
   /** 
     * Points to [testdb.products.ProductsRow.sku]
     */
-  val sku: String,
+  val sku: kotlin.String,
   /** 
     * Points to [testdb.products.ProductsRow.name]
     */
-  @field:JsonProperty("product_name") val productName: String,
+  @field:JsonProperty("product_name") val productName: kotlin.String,
   /** 
     * Default: 0
     * Points to [testdb.warehouses.WarehousesRow.warehouseId]
@@ -41,11 +39,11 @@ data class VInventoryStatusViewRow(
   /** 
     * Points to [testdb.warehouses.WarehousesRow.code]
     */
-  @field:JsonProperty("warehouse_code") val warehouseCode: String,
+  @field:JsonProperty("warehouse_code") val warehouseCode: kotlin.String,
   /** 
     * Points to [testdb.warehouses.WarehousesRow.name]
     */
-  @field:JsonProperty("warehouse_name") val warehouseName: String,
+  @field:JsonProperty("warehouse_name") val warehouseName: kotlin.String,
   /** 
     * Default: 0
     * Points to [testdb.inventory.InventoryRow.quantityOnHand]
@@ -64,7 +62,7 @@ data class VInventoryStatusViewRow(
   /** 
     * Default: 0
     */
-  val available: Long,
+  val available: kotlin.Long,
   /** 
     * Default: 0
     * Points to [testdb.inventory.InventoryRow.reorderPoint]
@@ -73,39 +71,39 @@ data class VInventoryStatusViewRow(
   /** 
     * Default: ''
     */
-  @field:JsonProperty("stock_status") val stockStatus: String,
+  @field:JsonProperty("stock_status") val stockStatus: kotlin.String,
   /** 
     * Default: NULL
     * Points to [testdb.inventory.InventoryRow.binLocation]
     */
-  @field:JsonProperty("bin_location") val binLocation: String?,
+  @field:JsonProperty("bin_location") val binLocation: kotlin.String?,
   /** 
     * Default: NULL
     * Points to [testdb.inventory.InventoryRow.lastCountedAt]
     */
   @field:JsonProperty("last_counted_at") val lastCountedAt: LocalDateTime?
-) : Tuple14<ProductsId, String, String, WarehousesId, String, String, Int, Int, Int, Long, Int, String, String?, LocalDateTime?> {
+) : Tuple14<ProductsId, kotlin.String, kotlin.String, WarehousesId, kotlin.String, kotlin.String, Int, Int, Int, kotlin.Long, Int, kotlin.String, kotlin.String?, LocalDateTime?> {
   override fun _1(): ProductsId = productId
 
-  override fun _10(): Long = available
+  override fun _10(): kotlin.Long = available
 
   override fun _11(): Int = reorderPoint
 
-  override fun _12(): String = stockStatus
+  override fun _12(): kotlin.String = stockStatus
 
-  override fun _13(): String? = binLocation
+  override fun _13(): kotlin.String? = binLocation
 
   override fun _14(): LocalDateTime? = lastCountedAt
 
-  override fun _2(): String = sku
+  override fun _2(): kotlin.String = sku
 
-  override fun _3(): String = productName
+  override fun _3(): kotlin.String = productName
 
   override fun _4(): WarehousesId = warehouseId
 
-  override fun _5(): String = warehouseCode
+  override fun _5(): kotlin.String = warehouseCode
 
-  override fun _6(): String = warehouseName
+  override fun _6(): kotlin.String = warehouseName
 
   override fun _7(): Int = quantityOnHand
 
@@ -114,6 +112,6 @@ data class VInventoryStatusViewRow(
   override fun _9(): Int = quantityOnOrder
 
   companion object {
-    val _rowParser: RowParser<VInventoryStatusViewRow> = RowParsers.of(ProductsId.mariaType, MariaTypes.varchar, MariaTypes.varchar, WarehousesId.mariaType, MariaTypes.char_, MariaTypes.varchar, KotlinDbTypes.MariaTypes.int_, KotlinDbTypes.MariaTypes.int_, KotlinDbTypes.MariaTypes.int_, KotlinDbTypes.MariaTypes.bigint, KotlinDbTypes.MariaTypes.int_, MariaTypes.varchar, MariaTypes.varchar.nullable(), MariaTypes.datetime.nullable(), { t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13 -> VInventoryStatusViewRow(t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13) }, { row -> arrayOf<Any?>(row.productId, row.sku, row.productName, row.warehouseId, row.warehouseCode, row.warehouseName, row.quantityOnHand, row.quantityReserved, row.quantityOnOrder, row.available, row.reorderPoint, row.stockStatus, row.binLocation, row.lastCountedAt) })
+    val rowCodec: RowCodec<VInventoryStatusViewRow> = RowCodecs.of(ProductsId.mariaType, MariaTypes.varchar, MariaTypes.varchar, WarehousesId.mariaType, MariaTypes.char_, MariaTypes.varchar, MariaTypes.int_, MariaTypes.int_, MariaTypes.int_, MariaTypes.bigint, MariaTypes.int_, MariaTypes.varchar, MariaTypes.varchar.opt(), MariaTypes.datetime.opt(), { t0: ProductsId, t1: kotlin.String, t2: kotlin.String, t3: WarehousesId, t4: kotlin.String, t5: kotlin.String, t6: Int, t7: Int, t8: Int, t9: kotlin.Long, t10: Int, t11: kotlin.String, t12: kotlin.String?, t13: LocalDateTime? -> VInventoryStatusViewRow(t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13) }, { row: VInventoryStatusViewRow -> arrayOf<Any?>(row.productId, row.sku, row.productName, row.warehouseId, row.warehouseCode, row.warehouseName, row.quantityOnHand, row.quantityReserved, row.quantityOnOrder, row.available, row.reorderPoint, row.stockStatus, row.binLocation, row.lastCountedAt) })
   }
 }

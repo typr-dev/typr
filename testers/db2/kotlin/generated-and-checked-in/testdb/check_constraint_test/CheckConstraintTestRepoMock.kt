@@ -5,17 +5,18 @@
  */
 package testdb.check_constraint_test
 
-import dev.typr.foundations.kotlin.DeleteBuilder
-import dev.typr.foundations.kotlin.DeleteBuilderMock
-import dev.typr.foundations.kotlin.DeleteParams
-import dev.typr.foundations.kotlin.SelectBuilder
-import dev.typr.foundations.kotlin.SelectBuilderMock
-import dev.typr.foundations.kotlin.SelectParams
-import dev.typr.foundations.kotlin.UpdateBuilder
-import dev.typr.foundations.kotlin.UpdateBuilderMock
-import dev.typr.foundations.kotlin.UpdateParams
+import dev.typr.dslkt.DeleteBuilder
+import dev.typr.dslkt.DeleteBuilderMock
+import dev.typr.dslkt.DeleteParams
+import dev.typr.dslkt.SelectBuilder
+import dev.typr.dslkt.SelectBuilderMock
+import dev.typr.dslkt.SelectParams
+import dev.typr.dslkt.UpdateBuilder
+import dev.typr.dslkt.UpdateBuilderMock
+import dev.typr.dslkt.UpdateParams
+import dev.typr.foundationskt.Connection
+import dev.typr.foundationskt.ConnectionRead
 import java.lang.RuntimeException
-import java.sql.Connection
 import java.util.ArrayList
 import kotlin.collections.Iterator
 import kotlin.collections.List
@@ -28,10 +29,10 @@ data class CheckConstraintTestRepoMock(val map: MutableMap<CheckConstraintTestId
   override fun deleteById(
     id: CheckConstraintTestId,
     c: Connection
-  ): Boolean = map.remove(id) != null
+  ): kotlin.Boolean = map.remove(id) != null
 
   override fun deleteByIds(
-    ids: Array<CheckConstraintTestId>,
+    ids: List<CheckConstraintTestId>,
     c: Connection
   ): Int {
     var count = 0
@@ -56,16 +57,16 @@ data class CheckConstraintTestRepoMock(val map: MutableMap<CheckConstraintTestId
 
   override fun select(): SelectBuilder<CheckConstraintTestFields, CheckConstraintTestRow> = SelectBuilderMock(CheckConstraintTestFields.structure, { map.values.toList() }, SelectParams.empty())
 
-  override fun selectAll(c: Connection): List<CheckConstraintTestRow> = map.values.toList()
+  override fun selectAll(c: ConnectionRead): List<CheckConstraintTestRow> = map.values.toList()
 
   override fun selectById(
     id: CheckConstraintTestId,
-    c: Connection
+    c: ConnectionRead
   ): CheckConstraintTestRow? = map[id]
 
   override fun selectByIds(
-    ids: Array<CheckConstraintTestId>,
-    c: Connection
+    ids: List<CheckConstraintTestId>,
+    c: ConnectionRead
   ): List<CheckConstraintTestRow> {
     val result = ArrayList<CheckConstraintTestRow>()
     for (id in ids) {
@@ -78,8 +79,8 @@ data class CheckConstraintTestRepoMock(val map: MutableMap<CheckConstraintTestId
   }
 
   override fun selectByIdsTracked(
-    ids: Array<CheckConstraintTestId>,
-    c: Connection
+    ids: List<CheckConstraintTestId>,
+    c: ConnectionRead
   ): Map<CheckConstraintTestId, CheckConstraintTestRow> = selectByIds(ids, c).associateBy({ row: CheckConstraintTestRow -> row.id })
 
   override fun update(): UpdateBuilder<CheckConstraintTestFields, CheckConstraintTestRow> = UpdateBuilderMock(CheckConstraintTestFields.structure, { map.values.toList() }, UpdateParams.empty(), { row -> row })
@@ -87,7 +88,7 @@ data class CheckConstraintTestRepoMock(val map: MutableMap<CheckConstraintTestId
   override fun update(
     row: CheckConstraintTestRow,
     c: Connection
-  ): Boolean {
+  ): kotlin.Boolean {
     val shouldUpdate = map[row.id]?.takeIf({ oldRow -> (oldRow != row) }) != null
     if (shouldUpdate) {
       map[row.id] = row

@@ -5,17 +5,16 @@
  */
 package testdb.v_customer_summary
 
-import dev.typr.foundations.MariaTypes
-import dev.typr.foundations.RowParser
-import dev.typr.foundations.dsl.FieldsBase
-import dev.typr.foundations.dsl.Path
-import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.kotlin.KotlinDbTypes
-import dev.typr.foundations.kotlin.RelationStructure
-import dev.typr.foundations.kotlin.SqlExpr
-import dev.typr.foundations.kotlin.SqlExpr.Field
-import dev.typr.foundations.kotlin.SqlExpr.OptField
-import dev.typr.foundations.kotlin.TupleExpr10
+import dev.typr.dsl.FieldsBase
+import dev.typr.dsl.Path
+import dev.typr.dsl.SqlExpr.FieldLike
+import dev.typr.dslkt.RelationStructure
+import dev.typr.dslkt.SqlExpr
+import dev.typr.dslkt.SqlExpr.Field
+import dev.typr.dslkt.SqlExpr.OptField
+import dev.typr.dslkt.TupleExpr10
+import dev.typr.foundations.RowCodec
+import dev.typr.foundationskt.MariaTypes
 import java.math.BigDecimal
 import java.time.LocalDateTime
 import kotlin.collections.List
@@ -23,16 +22,16 @@ import testdb.customer_status.CustomerStatusId
 import testdb.customers.CustomersId
 import testdb.userdefined.Email
 
-data class VCustomerSummaryViewFields(val _path: List<Path>) : TupleExpr10<CustomersId, /* user-picked */ Email, String, String, CustomerStatusId, LocalDateTime, LocalDateTime, Long, BigDecimal, LocalDateTime>, RelationStructure<VCustomerSummaryViewFields, VCustomerSummaryViewRow>, FieldsBase<VCustomerSummaryViewRow> {
+data class VCustomerSummaryViewFields(val _path: List<Path>) : TupleExpr10<CustomersId, /* user-picked */ Email, kotlin.String, kotlin.String, CustomerStatusId, LocalDateTime, LocalDateTime, kotlin.Long, BigDecimal, LocalDateTime>, RelationStructure<VCustomerSummaryViewFields, VCustomerSummaryViewRow>, FieldsBase<VCustomerSummaryViewRow> {
   override fun _1(): SqlExpr<CustomersId> = customerId()
 
   override fun _10(): SqlExpr<LocalDateTime> = lastOrderDate()
 
   override fun _2(): SqlExpr</* user-picked */ Email> = email()
 
-  override fun _3(): SqlExpr<String> = fullName()
+  override fun _3(): SqlExpr<kotlin.String> = fullName()
 
-  override fun _4(): SqlExpr<String> = tier()
+  override fun _4(): SqlExpr<kotlin.String> = tier()
 
   override fun _5(): SqlExpr<CustomerStatusId> = status()
 
@@ -40,7 +39,7 @@ data class VCustomerSummaryViewFields(val _path: List<Path>) : TupleExpr10<Custo
 
   override fun _7(): SqlExpr<LocalDateTime> = lastLoginAt()
 
-  override fun _8(): SqlExpr<Long> = totalOrders()
+  override fun _8(): SqlExpr<kotlin.Long> = totalOrders()
 
   override fun _9(): SqlExpr<BigDecimal> = lifetimeValue()
 
@@ -48,27 +47,27 @@ data class VCustomerSummaryViewFields(val _path: List<Path>) : TupleExpr10<Custo
 
   override fun columns(): List<FieldLike<*, VCustomerSummaryViewRow>> = listOf(this.customerId().underlying, this.email().underlying, this.fullName().underlying, this.tier().underlying, this.status().underlying, this.createdAt().underlying, this.lastLoginAt().underlying, this.totalOrders().underlying, this.lifetimeValue().underlying, this.lastOrderDate().underlying)
 
-  fun createdAt(): Field<LocalDateTime, VCustomerSummaryViewRow> = Field<LocalDateTime, VCustomerSummaryViewRow>(_path, "created_at", VCustomerSummaryViewRow::createdAt, null, null, { row, value -> row.copy(createdAt = value) }, MariaTypes.datetime)
+  fun createdAt(): Field<LocalDateTime, VCustomerSummaryViewRow> = Field<LocalDateTime, VCustomerSummaryViewRow>(_path, "created_at", VCustomerSummaryViewRow::createdAt, null, null, { row, value -> row.copy(createdAt = value) }, MariaTypes.datetime.underlying)
 
-  fun customerId(): Field<CustomersId, VCustomerSummaryViewRow> = Field<CustomersId, VCustomerSummaryViewRow>(_path, "customer_id", VCustomerSummaryViewRow::customerId, null, null, { row, value -> row.copy(customerId = value) }, CustomersId.mariaType)
+  fun customerId(): Field<CustomersId, VCustomerSummaryViewRow> = Field<CustomersId, VCustomerSummaryViewRow>(_path, "customer_id", VCustomerSummaryViewRow::customerId, null, null, { row, value -> row.copy(customerId = value) }, CustomersId.mariaType.underlying)
 
-  fun email(): Field</* user-picked */ Email, VCustomerSummaryViewRow> = Field</* user-picked */ Email, VCustomerSummaryViewRow>(_path, "email", VCustomerSummaryViewRow::email, null, null, { row, value -> row.copy(email = value) }, Email.mariaType)
+  fun email(): Field</* user-picked */ Email, VCustomerSummaryViewRow> = Field</* user-picked */ Email, VCustomerSummaryViewRow>(_path, "email", VCustomerSummaryViewRow::email, null, null, { row, value -> row.copy(email = value) }, Email.mariaType.underlying)
 
-  fun fullName(): OptField<String, VCustomerSummaryViewRow> = OptField<String, VCustomerSummaryViewRow>(_path, "full_name", VCustomerSummaryViewRow::fullName, null, null, { row, value -> row.copy(fullName = value) }, MariaTypes.varchar)
+  fun fullName(): OptField<kotlin.String, VCustomerSummaryViewRow> = OptField<kotlin.String, VCustomerSummaryViewRow>(_path, "full_name", VCustomerSummaryViewRow::fullName, null, null, { row, value -> row.copy(fullName = value) }, MariaTypes.varchar.underlying)
 
-  fun lastLoginAt(): OptField<LocalDateTime, VCustomerSummaryViewRow> = OptField<LocalDateTime, VCustomerSummaryViewRow>(_path, "last_login_at", VCustomerSummaryViewRow::lastLoginAt, null, null, { row, value -> row.copy(lastLoginAt = value) }, MariaTypes.datetime)
+  fun lastLoginAt(): OptField<LocalDateTime, VCustomerSummaryViewRow> = OptField<LocalDateTime, VCustomerSummaryViewRow>(_path, "last_login_at", VCustomerSummaryViewRow::lastLoginAt, null, null, { row, value -> row.copy(lastLoginAt = value) }, MariaTypes.datetime.underlying)
 
-  fun lastOrderDate(): OptField<LocalDateTime, VCustomerSummaryViewRow> = OptField<LocalDateTime, VCustomerSummaryViewRow>(_path, "last_order_date", VCustomerSummaryViewRow::lastOrderDate, null, null, { row, value -> row.copy(lastOrderDate = value) }, MariaTypes.datetime)
+  fun lastOrderDate(): OptField<LocalDateTime, VCustomerSummaryViewRow> = OptField<LocalDateTime, VCustomerSummaryViewRow>(_path, "last_order_date", VCustomerSummaryViewRow::lastOrderDate, null, null, { row, value -> row.copy(lastOrderDate = value) }, MariaTypes.datetime.underlying)
 
-  fun lifetimeValue(): Field<BigDecimal, VCustomerSummaryViewRow> = Field<BigDecimal, VCustomerSummaryViewRow>(_path, "lifetime_value", VCustomerSummaryViewRow::lifetimeValue, null, null, { row, value -> row.copy(lifetimeValue = value) }, KotlinDbTypes.MariaTypes.numeric)
+  fun lifetimeValue(): Field<BigDecimal, VCustomerSummaryViewRow> = Field<BigDecimal, VCustomerSummaryViewRow>(_path, "lifetime_value", VCustomerSummaryViewRow::lifetimeValue, null, null, { row, value -> row.copy(lifetimeValue = value) }, MariaTypes.numeric.underlying)
 
-  override fun rowParser(): RowParser<VCustomerSummaryViewRow> = VCustomerSummaryViewRow._rowParser.underlying
+  override fun rowCodec(): RowCodec<VCustomerSummaryViewRow> = VCustomerSummaryViewRow.rowCodec.underlying
 
-  fun status(): Field<CustomerStatusId, VCustomerSummaryViewRow> = Field<CustomerStatusId, VCustomerSummaryViewRow>(_path, "status", VCustomerSummaryViewRow::status, null, null, { row, value -> row.copy(status = value) }, CustomerStatusId.mariaType)
+  fun status(): Field<CustomerStatusId, VCustomerSummaryViewRow> = Field<CustomerStatusId, VCustomerSummaryViewRow>(_path, "status", VCustomerSummaryViewRow::status, null, null, { row, value -> row.copy(status = value) }, CustomerStatusId.mariaType.underlying)
 
-  fun tier(): Field<String, VCustomerSummaryViewRow> = Field<String, VCustomerSummaryViewRow>(_path, "tier", VCustomerSummaryViewRow::tier, null, null, { row, value -> row.copy(tier = value) }, MariaTypes.text)
+  fun tier(): Field<kotlin.String, VCustomerSummaryViewRow> = Field<kotlin.String, VCustomerSummaryViewRow>(_path, "tier", VCustomerSummaryViewRow::tier, null, null, { row, value -> row.copy(tier = value) }, MariaTypes.text.underlying)
 
-  fun totalOrders(): Field<Long, VCustomerSummaryViewRow> = Field<Long, VCustomerSummaryViewRow>(_path, "total_orders", VCustomerSummaryViewRow::totalOrders, null, null, { row, value -> row.copy(totalOrders = value) }, KotlinDbTypes.MariaTypes.bigint)
+  fun totalOrders(): Field<kotlin.Long, VCustomerSummaryViewRow> = Field<kotlin.Long, VCustomerSummaryViewRow>(_path, "total_orders", VCustomerSummaryViewRow::totalOrders, null, null, { row, value -> row.copy(totalOrders = value) }, MariaTypes.bigint.underlying)
 
   override fun withPaths(_path: List<Path>): RelationStructure<VCustomerSummaryViewFields, VCustomerSummaryViewRow> = VCustomerSummaryViewFields(_path)
 

@@ -5,55 +5,54 @@
  */
 package testdb.orders
 
-import dev.typr.foundations.DuckDbTypes
-import dev.typr.foundations.scala.DbTypeOps
-import dev.typr.foundations.scala.DeleteBuilder
-import dev.typr.foundations.scala.Dialect
-import dev.typr.foundations.scala.Fragment
-import dev.typr.foundations.scala.ScalaDbTypes
-import dev.typr.foundations.scala.SelectBuilder
-import dev.typr.foundations.scala.UpdateBuilder
-import java.sql.Connection
+import dev.typr.dslsc.DeleteBuilder
+import dev.typr.dslsc.Dialect
+import dev.typr.dslsc.SelectBuilder
+import dev.typr.dslsc.UpdateBuilder
+import dev.typr.foundationssc.Connection
+import dev.typr.foundationssc.ConnectionRead
+import dev.typr.foundationssc.DuckDbTypes
+import dev.typr.foundationssc.Fragment
 import scala.collection.mutable.ListBuffer
-import dev.typr.foundations.scala.Fragment.sql
+import dev.typr.foundationssc.Fragment.sql
 
 class OrdersRepoImpl extends OrdersRepo {
   override def delete: DeleteBuilder[OrdersFields, OrdersRow] = DeleteBuilder.of(""""orders"""", OrdersFields.structure, Dialect.DUCKDB)
 
-  override def deleteById(orderId: OrdersId)(using c: Connection): Boolean = sql"""delete from "orders" where "order_id" = ${Fragment.encode(OrdersId.duckDbType, orderId)}""".update().runUnchecked(c) > 0
+  override def deleteById(orderId: OrdersId)(using c: Connection): Boolean = sql"""delete from "orders" where "order_id" = ${Fragment.encode(OrdersId.duckDbType, orderId)}""".update().run(using c) > 0
 
-  override def deleteByIds(orderIds: Array[OrdersId])(using c: Connection): Int = {
+  override def deleteByIds(orderIds: List[OrdersId])(using c: Connection): Int = {
     sql"""delete
     from "orders"
     where "order_id" = ANY(${Fragment.encode(OrdersId.duckDbTypeArray, orderIds)})"""
       .update()
-      .runUnchecked(c)
+      .run(using c)
   }
 
   override def insert(unsaved: OrdersRow)(using c: Connection): OrdersRow = {
   sql"""insert into "orders"("order_id", "customer_id", "order_date", "total_amount", "status")
-    values (${Fragment.encode(OrdersId.duckDbType, unsaved.orderId)}, ${Fragment.encode(ScalaDbTypes.DuckDbTypes.integer, unsaved.customerId)}, ${Fragment.encode(DuckDbTypes.date, unsaved.orderDate)}, ${Fragment.encode(ScalaDbTypes.DuckDbTypes.numeric.nullable, unsaved.totalAmount)}, ${Fragment.encode(DuckDbTypes.varchar.nullable, unsaved.status)})
+    values (${Fragment.encode(OrdersId.duckDbType, unsaved.orderId)}, ${Fragment.encode(DuckDbTypes.integer, unsaved.customerId)}, ${Fragment.encode(DuckDbTypes.date, unsaved.orderDate)}, ${Fragment.encode(DuckDbTypes.numeric.opt, unsaved.totalAmount)}, ${Fragment.encode(DuckDbTypes.varchar.opt, unsaved.status)})
     RETURNING "order_id", "customer_id", "order_date", "total_amount", "status"
     """
-    .updateReturning(OrdersRow.`_rowParser`.exactlyOne()).runUnchecked(c)
+    .updateReturning(OrdersRow.rowCodec.exactlyOne()).run(using c)
   }
 
   override def insert(unsaved: OrdersRowUnsaved)(using c: Connection): OrdersRow = {
     val columns: ListBuffer[Fragment] = ListBuffer()
     val values: ListBuffer[Fragment] = ListBuffer()
-    columns.addOne(Fragment.lit(""""order_id"""")): @scala.annotation.nowarn
+    columns.addOne(Fragment.of(""""order_id"""")): @scala.annotation.nowarn
     values.addOne(sql"${Fragment.encode(OrdersId.duckDbType, unsaved.orderId)}"): @scala.annotation.nowarn
-    columns.addOne(Fragment.lit(""""customer_id"""")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(ScalaDbTypes.DuckDbTypes.integer, unsaved.customerId)}"): @scala.annotation.nowarn
-    columns.addOne(Fragment.lit(""""total_amount"""")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(ScalaDbTypes.DuckDbTypes.numeric.nullable, unsaved.totalAmount)}"): @scala.annotation.nowarn
+    columns.addOne(Fragment.of(""""customer_id"""")): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(DuckDbTypes.integer, unsaved.customerId)}"): @scala.annotation.nowarn
+    columns.addOne(Fragment.of(""""total_amount"""")): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(DuckDbTypes.numeric.opt, unsaved.totalAmount)}"): @scala.annotation.nowarn
     unsaved.orderDate.visit(
       {  },
-      value => { columns.addOne(Fragment.lit(""""order_date"""")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(DuckDbTypes.date, value)}"): @scala.annotation.nowarn }
+      value => { columns.addOne(Fragment.of(""""order_date"""")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(DuckDbTypes.date, value)}"): @scala.annotation.nowarn }
     );
     unsaved.status.visit(
       {  },
-      value => { columns.addOne(Fragment.lit(""""status"""")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(DuckDbTypes.varchar.nullable, value)}"): @scala.annotation.nowarn }
+      value => { columns.addOne(Fragment.of(""""status"""")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(DuckDbTypes.varchar.opt, value)}"): @scala.annotation.nowarn }
     );
     val q: Fragment = {
       sql"""insert into "orders"(${Fragment.comma(columns)})
@@ -61,50 +60,50 @@ class OrdersRepoImpl extends OrdersRepo {
       RETURNING "order_id", "customer_id", "order_date", "total_amount", "status"
       """
     }
-    return q.updateReturning(OrdersRow.`_rowParser`.exactlyOne()).runUnchecked(c)
+    return q.updateReturning(OrdersRow.rowCodec.exactlyOne()).run(using c)
   }
 
-  override def select: SelectBuilder[OrdersFields, OrdersRow] = SelectBuilder.of(""""orders"""", OrdersFields.structure, OrdersRow.`_rowParser`, Dialect.DUCKDB)
+  override def select: SelectBuilder[OrdersFields, OrdersRow] = SelectBuilder.of(""""orders"""", OrdersFields.structure, OrdersRow.rowCodec, Dialect.DUCKDB)
 
-  override def selectAll(using c: Connection): List[OrdersRow] = {
+  override def selectAll(using c: ConnectionRead): List[OrdersRow] = {
     sql"""select "order_id", "customer_id", "order_date", "total_amount", "status"
     from "orders"
-    """.query(OrdersRow.`_rowParser`.all()).runUnchecked(c)
+    """.query(OrdersRow.rowCodec.all()).run(using c)
   }
 
-  override def selectById(orderId: OrdersId)(using c: Connection): Option[OrdersRow] = {
+  override def selectById(orderId: OrdersId)(using c: ConnectionRead): Option[OrdersRow] = {
     sql"""select "order_id", "customer_id", "order_date", "total_amount", "status"
     from "orders"
-    where "order_id" = ${Fragment.encode(OrdersId.duckDbType, orderId)}""".query(OrdersRow.`_rowParser`.first()).runUnchecked(c)
+    where "order_id" = ${Fragment.encode(OrdersId.duckDbType, orderId)}""".query(OrdersRow.rowCodec.first()).run(using c)
   }
 
-  override def selectByIds(orderIds: Array[OrdersId])(using c: Connection): List[OrdersRow] = {
+  override def selectByIds(orderIds: List[OrdersId])(using c: ConnectionRead): List[OrdersRow] = {
     sql"""select "order_id", "customer_id", "order_date", "total_amount", "status"
     from "orders"
-    where "order_id" = ANY(${Fragment.encode(OrdersId.duckDbTypeArray, orderIds)})""".query(OrdersRow.`_rowParser`.all()).runUnchecked(c)
+    where "order_id" = ANY(${Fragment.encode(OrdersId.duckDbTypeArray, orderIds)})""".query(OrdersRow.rowCodec.all()).run(using c)
   }
 
-  override def selectByIdsTracked(orderIds: Array[OrdersId])(using c: Connection): Map[OrdersId, OrdersRow] = {
+  override def selectByIdsTracked(orderIds: List[OrdersId])(using c: ConnectionRead): Map[OrdersId, OrdersRow] = {
     val ret: scala.collection.mutable.Map[OrdersId, OrdersRow] = scala.collection.mutable.Map.empty[OrdersId, OrdersRow]
     selectByIds(orderIds)(using c).foreach(row => ret.put(row.orderId, row): @scala.annotation.nowarn)
     return ret.toMap
   }
 
-  override def update: UpdateBuilder[OrdersFields, OrdersRow] = UpdateBuilder.of(""""orders"""", OrdersFields.structure, OrdersRow.`_rowParser`, Dialect.DUCKDB)
+  override def update: UpdateBuilder[OrdersFields, OrdersRow] = UpdateBuilder.of(""""orders"""", OrdersFields.structure, OrdersRow.rowCodec, Dialect.DUCKDB)
 
   override def update(row: OrdersRow)(using c: Connection): Boolean = {
     val orderId: OrdersId = row.orderId
     return sql"""update "orders"
-    set "customer_id" = ${Fragment.encode(ScalaDbTypes.DuckDbTypes.integer, row.customerId)},
+    set "customer_id" = ${Fragment.encode(DuckDbTypes.integer, row.customerId)},
     "order_date" = ${Fragment.encode(DuckDbTypes.date, row.orderDate)},
-    "total_amount" = ${Fragment.encode(ScalaDbTypes.DuckDbTypes.numeric.nullable, row.totalAmount)},
-    "status" = ${Fragment.encode(DuckDbTypes.varchar.nullable, row.status)}
-    where "order_id" = ${Fragment.encode(OrdersId.duckDbType, orderId)}""".update().runUnchecked(c) > 0
+    "total_amount" = ${Fragment.encode(DuckDbTypes.numeric.opt, row.totalAmount)},
+    "status" = ${Fragment.encode(DuckDbTypes.varchar.opt, row.status)}
+    where "order_id" = ${Fragment.encode(OrdersId.duckDbType, orderId)}""".update().run(using c) > 0
   }
 
   override def upsert(unsaved: OrdersRow)(using c: Connection): OrdersRow = {
   sql"""INSERT INTO "orders"("order_id", "customer_id", "order_date", "total_amount", "status")
-    VALUES (${Fragment.encode(OrdersId.duckDbType, unsaved.orderId)}, ${Fragment.encode(ScalaDbTypes.DuckDbTypes.integer, unsaved.customerId)}, ${Fragment.encode(DuckDbTypes.date, unsaved.orderDate)}, ${Fragment.encode(ScalaDbTypes.DuckDbTypes.numeric.nullable, unsaved.totalAmount)}, ${Fragment.encode(DuckDbTypes.varchar.nullable, unsaved.status)})
+    VALUES (${Fragment.encode(OrdersId.duckDbType, unsaved.orderId)}, ${Fragment.encode(DuckDbTypes.integer, unsaved.customerId)}, ${Fragment.encode(DuckDbTypes.date, unsaved.orderDate)}, ${Fragment.encode(DuckDbTypes.numeric.opt, unsaved.totalAmount)}, ${Fragment.encode(DuckDbTypes.varchar.opt, unsaved.status)})
     ON CONFLICT ("order_id")
     DO UPDATE SET
       "customer_id" = EXCLUDED."customer_id",
@@ -112,8 +111,8 @@ class OrdersRepoImpl extends OrdersRepo {
     "total_amount" = EXCLUDED."total_amount",
     "status" = EXCLUDED."status"
     RETURNING "order_id", "customer_id", "order_date", "total_amount", "status""""
-    .updateReturning(OrdersRow.`_rowParser`.exactlyOne())
-    .runUnchecked(c)
+    .updateReturning(OrdersRow.rowCodec.exactlyOne())
+    .run(using c)
   }
 
   override def upsertBatch(unsaved: Iterator[OrdersRow])(using c: Connection): List[OrdersRow] = {
@@ -126,7 +125,7 @@ class OrdersRepoImpl extends OrdersRepo {
     "total_amount" = EXCLUDED."total_amount",
     "status" = EXCLUDED."status"
     RETURNING "order_id", "customer_id", "order_date", "total_amount", "status""""
-      .updateReturningEach(OrdersRow.`_rowParser`, unsaved)
-    .runUnchecked(c)
+      .updateReturningEach(OrdersRow.rowCodec, unsaved)
+    .run(using c)
   }
 }

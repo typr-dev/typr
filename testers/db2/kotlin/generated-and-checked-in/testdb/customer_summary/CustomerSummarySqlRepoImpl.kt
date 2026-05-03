@@ -5,10 +5,10 @@
  */
 package testdb.customer_summary
 
-import dev.typr.foundations.kotlin.Fragment
-import java.sql.Connection
+import dev.typr.foundationskt.ConnectionRead
+import dev.typr.foundationskt.Fragment
 import kotlin.collections.List
 
 class CustomerSummarySqlRepoImpl() : CustomerSummarySqlRepo {
-  override fun apply(c: Connection): List<CustomerSummarySqlRow> = Fragment.interpolate(Fragment.lit("-- Customer summary with total orders\nSELECT c.customer_id, c.name, c.email,\n       COUNT(o.order_id) as order_count,\n       COALESCE(SUM(o.total_amount), 0) as total_spent\nFROM customers c\nLEFT JOIN orders o ON c.customer_id = o.customer_id\nGROUP BY c.customer_id, c.name, c.email\n")).query(CustomerSummarySqlRow._rowParser.all()).runUnchecked(c)
+  override fun apply(c: ConnectionRead): List<CustomerSummarySqlRow> = Fragment.concat(Fragment.of("-- Customer summary with total orders\nSELECT c.customer_id, c.name, c.email,\n       COUNT(o.order_id) as order_count,\n       COALESCE(SUM(o.total_amount), 0) as total_spent\nFROM customers c\nLEFT JOIN orders o ON c.customer_id = o.customer_id\nGROUP BY c.customer_id, c.name, c.email\n")).query(CustomerSummarySqlRow.rowCodec.all()).run(c)
 }

@@ -6,10 +6,10 @@
 package testdb.db2test_identity_default
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import dev.typr.foundations.Db2Types
+import dev.typr.dslkt.RowCodecs
 import dev.typr.foundations.Tuple.Tuple2
-import dev.typr.foundations.kotlin.RowParser
-import dev.typr.foundations.kotlin.RowParsers
+import dev.typr.foundationskt.Db2Types
+import dev.typr.foundationskt.RowCodec
 import testdb.customtypes.Defaulted
 
 /** Table: DB2TEST_IDENTITY_DEFAULT
@@ -18,15 +18,15 @@ import testdb.customtypes.Defaulted
 data class Db2testIdentityDefaultRow(
   /** Identity BY DEFAULT */
   @field:JsonProperty("ID") val id: Db2testIdentityDefaultId,
-  @field:JsonProperty("NAME") val name: String
-) : Tuple2<Db2testIdentityDefaultId, String> {
+  @field:JsonProperty("NAME") val name: kotlin.String
+) : Tuple2<Db2testIdentityDefaultId, kotlin.String> {
   override fun _1(): Db2testIdentityDefaultId = id
 
-  override fun _2(): String = name
+  override fun _2(): kotlin.String = name
 
   fun toUnsavedRow(id: Defaulted<Db2testIdentityDefaultId>): Db2testIdentityDefaultRowUnsaved = Db2testIdentityDefaultRowUnsaved(name, id)
 
   companion object {
-    val _rowParser: RowParser<Db2testIdentityDefaultRow> = RowParsers.of(Db2testIdentityDefaultId.db2Type, Db2Types.varchar, { t0, t1 -> Db2testIdentityDefaultRow(t0, t1) }, { row -> arrayOf<Any?>(row.id, row.name) })
+    val rowCodec: RowCodec<Db2testIdentityDefaultRow> = RowCodecs.of(Db2testIdentityDefaultId.db2Type, Db2Types.varchar, { t0: Db2testIdentityDefaultId, t1: kotlin.String -> Db2testIdentityDefaultRow(t0, t1) }, { row: Db2testIdentityDefaultRow -> arrayOf<Any?>(row.id, row.name) })
   }
 }

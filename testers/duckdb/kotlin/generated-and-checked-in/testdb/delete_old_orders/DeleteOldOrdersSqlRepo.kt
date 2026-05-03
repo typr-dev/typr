@@ -5,14 +5,14 @@
  */
 package testdb.delete_old_orders
 
-import java.sql.Connection
+import dev.typr.foundationskt.ConnectionRead
 import java.time.LocalDate
 import kotlin.collections.List
 
 interface DeleteOldOrdersSqlRepo {
   abstract fun apply(
     cutoffDate: LocalDate,
-    status: String?,
-    c: Connection
+    status: kotlin.String?,
+    c: ConnectionRead
   ): List<DeleteOldOrdersSqlRow>
 }

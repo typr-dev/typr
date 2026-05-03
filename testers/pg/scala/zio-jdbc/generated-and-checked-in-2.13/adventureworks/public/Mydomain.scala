@@ -27,7 +27,7 @@ object Mydomain {
 
   implicit lazy val arraySetter: Setter[Array[Mydomain]] = adventureworks.StringArraySetter.contramap(_.map(_.value))
 
-  implicit lazy val bijection: Bijection[Mydomain, String] = Bijection.apply[Mydomain, String](_.value)(Mydomain.apply)
+  implicit lazy val bijection: Bijection[Mydomain, String] = Bijection[Mydomain, String](_.value)(Mydomain.apply)
 
   implicit lazy val jdbcDecoder: JdbcDecoder[Mydomain] = JdbcDecoder.stringDecoder.map(Mydomain.apply)
 

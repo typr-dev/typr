@@ -5,11 +5,10 @@
  */
 package testdb.update_customer_email
 
-import dev.typr.foundations.SqlServerTypes
-import dev.typr.foundations.scala.Fragment
-import dev.typr.foundations.scala.ScalaDbTypes
-import java.sql.Connection
-import dev.typr.foundations.scala.Fragment.sql
+import dev.typr.foundationssc.Connection
+import dev.typr.foundationssc.Fragment
+import dev.typr.foundationssc.SqlServerTypes
+import dev.typr.foundationssc.Fragment.sql
 
 class UpdateCustomerEmailSqlRepoImpl extends UpdateCustomerEmailSqlRepo {
   override def apply(
@@ -19,7 +18,7 @@ class UpdateCustomerEmailSqlRepoImpl extends UpdateCustomerEmailSqlRepo {
     sql"""-- Update customer email
     UPDATE customers
     SET email = ${Fragment.encode(SqlServerTypes.nvarchar, newEmail)}
-    WHERE customer_id = ${Fragment.encode(ScalaDbTypes.SqlServerTypes.int_, customerId)}
-    """.update().runUnchecked(c)
+    WHERE customer_id = ${Fragment.encode(SqlServerTypes.int_, customerId)}
+    """.update().run(using c)
   }
 }

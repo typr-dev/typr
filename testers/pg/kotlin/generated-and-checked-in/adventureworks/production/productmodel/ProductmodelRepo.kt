@@ -5,10 +5,11 @@
  */
 package adventureworks.production.productmodel
 
-import dev.typr.foundations.kotlin.DeleteBuilder
-import dev.typr.foundations.kotlin.SelectBuilder
-import dev.typr.foundations.kotlin.UpdateBuilder
-import java.sql.Connection
+import dev.typr.dslkt.DeleteBuilder
+import dev.typr.dslkt.SelectBuilder
+import dev.typr.dslkt.UpdateBuilder
+import dev.typr.foundationskt.Connection
+import dev.typr.foundationskt.ConnectionRead
 import kotlin.collections.Iterator
 import kotlin.collections.List
 import kotlin.collections.Map
@@ -19,10 +20,10 @@ interface ProductmodelRepo {
   abstract fun deleteById(
     productmodelid: ProductmodelId,
     c: Connection
-  ): Boolean
+  ): kotlin.Boolean
 
   abstract fun deleteByIds(
-    productmodelids: Array<ProductmodelId>,
+    productmodelids: List<ProductmodelId>,
     c: Connection
   ): Int
 
@@ -40,32 +41,32 @@ interface ProductmodelRepo {
     unsaved: Iterator<ProductmodelRow>,
     batchSize: Int = 10000,
     c: Connection
-  ): Long
+  ): kotlin.Long
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
   abstract fun insertUnsavedStreaming(
     unsaved: Iterator<ProductmodelRowUnsaved>,
     batchSize: Int = 10000,
     c: Connection
-  ): Long
+  ): kotlin.Long
 
   abstract fun select(): SelectBuilder<ProductmodelFields, ProductmodelRow>
 
-  abstract fun selectAll(c: Connection): List<ProductmodelRow>
+  abstract fun selectAll(c: ConnectionRead): List<ProductmodelRow>
 
   abstract fun selectById(
     productmodelid: ProductmodelId,
-    c: Connection
+    c: ConnectionRead
   ): ProductmodelRow?
 
   abstract fun selectByIds(
-    productmodelids: Array<ProductmodelId>,
-    c: Connection
+    productmodelids: List<ProductmodelId>,
+    c: ConnectionRead
   ): List<ProductmodelRow>
 
   abstract fun selectByIdsTracked(
-    productmodelids: Array<ProductmodelId>,
-    c: Connection
+    productmodelids: List<ProductmodelId>,
+    c: ConnectionRead
   ): Map<ProductmodelId, ProductmodelRow>
 
   abstract fun update(): UpdateBuilder<ProductmodelFields, ProductmodelRow>
@@ -73,7 +74,7 @@ interface ProductmodelRepo {
   abstract fun update(
     row: ProductmodelRow,
     c: Connection
-  ): Boolean
+  ): kotlin.Boolean
 
   abstract fun upsert(
     unsaved: ProductmodelRow,

@@ -5,10 +5,11 @@
  */
 package adventureworks.public.issue142
 
-import dev.typr.foundations.dsl.DeleteBuilder
-import dev.typr.foundations.dsl.SelectBuilder
-import dev.typr.foundations.dsl.UpdateBuilder
-import java.sql.Connection
+import dev.typr.dsl.DeleteBuilder
+import dev.typr.dsl.SelectBuilder
+import dev.typr.dsl.UpdateBuilder
+import dev.typr.foundations.Connection
+import dev.typr.foundations.ConnectionRead
 import java.util.Optional
 
 trait Issue142Repo {
@@ -16,7 +17,7 @@ trait Issue142Repo {
 
   def deleteById(tabellkode: Issue142Id)(using c: Connection): java.lang.Boolean
 
-  def deleteByIds(tabellkodes: Array[Issue142Id])(using c: Connection): Integer
+  def deleteByIds(tabellkodes: java.util.List[Issue142Id])(using c: Connection): Integer
 
   def insert(unsaved: Issue142Row)(using c: Connection): Issue142Row
 
@@ -27,13 +28,13 @@ trait Issue142Repo {
 
   def select: SelectBuilder[Issue142Fields, Issue142Row]
 
-  def selectAll(using c: Connection): java.util.List[Issue142Row]
+  def selectAll(using c: ConnectionRead): java.util.List[Issue142Row]
 
-  def selectById(tabellkode: Issue142Id)(using c: Connection): Optional[Issue142Row]
+  def selectById(tabellkode: Issue142Id)(using c: ConnectionRead): Optional[Issue142Row]
 
-  def selectByIds(tabellkodes: Array[Issue142Id])(using c: Connection): java.util.List[Issue142Row]
+  def selectByIds(tabellkodes: java.util.List[Issue142Id])(using c: ConnectionRead): java.util.List[Issue142Row]
 
-  def selectByIdsTracked(tabellkodes: Array[Issue142Id])(using c: Connection): java.util.Map[Issue142Id, Issue142Row]
+  def selectByIdsTracked(tabellkodes: java.util.List[Issue142Id])(using c: ConnectionRead): java.util.Map[Issue142Id, Issue142Row]
 
   def update: UpdateBuilder[Issue142Fields, Issue142Row]
 

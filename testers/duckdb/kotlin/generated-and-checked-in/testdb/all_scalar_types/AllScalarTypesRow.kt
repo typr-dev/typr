@@ -6,24 +6,21 @@
 package testdb.all_scalar_types
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import dev.typr.foundations.DuckDbTypes
 import dev.typr.foundations.Tuple.Tuple26
 import dev.typr.foundations.data.Json
 import dev.typr.foundations.data.Uint1
 import dev.typr.foundations.data.Uint2
 import dev.typr.foundations.data.Uint4
 import dev.typr.foundations.data.Uint8
-import dev.typr.foundations.kotlin.KotlinDbTypes
-import dev.typr.foundations.kotlin.RowParser
-import dev.typr.foundations.kotlin.RowParsers
-import dev.typr.foundations.kotlin.nullable
+import dev.typr.foundationskt.DuckDbTypes
+import dev.typr.foundationskt.RowCodec
 import java.math.BigDecimal
 import java.math.BigInteger
 import java.time.Duration
+import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
-import java.time.OffsetDateTime
 import java.util.UUID
 import testdb.Mood
 
@@ -32,47 +29,47 @@ import testdb.Mood
   */
 data class AllScalarTypesRow(
   val id: AllScalarTypesId,
-  @field:JsonProperty("col_tinyint") val colTinyint: Byte?,
-  @field:JsonProperty("col_smallint") val colSmallint: Short?,
+  @field:JsonProperty("col_tinyint") val colTinyint: kotlin.Byte?,
+  @field:JsonProperty("col_smallint") val colSmallint: kotlin.Short?,
   @field:JsonProperty("col_integer") val colInteger: Int?,
-  @field:JsonProperty("col_bigint") val colBigint: Long?,
+  @field:JsonProperty("col_bigint") val colBigint: kotlin.Long?,
   @field:JsonProperty("col_hugeint") val colHugeint: BigInteger?,
   @field:JsonProperty("col_utinyint") val colUtinyint: Uint1?,
   @field:JsonProperty("col_usmallint") val colUsmallint: Uint2?,
   @field:JsonProperty("col_uinteger") val colUinteger: Uint4?,
   @field:JsonProperty("col_ubigint") val colUbigint: Uint8?,
-  @field:JsonProperty("col_float") val colFloat: Float?,
-  @field:JsonProperty("col_double") val colDouble: Double?,
+  @field:JsonProperty("col_float") val colFloat: kotlin.Float?,
+  @field:JsonProperty("col_double") val colDouble: kotlin.Double?,
   @field:JsonProperty("col_decimal") val colDecimal: BigDecimal?,
-  @field:JsonProperty("col_boolean") val colBoolean: Boolean?,
-  @field:JsonProperty("col_varchar") val colVarchar: String?,
-  @field:JsonProperty("col_text") val colText: String?,
+  @field:JsonProperty("col_boolean") val colBoolean: kotlin.Boolean?,
+  @field:JsonProperty("col_varchar") val colVarchar: kotlin.String?,
+  @field:JsonProperty("col_text") val colText: kotlin.String?,
   @field:JsonProperty("col_blob") val colBlob: ByteArray?,
   @field:JsonProperty("col_date") val colDate: LocalDate?,
   @field:JsonProperty("col_time") val colTime: LocalTime?,
   @field:JsonProperty("col_timestamp") val colTimestamp: LocalDateTime?,
-  @field:JsonProperty("col_timestamptz") val colTimestamptz: OffsetDateTime?,
+  @field:JsonProperty("col_timestamptz") val colTimestamptz: Instant?,
   @field:JsonProperty("col_interval") val colInterval: Duration?,
   @field:JsonProperty("col_uuid") val colUuid: UUID?,
   @field:JsonProperty("col_json") val colJson: Json?,
   @field:JsonProperty("col_mood") val colMood: Mood?,
-  @field:JsonProperty("col_not_null") val colNotNull: String
-) : Tuple26<AllScalarTypesId, Byte?, Short?, Int?, Long?, BigInteger?, Uint1?, Uint2?, Uint4?, Uint8?, Float?, Double?, BigDecimal?, Boolean?, String?, String?, ByteArray?, LocalDate?, LocalTime?, LocalDateTime?, OffsetDateTime?, Duration?, UUID?, Json?, Mood?, String> {
+  @field:JsonProperty("col_not_null") val colNotNull: kotlin.String
+) : Tuple26<AllScalarTypesId, kotlin.Byte?, kotlin.Short?, Int?, kotlin.Long?, BigInteger?, Uint1?, Uint2?, Uint4?, Uint8?, kotlin.Float?, kotlin.Double?, BigDecimal?, kotlin.Boolean?, kotlin.String?, kotlin.String?, ByteArray?, LocalDate?, LocalTime?, LocalDateTime?, Instant?, Duration?, UUID?, Json?, Mood?, kotlin.String> {
   override fun _1(): AllScalarTypesId = id
 
   override fun _10(): Uint8? = colUbigint
 
-  override fun _11(): Float? = colFloat
+  override fun _11(): kotlin.Float? = colFloat
 
-  override fun _12(): Double? = colDouble
+  override fun _12(): kotlin.Double? = colDouble
 
   override fun _13(): BigDecimal? = colDecimal
 
-  override fun _14(): Boolean? = colBoolean
+  override fun _14(): kotlin.Boolean? = colBoolean
 
-  override fun _15(): String? = colVarchar
+  override fun _15(): kotlin.String? = colVarchar
 
-  override fun _16(): String? = colText
+  override fun _16(): kotlin.String? = colText
 
   override fun _17(): ByteArray? = colBlob
 
@@ -80,11 +77,11 @@ data class AllScalarTypesRow(
 
   override fun _19(): LocalTime? = colTime
 
-  override fun _2(): Byte? = colTinyint
+  override fun _2(): kotlin.Byte? = colTinyint
 
   override fun _20(): LocalDateTime? = colTimestamp
 
-  override fun _21(): OffsetDateTime? = colTimestamptz
+  override fun _21(): Instant? = colTimestamptz
 
   override fun _22(): Duration? = colInterval
 
@@ -94,13 +91,13 @@ data class AllScalarTypesRow(
 
   override fun _25(): Mood? = colMood
 
-  override fun _26(): String = colNotNull
+  override fun _26(): kotlin.String = colNotNull
 
-  override fun _3(): Short? = colSmallint
+  override fun _3(): kotlin.Short? = colSmallint
 
   override fun _4(): Int? = colInteger
 
-  override fun _5(): Long? = colBigint
+  override fun _5(): kotlin.Long? = colBigint
 
   override fun _6(): BigInteger? = colHugeint
 
@@ -111,6 +108,6 @@ data class AllScalarTypesRow(
   override fun _9(): Uint4? = colUinteger
 
   companion object {
-    val _rowParser: RowParser<AllScalarTypesRow> = RowParsers.of(AllScalarTypesId.duckDbType, KotlinDbTypes.DuckDbTypes.tinyint.nullable(), KotlinDbTypes.DuckDbTypes.smallint.nullable(), KotlinDbTypes.DuckDbTypes.integer.nullable(), KotlinDbTypes.DuckDbTypes.bigint.nullable(), DuckDbTypes.hugeint.nullable(), DuckDbTypes.utinyint.nullable(), DuckDbTypes.usmallint.nullable(), DuckDbTypes.uinteger.nullable(), DuckDbTypes.ubigint.nullable(), KotlinDbTypes.DuckDbTypes.float_.nullable(), KotlinDbTypes.DuckDbTypes.double_.nullable(), DuckDbTypes.numeric.nullable(), KotlinDbTypes.DuckDbTypes.boolean_.nullable(), DuckDbTypes.varchar.nullable(), DuckDbTypes.varchar.nullable(), DuckDbTypes.blob.nullable(), DuckDbTypes.date.nullable(), DuckDbTypes.time.nullable(), DuckDbTypes.timestamp.nullable(), DuckDbTypes.timestamptz.nullable(), DuckDbTypes.interval.nullable(), DuckDbTypes.uuid.nullable(), DuckDbTypes.json.nullable(), Mood.duckDbType.nullable(), DuckDbTypes.varchar, { t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15, t16, t17, t18, t19, t20, t21, t22, t23, t24, t25 -> AllScalarTypesRow(t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15, t16, t17, t18, t19, t20, t21, t22, t23, t24, t25) }, { row -> arrayOf<Any?>(row.id, row.colTinyint, row.colSmallint, row.colInteger, row.colBigint, row.colHugeint, row.colUtinyint, row.colUsmallint, row.colUinteger, row.colUbigint, row.colFloat, row.colDouble, row.colDecimal, row.colBoolean, row.colVarchar, row.colText, row.colBlob, row.colDate, row.colTime, row.colTimestamp, row.colTimestamptz, row.colInterval, row.colUuid, row.colJson, row.colMood, row.colNotNull) })
+    val rowCodec: RowCodec<AllScalarTypesRow> = RowCodec(dev.typr.foundations.RowCodec.create(listOf(AllScalarTypesId.duckDbType.underlying, DuckDbTypes.tinyint.opt().underlying, DuckDbTypes.smallint.opt().underlying, DuckDbTypes.integer.opt().underlying, DuckDbTypes.bigint.opt().underlying, DuckDbTypes.hugeint.opt().underlying, DuckDbTypes.utinyint.opt().underlying, DuckDbTypes.usmallint.opt().underlying, DuckDbTypes.uinteger.opt().underlying, DuckDbTypes.ubigint.opt().underlying, DuckDbTypes.float_.opt().underlying, DuckDbTypes.double_.opt().underlying, DuckDbTypes.numeric.opt().underlying, DuckDbTypes.boolean_.opt().underlying, DuckDbTypes.varchar.opt().underlying, DuckDbTypes.varchar.opt().underlying, DuckDbTypes.blob.opt().underlying, DuckDbTypes.date.opt().underlying, DuckDbTypes.time.opt().underlying, DuckDbTypes.timestamp.opt().underlying, DuckDbTypes.timestamptz.opt().underlying, DuckDbTypes.interval.opt().underlying, DuckDbTypes.uuid.opt().underlying, DuckDbTypes.json.opt().underlying, Mood.duckDbType.opt().underlying, DuckDbTypes.varchar.underlying), { a -> AllScalarTypesRow(a[0] as AllScalarTypesId, a[1] as kotlin.Byte?, a[2] as kotlin.Short?, a[3] as Int?, a[4] as kotlin.Long?, a[5] as BigInteger?, a[6] as Uint1?, a[7] as Uint2?, a[8] as Uint4?, a[9] as Uint8?, a[10] as kotlin.Float?, a[11] as kotlin.Double?, a[12] as BigDecimal?, a[13] as kotlin.Boolean?, a[14] as kotlin.String?, a[15] as kotlin.String?, a[16] as ByteArray?, a[17] as LocalDate?, a[18] as LocalTime?, a[19] as LocalDateTime?, a[20] as Instant?, a[21] as Duration?, a[22] as UUID?, a[23] as Json?, a[24] as Mood?, a[25] as kotlin.String) }, { row: AllScalarTypesRow -> arrayOf<Any?>(row.id, row.colTinyint, row.colSmallint, row.colInteger, row.colBigint, row.colHugeint, row.colUtinyint, row.colUsmallint, row.colUinteger, row.colUbigint, row.colFloat, row.colDouble, row.colDecimal, row.colBoolean, row.colVarchar, row.colText, row.colBlob, row.colDate, row.colTime, row.colTimestamp, row.colTimestamptz, row.colInterval, row.colUuid, row.colJson, row.colMood, row.colNotNull) }))
   }
 }

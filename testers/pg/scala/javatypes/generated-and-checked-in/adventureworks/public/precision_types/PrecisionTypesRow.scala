@@ -14,11 +14,11 @@ import adventureworks.precisetypes.String20
 import adventureworks.precisetypes.String255
 import adventureworks.precisetypes.String50
 import com.fasterxml.jackson.annotation.JsonProperty
+import dev.typr.dsl.RowCodecs
+import dev.typr.dsl.RowCodecs.Function25
 import dev.typr.foundations.PgText
 import dev.typr.foundations.PgTypes
-import dev.typr.foundations.RowParser
-import dev.typr.foundations.RowParsers
-import dev.typr.foundations.RowParsers.Function25
+import dev.typr.foundations.RowCodec
 import dev.typr.foundations.Tuple.Tuple25
 import java.time.Instant
 import java.time.LocalDateTime
@@ -138,8 +138,10 @@ case class PrecisionTypesRow(
 }
 
 object PrecisionTypesRow {
-  val `_rowParser`: RowParser[PrecisionTypesRow] = {
-    RowParsers.of(PrecisionTypesId.pgType, String10.pgType, String20.pgType, String50.pgType, String100.pgType, String255.pgType, PaddedString3.pgType, PaddedString10.pgType, PgTypes.numeric, PgTypes.numeric, PgTypes.numeric, PgTypes.numeric, PgTypes.numeric, PgTypes.timestamp, PgTypes.timestamp, PgTypes.timestamp, PgTypes.timestamptz, PgTypes.timestamptz, PgTypes.timestamptz, PgTypes.time, PgTypes.time, PgTypes.time, PgTypes.timetz, PgTypes.timetz, PgTypes.timetz, new Function25[PrecisionTypesId, String10, String20, String50, String100, String255, PaddedString3, PaddedString10, java.math.BigDecimal, java.math.BigDecimal, java.math.BigDecimal, java.math.BigDecimal, java.math.BigDecimal, LocalDateTime, LocalDateTime, LocalDateTime, Instant, Instant, Instant, LocalTime, LocalTime, LocalTime, OffsetTime, OffsetTime, OffsetTime, PrecisionTypesRow] {
+  given pgText: PgText[PrecisionTypesRow] = PgText.from(rowCodec)
+
+  val rowCodec: RowCodec[PrecisionTypesRow] = {
+    RowCodecs.of(PrecisionTypesId.pgType, String10.pgType, String20.pgType, String50.pgType, String100.pgType, String255.pgType, PaddedString3.pgType, PaddedString10.pgType, PgTypes.numeric, PgTypes.numeric, PgTypes.numeric, PgTypes.numeric, PgTypes.numeric, PgTypes.timestamp, PgTypes.timestamp, PgTypes.timestamp, PgTypes.timestamptz, PgTypes.timestamptz, PgTypes.timestamptz, PgTypes.time, PgTypes.time, PgTypes.time, PgTypes.timetz, PgTypes.timetz, PgTypes.timetz, new Function25[PrecisionTypesId, String10, String20, String50, String100, String255, PaddedString3, PaddedString10, java.math.BigDecimal, java.math.BigDecimal, java.math.BigDecimal, java.math.BigDecimal, java.math.BigDecimal, LocalDateTime, LocalDateTime, LocalDateTime, Instant, Instant, Instant, LocalTime, LocalTime, LocalTime, OffsetTime, OffsetTime, OffsetTime, PrecisionTypesRow] {
       override def apply(
         t0: PrecisionTypesId,
         t1: String10,
@@ -197,6 +199,4 @@ object PrecisionTypesRow {
       }
     }, row => Array[Any](row.id, row.string10, row.string20, row.string50, row.string100, row.string255, row.bpchar3, row.bpchar10, row.decimal52, row.decimal102, row.decimal184, row.numeric82, row.numeric124, row.timestamp0, row.timestamp3, row.timestamp6, row.timestamptz0, row.timestamptz3, row.timestamptz6, row.time0, row.time3, row.time6, row.timetz0, row.timetz3, row.timetz6))
   }
-
-  given pgText: PgText[PrecisionTypesRow] = PgText.from(`_rowParser`)
 }

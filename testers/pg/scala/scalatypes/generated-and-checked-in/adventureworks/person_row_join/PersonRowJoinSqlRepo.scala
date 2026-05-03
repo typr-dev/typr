@@ -5,8 +5,8 @@
  */
 package adventureworks.person_row_join
 
-import java.sql.Connection
+import dev.typr.foundationssc.ConnectionRead
 
 trait PersonRowJoinSqlRepo {
-  def apply(using c: Connection): List[PersonRowJoinSqlRow]
+  def apply(using c: ConnectionRead): List[PersonRowJoinSqlRow]
 }

@@ -5,12 +5,10 @@
  */
 package testdb.employee_salary_update
 
-import dev.typr.foundations.DuckDbTypes
-import dev.typr.foundations.scala.DbTypeOps
-import dev.typr.foundations.scala.Fragment
-import dev.typr.foundations.scala.ScalaDbTypes
-import java.sql.Connection
-import dev.typr.foundations.scala.Fragment.sql
+import dev.typr.foundationssc.ConnectionRead
+import dev.typr.foundationssc.DuckDbTypes
+import dev.typr.foundationssc.Fragment
+import dev.typr.foundationssc.Fragment.sql
 
 class EmployeeSalaryUpdateSqlRepoImpl extends EmployeeSalaryUpdateSqlRepo {
   override def apply(
@@ -18,16 +16,16 @@ class EmployeeSalaryUpdateSqlRepoImpl extends EmployeeSalaryUpdateSqlRepo {
     newSalary: BigDecimal,
     empNumber: Int,
     empSuffix: String
-  )(using c: Connection): List[EmployeeSalaryUpdateSqlRow] = {
+  )(using c: ConnectionRead): List[EmployeeSalaryUpdateSqlRow] = {
     sql"""-- Update employee salary using composite primary key
     -- Tests: UPDATE with composite primary key, RETURNING, decimal arithmetic
   
     UPDATE employees
     SET salary = CASE
-        WHEN ${Fragment.encode(ScalaDbTypes.DuckDbTypes.numeric.nullable, raisePercentage)} IS NOT NULL THEN salary * (1 + CAST(${Fragment.encode(ScalaDbTypes.DuckDbTypes.numeric.nullable, raisePercentage)} AS DECIMAL) / 100.0)
-        ELSE CAST(${Fragment.encode(ScalaDbTypes.DuckDbTypes.numeric, newSalary)} AS DECIMAL)
+        WHEN ${Fragment.encode(DuckDbTypes.numeric.opt, raisePercentage)} IS NOT NULL THEN salary * (1 + CAST(${Fragment.encode(DuckDbTypes.numeric.opt, raisePercentage)} AS DECIMAL) / 100.0)
+        ELSE CAST(${Fragment.encode(DuckDbTypes.numeric, newSalary)} AS DECIMAL)
     END
-    WHERE emp_number = CAST(${Fragment.encode(ScalaDbTypes.DuckDbTypes.integer, empNumber)} AS INTEGER)
+    WHERE emp_number = CAST(${Fragment.encode(DuckDbTypes.integer, empNumber)} AS INTEGER)
       AND emp_suffix = CAST(${Fragment.encode(DuckDbTypes.text, empSuffix)} AS VARCHAR)
     RETURNING
         emp_number,
@@ -36,6 +34,6 @@ class EmployeeSalaryUpdateSqlRepoImpl extends EmployeeSalaryUpdateSqlRepo {
         dept_region,
         emp_name,
         salary,
-        hire_date""".query(EmployeeSalaryUpdateSqlRow.`_rowParser`.all()).runUnchecked(c)
+        hire_date""".query(EmployeeSalaryUpdateSqlRow.rowCodec.all()).run(using c)
   }
 }

@@ -5,14 +5,14 @@
  */
 package testdb.find_customers_by_email
 
-import dev.typr.foundations.SqlServerTypes
-import dev.typr.foundations.kotlin.Fragment
-import java.sql.Connection
+import dev.typr.foundationskt.ConnectionRead
+import dev.typr.foundationskt.Fragment
+import dev.typr.foundationskt.SqlServerTypes
 import kotlin.collections.List
 
 class FindCustomersByEmailSqlRepoImpl() : FindCustomersByEmailSqlRepo {
   override fun apply(
-    emailPattern: String,
-    c: Connection
-  ): List<FindCustomersByEmailSqlRow> = Fragment.interpolate(Fragment.lit("-- Find customers by email pattern\nSELECT\n    customer_id,\n    name as customer_name,\n    email as customer_email,\n    created_at\nFROM customers\nWHERE email LIKE "), Fragment.encode(SqlServerTypes.nvarchar, emailPattern), Fragment.lit("\nORDER BY created_at DESC\n")).query(FindCustomersByEmailSqlRow._rowParser.all()).runUnchecked(c)
+    emailPattern: kotlin.String,
+    c: ConnectionRead
+  ): List<FindCustomersByEmailSqlRow> = Fragment.concat(Fragment.of("-- Find customers by email pattern\nSELECT\n    customer_id,\n    name as customer_name,\n    email as customer_email,\n    created_at\nFROM customers\nWHERE email LIKE "), Fragment.encode(SqlServerTypes.nvarchar, emailPattern), Fragment.of("\nORDER BY created_at DESC\n")).query(FindCustomersByEmailSqlRow.rowCodec.all()).run(c)
 }

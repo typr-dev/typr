@@ -24,7 +24,7 @@ object AddresstypeId {
 
   given arraySetter: Setter[Array[AddresstypeId]] = adventureworks.IntArraySetter.contramap(_.map(_.value))
 
-  given bijection: Bijection[AddresstypeId, Int] = Bijection.apply[AddresstypeId, Int](_.value)(AddresstypeId.apply)
+  given bijection: Bijection[AddresstypeId, Int] = Bijection[AddresstypeId, Int](_.value)(AddresstypeId.apply)
 
   given jdbcDecoder: JdbcDecoder[AddresstypeId] = JdbcDecoder.intDecoder.map(AddresstypeId.apply)
 

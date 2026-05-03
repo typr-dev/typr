@@ -23,7 +23,7 @@ object CardinalNumber {
 
   implicit lazy val arrayPut: Put[Array[CardinalNumber]] = adventureworks.IntegerArrayMeta.put.contramap(_.map(_.value))
 
-  implicit lazy val bijection: Bijection[CardinalNumber, Int] = Bijection.apply[CardinalNumber, Int](_.value)(CardinalNumber.apply)
+  implicit lazy val bijection: Bijection[CardinalNumber, Int] = Bijection[CardinalNumber, Int](_.value)(CardinalNumber.apply)
 
   implicit lazy val decoder: Decoder[CardinalNumber] = Decoder.decodeInt.map(CardinalNumber.apply)
 

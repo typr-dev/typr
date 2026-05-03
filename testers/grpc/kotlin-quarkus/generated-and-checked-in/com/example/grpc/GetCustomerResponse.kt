@@ -28,6 +28,20 @@ data class GetCustomerResponse(val customer: Customer?) {
   }
 
   companion object {
+    @Throws(IOException::class)
+    fun parseFrom(input: CodedInputStream): GetCustomerResponse {
+      var customer: Customer? = null
+      while (!input.isAtEnd()) {
+        val tag = input.readTag()
+        if (WireFormat.getTagFieldNumber(tag) == 1) { val _length = input.readRawVarint32();
+        val _oldLimit = input.pushLimit(_length);
+        customer = Customer.parseFrom(input);
+        input.popLimit(_oldLimit); }
+        else { input.skipField(tag) }
+      }
+      return GetCustomerResponse(customer)
+    }
+
     val MARSHALLER: Marshaller<GetCustomerResponse> =
       object : Marshaller<GetCustomerResponse> {
         override fun stream(value: GetCustomerResponse): InputStream {
@@ -49,19 +63,5 @@ data class GetCustomerResponse(val customer: Customer?) {
           } 
         }
       }
-
-    @Throws(IOException::class)
-    fun parseFrom(input: CodedInputStream): GetCustomerResponse {
-      var customer: Customer? = null
-      while (!input.isAtEnd()) {
-        val tag = input.readTag()
-        if (WireFormat.getTagFieldNumber(tag) == 1) { val _length = input.readRawVarint32();
-        val _oldLimit = input.pushLimit(_length);
-        customer = Customer.parseFrom(input);
-        input.popLimit(_oldLimit); }
-        else { input.skipField(tag) }
-      }
-      return GetCustomerResponse(customer)
-    }
   }
 }

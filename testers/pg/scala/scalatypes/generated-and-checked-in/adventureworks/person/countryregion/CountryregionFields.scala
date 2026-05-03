@@ -6,16 +6,16 @@
 package adventureworks.person.countryregion
 
 import adventureworks.public.Name
-import dev.typr.foundations.PgTypes
-import dev.typr.foundations.RowParser
-import dev.typr.foundations.dsl.FieldsBase
-import dev.typr.foundations.dsl.Path
-import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.scala.RelationStructure
-import dev.typr.foundations.scala.SqlExpr
-import dev.typr.foundations.scala.SqlExpr.Field
-import dev.typr.foundations.scala.SqlExpr.IdField
-import dev.typr.foundations.scala.TupleExpr3
+import dev.typr.dsl.FieldsBase
+import dev.typr.dsl.Path
+import dev.typr.dsl.SqlExpr.FieldLike
+import dev.typr.dslsc.RelationStructure
+import dev.typr.dslsc.SqlExpr
+import dev.typr.dslsc.SqlExpr.Field
+import dev.typr.dslsc.SqlExpr.IdField
+import dev.typr.dslsc.TupleExpr3
+import dev.typr.foundations.RowCodec
+import dev.typr.foundationssc.PgTypes
 import java.time.LocalDateTime
 
 class CountryregionFields(val `_path`: java.util.List[Path]) extends TupleExpr3[CountryregionId, Name, LocalDateTime] with RelationStructure[CountryregionFields, CountryregionRow]  with FieldsBase[CountryregionRow] {
@@ -27,7 +27,7 @@ class CountryregionFields(val `_path`: java.util.List[Path]) extends TupleExpr3[
       None,
       None,
       (row, value) => row.copy(countryregioncode = value),
-      CountryregionId.pgType
+      CountryregionId.pgType.underlying
     )
   }
 
@@ -39,7 +39,7 @@ class CountryregionFields(val `_path`: java.util.List[Path]) extends TupleExpr3[
       None,
       Some("varchar"),
       (row, value) => row.copy(name = value),
-      Name.pgType
+      Name.pgType.underlying
     )
   }
 
@@ -51,13 +51,13 @@ class CountryregionFields(val `_path`: java.util.List[Path]) extends TupleExpr3[
       None,
       Some("timestamp"),
       (row, value) => row.copy(modifieddate = value),
-      PgTypes.timestamp
+      PgTypes.timestamp.underlying
     )
   }
 
   override def columns: java.util.List[FieldLike[?, CountryregionRow]] = java.util.List.of(this.countryregioncode.underlying, this.name.underlying, this.modifieddate.underlying)
 
-  override def rowParser: RowParser[CountryregionRow] = CountryregionRow._rowParser.underlying
+  override def rowCodec: RowCodec[CountryregionRow] = CountryregionRow.rowCodec.underlying
 
   override def withPaths(`_path`: java.util.List[Path]): RelationStructure[CountryregionFields, CountryregionRow] = new CountryregionFields(`_path`)
 

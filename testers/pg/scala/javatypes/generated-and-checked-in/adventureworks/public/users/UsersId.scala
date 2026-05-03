@@ -6,18 +6,18 @@
 package adventureworks.public.users
 
 import com.fasterxml.jackson.annotation.JsonValue
+import dev.typr.foundations.Bijection
 import dev.typr.foundations.PgType
 import dev.typr.foundations.PgTypes
-import dev.typr.foundations.dsl.Bijection
 import java.util.UUID
 
 /** Type for the primary key of table `public.users` */
 case class UsersId(@JsonValue value: UUID) extends scala.AnyVal
 
 object UsersId {
-  given bijection: Bijection[UsersId, UUID] = Bijection.apply[UsersId, UUID](_.value)(UsersId.apply)
+  given bijection: Bijection[UsersId, UUID] = Bijection.of[UsersId, UUID](_.value, UsersId.apply)
 
-  given pgType: PgType[UsersId] = PgTypes.uuid.bimap(UsersId.apply, _.value)
+  given pgType: PgType[UsersId] = PgTypes.uuid.to(Bijection.of(UsersId.apply, _.value))
 
-  given pgTypeArray: PgType[Array[UsersId]] = PgTypes.uuidArray.bimap(xs => xs.map(UsersId.apply), xs => xs.map(_.value))
+  given pgTypeArray: PgType[java.util.List[UsersId]] = pgType.array
 }

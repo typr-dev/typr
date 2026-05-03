@@ -57,7 +57,7 @@ object TypoInstant {
     )
   }
 
-  implicit lazy val bijection: Bijection[TypoInstant, Instant] = Bijection.apply[TypoInstant, Instant](_.value)(TypoInstant.apply)
+  implicit lazy val bijection: Bijection[TypoInstant, Instant] = Bijection[TypoInstant, Instant](_.value)(TypoInstant.apply)
 
   implicit lazy val jdbcDecoder: JdbcDecoder[TypoInstant] = {
     JdbcDecoder[TypoInstant](

@@ -13,10 +13,8 @@ import adventureworks.userdefined.FirstName
 import adventureworks.userdefined.LastName
 import adventureworks.userdefined.MiddleName
 import dev.typr.foundations.PgText
-import dev.typr.foundations.PgTypes
 import dev.typr.foundations.data.Xml
-import dev.typr.foundations.scala.DbTypeOps
-import dev.typr.foundations.scala.ScalaDbTypes
+import dev.typr.foundationssc.PgTypes
 import java.time.LocalDateTime
 import java.util.UUID
 
@@ -83,5 +81,5 @@ case class PersonRowUnsaved(
 }
 
 object PersonRowUnsaved {
-  given pgText: PgText[PersonRowUnsaved] = PgText.instance((row, sb) => { BusinessentityId.pgType.text.unsafeEncode(row.businessentityid, sb); sb.append(PgText.DELIMETER); PgTypes.bpchar.text.unsafeEncode(row.persontype, sb); sb.append(PgText.DELIMETER); PgTypes.text.nullable.text.unsafeEncode(row.title, sb); sb.append(PgText.DELIMETER); FirstName.pgType.text.unsafeEncode(row.firstname, sb); sb.append(PgText.DELIMETER); MiddleName.pgType.nullable.text.unsafeEncode(row.middlename, sb); sb.append(PgText.DELIMETER); LastName.pgType.text.unsafeEncode(row.lastname, sb); sb.append(PgText.DELIMETER); PgTypes.text.nullable.text.unsafeEncode(row.suffix, sb); sb.append(PgText.DELIMETER); PgTypes.xml.nullable.text.unsafeEncode(row.additionalcontactinfo, sb); sb.append(PgText.DELIMETER); PgTypes.xml.nullable.text.unsafeEncode(row.demographics, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using NameStyle.pgType.text).unsafeEncode(row.namestyle, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using ScalaDbTypes.PgTypes.int4.text).unsafeEncode(row.emailpromotion, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using PgTypes.uuid.text).unsafeEncode(row.rowguid, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using PgTypes.timestamp.text).unsafeEncode(row.modifieddate, sb) })
+  given pgText: PgText[PersonRowUnsaved] = PgText.instance((row, sb) => { BusinessentityId.pgType.pgText().unsafeEncode(row.businessentityid, sb); sb.append(PgText.DELIMETER); PgTypes.bpchar.pgText().unsafeEncode(row.persontype, sb); sb.append(PgText.DELIMETER); PgTypes.text.opt.pgText().unsafeEncode(row.title, sb); sb.append(PgText.DELIMETER); FirstName.pgType.pgText().unsafeEncode(row.firstname, sb); sb.append(PgText.DELIMETER); MiddleName.pgType.opt.pgText().unsafeEncode(row.middlename, sb); sb.append(PgText.DELIMETER); LastName.pgType.pgText().unsafeEncode(row.lastname, sb); sb.append(PgText.DELIMETER); PgTypes.text.opt.pgText().unsafeEncode(row.suffix, sb); sb.append(PgText.DELIMETER); PgTypes.xml.opt.pgText().unsafeEncode(row.additionalcontactinfo, sb); sb.append(PgText.DELIMETER); PgTypes.xml.opt.pgText().unsafeEncode(row.demographics, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using NameStyle.pgType.pgText()).unsafeEncode(row.namestyle, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using PgTypes.int4.pgText()).unsafeEncode(row.emailpromotion, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using PgTypes.uuid.pgText()).unsafeEncode(row.rowguid, sb); sb.append(PgText.DELIMETER); Defaulted.pgText(using PgTypes.timestamp.pgText()).unsafeEncode(row.modifieddate, sb) })
 }

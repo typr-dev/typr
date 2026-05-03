@@ -5,8 +5,8 @@
  */
 package testdb.update_customer_priority
 
-import dev.typr.foundations.kotlin.Fragment
-import java.sql.Connection
+import dev.typr.foundationskt.ConnectionRead
+import dev.typr.foundationskt.Fragment
 import kotlin.collections.List
 import testdb.Priority
 import testdb.customers.CustomersId
@@ -15,6 +15,6 @@ class UpdateCustomerPrioritySqlRepoImpl() : UpdateCustomerPrioritySqlRepo {
   override fun apply(
     newPriority: /* user-picked */ Priority,
     customerId: /* user-picked */ CustomersId,
-    c: Connection
-  ): List<UpdateCustomerPrioritySqlRow> = Fragment.interpolate(Fragment.lit("-- Update customer priority based on spending and return updated rows\n-- Tests: UPDATE with RETURNING, enum parameters\n\nUPDATE customers\nSET priority = "), Fragment.encode(Priority.duckDbType, newPriority), Fragment.lit("\nWHERE customer_id = "), Fragment.encode(CustomersId.duckDbType, customerId), Fragment.lit("\nRETURNING\n    customer_id,\n    name,\n    email,\n    created_at,\n    priority")).query(UpdateCustomerPrioritySqlRow._rowParser.all()).runUnchecked(c)
+    c: ConnectionRead
+  ): List<UpdateCustomerPrioritySqlRow> = Fragment.concat(Fragment.of("-- Update customer priority based on spending and return updated rows\n-- Tests: UPDATE with RETURNING, enum parameters\n\nUPDATE customers\nSET priority = "), Fragment.encode(Priority.duckDbType, newPriority), Fragment.of("\nWHERE customer_id = "), Fragment.encode(CustomersId.duckDbType, customerId), Fragment.of("\nRETURNING\n    customer_id,\n    name,\n    email,\n    created_at,\n    priority")).query(UpdateCustomerPrioritySqlRow.rowCodec.all()).run(c)
 }

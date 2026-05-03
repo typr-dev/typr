@@ -5,17 +5,18 @@
  */
 package adventureworks.person.businessentityaddress
 
-import dev.typr.foundations.dsl.DeleteBuilder
-import dev.typr.foundations.dsl.DeleteBuilderMock
-import dev.typr.foundations.dsl.DeleteParams
-import dev.typr.foundations.dsl.SelectBuilder
-import dev.typr.foundations.dsl.SelectBuilderMock
-import dev.typr.foundations.dsl.SelectParams
-import dev.typr.foundations.dsl.UpdateBuilder
-import dev.typr.foundations.dsl.UpdateBuilderMock
-import dev.typr.foundations.dsl.UpdateParams
+import dev.typr.dsl.DeleteBuilder
+import dev.typr.dsl.DeleteBuilderMock
+import dev.typr.dsl.DeleteParams
+import dev.typr.dsl.SelectBuilder
+import dev.typr.dsl.SelectBuilderMock
+import dev.typr.dsl.SelectParams
+import dev.typr.dsl.UpdateBuilder
+import dev.typr.dsl.UpdateBuilderMock
+import dev.typr.dsl.UpdateParams
+import dev.typr.foundations.Connection
+import dev.typr.foundations.ConnectionRead
 import java.lang.RuntimeException
-import java.sql.Connection
 import java.util.ArrayList
 import java.util.HashMap
 import java.util.Optional
@@ -30,9 +31,9 @@ case class BusinessentityaddressRepoMock(
 
   override def deleteById(compositeId: BusinessentityaddressId)(using c: Connection): java.lang.Boolean = Optional.ofNullable(map.remove(compositeId)).isPresent()
 
-  override def deleteByIds(compositeIds: Array[BusinessentityaddressId])(using c: Connection): Integer = {
+  override def deleteByIds(compositeIds: java.util.List[BusinessentityaddressId])(using c: Connection): Integer = {
     var count = 0
-    compositeIds.foreach { id => if (Optional.ofNullable(map.remove(id)).isPresent()) {
+    compositeIds.forEach { id => if (Optional.ofNullable(map.remove(id)).isPresent()) {
       count = count + 1
     } }
     return count
@@ -78,19 +79,19 @@ case class BusinessentityaddressRepoMock(
 
   override def select: SelectBuilder[BusinessentityaddressFields, BusinessentityaddressRow] = SelectBuilderMock(BusinessentityaddressFields.structure, () => new ArrayList(map.values()), SelectParams.empty())
 
-  override def selectAll(using c: Connection): java.util.List[BusinessentityaddressRow] = new ArrayList(map.values())
+  override def selectAll(using c: ConnectionRead): java.util.List[BusinessentityaddressRow] = new ArrayList(map.values())
 
-  override def selectById(compositeId: BusinessentityaddressId)(using c: Connection): Optional[BusinessentityaddressRow] = Optional.ofNullable(map.get(compositeId))
+  override def selectById(compositeId: BusinessentityaddressId)(using c: ConnectionRead): Optional[BusinessentityaddressRow] = Optional.ofNullable(map.get(compositeId))
 
-  override def selectByIds(compositeIds: Array[BusinessentityaddressId])(using c: Connection): java.util.List[BusinessentityaddressRow] = {
+  override def selectByIds(compositeIds: java.util.List[BusinessentityaddressId])(using c: ConnectionRead): java.util.List[BusinessentityaddressRow] = {
     val result = new ArrayList[BusinessentityaddressRow]()
-    compositeIds.foreach { id => val opt = Optional.ofNullable(map.get(id)); if (opt.isPresent()) {
+    compositeIds.forEach { id => val opt = Optional.ofNullable(map.get(id)); if (opt.isPresent()) {
       result.add(opt.get()): @scala.annotation.nowarn
     } }
     return result
   }
 
-  override def selectByIdsTracked(compositeIds: Array[BusinessentityaddressId])(using c: Connection): java.util.Map[BusinessentityaddressId, BusinessentityaddressRow] = selectByIds(compositeIds)(using c).stream().collect(Collectors.toMap((row: BusinessentityaddressRow) => row.compositeId, Function.identity()))
+  override def selectByIdsTracked(compositeIds: java.util.List[BusinessentityaddressId])(using c: ConnectionRead): java.util.Map[BusinessentityaddressId, BusinessentityaddressRow] = selectByIds(compositeIds)(using c).stream().collect(Collectors.toMap((row: BusinessentityaddressRow) => row.compositeId, Function.identity()))
 
   override def update: UpdateBuilder[BusinessentityaddressFields, BusinessentityaddressRow] = UpdateBuilderMock(BusinessentityaddressFields.structure, () => new ArrayList(map.values()), UpdateParams.empty(), row => row)
 

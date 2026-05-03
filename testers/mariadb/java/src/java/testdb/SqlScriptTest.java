@@ -23,7 +23,7 @@ public class SqlScriptTest {
   private final CustomerOrdersSqlRepoImpl customerOrdersRepo = new CustomerOrdersSqlRepoImpl();
   private final SimpleCustomerLookupSqlRepoImpl simpleCustomerLookupRepo =
       new SimpleCustomerLookupSqlRepoImpl();
-  private final TestInsert testInsert = new TestInsert(new Random(42));
+  private final TestInsert testInsert = new TestInsert(new Random(1627725949));
 
   @Test
   public void testProductSearchWithNoFilters() {

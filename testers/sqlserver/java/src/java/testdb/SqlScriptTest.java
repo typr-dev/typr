@@ -18,7 +18,7 @@ import testdb.userdefined.Email;
  * generated from SQL files in sql-scripts/sqlserver/.
  */
 public class SqlScriptTest {
-  private final TestInsert testInsert = new TestInsert(new Random(42));
+  private final TestInsert testInsert = new TestInsert(new Random(437515040));
   private final CustomerOrdersSummarySqlRepoImpl ordersSummaryRepo =
       new CustomerOrdersSummarySqlRepoImpl();
   private final FindCustomersByEmailSqlRepoImpl findByEmailRepo =

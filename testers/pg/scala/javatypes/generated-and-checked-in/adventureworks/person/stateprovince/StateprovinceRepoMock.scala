@@ -5,17 +5,18 @@
  */
 package adventureworks.person.stateprovince
 
-import dev.typr.foundations.dsl.DeleteBuilder
-import dev.typr.foundations.dsl.DeleteBuilderMock
-import dev.typr.foundations.dsl.DeleteParams
-import dev.typr.foundations.dsl.SelectBuilder
-import dev.typr.foundations.dsl.SelectBuilderMock
-import dev.typr.foundations.dsl.SelectParams
-import dev.typr.foundations.dsl.UpdateBuilder
-import dev.typr.foundations.dsl.UpdateBuilderMock
-import dev.typr.foundations.dsl.UpdateParams
+import dev.typr.dsl.DeleteBuilder
+import dev.typr.dsl.DeleteBuilderMock
+import dev.typr.dsl.DeleteParams
+import dev.typr.dsl.SelectBuilder
+import dev.typr.dsl.SelectBuilderMock
+import dev.typr.dsl.SelectParams
+import dev.typr.dsl.UpdateBuilder
+import dev.typr.dsl.UpdateBuilderMock
+import dev.typr.dsl.UpdateParams
+import dev.typr.foundations.Connection
+import dev.typr.foundations.ConnectionRead
 import java.lang.RuntimeException
-import java.sql.Connection
 import java.util.ArrayList
 import java.util.HashMap
 import java.util.Optional
@@ -30,9 +31,9 @@ case class StateprovinceRepoMock(
 
   override def deleteById(stateprovinceid: StateprovinceId)(using c: Connection): java.lang.Boolean = Optional.ofNullable(map.remove(stateprovinceid)).isPresent()
 
-  override def deleteByIds(stateprovinceids: Array[StateprovinceId])(using c: Connection): Integer = {
+  override def deleteByIds(stateprovinceids: java.util.List[StateprovinceId])(using c: Connection): Integer = {
     var count = 0
-    stateprovinceids.foreach { id => if (Optional.ofNullable(map.remove(id)).isPresent()) {
+    stateprovinceids.forEach { id => if (Optional.ofNullable(map.remove(id)).isPresent()) {
       count = count + 1
     } }
     return count
@@ -78,19 +79,19 @@ case class StateprovinceRepoMock(
 
   override def select: SelectBuilder[StateprovinceFields, StateprovinceRow] = SelectBuilderMock(StateprovinceFields.structure, () => new ArrayList(map.values()), SelectParams.empty())
 
-  override def selectAll(using c: Connection): java.util.List[StateprovinceRow] = new ArrayList(map.values())
+  override def selectAll(using c: ConnectionRead): java.util.List[StateprovinceRow] = new ArrayList(map.values())
 
-  override def selectById(stateprovinceid: StateprovinceId)(using c: Connection): Optional[StateprovinceRow] = Optional.ofNullable(map.get(stateprovinceid))
+  override def selectById(stateprovinceid: StateprovinceId)(using c: ConnectionRead): Optional[StateprovinceRow] = Optional.ofNullable(map.get(stateprovinceid))
 
-  override def selectByIds(stateprovinceids: Array[StateprovinceId])(using c: Connection): java.util.List[StateprovinceRow] = {
+  override def selectByIds(stateprovinceids: java.util.List[StateprovinceId])(using c: ConnectionRead): java.util.List[StateprovinceRow] = {
     val result = new ArrayList[StateprovinceRow]()
-    stateprovinceids.foreach { id => val opt = Optional.ofNullable(map.get(id)); if (opt.isPresent()) {
+    stateprovinceids.forEach { id => val opt = Optional.ofNullable(map.get(id)); if (opt.isPresent()) {
       result.add(opt.get()): @scala.annotation.nowarn
     } }
     return result
   }
 
-  override def selectByIdsTracked(stateprovinceids: Array[StateprovinceId])(using c: Connection): java.util.Map[StateprovinceId, StateprovinceRow] = selectByIds(stateprovinceids)(using c).stream().collect(Collectors.toMap((row: StateprovinceRow) => row.stateprovinceid, Function.identity()))
+  override def selectByIdsTracked(stateprovinceids: java.util.List[StateprovinceId])(using c: ConnectionRead): java.util.Map[StateprovinceId, StateprovinceRow] = selectByIds(stateprovinceids)(using c).stream().collect(Collectors.toMap((row: StateprovinceRow) => row.stateprovinceid, Function.identity()))
 
   override def update: UpdateBuilder[StateprovinceFields, StateprovinceRow] = UpdateBuilderMock(StateprovinceFields.structure, () => new ArrayList(map.values()), UpdateParams.empty(), row => row)
 

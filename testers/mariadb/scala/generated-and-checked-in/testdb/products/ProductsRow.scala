@@ -6,13 +6,11 @@
 package testdb.products
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import dev.typr.foundations.MariaTypes
+import dev.typr.dslsc.RowCodecs
 import dev.typr.foundations.Tuple.Tuple18
 import dev.typr.foundations.data.Json
-import dev.typr.foundations.scala.DbTypeOps
-import dev.typr.foundations.scala.RowParser
-import dev.typr.foundations.scala.RowParsers
-import dev.typr.foundations.scala.ScalaDbTypes
+import dev.typr.foundationssc.MariaTypes
+import dev.typr.foundationssc.RowCodec
 import java.time.LocalDateTime
 import testdb.BestsellerClearanceFSet
 import testdb.brands.BrandsId
@@ -167,5 +165,5 @@ case class ProductsRow(
 }
 
 object ProductsRow {
-  val `_rowParser`: RowParser[ProductsRow] = RowParsers.of(ProductsId.mariaType, MariaTypes.varchar, BrandsId.mariaType.nullable, MariaTypes.varchar, MariaTypes.varchar.nullable, MariaTypes.longtext.nullable, ScalaDbTypes.MariaTypes.numeric, ScalaDbTypes.MariaTypes.numeric.nullable, ScalaDbTypes.MariaTypes.numeric.nullable, MariaTypes.json.nullable, MariaTypes.text, MariaTypes.text, BestsellerClearanceFSet.mariaType.nullable, MariaTypes.json.nullable, MariaTypes.json.nullable, MariaTypes.datetime, MariaTypes.datetime, MariaTypes.datetime.nullable)(ProductsRow.apply)(row => Array[Any](row.productId, row.sku, row.brandId, row.name, row.shortDescription, row.fullDescription, row.basePrice, row.costPrice, row.weightKg, row.dimensionsJson, row.status, row.taxClass, row.tags, row.attributes, row.seoMetadata, row.createdAt, row.updatedAt, row.publishedAt))
+  val rowCodec: RowCodec[ProductsRow] = RowCodecs.of(ProductsId.mariaType, MariaTypes.varchar, BrandsId.mariaType.opt, MariaTypes.varchar, MariaTypes.varchar.opt, MariaTypes.longtext.opt, MariaTypes.numeric, MariaTypes.numeric.opt, MariaTypes.numeric.opt, MariaTypes.json.opt, MariaTypes.text, MariaTypes.text, BestsellerClearanceFSet.mariaType.opt, MariaTypes.json.opt, MariaTypes.json.opt, MariaTypes.datetime, MariaTypes.datetime, MariaTypes.datetime.opt)(ProductsRow.apply)(row => Array[Any](row.productId, row.sku, row.brandId, row.name, row.shortDescription, row.fullDescription, row.basePrice, row.costPrice, row.weightKg, row.dimensionsJson, row.status, row.taxClass, row.tags, row.attributes, row.seoMetadata, row.createdAt, row.updatedAt, row.publishedAt))
 }

@@ -1,7 +1,7 @@
 package testdb
 
-import dev.typr.foundations.scala.TupleExpr2
-import dev.typr.foundations.scala.Tuples
+import dev.typr.dslsc.TupleExpr2
+import dev.typr.dslsc.Tuples
 import org.scalatest.funsuite.AnyFunSuite
 import testdb.products.*
 
@@ -11,8 +11,7 @@ class TupleInTest extends AnyFunSuite {
   // =============== Tuple IN with name and basePrice ===============
 
   test("tupleInWithMultipleTuples") {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       val _ = productsRepo.insert(ProductsRowUnsaved("SKU001", "Widget", BigDecimal("19.99")))
       val _ = productsRepo.insert(ProductsRowUnsaved("SKU002", "Gadget", BigDecimal("29.99")))
       val _ = productsRepo.insert(ProductsRowUnsaved("SKU003", "Widget", BigDecimal("39.99")))
@@ -38,8 +37,7 @@ class TupleInTest extends AnyFunSuite {
   }
 
   test("tupleInWithSingleTuple") {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       val _ = productsRepo.insert(ProductsRowUnsaved("SKU010", "SingleItem", BigDecimal("99.99")))
       val _ = productsRepo.insert(ProductsRowUnsaved("SKU011", "OtherItem", BigDecimal("88.88")))
 
@@ -61,8 +59,7 @@ class TupleInTest extends AnyFunSuite {
   }
 
   test("tupleInWithEmptyList") {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       val _ = productsRepo.insert(ProductsRowUnsaved("SKU020", "TestProduct", BigDecimal("50.00")))
 
       val result = productsRepo.select
@@ -74,8 +71,7 @@ class TupleInTest extends AnyFunSuite {
   }
 
   test("tupleInCombinedWithOtherConditions") {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       val _ = productsRepo.insert(ProductsRowUnsaved("SKU030", "Alpha", BigDecimal("10.00"), shortDescription = testdb.customtypes.Defaulted.Provided(Some("First product"))))
       val _ = productsRepo.insert(ProductsRowUnsaved("SKU031", "Beta", BigDecimal("20.00"), shortDescription = testdb.customtypes.Defaulted.Provided(Some("Second product"))))
       val _ = productsRepo.insert(ProductsRowUnsaved("SKU032", "Gamma", BigDecimal("10.00")))
@@ -102,8 +98,7 @@ class TupleInTest extends AnyFunSuite {
   }
 
   test("tupleInWithNonExistentTuples") {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       val _ = productsRepo.insert(ProductsRowUnsaved("SKU040", "Existing", BigDecimal("100.00")))
 
       val result = productsRepo.select
@@ -128,8 +123,7 @@ class TupleInTest extends AnyFunSuite {
   // ==================== Tuple IN Subquery Tests ====================
 
   test("tupleInSubqueryBasic") {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       import TupleExpr2.bijection
       val _ = productsRepo.insert(ProductsRowUnsaved("SubqSKU1", "SubqCheap1", BigDecimal("10.00")))
       val _ = productsRepo.insert(ProductsRowUnsaved("SubqSKU2", "SubqCheap2", BigDecimal("20.00")))
@@ -155,8 +149,7 @@ class TupleInTest extends AnyFunSuite {
   }
 
   test("tupleInSubqueryWithNoMatches") {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       import TupleExpr2.bijection
       val _ = productsRepo.insert(ProductsRowUnsaved("SKU050", "Prod1", BigDecimal("100.00")))
       val _ = productsRepo.insert(ProductsRowUnsaved("SKU051", "Prod2", BigDecimal("200.00")))
@@ -179,8 +172,7 @@ class TupleInTest extends AnyFunSuite {
   }
 
   test("tupleInSubqueryCombinedWithOtherConditions") {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       import TupleExpr2.bijection
       val _ = productsRepo.insert(ProductsRowUnsaved("CombSKU1", "CombItemA", BigDecimal("50.00"), shortDescription = testdb.customtypes.Defaulted.Provided(Some("Has desc"))))
       val _ = productsRepo.insert(ProductsRowUnsaved("CombSKU2", "CombItemB", BigDecimal("60.00")))
@@ -210,8 +202,7 @@ class TupleInTest extends AnyFunSuite {
 
   // Skipped: MariaDB VALUES table syntax doesn't support column aliasing - requires deep refactor
   ignore("tupleInWithNullableColumn") {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       // Create products with nullable shortDescription
       val _ = productsRepo.insert(ProductsRowUnsaved("NullSKU1", "NullDescProd1", BigDecimal("100.00")))
       val _ = productsRepo.insert(ProductsRowUnsaved("NullSKU2", "NullDescProd2", BigDecimal("200.00")))
@@ -239,8 +230,7 @@ class TupleInTest extends AnyFunSuite {
 
   // Skipped: Nested tuple type mapping requires deep refactor
   ignore("nestedTupleIn") {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       val _ = productsRepo.insert(ProductsRowUnsaved("NestSKU1", "NestProd1", BigDecimal("100.00")))
       val _ = productsRepo.insert(ProductsRowUnsaved("NestSKU2", "NestProd2", BigDecimal("200.00")))
       val _ = productsRepo.insert(ProductsRowUnsaved("NestSKU3", "NestProd3", BigDecimal("300.00")))
@@ -283,8 +273,7 @@ class TupleInTest extends AnyFunSuite {
   // ==================== Read Nested Tuple from Database Tests ====================
 
   test("readNestedTupleFromDatabase") {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       // Insert test data
       val _ = productsRepo.insert(ProductsRowUnsaved("READ001", "ReadProd1", BigDecimal("100.00")))
       val _ = productsRepo.insert(ProductsRowUnsaved("READ002", "ReadProd2", BigDecimal("200.00")))

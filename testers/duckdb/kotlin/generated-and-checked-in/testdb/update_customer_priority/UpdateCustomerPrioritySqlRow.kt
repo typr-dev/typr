@@ -6,11 +6,10 @@
 package testdb.update_customer_priority
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import dev.typr.foundations.DuckDbTypes
+import dev.typr.dslkt.RowCodecs
 import dev.typr.foundations.Tuple.Tuple5
-import dev.typr.foundations.kotlin.RowParser
-import dev.typr.foundations.kotlin.RowParsers
-import dev.typr.foundations.kotlin.nullable
+import dev.typr.foundationskt.DuckDbTypes
+import dev.typr.foundationskt.RowCodec
 import java.time.LocalDateTime
 import testdb.Priority
 import testdb.customers.CustomersId
@@ -21,17 +20,17 @@ data class UpdateCustomerPrioritySqlRow(
   /** Points to [testdb.customers.CustomersRow.customerId] */
   @field:JsonProperty("customer_id") val customerId: CustomersId,
   /** Points to [testdb.customers.CustomersRow.name] */
-  val name: String,
+  val name: kotlin.String,
   /** Points to [testdb.customers.CustomersRow.email] */
   val email: /* user-picked */ Email?,
   /** Points to [testdb.customers.CustomersRow.createdAt] */
   @field:JsonProperty("created_at") val createdAt: LocalDateTime,
   /** Points to [testdb.customers.CustomersRow.priority] */
   val priority: Priority?
-) : Tuple5<CustomersId, String, /* user-picked */ Email?, LocalDateTime, Priority?> {
+) : Tuple5<CustomersId, kotlin.String, /* user-picked */ Email?, LocalDateTime, Priority?> {
   override fun _1(): CustomersId = customerId
 
-  override fun _2(): String = name
+  override fun _2(): kotlin.String = name
 
   override fun _3(): /* user-picked */ Email? = email
 
@@ -40,6 +39,6 @@ data class UpdateCustomerPrioritySqlRow(
   override fun _5(): Priority? = priority
 
   companion object {
-    val _rowParser: RowParser<UpdateCustomerPrioritySqlRow> = RowParsers.of(CustomersId.duckDbType, DuckDbTypes.varchar, Email.duckDbType.nullable(), DuckDbTypes.timestamp, Priority.duckDbType.nullable(), { t0, t1, t2, t3, t4 -> UpdateCustomerPrioritySqlRow(t0, t1, t2, t3, t4) }, { row -> arrayOf<Any?>(row.customerId, row.name, row.email, row.createdAt, row.priority) })
+    val rowCodec: RowCodec<UpdateCustomerPrioritySqlRow> = RowCodecs.of(CustomersId.duckDbType, DuckDbTypes.varchar, Email.duckDbType.opt(), DuckDbTypes.timestamp, Priority.duckDbType.opt(), { t0: CustomersId, t1: kotlin.String, t2: /* user-picked */ Email?, t3: LocalDateTime, t4: Priority? -> UpdateCustomerPrioritySqlRow(t0, t1, t2, t3, t4) }, { row: UpdateCustomerPrioritySqlRow -> arrayOf<Any?>(row.customerId, row.name, row.email, row.createdAt, row.priority) })
   }
 }

@@ -2,7 +2,7 @@ package testdb;
 
 import static org.junit.Assert.*;
 
-import dev.typr.foundations.dsl.MockConnection;
+import dev.typr.dsl.MockConnection;
 import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;

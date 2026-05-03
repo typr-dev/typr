@@ -5,31 +5,32 @@
  */
 package adventureworks.public.issue142
 
-import dev.typr.foundations.PgType
-import dev.typr.foundations.PgTypes
-import dev.typr.foundations.internal.arrayMap
+import dev.typr.foundationskt.Bijection
+import dev.typr.foundationskt.PgType
+import dev.typr.foundationskt.PgTypes
+import kotlin.collections.List
 
 sealed interface Issue142Id {
-    val value: String
+    val value: kotlin.String
 
-    data class Unknown(override val value: String) : Issue142Id
+    data class Unknown(override val value: kotlin.String) : Issue142Id
 
-    enum class Known(override val value: String) : Issue142Id {
+    enum class Known(override val value: kotlin.String) : Issue142Id {
         aa("aa"),
         bb("bb");
 
         companion object {
-            val ByName: kotlin.collections.Map<String, Known> = entries.associateBy { it.value }
+            val ByName: kotlin.collections.Map<kotlin.String, Known> = entries.associateBy { it.value }
         }
     }
 
     companion object {
-        fun apply(str: String): Issue142Id =
+        fun apply(str: kotlin.String): Issue142Id =
             Known.ByName[str] ?: Unknown(str)
-        val pgTypeArray: PgType<Array<Issue142Id>> =
-          PgTypes.textArray
-            .bimap({ xs -> arrayMap.map(xs, Issue142Id::apply, Issue142Id::class.java) }, { xs -> arrayMap.map(xs, Issue142Id::value, String::class.java) })
+        val pgTypeArray: PgType<List<Issue142Id>> =
+          PgTypes.text.array()
+            .to(Bijection.of({ xs -> xs.map(Issue142Id::apply) }, { xs -> xs.map(Issue142Id::value) }))
         val pgType: PgType<Issue142Id> =
-          PgTypes.text.bimap(Issue142Id::apply, Issue142Id::value)
+          PgTypes.text.to(Bijection.of(Issue142Id::apply, Issue142Id::value))
     }
 }

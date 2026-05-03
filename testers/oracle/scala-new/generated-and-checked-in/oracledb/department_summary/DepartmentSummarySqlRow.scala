@@ -6,12 +6,11 @@
 package oracledb.department_summary
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import dev.typr.foundations.OracleTypes
+import dev.typr.dslsc.RowCodecs
 import dev.typr.foundations.Tuple.Tuple5
 import dev.typr.foundations.data.Unknown
-import dev.typr.foundations.scala.DbTypeOps
-import dev.typr.foundations.scala.RowParser
-import dev.typr.foundations.scala.RowParsers
+import dev.typr.foundationssc.OracleTypes
+import dev.typr.foundationssc.RowCodec
 import oracledb.MoneyT
 
 /** SQL file: department_summary.sql */
@@ -39,5 +38,5 @@ case class DepartmentSummarySqlRow(
 }
 
 object DepartmentSummarySqlRow {
-  val `_rowParser`: RowParser[DepartmentSummarySqlRow] = RowParsers.of(OracleTypes.varchar2, OracleTypes.varchar2, OracleTypes.varchar2, MoneyT.oracleType.nullable, OracleTypes.unknown.nullable)(DepartmentSummarySqlRow.apply)(row => Array[Any](row.deptCode, row.deptRegion, row.deptName, row.budget, row.employeeCount))
+  val rowCodec: RowCodec[DepartmentSummarySqlRow] = RowCodecs.of(OracleTypes.varchar2, OracleTypes.varchar2, OracleTypes.varchar2, MoneyT.oracleType.opt, OracleTypes.unknown.opt)(DepartmentSummarySqlRow.apply)(row => Array[Any](row.deptCode, row.deptRegion, row.deptName, row.budget, row.employeeCount))
 }

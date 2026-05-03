@@ -5,19 +5,18 @@
  */
 package testdb.inventory
 
-import dev.typr.foundations.MariaTypes
-import dev.typr.foundations.RowParser
-import dev.typr.foundations.dsl.FieldsBase
-import dev.typr.foundations.dsl.Path
-import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.scala.ForeignKey
-import dev.typr.foundations.scala.RelationStructure
-import dev.typr.foundations.scala.ScalaDbTypes
-import dev.typr.foundations.scala.SqlExpr
-import dev.typr.foundations.scala.SqlExpr.Field
-import dev.typr.foundations.scala.SqlExpr.IdField
-import dev.typr.foundations.scala.SqlExpr.OptField
-import dev.typr.foundations.scala.TupleExpr11
+import dev.typr.dsl.FieldsBase
+import dev.typr.dsl.Path
+import dev.typr.dsl.SqlExpr.FieldLike
+import dev.typr.dslsc.ForeignKey
+import dev.typr.dslsc.RelationStructure
+import dev.typr.dslsc.SqlExpr
+import dev.typr.dslsc.SqlExpr.Field
+import dev.typr.dslsc.SqlExpr.IdField
+import dev.typr.dslsc.SqlExpr.OptField
+import dev.typr.dslsc.TupleExpr11
+import dev.typr.foundations.RowCodec
+import dev.typr.foundationssc.MariaTypes
 import java.time.LocalDateTime
 import testdb.products.ProductsFields
 import testdb.products.ProductsId
@@ -35,7 +34,7 @@ class InventoryFields(val `_path`: java.util.List[Path]) extends TupleExpr11[Inv
       None,
       None,
       (row, value) => row.copy(inventoryId = value),
-      InventoryId.mariaType
+      InventoryId.mariaType.underlying
     )
   }
 
@@ -47,7 +46,7 @@ class InventoryFields(val `_path`: java.util.List[Path]) extends TupleExpr11[Inv
       None,
       None,
       (row, value) => row.copy(productId = value),
-      ProductsId.mariaType
+      ProductsId.mariaType.underlying
     )
   }
 
@@ -59,7 +58,7 @@ class InventoryFields(val `_path`: java.util.List[Path]) extends TupleExpr11[Inv
       None,
       None,
       (row, value) => row.copy(warehouseId = value),
-      WarehousesId.mariaType
+      WarehousesId.mariaType.underlying
     )
   }
 
@@ -71,7 +70,7 @@ class InventoryFields(val `_path`: java.util.List[Path]) extends TupleExpr11[Inv
       None,
       None,
       (row, value) => row.copy(quantityOnHand = value),
-      ScalaDbTypes.MariaTypes.int_
+      MariaTypes.int_.underlying
     )
   }
 
@@ -83,7 +82,7 @@ class InventoryFields(val `_path`: java.util.List[Path]) extends TupleExpr11[Inv
       None,
       None,
       (row, value) => row.copy(quantityReserved = value),
-      ScalaDbTypes.MariaTypes.int_
+      MariaTypes.int_.underlying
     )
   }
 
@@ -95,7 +94,7 @@ class InventoryFields(val `_path`: java.util.List[Path]) extends TupleExpr11[Inv
       None,
       None,
       (row, value) => row.copy(quantityOnOrder = value),
-      ScalaDbTypes.MariaTypes.int_
+      MariaTypes.int_.underlying
     )
   }
 
@@ -107,7 +106,7 @@ class InventoryFields(val `_path`: java.util.List[Path]) extends TupleExpr11[Inv
       None,
       None,
       (row, value) => row.copy(reorderPoint = value),
-      ScalaDbTypes.MariaTypes.int_
+      MariaTypes.int_.underlying
     )
   }
 
@@ -119,7 +118,7 @@ class InventoryFields(val `_path`: java.util.List[Path]) extends TupleExpr11[Inv
       None,
       None,
       (row, value) => row.copy(reorderQuantity = value),
-      ScalaDbTypes.MariaTypes.int_
+      MariaTypes.int_.underlying
     )
   }
 
@@ -131,7 +130,7 @@ class InventoryFields(val `_path`: java.util.List[Path]) extends TupleExpr11[Inv
       None,
       None,
       (row, value) => row.copy(binLocation = value),
-      MariaTypes.varchar
+      MariaTypes.varchar.underlying
     )
   }
 
@@ -143,7 +142,7 @@ class InventoryFields(val `_path`: java.util.List[Path]) extends TupleExpr11[Inv
       None,
       None,
       (row, value) => row.copy(lastCountedAt = value),
-      MariaTypes.datetime
+      MariaTypes.datetime.underlying
     )
   }
 
@@ -155,7 +154,7 @@ class InventoryFields(val `_path`: java.util.List[Path]) extends TupleExpr11[Inv
       None,
       None,
       (row, value) => row.copy(updatedAt = value),
-      MariaTypes.datetime
+      MariaTypes.datetime.underlying
     )
   }
 
@@ -165,7 +164,7 @@ class InventoryFields(val `_path`: java.util.List[Path]) extends TupleExpr11[Inv
 
   override def columns: java.util.List[FieldLike[?, InventoryRow]] = java.util.List.of(this.inventoryId.underlying, this.productId.underlying, this.warehouseId.underlying, this.quantityOnHand.underlying, this.quantityReserved.underlying, this.quantityOnOrder.underlying, this.reorderPoint.underlying, this.reorderQuantity.underlying, this.binLocation.underlying, this.lastCountedAt.underlying, this.updatedAt.underlying)
 
-  override def rowParser: RowParser[InventoryRow] = InventoryRow._rowParser.underlying
+  override def rowCodec: RowCodec[InventoryRow] = InventoryRow.rowCodec.underlying
 
   override def withPaths(`_path`: java.util.List[Path]): RelationStructure[InventoryFields, InventoryRow] = new InventoryFields(`_path`)
 

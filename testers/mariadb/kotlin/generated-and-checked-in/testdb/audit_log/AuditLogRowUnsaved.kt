@@ -15,11 +15,11 @@ import testdb.customtypes.Defaulted.UseDefault
 /** This class corresponds to a row in table `audit_log` which has not been persisted yet */
 data class AuditLogRowUnsaved(
   /**  */
-  @field:JsonProperty("table_name") val tableName: String,
+  @field:JsonProperty("table_name") val tableName: kotlin.String,
   /**  */
-  @field:JsonProperty("record_id") val recordId: String,
+  @field:JsonProperty("record_id") val recordId: kotlin.String,
   /**  */
-  val action: String,
+  val action: kotlin.String,
   /** Default: NULL
 
     */
@@ -31,7 +31,7 @@ data class AuditLogRowUnsaved(
   /** Default: NULL
 
     */
-  @field:JsonProperty("changed_by") val changedBy: Defaulted<String?> = UseDefault(),
+  @field:JsonProperty("changed_by") val changedBy: Defaulted<kotlin.String?> = UseDefault(),
   /** Default: current_timestamp(6)
 
     */
@@ -48,7 +48,7 @@ data class AuditLogRowUnsaved(
   fun toRow(
     oldValuesDefault: () -> Json?,
     newValuesDefault: () -> Json?,
-    changedByDefault: () -> String?,
+    changedByDefault: () -> kotlin.String?,
     changedAtDefault: () -> LocalDateTime,
     clientIpDefault: () -> Inet6?,
     sessionIdDefault: () -> ByteArray?,

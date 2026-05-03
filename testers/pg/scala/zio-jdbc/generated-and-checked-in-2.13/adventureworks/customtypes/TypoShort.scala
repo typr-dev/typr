@@ -47,7 +47,7 @@ object TypoShort {
     )
   }
 
-  implicit lazy val bijection: Bijection[TypoShort, Short] = Bijection.apply[TypoShort, Short](_.value)(TypoShort.apply)
+  implicit lazy val bijection: Bijection[TypoShort, Short] = Bijection[TypoShort, Short](_.value)(TypoShort.apply)
 
   implicit lazy val jdbcDecoder: JdbcDecoder[TypoShort] = {
     JdbcDecoder[TypoShort](

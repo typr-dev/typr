@@ -6,12 +6,10 @@
 package testdb.v_daily_sales
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import dev.typr.foundations.MariaTypes
+import dev.typr.dslsc.RowCodecs
 import dev.typr.foundations.Tuple.Tuple10
-import dev.typr.foundations.scala.DbTypeOps
-import dev.typr.foundations.scala.RowParser
-import dev.typr.foundations.scala.RowParsers
-import dev.typr.foundations.scala.ScalaDbTypes
+import dev.typr.foundationssc.MariaTypes
+import dev.typr.foundationssc.RowCodec
 import java.time.LocalDate
 
 /** View: v_daily_sales
@@ -81,5 +79,5 @@ case class VDailySalesViewRow(
 }
 
 object VDailySalesViewRow {
-  val `_rowParser`: RowParser[VDailySalesViewRow] = RowParsers.of(MariaTypes.date.nullable, ScalaDbTypes.MariaTypes.bigint, ScalaDbTypes.MariaTypes.bigint, ScalaDbTypes.MariaTypes.numeric.nullable, ScalaDbTypes.MariaTypes.numeric.nullable, ScalaDbTypes.MariaTypes.numeric.nullable, ScalaDbTypes.MariaTypes.numeric.nullable, ScalaDbTypes.MariaTypes.numeric.nullable, ScalaDbTypes.MariaTypes.numeric.nullable, ScalaDbTypes.MariaTypes.numeric.nullable)(VDailySalesViewRow.apply)(row => Array[Any](row.orderDate, row.orderCount, row.uniqueCustomers, row.itemsSold, row.grossSales, row.totalDiscounts, row.totalShipping, row.totalTax, row.netSales, row.avgOrderValue))
+  val rowCodec: RowCodec[VDailySalesViewRow] = RowCodecs.of(MariaTypes.date.opt, MariaTypes.bigint, MariaTypes.bigint, MariaTypes.numeric.opt, MariaTypes.numeric.opt, MariaTypes.numeric.opt, MariaTypes.numeric.opt, MariaTypes.numeric.opt, MariaTypes.numeric.opt, MariaTypes.numeric.opt)(VDailySalesViewRow.apply)(row => Array[Any](row.orderDate, row.orderCount, row.uniqueCustomers, row.itemsSold, row.grossSales, row.totalDiscounts, row.totalShipping, row.totalTax, row.netSales, row.avgOrderValue))
 }

@@ -10,5 +10,5 @@ package typr.generated.custom.composite_types
 import java.sql.Connection
 
 trait CompositeTypesSqlRepo {
-  def apply(implicit c: Connection): List[CompositeTypesSqlRow]
+  def apply(using c: Connection): List[CompositeTypesSqlRow]
 }

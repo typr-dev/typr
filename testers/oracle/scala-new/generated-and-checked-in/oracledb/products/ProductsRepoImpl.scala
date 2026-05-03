@@ -5,94 +5,94 @@
  */
 package oracledb.products
 
-import dev.typr.foundations.OracleTypes
-import dev.typr.foundations.scala.DbTypeOps
-import dev.typr.foundations.scala.DeleteBuilder
-import dev.typr.foundations.scala.Dialect
-import dev.typr.foundations.scala.Fragment
-import dev.typr.foundations.scala.SelectBuilder
-import dev.typr.foundations.scala.UpdateBuilder
-import java.sql.Connection
+import dev.typr.dslsc.DeleteBuilder
+import dev.typr.dslsc.Dialect
+import dev.typr.dslsc.SelectBuilder
+import dev.typr.dslsc.UpdateBuilder
+import dev.typr.foundationssc.Connection
+import dev.typr.foundationssc.ConnectionRead
+import dev.typr.foundationssc.Fragment
+import dev.typr.foundationssc.OracleTypes
 import oracledb.MoneyT
 import oracledb.TagVarrayT
 import scala.collection.mutable.ListBuffer
-import dev.typr.foundations.scala.Fragment.sql
+import dev.typr.foundationssc.Fragment.sql
 
 class ProductsRepoImpl extends ProductsRepo {
   override def delete: DeleteBuilder[ProductsFields, ProductsRow] = DeleteBuilder.of(""""PRODUCTS"""", ProductsFields.structure, Dialect.ORACLE)
 
-  override def deleteById(productId: ProductsId)(using c: Connection): Boolean = sql"""delete from "PRODUCTS" where "PRODUCT_ID" = ${Fragment.encode(ProductsId.oracleType, productId)}""".update().runUnchecked(c) > 0
+  override def deleteById(productId: ProductsId)(using c: Connection): Boolean = sql"""delete from "PRODUCTS" where "PRODUCT_ID" = ${Fragment.encode(ProductsId.oracleType, productId)}""".update().run(using c) > 0
 
-  override def deleteByIds(productIds: Array[ProductsId])(using c: Connection): Int = {
+  override def deleteByIds(productIds: List[ProductsId])(using c: Connection): Int = {
     val fragments: ListBuffer[Fragment] = ListBuffer()
     productIds.foreach { id => fragments.addOne(Fragment.encode(ProductsId.oracleType, id)): @scala.annotation.nowarn }
-    return Fragment.interpolate(Fragment.lit("""delete from "PRODUCTS" where "PRODUCT_ID" in ("""), Fragment.comma(fragments), Fragment.lit(")")).update().runUnchecked(c)
+    return Fragment.concat(Fragment.of("""delete from "PRODUCTS" where "PRODUCT_ID" in ("""), Fragment.comma(fragments), Fragment.of(")")).update().run(using c)
   }
 
   override def insert(unsaved: ProductsRow)(using c: Connection): ProductsId = {
   sql"""insert into "PRODUCTS"("PRODUCT_ID", "SKU", "NAME", "PRICE", "TAGS")
-    values (${Fragment.encode(ProductsId.oracleType, unsaved.productId)}, ${Fragment.encode(OracleTypes.varchar2, unsaved.sku)}, ${Fragment.encode(OracleTypes.varchar2, unsaved.name)}, ${Fragment.encode(MoneyT.oracleType, unsaved.price)}, ${Fragment.encode(TagVarrayT.oracleType.nullable, unsaved.tags)})
+    values (${Fragment.encode(ProductsId.oracleType, unsaved.productId)}, ${Fragment.encode(OracleTypes.varchar2, unsaved.sku)}, ${Fragment.encode(OracleTypes.varchar2, unsaved.name)}, ${Fragment.encode(MoneyT.oracleType, unsaved.price)}, ${Fragment.encode(TagVarrayT.oracleType.opt, unsaved.tags)})
     """
-    .updateReturningGeneratedKeys(Array[String]("PRODUCT_ID"), ProductsId.`_rowParser`.exactlyOne()).runUnchecked(c)
+    .updateReturningGeneratedKeys(Array[String]("PRODUCT_ID"), ProductsId.rowCodec.exactlyOne()).run(using c)
   }
 
   override def insert(unsaved: ProductsRowUnsaved)(using c: Connection): ProductsId = {
     val columns: ListBuffer[Fragment] = ListBuffer()
     val values: ListBuffer[Fragment] = ListBuffer()
-    columns.addOne(Fragment.lit(""""SKU"""")): @scala.annotation.nowarn
+    columns.addOne(Fragment.of(""""SKU"""")): @scala.annotation.nowarn
     values.addOne(sql"${Fragment.encode(OracleTypes.varchar2, unsaved.sku)}"): @scala.annotation.nowarn
-    columns.addOne(Fragment.lit(""""NAME"""")): @scala.annotation.nowarn
+    columns.addOne(Fragment.of(""""NAME"""")): @scala.annotation.nowarn
     values.addOne(sql"${Fragment.encode(OracleTypes.varchar2, unsaved.name)}"): @scala.annotation.nowarn
-    columns.addOne(Fragment.lit(""""PRICE"""")): @scala.annotation.nowarn
+    columns.addOne(Fragment.of(""""PRICE"""")): @scala.annotation.nowarn
     values.addOne(sql"${Fragment.encode(MoneyT.oracleType, unsaved.price)}"): @scala.annotation.nowarn
-    columns.addOne(Fragment.lit(""""TAGS"""")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(TagVarrayT.oracleType.nullable, unsaved.tags)}"): @scala.annotation.nowarn
+    columns.addOne(Fragment.of(""""TAGS"""")): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(TagVarrayT.oracleType.opt, unsaved.tags)}"): @scala.annotation.nowarn
     unsaved.productId.visit(
       {  },
-      value => { columns.addOne(Fragment.lit(""""PRODUCT_ID"""")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(ProductsId.oracleType, value)}"): @scala.annotation.nowarn }
+      value => { columns.addOne(Fragment.of(""""PRODUCT_ID"""")): @scala.annotation.nowarn; values.addOne(sql"${Fragment.encode(ProductsId.oracleType, value)}"): @scala.annotation.nowarn }
     );
     val q: Fragment = {
       sql"""insert into "PRODUCTS"(${Fragment.comma(columns)})
       values (${Fragment.comma(values)})
       """
     }
-    return q.updateReturningGeneratedKeys(Array[String]("PRODUCT_ID"), ProductsId.`_rowParser`.exactlyOne()).runUnchecked(c)
+    return q.updateReturningGeneratedKeys(Array[String]("PRODUCT_ID"), ProductsId.rowCodec.exactlyOne()).run(using c)
   }
 
-  override def select: SelectBuilder[ProductsFields, ProductsRow] = SelectBuilder.of(""""PRODUCTS"""", ProductsFields.structure, ProductsRow.`_rowParser`, Dialect.ORACLE)
+  override def select: SelectBuilder[ProductsFields, ProductsRow] = SelectBuilder.of(""""PRODUCTS"""", ProductsFields.structure, ProductsRow.rowCodec, Dialect.ORACLE)
 
-  override def selectAll(using c: Connection): List[ProductsRow] = {
+  override def selectAll(using c: ConnectionRead): List[ProductsRow] = {
     sql"""select "PRODUCT_ID", "SKU", "NAME", "PRICE", "TAGS"
     from "PRODUCTS"
-    """.query(ProductsRow.`_rowParser`.all()).runUnchecked(c)
+    """.query(ProductsRow.rowCodec.all()).run(using c)
   }
 
-  override def selectById(productId: ProductsId)(using c: Connection): Option[ProductsRow] = {
+  override def selectById(productId: ProductsId)(using c: ConnectionRead): Option[ProductsRow] = {
     sql"""select "PRODUCT_ID", "SKU", "NAME", "PRICE", "TAGS"
     from "PRODUCTS"
-    where "PRODUCT_ID" = ${Fragment.encode(ProductsId.oracleType, productId)}""".query(ProductsRow.`_rowParser`.first()).runUnchecked(c)
+    where "PRODUCT_ID" = ${Fragment.encode(ProductsId.oracleType, productId)}""".query(ProductsRow.rowCodec.first()).run(using c)
   }
 
-  override def selectByIds(productIds: Array[ProductsId])(using c: Connection): List[ProductsRow] = {
+  override def selectByIds(productIds: List[ProductsId])(using c: ConnectionRead): List[ProductsRow] = {
     val fragments: ListBuffer[Fragment] = ListBuffer()
     productIds.foreach { id => fragments.addOne(Fragment.encode(ProductsId.oracleType, id)): @scala.annotation.nowarn }
-    return Fragment.interpolate(Fragment.lit("""select "PRODUCT_ID", "SKU", "NAME", "PRICE", "TAGS" from "PRODUCTS" where "PRODUCT_ID" in ("""), Fragment.comma(fragments), Fragment.lit(")")).query(ProductsRow.`_rowParser`.all()).runUnchecked(c)
+    return Fragment.concat(Fragment.of("""select "PRODUCT_ID", "SKU", "NAME", "PRICE", "TAGS" from "PRODUCTS" where "PRODUCT_ID" in ("""), Fragment.comma(fragments), Fragment.of(")")).query(ProductsRow.rowCodec.all()).run(using c)
   }
 
-  override def selectByIdsTracked(productIds: Array[ProductsId])(using c: Connection): Map[ProductsId, ProductsRow] = {
+  override def selectByIdsTracked(productIds: List[ProductsId])(using c: ConnectionRead): Map[ProductsId, ProductsRow] = {
     val ret: scala.collection.mutable.Map[ProductsId, ProductsRow] = scala.collection.mutable.Map.empty[ProductsId, ProductsRow]
     selectByIds(productIds)(using c).foreach(row => ret.put(row.productId, row): @scala.annotation.nowarn)
     return ret.toMap
   }
 
-  override def selectByUniqueSku(sku: String)(using c: Connection): Option[ProductsRow] = {
+  override def selectByUniqueSku(sku: String)(using c: ConnectionRead): Option[ProductsRow] = {
     sql"""select "PRODUCT_ID", "SKU", "NAME", "PRICE", "TAGS"
     from "PRODUCTS"
     where "SKU" = ${Fragment.encode(OracleTypes.varchar2, sku)}
-    """.query(ProductsRow.`_rowParser`.first()).runUnchecked(c)
+    """.query(ProductsRow.rowCodec.first()).run(using c)
   }
 
-  override def update: UpdateBuilder[ProductsFields, ProductsRow] = UpdateBuilder.of(""""PRODUCTS"""", ProductsFields.structure, ProductsRow.`_rowParser`, Dialect.ORACLE)
+  override def update: UpdateBuilder[ProductsFields, ProductsRow] = UpdateBuilder.of(""""PRODUCTS"""", ProductsFields.structure, ProductsRow.rowCodec, Dialect.ORACLE)
 
   override def update(row: ProductsRow)(using c: Connection): Boolean = {
     val productId: ProductsId = row.productId
@@ -100,21 +100,21 @@ class ProductsRepoImpl extends ProductsRepo {
     set "SKU" = ${Fragment.encode(OracleTypes.varchar2, row.sku)},
     "NAME" = ${Fragment.encode(OracleTypes.varchar2, row.name)},
     "PRICE" = ${Fragment.encode(MoneyT.oracleType, row.price)},
-    "TAGS" = ${Fragment.encode(TagVarrayT.oracleType.nullable, row.tags)}
-    where "PRODUCT_ID" = ${Fragment.encode(ProductsId.oracleType, productId)}""".update().runUnchecked(c) > 0
+    "TAGS" = ${Fragment.encode(TagVarrayT.oracleType.opt, row.tags)}
+    where "PRODUCT_ID" = ${Fragment.encode(ProductsId.oracleType, productId)}""".update().run(using c) > 0
   }
 
   override def upsert(unsaved: ProductsRow)(using c: Connection): Unit = {
     sql"""MERGE INTO "PRODUCTS" t
-    USING (SELECT ${Fragment.encode(ProductsId.oracleType, unsaved.productId)}, ${Fragment.encode(OracleTypes.varchar2, unsaved.sku)}, ${Fragment.encode(OracleTypes.varchar2, unsaved.name)}, ${Fragment.encode(MoneyT.oracleType, unsaved.price)}, ${Fragment.encode(TagVarrayT.oracleType.nullable, unsaved.tags)} FROM DUAL) s
+    USING (SELECT ${Fragment.encode(ProductsId.oracleType, unsaved.productId)}, ${Fragment.encode(OracleTypes.varchar2, unsaved.sku)}, ${Fragment.encode(OracleTypes.varchar2, unsaved.name)}, ${Fragment.encode(MoneyT.oracleType, unsaved.price)}, ${Fragment.encode(TagVarrayT.oracleType.opt, unsaved.tags)} FROM DUAL) s
     ON (t."PRODUCT_ID" = s."PRODUCT_ID")
     WHEN MATCHED THEN UPDATE SET t."SKU" = s."SKU",
     t."NAME" = s."NAME",
     t."PRICE" = s."PRICE",
     t."TAGS" = s."TAGS"
-    WHEN NOT MATCHED THEN INSERT ("PRODUCT_ID", "SKU", "NAME", "PRICE", "TAGS") VALUES (${Fragment.encode(ProductsId.oracleType, unsaved.productId)}, ${Fragment.encode(OracleTypes.varchar2, unsaved.sku)}, ${Fragment.encode(OracleTypes.varchar2, unsaved.name)}, ${Fragment.encode(MoneyT.oracleType, unsaved.price)}, ${Fragment.encode(TagVarrayT.oracleType.nullable, unsaved.tags)})"""
+    WHEN NOT MATCHED THEN INSERT ("PRODUCT_ID", "SKU", "NAME", "PRICE", "TAGS") VALUES (${Fragment.encode(ProductsId.oracleType, unsaved.productId)}, ${Fragment.encode(OracleTypes.varchar2, unsaved.sku)}, ${Fragment.encode(OracleTypes.varchar2, unsaved.name)}, ${Fragment.encode(MoneyT.oracleType, unsaved.price)}, ${Fragment.encode(TagVarrayT.oracleType.opt, unsaved.tags)})"""
       .update()
-      .runUnchecked(c): @scala.annotation.nowarn
+      .run(using c): @scala.annotation.nowarn
   }
 
   override def upsertBatch(unsaved: Iterator[ProductsRow])(using c: Connection): Unit = {
@@ -126,7 +126,7 @@ class ProductsRepoImpl extends ProductsRepo {
     t."PRICE" = s."PRICE",
     t."TAGS" = s."TAGS"
     WHEN NOT MATCHED THEN INSERT ("PRODUCT_ID", "SKU", "NAME", "PRICE", "TAGS") VALUES (?, ?, ?, ?, ?)"""
-      .updateMany(ProductsRow.`_rowParser`, unsaved)
-      .runUnchecked(c): @scala.annotation.nowarn
+      .updateMany(ProductsRow.rowCodec, unsaved)
+      .run(using c): @scala.annotation.nowarn
   }
 }

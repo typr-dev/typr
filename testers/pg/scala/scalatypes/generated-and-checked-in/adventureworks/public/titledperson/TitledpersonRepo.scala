@@ -5,10 +5,11 @@
  */
 package adventureworks.public.titledperson
 
-import dev.typr.foundations.scala.DeleteBuilder
-import dev.typr.foundations.scala.SelectBuilder
-import dev.typr.foundations.scala.UpdateBuilder
-import java.sql.Connection
+import dev.typr.dslsc.DeleteBuilder
+import dev.typr.dslsc.SelectBuilder
+import dev.typr.dslsc.UpdateBuilder
+import dev.typr.foundationssc.Connection
+import dev.typr.foundationssc.ConnectionRead
 
 trait TitledpersonRepo {
   def delete: DeleteBuilder[TitledpersonFields, TitledpersonRow]
@@ -22,7 +23,7 @@ trait TitledpersonRepo {
 
   def select: SelectBuilder[TitledpersonFields, TitledpersonRow]
 
-  def selectAll(using c: Connection): List[TitledpersonRow]
+  def selectAll(using c: ConnectionRead): List[TitledpersonRow]
 
   def update: UpdateBuilder[TitledpersonFields, TitledpersonRow]
 }

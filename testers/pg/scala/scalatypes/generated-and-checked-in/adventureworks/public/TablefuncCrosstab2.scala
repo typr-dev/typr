@@ -5,11 +5,9 @@
  */
 package adventureworks.public
 
-import dev.typr.foundations.PgRead
-import dev.typr.foundations.PgStruct
-import dev.typr.foundations.PgType
-import dev.typr.foundations.PgTypes
-import scala.jdk.OptionConverters.RichOption
+import dev.typr.foundationssc.PgType
+import dev.typr.foundationssc.PgTypes
+import dev.typr.foundationssc.RowCodec
 
 /** PostgreSQL composite type: public.tablefunc_crosstab_2 */
 case class TablefuncCrosstab2(
@@ -19,9 +17,7 @@ case class TablefuncCrosstab2(
 )
 
 object TablefuncCrosstab2 {
-  given pgStruct: PgStruct[TablefuncCrosstab2] = PgStruct.builder[TablefuncCrosstab2]("public.tablefunc_crosstab_2").optField("rowName", PgTypes.text, (v: TablefuncCrosstab2) => v.rowName.asJava).optField("category1", PgTypes.text, (v: TablefuncCrosstab2) => v.category1.asJava).optField("category2", PgTypes.text, (v: TablefuncCrosstab2) => v.category2.asJava).build(arr => TablefuncCrosstab2(rowName = Option(arr(0).asInstanceOf[String]), category1 = Option(arr(1).asInstanceOf[String]), category2 = Option(arr(2).asInstanceOf[String])))
+  given pgType: PgType[TablefuncCrosstab2] = PgTypes.compositeOf("public.tablefunc_crosstab_2", RowCodec.namedBuilder[TablefuncCrosstab2]().field("rowName", PgTypes.text.opt)((v: TablefuncCrosstab2) => v.rowName).field("category1", PgTypes.text.opt)((v: TablefuncCrosstab2) => v.category1).field("category2", PgTypes.text.opt)((v: TablefuncCrosstab2) => v.category2).build((t0, t1, t2) => TablefuncCrosstab2(rowName = t0, category1 = t1, category2 = t2)))
 
-  given pgType: PgType[TablefuncCrosstab2] = pgStruct.asType()
-
-  given pgTypeArray: PgType[Array[TablefuncCrosstab2]] = pgType.array(PgRead.readCompositeArray(pgType.pgCompositeText(), n => new Array[TablefuncCrosstab2](n)), n => new Array[TablefuncCrosstab2](n))
+  given pgTypeArray: PgType[scala.collection.immutable.List[TablefuncCrosstab2]] = pgType.array
 }

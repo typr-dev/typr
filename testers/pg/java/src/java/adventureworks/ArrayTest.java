@@ -65,44 +65,44 @@ public class ArrayTest {
         "asd asd ",
         new Vector(new float[] {1.0f, 2.2f, 3.3f}),
         new Xml("<xml/>"),
-        new PGbox[] {new PGbox(new PGpoint(3.0, 4.0), new PGpoint(1.0, 2.0))},
-        new String[] {"abc"},
-        new String[] {"a"},
-        new PGcircle[] {new PGcircle(new PGpoint(1.0, 2.0), 3.0)},
-        new LocalDate[] {LocalDate.now()},
-        new Float[] {1.0f},
-        new Double[] {2.45},
-        new Inet[] {new Inet("::10.2.3.4")},
-        new Short[] {(short) 1},
-        new Int2Vector[] {new Int2Vector("1 2 3")},
-        new Integer[] {4},
-        new Long[] {(long) Integer.MAX_VALUE + 1},
-        new PGInterval[] {new PGInterval(1, 2, 3, 4, 5, 6.5)},
-        new Json[] {new Json("{\"a\": 1}")},
-        new Jsonb[] {new Jsonb("{\"a\": 2}")},
-        new PGline[] {new PGline(3.0, 4.5, 5.5)},
-        new PGlseg[] {new PGlseg(new PGpoint(6.5, 4.3), new PGpoint(1.5, 2.3))},
-        new Money[] {new Money(22.50)},
-        new Mydomain[] {new Mydomain("a")},
-        new Myenum[] {Myenum.c},
-        new String[] {"foo"},
-        new BigDecimal[] {new BigDecimal("3.14159")},
-        new PGpath[] {
-          new PGpath(new PGpoint[] {new PGpoint(6.5, 4.3), new PGpoint(8.5, 4.3)}, true)
-        },
-        new PGpoint[] {new PGpoint(6.5, 4.3)},
-        new PGpolygon[] {
-          new PGpolygon(
-              new PGpoint[] {new PGpoint(6.5, 4.3), new PGpoint(10.5, 4.3), new PGpoint(-6.5, 4.3)})
-        },
-        new String[] {"flaff"},
-        new LocalTime[] {DbNow.localDateTime().toLocalTime()},
-        new LocalDateTime[] {DbNow.localDateTime()},
-        new Instant[] {DbNow.instant()},
-        new OffsetTime[] {DbNow.offsetDateTime().toOffsetTime()},
-        new UUID[] {UUID.randomUUID()},
-        new String[] {"asd asd "},
-        new Xml[] {new Xml("<xml/>")});
+        java.util.List.of(new PGbox(new PGpoint(3.0, 4.0), new PGpoint(1.0, 2.0))),
+        java.util.List.of("abc"),
+        java.util.List.of("a"),
+        java.util.List.of(new PGcircle(new PGpoint(1.0, 2.0), 3.0)),
+        java.util.List.of(LocalDate.now()),
+        java.util.List.of(1.0f),
+        java.util.List.of(2.45),
+        java.util.List.of(new Inet("::10.2.3.4")),
+        java.util.List.of((short) 1),
+        java.util.List.of(new Int2Vector("1 2 3")),
+        java.util.List.of(4),
+        java.util.List.of((long) Integer.MAX_VALUE + 1),
+        java.util.List.of(new PGInterval(1, 2, 3, 4, 5, 6.5)),
+        java.util.List.of(new Json("{\"a\": 1}")),
+        java.util.List.of(new Jsonb("{\"a\": 2}")),
+        java.util.List.of(new PGline(3.0, 4.5, 5.5)),
+        java.util.List.of(new PGlseg(new PGpoint(6.5, 4.3), new PGpoint(1.5, 2.3))),
+        java.util.List.of(new Money(22.50)),
+        java.util.List.of(new Mydomain("a")),
+        java.util.List.of(Myenum.c),
+        java.util.List.of("foo"),
+        java.util.List.of(new BigDecimal("3.14159")),
+        java.util.List.of(
+            new PGpath(new PGpoint[] {new PGpoint(6.5, 4.3), new PGpoint(8.5, 4.3)}, true)),
+        java.util.List.of(new PGpoint(6.5, 4.3)),
+        java.util.List.of(
+            new PGpolygon(
+                new PGpoint[] {
+                  new PGpoint(6.5, 4.3), new PGpoint(10.5, 4.3), new PGpoint(-6.5, 4.3)
+                })),
+        java.util.List.of("flaff"),
+        java.util.List.of(DbNow.localDateTime().toLocalTime()),
+        java.util.List.of(DbNow.localDateTime()),
+        java.util.List.of(DbNow.instant()),
+        java.util.List.of(DbNow.offsetDateTime().toOffsetTime()),
+        java.util.List.of(UUID.randomUUID()),
+        java.util.List.of("asd asd "),
+        java.util.List.of(new Xml("<xml/>")));
   }
 
   static PgtestnullRow pgtestnullRow() {
@@ -222,48 +222,46 @@ public class ArrayTest {
         Optional.of("asd asd "),
         Optional.of(new Vector(new float[] {1.0f, 2.2f, 3.3f})),
         Optional.of(new Xml("<xml/>")),
-        Optional.of(new PGbox[] {new PGbox(new PGpoint(3.0, 4.0), new PGpoint(1.0, 2.0))}),
-        Optional.of(new String[] {"abc"}),
-        Optional.of(new String[] {"a"}),
-        Optional.of(new PGcircle[] {new PGcircle(new PGpoint(1.0, 2.0), 3.0)}),
-        Optional.of(new LocalDate[] {LocalDate.now()}),
-        Optional.of(new Float[] {1.0f}),
-        Optional.of(new Double[] {2.45}),
-        Optional.of(new Inet[] {new Inet("::10.2.3.4")}),
-        Optional.of(new Short[] {(short) 1}),
-        Optional.of(new Int2Vector[] {new Int2Vector("1 2 3")}),
-        Optional.of(new Integer[] {4}),
-        Optional.of(new Long[] {(long) Integer.MAX_VALUE + 1}),
-        Optional.of(new PGInterval[] {new PGInterval(1, 2, 3, 4, 5, 6.5)}),
-        Optional.of(new Json[] {new Json("{\"a\": 1}")}),
-        Optional.of(new Jsonb[] {new Jsonb("{\"a\": 2}")}),
-        Optional.of(new PGline[] {new PGline(3.0, 4.5, 5.5)}),
-        Optional.of(new PGlseg[] {new PGlseg(new PGpoint(6.5, 4.3), new PGpoint(1.5, 2.3))}),
-        Optional.of(new Money[] {new Money(22.50)}),
-        Optional.of(new Mydomain[] {new Mydomain("a")}),
-        Optional.of(new Myenum[] {Myenum.c}),
-        Optional.of(new String[] {"foo"}),
-        Optional.of(new BigDecimal[] {new BigDecimal("3.14159")}),
+        Optional.of(java.util.List.of(new PGbox(new PGpoint(3.0, 4.0), new PGpoint(1.0, 2.0)))),
+        Optional.of(java.util.List.of("abc")),
+        Optional.of(java.util.List.of("a")),
+        Optional.of(java.util.List.of(new PGcircle(new PGpoint(1.0, 2.0), 3.0))),
+        Optional.of(java.util.List.of(LocalDate.now())),
+        Optional.of(java.util.List.of(1.0f)),
+        Optional.of(java.util.List.of(2.45)),
+        Optional.of(java.util.List.of(new Inet("::10.2.3.4"))),
+        Optional.of(java.util.List.of((short) 1)),
+        Optional.of(java.util.List.of(new Int2Vector("1 2 3"))),
+        Optional.of(java.util.List.of(4)),
+        Optional.of(java.util.List.of((long) Integer.MAX_VALUE + 1)),
+        Optional.of(java.util.List.of(new PGInterval(1, 2, 3, 4, 5, 6.5))),
+        Optional.of(java.util.List.of(new Json("{\"a\": 1}"))),
+        Optional.of(java.util.List.of(new Jsonb("{\"a\": 2}"))),
+        Optional.of(java.util.List.of(new PGline(3.0, 4.5, 5.5))),
+        Optional.of(java.util.List.of(new PGlseg(new PGpoint(6.5, 4.3), new PGpoint(1.5, 2.3)))),
+        Optional.of(java.util.List.of(new Money(22.50))),
+        Optional.of(java.util.List.of(new Mydomain("a"))),
+        Optional.of(java.util.List.of(Myenum.c)),
+        Optional.of(java.util.List.of("foo")),
+        Optional.of(java.util.List.of(new BigDecimal("3.14159"))),
         Optional.of(
-            new PGpath[] {
-              new PGpath(new PGpoint[] {new PGpoint(6.5, 4.3), new PGpoint(8.5, 4.3)}, true)
-            }),
-        Optional.of(new PGpoint[] {new PGpoint(6.5, 4.3)}),
+            java.util.List.of(
+                new PGpath(new PGpoint[] {new PGpoint(6.5, 4.3), new PGpoint(8.5, 4.3)}, true))),
+        Optional.of(java.util.List.of(new PGpoint(6.5, 4.3))),
         Optional.of(
-            new PGpolygon[] {
-              new PGpolygon(
-                  new PGpoint[] {
-                    new PGpoint(6.5, 4.3), new PGpoint(10.5, 4.3), new PGpoint(-6.5, 4.3)
-                  })
-            }),
-        Optional.of(new String[] {"flaff"}),
-        Optional.of(new LocalTime[] {DbNow.localDateTime().toLocalTime()}),
-        Optional.of(new LocalDateTime[] {DbNow.localDateTime()}),
-        Optional.of(new Instant[] {DbNow.instant()}),
-        Optional.of(new OffsetTime[] {DbNow.offsetDateTime().toOffsetTime()}),
-        Optional.of(new UUID[] {UUID.randomUUID()}),
-        Optional.of(new String[] {"asd asd "}),
-        Optional.of(new Xml[] {new Xml("<xml/>")}));
+            java.util.List.of(
+                new PGpolygon(
+                    new PGpoint[] {
+                      new PGpoint(6.5, 4.3), new PGpoint(10.5, 4.3), new PGpoint(-6.5, 4.3)
+                    }))),
+        Optional.of(java.util.List.of("flaff")),
+        Optional.of(java.util.List.of(DbNow.localDateTime().toLocalTime())),
+        Optional.of(java.util.List.of(DbNow.localDateTime())),
+        Optional.of(java.util.List.of(DbNow.instant())),
+        Optional.of(java.util.List.of(DbNow.offsetDateTime().toOffsetTime())),
+        Optional.of(java.util.List.of(UUID.randomUUID())),
+        Optional.of(java.util.List.of("asd asd ")),
+        Optional.of(java.util.List.of(new Xml("<xml/>"))));
   }
 
   @Test
@@ -587,7 +585,7 @@ public class ArrayTest {
           // xml requires special handling
 
           // Array types
-          assertArrayEquals(
+          assertEquals(
               row.datees().orElse(null),
               pgtestnullRepo
                   .select()
@@ -596,7 +594,7 @@ public class ArrayTest {
                   .get(0)
                   .datees()
                   .orElse(null));
-          assertArrayEquals(
+          assertEquals(
               row.float4es().orElse(null),
               pgtestnullRepo
                   .select()
@@ -605,7 +603,7 @@ public class ArrayTest {
                   .get(0)
                   .float4es()
                   .orElse(null));
-          assertArrayEquals(
+          assertEquals(
               row.float8es().orElse(null),
               pgtestnullRepo
                   .select()
@@ -614,7 +612,7 @@ public class ArrayTest {
                   .get(0)
                   .float8es()
                   .orElse(null));
-          assertArrayEquals(
+          assertEquals(
               row.inetes().orElse(null),
               pgtestnullRepo
                   .select()
@@ -623,7 +621,7 @@ public class ArrayTest {
                   .get(0)
                   .inetes()
                   .orElse(null));
-          assertArrayEquals(
+          assertEquals(
               row.int2es().orElse(null),
               pgtestnullRepo
                   .select()
@@ -632,7 +630,7 @@ public class ArrayTest {
                   .get(0)
                   .int2es()
                   .orElse(null));
-          assertArrayEquals(
+          assertEquals(
               row.int2vectores().orElse(null),
               pgtestnullRepo
                   .select()
@@ -641,7 +639,7 @@ public class ArrayTest {
                   .get(0)
                   .int2vectores()
                   .orElse(null));
-          assertArrayEquals(
+          assertEquals(
               row.int4es().orElse(null),
               pgtestnullRepo
                   .select()
@@ -650,7 +648,7 @@ public class ArrayTest {
                   .get(0)
                   .int4es()
                   .orElse(null));
-          assertArrayEquals(
+          assertEquals(
               row.intervales().orElse(null),
               pgtestnullRepo
                   .select()
@@ -659,7 +657,7 @@ public class ArrayTest {
                   .get(0)
                   .intervales()
                   .orElse(null));
-          assertArrayEquals(
+          assertEquals(
               row.moneyes().orElse(null),
               pgtestnullRepo
                   .select()
@@ -668,7 +666,7 @@ public class ArrayTest {
                   .get(0)
                   .moneyes()
                   .orElse(null));
-          assertArrayEquals(
+          assertEquals(
               row.mydomaines().orElse(null),
               pgtestnullRepo
                   .select()
@@ -677,7 +675,7 @@ public class ArrayTest {
                   .get(0)
                   .mydomaines()
                   .orElse(null));
-          assertArrayEquals(
+          assertEquals(
               row.myenumes().orElse(null),
               pgtestnullRepo
                   .select()
@@ -686,7 +684,7 @@ public class ArrayTest {
                   .get(0)
                   .myenumes()
                   .orElse(null));
-          assertArrayEquals(
+          assertEquals(
               row.textes().orElse(null),
               pgtestnullRepo
                   .select()
@@ -695,7 +693,7 @@ public class ArrayTest {
                   .get(0)
                   .textes()
                   .orElse(null));
-          assertArrayEquals(
+          assertEquals(
               row.timees().orElse(null),
               pgtestnullRepo
                   .select()
@@ -704,7 +702,7 @@ public class ArrayTest {
                   .get(0)
                   .timees()
                   .orElse(null));
-          assertArrayEquals(
+          assertEquals(
               row.timestampes().orElse(null),
               pgtestnullRepo
                   .select()
@@ -713,7 +711,7 @@ public class ArrayTest {
                   .get(0)
                   .timestampes()
                   .orElse(null));
-          assertArrayEquals(
+          assertEquals(
               row.timestampzes().orElse(null),
               pgtestnullRepo
                   .select()
@@ -722,7 +720,7 @@ public class ArrayTest {
                   .get(0)
                   .timestampzes()
                   .orElse(null));
-          assertArrayEquals(
+          assertEquals(
               row.timezes().orElse(null),
               pgtestnullRepo
                   .select()
@@ -731,7 +729,7 @@ public class ArrayTest {
                   .get(0)
                   .timezes()
                   .orElse(null));
-          assertArrayEquals(
+          assertEquals(
               row.uuides().orElse(null),
               pgtestnullRepo
                   .select()

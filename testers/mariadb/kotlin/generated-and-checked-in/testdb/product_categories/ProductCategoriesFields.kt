@@ -5,18 +5,18 @@
  */
 package testdb.product_categories
 
-import dev.typr.foundations.RowParser
-import dev.typr.foundations.dsl.FieldsBase
-import dev.typr.foundations.dsl.Path
-import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.kotlin.ForeignKey
-import dev.typr.foundations.kotlin.KotlinDbTypes
-import dev.typr.foundations.kotlin.RelationStructure
-import dev.typr.foundations.kotlin.SqlExpr
-import dev.typr.foundations.kotlin.SqlExpr.Field
-import dev.typr.foundations.kotlin.SqlExpr.IdField
-import dev.typr.foundations.kotlin.TupleExpr
-import dev.typr.foundations.kotlin.TupleExpr4
+import dev.typr.dsl.FieldsBase
+import dev.typr.dsl.Path
+import dev.typr.dsl.SqlExpr.FieldLike
+import dev.typr.dslkt.ForeignKey
+import dev.typr.dslkt.RelationStructure
+import dev.typr.dslkt.SqlExpr
+import dev.typr.dslkt.SqlExpr.Field
+import dev.typr.dslkt.SqlExpr.IdField
+import dev.typr.dslkt.TupleExpr
+import dev.typr.dslkt.TupleExpr4
+import dev.typr.foundations.RowCodec
+import dev.typr.foundationskt.MariaTypes
 import kotlin.collections.List
 import testdb.categories.CategoriesFields
 import testdb.categories.CategoriesId
@@ -26,36 +26,36 @@ import testdb.products.ProductsId
 import testdb.products.ProductsRow
 import testdb.userdefined.IsPrimary
 
-data class ProductCategoriesFields(val _path: List<Path>) : TupleExpr4<ProductsId, CategoriesId, /* user-picked */ IsPrimary, Short>, RelationStructure<ProductCategoriesFields, ProductCategoriesRow>, FieldsBase<ProductCategoriesRow> {
+data class ProductCategoriesFields(val _path: List<Path>) : TupleExpr4<ProductsId, CategoriesId, /* user-picked */ IsPrimary, kotlin.Short>, RelationStructure<ProductCategoriesFields, ProductCategoriesRow>, FieldsBase<ProductCategoriesRow> {
   override fun _1(): SqlExpr<ProductsId> = productId()
 
   override fun _2(): SqlExpr<CategoriesId> = categoryId()
 
   override fun _3(): SqlExpr</* user-picked */ IsPrimary> = isPrimary()
 
-  override fun _4(): SqlExpr<Short> = sortOrder()
+  override fun _4(): SqlExpr<kotlin.Short> = sortOrder()
 
   override fun _path(): List<Path> = _path
 
-  fun categoryId(): IdField<CategoriesId, ProductCategoriesRow> = IdField<CategoriesId, ProductCategoriesRow>(_path, "category_id", ProductCategoriesRow::categoryId, null, null, { row, value -> row.copy(categoryId = value) }, CategoriesId.mariaType)
+  fun categoryId(): IdField<CategoriesId, ProductCategoriesRow> = IdField<CategoriesId, ProductCategoriesRow>(_path, "category_id", ProductCategoriesRow::categoryId, null, null, { row, value -> row.copy(categoryId = value) }, CategoriesId.mariaType.underlying)
 
   override fun columns(): List<FieldLike<*, ProductCategoriesRow>> = listOf(this.productId().underlying, this.categoryId().underlying, this.isPrimary().underlying, this.sortOrder().underlying)
 
-  fun compositeIdIn(compositeIds: List<ProductCategoriesId>): SqlExpr<Boolean> = TupleExpr.of(productId(), categoryId()).among(compositeIds)
+  fun compositeIdIn(compositeIds: List<ProductCategoriesId>): SqlExpr<kotlin.Boolean> = TupleExpr.of(productId(), categoryId()).among(compositeIds)
 
-  fun compositeIdIs(compositeId: ProductCategoriesId): SqlExpr<Boolean> = SqlExpr.all(productId().isEqual(compositeId.productId), categoryId().isEqual(compositeId.categoryId))
+  fun compositeIdIs(compositeId: ProductCategoriesId): SqlExpr<kotlin.Boolean> = SqlExpr.all(productId().isEqual(compositeId.productId), categoryId().isEqual(compositeId.categoryId))
 
   fun fkCategories(): ForeignKey<CategoriesFields, CategoriesRow> = ForeignKey.of<CategoriesFields, CategoriesRow>("fk_pc_category").withColumnPair<CategoriesId>(categoryId(), CategoriesFields::categoryId)
 
   fun fkProducts(): ForeignKey<ProductsFields, ProductsRow> = ForeignKey.of<ProductsFields, ProductsRow>("fk_pc_product").withColumnPair<ProductsId>(productId(), ProductsFields::productId)
 
-  fun isPrimary(): Field</* user-picked */ IsPrimary, ProductCategoriesRow> = Field</* user-picked */ IsPrimary, ProductCategoriesRow>(_path, "is_primary", ProductCategoriesRow::isPrimary, null, null, { row, value -> row.copy(isPrimary = value) }, IsPrimary.mariaType)
+  fun isPrimary(): Field</* user-picked */ IsPrimary, ProductCategoriesRow> = Field</* user-picked */ IsPrimary, ProductCategoriesRow>(_path, "is_primary", ProductCategoriesRow::isPrimary, null, null, { row, value -> row.copy(isPrimary = value) }, IsPrimary.mariaType.underlying)
 
-  fun productId(): IdField<ProductsId, ProductCategoriesRow> = IdField<ProductsId, ProductCategoriesRow>(_path, "product_id", ProductCategoriesRow::productId, null, null, { row, value -> row.copy(productId = value) }, ProductsId.mariaType)
+  fun productId(): IdField<ProductsId, ProductCategoriesRow> = IdField<ProductsId, ProductCategoriesRow>(_path, "product_id", ProductCategoriesRow::productId, null, null, { row, value -> row.copy(productId = value) }, ProductsId.mariaType.underlying)
 
-  override fun rowParser(): RowParser<ProductCategoriesRow> = ProductCategoriesRow._rowParser.underlying
+  override fun rowCodec(): RowCodec<ProductCategoriesRow> = ProductCategoriesRow.rowCodec.underlying
 
-  fun sortOrder(): Field<Short, ProductCategoriesRow> = Field<Short, ProductCategoriesRow>(_path, "sort_order", ProductCategoriesRow::sortOrder, null, null, { row, value -> row.copy(sortOrder = value) }, KotlinDbTypes.MariaTypes.smallint)
+  fun sortOrder(): Field<kotlin.Short, ProductCategoriesRow> = Field<kotlin.Short, ProductCategoriesRow>(_path, "sort_order", ProductCategoriesRow::sortOrder, null, null, { row, value -> row.copy(sortOrder = value) }, MariaTypes.smallint.underlying)
 
   override fun withPaths(_path: List<Path>): RelationStructure<ProductCategoriesFields, ProductCategoriesRow> = ProductCategoriesFields(_path)
 

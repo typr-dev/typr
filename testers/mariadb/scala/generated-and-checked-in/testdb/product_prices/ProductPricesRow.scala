@@ -6,12 +6,10 @@
 package testdb.product_prices
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import dev.typr.foundations.MariaTypes
+import dev.typr.dslsc.RowCodecs
 import dev.typr.foundations.Tuple.Tuple7
-import dev.typr.foundations.scala.DbTypeOps
-import dev.typr.foundations.scala.RowParser
-import dev.typr.foundations.scala.RowParsers
-import dev.typr.foundations.scala.ScalaDbTypes
+import dev.typr.foundationssc.MariaTypes
+import dev.typr.foundationssc.RowCodec
 import java.time.LocalDate
 import testdb.customtypes.Defaulted
 import testdb.price_tiers.PriceTiersId
@@ -80,5 +78,5 @@ case class ProductPricesRow(
 }
 
 object ProductPricesRow {
-  val `_rowParser`: RowParser[ProductPricesRow] = RowParsers.of(ProductPricesId.mariaType, ProductsId.mariaType, PriceTiersId.mariaType.nullable, ScalaDbTypes.MariaTypes.numeric, MariaTypes.char_, MariaTypes.date, MariaTypes.date.nullable)(ProductPricesRow.apply)(row => Array[Any](row.priceId, row.productId, row.tierId, row.price, row.currencyCode, row.validFrom, row.validTo))
+  val rowCodec: RowCodec[ProductPricesRow] = RowCodecs.of(ProductPricesId.mariaType, ProductsId.mariaType, PriceTiersId.mariaType.opt, MariaTypes.numeric, MariaTypes.char_, MariaTypes.date, MariaTypes.date.opt)(ProductPricesRow.apply)(row => Array[Any](row.priceId, row.productId, row.tierId, row.price, row.currencyCode, row.validFrom, row.validTo))
 }

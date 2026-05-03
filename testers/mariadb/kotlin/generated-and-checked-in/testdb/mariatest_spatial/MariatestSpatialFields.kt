@@ -5,16 +5,16 @@
  */
 package testdb.mariatest_spatial
 
-import dev.typr.foundations.MariaTypes
-import dev.typr.foundations.RowParser
-import dev.typr.foundations.dsl.FieldsBase
-import dev.typr.foundations.dsl.Path
-import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.kotlin.RelationStructure
-import dev.typr.foundations.kotlin.SqlExpr
-import dev.typr.foundations.kotlin.SqlExpr.Field
-import dev.typr.foundations.kotlin.SqlExpr.IdField
-import dev.typr.foundations.kotlin.TupleExpr9
+import dev.typr.dsl.FieldsBase
+import dev.typr.dsl.Path
+import dev.typr.dsl.SqlExpr.FieldLike
+import dev.typr.dslkt.RelationStructure
+import dev.typr.dslkt.SqlExpr
+import dev.typr.dslkt.SqlExpr.Field
+import dev.typr.dslkt.SqlExpr.IdField
+import dev.typr.dslkt.TupleExpr9
+import dev.typr.foundations.RowCodec
+import dev.typr.foundationskt.MariaTypes
 import kotlin.collections.List
 import org.mariadb.jdbc.type.Geometry
 import org.mariadb.jdbc.type.GeometryCollection
@@ -48,25 +48,25 @@ data class MariatestSpatialFields(val _path: List<Path>) : TupleExpr9<MariatestS
 
   override fun columns(): List<FieldLike<*, MariatestSpatialRow>> = listOf(this.id().underlying, this.geometryCol().underlying, this.pointCol().underlying, this.linestringCol().underlying, this.polygonCol().underlying, this.multipointCol().underlying, this.multilinestringCol().underlying, this.multipolygonCol().underlying, this.geometrycollectionCol().underlying)
 
-  fun geometryCol(): Field<Geometry, MariatestSpatialRow> = Field<Geometry, MariatestSpatialRow>(_path, "geometry_col", MariatestSpatialRow::geometryCol, null, null, { row, value -> row.copy(geometryCol = value) }, MariaTypes.geometry)
+  fun geometryCol(): Field<Geometry, MariatestSpatialRow> = Field<Geometry, MariatestSpatialRow>(_path, "geometry_col", MariatestSpatialRow::geometryCol, null, null, { row, value -> row.copy(geometryCol = value) }, MariaTypes.geometry.underlying)
 
-  fun geometrycollectionCol(): Field<GeometryCollection, MariatestSpatialRow> = Field<GeometryCollection, MariatestSpatialRow>(_path, "geometrycollection_col", MariatestSpatialRow::geometrycollectionCol, null, null, { row, value -> row.copy(geometrycollectionCol = value) }, MariaTypes.geometrycollection)
+  fun geometrycollectionCol(): Field<GeometryCollection, MariatestSpatialRow> = Field<GeometryCollection, MariatestSpatialRow>(_path, "geometrycollection_col", MariatestSpatialRow::geometrycollectionCol, null, null, { row, value -> row.copy(geometrycollectionCol = value) }, MariaTypes.geometrycollection.underlying)
 
-  fun id(): IdField<MariatestSpatialId, MariatestSpatialRow> = IdField<MariatestSpatialId, MariatestSpatialRow>(_path, "id", MariatestSpatialRow::id, null, null, { row, value -> row.copy(id = value) }, MariatestSpatialId.mariaType)
+  fun id(): IdField<MariatestSpatialId, MariatestSpatialRow> = IdField<MariatestSpatialId, MariatestSpatialRow>(_path, "id", MariatestSpatialRow::id, null, null, { row, value -> row.copy(id = value) }, MariatestSpatialId.mariaType.underlying)
 
-  fun linestringCol(): Field<LineString, MariatestSpatialRow> = Field<LineString, MariatestSpatialRow>(_path, "linestring_col", MariatestSpatialRow::linestringCol, null, null, { row, value -> row.copy(linestringCol = value) }, MariaTypes.linestring)
+  fun linestringCol(): Field<LineString, MariatestSpatialRow> = Field<LineString, MariatestSpatialRow>(_path, "linestring_col", MariatestSpatialRow::linestringCol, null, null, { row, value -> row.copy(linestringCol = value) }, MariaTypes.linestring.underlying)
 
-  fun multilinestringCol(): Field<MultiLineString, MariatestSpatialRow> = Field<MultiLineString, MariatestSpatialRow>(_path, "multilinestring_col", MariatestSpatialRow::multilinestringCol, null, null, { row, value -> row.copy(multilinestringCol = value) }, MariaTypes.multilinestring)
+  fun multilinestringCol(): Field<MultiLineString, MariatestSpatialRow> = Field<MultiLineString, MariatestSpatialRow>(_path, "multilinestring_col", MariatestSpatialRow::multilinestringCol, null, null, { row, value -> row.copy(multilinestringCol = value) }, MariaTypes.multilinestring.underlying)
 
-  fun multipointCol(): Field<MultiPoint, MariatestSpatialRow> = Field<MultiPoint, MariatestSpatialRow>(_path, "multipoint_col", MariatestSpatialRow::multipointCol, null, null, { row, value -> row.copy(multipointCol = value) }, MariaTypes.multipoint)
+  fun multipointCol(): Field<MultiPoint, MariatestSpatialRow> = Field<MultiPoint, MariatestSpatialRow>(_path, "multipoint_col", MariatestSpatialRow::multipointCol, null, null, { row, value -> row.copy(multipointCol = value) }, MariaTypes.multipoint.underlying)
 
-  fun multipolygonCol(): Field<MultiPolygon, MariatestSpatialRow> = Field<MultiPolygon, MariatestSpatialRow>(_path, "multipolygon_col", MariatestSpatialRow::multipolygonCol, null, null, { row, value -> row.copy(multipolygonCol = value) }, MariaTypes.multipolygon)
+  fun multipolygonCol(): Field<MultiPolygon, MariatestSpatialRow> = Field<MultiPolygon, MariatestSpatialRow>(_path, "multipolygon_col", MariatestSpatialRow::multipolygonCol, null, null, { row, value -> row.copy(multipolygonCol = value) }, MariaTypes.multipolygon.underlying)
 
-  fun pointCol(): Field<Point, MariatestSpatialRow> = Field<Point, MariatestSpatialRow>(_path, "point_col", MariatestSpatialRow::pointCol, null, null, { row, value -> row.copy(pointCol = value) }, MariaTypes.point)
+  fun pointCol(): Field<Point, MariatestSpatialRow> = Field<Point, MariatestSpatialRow>(_path, "point_col", MariatestSpatialRow::pointCol, null, null, { row, value -> row.copy(pointCol = value) }, MariaTypes.point.underlying)
 
-  fun polygonCol(): Field<Polygon, MariatestSpatialRow> = Field<Polygon, MariatestSpatialRow>(_path, "polygon_col", MariatestSpatialRow::polygonCol, null, null, { row, value -> row.copy(polygonCol = value) }, MariaTypes.polygon)
+  fun polygonCol(): Field<Polygon, MariatestSpatialRow> = Field<Polygon, MariatestSpatialRow>(_path, "polygon_col", MariatestSpatialRow::polygonCol, null, null, { row, value -> row.copy(polygonCol = value) }, MariaTypes.polygon.underlying)
 
-  override fun rowParser(): RowParser<MariatestSpatialRow> = MariatestSpatialRow._rowParser.underlying
+  override fun rowCodec(): RowCodec<MariatestSpatialRow> = MariatestSpatialRow.rowCodec.underlying
 
   override fun withPaths(_path: List<Path>): RelationStructure<MariatestSpatialFields, MariatestSpatialRow> = MariatestSpatialFields(_path)
 

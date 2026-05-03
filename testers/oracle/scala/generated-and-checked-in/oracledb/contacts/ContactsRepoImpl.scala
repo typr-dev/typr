@@ -5,117 +5,118 @@
  */
 package oracledb.contacts
 
+import dev.typr.dsl.DeleteBuilder
+import dev.typr.dsl.Dialect
+import dev.typr.dsl.SelectBuilder
+import dev.typr.dsl.UpdateBuilder
+import dev.typr.foundations.Connection
+import dev.typr.foundations.ConnectionRead
 import dev.typr.foundations.Fragment
 import dev.typr.foundations.OracleTypes
-import dev.typr.foundations.dsl.DeleteBuilder
-import dev.typr.foundations.dsl.Dialect
-import dev.typr.foundations.dsl.SelectBuilder
-import dev.typr.foundations.dsl.UpdateBuilder
-import java.sql.Connection
 import java.util.ArrayList
 import java.util.HashMap
 import java.util.Optional
+import oracledb.EmailTableT
 import oracledb.TagVarrayT
-import oracledb.userdefined.Email
-import dev.typr.foundations.Fragment.interpolate
+import dev.typr.foundations.Fragment.concat
 
 class ContactsRepoImpl extends ContactsRepo {
   override def delete: DeleteBuilder[ContactsFields, ContactsRow] = DeleteBuilder.of(""""CONTACTS"""", ContactsFields.structure, Dialect.ORACLE)
 
-  override def deleteById(contactId: ContactsId)(using c: Connection): java.lang.Boolean = interpolate(Fragment.lit("""delete from "CONTACTS" where "CONTACT_ID" = """), Fragment.encode(ContactsId.oracleType, contactId), Fragment.lit("")).update().runUnchecked(c) > 0
+  override def deleteById(contactId: ContactsId)(using c: Connection): java.lang.Boolean = concat(Fragment.of("""delete from "CONTACTS" where "CONTACT_ID" = """), Fragment.encode(ContactsId.oracleType, contactId), Fragment.of("")).update().run(c) > 0
 
-  override def deleteByIds(contactIds: Array[ContactsId])(using c: Connection): Integer = {
+  override def deleteByIds(contactIds: java.util.List[ContactsId])(using c: Connection): Integer = {
     val fragments: ArrayList[Fragment] = new ArrayList()
-    contactIds.foreach { id => fragments.add(Fragment.encode(ContactsId.oracleType, id)): @scala.annotation.nowarn }
-    return Fragment.interpolate(Fragment.lit("""delete from "CONTACTS" where "CONTACT_ID" in ("""), Fragment.comma(fragments), Fragment.lit(")")).update().runUnchecked(c)
+    contactIds.forEach { id => fragments.add(Fragment.encode(ContactsId.oracleType, id)): @scala.annotation.nowarn }
+    return Fragment.concat(Fragment.of("""delete from "CONTACTS" where "CONTACT_ID" in ("""), Fragment.comma(fragments), Fragment.of(")")).update().run(c)
   }
 
   override def insert(unsaved: ContactsRow)(using c: Connection): ContactsId = {
-  interpolate(Fragment.lit("""insert into "CONTACTS"("CONTACT_ID", "NAME", "EMAILS", "TAGS")
-    values ("""), Fragment.encode(ContactsId.oracleType, unsaved.contactId), Fragment.lit(", "), Fragment.encode(OracleTypes.varchar2, unsaved.name), Fragment.lit(", "), Fragment.encode(Email.oracleType.opt(), unsaved.emails), Fragment.lit(", "), Fragment.encode(TagVarrayT.oracleType.opt(), unsaved.tags), Fragment.lit(""")
+  concat(Fragment.of("""insert into "CONTACTS"("CONTACT_ID", "NAME", "EMAILS", "TAGS")
+    values ("""), Fragment.encode(ContactsId.oracleType, unsaved.contactId), Fragment.of(", "), Fragment.encode(OracleTypes.varchar2, unsaved.name), Fragment.of(", "), Fragment.encode(EmailTableT.oracleType.opt, unsaved.emails), Fragment.of(", "), Fragment.encode(TagVarrayT.oracleType.opt, unsaved.tags), Fragment.of(""")
     """))
-    .updateReturningGeneratedKeys(Array[String]("CONTACT_ID"), ContactsId.`_rowParser`.exactlyOne()).runUnchecked(c)
+    .updateReturningGeneratedKeys(Array[String]("CONTACT_ID"), ContactsId.rowCodec.exactlyOne()).run(c)
   }
 
   override def insert(unsaved: ContactsRowUnsaved)(using c: Connection): ContactsId = {
     val columns: ArrayList[Fragment] = new ArrayList()
     val values: ArrayList[Fragment] = new ArrayList()
-    columns.add(Fragment.lit(""""NAME"""")): @scala.annotation.nowarn
-    values.add(interpolate(Fragment.encode(OracleTypes.varchar2, unsaved.name), Fragment.lit(""))): @scala.annotation.nowarn
-    columns.add(Fragment.lit(""""EMAILS"""")): @scala.annotation.nowarn
-    values.add(interpolate(Fragment.encode(Email.oracleType.opt(), unsaved.emails), Fragment.lit(""))): @scala.annotation.nowarn
-    columns.add(Fragment.lit(""""TAGS"""")): @scala.annotation.nowarn
-    values.add(interpolate(Fragment.encode(TagVarrayT.oracleType.opt(), unsaved.tags), Fragment.lit(""))): @scala.annotation.nowarn
+    columns.add(Fragment.of(""""NAME"""")): @scala.annotation.nowarn
+    values.add(concat(Fragment.encode(OracleTypes.varchar2, unsaved.name), Fragment.of(""))): @scala.annotation.nowarn
+    columns.add(Fragment.of(""""EMAILS"""")): @scala.annotation.nowarn
+    values.add(concat(Fragment.encode(EmailTableT.oracleType.opt, unsaved.emails), Fragment.of(""))): @scala.annotation.nowarn
+    columns.add(Fragment.of(""""TAGS"""")): @scala.annotation.nowarn
+    values.add(concat(Fragment.encode(TagVarrayT.oracleType.opt, unsaved.tags), Fragment.of(""))): @scala.annotation.nowarn
     unsaved.contactId.visit(
       {  },
-      value => { columns.add(Fragment.lit(""""CONTACT_ID"""")): @scala.annotation.nowarn; values.add(interpolate(Fragment.encode(ContactsId.oracleType, value), Fragment.lit(""))): @scala.annotation.nowarn }
+      value => { columns.add(Fragment.of(""""CONTACT_ID"""")): @scala.annotation.nowarn; values.add(concat(Fragment.encode(ContactsId.oracleType, value), Fragment.of(""))): @scala.annotation.nowarn }
     );
     val q: Fragment = {
-      interpolate(Fragment.lit("""insert into "CONTACTS"("""), Fragment.comma(columns), Fragment.lit(""")
-      values ("""), Fragment.comma(values), Fragment.lit(""")
+      concat(Fragment.of("""insert into "CONTACTS"("""), Fragment.comma(columns), Fragment.of(""")
+      values ("""), Fragment.comma(values), Fragment.of(""")
       """))
     }
-    return q.updateReturningGeneratedKeys(Array[String]("CONTACT_ID"), ContactsId.`_rowParser`.exactlyOne()).runUnchecked(c)
+    return q.updateReturningGeneratedKeys(Array[String]("CONTACT_ID"), ContactsId.rowCodec.exactlyOne()).run(c)
   }
 
-  override def select: SelectBuilder[ContactsFields, ContactsRow] = SelectBuilder.of(""""CONTACTS"""", ContactsFields.structure, ContactsRow.`_rowParser`, Dialect.ORACLE)
+  override def select: SelectBuilder[ContactsFields, ContactsRow] = SelectBuilder.of(""""CONTACTS"""", ContactsFields.structure, ContactsRow.rowCodec, Dialect.ORACLE)
 
-  override def selectAll(using c: Connection): java.util.List[ContactsRow] = {
-    interpolate(Fragment.lit("""select "CONTACT_ID", "NAME", "EMAILS", "TAGS"
+  override def selectAll(using c: ConnectionRead): java.util.List[ContactsRow] = {
+    concat(Fragment.of("""select "CONTACT_ID", "NAME", "EMAILS", "TAGS"
     from "CONTACTS"
-    """)).query(ContactsRow.`_rowParser`.all()).runUnchecked(c)
+    """)).query(ContactsRow.rowCodec.all()).run(c)
   }
 
-  override def selectById(contactId: ContactsId)(using c: Connection): Optional[ContactsRow] = {
-    interpolate(Fragment.lit("""select "CONTACT_ID", "NAME", "EMAILS", "TAGS"
+  override def selectById(contactId: ContactsId)(using c: ConnectionRead): Optional[ContactsRow] = {
+    concat(Fragment.of("""select "CONTACT_ID", "NAME", "EMAILS", "TAGS"
     from "CONTACTS"
-    where "CONTACT_ID" = """), Fragment.encode(ContactsId.oracleType, contactId), Fragment.lit("")).query(ContactsRow.`_rowParser`.first()).runUnchecked(c)
+    where "CONTACT_ID" = """), Fragment.encode(ContactsId.oracleType, contactId), Fragment.of("")).query(ContactsRow.rowCodec.first()).run(c)
   }
 
-  override def selectByIds(contactIds: Array[ContactsId])(using c: Connection): java.util.List[ContactsRow] = {
+  override def selectByIds(contactIds: java.util.List[ContactsId])(using c: ConnectionRead): java.util.List[ContactsRow] = {
     val fragments: ArrayList[Fragment] = new ArrayList()
-    contactIds.foreach { id => fragments.add(Fragment.encode(ContactsId.oracleType, id)): @scala.annotation.nowarn }
-    return Fragment.interpolate(Fragment.lit("""select "CONTACT_ID", "NAME", "EMAILS", "TAGS" from "CONTACTS" where "CONTACT_ID" in ("""), Fragment.comma(fragments), Fragment.lit(")")).query(ContactsRow.`_rowParser`.all()).runUnchecked(c)
+    contactIds.forEach { id => fragments.add(Fragment.encode(ContactsId.oracleType, id)): @scala.annotation.nowarn }
+    return Fragment.concat(Fragment.of("""select "CONTACT_ID", "NAME", "EMAILS", "TAGS" from "CONTACTS" where "CONTACT_ID" in ("""), Fragment.comma(fragments), Fragment.of(")")).query(ContactsRow.rowCodec.all()).run(c)
   }
 
-  override def selectByIdsTracked(contactIds: Array[ContactsId])(using c: Connection): java.util.Map[ContactsId, ContactsRow] = {
+  override def selectByIdsTracked(contactIds: java.util.List[ContactsId])(using c: ConnectionRead): java.util.Map[ContactsId, ContactsRow] = {
     val ret: HashMap[ContactsId, ContactsRow] = new HashMap[ContactsId, ContactsRow]()
     selectByIds(contactIds)(using c).forEach(row => ret.put(row.contactId, row): @scala.annotation.nowarn)
     return ret
   }
 
-  override def update: UpdateBuilder[ContactsFields, ContactsRow] = UpdateBuilder.of(""""CONTACTS"""", ContactsFields.structure, ContactsRow.`_rowParser`, Dialect.ORACLE)
+  override def update: UpdateBuilder[ContactsFields, ContactsRow] = UpdateBuilder.of(""""CONTACTS"""", ContactsFields.structure, ContactsRow.rowCodec, Dialect.ORACLE)
 
   override def update(row: ContactsRow)(using c: Connection): java.lang.Boolean = {
     val contactId: ContactsId = row.contactId
-    return interpolate(Fragment.lit("""update "CONTACTS"
-    set "NAME" = """), Fragment.encode(OracleTypes.varchar2, row.name), Fragment.lit(""",
-    "EMAILS" = """), Fragment.encode(Email.oracleType.opt(), row.emails), Fragment.lit(""",
-    "TAGS" = """), Fragment.encode(TagVarrayT.oracleType.opt(), row.tags), Fragment.lit("""
-    where "CONTACT_ID" = """), Fragment.encode(ContactsId.oracleType, contactId), Fragment.lit("")).update().runUnchecked(c) > 0
+    return concat(Fragment.of("""update "CONTACTS"
+    set "NAME" = """), Fragment.encode(OracleTypes.varchar2, row.name), Fragment.of(""",
+    "EMAILS" = """), Fragment.encode(EmailTableT.oracleType.opt, row.emails), Fragment.of(""",
+    "TAGS" = """), Fragment.encode(TagVarrayT.oracleType.opt, row.tags), Fragment.of("""
+    where "CONTACT_ID" = """), Fragment.encode(ContactsId.oracleType, contactId), Fragment.of("")).update().run(c) > 0
   }
 
   override def upsert(unsaved: ContactsRow)(using c: Connection): Unit = {
-    interpolate(Fragment.lit("""MERGE INTO "CONTACTS" t
-    USING (SELECT """), Fragment.encode(ContactsId.oracleType, unsaved.contactId), Fragment.lit(", "), Fragment.encode(OracleTypes.varchar2, unsaved.name), Fragment.lit(", "), Fragment.encode(Email.oracleType.opt(), unsaved.emails), Fragment.lit(", "), Fragment.encode(TagVarrayT.oracleType.opt(), unsaved.tags), Fragment.lit(""" FROM DUAL) s
+    concat(Fragment.of("""MERGE INTO "CONTACTS" t
+    USING (SELECT """), Fragment.encode(ContactsId.oracleType, unsaved.contactId), Fragment.of(", "), Fragment.encode(OracleTypes.varchar2, unsaved.name), Fragment.of(", "), Fragment.encode(EmailTableT.oracleType.opt, unsaved.emails), Fragment.of(", "), Fragment.encode(TagVarrayT.oracleType.opt, unsaved.tags), Fragment.of(""" FROM DUAL) s
     ON (t."CONTACT_ID" = s."CONTACT_ID")
     WHEN MATCHED THEN UPDATE SET t."NAME" = s."NAME",
     t."EMAILS" = s."EMAILS",
     t."TAGS" = s."TAGS"
-    WHEN NOT MATCHED THEN INSERT ("CONTACT_ID", "NAME", "EMAILS", "TAGS") VALUES ("""), Fragment.encode(ContactsId.oracleType, unsaved.contactId), Fragment.lit(", "), Fragment.encode(OracleTypes.varchar2, unsaved.name), Fragment.lit(", "), Fragment.encode(Email.oracleType.opt(), unsaved.emails), Fragment.lit(", "), Fragment.encode(TagVarrayT.oracleType.opt(), unsaved.tags), Fragment.lit(")"))
+    WHEN NOT MATCHED THEN INSERT ("CONTACT_ID", "NAME", "EMAILS", "TAGS") VALUES ("""), Fragment.encode(ContactsId.oracleType, unsaved.contactId), Fragment.of(", "), Fragment.encode(OracleTypes.varchar2, unsaved.name), Fragment.of(", "), Fragment.encode(EmailTableT.oracleType.opt, unsaved.emails), Fragment.of(", "), Fragment.encode(TagVarrayT.oracleType.opt, unsaved.tags), Fragment.of(")"))
       .update()
-      .runUnchecked(c): @scala.annotation.nowarn
+      .run(c): @scala.annotation.nowarn
   }
 
   override def upsertBatch(unsaved: java.util.Iterator[ContactsRow])(using c: Connection): Unit = {
-    interpolate(Fragment.lit("""MERGE INTO "CONTACTS" t
+    concat(Fragment.of("""MERGE INTO "CONTACTS" t
     USING (SELECT ?, ?, ?, ? FROM DUAL) s
     ON (t."CONTACT_ID" = s."CONTACT_ID")
     WHEN MATCHED THEN UPDATE SET t."NAME" = s."NAME",
     t."EMAILS" = s."EMAILS",
     t."TAGS" = s."TAGS"
     WHEN NOT MATCHED THEN INSERT ("CONTACT_ID", "NAME", "EMAILS", "TAGS") VALUES (?, ?, ?, ?)"""))
-      .updateMany(ContactsRow.`_rowParser`, unsaved)
-      .runUnchecked(c): @scala.annotation.nowarn
+      .updateMany(ContactsRow.rowCodec, unsaved)
+      .run(c): @scala.annotation.nowarn
   }
 }

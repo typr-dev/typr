@@ -12,16 +12,16 @@ import adventureworks.precisetypes.String100
 import adventureworks.precisetypes.String20
 import adventureworks.precisetypes.String255
 import adventureworks.precisetypes.String50
-import dev.typr.foundations.PgTypes
-import dev.typr.foundations.RowParser
-import dev.typr.foundations.dsl.FieldsBase
-import dev.typr.foundations.dsl.Path
-import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.kotlin.RelationStructure
-import dev.typr.foundations.kotlin.SqlExpr
-import dev.typr.foundations.kotlin.SqlExpr.Field
-import dev.typr.foundations.kotlin.SqlExpr.IdField
-import dev.typr.foundations.kotlin.TupleExpr25
+import dev.typr.dsl.FieldsBase
+import dev.typr.dsl.Path
+import dev.typr.dsl.SqlExpr.FieldLike
+import dev.typr.dslkt.RelationStructure
+import dev.typr.dslkt.SqlExpr
+import dev.typr.dslkt.SqlExpr.Field
+import dev.typr.dslkt.SqlExpr.IdField
+import dev.typr.dslkt.TupleExpr25
+import dev.typr.foundations.RowCodec
+import dev.typr.foundationskt.PgTypes
 import java.math.BigDecimal
 import java.time.Instant
 import java.time.LocalDateTime
@@ -82,59 +82,59 @@ data class PrecisionTypesFields(val _path: List<Path>) : TupleExpr25<PrecisionTy
 
   override fun _path(): List<Path> = _path
 
-  fun bpchar10(): Field<PaddedString10, PrecisionTypesRow> = Field<PaddedString10, PrecisionTypesRow>(_path, "bpchar10", PrecisionTypesRow::bpchar10, null, "bpchar", { row, value -> row.copy(bpchar10 = value) }, PaddedString10.pgType)
+  fun bpchar10(): Field<PaddedString10, PrecisionTypesRow> = Field<PaddedString10, PrecisionTypesRow>(_path, "bpchar10", PrecisionTypesRow::bpchar10, null, "bpchar", { row, value -> row.copy(bpchar10 = value) }, PaddedString10.pgType.underlying)
 
-  fun bpchar3(): Field<PaddedString3, PrecisionTypesRow> = Field<PaddedString3, PrecisionTypesRow>(_path, "bpchar3", PrecisionTypesRow::bpchar3, null, "bpchar", { row, value -> row.copy(bpchar3 = value) }, PaddedString3.pgType)
+  fun bpchar3(): Field<PaddedString3, PrecisionTypesRow> = Field<PaddedString3, PrecisionTypesRow>(_path, "bpchar3", PrecisionTypesRow::bpchar3, null, "bpchar", { row, value -> row.copy(bpchar3 = value) }, PaddedString3.pgType.underlying)
 
   override fun columns(): List<FieldLike<*, PrecisionTypesRow>> = listOf(this.id().underlying, this.string10().underlying, this.string20().underlying, this.string50().underlying, this.string100().underlying, this.string255().underlying, this.bpchar3().underlying, this.bpchar10().underlying, this.decimal52().underlying, this.decimal102().underlying, this.decimal184().underlying, this.numeric82().underlying, this.numeric124().underlying, this.timestamp0().underlying, this.timestamp3().underlying, this.timestamp6().underlying, this.timestamptz0().underlying, this.timestamptz3().underlying, this.timestamptz6().underlying, this.time0().underlying, this.time3().underlying, this.time6().underlying, this.timetz0().underlying, this.timetz3().underlying, this.timetz6().underlying)
 
-  fun decimal102(): Field<BigDecimal, PrecisionTypesRow> = Field<BigDecimal, PrecisionTypesRow>(_path, "decimal10_2", PrecisionTypesRow::decimal102, null, "numeric", { row, value -> row.copy(decimal102 = value) }, PgTypes.numeric)
+  fun decimal102(): Field<BigDecimal, PrecisionTypesRow> = Field<BigDecimal, PrecisionTypesRow>(_path, "decimal10_2", PrecisionTypesRow::decimal102, null, "numeric", { row, value -> row.copy(decimal102 = value) }, PgTypes.numeric.underlying)
 
-  fun decimal184(): Field<BigDecimal, PrecisionTypesRow> = Field<BigDecimal, PrecisionTypesRow>(_path, "decimal18_4", PrecisionTypesRow::decimal184, null, "numeric", { row, value -> row.copy(decimal184 = value) }, PgTypes.numeric)
+  fun decimal184(): Field<BigDecimal, PrecisionTypesRow> = Field<BigDecimal, PrecisionTypesRow>(_path, "decimal18_4", PrecisionTypesRow::decimal184, null, "numeric", { row, value -> row.copy(decimal184 = value) }, PgTypes.numeric.underlying)
 
-  fun decimal52(): Field<BigDecimal, PrecisionTypesRow> = Field<BigDecimal, PrecisionTypesRow>(_path, "decimal5_2", PrecisionTypesRow::decimal52, null, "numeric", { row, value -> row.copy(decimal52 = value) }, PgTypes.numeric)
+  fun decimal52(): Field<BigDecimal, PrecisionTypesRow> = Field<BigDecimal, PrecisionTypesRow>(_path, "decimal5_2", PrecisionTypesRow::decimal52, null, "numeric", { row, value -> row.copy(decimal52 = value) }, PgTypes.numeric.underlying)
 
-  fun id(): IdField<PrecisionTypesId, PrecisionTypesRow> = IdField<PrecisionTypesId, PrecisionTypesRow>(_path, "id", PrecisionTypesRow::id, null, "int4", { row, value -> row.copy(id = value) }, PrecisionTypesId.pgType)
+  fun id(): IdField<PrecisionTypesId, PrecisionTypesRow> = IdField<PrecisionTypesId, PrecisionTypesRow>(_path, "id", PrecisionTypesRow::id, null, "int4", { row, value -> row.copy(id = value) }, PrecisionTypesId.pgType.underlying)
 
-  fun numeric124(): Field<BigDecimal, PrecisionTypesRow> = Field<BigDecimal, PrecisionTypesRow>(_path, "numeric12_4", PrecisionTypesRow::numeric124, null, "numeric", { row, value -> row.copy(numeric124 = value) }, PgTypes.numeric)
+  fun numeric124(): Field<BigDecimal, PrecisionTypesRow> = Field<BigDecimal, PrecisionTypesRow>(_path, "numeric12_4", PrecisionTypesRow::numeric124, null, "numeric", { row, value -> row.copy(numeric124 = value) }, PgTypes.numeric.underlying)
 
-  fun numeric82(): Field<BigDecimal, PrecisionTypesRow> = Field<BigDecimal, PrecisionTypesRow>(_path, "numeric8_2", PrecisionTypesRow::numeric82, null, "numeric", { row, value -> row.copy(numeric82 = value) }, PgTypes.numeric)
+  fun numeric82(): Field<BigDecimal, PrecisionTypesRow> = Field<BigDecimal, PrecisionTypesRow>(_path, "numeric8_2", PrecisionTypesRow::numeric82, null, "numeric", { row, value -> row.copy(numeric82 = value) }, PgTypes.numeric.underlying)
 
-  override fun rowParser(): RowParser<PrecisionTypesRow> = PrecisionTypesRow._rowParser.underlying
+  override fun rowCodec(): RowCodec<PrecisionTypesRow> = PrecisionTypesRow.rowCodec.underlying
 
-  fun string10(): Field<String10, PrecisionTypesRow> = Field<String10, PrecisionTypesRow>(_path, "string10", PrecisionTypesRow::string10, null, null, { row, value -> row.copy(string10 = value) }, String10.pgType)
+  fun string10(): Field<String10, PrecisionTypesRow> = Field<String10, PrecisionTypesRow>(_path, "string10", PrecisionTypesRow::string10, null, null, { row, value -> row.copy(string10 = value) }, String10.pgType.underlying)
 
-  fun string100(): Field<String100, PrecisionTypesRow> = Field<String100, PrecisionTypesRow>(_path, "string100", PrecisionTypesRow::string100, null, null, { row, value -> row.copy(string100 = value) }, String100.pgType)
+  fun string100(): Field<String100, PrecisionTypesRow> = Field<String100, PrecisionTypesRow>(_path, "string100", PrecisionTypesRow::string100, null, null, { row, value -> row.copy(string100 = value) }, String100.pgType.underlying)
 
-  fun string20(): Field<String20, PrecisionTypesRow> = Field<String20, PrecisionTypesRow>(_path, "string20", PrecisionTypesRow::string20, null, null, { row, value -> row.copy(string20 = value) }, String20.pgType)
+  fun string20(): Field<String20, PrecisionTypesRow> = Field<String20, PrecisionTypesRow>(_path, "string20", PrecisionTypesRow::string20, null, null, { row, value -> row.copy(string20 = value) }, String20.pgType.underlying)
 
-  fun string255(): Field<String255, PrecisionTypesRow> = Field<String255, PrecisionTypesRow>(_path, "string255", PrecisionTypesRow::string255, null, null, { row, value -> row.copy(string255 = value) }, String255.pgType)
+  fun string255(): Field<String255, PrecisionTypesRow> = Field<String255, PrecisionTypesRow>(_path, "string255", PrecisionTypesRow::string255, null, null, { row, value -> row.copy(string255 = value) }, String255.pgType.underlying)
 
-  fun string50(): Field<String50, PrecisionTypesRow> = Field<String50, PrecisionTypesRow>(_path, "string50", PrecisionTypesRow::string50, null, null, { row, value -> row.copy(string50 = value) }, String50.pgType)
+  fun string50(): Field<String50, PrecisionTypesRow> = Field<String50, PrecisionTypesRow>(_path, "string50", PrecisionTypesRow::string50, null, null, { row, value -> row.copy(string50 = value) }, String50.pgType.underlying)
 
-  fun time0(): Field<LocalTime, PrecisionTypesRow> = Field<LocalTime, PrecisionTypesRow>(_path, "time0", PrecisionTypesRow::time0, null, "time", { row, value -> row.copy(time0 = value) }, PgTypes.time)
+  fun time0(): Field<LocalTime, PrecisionTypesRow> = Field<LocalTime, PrecisionTypesRow>(_path, "time0", PrecisionTypesRow::time0, null, "time", { row, value -> row.copy(time0 = value) }, PgTypes.time.underlying)
 
-  fun time3(): Field<LocalTime, PrecisionTypesRow> = Field<LocalTime, PrecisionTypesRow>(_path, "time3", PrecisionTypesRow::time3, null, "time", { row, value -> row.copy(time3 = value) }, PgTypes.time)
+  fun time3(): Field<LocalTime, PrecisionTypesRow> = Field<LocalTime, PrecisionTypesRow>(_path, "time3", PrecisionTypesRow::time3, null, "time", { row, value -> row.copy(time3 = value) }, PgTypes.time.underlying)
 
-  fun time6(): Field<LocalTime, PrecisionTypesRow> = Field<LocalTime, PrecisionTypesRow>(_path, "time6", PrecisionTypesRow::time6, null, "time", { row, value -> row.copy(time6 = value) }, PgTypes.time)
+  fun time6(): Field<LocalTime, PrecisionTypesRow> = Field<LocalTime, PrecisionTypesRow>(_path, "time6", PrecisionTypesRow::time6, null, "time", { row, value -> row.copy(time6 = value) }, PgTypes.time.underlying)
 
-  fun timestamp0(): Field<LocalDateTime, PrecisionTypesRow> = Field<LocalDateTime, PrecisionTypesRow>(_path, "timestamp0", PrecisionTypesRow::timestamp0, null, "timestamp", { row, value -> row.copy(timestamp0 = value) }, PgTypes.timestamp)
+  fun timestamp0(): Field<LocalDateTime, PrecisionTypesRow> = Field<LocalDateTime, PrecisionTypesRow>(_path, "timestamp0", PrecisionTypesRow::timestamp0, null, "timestamp", { row, value -> row.copy(timestamp0 = value) }, PgTypes.timestamp.underlying)
 
-  fun timestamp3(): Field<LocalDateTime, PrecisionTypesRow> = Field<LocalDateTime, PrecisionTypesRow>(_path, "timestamp3", PrecisionTypesRow::timestamp3, null, "timestamp", { row, value -> row.copy(timestamp3 = value) }, PgTypes.timestamp)
+  fun timestamp3(): Field<LocalDateTime, PrecisionTypesRow> = Field<LocalDateTime, PrecisionTypesRow>(_path, "timestamp3", PrecisionTypesRow::timestamp3, null, "timestamp", { row, value -> row.copy(timestamp3 = value) }, PgTypes.timestamp.underlying)
 
-  fun timestamp6(): Field<LocalDateTime, PrecisionTypesRow> = Field<LocalDateTime, PrecisionTypesRow>(_path, "timestamp6", PrecisionTypesRow::timestamp6, null, "timestamp", { row, value -> row.copy(timestamp6 = value) }, PgTypes.timestamp)
+  fun timestamp6(): Field<LocalDateTime, PrecisionTypesRow> = Field<LocalDateTime, PrecisionTypesRow>(_path, "timestamp6", PrecisionTypesRow::timestamp6, null, "timestamp", { row, value -> row.copy(timestamp6 = value) }, PgTypes.timestamp.underlying)
 
-  fun timestamptz0(): Field<Instant, PrecisionTypesRow> = Field<Instant, PrecisionTypesRow>(_path, "timestamptz0", PrecisionTypesRow::timestamptz0, null, "timestamptz", { row, value -> row.copy(timestamptz0 = value) }, PgTypes.timestamptz)
+  fun timestamptz0(): Field<Instant, PrecisionTypesRow> = Field<Instant, PrecisionTypesRow>(_path, "timestamptz0", PrecisionTypesRow::timestamptz0, null, "timestamptz", { row, value -> row.copy(timestamptz0 = value) }, PgTypes.timestamptz.underlying)
 
-  fun timestamptz3(): Field<Instant, PrecisionTypesRow> = Field<Instant, PrecisionTypesRow>(_path, "timestamptz3", PrecisionTypesRow::timestamptz3, null, "timestamptz", { row, value -> row.copy(timestamptz3 = value) }, PgTypes.timestamptz)
+  fun timestamptz3(): Field<Instant, PrecisionTypesRow> = Field<Instant, PrecisionTypesRow>(_path, "timestamptz3", PrecisionTypesRow::timestamptz3, null, "timestamptz", { row, value -> row.copy(timestamptz3 = value) }, PgTypes.timestamptz.underlying)
 
-  fun timestamptz6(): Field<Instant, PrecisionTypesRow> = Field<Instant, PrecisionTypesRow>(_path, "timestamptz6", PrecisionTypesRow::timestamptz6, null, "timestamptz", { row, value -> row.copy(timestamptz6 = value) }, PgTypes.timestamptz)
+  fun timestamptz6(): Field<Instant, PrecisionTypesRow> = Field<Instant, PrecisionTypesRow>(_path, "timestamptz6", PrecisionTypesRow::timestamptz6, null, "timestamptz", { row, value -> row.copy(timestamptz6 = value) }, PgTypes.timestamptz.underlying)
 
-  fun timetz0(): Field<OffsetTime, PrecisionTypesRow> = Field<OffsetTime, PrecisionTypesRow>(_path, "timetz0", PrecisionTypesRow::timetz0, null, "timetz", { row, value -> row.copy(timetz0 = value) }, PgTypes.timetz)
+  fun timetz0(): Field<OffsetTime, PrecisionTypesRow> = Field<OffsetTime, PrecisionTypesRow>(_path, "timetz0", PrecisionTypesRow::timetz0, null, "timetz", { row, value -> row.copy(timetz0 = value) }, PgTypes.timetz.underlying)
 
-  fun timetz3(): Field<OffsetTime, PrecisionTypesRow> = Field<OffsetTime, PrecisionTypesRow>(_path, "timetz3", PrecisionTypesRow::timetz3, null, "timetz", { row, value -> row.copy(timetz3 = value) }, PgTypes.timetz)
+  fun timetz3(): Field<OffsetTime, PrecisionTypesRow> = Field<OffsetTime, PrecisionTypesRow>(_path, "timetz3", PrecisionTypesRow::timetz3, null, "timetz", { row, value -> row.copy(timetz3 = value) }, PgTypes.timetz.underlying)
 
-  fun timetz6(): Field<OffsetTime, PrecisionTypesRow> = Field<OffsetTime, PrecisionTypesRow>(_path, "timetz6", PrecisionTypesRow::timetz6, null, "timetz", { row, value -> row.copy(timetz6 = value) }, PgTypes.timetz)
+  fun timetz6(): Field<OffsetTime, PrecisionTypesRow> = Field<OffsetTime, PrecisionTypesRow>(_path, "timetz6", PrecisionTypesRow::timetz6, null, "timetz", { row, value -> row.copy(timetz6 = value) }, PgTypes.timetz.underlying)
 
   override fun withPaths(_path: List<Path>): RelationStructure<PrecisionTypesFields, PrecisionTypesRow> = PrecisionTypesFields(_path)
 

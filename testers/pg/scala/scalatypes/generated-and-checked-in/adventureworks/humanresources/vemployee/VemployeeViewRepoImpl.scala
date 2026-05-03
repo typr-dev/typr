@@ -5,17 +5,17 @@
  */
 package adventureworks.humanresources.vemployee
 
-import dev.typr.foundations.scala.Dialect
-import dev.typr.foundations.scala.SelectBuilder
-import java.sql.Connection
-import dev.typr.foundations.scala.Fragment.sql
+import dev.typr.dslsc.Dialect
+import dev.typr.dslsc.SelectBuilder
+import dev.typr.foundationssc.ConnectionRead
+import dev.typr.foundationssc.Fragment.sql
 
 class VemployeeViewRepoImpl extends VemployeeViewRepo {
-  override def select: SelectBuilder[VemployeeViewFields, VemployeeViewRow] = SelectBuilder.of(""""humanresources"."vemployee"""", VemployeeViewFields.structure, VemployeeViewRow.`_rowParser`, Dialect.POSTGRESQL)
+  override def select: SelectBuilder[VemployeeViewFields, VemployeeViewRow] = SelectBuilder.of(""""humanresources"."vemployee"""", VemployeeViewFields.structure, VemployeeViewRow.rowCodec, Dialect.POSTGRESQL)
 
-  override def selectAll(using c: Connection): List[VemployeeViewRow] = {
+  override def selectAll(using c: ConnectionRead): List[VemployeeViewRow] = {
     sql"""select "businessentityid", "title", "firstname", "middlename", "lastname", "suffix", "jobtitle", "phonenumber", "phonenumbertype", "emailaddress", "emailpromotion", "addressline1", "addressline2", "city", "stateprovincename", "postalcode", "countryregionname", "additionalcontactinfo"
     from "humanresources"."vemployee"
-    """.query(VemployeeViewRow.`_rowParser`.all()).runUnchecked(c)
+    """.query(VemployeeViewRow.rowCodec.all()).run(using c)
   }
 }

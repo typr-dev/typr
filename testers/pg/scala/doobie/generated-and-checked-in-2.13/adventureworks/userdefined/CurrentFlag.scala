@@ -23,7 +23,7 @@ object CurrentFlag {
 
   implicit lazy val arrayPut: Put[Array[CurrentFlag]] = Flag.arrayPut.contramap(_.map(_.value))
 
-  implicit lazy val bijection: Bijection[CurrentFlag, Flag] = Bijection.apply[CurrentFlag, Flag](_.value)(CurrentFlag.apply)
+  implicit lazy val bijection: Bijection[CurrentFlag, Flag] = Bijection[CurrentFlag, Flag](_.value)(CurrentFlag.apply)
 
   implicit lazy val decoder: Decoder[CurrentFlag] = Flag.decoder.map(CurrentFlag.apply)
 

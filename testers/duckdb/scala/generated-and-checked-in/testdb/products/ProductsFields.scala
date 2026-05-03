@@ -5,19 +5,18 @@
  */
 package testdb.products
 
-import dev.typr.foundations.DuckDbTypes
-import dev.typr.foundations.RowParser
+import dev.typr.dsl.FieldsBase
+import dev.typr.dsl.Path
+import dev.typr.dsl.SqlExpr.FieldLike
+import dev.typr.dslsc.RelationStructure
+import dev.typr.dslsc.SqlExpr
+import dev.typr.dslsc.SqlExpr.Field
+import dev.typr.dslsc.SqlExpr.IdField
+import dev.typr.dslsc.SqlExpr.OptField
+import dev.typr.dslsc.TupleExpr5
+import dev.typr.foundations.RowCodec
 import dev.typr.foundations.data.Json
-import dev.typr.foundations.dsl.FieldsBase
-import dev.typr.foundations.dsl.Path
-import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.scala.RelationStructure
-import dev.typr.foundations.scala.ScalaDbTypes
-import dev.typr.foundations.scala.SqlExpr
-import dev.typr.foundations.scala.SqlExpr.Field
-import dev.typr.foundations.scala.SqlExpr.IdField
-import dev.typr.foundations.scala.SqlExpr.OptField
-import dev.typr.foundations.scala.TupleExpr5
+import dev.typr.foundationssc.DuckDbTypes
 
 class ProductsFields(val `_path`: java.util.List[Path]) extends TupleExpr5[ProductsId, String, String, BigDecimal, Json] with RelationStructure[ProductsFields, ProductsRow]  with FieldsBase[ProductsRow] {
   def productId: IdField[ProductsId, ProductsRow] = {
@@ -28,7 +27,7 @@ class ProductsFields(val `_path`: java.util.List[Path]) extends TupleExpr5[Produ
       None,
       Some("INTEGER"),
       (row, value) => row.copy(productId = value),
-      ProductsId.duckDbType
+      ProductsId.duckDbType.underlying
     )
   }
 
@@ -40,7 +39,7 @@ class ProductsFields(val `_path`: java.util.List[Path]) extends TupleExpr5[Produ
       None,
       None,
       (row, value) => row.copy(sku = value),
-      DuckDbTypes.varchar
+      DuckDbTypes.varchar.underlying
     )
   }
 
@@ -52,7 +51,7 @@ class ProductsFields(val `_path`: java.util.List[Path]) extends TupleExpr5[Produ
       None,
       None,
       (row, value) => row.copy(name = value),
-      DuckDbTypes.varchar
+      DuckDbTypes.varchar.underlying
     )
   }
 
@@ -64,7 +63,7 @@ class ProductsFields(val `_path`: java.util.List[Path]) extends TupleExpr5[Produ
       None,
       Some("DECIMAL(10,2)"),
       (row, value) => row.copy(price = value),
-      ScalaDbTypes.DuckDbTypes.numeric
+      DuckDbTypes.numeric.underlying
     )
   }
 
@@ -76,13 +75,13 @@ class ProductsFields(val `_path`: java.util.List[Path]) extends TupleExpr5[Produ
       None,
       Some("JSON"),
       (row, value) => row.copy(metadata = value),
-      DuckDbTypes.json
+      DuckDbTypes.json.underlying
     )
   }
 
   override def columns: java.util.List[FieldLike[?, ProductsRow]] = java.util.List.of(this.productId.underlying, this.sku.underlying, this.name.underlying, this.price.underlying, this.metadata.underlying)
 
-  override def rowParser: RowParser[ProductsRow] = ProductsRow._rowParser.underlying
+  override def rowCodec: RowCodec[ProductsRow] = ProductsRow.rowCodec.underlying
 
   override def withPaths(`_path`: java.util.List[Path]): RelationStructure[ProductsFields, ProductsRow] = new ProductsFields(`_path`)
 

@@ -5,19 +5,18 @@
  */
 package testdb.orders
 
-import dev.typr.foundations.Db2Types
-import dev.typr.foundations.RowParser
-import dev.typr.foundations.dsl.FieldsBase
-import dev.typr.foundations.dsl.Path
-import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.kotlin.ForeignKey
-import dev.typr.foundations.kotlin.KotlinDbTypes
-import dev.typr.foundations.kotlin.RelationStructure
-import dev.typr.foundations.kotlin.SqlExpr
-import dev.typr.foundations.kotlin.SqlExpr.Field
-import dev.typr.foundations.kotlin.SqlExpr.IdField
-import dev.typr.foundations.kotlin.SqlExpr.OptField
-import dev.typr.foundations.kotlin.TupleExpr5
+import dev.typr.dsl.FieldsBase
+import dev.typr.dsl.Path
+import dev.typr.dsl.SqlExpr.FieldLike
+import dev.typr.dslkt.ForeignKey
+import dev.typr.dslkt.RelationStructure
+import dev.typr.dslkt.SqlExpr
+import dev.typr.dslkt.SqlExpr.Field
+import dev.typr.dslkt.SqlExpr.IdField
+import dev.typr.dslkt.SqlExpr.OptField
+import dev.typr.dslkt.TupleExpr5
+import dev.typr.foundations.RowCodec
+import dev.typr.foundationskt.Db2Types
 import java.math.BigDecimal
 import java.time.LocalDate
 import kotlin.collections.List
@@ -25,7 +24,7 @@ import testdb.customers.CustomersFields
 import testdb.customers.CustomersId
 import testdb.customers.CustomersRow
 
-data class OrdersFields(val _path: List<Path>) : TupleExpr5<OrdersId, CustomersId, LocalDate, BigDecimal, String>, RelationStructure<OrdersFields, OrdersRow>, FieldsBase<OrdersRow> {
+data class OrdersFields(val _path: List<Path>) : TupleExpr5<OrdersId, CustomersId, LocalDate, BigDecimal, kotlin.String>, RelationStructure<OrdersFields, OrdersRow>, FieldsBase<OrdersRow> {
   override fun _1(): SqlExpr<OrdersId> = orderId()
 
   override fun _2(): SqlExpr<CustomersId> = customerId()
@@ -34,25 +33,25 @@ data class OrdersFields(val _path: List<Path>) : TupleExpr5<OrdersId, CustomersI
 
   override fun _4(): SqlExpr<BigDecimal> = totalAmount()
 
-  override fun _5(): SqlExpr<String> = status()
+  override fun _5(): SqlExpr<kotlin.String> = status()
 
   override fun _path(): List<Path> = _path
 
   override fun columns(): List<FieldLike<*, OrdersRow>> = listOf(this.orderId().underlying, this.customerId().underlying, this.orderDate().underlying, this.totalAmount().underlying, this.status().underlying)
 
-  fun customerId(): Field<CustomersId, OrdersRow> = Field<CustomersId, OrdersRow>(_path, "CUSTOMER_ID", OrdersRow::customerId, null, null, { row, value -> row.copy(customerId = value) }, CustomersId.db2Type)
+  fun customerId(): Field<CustomersId, OrdersRow> = Field<CustomersId, OrdersRow>(_path, "CUSTOMER_ID", OrdersRow::customerId, null, null, { row, value -> row.copy(customerId = value) }, CustomersId.db2Type.underlying)
 
   fun fkCustomers(): ForeignKey<CustomersFields, CustomersRow> = ForeignKey.of<CustomersFields, CustomersRow>("FK_CUSTOMER").withColumnPair<CustomersId>(customerId(), CustomersFields::customerId)
 
-  fun orderDate(): Field<LocalDate, OrdersRow> = Field<LocalDate, OrdersRow>(_path, "ORDER_DATE", OrdersRow::orderDate, null, null, { row, value -> row.copy(orderDate = value) }, Db2Types.date)
+  fun orderDate(): Field<LocalDate, OrdersRow> = Field<LocalDate, OrdersRow>(_path, "ORDER_DATE", OrdersRow::orderDate, null, null, { row, value -> row.copy(orderDate = value) }, Db2Types.date.underlying)
 
-  fun orderId(): IdField<OrdersId, OrdersRow> = IdField<OrdersId, OrdersRow>(_path, "ORDER_ID", OrdersRow::orderId, null, null, { row, value -> row.copy(orderId = value) }, OrdersId.db2Type)
+  fun orderId(): IdField<OrdersId, OrdersRow> = IdField<OrdersId, OrdersRow>(_path, "ORDER_ID", OrdersRow::orderId, null, null, { row, value -> row.copy(orderId = value) }, OrdersId.db2Type.underlying)
 
-  override fun rowParser(): RowParser<OrdersRow> = OrdersRow._rowParser.underlying
+  override fun rowCodec(): RowCodec<OrdersRow> = OrdersRow.rowCodec.underlying
 
-  fun status(): OptField<String, OrdersRow> = OptField<String, OrdersRow>(_path, "STATUS", OrdersRow::status, null, null, { row, value -> row.copy(status = value) }, Db2Types.varchar)
+  fun status(): OptField<kotlin.String, OrdersRow> = OptField<kotlin.String, OrdersRow>(_path, "STATUS", OrdersRow::status, null, null, { row, value -> row.copy(status = value) }, Db2Types.varchar.underlying)
 
-  fun totalAmount(): OptField<BigDecimal, OrdersRow> = OptField<BigDecimal, OrdersRow>(_path, "TOTAL_AMOUNT", OrdersRow::totalAmount, null, null, { row, value -> row.copy(totalAmount = value) }, KotlinDbTypes.Db2Types.decimal)
+  fun totalAmount(): OptField<BigDecimal, OrdersRow> = OptField<BigDecimal, OrdersRow>(_path, "TOTAL_AMOUNT", OrdersRow::totalAmount, null, null, { row, value -> row.copy(totalAmount = value) }, Db2Types.decimal.underlying)
 
   override fun withPaths(_path: List<Path>): RelationStructure<OrdersFields, OrdersRow> = OrdersFields(_path)
 

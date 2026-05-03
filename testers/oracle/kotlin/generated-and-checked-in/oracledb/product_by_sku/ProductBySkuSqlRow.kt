@@ -6,11 +6,10 @@
 package oracledb.product_by_sku
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import dev.typr.foundations.OracleTypes
+import dev.typr.dslkt.RowCodecs
 import dev.typr.foundations.Tuple.Tuple5
-import dev.typr.foundations.kotlin.RowParser
-import dev.typr.foundations.kotlin.RowParsers
-import dev.typr.foundations.kotlin.nullable
+import dev.typr.foundationskt.OracleTypes
+import dev.typr.foundationskt.RowCodec
 import oracledb.MoneyT
 import oracledb.TagVarrayT
 import oracledb.products.ProductsId
@@ -20,25 +19,25 @@ data class ProductBySkuSqlRow(
   /** Points to [oracledb.products.ProductsRow.productId] */
   @field:JsonProperty("PRODUCT_ID") val productId: ProductsId,
   /** Points to [oracledb.products.ProductsRow.sku] */
-  @field:JsonProperty("SKU") val sku: String,
+  @field:JsonProperty("SKU") val sku: kotlin.String,
   /** Points to [oracledb.products.ProductsRow.name] */
-  @field:JsonProperty("NAME") val name: String,
+  @field:JsonProperty("NAME") val name: kotlin.String,
   /** Points to [oracledb.products.ProductsRow.price] */
   @field:JsonProperty("PRICE") val price: MoneyT,
   /** Points to [oracledb.products.ProductsRow.tags] */
   @field:JsonProperty("TAGS") val tags: TagVarrayT?
-) : Tuple5<ProductsId, String, String, MoneyT, TagVarrayT?> {
+) : Tuple5<ProductsId, kotlin.String, kotlin.String, MoneyT, TagVarrayT?> {
   override fun _1(): ProductsId = productId
 
-  override fun _2(): String = sku
+  override fun _2(): kotlin.String = sku
 
-  override fun _3(): String = name
+  override fun _3(): kotlin.String = name
 
   override fun _4(): MoneyT = price
 
   override fun _5(): TagVarrayT? = tags
 
   companion object {
-    val _rowParser: RowParser<ProductBySkuSqlRow> = RowParsers.of(ProductsId.oracleType, OracleTypes.varchar2, OracleTypes.varchar2, MoneyT.oracleType, TagVarrayT.oracleType.nullable(), { t0, t1, t2, t3, t4 -> ProductBySkuSqlRow(t0, t1, t2, t3, t4) }, { row -> arrayOf<Any?>(row.productId, row.sku, row.name, row.price, row.tags) })
+    val rowCodec: RowCodec<ProductBySkuSqlRow> = RowCodecs.of(ProductsId.oracleType, OracleTypes.varchar2, OracleTypes.varchar2, MoneyT.oracleType, TagVarrayT.oracleType.opt(), { t0: ProductsId, t1: kotlin.String, t2: kotlin.String, t3: MoneyT, t4: TagVarrayT? -> ProductBySkuSqlRow(t0, t1, t2, t3, t4) }, { row: ProductBySkuSqlRow -> arrayOf<Any?>(row.productId, row.sku, row.name, row.price, row.tags) })
   }
 }

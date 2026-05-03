@@ -5,20 +5,18 @@
  */
 package testdb.inventory_check
 
-import dev.typr.foundations.MariaTypes
 import dev.typr.foundations.data.Uint1
 import dev.typr.foundations.data.Uint8
-import dev.typr.foundations.kotlin.Fragment
-import dev.typr.foundations.kotlin.KotlinDbTypes
-import dev.typr.foundations.kotlin.nullable
-import java.sql.Connection
+import dev.typr.foundationskt.ConnectionRead
+import dev.typr.foundationskt.Fragment
+import dev.typr.foundationskt.MariaTypes
 import kotlin.collections.List
 
 class InventoryCheckSqlRepoImpl() : InventoryCheckSqlRepo {
   override fun apply(
     warehouseId: Uint1?,
     productId: Uint8?,
-    lowStockOnly: Boolean?,
-    c: Connection
-  ): List<InventoryCheckSqlRow> = Fragment.interpolate(Fragment.lit("-- Check inventory levels across warehouses\nSELECT i.inventory_id,\n       p.product_id,\n       p.sku,\n       p.name AS product_name,\n       w.warehouse_id,\n       w.code AS warehouse_code,\n       w.name AS warehouse_name,\n       i.quantity_on_hand,\n       i.quantity_reserved,\n       (i.quantity_on_hand - i.quantity_reserved) AS available,\n       i.reorder_point,\n       i.bin_location\nFROM inventory i\nJOIN products p ON i.product_id = p.product_id\nJOIN warehouses w ON i.warehouse_id = w.warehouse_id\nWHERE ("), Fragment.encode(MariaTypes.tinyintUnsigned.nullable(), warehouseId), Fragment.lit(" IS NULL OR i.warehouse_id = "), Fragment.encode(MariaTypes.tinyintUnsigned.nullable(), warehouseId), Fragment.lit(")\n  AND ("), Fragment.encode(MariaTypes.bigintUnsigned.nullable(), productId), Fragment.lit(" IS NULL OR i.product_id = "), Fragment.encode(MariaTypes.bigintUnsigned.nullable(), productId), Fragment.lit(")\n  AND ("), Fragment.encode(KotlinDbTypes.MariaTypes.bool.nullable(), lowStockOnly), Fragment.lit(" IS NULL OR (i.quantity_on_hand - i.quantity_reserved) <= i.reorder_point)\n")).query(InventoryCheckSqlRow._rowParser.all()).runUnchecked(c)
+    lowStockOnly: kotlin.Boolean?,
+    c: ConnectionRead
+  ): List<InventoryCheckSqlRow> = Fragment.concat(Fragment.of("-- Check inventory levels across warehouses\nSELECT i.inventory_id,\n       p.product_id,\n       p.sku,\n       p.name AS product_name,\n       w.warehouse_id,\n       w.code AS warehouse_code,\n       w.name AS warehouse_name,\n       i.quantity_on_hand,\n       i.quantity_reserved,\n       (i.quantity_on_hand - i.quantity_reserved) AS available,\n       i.reorder_point,\n       i.bin_location\nFROM inventory i\nJOIN products p ON i.product_id = p.product_id\nJOIN warehouses w ON i.warehouse_id = w.warehouse_id\nWHERE ("), Fragment.encode(MariaTypes.tinyintUnsigned.opt(), warehouseId), Fragment.of(" IS NULL OR i.warehouse_id = "), Fragment.encode(MariaTypes.tinyintUnsigned.opt(), warehouseId), Fragment.of(")\n  AND ("), Fragment.encode(MariaTypes.bigintUnsigned.opt(), productId), Fragment.of(" IS NULL OR i.product_id = "), Fragment.encode(MariaTypes.bigintUnsigned.opt(), productId), Fragment.of(")\n  AND ("), Fragment.encode(MariaTypes.bool.opt(), lowStockOnly), Fragment.of(" IS NULL OR (i.quantity_on_hand - i.quantity_reserved) <= i.reorder_point)\n")).query(InventoryCheckSqlRow.rowCodec.all()).run(c)
 }

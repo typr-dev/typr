@@ -5,13 +5,14 @@
  */
 package testdb.customer_status
 
-import dev.typr.foundations.MariaTypes
-import dev.typr.foundations.kotlin.DeleteBuilder
-import dev.typr.foundations.kotlin.Dialect
-import dev.typr.foundations.kotlin.Fragment
-import dev.typr.foundations.kotlin.SelectBuilder
-import dev.typr.foundations.kotlin.UpdateBuilder
-import java.sql.Connection
+import dev.typr.dslkt.DeleteBuilder
+import dev.typr.dslkt.Dialect
+import dev.typr.dslkt.SelectBuilder
+import dev.typr.dslkt.UpdateBuilder
+import dev.typr.foundationskt.Connection
+import dev.typr.foundationskt.ConnectionRead
+import dev.typr.foundationskt.Fragment
+import dev.typr.foundationskt.MariaTypes
 import java.util.ArrayList
 import kotlin.collections.Iterator
 import kotlin.collections.List
@@ -25,22 +26,22 @@ class CustomerStatusRepoImpl() : CustomerStatusRepo {
   override fun deleteById(
     statusCode: CustomerStatusId,
     c: Connection
-  ): Boolean = Fragment.interpolate(Fragment.lit("delete from `customer_status` where `status_code` = "), Fragment.encode(CustomerStatusId.mariaType, statusCode), Fragment.lit("")).update().runUnchecked(c) > 0
+  ): kotlin.Boolean = Fragment.concat(Fragment.of("delete from `customer_status` where `status_code` = "), Fragment.encode(CustomerStatusId.mariaType, statusCode), Fragment.of("")).update().run(c) > 0
 
   override fun deleteByIds(
-    statusCodes: Array<CustomerStatusId>,
+    statusCodes: List<CustomerStatusId>,
     c: Connection
   ): Int {
     val fragments: ArrayList<Fragment> = ArrayList()
     for (id in statusCodes) { fragments.add(Fragment.encode(CustomerStatusId.mariaType, id)) }
-    return Fragment.interpolate(Fragment.lit("delete from `customer_status` where `status_code` in ("), Fragment.comma(fragments.toMutableList()), Fragment.lit(")")).update().runUnchecked(c)
+    return Fragment.concat(Fragment.of("delete from `customer_status` where `status_code` in ("), Fragment.comma(fragments.toMutableList()), Fragment.of(")")).update().run(c)
   }
 
   override fun insert(
     unsaved: CustomerStatusRow,
     c: Connection
-  ): CustomerStatusRow = Fragment.interpolate(Fragment.lit("insert into `customer_status`(`status_code`, `description`, `is_active`)\nvalues ("), Fragment.encode(CustomerStatusId.mariaType, unsaved.statusCode), Fragment.lit(", "), Fragment.encode(MariaTypes.varchar, unsaved.description), Fragment.lit(", "), Fragment.encode(IsActive.mariaType, unsaved.isActive), Fragment.lit(")\nRETURNING `status_code`, `description`, `is_active`\n"))
-    .updateReturning(CustomerStatusRow._rowParser.exactlyOne()).runUnchecked(c)
+  ): CustomerStatusRow = Fragment.concat(Fragment.of("insert into `customer_status`(`status_code`, `description`, `is_active`)\nvalues ("), Fragment.encode(CustomerStatusId.mariaType, unsaved.statusCode), Fragment.of(", "), Fragment.encode(MariaTypes.varchar, unsaved.description), Fragment.of(", "), Fragment.encode(IsActive.mariaType, unsaved.isActive), Fragment.of(")\nRETURNING `status_code`, `description`, `is_active`\n"))
+    .updateReturning(CustomerStatusRow.rowCodec.exactlyOne()).run(c)
 
   override fun insert(
     unsaved: CustomerStatusRowUnsaved,
@@ -48,67 +49,67 @@ class CustomerStatusRepoImpl() : CustomerStatusRepo {
   ): CustomerStatusRow {
     val columns: ArrayList<Fragment> = ArrayList()
     val values: ArrayList<Fragment> = ArrayList()
-    columns.add(Fragment.lit("`status_code`"))
-    values.add(Fragment.interpolate(Fragment.encode(CustomerStatusId.mariaType, unsaved.statusCode), Fragment.lit("")))
-    columns.add(Fragment.lit("`description`"))
-    values.add(Fragment.interpolate(Fragment.encode(MariaTypes.varchar, unsaved.description), Fragment.lit("")))
+    columns.add(Fragment.of("`status_code`"))
+    values.add(Fragment.concat(Fragment.encode(CustomerStatusId.mariaType, unsaved.statusCode), Fragment.of("")))
+    columns.add(Fragment.of("`description`"))
+    values.add(Fragment.concat(Fragment.encode(MariaTypes.varchar, unsaved.description), Fragment.of("")))
     unsaved.isActive.visit(
       {  },
-      { value -> columns.add(Fragment.lit("`is_active`"))
-      values.add(Fragment.interpolate(Fragment.encode(IsActive.mariaType, value), Fragment.lit(""))) }
+      { value -> columns.add(Fragment.of("`is_active`"))
+      values.add(Fragment.concat(Fragment.encode(IsActive.mariaType, value), Fragment.of(""))) }
     );
-    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into `customer_status`("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\nRETURNING `status_code`, `description`, `is_active`\n"))
-    return q.updateReturning(CustomerStatusRow._rowParser.exactlyOne()).runUnchecked(c)
+    val q: Fragment = Fragment.concat(Fragment.of("insert into `customer_status`("), Fragment.comma(columns.toMutableList()), Fragment.of(")\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.of(")\nRETURNING `status_code`, `description`, `is_active`\n"))
+    return q.updateReturning(CustomerStatusRow.rowCodec.exactlyOne()).run(c)
   }
 
-  override fun select(): SelectBuilder<CustomerStatusFields, CustomerStatusRow> = SelectBuilder.of("`customer_status`", CustomerStatusFields.structure, CustomerStatusRow._rowParser, Dialect.MARIADB)
+  override fun select(): SelectBuilder<CustomerStatusFields, CustomerStatusRow> = SelectBuilder.of("`customer_status`", CustomerStatusFields.structure, CustomerStatusRow.rowCodec, Dialect.MARIADB)
 
-  override fun selectAll(c: Connection): List<CustomerStatusRow> = Fragment.interpolate(Fragment.lit("select `status_code`, `description`, `is_active`\nfrom `customer_status`\n")).query(CustomerStatusRow._rowParser.all()).runUnchecked(c)
+  override fun selectAll(c: ConnectionRead): List<CustomerStatusRow> = Fragment.concat(Fragment.of("select `status_code`, `description`, `is_active`\nfrom `customer_status`\n")).query(CustomerStatusRow.rowCodec.all()).run(c)
 
   override fun selectById(
     statusCode: CustomerStatusId,
-    c: Connection
-  ): CustomerStatusRow? = Fragment.interpolate(Fragment.lit("select `status_code`, `description`, `is_active`\nfrom `customer_status`\nwhere `status_code` = "), Fragment.encode(CustomerStatusId.mariaType, statusCode), Fragment.lit("")).query(CustomerStatusRow._rowParser.first()).runUnchecked(c)
+    c: ConnectionRead
+  ): CustomerStatusRow? = Fragment.concat(Fragment.of("select `status_code`, `description`, `is_active`\nfrom `customer_status`\nwhere `status_code` = "), Fragment.encode(CustomerStatusId.mariaType, statusCode), Fragment.of("")).query(CustomerStatusRow.rowCodec.first()).run(c)
 
   override fun selectByIds(
-    statusCodes: Array<CustomerStatusId>,
-    c: Connection
+    statusCodes: List<CustomerStatusId>,
+    c: ConnectionRead
   ): List<CustomerStatusRow> {
     val fragments: ArrayList<Fragment> = ArrayList()
     for (id in statusCodes) { fragments.add(Fragment.encode(CustomerStatusId.mariaType, id)) }
-    return Fragment.interpolate(Fragment.lit("select `status_code`, `description`, `is_active` from `customer_status` where `status_code` in ("), Fragment.comma(fragments.toMutableList()), Fragment.lit(")")).query(CustomerStatusRow._rowParser.all()).runUnchecked(c)
+    return Fragment.concat(Fragment.of("select `status_code`, `description`, `is_active` from `customer_status` where `status_code` in ("), Fragment.comma(fragments.toMutableList()), Fragment.of(")")).query(CustomerStatusRow.rowCodec.all()).run(c)
   }
 
   override fun selectByIdsTracked(
-    statusCodes: Array<CustomerStatusId>,
-    c: Connection
+    statusCodes: List<CustomerStatusId>,
+    c: ConnectionRead
   ): Map<CustomerStatusId, CustomerStatusRow> {
     val ret: MutableMap<CustomerStatusId, CustomerStatusRow> = mutableMapOf<CustomerStatusId, CustomerStatusRow>()
     selectByIds(statusCodes, c).forEach({ row -> ret.put(row.statusCode, row) })
     return ret.toMap()
   }
 
-  override fun update(): UpdateBuilder<CustomerStatusFields, CustomerStatusRow> = UpdateBuilder.of("`customer_status`", CustomerStatusFields.structure, CustomerStatusRow._rowParser, Dialect.MARIADB)
+  override fun update(): UpdateBuilder<CustomerStatusFields, CustomerStatusRow> = UpdateBuilder.of("`customer_status`", CustomerStatusFields.structure, CustomerStatusRow.rowCodec, Dialect.MARIADB)
 
   override fun update(
     row: CustomerStatusRow,
     c: Connection
-  ): Boolean {
+  ): kotlin.Boolean {
     val statusCode: CustomerStatusId = row.statusCode
-    return Fragment.interpolate(Fragment.lit("update `customer_status`\nset `description` = "), Fragment.encode(MariaTypes.varchar, row.description), Fragment.lit(",\n`is_active` = "), Fragment.encode(IsActive.mariaType, row.isActive), Fragment.lit("\nwhere `status_code` = "), Fragment.encode(CustomerStatusId.mariaType, statusCode), Fragment.lit("")).update().runUnchecked(c) > 0
+    return Fragment.concat(Fragment.of("update `customer_status`\nset `description` = "), Fragment.encode(MariaTypes.varchar, row.description), Fragment.of(",\n`is_active` = "), Fragment.encode(IsActive.mariaType, row.isActive), Fragment.of("\nwhere `status_code` = "), Fragment.encode(CustomerStatusId.mariaType, statusCode), Fragment.of("")).update().run(c) > 0
   }
 
   override fun upsert(
     unsaved: CustomerStatusRow,
     c: Connection
-  ): CustomerStatusRow = Fragment.interpolate(Fragment.lit("INSERT INTO `customer_status`(`status_code`, `description`, `is_active`)\nVALUES ("), Fragment.encode(CustomerStatusId.mariaType, unsaved.statusCode), Fragment.lit(", "), Fragment.encode(MariaTypes.varchar, unsaved.description), Fragment.lit(", "), Fragment.encode(IsActive.mariaType, unsaved.isActive), Fragment.lit(")\nON DUPLICATE KEY UPDATE `description` = VALUES(`description`),\n`is_active` = VALUES(`is_active`)\nRETURNING `status_code`, `description`, `is_active`"))
-    .updateReturning(CustomerStatusRow._rowParser.exactlyOne())
-    .runUnchecked(c)
+  ): CustomerStatusRow = Fragment.concat(Fragment.of("INSERT INTO `customer_status`(`status_code`, `description`, `is_active`)\nVALUES ("), Fragment.encode(CustomerStatusId.mariaType, unsaved.statusCode), Fragment.of(", "), Fragment.encode(MariaTypes.varchar, unsaved.description), Fragment.of(", "), Fragment.encode(IsActive.mariaType, unsaved.isActive), Fragment.of(")\nON DUPLICATE KEY UPDATE `description` = VALUES(`description`),\n`is_active` = VALUES(`is_active`)\nRETURNING `status_code`, `description`, `is_active`"))
+    .updateReturning(CustomerStatusRow.rowCodec.exactlyOne())
+    .run(c)
 
   override fun upsertBatch(
     unsaved: Iterator<CustomerStatusRow>,
     c: Connection
-  ): List<CustomerStatusRow> = Fragment.interpolate(Fragment.lit("INSERT INTO `customer_status`(`status_code`, `description`, `is_active`)\nVALUES (?, ?, ?)\nON DUPLICATE KEY UPDATE `description` = VALUES(`description`),\n`is_active` = VALUES(`is_active`)\nRETURNING `status_code`, `description`, `is_active`"))
-    .updateReturningEach(CustomerStatusRow._rowParser, unsaved)
-  .runUnchecked(c)
+  ): List<CustomerStatusRow> = Fragment.concat(Fragment.of("INSERT INTO `customer_status`(`status_code`, `description`, `is_active`)\nVALUES (?, ?, ?)\nON DUPLICATE KEY UPDATE `description` = VALUES(`description`),\n`is_active` = VALUES(`is_active`)\nRETURNING `status_code`, `description`, `is_active`"))
+    .updateReturningEach(CustomerStatusRow.rowCodec, unsaved)
+  .run(c)
 }

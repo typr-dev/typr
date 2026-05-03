@@ -6,15 +6,15 @@
 package testdb.orders
 
 import com.fasterxml.jackson.annotation.JsonValue
-import dev.typr.foundations.SqlServerType
-import dev.typr.foundations.scala.Bijection
-import dev.typr.foundations.scala.ScalaDbTypes
+import dev.typr.dslsc.Bijection
+import dev.typr.foundationssc.SqlServerType
+import dev.typr.foundationssc.SqlServerTypes
 
 /** Type for the primary key of table `orders` */
 case class OrdersId(@JsonValue value: Int) extends scala.AnyVal
 
 object OrdersId {
-  given bijection: Bijection[OrdersId, Int] = Bijection.apply[OrdersId, Int](_.value)(OrdersId.apply)
+  given bijection: Bijection[OrdersId, Int] = Bijection.of[OrdersId, Int](_.value, OrdersId.apply)
 
-  given sqlServerType: SqlServerType[OrdersId] = ScalaDbTypes.SqlServerTypes.int_.bimap(OrdersId.apply, _.value)
+  given sqlServerType: SqlServerType[OrdersId] = SqlServerTypes.int_.to(Bijection.of(OrdersId.apply, _.value))
 }

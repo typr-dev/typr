@@ -5,12 +5,12 @@
  */
 package testdb.simple_customer_lookup
 
-import java.sql.Connection
+import dev.typr.foundationskt.ConnectionRead
 import kotlin.collections.List
 
 interface SimpleCustomerLookupSqlRepo {
   abstract fun apply(
-    email: String,
-    c: Connection
+    email: kotlin.String,
+    c: ConnectionRead
   ): List<SimpleCustomerLookupSqlRow>
 }

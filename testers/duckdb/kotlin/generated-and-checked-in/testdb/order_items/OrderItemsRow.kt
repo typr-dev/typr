@@ -6,11 +6,10 @@
 package testdb.order_items
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import dev.typr.foundations.DuckDbTypes
+import dev.typr.dslkt.RowCodecs
 import dev.typr.foundations.Tuple.Tuple4
-import dev.typr.foundations.kotlin.KotlinDbTypes
-import dev.typr.foundations.kotlin.RowParser
-import dev.typr.foundations.kotlin.RowParsers
+import dev.typr.foundationskt.DuckDbTypes
+import dev.typr.foundationskt.RowCodec
 import java.math.BigDecimal
 import testdb.customtypes.Defaulted
 
@@ -39,7 +38,7 @@ data class OrderItemsRow(
   fun toUnsavedRow(quantity: Defaulted<Int> = Defaulted.Provided(this.quantity)): OrderItemsRowUnsaved = OrderItemsRowUnsaved(orderId, productId, unitPrice, quantity)
 
   companion object {
-    val _rowParser: RowParser<OrderItemsRow> = RowParsers.of(KotlinDbTypes.DuckDbTypes.integer, KotlinDbTypes.DuckDbTypes.integer, KotlinDbTypes.DuckDbTypes.integer, DuckDbTypes.numeric, { t0, t1, t2, t3 -> OrderItemsRow(t0, t1, t2, t3) }, { row -> arrayOf<Any?>(row.orderId, row.productId, row.quantity, row.unitPrice) })
+    val rowCodec: RowCodec<OrderItemsRow> = RowCodecs.of(DuckDbTypes.integer, DuckDbTypes.integer, DuckDbTypes.integer, DuckDbTypes.numeric, { t0: Int, t1: Int, t2: Int, t3: BigDecimal -> OrderItemsRow(t0, t1, t2, t3) }, { row: OrderItemsRow -> arrayOf<Any?>(row.orderId, row.productId, row.quantity, row.unitPrice) })
 
     fun apply(
       compositeId: OrderItemsId,

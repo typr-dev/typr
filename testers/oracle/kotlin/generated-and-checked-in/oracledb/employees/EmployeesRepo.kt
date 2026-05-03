@@ -5,10 +5,11 @@
  */
 package oracledb.employees
 
-import dev.typr.foundations.kotlin.DeleteBuilder
-import dev.typr.foundations.kotlin.SelectBuilder
-import dev.typr.foundations.kotlin.UpdateBuilder
-import java.sql.Connection
+import dev.typr.dslkt.DeleteBuilder
+import dev.typr.dslkt.SelectBuilder
+import dev.typr.dslkt.UpdateBuilder
+import dev.typr.foundationskt.Connection
+import dev.typr.foundationskt.ConnectionRead
 import kotlin.collections.Iterator
 import kotlin.collections.List
 import kotlin.collections.Map
@@ -19,10 +20,10 @@ interface EmployeesRepo {
   abstract fun deleteById(
     compositeId: EmployeesId,
     c: Connection
-  ): Boolean
+  ): kotlin.Boolean
 
   abstract fun deleteByIds(
-    compositeIds: Array<EmployeesId>,
+    compositeIds: List<EmployeesId>,
     c: Connection
   ): Int
 
@@ -38,21 +39,21 @@ interface EmployeesRepo {
 
   abstract fun select(): SelectBuilder<EmployeesFields, EmployeesRow>
 
-  abstract fun selectAll(c: Connection): List<EmployeesRow>
+  abstract fun selectAll(c: ConnectionRead): List<EmployeesRow>
 
   abstract fun selectById(
     compositeId: EmployeesId,
-    c: Connection
+    c: ConnectionRead
   ): EmployeesRow?
 
   abstract fun selectByIds(
-    compositeIds: Array<EmployeesId>,
-    c: Connection
+    compositeIds: List<EmployeesId>,
+    c: ConnectionRead
   ): List<EmployeesRow>
 
   abstract fun selectByIdsTracked(
-    compositeIds: Array<EmployeesId>,
-    c: Connection
+    compositeIds: List<EmployeesId>,
+    c: ConnectionRead
   ): Map<EmployeesId, EmployeesRow>
 
   abstract fun update(): UpdateBuilder<EmployeesFields, EmployeesRow>
@@ -60,7 +61,7 @@ interface EmployeesRepo {
   abstract fun update(
     row: EmployeesRow,
     c: Connection
-  ): Boolean
+  ): kotlin.Boolean
 
   abstract fun upsert(
     unsaved: EmployeesRow,

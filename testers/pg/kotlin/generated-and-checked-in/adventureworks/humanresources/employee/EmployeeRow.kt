@@ -9,13 +9,11 @@ import adventureworks.customtypes.Defaulted
 import adventureworks.person.businessentity.BusinessentityId
 import adventureworks.userdefined.CurrentFlag
 import adventureworks.userdefined.SalariedFlag
+import dev.typr.dslkt.RowCodecs
 import dev.typr.foundations.PgText
-import dev.typr.foundations.PgTypes
 import dev.typr.foundations.Tuple.Tuple15
-import dev.typr.foundations.kotlin.KotlinDbTypes
-import dev.typr.foundations.kotlin.RowParser
-import dev.typr.foundations.kotlin.RowParsers
-import dev.typr.foundations.kotlin.nullable
+import dev.typr.foundationskt.PgTypes
+import dev.typr.foundationskt.RowCodec
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.UUID
@@ -30,11 +28,11 @@ data class EmployeeRow(
     */
   val businessentityid: BusinessentityId,
   /** Unique national identification number such as a social security number. */
-  val nationalidnumber: String,
+  val nationalidnumber: kotlin.String,
   /** Network login. */
-  val loginid: String,
+  val loginid: kotlin.String,
   /** Work title such as Buyer or Sales Representative. */
-  val jobtitle: String,
+  val jobtitle: kotlin.String,
   /** Date of birth.
     * Constraint CK_Employee_BirthDate affecting columns birthdate: (((birthdate >= '1930-01-01'::date) AND (birthdate <= (now() - '18 years'::interval))))
     */
@@ -42,11 +40,11 @@ data class EmployeeRow(
   /** M = Married, S = Single
     * Constraint CK_Employee_MaritalStatus affecting columns maritalstatus: ((upper((maritalstatus)::text) = ANY (ARRAY['M'::text, 'S'::text])))
     */
-  val maritalstatus: String,
+  val maritalstatus: kotlin.String,
   /** M = Male, F = Female
     * Constraint CK_Employee_Gender affecting columns gender: ((upper((gender)::text) = ANY (ARRAY['M'::text, 'F'::text])))
     */
-  val gender: String,
+  val gender: kotlin.String,
   /** Employee hired on this date.
     * Constraint CK_Employee_HireDate affecting columns hiredate: (((hiredate >= '1996-07-01'::date) AND (hiredate <= (now() + '1 day'::interval))))
     */
@@ -59,12 +57,12 @@ data class EmployeeRow(
     * Default: 0
     * Constraint CK_Employee_VacationHours affecting columns vacationhours: (((vacationhours >= '-40'::integer) AND (vacationhours <= 240)))
     */
-  val vacationhours: Short,
+  val vacationhours: kotlin.Short,
   /** Number of available sick leave hours.
     * Default: 0
     * Constraint CK_Employee_SickLeaveHours affecting columns sickleavehours: (((sickleavehours >= 0) AND (sickleavehours <= 120)))
     */
-  val sickleavehours: Short,
+  val sickleavehours: kotlin.Short,
   /** 0 = Inactive, 1 = Active
     * Default: true
     */
@@ -76,13 +74,13 @@ data class EmployeeRow(
   /** Where the employee is located in corporate hierarchy.
     * Default: '/'::character varying
     */
-  val organizationnode: String?
-) : Tuple15<BusinessentityId, String, String, String, LocalDate, String, String, LocalDate, /* user-picked */ SalariedFlag, Short, Short, /* user-picked */ CurrentFlag, UUID, LocalDateTime, String?> {
+  val organizationnode: kotlin.String?
+) : Tuple15<BusinessentityId, kotlin.String, kotlin.String, kotlin.String, LocalDate, kotlin.String, kotlin.String, LocalDate, /* user-picked */ SalariedFlag, kotlin.Short, kotlin.Short, /* user-picked */ CurrentFlag, UUID, LocalDateTime, kotlin.String?> {
   override fun _1(): BusinessentityId = businessentityid
 
-  override fun _10(): Short = vacationhours
+  override fun _10(): kotlin.Short = vacationhours
 
-  override fun _11(): Short = sickleavehours
+  override fun _11(): kotlin.Short = sickleavehours
 
   override fun _12(): /* user-picked */ CurrentFlag = currentflag
 
@@ -90,19 +88,19 @@ data class EmployeeRow(
 
   override fun _14(): LocalDateTime = modifieddate
 
-  override fun _15(): String? = organizationnode
+  override fun _15(): kotlin.String? = organizationnode
 
-  override fun _2(): String = nationalidnumber
+  override fun _2(): kotlin.String = nationalidnumber
 
-  override fun _3(): String = loginid
+  override fun _3(): kotlin.String = loginid
 
-  override fun _4(): String = jobtitle
+  override fun _4(): kotlin.String = jobtitle
 
   override fun _5(): LocalDate = birthdate
 
-  override fun _6(): String = maritalstatus
+  override fun _6(): kotlin.String = maritalstatus
 
-  override fun _7(): String = gender
+  override fun _7(): kotlin.String = gender
 
   override fun _8(): LocalDate = hiredate
 
@@ -112,18 +110,18 @@ data class EmployeeRow(
 
   fun toUnsavedRow(
     salariedflag: Defaulted</* user-picked */ SalariedFlag> = Defaulted.Provided(this.salariedflag),
-    vacationhours: Defaulted<Short> = Defaulted.Provided(this.vacationhours),
-    sickleavehours: Defaulted<Short> = Defaulted.Provided(this.sickleavehours),
+    vacationhours: Defaulted<kotlin.Short> = Defaulted.Provided(this.vacationhours),
+    sickleavehours: Defaulted<kotlin.Short> = Defaulted.Provided(this.sickleavehours),
     currentflag: Defaulted</* user-picked */ CurrentFlag> = Defaulted.Provided(this.currentflag),
     rowguid: Defaulted<UUID> = Defaulted.Provided(this.rowguid),
     modifieddate: Defaulted<LocalDateTime> = Defaulted.Provided(this.modifieddate),
-    organizationnode: Defaulted<String?> = Defaulted.Provided(this.organizationnode)
+    organizationnode: Defaulted<kotlin.String?> = Defaulted.Provided(this.organizationnode)
   ): EmployeeRowUnsaved = EmployeeRowUnsaved(businessentityid, nationalidnumber, loginid, jobtitle, birthdate, maritalstatus, gender, hiredate, salariedflag, vacationhours, sickleavehours, currentflag, rowguid, modifieddate, organizationnode)
 
   companion object {
-    val _rowParser: RowParser<EmployeeRow> = RowParsers.of(BusinessentityId.pgType, PgTypes.text, PgTypes.text, PgTypes.text, PgTypes.date, PgTypes.bpchar, PgTypes.bpchar, PgTypes.date, SalariedFlag.pgType, KotlinDbTypes.PgTypes.int2, KotlinDbTypes.PgTypes.int2, CurrentFlag.pgType, PgTypes.uuid, PgTypes.timestamp, PgTypes.text.nullable(), { t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14 -> EmployeeRow(t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14) }, { row -> arrayOf<Any?>(row.businessentityid, row.nationalidnumber, row.loginid, row.jobtitle, row.birthdate, row.maritalstatus, row.gender, row.hiredate, row.salariedflag, row.vacationhours, row.sickleavehours, row.currentflag, row.rowguid, row.modifieddate, row.organizationnode) })
+    val rowCodec: RowCodec<EmployeeRow> = RowCodecs.of(BusinessentityId.pgType, PgTypes.text, PgTypes.text, PgTypes.text, PgTypes.date, PgTypes.bpchar, PgTypes.bpchar, PgTypes.date, SalariedFlag.pgType, PgTypes.int2, PgTypes.int2, CurrentFlag.pgType, PgTypes.uuid, PgTypes.timestamp, PgTypes.text.opt(), { t0: BusinessentityId, t1: kotlin.String, t2: kotlin.String, t3: kotlin.String, t4: LocalDate, t5: kotlin.String, t6: kotlin.String, t7: LocalDate, t8: /* user-picked */ SalariedFlag, t9: kotlin.Short, t10: kotlin.Short, t11: /* user-picked */ CurrentFlag, t12: UUID, t13: LocalDateTime, t14: kotlin.String? -> EmployeeRow(t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14) }, { row: EmployeeRow -> arrayOf<Any?>(row.businessentityid, row.nationalidnumber, row.loginid, row.jobtitle, row.birthdate, row.maritalstatus, row.gender, row.hiredate, row.salariedflag, row.vacationhours, row.sickleavehours, row.currentflag, row.rowguid, row.modifieddate, row.organizationnode) })
 
     val pgText: PgText<EmployeeRow> =
-      PgText.from(_rowParser.underlying)
+      PgText.from(rowCodec.underlying)
   }
 }

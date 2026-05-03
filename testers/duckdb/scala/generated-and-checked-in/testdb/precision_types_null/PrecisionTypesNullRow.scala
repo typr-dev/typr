@@ -6,11 +6,10 @@
 package testdb.precision_types_null
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import dev.typr.foundations.DuckDbTypes
+import dev.typr.dslsc.RowCodecs
 import dev.typr.foundations.Tuple.Tuple12
-import dev.typr.foundations.scala.DbTypeOps
-import dev.typr.foundations.scala.RowParser
-import dev.typr.foundations.scala.RowParsers
+import dev.typr.foundationssc.DuckDbTypes
+import dev.typr.foundationssc.RowCodec
 import testdb.precisetypes.Decimal10_2
 import testdb.precisetypes.Decimal18_4
 import testdb.precisetypes.Decimal5_2
@@ -61,5 +60,5 @@ case class PrecisionTypesNullRow(
 }
 
 object PrecisionTypesNullRow {
-  val `_rowParser`: RowParser[PrecisionTypesNullRow] = RowParsers.of(PrecisionTypesNullId.duckDbType, DuckDbTypes.varchar.nullable, DuckDbTypes.varchar.nullable, DuckDbTypes.varchar.nullable, DuckDbTypes.varchar.nullable, DuckDbTypes.varchar.nullable, Decimal5_2.duckDbType.nullable, Decimal10_2.duckDbType.nullable, Decimal18_4.duckDbType.nullable, Int5.duckDbType.nullable, Int10.duckDbType.nullable, Int18.duckDbType.nullable)(PrecisionTypesNullRow.apply)(row => Array[Any](row.id, row.string10, row.string20, row.string50, row.string100, row.string255, row.decimal52, row.decimal102, row.decimal184, row.decimal50, row.decimal100, row.decimal180))
+  val rowCodec: RowCodec[PrecisionTypesNullRow] = RowCodecs.of(PrecisionTypesNullId.duckDbType, DuckDbTypes.varchar.opt, DuckDbTypes.varchar.opt, DuckDbTypes.varchar.opt, DuckDbTypes.varchar.opt, DuckDbTypes.varchar.opt, Decimal5_2.duckDbType.opt, Decimal10_2.duckDbType.opt, Decimal18_4.duckDbType.opt, Int5.duckDbType.opt, Int10.duckDbType.opt, Int18.duckDbType.opt)(PrecisionTypesNullRow.apply)(row => Array[Any](row.id, row.string10, row.string20, row.string50, row.string100, row.string255, row.decimal52, row.decimal102, row.decimal184, row.decimal50, row.decimal100, row.decimal180))
 }

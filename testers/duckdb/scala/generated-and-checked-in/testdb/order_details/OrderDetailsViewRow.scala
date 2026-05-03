@@ -6,12 +6,10 @@
 package testdb.order_details
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import dev.typr.foundations.DuckDbTypes
+import dev.typr.dslsc.RowCodecs
 import dev.typr.foundations.Tuple.Tuple7
-import dev.typr.foundations.scala.DbTypeOps
-import dev.typr.foundations.scala.RowParser
-import dev.typr.foundations.scala.RowParsers
-import dev.typr.foundations.scala.ScalaDbTypes
+import dev.typr.foundationssc.DuckDbTypes
+import dev.typr.foundationssc.RowCodec
 import java.time.LocalDate
 
 /** View: order_details */
@@ -40,5 +38,5 @@ case class OrderDetailsViewRow(
 }
 
 object OrderDetailsViewRow {
-  val `_rowParser`: RowParser[OrderDetailsViewRow] = RowParsers.of(ScalaDbTypes.DuckDbTypes.integer.nullable, DuckDbTypes.date.nullable, DuckDbTypes.varchar.nullable, DuckDbTypes.varchar.nullable, ScalaDbTypes.DuckDbTypes.integer.nullable, ScalaDbTypes.DuckDbTypes.numeric.nullable, ScalaDbTypes.DuckDbTypes.numeric.nullable)(OrderDetailsViewRow.apply)(row => Array[Any](row.orderId, row.orderDate, row.customerName, row.productName, row.quantity, row.unitPrice, row.lineTotal))
+  val rowCodec: RowCodec[OrderDetailsViewRow] = RowCodecs.of(DuckDbTypes.integer.opt, DuckDbTypes.date.opt, DuckDbTypes.varchar.opt, DuckDbTypes.varchar.opt, DuckDbTypes.integer.opt, DuckDbTypes.numeric.opt, DuckDbTypes.numeric.opt)(OrderDetailsViewRow.apply)(row => Array[Any](row.orderId, row.orderDate, row.customerName, row.productName, row.quantity, row.unitPrice, row.lineTotal))
 }

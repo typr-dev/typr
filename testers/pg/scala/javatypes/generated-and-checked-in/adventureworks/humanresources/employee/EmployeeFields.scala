@@ -10,18 +10,18 @@ import adventureworks.person.person.PersonFields
 import adventureworks.person.person.PersonRow
 import adventureworks.userdefined.CurrentFlag
 import adventureworks.userdefined.SalariedFlag
+import dev.typr.dsl.FieldsBase
+import dev.typr.dsl.ForeignKey
+import dev.typr.dsl.Path
+import dev.typr.dsl.RelationStructure
+import dev.typr.dsl.SqlExpr
+import dev.typr.dsl.SqlExpr.Field
+import dev.typr.dsl.SqlExpr.FieldLike
+import dev.typr.dsl.SqlExpr.IdField
+import dev.typr.dsl.SqlExpr.OptField
+import dev.typr.dsl.TupleExpr.TupleExpr15
 import dev.typr.foundations.PgTypes
-import dev.typr.foundations.RowParser
-import dev.typr.foundations.dsl.FieldsBase
-import dev.typr.foundations.dsl.ForeignKey
-import dev.typr.foundations.dsl.Path
-import dev.typr.foundations.dsl.RelationStructure
-import dev.typr.foundations.dsl.SqlExpr
-import dev.typr.foundations.dsl.SqlExpr.Field
-import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.dsl.SqlExpr.IdField
-import dev.typr.foundations.dsl.SqlExpr.OptField
-import dev.typr.foundations.dsl.TupleExpr.TupleExpr15
+import dev.typr.foundations.RowCodec
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.Optional
@@ -212,7 +212,7 @@ class EmployeeFields(val `_path`: java.util.List[Path]) extends TupleExpr15[Busi
 
   override def columns: java.util.List[FieldLike[?, EmployeeRow]] = java.util.List.of(this.businessentityid, this.nationalidnumber, this.loginid, this.jobtitle, this.birthdate, this.maritalstatus, this.gender, this.hiredate, this.salariedflag, this.vacationhours, this.sickleavehours, this.currentflag, this.rowguid, this.modifieddate, this.organizationnode)
 
-  override def rowParser: RowParser[EmployeeRow] = EmployeeRow._rowParser
+  override def rowCodec: RowCodec[EmployeeRow] = EmployeeRow.rowCodec
 
   override def withPaths(`_path`: java.util.List[Path]): RelationStructure[EmployeeFields, EmployeeRow] = new EmployeeFields(`_path`)
 

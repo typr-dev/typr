@@ -7,13 +7,11 @@ package adventureworks.person.emailaddress
 
 import adventureworks.customtypes.Defaulted
 import adventureworks.person.businessentity.BusinessentityId
+import dev.typr.dslsc.RowCodecs
 import dev.typr.foundations.PgText
-import dev.typr.foundations.PgTypes
 import dev.typr.foundations.Tuple.Tuple5
-import dev.typr.foundations.scala.DbTypeOps
-import dev.typr.foundations.scala.RowParser
-import dev.typr.foundations.scala.RowParsers
-import dev.typr.foundations.scala.ScalaDbTypes
+import dev.typr.foundationssc.PgTypes
+import dev.typr.foundationssc.RowCodec
 import java.time.LocalDateTime
 import java.util.UUID
 
@@ -67,8 +65,6 @@ case class EmailaddressRow(
 }
 
 object EmailaddressRow {
-  val `_rowParser`: RowParser[EmailaddressRow] = RowParsers.of(BusinessentityId.pgType, ScalaDbTypes.PgTypes.int4, PgTypes.text.nullable, PgTypes.uuid, PgTypes.timestamp)(EmailaddressRow.apply)(row => Array[Any](row.businessentityid, row.emailaddressid, row.emailaddress, row.rowguid, row.modifieddate))
-
   def apply(
     compositeId: EmailaddressId,
     emailaddress: Option[/* max 50 chars */ String],
@@ -84,5 +80,7 @@ object EmailaddressRow {
     )
   }
 
-  given pgText: PgText[EmailaddressRow] = PgText.from(`_rowParser`.underlying)
+  given pgText: PgText[EmailaddressRow] = PgText.from(rowCodec.underlying)
+
+  val rowCodec: RowCodec[EmailaddressRow] = RowCodecs.of(BusinessentityId.pgType, PgTypes.int4, PgTypes.text.opt, PgTypes.uuid, PgTypes.timestamp)(EmailaddressRow.apply)(row => Array[Any](row.businessentityid, row.emailaddressid, row.emailaddress, row.rowguid, row.modifieddate))
 }

@@ -5,7 +5,7 @@
  */
 package testdb.update_order_status
 
-import java.sql.Connection
+import dev.typr.foundationssc.Connection
 import testdb.orders.OrdersId
 
 trait UpdateOrderStatusSqlRepo {

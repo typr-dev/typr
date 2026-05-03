@@ -5,10 +5,10 @@
  */
 package testdb.mariatest_identity
 
-import dev.typr.foundations.MariaTypes
+import dev.typr.dslkt.RowCodecs
 import dev.typr.foundations.Tuple.Tuple2
-import dev.typr.foundations.kotlin.RowParser
-import dev.typr.foundations.kotlin.RowParsers
+import dev.typr.foundationskt.MariaTypes
+import dev.typr.foundationskt.RowCodec
 
 /** Table: mariatest_identity
   * Primary key: id
@@ -19,15 +19,15 @@ data class MariatestIdentityRow(
     */
   val id: MariatestIdentityId,
   /**  */
-  val name: String
-) : Tuple2<MariatestIdentityId, String> {
+  val name: kotlin.String
+) : Tuple2<MariatestIdentityId, kotlin.String> {
   override fun _1(): MariatestIdentityId = id
 
-  override fun _2(): String = name
+  override fun _2(): kotlin.String = name
 
   fun toUnsavedRow(): MariatestIdentityRowUnsaved = MariatestIdentityRowUnsaved(name)
 
   companion object {
-    val _rowParser: RowParser<MariatestIdentityRow> = RowParsers.of(MariatestIdentityId.mariaType, MariaTypes.varchar, { t0, t1 -> MariatestIdentityRow(t0, t1) }, { row -> arrayOf<Any?>(row.id, row.name) })
+    val rowCodec: RowCodec<MariatestIdentityRow> = RowCodecs.of(MariatestIdentityId.mariaType, MariaTypes.varchar, { t0: MariatestIdentityId, t1: kotlin.String -> MariatestIdentityRow(t0, t1) }, { row: MariatestIdentityRow -> arrayOf<Any?>(row.id, row.name) })
   }
 }

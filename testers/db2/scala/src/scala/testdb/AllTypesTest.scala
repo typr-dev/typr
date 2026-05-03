@@ -11,13 +11,11 @@ import scala.util.Random
 /** Comprehensive tests for all DB2 scalar data types. Tests the db2test table covering DB2 numeric, string, binary, and date/time types.
   */
 class AllTypesTest {
-  private val testInsert = TestInsert(Random(42))
+  private val testInsert = TestInsert(Random(1275531346))
   private val db2testRepo = Db2testRepoImpl()
 
   @Test
-  def testInsertAndSelectAllTypes(): Unit = withConnection { c =>
-    given java.sql.Connection = c
-
+  def testInsertAndSelectAllTypes(): Unit = withConnection {
     val binary = new Array[Byte](16) // BINARY(16) requires exactly 16 bytes
     val varbinary = Array[Byte](6, 7, 8)
     val blob = Array[Byte](9, 10, 11, 12)
@@ -34,9 +32,7 @@ class AllTypesTest {
   }
 
   @Test
-  def testIntegerTypes(): Unit = withConnection { c =>
-    given java.sql.Connection = c
-
+  def testIntegerTypes(): Unit = withConnection {
     val binary = new Array[Byte](16)
     val row = testInsert.Db2test(
       binaryCol = binary,
@@ -54,9 +50,7 @@ class AllTypesTest {
   }
 
   @Test
-  def testDecimalTypes(): Unit = withConnection { c =>
-    given java.sql.Connection = c
-
+  def testDecimalTypes(): Unit = withConnection {
     val binary = new Array[Byte](16)
     val row = testInsert.Db2test(
       binaryCol = binary,
@@ -71,9 +65,7 @@ class AllTypesTest {
   }
 
   @Test
-  def testStringTypes(): Unit = withConnection { c =>
-    given java.sql.Connection = c
-
+  def testStringTypes(): Unit = withConnection {
     val binary = new Array[Byte](16)
     val row = testInsert.Db2test(
       binaryCol = binary,
@@ -91,9 +83,7 @@ class AllTypesTest {
   }
 
   @Test
-  def testDateTimeTypes(): Unit = withConnection { c =>
-    given java.sql.Connection = c
-
+  def testDateTimeTypes(): Unit = withConnection {
     val binary = new Array[Byte](16)
     val date = LocalDate.of(2025, 6, 15)
     val time = LocalTime.of(14, 30, 45)
@@ -115,9 +105,7 @@ class AllTypesTest {
   }
 
   @Test
-  def testBinaryTypes(): Unit = withConnection { c =>
-    given java.sql.Connection = c
-
+  def testBinaryTypes(): Unit = withConnection {
     val binary = Array[Byte](0x00, 0x01, 0xff.toByte, 0xfe.toByte, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
     val varbinary = Array[Byte](0x10, 0x20, 0x30)
     val blob = Array[Byte](0xab.toByte, 0xcd.toByte, 0xef.toByte)
@@ -129,17 +117,13 @@ class AllTypesTest {
   }
 
   @Test
-  def testNullableTypes(): Unit = withConnection { c =>
-    given java.sql.Connection = c
-
+  def testNullableTypes(): Unit = withConnection {
     val row = testInsert.Db2testnull(graphicCol = Some("test      "))
     assertNotNull(row)
   }
 
   @Test
-  def testNullableTypesWithValues(): Unit = withConnection { c =>
-    given java.sql.Connection = c
-
+  def testNullableTypesWithValues(): Unit = withConnection {
     val row = testInsert.Db2testnull(
       smallintCol = Some(100.toShort),
       intCol = Some(200),
@@ -152,9 +136,7 @@ class AllTypesTest {
   }
 
   @Test
-  def testUpdate(): Unit = withConnection { c =>
-    given java.sql.Connection = c
-
+  def testUpdate(): Unit = withConnection {
     val binary = new Array[Byte](16)
     val inserted = testInsert.Db2test(binary, binary, binary, graphicCol = "test      ")
 
@@ -171,9 +153,7 @@ class AllTypesTest {
   }
 
   @Test
-  def testDelete(): Unit = withConnection { c =>
-    given java.sql.Connection = c
-
+  def testDelete(): Unit = withConnection {
     val binary = new Array[Byte](16)
     val inserted = testInsert.Db2test(binary, binary, binary, graphicCol = "test      ")
 
@@ -185,9 +165,7 @@ class AllTypesTest {
   }
 
   @Test
-  def testBooleanType(): Unit = withConnection { c =>
-    given java.sql.Connection = c
-
+  def testBooleanType(): Unit = withConnection {
     val binary = new Array[Byte](16)
     val rowTrue = testInsert.Db2test(
       binaryCol = binary,
@@ -209,9 +187,7 @@ class AllTypesTest {
   }
 
   @Test
-  def testXmlType(): Unit = withConnection { c =>
-    given java.sql.Connection = c
-
+  def testXmlType(): Unit = withConnection {
     val binary = new Array[Byte](16)
     val xml = new Xml("<root><element>value</element></root>")
     val row = testInsert.Db2test(

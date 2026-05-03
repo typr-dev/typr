@@ -27,6 +27,19 @@ data class ListOrdersRequest(
   }
 
   companion object {
+    @Throws(IOException::class)
+    fun parseFrom(input: CodedInputStream): ListOrdersRequest {
+      var customerId: kotlin.String = ""
+      var pageSize: Int = 0
+      while (!input.isAtEnd()) {
+        val tag = input.readTag()
+        if (WireFormat.getTagFieldNumber(tag) == 1) { customerId = input.readString() }
+        else if (WireFormat.getTagFieldNumber(tag) == 2) { pageSize = input.readInt32() }
+        else { input.skipField(tag) }
+      }
+      return ListOrdersRequest(customerId, pageSize)
+    }
+
     val MARSHALLER: Marshaller<ListOrdersRequest> =
       object : Marshaller<ListOrdersRequest> {
         override fun stream(value: ListOrdersRequest): InputStream {
@@ -48,18 +61,5 @@ data class ListOrdersRequest(
           } 
         }
       }
-
-    @Throws(IOException::class)
-    fun parseFrom(input: CodedInputStream): ListOrdersRequest {
-      var customerId: kotlin.String = ""
-      var pageSize: Int = 0
-      while (!input.isAtEnd()) {
-        val tag = input.readTag()
-        if (WireFormat.getTagFieldNumber(tag) == 1) { customerId = input.readString() }
-        else if (WireFormat.getTagFieldNumber(tag) == 2) { pageSize = input.readInt32() }
-        else { input.skipField(tag) }
-      }
-      return ListOrdersRequest(customerId, pageSize)
-    }
   }
 }

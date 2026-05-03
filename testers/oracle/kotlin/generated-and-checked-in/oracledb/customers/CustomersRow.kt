@@ -6,11 +6,10 @@
 package oracledb.customers
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import dev.typr.foundations.OracleTypes
+import dev.typr.dslkt.RowCodecs
 import dev.typr.foundations.Tuple.Tuple5
-import dev.typr.foundations.kotlin.RowParser
-import dev.typr.foundations.kotlin.RowParsers
-import dev.typr.foundations.kotlin.nullable
+import dev.typr.foundationskt.OracleTypes
+import dev.typr.foundationskt.RowCodec
 import java.time.LocalDateTime
 import oracledb.AddressT
 import oracledb.MoneyT
@@ -20,17 +19,17 @@ import oracledb.customtypes.Defaulted
   * Primary key: CUSTOMER_ID
   */
 data class CustomersRow(
-  /** Default: "TYPR"."ISEQ$$_72850".nextval */
+  /** Default: "TYPR"."ISEQ$$_72840".nextval */
   @field:JsonProperty("CUSTOMER_ID") val customerId: CustomersId,
-  @field:JsonProperty("NAME") val name: String,
+  @field:JsonProperty("NAME") val name: kotlin.String,
   @field:JsonProperty("BILLING_ADDRESS") val billingAddress: AddressT,
   @field:JsonProperty("CREDIT_LIMIT") val creditLimit: MoneyT?,
   /** Default: SYSTIMESTAMP  */
   @field:JsonProperty("CREATED_AT") val createdAt: LocalDateTime
-) : Tuple5<CustomersId, String, AddressT, MoneyT?, LocalDateTime> {
+) : Tuple5<CustomersId, kotlin.String, AddressT, MoneyT?, LocalDateTime> {
   override fun _1(): CustomersId = customerId
 
-  override fun _2(): String = name
+  override fun _2(): kotlin.String = name
 
   override fun _3(): AddressT = billingAddress
 
@@ -46,6 +45,6 @@ data class CustomersRow(
   ): CustomersRowUnsaved = CustomersRowUnsaved(name, billingAddress, creditLimit, customerId, createdAt)
 
   companion object {
-    val _rowParser: RowParser<CustomersRow> = RowParsers.of(CustomersId.oracleType, OracleTypes.varchar2, AddressT.oracleType, MoneyT.oracleType.nullable(), OracleTypes.timestamp, { t0, t1, t2, t3, t4 -> CustomersRow(t0, t1, t2, t3, t4) }, { row -> arrayOf<Any?>(row.customerId, row.name, row.billingAddress, row.creditLimit, row.createdAt) })
+    val rowCodec: RowCodec<CustomersRow> = RowCodecs.of(CustomersId.oracleType, OracleTypes.varchar2, AddressT.oracleType, MoneyT.oracleType.opt(), OracleTypes.timestamp, { t0: CustomersId, t1: kotlin.String, t2: AddressT, t3: MoneyT?, t4: LocalDateTime -> CustomersRow(t0, t1, t2, t3, t4) }, { row: CustomersRow -> arrayOf<Any?>(row.customerId, row.name, row.billingAddress, row.creditLimit, row.createdAt) })
   }
 }

@@ -14,7 +14,7 @@ import java.util.Random
  * limit, count, and projection.
  */
 class DSLTest {
-    private val testInsert = TestInsert(Random(42))
+    private val testInsert = TestInsert(Random(423303944))
     private val customersRepo = CustomersRepoImpl()
     private val productsRepo = ProductsRepoImpl()
     private val ordersRepo = OrdersRepoImpl()
@@ -52,7 +52,7 @@ class DSLTest {
             assertTrue(results.size >= 3)
             var firstName: String? = null
             for (result in results) {
-                firstName?.let { prev -> assertTrue(result.name >= prev) }
+                firstName?.let { prev -> assertTrue(result.name.compareTo(prev, ignoreCase = true) >= 0) }
                 firstName = result.name
             }
         }

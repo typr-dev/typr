@@ -5,10 +5,11 @@
  */
 package oracledb.contacts
 
-import dev.typr.foundations.dsl.DeleteBuilder
-import dev.typr.foundations.dsl.SelectBuilder
-import dev.typr.foundations.dsl.UpdateBuilder
-import java.sql.Connection
+import dev.typr.dsl.DeleteBuilder
+import dev.typr.dsl.SelectBuilder
+import dev.typr.dsl.UpdateBuilder
+import dev.typr.foundations.Connection
+import dev.typr.foundations.ConnectionRead
 import java.util.Optional
 
 trait ContactsRepo {
@@ -16,7 +17,7 @@ trait ContactsRepo {
 
   def deleteById(contactId: ContactsId)(using c: Connection): java.lang.Boolean
 
-  def deleteByIds(contactIds: Array[ContactsId])(using c: Connection): Integer
+  def deleteByIds(contactIds: java.util.List[ContactsId])(using c: Connection): Integer
 
   def insert(unsaved: ContactsRow)(using c: Connection): ContactsId
 
@@ -24,13 +25,13 @@ trait ContactsRepo {
 
   def select: SelectBuilder[ContactsFields, ContactsRow]
 
-  def selectAll(using c: Connection): java.util.List[ContactsRow]
+  def selectAll(using c: ConnectionRead): java.util.List[ContactsRow]
 
-  def selectById(contactId: ContactsId)(using c: Connection): Optional[ContactsRow]
+  def selectById(contactId: ContactsId)(using c: ConnectionRead): Optional[ContactsRow]
 
-  def selectByIds(contactIds: Array[ContactsId])(using c: Connection): java.util.List[ContactsRow]
+  def selectByIds(contactIds: java.util.List[ContactsId])(using c: ConnectionRead): java.util.List[ContactsRow]
 
-  def selectByIdsTracked(contactIds: Array[ContactsId])(using c: Connection): java.util.Map[ContactsId, ContactsRow]
+  def selectByIdsTracked(contactIds: java.util.List[ContactsId])(using c: ConnectionRead): java.util.Map[ContactsId, ContactsRow]
 
   def update: UpdateBuilder[ContactsFields, ContactsRow]
 

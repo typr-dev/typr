@@ -6,12 +6,10 @@
 package testdb.v_warehouse_coverage
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import dev.typr.foundations.MariaTypes
+import dev.typr.dslsc.RowCodecs
 import dev.typr.foundations.Tuple.Tuple10
-import dev.typr.foundations.scala.DbTypeOps
-import dev.typr.foundations.scala.RowParser
-import dev.typr.foundations.scala.RowParsers
-import dev.typr.foundations.scala.ScalaDbTypes
+import dev.typr.foundationssc.MariaTypes
+import dev.typr.foundationssc.RowCodec
 import testdb.userdefined.IsActive
 import testdb.warehouses.WarehousesId
 
@@ -85,5 +83,5 @@ case class VWarehouseCoverageViewRow(
 }
 
 object VWarehouseCoverageViewRow {
-  val `_rowParser`: RowParser[VWarehouseCoverageViewRow] = RowParsers.of(WarehousesId.mariaType, MariaTypes.char_, MariaTypes.varchar, MariaTypes.varchar, MariaTypes.longtext.nullable, MariaTypes.longtext.nullable, MariaTypes.varchar, IsActive.mariaType, ScalaDbTypes.MariaTypes.bigint, ScalaDbTypes.MariaTypes.numeric.nullable)(VWarehouseCoverageViewRow.apply)(row => Array[Any](row.warehouseId, row.code, row.name, row.address, row.locationWkt, row.serviceAreaWkt, row.timezone, row.isActive, row.productsStocked, row.totalInventory))
+  val rowCodec: RowCodec[VWarehouseCoverageViewRow] = RowCodecs.of(WarehousesId.mariaType, MariaTypes.char_, MariaTypes.varchar, MariaTypes.varchar, MariaTypes.longtext.opt, MariaTypes.longtext.opt, MariaTypes.varchar, IsActive.mariaType, MariaTypes.bigint, MariaTypes.numeric.opt)(VWarehouseCoverageViewRow.apply)(row => Array[Any](row.warehouseId, row.code, row.name, row.address, row.locationWkt, row.serviceAreaWkt, row.timezone, row.isActive, row.productsStocked, row.totalInventory))
 }

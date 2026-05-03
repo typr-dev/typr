@@ -5,11 +5,9 @@
  */
 package adventureworks.public
 
-import dev.typr.foundations.PgRead
-import dev.typr.foundations.PgStruct
-import dev.typr.foundations.PgType
-import dev.typr.foundations.PgTypes
-import scala.jdk.OptionConverters.RichOption
+import dev.typr.foundationssc.PgType
+import dev.typr.foundationssc.PgTypes
+import dev.typr.foundationssc.RowCodec
 
 /** PostgreSQL composite type: public.person_name */
 case class PersonName(
@@ -20,9 +18,7 @@ case class PersonName(
 )
 
 object PersonName {
-  given pgStruct: PgStruct[PersonName] = PgStruct.builder[PersonName]("public.person_name").optField("firstName", PgTypes.text, (v: PersonName) => v.firstName.asJava).optField("middleName", PgTypes.text, (v: PersonName) => v.middleName.asJava).optField("lastName", PgTypes.text, (v: PersonName) => v.lastName.asJava).optField("suffix", PgTypes.text, (v: PersonName) => v.suffix.asJava).build(arr => PersonName(firstName = Option(arr(0).asInstanceOf[String]), middleName = Option(arr(1).asInstanceOf[String]), lastName = Option(arr(2).asInstanceOf[String]), suffix = Option(arr(3).asInstanceOf[String])))
+  given pgType: PgType[PersonName] = PgTypes.compositeOf("public.person_name", RowCodec.namedBuilder[PersonName]().field("firstName", PgTypes.text.opt)((v: PersonName) => v.firstName).field("middleName", PgTypes.text.opt)((v: PersonName) => v.middleName).field("lastName", PgTypes.text.opt)((v: PersonName) => v.lastName).field("suffix", PgTypes.text.opt)((v: PersonName) => v.suffix).build((t0, t1, t2, t3) => PersonName(firstName = t0, middleName = t1, lastName = t2, suffix = t3)))
 
-  given pgType: PgType[PersonName] = pgStruct.asType()
-
-  given pgTypeArray: PgType[Array[PersonName]] = pgType.array(PgRead.readCompositeArray(pgType.pgCompositeText(), n => new Array[PersonName](n)), n => new Array[PersonName](n))
+  given pgTypeArray: PgType[scala.collection.immutable.List[PersonName]] = pgType.array
 }

@@ -5,6 +5,7 @@
  */
 package oracledb
 
+import dev.typr.foundations.Bijection
 import dev.typr.foundations.OracleType
 import dev.typr.foundations.OracleTypes
 import dev.typr.foundations.OracleVArray
@@ -13,5 +14,5 @@ import dev.typr.foundations.OracleVArray
 case class EmailVarrayT(value: Array[String])
 
 object EmailVarrayT {
-  val oracleType: OracleType[EmailVarrayT] = OracleVArray.of("EMAIL_VARRAY_T", 5, OracleTypes.varchar2).bimap(list => new EmailVarrayT(list.toArray(new Array[String](0))), wrapper => java.util.List.of(wrapper.value*))
+  val oracleType: OracleType[EmailVarrayT] = OracleVArray.of("EMAIL_VARRAY_T", 5, OracleTypes.varchar2).to(Bijection.of(list => new EmailVarrayT(list.toArray(new Array[String](0))), wrapper => java.util.List.of(wrapper.value*)))
 }

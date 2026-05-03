@@ -7,138 +7,139 @@ package adventureworks.sales.salesperson
 
 import adventureworks.person.businessentity.BusinessentityId
 import adventureworks.sales.salesterritory.SalesterritoryId
+import dev.typr.dsl.DeleteBuilder
+import dev.typr.dsl.Dialect
+import dev.typr.dsl.SelectBuilder
+import dev.typr.dsl.UpdateBuilder
+import dev.typr.foundations.Connection
+import dev.typr.foundations.ConnectionRead
 import dev.typr.foundations.Fragment
 import dev.typr.foundations.PgTypes
-import dev.typr.foundations.dsl.DeleteBuilder
-import dev.typr.foundations.dsl.Dialect
-import dev.typr.foundations.dsl.SelectBuilder
-import dev.typr.foundations.dsl.UpdateBuilder
-import dev.typr.foundations.streamingInsert
-import java.sql.Connection
+import dev.typr.foundations.StreamingInsert
 import java.util.ArrayList
 import java.util.HashMap
 import java.util.Optional
-import dev.typr.foundations.Fragment.interpolate
+import dev.typr.foundations.Fragment.concat
 
 class SalespersonRepoImpl extends SalespersonRepo {
   override def delete: DeleteBuilder[SalespersonFields, SalespersonRow] = DeleteBuilder.of(""""sales"."salesperson"""", SalespersonFields.structure, Dialect.POSTGRESQL)
 
-  override def deleteById(businessentityid: BusinessentityId)(using c: Connection): java.lang.Boolean = interpolate(Fragment.lit("""delete from "sales"."salesperson" where "businessentityid" = """), Fragment.encode(BusinessentityId.pgType, businessentityid), Fragment.lit("")).update().runUnchecked(c) > 0
+  override def deleteById(businessentityid: BusinessentityId)(using c: Connection): java.lang.Boolean = concat(Fragment.of("""delete from "sales"."salesperson" where "businessentityid" = """), Fragment.encode(BusinessentityId.pgType, businessentityid), Fragment.of("")).update().run(c) > 0
 
-  override def deleteByIds(businessentityids: Array[BusinessentityId])(using c: Connection): Integer = {
-    interpolate(Fragment.lit("""delete
+  override def deleteByIds(businessentityids: java.util.List[BusinessentityId])(using c: Connection): Integer = {
+    concat(Fragment.of("""delete
     from "sales"."salesperson"
-    where "businessentityid" = ANY("""), Fragment.encode(BusinessentityId.pgTypeArray, businessentityids), Fragment.lit(")"))
+    where "businessentityid" = ANY("""), Fragment.encode(BusinessentityId.pgType.array(), businessentityids), Fragment.of(")"))
       .update()
-      .runUnchecked(c)
+      .run(c)
   }
 
   override def insert(unsaved: SalespersonRow)(using c: Connection): SalespersonRow = {
-  interpolate(Fragment.lit("""insert into "sales"."salesperson"("businessentityid", "territoryid", "salesquota", "bonus", "commissionpct", "salesytd", "saleslastyear", "rowguid", "modifieddate")
-    values ("""), Fragment.encode(BusinessentityId.pgType, unsaved.businessentityid), Fragment.lit("::int4, "), Fragment.encode(SalesterritoryId.pgType.opt(), unsaved.territoryid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.numeric.opt(), unsaved.salesquota), Fragment.lit("::numeric, "), Fragment.encode(PgTypes.numeric, unsaved.bonus), Fragment.lit("::numeric, "), Fragment.encode(PgTypes.numeric, unsaved.commissionpct), Fragment.lit("::numeric, "), Fragment.encode(PgTypes.numeric, unsaved.salesytd), Fragment.lit("::numeric, "), Fragment.encode(PgTypes.numeric, unsaved.saleslastyear), Fragment.lit("::numeric, "), Fragment.encode(PgTypes.uuid, unsaved.rowguid), Fragment.lit("::uuid, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("""::timestamp)
+  concat(Fragment.of("""insert into "sales"."salesperson"("businessentityid", "territoryid", "salesquota", "bonus", "commissionpct", "salesytd", "saleslastyear", "rowguid", "modifieddate")
+    values ("""), Fragment.encode(BusinessentityId.pgType, unsaved.businessentityid), Fragment.of("::int4, "), Fragment.encode(SalesterritoryId.pgType.opt, unsaved.territoryid), Fragment.of("::int4, "), Fragment.encode(PgTypes.numeric.opt, unsaved.salesquota), Fragment.of("::numeric, "), Fragment.encode(PgTypes.numeric, unsaved.bonus), Fragment.of("::numeric, "), Fragment.encode(PgTypes.numeric, unsaved.commissionpct), Fragment.of("::numeric, "), Fragment.encode(PgTypes.numeric, unsaved.salesytd), Fragment.of("::numeric, "), Fragment.encode(PgTypes.numeric, unsaved.saleslastyear), Fragment.of("::numeric, "), Fragment.encode(PgTypes.uuid, unsaved.rowguid), Fragment.of("::uuid, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.of("""::timestamp)
     RETURNING "businessentityid", "territoryid", "salesquota", "bonus", "commissionpct", "salesytd", "saleslastyear", "rowguid", "modifieddate"
     """))
-    .updateReturning(SalespersonRow.`_rowParser`.exactlyOne()).runUnchecked(c)
+    .updateReturning(SalespersonRow.rowCodec.exactlyOne()).run(c)
   }
 
   override def insert(unsaved: SalespersonRowUnsaved)(using c: Connection): SalespersonRow = {
     val columns: ArrayList[Fragment] = new ArrayList()
     val values: ArrayList[Fragment] = new ArrayList()
-    columns.add(Fragment.lit(""""businessentityid"""")): @scala.annotation.nowarn
-    values.add(interpolate(Fragment.encode(BusinessentityId.pgType, unsaved.businessentityid), Fragment.lit("::int4"))): @scala.annotation.nowarn
-    columns.add(Fragment.lit(""""territoryid"""")): @scala.annotation.nowarn
-    values.add(interpolate(Fragment.encode(SalesterritoryId.pgType.opt(), unsaved.territoryid), Fragment.lit("::int4"))): @scala.annotation.nowarn
-    columns.add(Fragment.lit(""""salesquota"""")): @scala.annotation.nowarn
-    values.add(interpolate(Fragment.encode(PgTypes.numeric.opt(), unsaved.salesquota), Fragment.lit("::numeric"))): @scala.annotation.nowarn
+    columns.add(Fragment.of(""""businessentityid"""")): @scala.annotation.nowarn
+    values.add(concat(Fragment.encode(BusinessentityId.pgType, unsaved.businessentityid), Fragment.of("::int4"))): @scala.annotation.nowarn
+    columns.add(Fragment.of(""""territoryid"""")): @scala.annotation.nowarn
+    values.add(concat(Fragment.encode(SalesterritoryId.pgType.opt, unsaved.territoryid), Fragment.of("::int4"))): @scala.annotation.nowarn
+    columns.add(Fragment.of(""""salesquota"""")): @scala.annotation.nowarn
+    values.add(concat(Fragment.encode(PgTypes.numeric.opt, unsaved.salesquota), Fragment.of("::numeric"))): @scala.annotation.nowarn
     unsaved.bonus.visit(
       {  },
-      value => { columns.add(Fragment.lit(""""bonus"""")): @scala.annotation.nowarn; values.add(interpolate(Fragment.encode(PgTypes.numeric, value), Fragment.lit("::numeric"))): @scala.annotation.nowarn }
+      value => { columns.add(Fragment.of(""""bonus"""")): @scala.annotation.nowarn; values.add(concat(Fragment.encode(PgTypes.numeric, value), Fragment.of("::numeric"))): @scala.annotation.nowarn }
     );
     unsaved.commissionpct.visit(
       {  },
-      value => { columns.add(Fragment.lit(""""commissionpct"""")): @scala.annotation.nowarn; values.add(interpolate(Fragment.encode(PgTypes.numeric, value), Fragment.lit("::numeric"))): @scala.annotation.nowarn }
+      value => { columns.add(Fragment.of(""""commissionpct"""")): @scala.annotation.nowarn; values.add(concat(Fragment.encode(PgTypes.numeric, value), Fragment.of("::numeric"))): @scala.annotation.nowarn }
     );
     unsaved.salesytd.visit(
       {  },
-      value => { columns.add(Fragment.lit(""""salesytd"""")): @scala.annotation.nowarn; values.add(interpolate(Fragment.encode(PgTypes.numeric, value), Fragment.lit("::numeric"))): @scala.annotation.nowarn }
+      value => { columns.add(Fragment.of(""""salesytd"""")): @scala.annotation.nowarn; values.add(concat(Fragment.encode(PgTypes.numeric, value), Fragment.of("::numeric"))): @scala.annotation.nowarn }
     );
     unsaved.saleslastyear.visit(
       {  },
-      value => { columns.add(Fragment.lit(""""saleslastyear"""")): @scala.annotation.nowarn; values.add(interpolate(Fragment.encode(PgTypes.numeric, value), Fragment.lit("::numeric"))): @scala.annotation.nowarn }
+      value => { columns.add(Fragment.of(""""saleslastyear"""")): @scala.annotation.nowarn; values.add(concat(Fragment.encode(PgTypes.numeric, value), Fragment.of("::numeric"))): @scala.annotation.nowarn }
     );
     unsaved.rowguid.visit(
       {  },
-      value => { columns.add(Fragment.lit(""""rowguid"""")): @scala.annotation.nowarn; values.add(interpolate(Fragment.encode(PgTypes.uuid, value), Fragment.lit("::uuid"))): @scala.annotation.nowarn }
+      value => { columns.add(Fragment.of(""""rowguid"""")): @scala.annotation.nowarn; values.add(concat(Fragment.encode(PgTypes.uuid, value), Fragment.of("::uuid"))): @scala.annotation.nowarn }
     );
     unsaved.modifieddate.visit(
       {  },
-      value => { columns.add(Fragment.lit(""""modifieddate"""")): @scala.annotation.nowarn; values.add(interpolate(Fragment.encode(PgTypes.timestamp, value), Fragment.lit("::timestamp"))): @scala.annotation.nowarn }
+      value => { columns.add(Fragment.of(""""modifieddate"""")): @scala.annotation.nowarn; values.add(concat(Fragment.encode(PgTypes.timestamp, value), Fragment.of("::timestamp"))): @scala.annotation.nowarn }
     );
     val q: Fragment = {
-      interpolate(Fragment.lit("""insert into "sales"."salesperson"("""), Fragment.comma(columns), Fragment.lit(""")
-      values ("""), Fragment.comma(values), Fragment.lit(""")
+      concat(Fragment.of("""insert into "sales"."salesperson"("""), Fragment.comma(columns), Fragment.of(""")
+      values ("""), Fragment.comma(values), Fragment.of(""")
       RETURNING "businessentityid", "territoryid", "salesquota", "bonus", "commissionpct", "salesytd", "saleslastyear", "rowguid", "modifieddate"
       """))
     }
-    return q.updateReturning(SalespersonRow.`_rowParser`.exactlyOne()).runUnchecked(c)
+    return q.updateReturning(SalespersonRow.rowCodec.exactlyOne()).run(c)
   }
 
   override def insertStreaming(
     unsaved: java.util.Iterator[SalespersonRow],
     batchSize: Integer = 10000
-  )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "sales"."salesperson"("businessentityid", "territoryid", "salesquota", "bonus", "commissionpct", "salesytd", "saleslastyear", "rowguid", "modifieddate") FROM STDIN""", batchSize, unsaved, c, SalespersonRow.pgText)
+  )(using c: Connection): java.lang.Long = StreamingInsert.of(s"""COPY "sales"."salesperson"("businessentityid", "territoryid", "salesquota", "bonus", "commissionpct", "salesytd", "saleslastyear", "rowguid", "modifieddate") FROM STDIN""", batchSize, unsaved, SalespersonRow.pgText).run(c)
 
   /** NOTE: this functionality requires PostgreSQL 16 or later! */
   override def insertUnsavedStreaming(
     unsaved: java.util.Iterator[SalespersonRowUnsaved],
     batchSize: Integer = 10000
-  )(using c: Connection): java.lang.Long = streamingInsert.insertUnchecked(s"""COPY "sales"."salesperson"("businessentityid", "territoryid", "salesquota", "bonus", "commissionpct", "salesytd", "saleslastyear", "rowguid", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved, c, SalespersonRowUnsaved.pgText)
+  )(using c: Connection): java.lang.Long = StreamingInsert.of(s"""COPY "sales"."salesperson"("businessentityid", "territoryid", "salesquota", "bonus", "commissionpct", "salesytd", "saleslastyear", "rowguid", "modifieddate") FROM STDIN (DEFAULT '__DEFAULT_VALUE__')""", batchSize, unsaved, SalespersonRowUnsaved.pgText).run(c)
 
-  override def select: SelectBuilder[SalespersonFields, SalespersonRow] = SelectBuilder.of(""""sales"."salesperson"""", SalespersonFields.structure, SalespersonRow.`_rowParser`, Dialect.POSTGRESQL)
+  override def select: SelectBuilder[SalespersonFields, SalespersonRow] = SelectBuilder.of(""""sales"."salesperson"""", SalespersonFields.structure, SalespersonRow.rowCodec, Dialect.POSTGRESQL)
 
-  override def selectAll(using c: Connection): java.util.List[SalespersonRow] = {
-    interpolate(Fragment.lit("""select "businessentityid", "territoryid", "salesquota", "bonus", "commissionpct", "salesytd", "saleslastyear", "rowguid", "modifieddate"
+  override def selectAll(using c: ConnectionRead): java.util.List[SalespersonRow] = {
+    concat(Fragment.of("""select "businessentityid", "territoryid", "salesquota", "bonus", "commissionpct", "salesytd", "saleslastyear", "rowguid", "modifieddate"
     from "sales"."salesperson"
-    """)).query(SalespersonRow.`_rowParser`.all()).runUnchecked(c)
+    """)).query(SalespersonRow.rowCodec.all()).run(c)
   }
 
-  override def selectById(businessentityid: BusinessentityId)(using c: Connection): Optional[SalespersonRow] = {
-    interpolate(Fragment.lit("""select "businessentityid", "territoryid", "salesquota", "bonus", "commissionpct", "salesytd", "saleslastyear", "rowguid", "modifieddate"
+  override def selectById(businessentityid: BusinessentityId)(using c: ConnectionRead): Optional[SalespersonRow] = {
+    concat(Fragment.of("""select "businessentityid", "territoryid", "salesquota", "bonus", "commissionpct", "salesytd", "saleslastyear", "rowguid", "modifieddate"
     from "sales"."salesperson"
-    where "businessentityid" = """), Fragment.encode(BusinessentityId.pgType, businessentityid), Fragment.lit("")).query(SalespersonRow.`_rowParser`.first()).runUnchecked(c)
+    where "businessentityid" = """), Fragment.encode(BusinessentityId.pgType, businessentityid), Fragment.of("")).query(SalespersonRow.rowCodec.first()).run(c)
   }
 
-  override def selectByIds(businessentityids: Array[BusinessentityId])(using c: Connection): java.util.List[SalespersonRow] = {
-    interpolate(Fragment.lit("""select "businessentityid", "territoryid", "salesquota", "bonus", "commissionpct", "salesytd", "saleslastyear", "rowguid", "modifieddate"
+  override def selectByIds(businessentityids: java.util.List[BusinessentityId])(using c: ConnectionRead): java.util.List[SalespersonRow] = {
+    concat(Fragment.of("""select "businessentityid", "territoryid", "salesquota", "bonus", "commissionpct", "salesytd", "saleslastyear", "rowguid", "modifieddate"
     from "sales"."salesperson"
-    where "businessentityid" = ANY("""), Fragment.encode(BusinessentityId.pgTypeArray, businessentityids), Fragment.lit(")")).query(SalespersonRow.`_rowParser`.all()).runUnchecked(c)
+    where "businessentityid" = ANY("""), Fragment.encode(BusinessentityId.pgType.array(), businessentityids), Fragment.of(")")).query(SalespersonRow.rowCodec.all()).run(c)
   }
 
-  override def selectByIdsTracked(businessentityids: Array[BusinessentityId])(using c: Connection): java.util.Map[BusinessentityId, SalespersonRow] = {
+  override def selectByIdsTracked(businessentityids: java.util.List[BusinessentityId])(using c: ConnectionRead): java.util.Map[BusinessentityId, SalespersonRow] = {
     val ret: HashMap[BusinessentityId, SalespersonRow] = new HashMap[BusinessentityId, SalespersonRow]()
     selectByIds(businessentityids)(using c).forEach(row => ret.put(row.businessentityid, row): @scala.annotation.nowarn)
     return ret
   }
 
-  override def update: UpdateBuilder[SalespersonFields, SalespersonRow] = UpdateBuilder.of(""""sales"."salesperson"""", SalespersonFields.structure, SalespersonRow.`_rowParser`, Dialect.POSTGRESQL)
+  override def update: UpdateBuilder[SalespersonFields, SalespersonRow] = UpdateBuilder.of(""""sales"."salesperson"""", SalespersonFields.structure, SalespersonRow.rowCodec, Dialect.POSTGRESQL)
 
   override def update(row: SalespersonRow)(using c: Connection): java.lang.Boolean = {
     val businessentityid: BusinessentityId = row.businessentityid
-    return interpolate(Fragment.lit("""update "sales"."salesperson"
-    set "territoryid" = """), Fragment.encode(SalesterritoryId.pgType.opt(), row.territoryid), Fragment.lit("""::int4,
-    "salesquota" = """), Fragment.encode(PgTypes.numeric.opt(), row.salesquota), Fragment.lit("""::numeric,
-    "bonus" = """), Fragment.encode(PgTypes.numeric, row.bonus), Fragment.lit("""::numeric,
-    "commissionpct" = """), Fragment.encode(PgTypes.numeric, row.commissionpct), Fragment.lit("""::numeric,
-    "salesytd" = """), Fragment.encode(PgTypes.numeric, row.salesytd), Fragment.lit("""::numeric,
-    "saleslastyear" = """), Fragment.encode(PgTypes.numeric, row.saleslastyear), Fragment.lit("""::numeric,
-    "rowguid" = """), Fragment.encode(PgTypes.uuid, row.rowguid), Fragment.lit("""::uuid,
-    "modifieddate" = """), Fragment.encode(PgTypes.timestamp, row.modifieddate), Fragment.lit("""::timestamp
-    where "businessentityid" = """), Fragment.encode(BusinessentityId.pgType, businessentityid), Fragment.lit("")).update().runUnchecked(c) > 0
+    return concat(Fragment.of("""update "sales"."salesperson"
+    set "territoryid" = """), Fragment.encode(SalesterritoryId.pgType.opt, row.territoryid), Fragment.of("""::int4,
+    "salesquota" = """), Fragment.encode(PgTypes.numeric.opt, row.salesquota), Fragment.of("""::numeric,
+    "bonus" = """), Fragment.encode(PgTypes.numeric, row.bonus), Fragment.of("""::numeric,
+    "commissionpct" = """), Fragment.encode(PgTypes.numeric, row.commissionpct), Fragment.of("""::numeric,
+    "salesytd" = """), Fragment.encode(PgTypes.numeric, row.salesytd), Fragment.of("""::numeric,
+    "saleslastyear" = """), Fragment.encode(PgTypes.numeric, row.saleslastyear), Fragment.of("""::numeric,
+    "rowguid" = """), Fragment.encode(PgTypes.uuid, row.rowguid), Fragment.of("""::uuid,
+    "modifieddate" = """), Fragment.encode(PgTypes.timestamp, row.modifieddate), Fragment.of("""::timestamp
+    where "businessentityid" = """), Fragment.encode(BusinessentityId.pgType, businessentityid), Fragment.of("")).update().run(c) > 0
   }
 
   override def upsert(unsaved: SalespersonRow)(using c: Connection): SalespersonRow = {
-  interpolate(Fragment.lit("""insert into "sales"."salesperson"("businessentityid", "territoryid", "salesquota", "bonus", "commissionpct", "salesytd", "saleslastyear", "rowguid", "modifieddate")
-    values ("""), Fragment.encode(BusinessentityId.pgType, unsaved.businessentityid), Fragment.lit("::int4, "), Fragment.encode(SalesterritoryId.pgType.opt(), unsaved.territoryid), Fragment.lit("::int4, "), Fragment.encode(PgTypes.numeric.opt(), unsaved.salesquota), Fragment.lit("::numeric, "), Fragment.encode(PgTypes.numeric, unsaved.bonus), Fragment.lit("::numeric, "), Fragment.encode(PgTypes.numeric, unsaved.commissionpct), Fragment.lit("::numeric, "), Fragment.encode(PgTypes.numeric, unsaved.salesytd), Fragment.lit("::numeric, "), Fragment.encode(PgTypes.numeric, unsaved.saleslastyear), Fragment.lit("::numeric, "), Fragment.encode(PgTypes.uuid, unsaved.rowguid), Fragment.lit("::uuid, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.lit("""::timestamp)
+  concat(Fragment.of("""insert into "sales"."salesperson"("businessentityid", "territoryid", "salesquota", "bonus", "commissionpct", "salesytd", "saleslastyear", "rowguid", "modifieddate")
+    values ("""), Fragment.encode(BusinessentityId.pgType, unsaved.businessentityid), Fragment.of("::int4, "), Fragment.encode(SalesterritoryId.pgType.opt, unsaved.territoryid), Fragment.of("::int4, "), Fragment.encode(PgTypes.numeric.opt, unsaved.salesquota), Fragment.of("::numeric, "), Fragment.encode(PgTypes.numeric, unsaved.bonus), Fragment.of("::numeric, "), Fragment.encode(PgTypes.numeric, unsaved.commissionpct), Fragment.of("::numeric, "), Fragment.encode(PgTypes.numeric, unsaved.salesytd), Fragment.of("::numeric, "), Fragment.encode(PgTypes.numeric, unsaved.saleslastyear), Fragment.of("::numeric, "), Fragment.encode(PgTypes.uuid, unsaved.rowguid), Fragment.of("::uuid, "), Fragment.encode(PgTypes.timestamp, unsaved.modifieddate), Fragment.of("""::timestamp)
     on conflict ("businessentityid")
     do update set
       "territoryid" = EXCLUDED."territoryid",
@@ -150,12 +151,12 @@ class SalespersonRepoImpl extends SalespersonRepo {
     "rowguid" = EXCLUDED."rowguid",
     "modifieddate" = EXCLUDED."modifieddate"
     returning "businessentityid", "territoryid", "salesquota", "bonus", "commissionpct", "salesytd", "saleslastyear", "rowguid", "modifieddate""""))
-    .updateReturning(SalespersonRow.`_rowParser`.exactlyOne())
-    .runUnchecked(c)
+    .updateReturning(SalespersonRow.rowCodec.exactlyOne())
+    .run(c)
   }
 
   override def upsertBatch(unsaved: java.util.Iterator[SalespersonRow])(using c: Connection): java.util.List[SalespersonRow] = {
-    interpolate(Fragment.lit("""insert into "sales"."salesperson"("businessentityid", "territoryid", "salesquota", "bonus", "commissionpct", "salesytd", "saleslastyear", "rowguid", "modifieddate")
+    concat(Fragment.of("""insert into "sales"."salesperson"("businessentityid", "territoryid", "salesquota", "bonus", "commissionpct", "salesytd", "saleslastyear", "rowguid", "modifieddate")
     values (?::int4, ?::int4, ?::numeric, ?::numeric, ?::numeric, ?::numeric, ?::numeric, ?::uuid, ?::timestamp)
     on conflict ("businessentityid")
     do update set
@@ -168,8 +169,8 @@ class SalespersonRepoImpl extends SalespersonRepo {
     "rowguid" = EXCLUDED."rowguid",
     "modifieddate" = EXCLUDED."modifieddate"
     returning "businessentityid", "territoryid", "salesquota", "bonus", "commissionpct", "salesytd", "saleslastyear", "rowguid", "modifieddate""""))
-      .updateManyReturning(SalespersonRow.`_rowParser`, unsaved)
-    .runUnchecked(c)
+      .updateManyReturning(SalespersonRow.rowCodec, unsaved)
+    .run(c)
   }
 
   /** NOTE: this functionality is not safe if you use auto-commit mode! it runs 3 SQL statements */
@@ -177,9 +178,9 @@ class SalespersonRepoImpl extends SalespersonRepo {
     unsaved: java.util.Iterator[SalespersonRow],
     batchSize: Integer = 10000
   )(using c: Connection): Integer = {
-    interpolate(Fragment.lit("""create temporary table salesperson_TEMP (like "sales"."salesperson") on commit drop""")).update().runUnchecked(c): @scala.annotation.nowarn
-    streamingInsert.insertUnchecked(s"""copy salesperson_TEMP("businessentityid", "territoryid", "salesquota", "bonus", "commissionpct", "salesytd", "saleslastyear", "rowguid", "modifieddate") from stdin""", batchSize, unsaved, c, SalespersonRow.pgText): @scala.annotation.nowarn
-    return interpolate(Fragment.lit("""insert into "sales"."salesperson"("businessentityid", "territoryid", "salesquota", "bonus", "commissionpct", "salesytd", "saleslastyear", "rowguid", "modifieddate")
+    concat(Fragment.of("""create temporary table salesperson_TEMP (like "sales"."salesperson") on commit drop""")).update().run(c): @scala.annotation.nowarn
+    StreamingInsert.of(s"""copy salesperson_TEMP("businessentityid", "territoryid", "salesquota", "bonus", "commissionpct", "salesytd", "saleslastyear", "rowguid", "modifieddate") from stdin""", batchSize, unsaved, SalespersonRow.pgText).run(c): @scala.annotation.nowarn
+    return concat(Fragment.of("""insert into "sales"."salesperson"("businessentityid", "territoryid", "salesquota", "bonus", "commissionpct", "salesytd", "saleslastyear", "rowguid", "modifieddate")
     select * from salesperson_TEMP
     on conflict ("businessentityid")
     do update set
@@ -192,6 +193,6 @@ class SalespersonRepoImpl extends SalespersonRepo {
     "rowguid" = EXCLUDED."rowguid",
     "modifieddate" = EXCLUDED."modifieddate"
     ;
-    drop table salesperson_TEMP;""")).update().runUnchecked(c)
+    drop table salesperson_TEMP;""")).update().run(c)
   }
 }

@@ -6,12 +6,11 @@
 package testdb.order_details
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import dev.typr.foundations.MariaTypes
+import dev.typr.dslsc.RowCodecs
 import dev.typr.foundations.Tuple.Tuple17
 import dev.typr.foundations.data.Uint2
-import dev.typr.foundations.scala.RowParser
-import dev.typr.foundations.scala.RowParsers
-import dev.typr.foundations.scala.ScalaDbTypes
+import dev.typr.foundationssc.MariaTypes
+import dev.typr.foundationssc.RowCodec
 import java.time.LocalDateTime
 import testdb.order_items.OrderItemsId
 import testdb.orders.OrdersId
@@ -90,5 +89,5 @@ case class OrderDetailsSqlRow(
 }
 
 object OrderDetailsSqlRow {
-  val `_rowParser`: RowParser[OrderDetailsSqlRow] = RowParsers.of(OrdersId.mariaType, MariaTypes.varchar, MariaTypes.text, MariaTypes.text, ScalaDbTypes.MariaTypes.numeric, ScalaDbTypes.MariaTypes.numeric, ScalaDbTypes.MariaTypes.numeric, ScalaDbTypes.MariaTypes.numeric, ScalaDbTypes.MariaTypes.numeric, MariaTypes.datetime, OrderItemsId.mariaType, ProductsId.mariaType, MariaTypes.varchar, MariaTypes.varchar, MariaTypes.smallintUnsigned, ScalaDbTypes.MariaTypes.numeric, ScalaDbTypes.MariaTypes.numeric)(OrderDetailsSqlRow.apply)(row => Array[Any](row.orderId, row.orderNumber, row.orderStatus, row.paymentStatus, row.subtotal, row.shippingCost, row.taxAmount, row.discountAmount, row.totalAmount, row.orderedAt, row.itemId, row.productId, row.sku, row.productName, row.quantity, row.unitPrice, row.lineTotal))
+  val rowCodec: RowCodec[OrderDetailsSqlRow] = RowCodecs.of(OrdersId.mariaType, MariaTypes.varchar, MariaTypes.text, MariaTypes.text, MariaTypes.numeric, MariaTypes.numeric, MariaTypes.numeric, MariaTypes.numeric, MariaTypes.numeric, MariaTypes.datetime, OrderItemsId.mariaType, ProductsId.mariaType, MariaTypes.varchar, MariaTypes.varchar, MariaTypes.smallintUnsigned, MariaTypes.numeric, MariaTypes.numeric)(OrderDetailsSqlRow.apply)(row => Array[Any](row.orderId, row.orderNumber, row.orderStatus, row.paymentStatus, row.subtotal, row.shippingCost, row.taxAmount, row.discountAmount, row.totalAmount, row.orderedAt, row.itemId, row.productId, row.sku, row.productName, row.quantity, row.unitPrice, row.lineTotal))
 }

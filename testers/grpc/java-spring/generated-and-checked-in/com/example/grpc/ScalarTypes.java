@@ -8,334 +8,86 @@ import io.grpc.MethodDescriptor.Marshaller;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.RuntimeException;
 
 public record ScalarTypes(
-    Double doubleVal,
-    Float floatVal,
-    Integer int32Val,
-    Long int64Val,
-    Integer uint32Val,
-    Long uint64Val,
-    Integer sint32Val,
-    Long sint64Val,
-    Integer fixed32Val,
-    Long fixed64Val,
-    Integer sfixed32Val,
-    Long sfixed64Val,
-    Boolean boolVal,
-    String stringVal,
-    ByteString bytesVal) {
+  Double doubleVal,
+  Float floatVal,
+  Integer int32Val,
+  Long int64Val,
+  Integer uint32Val,
+  Long uint64Val,
+  Integer sint32Val,
+  Long sint64Val,
+  Integer fixed32Val,
+  Long fixed64Val,
+  Integer sfixed32Val,
+  Long sfixed64Val,
+  Boolean boolVal,
+  String stringVal,
+  ByteString bytesVal
+) {
   public ScalarTypes withDoubleVal(Double doubleVal) {
-    return new ScalarTypes(
-        doubleVal,
-        floatVal,
-        int32Val,
-        int64Val,
-        uint32Val,
-        uint64Val,
-        sint32Val,
-        sint64Val,
-        fixed32Val,
-        fixed64Val,
-        sfixed32Val,
-        sfixed64Val,
-        boolVal,
-        stringVal,
-        bytesVal);
+    return new ScalarTypes(doubleVal, floatVal, int32Val, int64Val, uint32Val, uint64Val, sint32Val, sint64Val, fixed32Val, fixed64Val, sfixed32Val, sfixed64Val, boolVal, stringVal, bytesVal);
   }
 
   public ScalarTypes withFloatVal(Float floatVal) {
-    return new ScalarTypes(
-        doubleVal,
-        floatVal,
-        int32Val,
-        int64Val,
-        uint32Val,
-        uint64Val,
-        sint32Val,
-        sint64Val,
-        fixed32Val,
-        fixed64Val,
-        sfixed32Val,
-        sfixed64Val,
-        boolVal,
-        stringVal,
-        bytesVal);
+    return new ScalarTypes(doubleVal, floatVal, int32Val, int64Val, uint32Val, uint64Val, sint32Val, sint64Val, fixed32Val, fixed64Val, sfixed32Val, sfixed64Val, boolVal, stringVal, bytesVal);
   }
 
   public ScalarTypes withInt32Val(Integer int32Val) {
-    return new ScalarTypes(
-        doubleVal,
-        floatVal,
-        int32Val,
-        int64Val,
-        uint32Val,
-        uint64Val,
-        sint32Val,
-        sint64Val,
-        fixed32Val,
-        fixed64Val,
-        sfixed32Val,
-        sfixed64Val,
-        boolVal,
-        stringVal,
-        bytesVal);
+    return new ScalarTypes(doubleVal, floatVal, int32Val, int64Val, uint32Val, uint64Val, sint32Val, sint64Val, fixed32Val, fixed64Val, sfixed32Val, sfixed64Val, boolVal, stringVal, bytesVal);
   }
 
   public ScalarTypes withInt64Val(Long int64Val) {
-    return new ScalarTypes(
-        doubleVal,
-        floatVal,
-        int32Val,
-        int64Val,
-        uint32Val,
-        uint64Val,
-        sint32Val,
-        sint64Val,
-        fixed32Val,
-        fixed64Val,
-        sfixed32Val,
-        sfixed64Val,
-        boolVal,
-        stringVal,
-        bytesVal);
+    return new ScalarTypes(doubleVal, floatVal, int32Val, int64Val, uint32Val, uint64Val, sint32Val, sint64Val, fixed32Val, fixed64Val, sfixed32Val, sfixed64Val, boolVal, stringVal, bytesVal);
   }
 
   public ScalarTypes withUint32Val(Integer uint32Val) {
-    return new ScalarTypes(
-        doubleVal,
-        floatVal,
-        int32Val,
-        int64Val,
-        uint32Val,
-        uint64Val,
-        sint32Val,
-        sint64Val,
-        fixed32Val,
-        fixed64Val,
-        sfixed32Val,
-        sfixed64Val,
-        boolVal,
-        stringVal,
-        bytesVal);
+    return new ScalarTypes(doubleVal, floatVal, int32Val, int64Val, uint32Val, uint64Val, sint32Val, sint64Val, fixed32Val, fixed64Val, sfixed32Val, sfixed64Val, boolVal, stringVal, bytesVal);
   }
 
   public ScalarTypes withUint64Val(Long uint64Val) {
-    return new ScalarTypes(
-        doubleVal,
-        floatVal,
-        int32Val,
-        int64Val,
-        uint32Val,
-        uint64Val,
-        sint32Val,
-        sint64Val,
-        fixed32Val,
-        fixed64Val,
-        sfixed32Val,
-        sfixed64Val,
-        boolVal,
-        stringVal,
-        bytesVal);
+    return new ScalarTypes(doubleVal, floatVal, int32Val, int64Val, uint32Val, uint64Val, sint32Val, sint64Val, fixed32Val, fixed64Val, sfixed32Val, sfixed64Val, boolVal, stringVal, bytesVal);
   }
 
   public ScalarTypes withSint32Val(Integer sint32Val) {
-    return new ScalarTypes(
-        doubleVal,
-        floatVal,
-        int32Val,
-        int64Val,
-        uint32Val,
-        uint64Val,
-        sint32Val,
-        sint64Val,
-        fixed32Val,
-        fixed64Val,
-        sfixed32Val,
-        sfixed64Val,
-        boolVal,
-        stringVal,
-        bytesVal);
+    return new ScalarTypes(doubleVal, floatVal, int32Val, int64Val, uint32Val, uint64Val, sint32Val, sint64Val, fixed32Val, fixed64Val, sfixed32Val, sfixed64Val, boolVal, stringVal, bytesVal);
   }
 
   public ScalarTypes withSint64Val(Long sint64Val) {
-    return new ScalarTypes(
-        doubleVal,
-        floatVal,
-        int32Val,
-        int64Val,
-        uint32Val,
-        uint64Val,
-        sint32Val,
-        sint64Val,
-        fixed32Val,
-        fixed64Val,
-        sfixed32Val,
-        sfixed64Val,
-        boolVal,
-        stringVal,
-        bytesVal);
+    return new ScalarTypes(doubleVal, floatVal, int32Val, int64Val, uint32Val, uint64Val, sint32Val, sint64Val, fixed32Val, fixed64Val, sfixed32Val, sfixed64Val, boolVal, stringVal, bytesVal);
   }
 
   public ScalarTypes withFixed32Val(Integer fixed32Val) {
-    return new ScalarTypes(
-        doubleVal,
-        floatVal,
-        int32Val,
-        int64Val,
-        uint32Val,
-        uint64Val,
-        sint32Val,
-        sint64Val,
-        fixed32Val,
-        fixed64Val,
-        sfixed32Val,
-        sfixed64Val,
-        boolVal,
-        stringVal,
-        bytesVal);
+    return new ScalarTypes(doubleVal, floatVal, int32Val, int64Val, uint32Val, uint64Val, sint32Val, sint64Val, fixed32Val, fixed64Val, sfixed32Val, sfixed64Val, boolVal, stringVal, bytesVal);
   }
 
   public ScalarTypes withFixed64Val(Long fixed64Val) {
-    return new ScalarTypes(
-        doubleVal,
-        floatVal,
-        int32Val,
-        int64Val,
-        uint32Val,
-        uint64Val,
-        sint32Val,
-        sint64Val,
-        fixed32Val,
-        fixed64Val,
-        sfixed32Val,
-        sfixed64Val,
-        boolVal,
-        stringVal,
-        bytesVal);
+    return new ScalarTypes(doubleVal, floatVal, int32Val, int64Val, uint32Val, uint64Val, sint32Val, sint64Val, fixed32Val, fixed64Val, sfixed32Val, sfixed64Val, boolVal, stringVal, bytesVal);
   }
 
   public ScalarTypes withSfixed32Val(Integer sfixed32Val) {
-    return new ScalarTypes(
-        doubleVal,
-        floatVal,
-        int32Val,
-        int64Val,
-        uint32Val,
-        uint64Val,
-        sint32Val,
-        sint64Val,
-        fixed32Val,
-        fixed64Val,
-        sfixed32Val,
-        sfixed64Val,
-        boolVal,
-        stringVal,
-        bytesVal);
+    return new ScalarTypes(doubleVal, floatVal, int32Val, int64Val, uint32Val, uint64Val, sint32Val, sint64Val, fixed32Val, fixed64Val, sfixed32Val, sfixed64Val, boolVal, stringVal, bytesVal);
   }
 
   public ScalarTypes withSfixed64Val(Long sfixed64Val) {
-    return new ScalarTypes(
-        doubleVal,
-        floatVal,
-        int32Val,
-        int64Val,
-        uint32Val,
-        uint64Val,
-        sint32Val,
-        sint64Val,
-        fixed32Val,
-        fixed64Val,
-        sfixed32Val,
-        sfixed64Val,
-        boolVal,
-        stringVal,
-        bytesVal);
+    return new ScalarTypes(doubleVal, floatVal, int32Val, int64Val, uint32Val, uint64Val, sint32Val, sint64Val, fixed32Val, fixed64Val, sfixed32Val, sfixed64Val, boolVal, stringVal, bytesVal);
   }
 
   public ScalarTypes withBoolVal(Boolean boolVal) {
-    return new ScalarTypes(
-        doubleVal,
-        floatVal,
-        int32Val,
-        int64Val,
-        uint32Val,
-        uint64Val,
-        sint32Val,
-        sint64Val,
-        fixed32Val,
-        fixed64Val,
-        sfixed32Val,
-        sfixed64Val,
-        boolVal,
-        stringVal,
-        bytesVal);
+    return new ScalarTypes(doubleVal, floatVal, int32Val, int64Val, uint32Val, uint64Val, sint32Val, sint64Val, fixed32Val, fixed64Val, sfixed32Val, sfixed64Val, boolVal, stringVal, bytesVal);
   }
 
   public ScalarTypes withStringVal(String stringVal) {
-    return new ScalarTypes(
-        doubleVal,
-        floatVal,
-        int32Val,
-        int64Val,
-        uint32Val,
-        uint64Val,
-        sint32Val,
-        sint64Val,
-        fixed32Val,
-        fixed64Val,
-        sfixed32Val,
-        sfixed64Val,
-        boolVal,
-        stringVal,
-        bytesVal);
+    return new ScalarTypes(doubleVal, floatVal, int32Val, int64Val, uint32Val, uint64Val, sint32Val, sint64Val, fixed32Val, fixed64Val, sfixed32Val, sfixed64Val, boolVal, stringVal, bytesVal);
   }
 
   public ScalarTypes withBytesVal(ByteString bytesVal) {
-    return new ScalarTypes(
-        doubleVal,
-        floatVal,
-        int32Val,
-        int64Val,
-        uint32Val,
-        uint64Val,
-        sint32Val,
-        sint64Val,
-        fixed32Val,
-        fixed64Val,
-        sfixed32Val,
-        sfixed64Val,
-        boolVal,
-        stringVal,
-        bytesVal);
+    return new ScalarTypes(doubleVal, floatVal, int32Val, int64Val, uint32Val, uint64Val, sint32Val, sint64Val, fixed32Val, fixed64Val, sfixed32Val, sfixed64Val, boolVal, stringVal, bytesVal);
   }
 
-  public static Marshaller<ScalarTypes> MARSHALLER =
-      new Marshaller<ScalarTypes>() {
-        @Override
-        public InputStream stream(ScalarTypes value) {
-          var bytes = new byte[value.getSerializedSize()];
-          var cos = CodedOutputStream.newInstance(bytes);
-          try {
-            value.writeTo(cos);
-            cos.flush();
-          } catch (IOException e) {
-            throw new RuntimeException(e);
-          }
-          return new ByteArrayInputStream(bytes);
-        }
-
-        @Override
-        public ScalarTypes parse(InputStream stream) {
-          try {
-            return ScalarTypes.parseFrom(CodedInputStream.newInstance(stream));
-          } catch (IOException e) {
-            throw new RuntimeException(e);
-          }
-        }
-      };
-
-  public static ScalarTypes parseFrom(CodedInputStream input) throws IOException {
+  static public ScalarTypes parseFrom(CodedInputStream input) throws IOException {
     Double doubleVal = 0.0;
     Float floatVal = 0.0f;
     Integer int32Val = 0;
@@ -353,59 +105,49 @@ public record ScalarTypes(
     ByteString bytesVal = ByteString.EMPTY;
     while (!input.isAtEnd()) {
       var tag = input.readTag();
-      if (WireFormat.getTagFieldNumber(tag) == 1) {
-        doubleVal = input.readDouble();
-      } else if (WireFormat.getTagFieldNumber(tag) == 2) {
-        floatVal = input.readFloat();
-      } else if (WireFormat.getTagFieldNumber(tag) == 3) {
-        int32Val = input.readInt32();
-      } else if (WireFormat.getTagFieldNumber(tag) == 4) {
-        int64Val = input.readInt64();
-      } else if (WireFormat.getTagFieldNumber(tag) == 5) {
-        uint32Val = input.readUInt32();
-      } else if (WireFormat.getTagFieldNumber(tag) == 6) {
-        uint64Val = input.readUInt64();
-      } else if (WireFormat.getTagFieldNumber(tag) == 7) {
-        sint32Val = input.readSInt32();
-      } else if (WireFormat.getTagFieldNumber(tag) == 8) {
-        sint64Val = input.readSInt64();
-      } else if (WireFormat.getTagFieldNumber(tag) == 9) {
-        fixed32Val = input.readFixed32();
-      } else if (WireFormat.getTagFieldNumber(tag) == 10) {
-        fixed64Val = input.readFixed64();
-      } else if (WireFormat.getTagFieldNumber(tag) == 11) {
-        sfixed32Val = input.readSFixed32();
-      } else if (WireFormat.getTagFieldNumber(tag) == 12) {
-        sfixed64Val = input.readSFixed64();
-      } else if (WireFormat.getTagFieldNumber(tag) == 13) {
-        boolVal = input.readBool();
-      } else if (WireFormat.getTagFieldNumber(tag) == 14) {
-        stringVal = input.readString();
-      } else if (WireFormat.getTagFieldNumber(tag) == 15) {
-        bytesVal = input.readBytes();
-      } else {
-        input.skipField(tag);
-      }
-      ;
-    }
-    ;
-    return new ScalarTypes(
-        doubleVal,
-        floatVal,
-        int32Val,
-        int64Val,
-        uint32Val,
-        uint64Val,
-        sint32Val,
-        sint64Val,
-        fixed32Val,
-        fixed64Val,
-        sfixed32Val,
-        sfixed64Val,
-        boolVal,
-        stringVal,
-        bytesVal);
+      if (WireFormat.getTagFieldNumber(tag) == 1) { doubleVal = input.readDouble(); }
+      else if (WireFormat.getTagFieldNumber(tag) == 2) { floatVal = input.readFloat(); }
+      else if (WireFormat.getTagFieldNumber(tag) == 3) { int32Val = input.readInt32(); }
+      else if (WireFormat.getTagFieldNumber(tag) == 4) { int64Val = input.readInt64(); }
+      else if (WireFormat.getTagFieldNumber(tag) == 5) { uint32Val = input.readUInt32(); }
+      else if (WireFormat.getTagFieldNumber(tag) == 6) { uint64Val = input.readUInt64(); }
+      else if (WireFormat.getTagFieldNumber(tag) == 7) { sint32Val = input.readSInt32(); }
+      else if (WireFormat.getTagFieldNumber(tag) == 8) { sint64Val = input.readSInt64(); }
+      else if (WireFormat.getTagFieldNumber(tag) == 9) { fixed32Val = input.readFixed32(); }
+      else if (WireFormat.getTagFieldNumber(tag) == 10) { fixed64Val = input.readFixed64(); }
+      else if (WireFormat.getTagFieldNumber(tag) == 11) { sfixed32Val = input.readSFixed32(); }
+      else if (WireFormat.getTagFieldNumber(tag) == 12) { sfixed64Val = input.readSFixed64(); }
+      else if (WireFormat.getTagFieldNumber(tag) == 13) { boolVal = input.readBool(); }
+      else if (WireFormat.getTagFieldNumber(tag) == 14) { stringVal = input.readString(); }
+      else if (WireFormat.getTagFieldNumber(tag) == 15) { bytesVal = input.readBytes(); }
+      else { input.skipField(tag); };
+    };
+    return new ScalarTypes(doubleVal, floatVal, int32Val, int64Val, uint32Val, uint64Val, sint32Val, sint64Val, fixed32Val, fixed64Val, sfixed32Val, sfixed64Val, boolVal, stringVal, bytesVal);
   }
+
+  static public Marshaller<ScalarTypes> MARSHALLER =
+    new Marshaller<ScalarTypes>() {
+      @Override
+      public InputStream stream(ScalarTypes value) {
+        var bytes = new byte[value.getSerializedSize()];
+        var cos = CodedOutputStream.newInstance(bytes);
+        try {
+          value.writeTo(cos);
+          cos.flush();
+        } catch (IOException e) {
+          throw new RuntimeException(e);
+        } 
+        return new ByteArrayInputStream(bytes);
+      }
+      @Override
+      public ScalarTypes parse(InputStream stream) {
+        try {
+          return ScalarTypes.parseFrom(CodedInputStream.newInstance(stream));
+        } catch (IOException e) {
+          throw new RuntimeException(e);
+        } 
+      }
+    };
 
   public Integer getSerializedSize() {
     Integer size = 0;

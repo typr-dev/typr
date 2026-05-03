@@ -7,8 +7,14 @@ package adventureworks.public.pgtestnull
 
 import adventureworks.public.Mydomain
 import adventureworks.public.Myenum
-import dev.typr.foundations.PgTypes
-import dev.typr.foundations.RowParser
+import dev.typr.dsl.FieldsBase
+import dev.typr.dsl.Path
+import dev.typr.dsl.SqlExpr.FieldLike
+import dev.typr.dslsc.RelationStructure
+import dev.typr.dslsc.SqlExpr
+import dev.typr.dslsc.SqlExpr.OptField
+import dev.typr.dslsc.TupleExpr70
+import dev.typr.foundations.RowCodec
 import dev.typr.foundations.data.Inet
 import dev.typr.foundations.data.Int2Vector
 import dev.typr.foundations.data.Json
@@ -16,14 +22,7 @@ import dev.typr.foundations.data.Jsonb
 import dev.typr.foundations.data.Money
 import dev.typr.foundations.data.Vector
 import dev.typr.foundations.data.Xml
-import dev.typr.foundations.dsl.FieldsBase
-import dev.typr.foundations.dsl.Path
-import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.scala.RelationStructure
-import dev.typr.foundations.scala.ScalaDbTypes
-import dev.typr.foundations.scala.SqlExpr
-import dev.typr.foundations.scala.SqlExpr.OptField
-import dev.typr.foundations.scala.TupleExpr70
+import dev.typr.foundationssc.PgTypes
 import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -39,7 +38,7 @@ import org.postgresql.geometric.PGpoint
 import org.postgresql.geometric.PGpolygon
 import org.postgresql.util.PGInterval
 
-class PgtestnullFields(val `_path`: java.util.List[Path]) extends TupleExpr70[Boolean, PGbox, /* bpchar, max 3 chars */ String, Array[Byte], /* bpchar, max 1 chars */ String, PGcircle, LocalDate, Float, Double, Map[String, String], Inet, Short, Int2Vector, Int, Long, PGInterval, Json, Jsonb, PGline, PGlseg, Money, Mydomain, Myenum, String, BigDecimal, PGpath, PGpoint, PGpolygon, String, LocalTime, LocalDateTime, Instant, OffsetTime, UUID, String, Vector, Xml, Array[PGbox], Array[/* bpchar */ String], Array[/* bpchar */ String], Array[PGcircle], Array[LocalDate], Array[Float], Array[Double], Array[Inet], Array[Short], Array[Int2Vector], Array[Int], Array[Long], Array[PGInterval], Array[Json], Array[Jsonb], Array[PGline], Array[PGlseg], Array[Money], Array[Mydomain], Array[Myenum], Array[String], Array[BigDecimal], Array[PGpath], Array[PGpoint], Array[PGpolygon], Array[String], Array[LocalTime], Array[LocalDateTime], Array[Instant], Array[OffsetTime], Array[UUID], Array[String], Array[Xml]] with RelationStructure[PgtestnullFields, PgtestnullRow]  with FieldsBase[PgtestnullRow] {
+class PgtestnullFields(val `_path`: java.util.List[Path]) extends TupleExpr70[Boolean, PGbox, /* bpchar, max 3 chars */ String, Array[Byte], /* bpchar, max 1 chars */ String, PGcircle, LocalDate, Float, Double, Map[String, String], Inet, Short, Int2Vector, Int, Long, PGInterval, Json, Jsonb, PGline, PGlseg, Money, Mydomain, Myenum, String, BigDecimal, PGpath, PGpoint, PGpolygon, String, LocalTime, LocalDateTime, Instant, OffsetTime, UUID, String, Vector, Xml, List[PGbox], List[/* bpchar */ String], List[/* bpchar */ String], List[PGcircle], List[LocalDate], List[Float], List[Double], List[Inet], List[Short], List[Int2Vector], List[Int], List[Long], List[PGInterval], List[Json], List[Jsonb], List[PGline], List[PGlseg], List[Money], List[Mydomain], List[Myenum], List[String], List[BigDecimal], List[PGpath], List[PGpoint], List[PGpolygon], List[String], List[LocalTime], List[LocalDateTime], List[Instant], List[OffsetTime], List[UUID], List[String], List[Xml]] with RelationStructure[PgtestnullFields, PgtestnullRow]  with FieldsBase[PgtestnullRow] {
   def bool: OptField[Boolean, PgtestnullRow] = {
     new OptField[Boolean, PgtestnullRow](
       _path,
@@ -48,7 +47,7 @@ class PgtestnullFields(val `_path`: java.util.List[Path]) extends TupleExpr70[Bo
       None,
       None,
       (row, value) => row.copy(bool = value),
-      ScalaDbTypes.PgTypes.bool
+      PgTypes.bool.underlying
     )
   }
 
@@ -60,7 +59,7 @@ class PgtestnullFields(val `_path`: java.util.List[Path]) extends TupleExpr70[Bo
       None,
       Some("box"),
       (row, value) => row.copy(box = value),
-      PgTypes.box
+      PgTypes.box.underlying
     )
   }
 
@@ -72,7 +71,7 @@ class PgtestnullFields(val `_path`: java.util.List[Path]) extends TupleExpr70[Bo
       None,
       Some("bpchar"),
       (row, value) => row.copy(bpchar = value),
-      PgTypes.bpchar
+      PgTypes.bpchar.underlying
     )
   }
 
@@ -84,7 +83,7 @@ class PgtestnullFields(val `_path`: java.util.List[Path]) extends TupleExpr70[Bo
       None,
       Some("bytea"),
       (row, value) => row.copy(bytea = value),
-      PgTypes.bytea
+      PgTypes.bytea.underlying
     )
   }
 
@@ -96,7 +95,7 @@ class PgtestnullFields(val `_path`: java.util.List[Path]) extends TupleExpr70[Bo
       None,
       Some("bpchar"),
       (row, value) => row.copy(char = value),
-      PgTypes.bpchar
+      PgTypes.bpchar.underlying
     )
   }
 
@@ -108,7 +107,7 @@ class PgtestnullFields(val `_path`: java.util.List[Path]) extends TupleExpr70[Bo
       None,
       Some("circle"),
       (row, value) => row.copy(circle = value),
-      PgTypes.circle
+      PgTypes.circle.underlying
     )
   }
 
@@ -120,7 +119,7 @@ class PgtestnullFields(val `_path`: java.util.List[Path]) extends TupleExpr70[Bo
       None,
       Some("date"),
       (row, value) => row.copy(date = value),
-      PgTypes.date
+      PgTypes.date.underlying
     )
   }
 
@@ -132,7 +131,7 @@ class PgtestnullFields(val `_path`: java.util.List[Path]) extends TupleExpr70[Bo
       None,
       Some("float4"),
       (row, value) => row.copy(float4 = value),
-      ScalaDbTypes.PgTypes.float4
+      PgTypes.float4.underlying
     )
   }
 
@@ -144,7 +143,7 @@ class PgtestnullFields(val `_path`: java.util.List[Path]) extends TupleExpr70[Bo
       None,
       Some("float8"),
       (row, value) => row.copy(float8 = value),
-      ScalaDbTypes.PgTypes.float8
+      PgTypes.float8.underlying
     )
   }
 
@@ -156,7 +155,7 @@ class PgtestnullFields(val `_path`: java.util.List[Path]) extends TupleExpr70[Bo
       None,
       Some("hstore"),
       (row, value) => row.copy(hstore = value),
-      ScalaDbTypes.PgTypes.hstore
+      PgTypes.hstore.underlying
     )
   }
 
@@ -168,7 +167,7 @@ class PgtestnullFields(val `_path`: java.util.List[Path]) extends TupleExpr70[Bo
       None,
       Some("inet"),
       (row, value) => row.copy(inet = value),
-      PgTypes.inet
+      PgTypes.inet.underlying
     )
   }
 
@@ -180,7 +179,7 @@ class PgtestnullFields(val `_path`: java.util.List[Path]) extends TupleExpr70[Bo
       None,
       Some("int2"),
       (row, value) => row.copy(int2 = value),
-      ScalaDbTypes.PgTypes.int2
+      PgTypes.int2.underlying
     )
   }
 
@@ -192,7 +191,7 @@ class PgtestnullFields(val `_path`: java.util.List[Path]) extends TupleExpr70[Bo
       None,
       Some("int2vector"),
       (row, value) => row.copy(int2vector = value),
-      PgTypes.int2vector
+      PgTypes.int2vector.underlying
     )
   }
 
@@ -204,7 +203,7 @@ class PgtestnullFields(val `_path`: java.util.List[Path]) extends TupleExpr70[Bo
       None,
       Some("int4"),
       (row, value) => row.copy(int4 = value),
-      ScalaDbTypes.PgTypes.int4
+      PgTypes.int4.underlying
     )
   }
 
@@ -216,7 +215,7 @@ class PgtestnullFields(val `_path`: java.util.List[Path]) extends TupleExpr70[Bo
       None,
       Some("int8"),
       (row, value) => row.copy(int8 = value),
-      ScalaDbTypes.PgTypes.int8
+      PgTypes.int8.underlying
     )
   }
 
@@ -228,7 +227,7 @@ class PgtestnullFields(val `_path`: java.util.List[Path]) extends TupleExpr70[Bo
       None,
       Some("interval"),
       (row, value) => row.copy(interval = value),
-      PgTypes.interval
+      PgTypes.interval.underlying
     )
   }
 
@@ -240,7 +239,7 @@ class PgtestnullFields(val `_path`: java.util.List[Path]) extends TupleExpr70[Bo
       None,
       Some("json"),
       (row, value) => row.copy(json = value),
-      PgTypes.json
+      PgTypes.json.underlying
     )
   }
 
@@ -252,7 +251,7 @@ class PgtestnullFields(val `_path`: java.util.List[Path]) extends TupleExpr70[Bo
       None,
       Some("jsonb"),
       (row, value) => row.copy(jsonb = value),
-      PgTypes.jsonb
+      PgTypes.jsonb.underlying
     )
   }
 
@@ -264,7 +263,7 @@ class PgtestnullFields(val `_path`: java.util.List[Path]) extends TupleExpr70[Bo
       None,
       Some("line"),
       (row, value) => row.copy(line = value),
-      PgTypes.line
+      PgTypes.line.underlying
     )
   }
 
@@ -276,7 +275,7 @@ class PgtestnullFields(val `_path`: java.util.List[Path]) extends TupleExpr70[Bo
       None,
       Some("lseg"),
       (row, value) => row.copy(lseg = value),
-      PgTypes.lseg
+      PgTypes.lseg.underlying
     )
   }
 
@@ -288,7 +287,7 @@ class PgtestnullFields(val `_path`: java.util.List[Path]) extends TupleExpr70[Bo
       Some("numeric"),
       Some("money"),
       (row, value) => row.copy(money = value),
-      PgTypes.money
+      PgTypes.money.underlying
     )
   }
 
@@ -300,7 +299,7 @@ class PgtestnullFields(val `_path`: java.util.List[Path]) extends TupleExpr70[Bo
       None,
       Some("text"),
       (row, value) => row.copy(mydomain = value),
-      Mydomain.pgType
+      Mydomain.pgType.underlying
     )
   }
 
@@ -312,7 +311,7 @@ class PgtestnullFields(val `_path`: java.util.List[Path]) extends TupleExpr70[Bo
       None,
       Some("public.myenum"),
       (row, value) => row.copy(myenum = value),
-      Myenum.pgType
+      Myenum.pgType.underlying
     )
   }
 
@@ -324,7 +323,7 @@ class PgtestnullFields(val `_path`: java.util.List[Path]) extends TupleExpr70[Bo
       None,
       Some("name"),
       (row, value) => row.copy(name = value),
-      PgTypes.name
+      PgTypes.name.underlying
     )
   }
 
@@ -336,7 +335,7 @@ class PgtestnullFields(val `_path`: java.util.List[Path]) extends TupleExpr70[Bo
       None,
       Some("numeric"),
       (row, value) => row.copy(numeric = value),
-      ScalaDbTypes.PgTypes.numeric
+      PgTypes.numeric.underlying
     )
   }
 
@@ -348,7 +347,7 @@ class PgtestnullFields(val `_path`: java.util.List[Path]) extends TupleExpr70[Bo
       None,
       Some("path"),
       (row, value) => row.copy(path = value),
-      PgTypes.path
+      PgTypes.path.underlying
     )
   }
 
@@ -360,7 +359,7 @@ class PgtestnullFields(val `_path`: java.util.List[Path]) extends TupleExpr70[Bo
       None,
       Some("point"),
       (row, value) => row.copy(point = value),
-      PgTypes.point
+      PgTypes.point.underlying
     )
   }
 
@@ -372,7 +371,7 @@ class PgtestnullFields(val `_path`: java.util.List[Path]) extends TupleExpr70[Bo
       None,
       Some("polygon"),
       (row, value) => row.copy(polygon = value),
-      PgTypes.polygon
+      PgTypes.polygon.underlying
     )
   }
 
@@ -384,7 +383,7 @@ class PgtestnullFields(val `_path`: java.util.List[Path]) extends TupleExpr70[Bo
       None,
       None,
       (row, value) => row.copy(text = value),
-      PgTypes.text
+      PgTypes.text.underlying
     )
   }
 
@@ -396,7 +395,7 @@ class PgtestnullFields(val `_path`: java.util.List[Path]) extends TupleExpr70[Bo
       None,
       Some("time"),
       (row, value) => row.copy(time = value),
-      PgTypes.time
+      PgTypes.time.underlying
     )
   }
 
@@ -408,7 +407,7 @@ class PgtestnullFields(val `_path`: java.util.List[Path]) extends TupleExpr70[Bo
       None,
       Some("timestamp"),
       (row, value) => row.copy(timestamp = value),
-      PgTypes.timestamp
+      PgTypes.timestamp.underlying
     )
   }
 
@@ -420,7 +419,7 @@ class PgtestnullFields(val `_path`: java.util.List[Path]) extends TupleExpr70[Bo
       None,
       Some("timestamptz"),
       (row, value) => row.copy(timestampz = value),
-      PgTypes.timestamptz
+      PgTypes.timestamptz.underlying
     )
   }
 
@@ -432,7 +431,7 @@ class PgtestnullFields(val `_path`: java.util.List[Path]) extends TupleExpr70[Bo
       None,
       Some("timetz"),
       (row, value) => row.copy(timez = value),
-      PgTypes.timetz
+      PgTypes.timetz.underlying
     )
   }
 
@@ -444,7 +443,7 @@ class PgtestnullFields(val `_path`: java.util.List[Path]) extends TupleExpr70[Bo
       None,
       Some("uuid"),
       (row, value) => row.copy(uuid = value),
-      PgTypes.uuid
+      PgTypes.uuid.underlying
     )
   }
 
@@ -456,7 +455,7 @@ class PgtestnullFields(val `_path`: java.util.List[Path]) extends TupleExpr70[Bo
       None,
       None,
       (row, value) => row.copy(varchar = value),
-      PgTypes.text
+      PgTypes.text.underlying
     )
   }
 
@@ -468,7 +467,7 @@ class PgtestnullFields(val `_path`: java.util.List[Path]) extends TupleExpr70[Bo
       None,
       Some("vector"),
       (row, value) => row.copy(vector = value),
-      PgTypes.vector
+      PgTypes.vector.underlying
     )
   }
 
@@ -480,409 +479,409 @@ class PgtestnullFields(val `_path`: java.util.List[Path]) extends TupleExpr70[Bo
       None,
       Some("xml"),
       (row, value) => row.copy(xml = value),
-      PgTypes.xml
+      PgTypes.xml.underlying
     )
   }
 
-  def boxes: OptField[Array[PGbox], PgtestnullRow] = {
-    new OptField[Array[PGbox], PgtestnullRow](
+  def boxes: OptField[List[PGbox], PgtestnullRow] = {
+    new OptField[List[PGbox], PgtestnullRow](
       _path,
       "boxes",
       _.boxes,
       None,
       Some("box[]"),
       (row, value) => row.copy(boxes = value),
-      PgTypes.boxArray
+      PgTypes.box.array.underlying
     )
   }
 
-  def bpchares: OptField[Array[/* bpchar */ String], PgtestnullRow] = {
-    new OptField[Array[/* bpchar */ String], PgtestnullRow](
+  def bpchares: OptField[List[/* bpchar */ String], PgtestnullRow] = {
+    new OptField[List[/* bpchar */ String], PgtestnullRow](
       _path,
       "bpchares",
       _.bpchares,
       None,
       Some("bpchar[]"),
       (row, value) => row.copy(bpchares = value),
-      PgTypes.bpcharArray
+      PgTypes.bpchar.array.underlying
     )
   }
 
-  def chares: OptField[Array[/* bpchar */ String], PgtestnullRow] = {
-    new OptField[Array[/* bpchar */ String], PgtestnullRow](
+  def chares: OptField[List[/* bpchar */ String], PgtestnullRow] = {
+    new OptField[List[/* bpchar */ String], PgtestnullRow](
       _path,
       "chares",
       _.chares,
       None,
       Some("bpchar[]"),
       (row, value) => row.copy(chares = value),
-      PgTypes.bpcharArray
+      PgTypes.bpchar.array.underlying
     )
   }
 
-  def circlees: OptField[Array[PGcircle], PgtestnullRow] = {
-    new OptField[Array[PGcircle], PgtestnullRow](
+  def circlees: OptField[List[PGcircle], PgtestnullRow] = {
+    new OptField[List[PGcircle], PgtestnullRow](
       _path,
       "circlees",
       _.circlees,
       None,
       Some("circle[]"),
       (row, value) => row.copy(circlees = value),
-      PgTypes.circleArray
+      PgTypes.circle.array.underlying
     )
   }
 
-  def datees: OptField[Array[LocalDate], PgtestnullRow] = {
-    new OptField[Array[LocalDate], PgtestnullRow](
+  def datees: OptField[List[LocalDate], PgtestnullRow] = {
+    new OptField[List[LocalDate], PgtestnullRow](
       _path,
       "datees",
       _.datees,
       None,
       Some("date[]"),
       (row, value) => row.copy(datees = value),
-      PgTypes.dateArray
+      PgTypes.date.array.underlying
     )
   }
 
-  def float4es: OptField[Array[Float], PgtestnullRow] = {
-    new OptField[Array[Float], PgtestnullRow](
+  def float4es: OptField[List[Float], PgtestnullRow] = {
+    new OptField[List[Float], PgtestnullRow](
       _path,
       "float4es",
       _.float4es,
       None,
       Some("float4[]"),
       (row, value) => row.copy(float4es = value),
-      PgTypes.float4ArrayUnboxed
+      PgTypes.float4.array.underlying
     )
   }
 
-  def float8es: OptField[Array[Double], PgtestnullRow] = {
-    new OptField[Array[Double], PgtestnullRow](
+  def float8es: OptField[List[Double], PgtestnullRow] = {
+    new OptField[List[Double], PgtestnullRow](
       _path,
       "float8es",
       _.float8es,
       None,
       Some("float8[]"),
       (row, value) => row.copy(float8es = value),
-      PgTypes.float8ArrayUnboxed
+      PgTypes.float8.array.underlying
     )
   }
 
-  def inetes: OptField[Array[Inet], PgtestnullRow] = {
-    new OptField[Array[Inet], PgtestnullRow](
+  def inetes: OptField[List[Inet], PgtestnullRow] = {
+    new OptField[List[Inet], PgtestnullRow](
       _path,
       "inetes",
       _.inetes,
       None,
       Some("inet[]"),
       (row, value) => row.copy(inetes = value),
-      PgTypes.inetArray
+      PgTypes.inet.array.underlying
     )
   }
 
-  def int2es: OptField[Array[Short], PgtestnullRow] = {
-    new OptField[Array[Short], PgtestnullRow](
+  def int2es: OptField[List[Short], PgtestnullRow] = {
+    new OptField[List[Short], PgtestnullRow](
       _path,
       "int2es",
       _.int2es,
       None,
       Some("int2[]"),
       (row, value) => row.copy(int2es = value),
-      PgTypes.int2ArrayUnboxed
+      PgTypes.int2.array.underlying
     )
   }
 
-  def int2vectores: OptField[Array[Int2Vector], PgtestnullRow] = {
-    new OptField[Array[Int2Vector], PgtestnullRow](
+  def int2vectores: OptField[List[Int2Vector], PgtestnullRow] = {
+    new OptField[List[Int2Vector], PgtestnullRow](
       _path,
       "int2vectores",
       _.int2vectores,
       None,
       Some("int2vector[]"),
       (row, value) => row.copy(int2vectores = value),
-      PgTypes.int2vectorArray
+      PgTypes.int2vector.array.underlying
     )
   }
 
-  def int4es: OptField[Array[Int], PgtestnullRow] = {
-    new OptField[Array[Int], PgtestnullRow](
+  def int4es: OptField[List[Int], PgtestnullRow] = {
+    new OptField[List[Int], PgtestnullRow](
       _path,
       "int4es",
       _.int4es,
       None,
       Some("int4[]"),
       (row, value) => row.copy(int4es = value),
-      PgTypes.int4ArrayUnboxed
+      PgTypes.int4.array.underlying
     )
   }
 
-  def int8es: OptField[Array[Long], PgtestnullRow] = {
-    new OptField[Array[Long], PgtestnullRow](
+  def int8es: OptField[List[Long], PgtestnullRow] = {
+    new OptField[List[Long], PgtestnullRow](
       _path,
       "int8es",
       _.int8es,
       None,
       Some("int8[]"),
       (row, value) => row.copy(int8es = value),
-      PgTypes.int8ArrayUnboxed
+      PgTypes.int8.array.underlying
     )
   }
 
-  def intervales: OptField[Array[PGInterval], PgtestnullRow] = {
-    new OptField[Array[PGInterval], PgtestnullRow](
+  def intervales: OptField[List[PGInterval], PgtestnullRow] = {
+    new OptField[List[PGInterval], PgtestnullRow](
       _path,
       "intervales",
       _.intervales,
       None,
       Some("interval[]"),
       (row, value) => row.copy(intervales = value),
-      PgTypes.intervalArray
+      PgTypes.interval.array.underlying
     )
   }
 
-  def jsones: OptField[Array[Json], PgtestnullRow] = {
-    new OptField[Array[Json], PgtestnullRow](
+  def jsones: OptField[List[Json], PgtestnullRow] = {
+    new OptField[List[Json], PgtestnullRow](
       _path,
       "jsones",
       _.jsones,
       None,
       Some("json[]"),
       (row, value) => row.copy(jsones = value),
-      PgTypes.jsonArray
+      PgTypes.json.array.underlying
     )
   }
 
-  def jsonbes: OptField[Array[Jsonb], PgtestnullRow] = {
-    new OptField[Array[Jsonb], PgtestnullRow](
+  def jsonbes: OptField[List[Jsonb], PgtestnullRow] = {
+    new OptField[List[Jsonb], PgtestnullRow](
       _path,
       "jsonbes",
       _.jsonbes,
       None,
       Some("jsonb[]"),
       (row, value) => row.copy(jsonbes = value),
-      PgTypes.jsonbArray
+      PgTypes.jsonb.array.underlying
     )
   }
 
-  def linees: OptField[Array[PGline], PgtestnullRow] = {
-    new OptField[Array[PGline], PgtestnullRow](
+  def linees: OptField[List[PGline], PgtestnullRow] = {
+    new OptField[List[PGline], PgtestnullRow](
       _path,
       "linees",
       _.linees,
       None,
       Some("line[]"),
       (row, value) => row.copy(linees = value),
-      PgTypes.lineArray
+      PgTypes.line.array.underlying
     )
   }
 
-  def lseges: OptField[Array[PGlseg], PgtestnullRow] = {
-    new OptField[Array[PGlseg], PgtestnullRow](
+  def lseges: OptField[List[PGlseg], PgtestnullRow] = {
+    new OptField[List[PGlseg], PgtestnullRow](
       _path,
       "lseges",
       _.lseges,
       None,
       Some("lseg[]"),
       (row, value) => row.copy(lseges = value),
-      PgTypes.lsegArray
+      PgTypes.lseg.array.underlying
     )
   }
 
-  def moneyes: OptField[Array[Money], PgtestnullRow] = {
-    new OptField[Array[Money], PgtestnullRow](
+  def moneyes: OptField[List[Money], PgtestnullRow] = {
+    new OptField[List[Money], PgtestnullRow](
       _path,
       "moneyes",
       _.moneyes,
       Some("numeric[]"),
       Some("money[]"),
       (row, value) => row.copy(moneyes = value),
-      PgTypes.moneyArray
+      PgTypes.money.array.underlying
     )
   }
 
-  def mydomaines: OptField[Array[Mydomain], PgtestnullRow] = {
-    new OptField[Array[Mydomain], PgtestnullRow](
+  def mydomaines: OptField[List[Mydomain], PgtestnullRow] = {
+    new OptField[List[Mydomain], PgtestnullRow](
       _path,
       "mydomaines",
       _.mydomaines,
       Some("text[]"),
       Some("mydomain[]"),
       (row, value) => row.copy(mydomaines = value),
-      Mydomain.pgTypeArray
+      Mydomain.pgType.array.underlying
     )
   }
 
-  def myenumes: OptField[Array[Myenum], PgtestnullRow] = {
-    new OptField[Array[Myenum], PgtestnullRow](
+  def myenumes: OptField[List[Myenum], PgtestnullRow] = {
+    new OptField[List[Myenum], PgtestnullRow](
       _path,
       "myenumes",
       _.myenumes,
       None,
       Some("myenum[]"),
       (row, value) => row.copy(myenumes = value),
-      Myenum.pgTypeArray
+      Myenum.pgType.array.underlying
     )
   }
 
-  def namees: OptField[Array[String], PgtestnullRow] = {
-    new OptField[Array[String], PgtestnullRow](
+  def namees: OptField[List[String], PgtestnullRow] = {
+    new OptField[List[String], PgtestnullRow](
       _path,
       "namees",
       _.namees,
       None,
       Some("name[]"),
       (row, value) => row.copy(namees = value),
-      PgTypes.nameArray
+      PgTypes.name.array.underlying
     )
   }
 
-  def numerices: OptField[Array[BigDecimal], PgtestnullRow] = {
-    new OptField[Array[BigDecimal], PgtestnullRow](
+  def numerices: OptField[List[BigDecimal], PgtestnullRow] = {
+    new OptField[List[BigDecimal], PgtestnullRow](
       _path,
       "numerices",
       _.numerices,
       None,
       Some("numeric[]"),
       (row, value) => row.copy(numerices = value),
-      ScalaDbTypes.PgTypes.numericArray
+      PgTypes.numeric.array.underlying
     )
   }
 
-  def pathes: OptField[Array[PGpath], PgtestnullRow] = {
-    new OptField[Array[PGpath], PgtestnullRow](
+  def pathes: OptField[List[PGpath], PgtestnullRow] = {
+    new OptField[List[PGpath], PgtestnullRow](
       _path,
       "pathes",
       _.pathes,
       None,
       Some("path[]"),
       (row, value) => row.copy(pathes = value),
-      PgTypes.pathArray
+      PgTypes.path.array.underlying
     )
   }
 
-  def pointes: OptField[Array[PGpoint], PgtestnullRow] = {
-    new OptField[Array[PGpoint], PgtestnullRow](
+  def pointes: OptField[List[PGpoint], PgtestnullRow] = {
+    new OptField[List[PGpoint], PgtestnullRow](
       _path,
       "pointes",
       _.pointes,
       None,
       Some("point[]"),
       (row, value) => row.copy(pointes = value),
-      PgTypes.pointArray
+      PgTypes.point.array.underlying
     )
   }
 
-  def polygones: OptField[Array[PGpolygon], PgtestnullRow] = {
-    new OptField[Array[PGpolygon], PgtestnullRow](
+  def polygones: OptField[List[PGpolygon], PgtestnullRow] = {
+    new OptField[List[PGpolygon], PgtestnullRow](
       _path,
       "polygones",
       _.polygones,
       None,
       Some("polygon[]"),
       (row, value) => row.copy(polygones = value),
-      PgTypes.polygonArray
+      PgTypes.polygon.array.underlying
     )
   }
 
-  def textes: OptField[Array[String], PgtestnullRow] = {
-    new OptField[Array[String], PgtestnullRow](
+  def textes: OptField[List[String], PgtestnullRow] = {
+    new OptField[List[String], PgtestnullRow](
       _path,
       "textes",
       _.textes,
       None,
       Some("text[]"),
       (row, value) => row.copy(textes = value),
-      PgTypes.textArray
+      PgTypes.text.array.underlying
     )
   }
 
-  def timees: OptField[Array[LocalTime], PgtestnullRow] = {
-    new OptField[Array[LocalTime], PgtestnullRow](
+  def timees: OptField[List[LocalTime], PgtestnullRow] = {
+    new OptField[List[LocalTime], PgtestnullRow](
       _path,
       "timees",
       _.timees,
       None,
       Some("time[]"),
       (row, value) => row.copy(timees = value),
-      PgTypes.timeArray
+      PgTypes.time.array.underlying
     )
   }
 
-  def timestampes: OptField[Array[LocalDateTime], PgtestnullRow] = {
-    new OptField[Array[LocalDateTime], PgtestnullRow](
+  def timestampes: OptField[List[LocalDateTime], PgtestnullRow] = {
+    new OptField[List[LocalDateTime], PgtestnullRow](
       _path,
       "timestampes",
       _.timestampes,
       None,
       Some("timestamp[]"),
       (row, value) => row.copy(timestampes = value),
-      PgTypes.timestampArray
+      PgTypes.timestamp.array.underlying
     )
   }
 
-  def timestampzes: OptField[Array[Instant], PgtestnullRow] = {
-    new OptField[Array[Instant], PgtestnullRow](
+  def timestampzes: OptField[List[Instant], PgtestnullRow] = {
+    new OptField[List[Instant], PgtestnullRow](
       _path,
       "timestampzes",
       _.timestampzes,
       None,
       Some("timestamptz[]"),
       (row, value) => row.copy(timestampzes = value),
-      PgTypes.timestamptzArray
+      PgTypes.timestamptz.array.underlying
     )
   }
 
-  def timezes: OptField[Array[OffsetTime], PgtestnullRow] = {
-    new OptField[Array[OffsetTime], PgtestnullRow](
+  def timezes: OptField[List[OffsetTime], PgtestnullRow] = {
+    new OptField[List[OffsetTime], PgtestnullRow](
       _path,
       "timezes",
       _.timezes,
       None,
       Some("timetz[]"),
       (row, value) => row.copy(timezes = value),
-      PgTypes.timetzArray
+      PgTypes.timetz.array.underlying
     )
   }
 
-  def uuides: OptField[Array[UUID], PgtestnullRow] = {
-    new OptField[Array[UUID], PgtestnullRow](
+  def uuides: OptField[List[UUID], PgtestnullRow] = {
+    new OptField[List[UUID], PgtestnullRow](
       _path,
       "uuides",
       _.uuides,
       None,
       Some("uuid[]"),
       (row, value) => row.copy(uuides = value),
-      PgTypes.uuidArray
+      PgTypes.uuid.array.underlying
     )
   }
 
-  def varchares: OptField[Array[String], PgtestnullRow] = {
-    new OptField[Array[String], PgtestnullRow](
+  def varchares: OptField[List[String], PgtestnullRow] = {
+    new OptField[List[String], PgtestnullRow](
       _path,
       "varchares",
       _.varchares,
       None,
       Some("varchar[]"),
       (row, value) => row.copy(varchares = value),
-      PgTypes.textArray
+      PgTypes.text.array.underlying
     )
   }
 
-  def xmles: OptField[Array[Xml], PgtestnullRow] = {
-    new OptField[Array[Xml], PgtestnullRow](
+  def xmles: OptField[List[Xml], PgtestnullRow] = {
+    new OptField[List[Xml], PgtestnullRow](
       _path,
       "xmles",
       _.xmles,
       None,
       Some("xml[]"),
       (row, value) => row.copy(xmles = value),
-      PgTypes.xmlArray
+      PgTypes.xml.array.underlying
     )
   }
 
   override def columns: java.util.List[FieldLike[?, PgtestnullRow]] = java.util.List.of(this.bool.underlying, this.box.underlying, this.bpchar.underlying, this.bytea.underlying, this.char.underlying, this.circle.underlying, this.date.underlying, this.float4.underlying, this.float8.underlying, this.hstore.underlying, this.inet.underlying, this.int2.underlying, this.int2vector.underlying, this.int4.underlying, this.int8.underlying, this.interval.underlying, this.json.underlying, this.jsonb.underlying, this.line.underlying, this.lseg.underlying, this.money.underlying, this.mydomain.underlying, this.myenum.underlying, this.name.underlying, this.numeric.underlying, this.path.underlying, this.point.underlying, this.polygon.underlying, this.text.underlying, this.time.underlying, this.timestamp.underlying, this.timestampz.underlying, this.timez.underlying, this.uuid.underlying, this.varchar.underlying, this.vector.underlying, this.xml.underlying, this.boxes.underlying, this.bpchares.underlying, this.chares.underlying, this.circlees.underlying, this.datees.underlying, this.float4es.underlying, this.float8es.underlying, this.inetes.underlying, this.int2es.underlying, this.int2vectores.underlying, this.int4es.underlying, this.int8es.underlying, this.intervales.underlying, this.jsones.underlying, this.jsonbes.underlying, this.linees.underlying, this.lseges.underlying, this.moneyes.underlying, this.mydomaines.underlying, this.myenumes.underlying, this.namees.underlying, this.numerices.underlying, this.pathes.underlying, this.pointes.underlying, this.polygones.underlying, this.textes.underlying, this.timees.underlying, this.timestampes.underlying, this.timestampzes.underlying, this.timezes.underlying, this.uuides.underlying, this.varchares.underlying, this.xmles.underlying)
 
-  override def rowParser: RowParser[PgtestnullRow] = PgtestnullRow._rowParser.underlying
+  override def rowCodec: RowCodec[PgtestnullRow] = PgtestnullRow.rowCodec.underlying
 
   override def withPaths(`_path`: java.util.List[Path]): RelationStructure[PgtestnullFields, PgtestnullRow] = new PgtestnullFields(`_path`)
 
@@ -960,71 +959,71 @@ class PgtestnullFields(val `_path`: java.util.List[Path]) extends TupleExpr70[Bo
 
   override def `_37`: SqlExpr[Xml] = xml
 
-  override def `_38`: SqlExpr[Array[PGbox]] = boxes
+  override def `_38`: SqlExpr[List[PGbox]] = boxes
 
-  override def `_39`: SqlExpr[Array[/* bpchar */ String]] = bpchares
+  override def `_39`: SqlExpr[List[/* bpchar */ String]] = bpchares
 
-  override def `_40`: SqlExpr[Array[/* bpchar */ String]] = chares
+  override def `_40`: SqlExpr[List[/* bpchar */ String]] = chares
 
-  override def `_41`: SqlExpr[Array[PGcircle]] = circlees
+  override def `_41`: SqlExpr[List[PGcircle]] = circlees
 
-  override def `_42`: SqlExpr[Array[LocalDate]] = datees
+  override def `_42`: SqlExpr[List[LocalDate]] = datees
 
-  override def `_43`: SqlExpr[Array[Float]] = float4es
+  override def `_43`: SqlExpr[List[Float]] = float4es
 
-  override def `_44`: SqlExpr[Array[Double]] = float8es
+  override def `_44`: SqlExpr[List[Double]] = float8es
 
-  override def `_45`: SqlExpr[Array[Inet]] = inetes
+  override def `_45`: SqlExpr[List[Inet]] = inetes
 
-  override def `_46`: SqlExpr[Array[Short]] = int2es
+  override def `_46`: SqlExpr[List[Short]] = int2es
 
-  override def `_47`: SqlExpr[Array[Int2Vector]] = int2vectores
+  override def `_47`: SqlExpr[List[Int2Vector]] = int2vectores
 
-  override def `_48`: SqlExpr[Array[Int]] = int4es
+  override def `_48`: SqlExpr[List[Int]] = int4es
 
-  override def `_49`: SqlExpr[Array[Long]] = int8es
+  override def `_49`: SqlExpr[List[Long]] = int8es
 
-  override def `_50`: SqlExpr[Array[PGInterval]] = intervales
+  override def `_50`: SqlExpr[List[PGInterval]] = intervales
 
-  override def `_51`: SqlExpr[Array[Json]] = jsones
+  override def `_51`: SqlExpr[List[Json]] = jsones
 
-  override def `_52`: SqlExpr[Array[Jsonb]] = jsonbes
+  override def `_52`: SqlExpr[List[Jsonb]] = jsonbes
 
-  override def `_53`: SqlExpr[Array[PGline]] = linees
+  override def `_53`: SqlExpr[List[PGline]] = linees
 
-  override def `_54`: SqlExpr[Array[PGlseg]] = lseges
+  override def `_54`: SqlExpr[List[PGlseg]] = lseges
 
-  override def `_55`: SqlExpr[Array[Money]] = moneyes
+  override def `_55`: SqlExpr[List[Money]] = moneyes
 
-  override def `_56`: SqlExpr[Array[Mydomain]] = mydomaines
+  override def `_56`: SqlExpr[List[Mydomain]] = mydomaines
 
-  override def `_57`: SqlExpr[Array[Myenum]] = myenumes
+  override def `_57`: SqlExpr[List[Myenum]] = myenumes
 
-  override def `_58`: SqlExpr[Array[String]] = namees
+  override def `_58`: SqlExpr[List[String]] = namees
 
-  override def `_59`: SqlExpr[Array[BigDecimal]] = numerices
+  override def `_59`: SqlExpr[List[BigDecimal]] = numerices
 
-  override def `_60`: SqlExpr[Array[PGpath]] = pathes
+  override def `_60`: SqlExpr[List[PGpath]] = pathes
 
-  override def `_61`: SqlExpr[Array[PGpoint]] = pointes
+  override def `_61`: SqlExpr[List[PGpoint]] = pointes
 
-  override def `_62`: SqlExpr[Array[PGpolygon]] = polygones
+  override def `_62`: SqlExpr[List[PGpolygon]] = polygones
 
-  override def `_63`: SqlExpr[Array[String]] = textes
+  override def `_63`: SqlExpr[List[String]] = textes
 
-  override def `_64`: SqlExpr[Array[LocalTime]] = timees
+  override def `_64`: SqlExpr[List[LocalTime]] = timees
 
-  override def `_65`: SqlExpr[Array[LocalDateTime]] = timestampes
+  override def `_65`: SqlExpr[List[LocalDateTime]] = timestampes
 
-  override def `_66`: SqlExpr[Array[Instant]] = timestampzes
+  override def `_66`: SqlExpr[List[Instant]] = timestampzes
 
-  override def `_67`: SqlExpr[Array[OffsetTime]] = timezes
+  override def `_67`: SqlExpr[List[OffsetTime]] = timezes
 
-  override def `_68`: SqlExpr[Array[UUID]] = uuides
+  override def `_68`: SqlExpr[List[UUID]] = uuides
 
-  override def `_69`: SqlExpr[Array[String]] = varchares
+  override def `_69`: SqlExpr[List[String]] = varchares
 
-  override def `_70`: SqlExpr[Array[Xml]] = xmles
+  override def `_70`: SqlExpr[List[Xml]] = xmles
 }
 
 object PgtestnullFields {

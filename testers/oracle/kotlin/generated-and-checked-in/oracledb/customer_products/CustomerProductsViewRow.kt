@@ -6,12 +6,10 @@
 package oracledb.customer_products
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import dev.typr.foundations.OracleTypes
+import dev.typr.dslkt.RowCodecs
 import dev.typr.foundations.Tuple.Tuple6
-import dev.typr.foundations.kotlin.KotlinDbTypes
-import dev.typr.foundations.kotlin.RowParser
-import dev.typr.foundations.kotlin.RowParsers
-import dev.typr.foundations.kotlin.nullable
+import dev.typr.foundationskt.OracleTypes
+import dev.typr.foundationskt.RowCodec
 import java.math.BigDecimal
 import oracledb.AddressT
 import oracledb.MoneyT
@@ -19,25 +17,25 @@ import oracledb.MoneyT
 /** View: CUSTOMER_PRODUCTS */
 data class CustomerProductsViewRow(
   @field:JsonProperty("CUSTOMER_ID") val customerId: BigDecimal,
-  @field:JsonProperty("CUSTOMER_NAME") val customerName: String,
+  @field:JsonProperty("CUSTOMER_NAME") val customerName: kotlin.String,
   @field:JsonProperty("BILLING_ADDRESS") val billingAddress: AddressT?,
   @field:JsonProperty("PRODUCT_ID") val productId: BigDecimal,
-  @field:JsonProperty("PRODUCT_NAME") val productName: String,
+  @field:JsonProperty("PRODUCT_NAME") val productName: kotlin.String,
   @field:JsonProperty("PRICE") val price: MoneyT?
-) : Tuple6<BigDecimal, String, AddressT?, BigDecimal, String, MoneyT?> {
+) : Tuple6<BigDecimal, kotlin.String, AddressT?, BigDecimal, kotlin.String, MoneyT?> {
   override fun _1(): BigDecimal = customerId
 
-  override fun _2(): String = customerName
+  override fun _2(): kotlin.String = customerName
 
   override fun _3(): AddressT? = billingAddress
 
   override fun _4(): BigDecimal = productId
 
-  override fun _5(): String = productName
+  override fun _5(): kotlin.String = productName
 
   override fun _6(): MoneyT? = price
 
   companion object {
-    val _rowParser: RowParser<CustomerProductsViewRow> = RowParsers.of(KotlinDbTypes.OracleTypes.number, OracleTypes.varchar2, AddressT.oracleType.nullable(), KotlinDbTypes.OracleTypes.number, OracleTypes.varchar2, MoneyT.oracleType.nullable(), { t0, t1, t2, t3, t4, t5 -> CustomerProductsViewRow(t0, t1, t2, t3, t4, t5) }, { row -> arrayOf<Any?>(row.customerId, row.customerName, row.billingAddress, row.productId, row.productName, row.price) })
+    val rowCodec: RowCodec<CustomerProductsViewRow> = RowCodecs.of(OracleTypes.number, OracleTypes.varchar2, AddressT.oracleType.opt(), OracleTypes.number, OracleTypes.varchar2, MoneyT.oracleType.opt(), { t0: BigDecimal, t1: kotlin.String, t2: AddressT?, t3: BigDecimal, t4: kotlin.String, t5: MoneyT? -> CustomerProductsViewRow(t0, t1, t2, t3, t4, t5) }, { row: CustomerProductsViewRow -> arrayOf<Any?>(row.customerId, row.customerName, row.billingAddress, row.productId, row.productName, row.price) })
   }
 }

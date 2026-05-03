@@ -30,7 +30,7 @@ object TypoLocalDate {
       .contramap(_.map(v => v.value.toString()))
   }
 
-  given bijection: Bijection[TypoLocalDate, LocalDate] = Bijection.apply[TypoLocalDate, LocalDate](_.value)(TypoLocalDate.apply)
+  given bijection: Bijection[TypoLocalDate, LocalDate] = Bijection[TypoLocalDate, LocalDate](_.value)(TypoLocalDate.apply)
 
   given decoder: Decoder[TypoLocalDate] = Decoder.decodeLocalDate.map(TypoLocalDate.apply)
 

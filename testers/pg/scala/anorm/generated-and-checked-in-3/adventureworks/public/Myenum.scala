@@ -23,7 +23,10 @@ import play.api.libs.json.Writes
  *  - c
  */
 
-sealed abstract class Myenum(val value: java.lang.String)
+enum Myenum {
+  case a, b, c
+  
+}
 
 object Myenum {
   given arrayColumn: Column[Array[Myenum]] = Column.columnToArray[String](using Column.columnToString, summon).map(_.map(Myenum.force))
@@ -51,19 +54,11 @@ object Myenum {
   given reads: Reads[Myenum] = Reads[Myenum]{(value: JsValue) => value.validate(using Reads.StringReads).flatMap(str => Myenum(str).fold(JsError.apply, JsSuccess(_)))}
 
   given writes: Writes[Myenum] = Writes[Myenum](value => Writes.StringWrites.writes(value.value))
+  extension (e: Myenum) def value: java.lang.String = e.toString
   def apply(str: java.lang.String): scala.Either[java.lang.String, Myenum] =
-    ByName.get(str).toRight(s"'$str' does not match any of the following legal values: $Names")
-  def force(str: java.lang.String): Myenum =
-    apply(str) match {
-      case scala.Left(msg) => sys.error(msg)
-      case scala.Right(value) => value
-    }
-  case object a extends Myenum("a")
-
-  case object b extends Myenum("b")
-
-  case object c extends Myenum("c")
-  val All: scala.List[Myenum] = scala.List(a, b, c)
-  val Names: java.lang.String = All.map(_.value).mkString(", ")
-  val ByName: scala.collection.immutable.Map[java.lang.String, Myenum] = All.map(x => (x.value, x)).toMap
+    scala.util.Try(Myenum.valueOf(str)).toEither.left.map(_ => s"'$str' does not match any of the following legal values: $Names")
+  def force(str: java.lang.String): Myenum = Myenum.valueOf(str)
+  val All: scala.List[Myenum] = values.toList
+  val Names: java.lang.String = All.map(_.toString).mkString(", ")
+  val ByName: scala.collection.immutable.Map[java.lang.String, Myenum] = All.map(x => (x.toString, x)).toMap
 }

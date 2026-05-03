@@ -6,9 +6,9 @@
 package oracledb
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import dev.typr.foundations.OracleObject
 import dev.typr.foundations.OracleType
 import dev.typr.foundations.OracleTypes
+import dev.typr.foundations.RowCodec
 
 /** Oracle Object Type: COORDINATES_T */
 case class CoordinatesT(
@@ -17,5 +17,5 @@ case class CoordinatesT(
 )
 
 object CoordinatesT {
-  val oracleType: OracleType[CoordinatesT] = OracleObject.builder[CoordinatesT]("COORDINATES_T").addAttribute("LATITUDE", OracleTypes.number, _.latitude).addAttribute("LONGITUDE", OracleTypes.number, _.longitude).build(attrs => new CoordinatesT(attrs(0).asInstanceOf[java.math.BigDecimal], attrs(1).asInstanceOf[java.math.BigDecimal])).asType()
+  val oracleType: OracleType[CoordinatesT] = OracleTypes.compositeOf("COORDINATES_T", RowCodec.namedBuilder[CoordinatesT]().field("LATITUDE", OracleTypes.number, _.latitude).field("LONGITUDE", OracleTypes.number, _.longitude).build((t0, t1) => CoordinatesT(latitude = t0, longitude = t1)))
 }

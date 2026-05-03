@@ -6,11 +6,10 @@
 package oracledb.all_types_test
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import dev.typr.foundations.OracleTypes
+import dev.typr.dslkt.RowCodecs
 import dev.typr.foundations.Tuple.Tuple4
-import dev.typr.foundations.kotlin.RowParser
-import dev.typr.foundations.kotlin.RowParsers
-import dev.typr.foundations.kotlin.nullable
+import dev.typr.foundationskt.OracleTypes
+import dev.typr.foundationskt.RowCodec
 import oracledb.AllTypesStructNoLobs
 import oracledb.AllTypesStructNoLobsArray
 import oracledb.customtypes.Defaulted
@@ -19,15 +18,15 @@ import oracledb.customtypes.Defaulted
   * Primary key: ID
   */
 data class AllTypesTestRow(
-  /** Default: "TYPR"."ISEQ$$_72879".nextval */
+  /** Default: "TYPR"."ISEQ$$_72869".nextval */
   @field:JsonProperty("ID") val id: AllTypesTestId,
-  @field:JsonProperty("NAME") val name: String,
+  @field:JsonProperty("NAME") val name: kotlin.String,
   @field:JsonProperty("DATA") val data: AllTypesStructNoLobs?,
   @field:JsonProperty("DATA_ARRAY") val dataArray: AllTypesStructNoLobsArray?
-) : Tuple4<AllTypesTestId, String, AllTypesStructNoLobs?, AllTypesStructNoLobsArray?> {
+) : Tuple4<AllTypesTestId, kotlin.String, AllTypesStructNoLobs?, AllTypesStructNoLobsArray?> {
   override fun _1(): AllTypesTestId = id
 
-  override fun _2(): String = name
+  override fun _2(): kotlin.String = name
 
   override fun _3(): AllTypesStructNoLobs? = data
 
@@ -36,6 +35,6 @@ data class AllTypesTestRow(
   fun toUnsavedRow(id: Defaulted<AllTypesTestId>): AllTypesTestRowUnsaved = AllTypesTestRowUnsaved(name, data, dataArray, id)
 
   companion object {
-    val _rowParser: RowParser<AllTypesTestRow> = RowParsers.of(AllTypesTestId.oracleType, OracleTypes.varchar2, AllTypesStructNoLobs.oracleType.nullable(), AllTypesStructNoLobsArray.oracleType.nullable(), { t0, t1, t2, t3 -> AllTypesTestRow(t0, t1, t2, t3) }, { row -> arrayOf<Any?>(row.id, row.name, row.data, row.dataArray) })
+    val rowCodec: RowCodec<AllTypesTestRow> = RowCodecs.of(AllTypesTestId.oracleType, OracleTypes.varchar2, AllTypesStructNoLobs.oracleType.opt(), AllTypesStructNoLobsArray.oracleType.opt(), { t0: AllTypesTestId, t1: kotlin.String, t2: AllTypesStructNoLobs?, t3: AllTypesStructNoLobsArray? -> AllTypesTestRow(t0, t1, t2, t3) }, { row: AllTypesTestRow -> arrayOf<Any?>(row.id, row.name, row.data, row.dataArray) })
   }
 }

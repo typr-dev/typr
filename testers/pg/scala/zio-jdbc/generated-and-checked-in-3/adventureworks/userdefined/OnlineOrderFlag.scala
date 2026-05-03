@@ -27,7 +27,7 @@ object OnlineOrderFlag {
 
   given arraySetter: Setter[Array[OnlineOrderFlag]] = Flag.arraySetter.contramap(_.map(_.value))
 
-  given bijection: Bijection[OnlineOrderFlag, Flag] = Bijection.apply[OnlineOrderFlag, Flag](_.value)(OnlineOrderFlag.apply)
+  given bijection: Bijection[OnlineOrderFlag, Flag] = Bijection[OnlineOrderFlag, Flag](_.value)(OnlineOrderFlag.apply)
 
   given jdbcDecoder: JdbcDecoder[OnlineOrderFlag] = Flag.jdbcDecoder.map(OnlineOrderFlag.apply)
 

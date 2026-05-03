@@ -6,11 +6,10 @@
 package testdb.all_scalar_types
 
 import com.fasterxml.jackson.annotation.JsonValue
-import dev.typr.foundations.DuckDbType
-import dev.typr.foundations.DuckDbTypes
-import dev.typr.foundations.internal.arrayMap
-import dev.typr.foundations.kotlin.Bijection
-import dev.typr.foundations.kotlin.KotlinDbTypes
+import dev.typr.foundationskt.Bijection
+import dev.typr.foundationskt.DuckDbType
+import dev.typr.foundationskt.DuckDbTypes
+import kotlin.collections.List
 
 /** Type for the primary key of table `all_scalar_types` */
 data class AllScalarTypesId(@field:JsonValue val value: Int) {
@@ -23,9 +22,9 @@ data class AllScalarTypesId(@field:JsonValue val value: Int) {
       Bijection.of(AllScalarTypesId::value, ::AllScalarTypesId)
 
     val duckDbType: DuckDbType<AllScalarTypesId> =
-      KotlinDbTypes.DuckDbTypes.integer.bimap(::AllScalarTypesId, AllScalarTypesId::value)
+      DuckDbTypes.integer.to(Bijection.of(::AllScalarTypesId, AllScalarTypesId::value))
 
-    val duckDbTypeArray: DuckDbType<Array<AllScalarTypesId>> =
-      DuckDbTypes.integerArray.bimap({ xs -> arrayMap.map(xs, ::AllScalarTypesId, AllScalarTypesId::class.java) }, { xs -> arrayMap.map(xs, AllScalarTypesId::value, Int::class.javaObjectType) })
+    val duckDbTypeArray: DuckDbType<List<AllScalarTypesId>> =
+      duckDbType.list()
   }
 }

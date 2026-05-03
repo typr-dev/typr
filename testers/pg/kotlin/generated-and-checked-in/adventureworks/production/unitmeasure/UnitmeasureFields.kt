@@ -6,16 +6,16 @@
 package adventureworks.production.unitmeasure
 
 import adventureworks.public.Name
-import dev.typr.foundations.PgTypes
-import dev.typr.foundations.RowParser
-import dev.typr.foundations.dsl.FieldsBase
-import dev.typr.foundations.dsl.Path
-import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.kotlin.RelationStructure
-import dev.typr.foundations.kotlin.SqlExpr
-import dev.typr.foundations.kotlin.SqlExpr.Field
-import dev.typr.foundations.kotlin.SqlExpr.IdField
-import dev.typr.foundations.kotlin.TupleExpr3
+import dev.typr.dsl.FieldsBase
+import dev.typr.dsl.Path
+import dev.typr.dsl.SqlExpr.FieldLike
+import dev.typr.dslkt.RelationStructure
+import dev.typr.dslkt.SqlExpr
+import dev.typr.dslkt.SqlExpr.Field
+import dev.typr.dslkt.SqlExpr.IdField
+import dev.typr.dslkt.TupleExpr3
+import dev.typr.foundations.RowCodec
+import dev.typr.foundationskt.PgTypes
 import java.time.LocalDateTime
 import kotlin.collections.List
 
@@ -30,13 +30,13 @@ data class UnitmeasureFields(val _path: List<Path>) : TupleExpr3<UnitmeasureId, 
 
   override fun columns(): List<FieldLike<*, UnitmeasureRow>> = listOf(this.unitmeasurecode().underlying, this.name().underlying, this.modifieddate().underlying)
 
-  fun modifieddate(): Field<LocalDateTime, UnitmeasureRow> = Field<LocalDateTime, UnitmeasureRow>(_path, "modifieddate", UnitmeasureRow::modifieddate, null, "timestamp", { row, value -> row.copy(modifieddate = value) }, PgTypes.timestamp)
+  fun modifieddate(): Field<LocalDateTime, UnitmeasureRow> = Field<LocalDateTime, UnitmeasureRow>(_path, "modifieddate", UnitmeasureRow::modifieddate, null, "timestamp", { row, value -> row.copy(modifieddate = value) }, PgTypes.timestamp.underlying)
 
-  fun name(): Field<Name, UnitmeasureRow> = Field<Name, UnitmeasureRow>(_path, "name", UnitmeasureRow::name, null, "varchar", { row, value -> row.copy(name = value) }, Name.pgType)
+  fun name(): Field<Name, UnitmeasureRow> = Field<Name, UnitmeasureRow>(_path, "name", UnitmeasureRow::name, null, "varchar", { row, value -> row.copy(name = value) }, Name.pgType.underlying)
 
-  override fun rowParser(): RowParser<UnitmeasureRow> = UnitmeasureRow._rowParser.underlying
+  override fun rowCodec(): RowCodec<UnitmeasureRow> = UnitmeasureRow.rowCodec.underlying
 
-  fun unitmeasurecode(): IdField<UnitmeasureId, UnitmeasureRow> = IdField<UnitmeasureId, UnitmeasureRow>(_path, "unitmeasurecode", UnitmeasureRow::unitmeasurecode, null, "bpchar", { row, value -> row.copy(unitmeasurecode = value) }, UnitmeasureId.pgType)
+  fun unitmeasurecode(): IdField<UnitmeasureId, UnitmeasureRow> = IdField<UnitmeasureId, UnitmeasureRow>(_path, "unitmeasurecode", UnitmeasureRow::unitmeasurecode, null, "bpchar", { row, value -> row.copy(unitmeasurecode = value) }, UnitmeasureId.pgType.underlying)
 
   override fun withPaths(_path: List<Path>): RelationStructure<UnitmeasureFields, UnitmeasureRow> = UnitmeasureFields(_path)
 

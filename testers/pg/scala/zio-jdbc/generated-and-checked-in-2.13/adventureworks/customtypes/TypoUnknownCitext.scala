@@ -47,7 +47,7 @@ object TypoUnknownCitext {
     )
   }
 
-  implicit lazy val bijection: Bijection[TypoUnknownCitext, String] = Bijection.apply[TypoUnknownCitext, String](_.value)(TypoUnknownCitext.apply)
+  implicit lazy val bijection: Bijection[TypoUnknownCitext, String] = Bijection[TypoUnknownCitext, String](_.value)(TypoUnknownCitext.apply)
 
   implicit lazy val jdbcDecoder: JdbcDecoder[TypoUnknownCitext] = {
     JdbcDecoder[TypoUnknownCitext](

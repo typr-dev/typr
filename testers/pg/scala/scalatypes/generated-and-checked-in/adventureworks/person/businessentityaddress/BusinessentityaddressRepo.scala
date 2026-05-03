@@ -5,17 +5,18 @@
  */
 package adventureworks.person.businessentityaddress
 
-import dev.typr.foundations.scala.DeleteBuilder
-import dev.typr.foundations.scala.SelectBuilder
-import dev.typr.foundations.scala.UpdateBuilder
-import java.sql.Connection
+import dev.typr.dslsc.DeleteBuilder
+import dev.typr.dslsc.SelectBuilder
+import dev.typr.dslsc.UpdateBuilder
+import dev.typr.foundationssc.Connection
+import dev.typr.foundationssc.ConnectionRead
 
 trait BusinessentityaddressRepo {
   def delete: DeleteBuilder[BusinessentityaddressFields, BusinessentityaddressRow]
 
   def deleteById(compositeId: BusinessentityaddressId)(using c: Connection): Boolean
 
-  def deleteByIds(compositeIds: Array[BusinessentityaddressId])(using c: Connection): Int
+  def deleteByIds(compositeIds: List[BusinessentityaddressId])(using c: Connection): Int
 
   def insert(unsaved: BusinessentityaddressRow)(using c: Connection): BusinessentityaddressRow
 
@@ -34,13 +35,13 @@ trait BusinessentityaddressRepo {
 
   def select: SelectBuilder[BusinessentityaddressFields, BusinessentityaddressRow]
 
-  def selectAll(using c: Connection): List[BusinessentityaddressRow]
+  def selectAll(using c: ConnectionRead): List[BusinessentityaddressRow]
 
-  def selectById(compositeId: BusinessentityaddressId)(using c: Connection): Option[BusinessentityaddressRow]
+  def selectById(compositeId: BusinessentityaddressId)(using c: ConnectionRead): Option[BusinessentityaddressRow]
 
-  def selectByIds(compositeIds: Array[BusinessentityaddressId])(using c: Connection): List[BusinessentityaddressRow]
+  def selectByIds(compositeIds: List[BusinessentityaddressId])(using c: ConnectionRead): List[BusinessentityaddressRow]
 
-  def selectByIdsTracked(compositeIds: Array[BusinessentityaddressId])(using c: Connection): Map[BusinessentityaddressId, BusinessentityaddressRow]
+  def selectByIdsTracked(compositeIds: List[BusinessentityaddressId])(using c: ConnectionRead): Map[BusinessentityaddressId, BusinessentityaddressRow]
 
   def update: UpdateBuilder[BusinessentityaddressFields, BusinessentityaddressRow]
 

@@ -5,19 +5,17 @@
  */
 package testdb.orders_with_customer_details
 
-import dev.typr.foundations.SqlServerTypes
-import dev.typr.foundations.scala.DbTypeOps
-import dev.typr.foundations.scala.Fragment
-import dev.typr.foundations.scala.ScalaDbTypes
-import java.sql.Connection
+import dev.typr.foundationssc.ConnectionRead
+import dev.typr.foundationssc.Fragment
+import dev.typr.foundationssc.SqlServerTypes
 import java.time.LocalDateTime
-import dev.typr.foundations.scala.Fragment.sql
+import dev.typr.foundationssc.Fragment.sql
 
 class OrdersWithCustomerDetailsSqlRepoImpl extends OrdersWithCustomerDetailsSqlRepo {
   override def apply(
     minAmount: Option[BigDecimal],
     startDate: Option[LocalDateTime]
-  )(using c: Connection): List[OrdersWithCustomerDetailsSqlRow] = {
+  )(using c: ConnectionRead): List[OrdersWithCustomerDetailsSqlRow] = {
     sql"""-- Get orders with full customer details
     SELECT
         o.order_id,
@@ -28,9 +26,9 @@ class OrdersWithCustomerDetailsSqlRepoImpl extends OrdersWithCustomerDetailsSqlR
         c.email as customer_email
     FROM orders o
     INNER JOIN customers c ON o.customer_id = c.customer_id
-    WHERE (${Fragment.encode(ScalaDbTypes.SqlServerTypes.numeric.nullable, minAmount)} IS NULL OR o.total_amount >= ${Fragment.encode(ScalaDbTypes.SqlServerTypes.numeric.nullable, minAmount)})
-      AND (${Fragment.encode(SqlServerTypes.datetime2.nullable, startDate)} IS NULL OR o.order_date >= ${Fragment.encode(SqlServerTypes.datetime2.nullable, startDate)})
+    WHERE (${Fragment.encode(SqlServerTypes.numeric.opt, minAmount)} IS NULL OR o.total_amount >= ${Fragment.encode(SqlServerTypes.numeric.opt, minAmount)})
+      AND (${Fragment.encode(SqlServerTypes.datetime2.opt, startDate)} IS NULL OR o.order_date >= ${Fragment.encode(SqlServerTypes.datetime2.opt, startDate)})
     ORDER BY o.order_date DESC
-    """.query(OrdersWithCustomerDetailsSqlRow.`_rowParser`.all()).runUnchecked(c)
+    """.query(OrdersWithCustomerDetailsSqlRow.rowCodec.all()).run(using c)
   }
 }

@@ -5,17 +5,18 @@
  */
 package adventureworks.production.unitmeasure
 
-import dev.typr.foundations.scala.DeleteBuilder
-import dev.typr.foundations.scala.DeleteBuilderMock
-import dev.typr.foundations.scala.DeleteParams
-import dev.typr.foundations.scala.SelectBuilder
-import dev.typr.foundations.scala.SelectBuilderMock
-import dev.typr.foundations.scala.SelectParams
-import dev.typr.foundations.scala.UpdateBuilder
-import dev.typr.foundations.scala.UpdateBuilderMock
-import dev.typr.foundations.scala.UpdateParams
+import dev.typr.dslsc.DeleteBuilder
+import dev.typr.dslsc.DeleteBuilderMock
+import dev.typr.dslsc.DeleteParams
+import dev.typr.dslsc.SelectBuilder
+import dev.typr.dslsc.SelectBuilderMock
+import dev.typr.dslsc.SelectParams
+import dev.typr.dslsc.UpdateBuilder
+import dev.typr.dslsc.UpdateBuilderMock
+import dev.typr.dslsc.UpdateParams
+import dev.typr.foundationssc.Connection
+import dev.typr.foundationssc.ConnectionRead
 import java.lang.RuntimeException
-import java.sql.Connection
 
 case class UnitmeasureRepoMock(
   toRow: UnitmeasureRowUnsaved => UnitmeasureRow,
@@ -25,7 +26,7 @@ case class UnitmeasureRepoMock(
 
   override def deleteById(unitmeasurecode: UnitmeasureId)(using c: Connection): Boolean = map.remove(unitmeasurecode).isDefined
 
-  override def deleteByIds(unitmeasurecodes: Array[UnitmeasureId])(using c: Connection): Int = {
+  override def deleteByIds(unitmeasurecodes: List[UnitmeasureId])(using c: Connection): Int = {
     var count = 0
     unitmeasurecodes.foreach { id => if (map.remove(id).isDefined) {
       count = count + 1
@@ -67,13 +68,13 @@ case class UnitmeasureRepoMock(
 
   override def select: SelectBuilder[UnitmeasureFields, UnitmeasureRow] = SelectBuilderMock(UnitmeasureFields.structure, () => map.values.toList, SelectParams.empty())
 
-  override def selectAll(using c: Connection): List[UnitmeasureRow] = map.values.toList
+  override def selectAll(using c: ConnectionRead): List[UnitmeasureRow] = map.values.toList
 
-  override def selectById(unitmeasurecode: UnitmeasureId)(using c: Connection): Option[UnitmeasureRow] = map.get(unitmeasurecode)
+  override def selectById(unitmeasurecode: UnitmeasureId)(using c: ConnectionRead): Option[UnitmeasureRow] = map.get(unitmeasurecode)
 
-  override def selectByIds(unitmeasurecodes: Array[UnitmeasureId])(using c: Connection): List[UnitmeasureRow] = unitmeasurecodes.flatMap(map.get(_)).toList
+  override def selectByIds(unitmeasurecodes: List[UnitmeasureId])(using c: ConnectionRead): List[UnitmeasureRow] = unitmeasurecodes.flatMap(map.get(_)).toList
 
-  override def selectByIdsTracked(unitmeasurecodes: Array[UnitmeasureId])(using c: Connection): Map[UnitmeasureId, UnitmeasureRow] = selectByIds(unitmeasurecodes)(using c).map(x => (((row: UnitmeasureRow) => row.unitmeasurecode).apply(x), x)).toMap
+  override def selectByIdsTracked(unitmeasurecodes: List[UnitmeasureId])(using c: ConnectionRead): Map[UnitmeasureId, UnitmeasureRow] = selectByIds(unitmeasurecodes)(using c).map(x => (((row: UnitmeasureRow) => row.unitmeasurecode).apply(x), x)).toMap
 
   override def update: UpdateBuilder[UnitmeasureFields, UnitmeasureRow] = UpdateBuilderMock(UnitmeasureFields.structure, () => map.values.toList, UpdateParams.empty(), row => row)
 

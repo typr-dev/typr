@@ -7,13 +7,11 @@ package adventureworks.person.emailaddress
 
 import adventureworks.customtypes.Defaulted
 import adventureworks.person.businessentity.BusinessentityId
+import dev.typr.dslkt.RowCodecs
 import dev.typr.foundations.PgText
-import dev.typr.foundations.PgTypes
 import dev.typr.foundations.Tuple.Tuple5
-import dev.typr.foundations.kotlin.KotlinDbTypes
-import dev.typr.foundations.kotlin.RowParser
-import dev.typr.foundations.kotlin.RowParsers
-import dev.typr.foundations.kotlin.nullable
+import dev.typr.foundationskt.PgTypes
+import dev.typr.foundationskt.RowCodec
 import java.time.LocalDateTime
 import java.util.UUID
 
@@ -31,17 +29,17 @@ data class EmailaddressRow(
     */
   val emailaddressid: Int,
   /** E-mail address for the person. */
-  val emailaddress: /* max 50 chars */ String?,
+  val emailaddress: /* max 50 chars */ kotlin.String?,
   /** Default: uuid_generate_v1() */
   val rowguid: UUID,
   /** Default: now() */
   val modifieddate: LocalDateTime
-) : Tuple5<BusinessentityId, Int, /* max 50 chars */ String?, UUID, LocalDateTime> {
+) : Tuple5<BusinessentityId, Int, /* max 50 chars */ kotlin.String?, UUID, LocalDateTime> {
   override fun _1(): BusinessentityId = businessentityid
 
   override fun _2(): Int = emailaddressid
 
-  override fun _3(): /* max 50 chars */ String? = emailaddress
+  override fun _3(): /* max 50 chars */ kotlin.String? = emailaddress
 
   override fun _4(): UUID = rowguid
 
@@ -58,16 +56,16 @@ data class EmailaddressRow(
   ): EmailaddressRowUnsaved = EmailaddressRowUnsaved(businessentityid, emailaddress, emailaddressid, rowguid, modifieddate)
 
   companion object {
-    val _rowParser: RowParser<EmailaddressRow> = RowParsers.of(BusinessentityId.pgType, KotlinDbTypes.PgTypes.int4, PgTypes.text.nullable(), PgTypes.uuid, PgTypes.timestamp, { t0, t1, t2, t3, t4 -> EmailaddressRow(t0, t1, t2, t3, t4) }, { row -> arrayOf<Any?>(row.businessentityid, row.emailaddressid, row.emailaddress, row.rowguid, row.modifieddate) })
+    val rowCodec: RowCodec<EmailaddressRow> = RowCodecs.of(BusinessentityId.pgType, PgTypes.int4, PgTypes.text.opt(), PgTypes.uuid, PgTypes.timestamp, { t0: BusinessentityId, t1: Int, t2: /* max 50 chars */ kotlin.String?, t3: UUID, t4: LocalDateTime -> EmailaddressRow(t0, t1, t2, t3, t4) }, { row: EmailaddressRow -> arrayOf<Any?>(row.businessentityid, row.emailaddressid, row.emailaddress, row.rowguid, row.modifieddate) })
+
+    val pgText: PgText<EmailaddressRow> =
+      PgText.from(rowCodec.underlying)
 
     fun apply(
       compositeId: EmailaddressId,
-      emailaddress: /* max 50 chars */ String?,
+      emailaddress: /* max 50 chars */ kotlin.String?,
       rowguid: UUID,
       modifieddate: LocalDateTime
     ): EmailaddressRow = EmailaddressRow(compositeId.businessentityid, compositeId.emailaddressid, emailaddress, rowguid, modifieddate)
-
-    val pgText: PgText<EmailaddressRow> =
-      PgText.from(_rowParser.underlying)
   }
 }

@@ -6,13 +6,11 @@
 package testdb.shipments
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import dev.typr.foundations.MariaTypes
+import dev.typr.dslkt.RowCodecs
 import dev.typr.foundations.Tuple.Tuple17
 import dev.typr.foundations.data.Json
-import dev.typr.foundations.kotlin.KotlinDbTypes
-import dev.typr.foundations.kotlin.RowParser
-import dev.typr.foundations.kotlin.RowParsers
-import dev.typr.foundations.kotlin.nullable
+import dev.typr.foundationskt.MariaTypes
+import dev.typr.foundationskt.RowCodec
 import java.math.BigDecimal
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -40,9 +38,9 @@ data class ShipmentsRow(
   /** 
     * Default: NULL
     */
-  @field:JsonProperty("tracking_number") val trackingNumber: String?,
+  @field:JsonProperty("tracking_number") val trackingNumber: kotlin.String?,
   /**  */
-  @field:JsonProperty("shipping_method") val shippingMethod: String,
+  @field:JsonProperty("shipping_method") val shippingMethod: kotlin.String,
   /** 
     * Default: NULL
     */
@@ -58,7 +56,7 @@ data class ShipmentsRow(
   /** 
     * Default: 'pending'
     */
-  val status: String,
+  val status: kotlin.String,
   /** 
     * Default: NULL
     */
@@ -90,7 +88,7 @@ data class ShipmentsRow(
     * Default: current_timestamp(6)
     */
   @field:JsonProperty("updated_at") val updatedAt: LocalDateTime
-) : Tuple17<ShipmentsId, OrdersId, ShippingCarriersId, String?, String, BigDecimal?, Json?, ByteArray?, String, LocalDate?, LocalDateTime?, BigDecimal, BigDecimal?, WarehousesId?, LocalDateTime?, LocalDateTime, LocalDateTime> {
+) : Tuple17<ShipmentsId, OrdersId, ShippingCarriersId, kotlin.String?, kotlin.String, BigDecimal?, Json?, ByteArray?, kotlin.String, LocalDate?, LocalDateTime?, BigDecimal, BigDecimal?, WarehousesId?, LocalDateTime?, LocalDateTime, LocalDateTime> {
   override fun _1(): ShipmentsId = shipmentId
 
   override fun _10(): LocalDate? = estimatedDeliveryDate
@@ -113,9 +111,9 @@ data class ShipmentsRow(
 
   override fun _3(): ShippingCarriersId = carrierId
 
-  override fun _4(): String? = trackingNumber
+  override fun _4(): kotlin.String? = trackingNumber
 
-  override fun _5(): String = shippingMethod
+  override fun _5(): kotlin.String = shippingMethod
 
   override fun _6(): BigDecimal? = weightKg
 
@@ -123,16 +121,16 @@ data class ShipmentsRow(
 
   override fun _8(): ByteArray? = labelData
 
-  override fun _9(): String = status
+  override fun _9(): kotlin.String = status
 
   fun id(): ShipmentsId = shipmentId
 
   fun toUnsavedRow(
-    trackingNumber: Defaulted<String?> = Defaulted.Provided(this.trackingNumber),
+    trackingNumber: Defaulted<kotlin.String?> = Defaulted.Provided(this.trackingNumber),
     weightKg: Defaulted<BigDecimal?> = Defaulted.Provided(this.weightKg),
     dimensionsJson: Defaulted<Json?> = Defaulted.Provided(this.dimensionsJson),
     labelData: Defaulted<ByteArray?> = Defaulted.Provided(this.labelData),
-    status: Defaulted<String> = Defaulted.Provided(this.status),
+    status: Defaulted<kotlin.String> = Defaulted.Provided(this.status),
     estimatedDeliveryDate: Defaulted<LocalDate?> = Defaulted.Provided(this.estimatedDeliveryDate),
     actualDeliveryAt: Defaulted<LocalDateTime?> = Defaulted.Provided(this.actualDeliveryAt),
     insuranceAmount: Defaulted<BigDecimal?> = Defaulted.Provided(this.insuranceAmount),
@@ -143,6 +141,6 @@ data class ShipmentsRow(
   ): ShipmentsRowUnsaved = ShipmentsRowUnsaved(orderId, carrierId, shippingMethod, shippingCost, trackingNumber, weightKg, dimensionsJson, labelData, status, estimatedDeliveryDate, actualDeliveryAt, insuranceAmount, originWarehouseId, shippedAt, createdAt, updatedAt)
 
   companion object {
-    val _rowParser: RowParser<ShipmentsRow> = RowParsers.of(ShipmentsId.mariaType, OrdersId.mariaType, ShippingCarriersId.mariaType, MariaTypes.varchar.nullable(), MariaTypes.varchar, KotlinDbTypes.MariaTypes.numeric.nullable(), MariaTypes.json.nullable(), MariaTypes.longblob.nullable(), MariaTypes.text, MariaTypes.date.nullable(), MariaTypes.datetime.nullable(), KotlinDbTypes.MariaTypes.numeric, KotlinDbTypes.MariaTypes.numeric.nullable(), WarehousesId.mariaType.nullable(), MariaTypes.datetime.nullable(), MariaTypes.datetime, MariaTypes.datetime, { t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15, t16 -> ShipmentsRow(t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15, t16) }, { row -> arrayOf<Any?>(row.shipmentId, row.orderId, row.carrierId, row.trackingNumber, row.shippingMethod, row.weightKg, row.dimensionsJson, row.labelData, row.status, row.estimatedDeliveryDate, row.actualDeliveryAt, row.shippingCost, row.insuranceAmount, row.originWarehouseId, row.shippedAt, row.createdAt, row.updatedAt) })
+    val rowCodec: RowCodec<ShipmentsRow> = RowCodecs.of(ShipmentsId.mariaType, OrdersId.mariaType, ShippingCarriersId.mariaType, MariaTypes.varchar.opt(), MariaTypes.varchar, MariaTypes.numeric.opt(), MariaTypes.json.opt(), MariaTypes.longblob.opt(), MariaTypes.text, MariaTypes.date.opt(), MariaTypes.datetime.opt(), MariaTypes.numeric, MariaTypes.numeric.opt(), WarehousesId.mariaType.opt(), MariaTypes.datetime.opt(), MariaTypes.datetime, MariaTypes.datetime, { t0: ShipmentsId, t1: OrdersId, t2: ShippingCarriersId, t3: kotlin.String?, t4: kotlin.String, t5: BigDecimal?, t6: Json?, t7: ByteArray?, t8: kotlin.String, t9: LocalDate?, t10: LocalDateTime?, t11: BigDecimal, t12: BigDecimal?, t13: WarehousesId?, t14: LocalDateTime?, t15: LocalDateTime, t16: LocalDateTime -> ShipmentsRow(t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15, t16) }, { row: ShipmentsRow -> arrayOf<Any?>(row.shipmentId, row.orderId, row.carrierId, row.trackingNumber, row.shippingMethod, row.weightKg, row.dimensionsJson, row.labelData, row.status, row.estimatedDeliveryDate, row.actualDeliveryAt, row.shippingCost, row.insuranceAmount, row.originWarehouseId, row.shippedAt, row.createdAt, row.updatedAt) })
   }
 }

@@ -14,11 +14,11 @@ import testdb.userdefined.IsActive
 /** This class corresponds to a row in table `payment_methods` which has not been persisted yet */
 data class PaymentMethodsRowUnsaved(
   /**  */
-  val code: String,
+  val code: kotlin.String,
   /**  */
-  val name: String,
+  val name: kotlin.String,
   /**  */
-  @field:JsonProperty("method_type") val methodType: String,
+  @field:JsonProperty("method_type") val methodType: kotlin.String,
   /** Default: NULL
 
     */
@@ -30,12 +30,12 @@ data class PaymentMethodsRowUnsaved(
   /** Default: 0
 
     */
-  @field:JsonProperty("sort_order") val sortOrder: Defaulted<Byte> = UseDefault()
+  @field:JsonProperty("sort_order") val sortOrder: Defaulted<kotlin.Byte> = UseDefault()
 ) {
   fun toRow(
     processorConfigDefault: () -> Json?,
     isActiveDefault: () -> /* user-picked */ IsActive,
-    sortOrderDefault: () -> Byte,
+    sortOrderDefault: () -> kotlin.Byte,
     methodIdDefault: () -> PaymentMethodsId
   ): PaymentMethodsRow = PaymentMethodsRow(methodId = methodIdDefault(), code = code, name = name, methodType = methodType, processorConfig = processorConfig.getOrElse(processorConfigDefault), isActive = isActive.getOrElse(isActiveDefault), sortOrder = sortOrder.getOrElse(sortOrderDefault))
 }

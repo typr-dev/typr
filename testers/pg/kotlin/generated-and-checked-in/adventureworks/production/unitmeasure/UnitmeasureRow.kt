@@ -7,11 +7,11 @@ package adventureworks.production.unitmeasure
 
 import adventureworks.customtypes.Defaulted
 import adventureworks.public.Name
+import dev.typr.dslkt.RowCodecs
 import dev.typr.foundations.PgText
-import dev.typr.foundations.PgTypes
 import dev.typr.foundations.Tuple.Tuple3
-import dev.typr.foundations.kotlin.RowParser
-import dev.typr.foundations.kotlin.RowParsers
+import dev.typr.foundationskt.PgTypes
+import dev.typr.foundationskt.RowCodec
 import java.time.LocalDateTime
 
 /** Table: production.unitmeasure
@@ -37,9 +37,9 @@ data class UnitmeasureRow(
   fun toUnsavedRow(modifieddate: Defaulted<LocalDateTime> = Defaulted.Provided(this.modifieddate)): UnitmeasureRowUnsaved = UnitmeasureRowUnsaved(unitmeasurecode, name, modifieddate)
 
   companion object {
-    val _rowParser: RowParser<UnitmeasureRow> = RowParsers.of(UnitmeasureId.pgType, Name.pgType, PgTypes.timestamp, { t0, t1, t2 -> UnitmeasureRow(t0, t1, t2) }, { row -> arrayOf<Any?>(row.unitmeasurecode, row.name, row.modifieddate) })
+    val rowCodec: RowCodec<UnitmeasureRow> = RowCodecs.of(UnitmeasureId.pgType, Name.pgType, PgTypes.timestamp, { t0: UnitmeasureId, t1: Name, t2: LocalDateTime -> UnitmeasureRow(t0, t1, t2) }, { row: UnitmeasureRow -> arrayOf<Any?>(row.unitmeasurecode, row.name, row.modifieddate) })
 
     val pgText: PgText<UnitmeasureRow> =
-      PgText.from(_rowParser.underlying)
+      PgText.from(rowCodec.underlying)
   }
 }

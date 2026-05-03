@@ -5,7 +5,7 @@
  */
 package testdb.department_employee_details
 
-import java.sql.Connection
+import dev.typr.foundationssc.ConnectionRead
 import java.time.LocalDate
 
 trait DepartmentEmployeeDetailsSqlRepo {
@@ -14,5 +14,5 @@ trait DepartmentEmployeeDetailsSqlRepo {
     deptRegion: Option[String],
     minSalary: Option[BigDecimal],
     hiredAfter: Option[LocalDate]
-  )(using c: Connection): List[DepartmentEmployeeDetailsSqlRow]
+  )(using c: ConnectionRead): List[DepartmentEmployeeDetailsSqlRow]
 }

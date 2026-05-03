@@ -33,7 +33,7 @@ object TypoInt2Vector {
                             }))
   }
 
-  given bijection: Bijection[TypoInt2Vector, String] = Bijection.apply[TypoInt2Vector, String](_.value)(TypoInt2Vector.apply)
+  given bijection: Bijection[TypoInt2Vector, String] = Bijection[TypoInt2Vector, String](_.value)(TypoInt2Vector.apply)
 
   given decoder: Decoder[TypoInt2Vector] = Decoder.decodeString.map(TypoInt2Vector.apply)
 

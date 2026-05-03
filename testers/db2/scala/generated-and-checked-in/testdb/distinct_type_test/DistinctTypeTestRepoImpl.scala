@@ -5,96 +5,96 @@
  */
 package testdb.distinct_type_test
 
-import dev.typr.foundations.scala.DbTypeOps
-import dev.typr.foundations.scala.DeleteBuilder
-import dev.typr.foundations.scala.Dialect
-import dev.typr.foundations.scala.Fragment
-import dev.typr.foundations.scala.SelectBuilder
-import dev.typr.foundations.scala.UpdateBuilder
-import java.sql.Connection
+import dev.typr.dslsc.DeleteBuilder
+import dev.typr.dslsc.Dialect
+import dev.typr.dslsc.SelectBuilder
+import dev.typr.dslsc.UpdateBuilder
+import dev.typr.foundationssc.Connection
+import dev.typr.foundationssc.ConnectionRead
+import dev.typr.foundationssc.Fragment
 import scala.collection.mutable.ListBuffer
 import testdb.EmailAddress
 import testdb.MoneyAmount
-import dev.typr.foundations.scala.Fragment.sql
+import dev.typr.foundationssc.Fragment.sql
 
 class DistinctTypeTestRepoImpl extends DistinctTypeTestRepo {
   override def delete: DeleteBuilder[DistinctTypeTestFields, DistinctTypeTestRow] = DeleteBuilder.of(""""DISTINCT_TYPE_TEST"""", DistinctTypeTestFields.structure, Dialect.DB2)
 
-  override def deleteById(id: DistinctTypeTestId)(using c: Connection): Boolean = sql"""delete from "DISTINCT_TYPE_TEST" where "ID" = ${Fragment.encode(DistinctTypeTestId.db2Type, id)}""".update().runUnchecked(c) > 0
+  override def deleteById(id: DistinctTypeTestId)(using c: Connection): Boolean = sql"""delete from "DISTINCT_TYPE_TEST" where "ID" = ${Fragment.encode(DistinctTypeTestId.db2Type, id)}""".update().run(using c) > 0
 
-  override def deleteByIds(ids: Array[DistinctTypeTestId])(using c: Connection): Int = {
+  override def deleteByIds(ids: List[DistinctTypeTestId])(using c: Connection): Int = {
     val fragments: ListBuffer[Fragment] = ListBuffer()
     ids.foreach { id => fragments.addOne(Fragment.encode(DistinctTypeTestId.db2Type, id)): @scala.annotation.nowarn }
-    return Fragment.interpolate(Fragment.lit("""delete from "DISTINCT_TYPE_TEST" where "ID" in ("""), Fragment.comma(fragments), Fragment.lit(")")).update().runUnchecked(c)
+    return Fragment.concat(Fragment.of("""delete from "DISTINCT_TYPE_TEST" where "ID" in ("""), Fragment.comma(fragments), Fragment.of(")")).update().run(using c)
   }
 
   override def insert(unsaved: DistinctTypeTestRow)(using c: Connection): DistinctTypeTestRow = {
   sql"""SELECT "ID", "EMAIL", "BALANCE" FROM FINAL TABLE (INSERT INTO "DISTINCT_TYPE_TEST"("EMAIL", "BALANCE")
-    VALUES (${Fragment.encode(EmailAddress.db2Type, unsaved.email)}, ${Fragment.encode(MoneyAmount.db2Type.nullable, unsaved.balance)}))
+    VALUES (${Fragment.encode(EmailAddress.db2Type, unsaved.email)}, ${Fragment.encode(MoneyAmount.db2Type.opt, unsaved.balance)}))
     """
-    .updateReturning(DistinctTypeTestRow.`_rowParser`.exactlyOne()).runUnchecked(c)
+    .updateReturning(DistinctTypeTestRow.rowCodec.exactlyOne()).run(using c)
   }
 
   override def insert(unsaved: DistinctTypeTestRowUnsaved)(using c: Connection): DistinctTypeTestRow = {
     val columns: ListBuffer[Fragment] = ListBuffer()
     val values: ListBuffer[Fragment] = ListBuffer()
-    columns.addOne(Fragment.lit(""""EMAIL"""")): @scala.annotation.nowarn
+    columns.addOne(Fragment.of(""""EMAIL"""")): @scala.annotation.nowarn
     values.addOne(sql"${Fragment.encode(EmailAddress.db2Type, unsaved.email)}"): @scala.annotation.nowarn
-    columns.addOne(Fragment.lit(""""BALANCE"""")): @scala.annotation.nowarn
-    values.addOne(sql"${Fragment.encode(MoneyAmount.db2Type.nullable, unsaved.balance)}"): @scala.annotation.nowarn
+    columns.addOne(Fragment.of(""""BALANCE"""")): @scala.annotation.nowarn
+    values.addOne(sql"${Fragment.encode(MoneyAmount.db2Type.opt, unsaved.balance)}"): @scala.annotation.nowarn
     val q: Fragment = {
       sql"""SELECT "ID", "EMAIL", "BALANCE" FROM FINAL TABLE (INSERT INTO "DISTINCT_TYPE_TEST"(${Fragment.comma(columns)})
       VALUES (${Fragment.comma(values)}))
       """
     }
-    return q.updateReturning(DistinctTypeTestRow.`_rowParser`.exactlyOne()).runUnchecked(c)
+    return q.updateReturning(DistinctTypeTestRow.rowCodec.exactlyOne()).run(using c)
   }
 
-  override def select: SelectBuilder[DistinctTypeTestFields, DistinctTypeTestRow] = SelectBuilder.of(""""DISTINCT_TYPE_TEST"""", DistinctTypeTestFields.structure, DistinctTypeTestRow.`_rowParser`, Dialect.DB2)
+  override def select: SelectBuilder[DistinctTypeTestFields, DistinctTypeTestRow] = SelectBuilder.of(""""DISTINCT_TYPE_TEST"""", DistinctTypeTestFields.structure, DistinctTypeTestRow.rowCodec, Dialect.DB2)
 
-  override def selectAll(using c: Connection): List[DistinctTypeTestRow] = {
+  override def selectAll(using c: ConnectionRead): List[DistinctTypeTestRow] = {
     sql"""select "ID", "EMAIL", "BALANCE"
     from "DISTINCT_TYPE_TEST"
-    """.query(DistinctTypeTestRow.`_rowParser`.all()).runUnchecked(c)
+    """.query(DistinctTypeTestRow.rowCodec.all()).run(using c)
   }
 
-  override def selectById(id: DistinctTypeTestId)(using c: Connection): Option[DistinctTypeTestRow] = {
+  override def selectById(id: DistinctTypeTestId)(using c: ConnectionRead): Option[DistinctTypeTestRow] = {
     sql"""select "ID", "EMAIL", "BALANCE"
     from "DISTINCT_TYPE_TEST"
-    where "ID" = ${Fragment.encode(DistinctTypeTestId.db2Type, id)}""".query(DistinctTypeTestRow.`_rowParser`.first()).runUnchecked(c)
+    where "ID" = ${Fragment.encode(DistinctTypeTestId.db2Type, id)}""".query(DistinctTypeTestRow.rowCodec.first()).run(using c)
   }
 
-  override def selectByIds(ids: Array[DistinctTypeTestId])(using c: Connection): List[DistinctTypeTestRow] = {
+  override def selectByIds(ids: List[DistinctTypeTestId])(using c: ConnectionRead): List[DistinctTypeTestRow] = {
     val fragments: ListBuffer[Fragment] = ListBuffer()
     ids.foreach { id => fragments.addOne(Fragment.encode(DistinctTypeTestId.db2Type, id)): @scala.annotation.nowarn }
-    return Fragment.interpolate(Fragment.lit("""select "ID", "EMAIL", "BALANCE" from "DISTINCT_TYPE_TEST" where "ID" in ("""), Fragment.comma(fragments), Fragment.lit(")")).query(DistinctTypeTestRow.`_rowParser`.all()).runUnchecked(c)
+    return Fragment.concat(Fragment.of("""select "ID", "EMAIL", "BALANCE" from "DISTINCT_TYPE_TEST" where "ID" in ("""), Fragment.comma(fragments), Fragment.of(")")).query(DistinctTypeTestRow.rowCodec.all()).run(using c)
   }
 
-  override def selectByIdsTracked(ids: Array[DistinctTypeTestId])(using c: Connection): Map[DistinctTypeTestId, DistinctTypeTestRow] = {
+  override def selectByIdsTracked(ids: List[DistinctTypeTestId])(using c: ConnectionRead): Map[DistinctTypeTestId, DistinctTypeTestRow] = {
     val ret: scala.collection.mutable.Map[DistinctTypeTestId, DistinctTypeTestRow] = scala.collection.mutable.Map.empty[DistinctTypeTestId, DistinctTypeTestRow]
     selectByIds(ids)(using c).foreach(row => ret.put(row.id, row): @scala.annotation.nowarn)
     return ret.toMap
   }
 
-  override def update: UpdateBuilder[DistinctTypeTestFields, DistinctTypeTestRow] = UpdateBuilder.of(""""DISTINCT_TYPE_TEST"""", DistinctTypeTestFields.structure, DistinctTypeTestRow.`_rowParser`, Dialect.DB2)
+  override def update: UpdateBuilder[DistinctTypeTestFields, DistinctTypeTestRow] = UpdateBuilder.of(""""DISTINCT_TYPE_TEST"""", DistinctTypeTestFields.structure, DistinctTypeTestRow.rowCodec, Dialect.DB2)
 
   override def update(row: DistinctTypeTestRow)(using c: Connection): Boolean = {
     val id: DistinctTypeTestId = row.id
     return sql"""update "DISTINCT_TYPE_TEST"
     set "EMAIL" = ${Fragment.encode(EmailAddress.db2Type, row.email)},
-    "BALANCE" = ${Fragment.encode(MoneyAmount.db2Type.nullable, row.balance)}
-    where "ID" = ${Fragment.encode(DistinctTypeTestId.db2Type, id)}""".update().runUnchecked(c) > 0
+    "BALANCE" = ${Fragment.encode(MoneyAmount.db2Type.opt, row.balance)}
+    where "ID" = ${Fragment.encode(DistinctTypeTestId.db2Type, id)}""".update().run(using c) > 0
   }
 
   override def upsert(unsaved: DistinctTypeTestRow)(using c: Connection): Unit = {
     sql"""MERGE INTO "DISTINCT_TYPE_TEST" AS t
-    USING (VALUES (${Fragment.encode(DistinctTypeTestId.db2Type, unsaved.id)}, ${Fragment.encode(EmailAddress.db2Type, unsaved.email)}, ${Fragment.encode(MoneyAmount.db2Type.nullable, unsaved.balance)})) AS s("ID", "EMAIL", "BALANCE")
+    USING (VALUES (${Fragment.encode(DistinctTypeTestId.db2Type, unsaved.id)}, ${Fragment.encode(EmailAddress.db2Type, unsaved.email)}, ${Fragment.encode(MoneyAmount.db2Type.opt, unsaved.balance)})) AS s("ID", "EMAIL", "BALANCE")
     ON t."ID" = s."ID"
     WHEN MATCHED THEN UPDATE SET "EMAIL" = s."EMAIL",
     "BALANCE" = s."BALANCE"
-    WHEN NOT MATCHED THEN INSERT ("ID", "EMAIL", "BALANCE") VALUES (${Fragment.encode(DistinctTypeTestId.db2Type, unsaved.id)}, ${Fragment.encode(EmailAddress.db2Type, unsaved.email)}, ${Fragment.encode(MoneyAmount.db2Type.nullable, unsaved.balance)})"""
+    WHEN NOT MATCHED THEN INSERT ("ID", "EMAIL", "BALANCE") VALUES (${Fragment.encode(DistinctTypeTestId.db2Type, unsaved.id)}, ${Fragment.encode(EmailAddress.db2Type, unsaved.email)}, ${Fragment.encode(MoneyAmount.db2Type.opt, unsaved.balance)})"""
       .update()
-      .runUnchecked(c): @scala.annotation.nowarn
+      .run(using c): @scala.annotation.nowarn
   }
 
   override def upsertBatch(unsaved: Iterator[DistinctTypeTestRow])(using c: Connection): Unit = {
@@ -104,7 +104,7 @@ class DistinctTypeTestRepoImpl extends DistinctTypeTestRepo {
     WHEN MATCHED THEN UPDATE SET "EMAIL" = s."EMAIL",
     "BALANCE" = s."BALANCE"
     WHEN NOT MATCHED THEN INSERT ("ID", "EMAIL", "BALANCE") VALUES (?, ?, ?)"""
-      .updateMany(DistinctTypeTestRow.`_rowParser`, unsaved)
-      .runUnchecked(c): @scala.annotation.nowarn
+      .updateMany(DistinctTypeTestRow.rowCodec, unsaved)
+      .run(using c): @scala.annotation.nowarn
   }
 }

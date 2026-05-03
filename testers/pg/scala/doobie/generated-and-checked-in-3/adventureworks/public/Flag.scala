@@ -23,7 +23,7 @@ object Flag {
 
   given arrayPut: Put[Array[Flag]] = adventureworks.BooleanArrayMeta.put.contramap(_.map(_.value))
 
-  given bijection: Bijection[Flag, Boolean] = Bijection.apply[Flag, Boolean](_.value)(Flag.apply)
+  given bijection: Bijection[Flag, Boolean] = Bijection[Flag, Boolean](_.value)(Flag.apply)
 
   given decoder: Decoder[Flag] = Decoder.decodeBoolean.map(Flag.apply)
 

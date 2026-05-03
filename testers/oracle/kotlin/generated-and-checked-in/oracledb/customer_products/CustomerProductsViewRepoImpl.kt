@@ -5,14 +5,14 @@
  */
 package oracledb.customer_products
 
-import dev.typr.foundations.kotlin.Dialect
-import dev.typr.foundations.kotlin.Fragment
-import dev.typr.foundations.kotlin.SelectBuilder
-import java.sql.Connection
+import dev.typr.dslkt.Dialect
+import dev.typr.dslkt.SelectBuilder
+import dev.typr.foundationskt.ConnectionRead
+import dev.typr.foundationskt.Fragment
 import kotlin.collections.List
 
 class CustomerProductsViewRepoImpl() : CustomerProductsViewRepo {
-  override fun select(): SelectBuilder<CustomerProductsViewFields, CustomerProductsViewRow> = SelectBuilder.of("\"CUSTOMER_PRODUCTS\"", CustomerProductsViewFields.structure, CustomerProductsViewRow._rowParser, Dialect.ORACLE)
+  override fun select(): SelectBuilder<CustomerProductsViewFields, CustomerProductsViewRow> = SelectBuilder.of("\"CUSTOMER_PRODUCTS\"", CustomerProductsViewFields.structure, CustomerProductsViewRow.rowCodec, Dialect.ORACLE)
 
-  override fun selectAll(c: Connection): List<CustomerProductsViewRow> = Fragment.interpolate(Fragment.lit("select \"CUSTOMER_ID\", \"CUSTOMER_NAME\", \"BILLING_ADDRESS\", \"PRODUCT_ID\", \"PRODUCT_NAME\", \"PRICE\"\nfrom \"CUSTOMER_PRODUCTS\"\n")).query(CustomerProductsViewRow._rowParser.all()).runUnchecked(c)
+  override fun selectAll(c: ConnectionRead): List<CustomerProductsViewRow> = Fragment.concat(Fragment.of("select \"CUSTOMER_ID\", \"CUSTOMER_NAME\", \"BILLING_ADDRESS\", \"PRODUCT_ID\", \"PRODUCT_NAME\", \"PRICE\"\nfrom \"CUSTOMER_PRODUCTS\"\n")).query(CustomerProductsViewRow.rowCodec.all()).run(c)
 }

@@ -99,7 +99,7 @@ class CompositeIdsTest extends SnapshotTest {
       assertEquals(product.productid, ph1.compositeId.productid)
 
       // Test selectByIds with composite IDs
-      val wanted = Array(
+      val wanted = List(
         ph1.compositeId,
         ph2.compositeId,
         ProductcosthistoryId(ProductId(9999), ph3.compositeId.startdate)

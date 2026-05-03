@@ -5,10 +5,9 @@
  */
 package adventureworks.public
 
-import dev.typr.foundations.PgRead
-import dev.typr.foundations.PgStruct
 import dev.typr.foundations.PgType
 import dev.typr.foundations.PgTypes
+import dev.typr.foundations.RowCodec
 import dev.typr.foundations.data.Jsonb
 import java.time.Instant
 import java.util.Optional
@@ -21,9 +20,7 @@ case class MetadataRecord(
 )
 
 object MetadataRecord {
-  given pgStruct: PgStruct[MetadataRecord] = PgStruct.builder[MetadataRecord]("public.metadata_record").optField("key", PgTypes.text, (v: MetadataRecord) => v.key).optField("value", PgTypes.jsonb, (v: MetadataRecord) => v.value).optField("createdAt", PgTypes.timestamptz, (v: MetadataRecord) => v.createdAt).build(arr => MetadataRecord(key = Optional.ofNullable(arr(0).asInstanceOf[String]), value = Optional.ofNullable(arr(1).asInstanceOf[Jsonb]), createdAt = Optional.ofNullable(arr(2).asInstanceOf[Instant])))
+  given pgType: PgType[MetadataRecord] = PgTypes.compositeOf("public.metadata_record", RowCodec.namedBuilder[MetadataRecord]().field("key", PgTypes.text.opt(), (v: MetadataRecord) => v.key).field("value", PgTypes.jsonb.opt(), (v: MetadataRecord) => v.value).field("createdAt", PgTypes.timestamptz.opt(), (v: MetadataRecord) => v.createdAt).build((t0, t1, t2) => MetadataRecord(key = t0, value = t1, createdAt = t2)))
 
-  given pgType: PgType[MetadataRecord] = pgStruct.asType()
-
-  given pgTypeArray: PgType[Array[MetadataRecord]] = pgType.array(PgRead.readCompositeArray(pgType.pgCompositeText(), n => new Array[MetadataRecord](n)), n => new Array[MetadataRecord](n))
+  given pgTypeArray: PgType[java.util.List[MetadataRecord]] = pgType.array()
 }

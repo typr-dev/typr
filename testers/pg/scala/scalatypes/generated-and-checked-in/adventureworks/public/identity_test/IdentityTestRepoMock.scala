@@ -5,17 +5,18 @@
  */
 package adventureworks.public.identity_test
 
-import dev.typr.foundations.scala.DeleteBuilder
-import dev.typr.foundations.scala.DeleteBuilderMock
-import dev.typr.foundations.scala.DeleteParams
-import dev.typr.foundations.scala.SelectBuilder
-import dev.typr.foundations.scala.SelectBuilderMock
-import dev.typr.foundations.scala.SelectParams
-import dev.typr.foundations.scala.UpdateBuilder
-import dev.typr.foundations.scala.UpdateBuilderMock
-import dev.typr.foundations.scala.UpdateParams
+import dev.typr.dslsc.DeleteBuilder
+import dev.typr.dslsc.DeleteBuilderMock
+import dev.typr.dslsc.DeleteParams
+import dev.typr.dslsc.SelectBuilder
+import dev.typr.dslsc.SelectBuilderMock
+import dev.typr.dslsc.SelectParams
+import dev.typr.dslsc.UpdateBuilder
+import dev.typr.dslsc.UpdateBuilderMock
+import dev.typr.dslsc.UpdateParams
+import dev.typr.foundationssc.Connection
+import dev.typr.foundationssc.ConnectionRead
 import java.lang.RuntimeException
-import java.sql.Connection
 
 case class IdentityTestRepoMock(
   toRow: IdentityTestRowUnsaved => IdentityTestRow,
@@ -25,7 +26,7 @@ case class IdentityTestRepoMock(
 
   override def deleteById(name: IdentityTestId)(using c: Connection): Boolean = map.remove(name).isDefined
 
-  override def deleteByIds(names: Array[IdentityTestId])(using c: Connection): Int = {
+  override def deleteByIds(names: List[IdentityTestId])(using c: Connection): Int = {
     var count = 0
     names.foreach { id => if (map.remove(id).isDefined) {
       count = count + 1
@@ -67,13 +68,13 @@ case class IdentityTestRepoMock(
 
   override def select: SelectBuilder[IdentityTestFields, IdentityTestRow] = SelectBuilderMock(IdentityTestFields.structure, () => map.values.toList, SelectParams.empty())
 
-  override def selectAll(using c: Connection): List[IdentityTestRow] = map.values.toList
+  override def selectAll(using c: ConnectionRead): List[IdentityTestRow] = map.values.toList
 
-  override def selectById(name: IdentityTestId)(using c: Connection): Option[IdentityTestRow] = map.get(name)
+  override def selectById(name: IdentityTestId)(using c: ConnectionRead): Option[IdentityTestRow] = map.get(name)
 
-  override def selectByIds(names: Array[IdentityTestId])(using c: Connection): List[IdentityTestRow] = names.flatMap(map.get(_)).toList
+  override def selectByIds(names: List[IdentityTestId])(using c: ConnectionRead): List[IdentityTestRow] = names.flatMap(map.get(_)).toList
 
-  override def selectByIdsTracked(names: Array[IdentityTestId])(using c: Connection): Map[IdentityTestId, IdentityTestRow] = selectByIds(names)(using c).map(x => (((row: IdentityTestRow) => row.name).apply(x), x)).toMap
+  override def selectByIdsTracked(names: List[IdentityTestId])(using c: ConnectionRead): Map[IdentityTestId, IdentityTestRow] = selectByIds(names)(using c).map(x => (((row: IdentityTestRow) => row.name).apply(x), x)).toMap
 
   override def update: UpdateBuilder[IdentityTestFields, IdentityTestRow] = UpdateBuilderMock(IdentityTestFields.structure, () => map.values.toList, UpdateParams.empty(), row => row)
 

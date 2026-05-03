@@ -6,11 +6,10 @@
 package adventureworks.information_schema
 
 import com.fasterxml.jackson.annotation.JsonValue
-import dev.typr.foundations.PgType
-import dev.typr.foundations.PgTypes
-import dev.typr.foundations.internal.arrayMap
-import dev.typr.foundations.kotlin.Bijection
-import dev.typr.foundations.kotlin.KotlinDbTypes
+import dev.typr.foundationskt.Bijection
+import dev.typr.foundationskt.PgType
+import dev.typr.foundationskt.PgTypes
+import kotlin.collections.List
 
 /** Domain `information_schema.cardinal_number`
   * Constraint: CHECK ((VALUE >= 0))
@@ -21,9 +20,9 @@ data class CardinalNumber(@field:JsonValue val value: Int) {
       Bijection.of(CardinalNumber::value, ::CardinalNumber)
 
     val pgType: PgType<CardinalNumber> =
-      KotlinDbTypes.PgTypes.int4.bimap(::CardinalNumber, CardinalNumber::value).renamed("\"information_schema\".\"cardinal_number\"")
+      PgType(PgTypes.int4.to(Bijection.of(::CardinalNumber, CardinalNumber::value)).underlying.renamed("\"information_schema\".\"cardinal_number\""))
 
-    val pgTypeArray: PgType<Array<CardinalNumber>> =
-      PgTypes.int4Array.bimap({ xs -> arrayMap.map(xs, ::CardinalNumber, CardinalNumber::class.java) }, { xs -> arrayMap.map(xs, CardinalNumber::value, Int::class.javaObjectType) }).renamed("\"information_schema\".\"cardinal_number\"[]")
+    val pgTypeArray: PgType<List<CardinalNumber>> =
+      pgType.array()
   }
 }

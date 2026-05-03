@@ -7,7 +7,7 @@ import org.junit.Test;
 
 /** Tests for TestInsert functionality - automatic random data generation for testing. */
 public class TestInsertTest {
-  private final TestInsert testInsert = new TestInsert(new Random(42));
+  private final TestInsert testInsert = new TestInsert(new Random(1172222373));
 
   @Test
   public void testCustomersInsert() {

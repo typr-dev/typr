@@ -17,9 +17,9 @@ import testdb.customtypes.Defaulted.UseDefault
 /** This class corresponds to a row in table `products` which has not been persisted yet */
 data class ProductsRowUnsaved(
   /**  */
-  val sku: String,
+  val sku: kotlin.String,
   /**  */
-  val name: String,
+  val name: kotlin.String,
   /**  */
   @field:JsonProperty("base_price") val basePrice: BigDecimal,
   /** Default: NULL
@@ -29,11 +29,11 @@ data class ProductsRowUnsaved(
   /** Default: NULL
 
     */
-  @field:JsonProperty("short_description") val shortDescription: Defaulted<String?> = UseDefault(),
+  @field:JsonProperty("short_description") val shortDescription: Defaulted<kotlin.String?> = UseDefault(),
   /** Default: NULL
 
     */
-  @field:JsonProperty("full_description") val fullDescription: Defaulted<String?> = UseDefault(),
+  @field:JsonProperty("full_description") val fullDescription: Defaulted<kotlin.String?> = UseDefault(),
   /** Default: NULL
 
     */
@@ -49,11 +49,11 @@ data class ProductsRowUnsaved(
   /** Default: 'draft'
 
     */
-  val status: Defaulted<String> = UseDefault(),
+  val status: Defaulted<kotlin.String> = UseDefault(),
   /** Default: 'standard'
 
     */
-  @field:JsonProperty("tax_class") val taxClass: Defaulted<String> = UseDefault(),
+  @field:JsonProperty("tax_class") val taxClass: Defaulted<kotlin.String> = UseDefault(),
   /** Default: NULL
 
     */
@@ -81,13 +81,13 @@ data class ProductsRowUnsaved(
 ) {
   fun toRow(
     brandIdDefault: () -> BrandsId?,
-    shortDescriptionDefault: () -> String?,
-    fullDescriptionDefault: () -> String?,
+    shortDescriptionDefault: () -> kotlin.String?,
+    fullDescriptionDefault: () -> kotlin.String?,
     costPriceDefault: () -> BigDecimal?,
     weightKgDefault: () -> BigDecimal?,
     dimensionsJsonDefault: () -> Json?,
-    statusDefault: () -> String,
-    taxClassDefault: () -> String,
+    statusDefault: () -> kotlin.String,
+    taxClassDefault: () -> kotlin.String,
     tagsDefault: () -> BestsellerClearanceFSet?,
     attributesDefault: () -> Json?,
     seoMetadataDefault: () -> Json?,

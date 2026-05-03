@@ -8,16 +8,14 @@ package testdb.all_scalar_types
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.microsoft.sqlserver.jdbc.Geography
 import com.microsoft.sqlserver.jdbc.Geometry
-import dev.typr.foundations.SqlServerTypes
+import dev.typr.dslsc.RowCodecs
 import dev.typr.foundations.Tuple.Tuple38
 import dev.typr.foundations.data.HierarchyId
 import dev.typr.foundations.data.Json
 import dev.typr.foundations.data.Uint1
 import dev.typr.foundations.data.Xml
-import dev.typr.foundations.scala.DbTypeOps
-import dev.typr.foundations.scala.RowParser
-import dev.typr.foundations.scala.RowParsers
-import dev.typr.foundations.scala.ScalaDbTypes
+import dev.typr.foundationssc.RowCodec
+import dev.typr.foundationssc.SqlServerTypes
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
@@ -190,5 +188,5 @@ case class AllScalarTypesRow(
 }
 
 object AllScalarTypesRow {
-  val `_rowParser`: RowParser[AllScalarTypesRow] = RowParsers.of(AllScalarTypesId.sqlServerType, SqlServerTypes.tinyint.nullable, ScalaDbTypes.SqlServerTypes.smallint.nullable, ScalaDbTypes.SqlServerTypes.int_.nullable, ScalaDbTypes.SqlServerTypes.bigint.nullable, ScalaDbTypes.SqlServerTypes.decimal.nullable, ScalaDbTypes.SqlServerTypes.decimal.nullable, ScalaDbTypes.SqlServerTypes.money.nullable, ScalaDbTypes.SqlServerTypes.smallmoney.nullable, ScalaDbTypes.SqlServerTypes.real.nullable, ScalaDbTypes.SqlServerTypes.float_.nullable, ScalaDbTypes.SqlServerTypes.bit.nullable, SqlServerTypes.char_.nullable, SqlServerTypes.varchar.nullable, SqlServerTypes.varchar.nullable, SqlServerTypes.text.nullable, SqlServerTypes.nchar.nullable, SqlServerTypes.nvarchar.nullable, SqlServerTypes.nvarchar.nullable, SqlServerTypes.ntext.nullable, SqlServerTypes.binary.nullable, SqlServerTypes.varbinary.nullable, SqlServerTypes.varbinary.nullable, SqlServerTypes.image.nullable, SqlServerTypes.date.nullable, SqlServerTypes.time.nullable, SqlServerTypes.datetime.nullable, SqlServerTypes.smalldatetime.nullable, SqlServerTypes.datetime2.nullable, SqlServerTypes.datetimeoffset.nullable, SqlServerTypes.uniqueidentifier.nullable, SqlServerTypes.xml.nullable, SqlServerTypes.json.nullable, SqlServerTypes.rowversion, SqlServerTypes.hierarchyid.nullable, SqlServerTypes.geography.nullable, SqlServerTypes.geometry.nullable, SqlServerTypes.nvarchar)(AllScalarTypesRow.apply)(row => Array[Any](row.id, row.colTinyint, row.colSmallint, row.colInt, row.colBigint, row.colDecimal, row.colNumeric, row.colMoney, row.colSmallmoney, row.colReal, row.colFloat, row.colBit, row.colChar, row.colVarchar, row.colVarcharMax, row.colText, row.colNchar, row.colNvarchar, row.colNvarcharMax, row.colNtext, row.colBinary, row.colVarbinary, row.colVarbinaryMax, row.colImage, row.colDate, row.colTime, row.colDatetime, row.colSmalldatetime, row.colDatetime2, row.colDatetimeoffset, row.colUniqueidentifier, row.colXml, row.colJson, row.colRowversion, row.colHierarchyid, row.colGeography, row.colGeometry, row.colNotNull))
+  val rowCodec: RowCodec[AllScalarTypesRow] = RowCodecs.of(AllScalarTypesId.sqlServerType, SqlServerTypes.tinyint.opt, SqlServerTypes.smallint.opt, SqlServerTypes.int_.opt, SqlServerTypes.bigint.opt, SqlServerTypes.decimal.opt, SqlServerTypes.decimal.opt, SqlServerTypes.money.opt, SqlServerTypes.smallmoney.opt, SqlServerTypes.real.opt, SqlServerTypes.float_.opt, SqlServerTypes.bit.opt, SqlServerTypes.char_.opt, SqlServerTypes.varchar.opt, SqlServerTypes.varchar.opt, SqlServerTypes.text.opt, SqlServerTypes.nchar.opt, SqlServerTypes.nvarchar.opt, SqlServerTypes.nvarchar.opt, SqlServerTypes.ntext.opt, SqlServerTypes.binary.opt, SqlServerTypes.varbinary.opt, SqlServerTypes.varbinary.opt, SqlServerTypes.image.opt, SqlServerTypes.date.opt, SqlServerTypes.time.opt, SqlServerTypes.datetime.opt, SqlServerTypes.smalldatetime.opt, SqlServerTypes.datetime2.opt, SqlServerTypes.datetimeoffset.opt, SqlServerTypes.uniqueidentifier.opt, SqlServerTypes.xml.opt, SqlServerTypes.json.opt, SqlServerTypes.rowversion, SqlServerTypes.hierarchyid.opt, SqlServerTypes.geography.opt, SqlServerTypes.geometry.opt, SqlServerTypes.nvarchar)(AllScalarTypesRow.apply)(row => Array[Any](row.id, row.colTinyint, row.colSmallint, row.colInt, row.colBigint, row.colDecimal, row.colNumeric, row.colMoney, row.colSmallmoney, row.colReal, row.colFloat, row.colBit, row.colChar, row.colVarchar, row.colVarcharMax, row.colText, row.colNchar, row.colNvarchar, row.colNvarcharMax, row.colNtext, row.colBinary, row.colVarbinary, row.colVarbinaryMax, row.colImage, row.colDate, row.colTime, row.colDatetime, row.colSmalldatetime, row.colDatetime2, row.colDatetimeoffset, row.colUniqueidentifier, row.colXml, row.colJson, row.colRowversion, row.colHierarchyid, row.colGeography, row.colGeometry, row.colNotNull))
 }

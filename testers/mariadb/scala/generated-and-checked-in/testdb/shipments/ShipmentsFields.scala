@@ -5,20 +5,19 @@
  */
 package testdb.shipments
 
-import dev.typr.foundations.MariaTypes
-import dev.typr.foundations.RowParser
+import dev.typr.dsl.FieldsBase
+import dev.typr.dsl.Path
+import dev.typr.dsl.SqlExpr.FieldLike
+import dev.typr.dslsc.ForeignKey
+import dev.typr.dslsc.RelationStructure
+import dev.typr.dslsc.SqlExpr
+import dev.typr.dslsc.SqlExpr.Field
+import dev.typr.dslsc.SqlExpr.IdField
+import dev.typr.dslsc.SqlExpr.OptField
+import dev.typr.dslsc.TupleExpr17
+import dev.typr.foundations.RowCodec
 import dev.typr.foundations.data.Json
-import dev.typr.foundations.dsl.FieldsBase
-import dev.typr.foundations.dsl.Path
-import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.scala.ForeignKey
-import dev.typr.foundations.scala.RelationStructure
-import dev.typr.foundations.scala.ScalaDbTypes
-import dev.typr.foundations.scala.SqlExpr
-import dev.typr.foundations.scala.SqlExpr.Field
-import dev.typr.foundations.scala.SqlExpr.IdField
-import dev.typr.foundations.scala.SqlExpr.OptField
-import dev.typr.foundations.scala.TupleExpr17
+import dev.typr.foundationssc.MariaTypes
 import java.time.LocalDate
 import java.time.LocalDateTime
 import testdb.orders.OrdersFields
@@ -40,7 +39,7 @@ class ShipmentsFields(val `_path`: java.util.List[Path]) extends TupleExpr17[Shi
       None,
       None,
       (row, value) => row.copy(shipmentId = value),
-      ShipmentsId.mariaType
+      ShipmentsId.mariaType.underlying
     )
   }
 
@@ -52,7 +51,7 @@ class ShipmentsFields(val `_path`: java.util.List[Path]) extends TupleExpr17[Shi
       None,
       None,
       (row, value) => row.copy(orderId = value),
-      OrdersId.mariaType
+      OrdersId.mariaType.underlying
     )
   }
 
@@ -64,7 +63,7 @@ class ShipmentsFields(val `_path`: java.util.List[Path]) extends TupleExpr17[Shi
       None,
       None,
       (row, value) => row.copy(carrierId = value),
-      ShippingCarriersId.mariaType
+      ShippingCarriersId.mariaType.underlying
     )
   }
 
@@ -76,7 +75,7 @@ class ShipmentsFields(val `_path`: java.util.List[Path]) extends TupleExpr17[Shi
       None,
       None,
       (row, value) => row.copy(trackingNumber = value),
-      MariaTypes.varchar
+      MariaTypes.varchar.underlying
     )
   }
 
@@ -88,7 +87,7 @@ class ShipmentsFields(val `_path`: java.util.List[Path]) extends TupleExpr17[Shi
       None,
       None,
       (row, value) => row.copy(shippingMethod = value),
-      MariaTypes.varchar
+      MariaTypes.varchar.underlying
     )
   }
 
@@ -100,7 +99,7 @@ class ShipmentsFields(val `_path`: java.util.List[Path]) extends TupleExpr17[Shi
       None,
       None,
       (row, value) => row.copy(weightKg = value),
-      ScalaDbTypes.MariaTypes.numeric
+      MariaTypes.numeric.underlying
     )
   }
 
@@ -112,7 +111,7 @@ class ShipmentsFields(val `_path`: java.util.List[Path]) extends TupleExpr17[Shi
       None,
       None,
       (row, value) => row.copy(dimensionsJson = value),
-      MariaTypes.json
+      MariaTypes.json.underlying
     )
   }
 
@@ -124,7 +123,7 @@ class ShipmentsFields(val `_path`: java.util.List[Path]) extends TupleExpr17[Shi
       None,
       None,
       (row, value) => row.copy(labelData = value),
-      MariaTypes.longblob
+      MariaTypes.longblob.underlying
     )
   }
 
@@ -136,7 +135,7 @@ class ShipmentsFields(val `_path`: java.util.List[Path]) extends TupleExpr17[Shi
       None,
       None,
       (row, value) => row.copy(status = value),
-      MariaTypes.text
+      MariaTypes.text.underlying
     )
   }
 
@@ -148,7 +147,7 @@ class ShipmentsFields(val `_path`: java.util.List[Path]) extends TupleExpr17[Shi
       None,
       None,
       (row, value) => row.copy(estimatedDeliveryDate = value),
-      MariaTypes.date
+      MariaTypes.date.underlying
     )
   }
 
@@ -160,7 +159,7 @@ class ShipmentsFields(val `_path`: java.util.List[Path]) extends TupleExpr17[Shi
       None,
       None,
       (row, value) => row.copy(actualDeliveryAt = value),
-      MariaTypes.datetime
+      MariaTypes.datetime.underlying
     )
   }
 
@@ -172,7 +171,7 @@ class ShipmentsFields(val `_path`: java.util.List[Path]) extends TupleExpr17[Shi
       None,
       None,
       (row, value) => row.copy(shippingCost = value),
-      ScalaDbTypes.MariaTypes.numeric
+      MariaTypes.numeric.underlying
     )
   }
 
@@ -184,7 +183,7 @@ class ShipmentsFields(val `_path`: java.util.List[Path]) extends TupleExpr17[Shi
       None,
       None,
       (row, value) => row.copy(insuranceAmount = value),
-      ScalaDbTypes.MariaTypes.numeric
+      MariaTypes.numeric.underlying
     )
   }
 
@@ -196,7 +195,7 @@ class ShipmentsFields(val `_path`: java.util.List[Path]) extends TupleExpr17[Shi
       None,
       None,
       (row, value) => row.copy(originWarehouseId = value),
-      WarehousesId.mariaType
+      WarehousesId.mariaType.underlying
     )
   }
 
@@ -208,7 +207,7 @@ class ShipmentsFields(val `_path`: java.util.List[Path]) extends TupleExpr17[Shi
       None,
       None,
       (row, value) => row.copy(shippedAt = value),
-      MariaTypes.datetime
+      MariaTypes.datetime.underlying
     )
   }
 
@@ -220,7 +219,7 @@ class ShipmentsFields(val `_path`: java.util.List[Path]) extends TupleExpr17[Shi
       None,
       None,
       (row, value) => row.copy(createdAt = value),
-      MariaTypes.datetime
+      MariaTypes.datetime.underlying
     )
   }
 
@@ -232,7 +231,7 @@ class ShipmentsFields(val `_path`: java.util.List[Path]) extends TupleExpr17[Shi
       None,
       None,
       (row, value) => row.copy(updatedAt = value),
-      MariaTypes.datetime
+      MariaTypes.datetime.underlying
     )
   }
 
@@ -244,7 +243,7 @@ class ShipmentsFields(val `_path`: java.util.List[Path]) extends TupleExpr17[Shi
 
   override def columns: java.util.List[FieldLike[?, ShipmentsRow]] = java.util.List.of(this.shipmentId.underlying, this.orderId.underlying, this.carrierId.underlying, this.trackingNumber.underlying, this.shippingMethod.underlying, this.weightKg.underlying, this.dimensionsJson.underlying, this.labelData.underlying, this.status.underlying, this.estimatedDeliveryDate.underlying, this.actualDeliveryAt.underlying, this.shippingCost.underlying, this.insuranceAmount.underlying, this.originWarehouseId.underlying, this.shippedAt.underlying, this.createdAt.underlying, this.updatedAt.underlying)
 
-  override def rowParser: RowParser[ShipmentsRow] = ShipmentsRow._rowParser.underlying
+  override def rowCodec: RowCodec[ShipmentsRow] = ShipmentsRow.rowCodec.underlying
 
   override def withPaths(`_path`: java.util.List[Path]): RelationStructure[ShipmentsFields, ShipmentsRow] = new ShipmentsFields(`_path`)
 

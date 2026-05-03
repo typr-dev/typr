@@ -5,18 +5,18 @@
  */
 package testdb.product_categories
 
-import dev.typr.foundations.RowParser
-import dev.typr.foundations.dsl.FieldsBase
-import dev.typr.foundations.dsl.Path
-import dev.typr.foundations.dsl.SqlExpr.FieldLike
-import dev.typr.foundations.scala.ForeignKey
-import dev.typr.foundations.scala.RelationStructure
-import dev.typr.foundations.scala.ScalaDbTypes
-import dev.typr.foundations.scala.SqlExpr
-import dev.typr.foundations.scala.SqlExpr.Field
-import dev.typr.foundations.scala.SqlExpr.IdField
-import dev.typr.foundations.scala.TupleExpr
-import dev.typr.foundations.scala.TupleExpr4
+import dev.typr.dsl.FieldsBase
+import dev.typr.dsl.Path
+import dev.typr.dsl.SqlExpr.FieldLike
+import dev.typr.dslsc.ForeignKey
+import dev.typr.dslsc.RelationStructure
+import dev.typr.dslsc.SqlExpr
+import dev.typr.dslsc.SqlExpr.Field
+import dev.typr.dslsc.SqlExpr.IdField
+import dev.typr.dslsc.TupleExpr
+import dev.typr.dslsc.TupleExpr4
+import dev.typr.foundations.RowCodec
+import dev.typr.foundationssc.MariaTypes
 import testdb.categories.CategoriesFields
 import testdb.categories.CategoriesId
 import testdb.categories.CategoriesRow
@@ -34,7 +34,7 @@ class ProductCategoriesFields(val `_path`: java.util.List[Path]) extends TupleEx
       None,
       None,
       (row, value) => row.copy(productId = value),
-      ProductsId.mariaType
+      ProductsId.mariaType.underlying
     )
   }
 
@@ -46,7 +46,7 @@ class ProductCategoriesFields(val `_path`: java.util.List[Path]) extends TupleEx
       None,
       None,
       (row, value) => row.copy(categoryId = value),
-      CategoriesId.mariaType
+      CategoriesId.mariaType.underlying
     )
   }
 
@@ -58,7 +58,7 @@ class ProductCategoriesFields(val `_path`: java.util.List[Path]) extends TupleEx
       None,
       None,
       (row, value) => row.copy(isPrimary = value),
-      IsPrimary.mariaType
+      IsPrimary.mariaType.underlying
     )
   }
 
@@ -70,7 +70,7 @@ class ProductCategoriesFields(val `_path`: java.util.List[Path]) extends TupleEx
       None,
       None,
       (row, value) => row.copy(sortOrder = value),
-      ScalaDbTypes.MariaTypes.smallint
+      MariaTypes.smallint.underlying
     )
   }
 
@@ -84,7 +84,7 @@ class ProductCategoriesFields(val `_path`: java.util.List[Path]) extends TupleEx
 
   override def columns: java.util.List[FieldLike[?, ProductCategoriesRow]] = java.util.List.of(this.productId.underlying, this.categoryId.underlying, this.isPrimary.underlying, this.sortOrder.underlying)
 
-  override def rowParser: RowParser[ProductCategoriesRow] = ProductCategoriesRow._rowParser.underlying
+  override def rowCodec: RowCodec[ProductCategoriesRow] = ProductCategoriesRow.rowCodec.underlying
 
   override def withPaths(`_path`: java.util.List[Path]): RelationStructure[ProductCategoriesFields, ProductCategoriesRow] = new ProductCategoriesFields(`_path`)
 

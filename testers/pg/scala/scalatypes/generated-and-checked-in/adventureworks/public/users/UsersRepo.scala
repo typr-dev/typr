@@ -5,18 +5,19 @@
  */
 package adventureworks.public.users
 
+import dev.typr.dslsc.DeleteBuilder
+import dev.typr.dslsc.SelectBuilder
+import dev.typr.dslsc.UpdateBuilder
 import dev.typr.foundations.data.Unknown
-import dev.typr.foundations.scala.DeleteBuilder
-import dev.typr.foundations.scala.SelectBuilder
-import dev.typr.foundations.scala.UpdateBuilder
-import java.sql.Connection
+import dev.typr.foundationssc.Connection
+import dev.typr.foundationssc.ConnectionRead
 
 trait UsersRepo {
   def delete: DeleteBuilder[UsersFields, UsersRow]
 
   def deleteById(userId: UsersId)(using c: Connection): Boolean
 
-  def deleteByIds(userIds: Array[UsersId])(using c: Connection): Int
+  def deleteByIds(userIds: List[UsersId])(using c: Connection): Int
 
   def insert(unsaved: UsersRow)(using c: Connection): UsersRow
 
@@ -35,15 +36,15 @@ trait UsersRepo {
 
   def select: SelectBuilder[UsersFields, UsersRow]
 
-  def selectAll(using c: Connection): List[UsersRow]
+  def selectAll(using c: ConnectionRead): List[UsersRow]
 
-  def selectById(userId: UsersId)(using c: Connection): Option[UsersRow]
+  def selectById(userId: UsersId)(using c: ConnectionRead): Option[UsersRow]
 
-  def selectByIds(userIds: Array[UsersId])(using c: Connection): List[UsersRow]
+  def selectByIds(userIds: List[UsersId])(using c: ConnectionRead): List[UsersRow]
 
-  def selectByIdsTracked(userIds: Array[UsersId])(using c: Connection): Map[UsersId, UsersRow]
+  def selectByIdsTracked(userIds: List[UsersId])(using c: ConnectionRead): Map[UsersId, UsersRow]
 
-  def selectByUniqueEmail(email: Unknown)(using c: Connection): Option[UsersRow]
+  def selectByUniqueEmail(email: Unknown)(using c: ConnectionRead): Option[UsersRow]
 
   def update: UpdateBuilder[UsersFields, UsersRow]
 

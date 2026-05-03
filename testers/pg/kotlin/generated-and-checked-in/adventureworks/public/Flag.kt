@@ -6,24 +6,23 @@
 package adventureworks.public
 
 import com.fasterxml.jackson.annotation.JsonValue
-import dev.typr.foundations.PgType
-import dev.typr.foundations.PgTypes
-import dev.typr.foundations.internal.arrayMap
-import dev.typr.foundations.kotlin.Bijection
-import dev.typr.foundations.kotlin.KotlinDbTypes
+import dev.typr.foundationskt.Bijection
+import dev.typr.foundationskt.PgType
+import dev.typr.foundationskt.PgTypes
+import kotlin.collections.List
 
 /** Domain `public.Flag`
   * No constraint
   */
-data class Flag(@field:JsonValue val value: Boolean) {
+data class Flag(@field:JsonValue val value: kotlin.Boolean) {
   companion object {
-    val bijection: Bijection<Flag, Boolean> =
+    val bijection: Bijection<Flag, kotlin.Boolean> =
       Bijection.of(Flag::value, ::Flag)
 
     val pgType: PgType<Flag> =
-      KotlinDbTypes.PgTypes.bool.bimap(::Flag, Flag::value).renamed("\"public\".\"Flag\"")
+      PgType(PgTypes.bool.to(Bijection.of(::Flag, Flag::value)).underlying.renamed("\"public\".\"Flag\""))
 
-    val pgTypeArray: PgType<Array<Flag>> =
-      PgTypes.boolArray.bimap({ xs -> arrayMap.map(xs, ::Flag, Flag::class.java) }, { xs -> arrayMap.map(xs, Flag::value, Boolean::class.javaObjectType) }).renamed("\"public\".\"Flag\"[]")
+    val pgTypeArray: PgType<List<Flag>> =
+      pgType.array()
   }
 }

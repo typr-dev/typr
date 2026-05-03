@@ -21,7 +21,7 @@ object ShiftId {
 
   implicit lazy val arrayToStatement: ToStatement[Array[ShiftId]] = adventureworks.IntArrayToStatement.contramap(_.map(_.value))
 
-  implicit lazy val bijection: Bijection[ShiftId, Int] = Bijection.apply[ShiftId, Int](_.value)(ShiftId.apply)
+  implicit lazy val bijection: Bijection[ShiftId, Int] = Bijection[ShiftId, Int](_.value)(ShiftId.apply)
 
   implicit lazy val column: Column[ShiftId] = Column.columnToInt.map(ShiftId.apply)
 

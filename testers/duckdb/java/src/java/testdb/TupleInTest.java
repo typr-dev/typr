@@ -2,10 +2,10 @@ package testdb;
 
 import static org.junit.Assert.*;
 
-import dev.typr.foundations.dsl.MockConnection;
-import dev.typr.foundations.dsl.SqlExpr;
+import dev.typr.dsl.MockConnection;
+import dev.typr.dsl.SqlExpr;
+import dev.typr.foundations.Connection;
 import java.math.BigDecimal;
-import java.sql.Connection;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;

@@ -5,7 +5,7 @@
  */
 package testdb.all_scalar_types_search
 
-import java.sql.Connection
+import dev.typr.foundationssc.ConnectionRead
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.UUID
@@ -24,5 +24,5 @@ trait AllScalarTypesSearchSqlRepo {
     uuidValue: Option[UUID],
     moodValue: Option[/* user-picked */ Mood],
     minDecimal: Option[BigDecimal]
-  )(using c: Connection): List[AllScalarTypesSearchSqlRow]
+  )(using c: ConnectionRead): List[AllScalarTypesSearchSqlRow]
 }

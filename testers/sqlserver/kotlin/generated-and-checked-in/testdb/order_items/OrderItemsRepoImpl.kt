@@ -5,13 +5,14 @@
  */
 package testdb.order_items
 
-import dev.typr.foundations.kotlin.DeleteBuilder
-import dev.typr.foundations.kotlin.Dialect
-import dev.typr.foundations.kotlin.Fragment
-import dev.typr.foundations.kotlin.KotlinDbTypes
-import dev.typr.foundations.kotlin.SelectBuilder
-import dev.typr.foundations.kotlin.UpdateBuilder
-import java.sql.Connection
+import dev.typr.dslkt.DeleteBuilder
+import dev.typr.dslkt.Dialect
+import dev.typr.dslkt.SelectBuilder
+import dev.typr.dslkt.UpdateBuilder
+import dev.typr.foundationskt.Connection
+import dev.typr.foundationskt.ConnectionRead
+import dev.typr.foundationskt.Fragment
+import dev.typr.foundationskt.SqlServerTypes
 import java.util.ArrayList
 import kotlin.collections.Iterator
 import kotlin.collections.List
@@ -26,22 +27,22 @@ class OrderItemsRepoImpl() : OrderItemsRepo {
   override fun deleteById(
     orderItemId: OrderItemsId,
     c: Connection
-  ): Boolean = Fragment.interpolate(Fragment.lit("delete from [order_items] where [order_item_id] = "), Fragment.encode(OrderItemsId.sqlServerType, orderItemId), Fragment.lit("")).update().runUnchecked(c) > 0
+  ): kotlin.Boolean = Fragment.concat(Fragment.of("delete from [order_items] where [order_item_id] = "), Fragment.encode(OrderItemsId.sqlServerType, orderItemId), Fragment.of("")).update().run(c) > 0
 
   override fun deleteByIds(
-    orderItemIds: Array<OrderItemsId>,
+    orderItemIds: List<OrderItemsId>,
     c: Connection
   ): Int {
     val fragments: ArrayList<Fragment> = ArrayList()
     for (id in orderItemIds) { fragments.add(Fragment.encode(OrderItemsId.sqlServerType, id)) }
-    return Fragment.interpolate(Fragment.lit("delete from [order_items] where [order_item_id] in ("), Fragment.comma(fragments.toMutableList()), Fragment.lit(")")).update().runUnchecked(c)
+    return Fragment.concat(Fragment.of("delete from [order_items] where [order_item_id] in ("), Fragment.comma(fragments.toMutableList()), Fragment.of(")")).update().run(c)
   }
 
   override fun insert(
     unsaved: OrderItemsRow,
     c: Connection
-  ): OrderItemsRow = Fragment.interpolate(Fragment.lit("insert into [order_items]([order_id], [product_id], [quantity], [price])\nOUTPUT INSERTED.[order_item_id], INSERTED.[order_id], INSERTED.[product_id], INSERTED.[quantity], INSERTED.[price]\nvalues ("), Fragment.encode(OrdersId.sqlServerType, unsaved.orderId), Fragment.lit(", "), Fragment.encode(ProductsId.sqlServerType, unsaved.productId), Fragment.lit(", "), Fragment.encode(KotlinDbTypes.SqlServerTypes.int_, unsaved.quantity), Fragment.lit(", "), Fragment.encode(KotlinDbTypes.SqlServerTypes.money, unsaved.price), Fragment.lit(")\n"))
-    .updateReturning(OrderItemsRow._rowParser.exactlyOne()).runUnchecked(c)
+  ): OrderItemsRow = Fragment.concat(Fragment.of("insert into [order_items]([order_id], [product_id], [quantity], [price])\nOUTPUT INSERTED.[order_item_id], INSERTED.[order_id], INSERTED.[product_id], INSERTED.[quantity], INSERTED.[price]\nvalues ("), Fragment.encode(OrdersId.sqlServerType, unsaved.orderId), Fragment.of(", "), Fragment.encode(ProductsId.sqlServerType, unsaved.productId), Fragment.of(", "), Fragment.encode(SqlServerTypes.int_, unsaved.quantity), Fragment.of(", "), Fragment.encode(SqlServerTypes.money, unsaved.price), Fragment.of(")\n"))
+    .updateReturning(OrderItemsRow.rowCodec.exactlyOne()).run(c)
 
   override fun insert(
     unsaved: OrderItemsRowUnsaved,
@@ -49,66 +50,66 @@ class OrderItemsRepoImpl() : OrderItemsRepo {
   ): OrderItemsRow {
     val columns: ArrayList<Fragment> = ArrayList()
     val values: ArrayList<Fragment> = ArrayList()
-    columns.add(Fragment.lit("[order_id]"))
-    values.add(Fragment.interpolate(Fragment.encode(OrdersId.sqlServerType, unsaved.orderId), Fragment.lit("")))
-    columns.add(Fragment.lit("[product_id]"))
-    values.add(Fragment.interpolate(Fragment.encode(ProductsId.sqlServerType, unsaved.productId), Fragment.lit("")))
-    columns.add(Fragment.lit("[quantity]"))
-    values.add(Fragment.interpolate(Fragment.encode(KotlinDbTypes.SqlServerTypes.int_, unsaved.quantity), Fragment.lit("")))
-    columns.add(Fragment.lit("[price]"))
-    values.add(Fragment.interpolate(Fragment.encode(KotlinDbTypes.SqlServerTypes.money, unsaved.price), Fragment.lit("")))
-    val q: Fragment = Fragment.interpolate(Fragment.lit("insert into [order_items]("), Fragment.comma(columns.toMutableList()), Fragment.lit(")\nOUTPUT INSERTED.[order_item_id], INSERTED.[order_id], INSERTED.[product_id], INSERTED.[quantity], INSERTED.[price]\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.lit(")\n"))
-    return q.updateReturning(OrderItemsRow._rowParser.exactlyOne()).runUnchecked(c)
+    columns.add(Fragment.of("[order_id]"))
+    values.add(Fragment.concat(Fragment.encode(OrdersId.sqlServerType, unsaved.orderId), Fragment.of("")))
+    columns.add(Fragment.of("[product_id]"))
+    values.add(Fragment.concat(Fragment.encode(ProductsId.sqlServerType, unsaved.productId), Fragment.of("")))
+    columns.add(Fragment.of("[quantity]"))
+    values.add(Fragment.concat(Fragment.encode(SqlServerTypes.int_, unsaved.quantity), Fragment.of("")))
+    columns.add(Fragment.of("[price]"))
+    values.add(Fragment.concat(Fragment.encode(SqlServerTypes.money, unsaved.price), Fragment.of("")))
+    val q: Fragment = Fragment.concat(Fragment.of("insert into [order_items]("), Fragment.comma(columns.toMutableList()), Fragment.of(")\nOUTPUT INSERTED.[order_item_id], INSERTED.[order_id], INSERTED.[product_id], INSERTED.[quantity], INSERTED.[price]\nvalues ("), Fragment.comma(values.toMutableList()), Fragment.of(")\n"))
+    return q.updateReturning(OrderItemsRow.rowCodec.exactlyOne()).run(c)
   }
 
-  override fun select(): SelectBuilder<OrderItemsFields, OrderItemsRow> = SelectBuilder.of("[order_items]", OrderItemsFields.structure, OrderItemsRow._rowParser, Dialect.SQLSERVER)
+  override fun select(): SelectBuilder<OrderItemsFields, OrderItemsRow> = SelectBuilder.of("[order_items]", OrderItemsFields.structure, OrderItemsRow.rowCodec, Dialect.SQLSERVER)
 
-  override fun selectAll(c: Connection): List<OrderItemsRow> = Fragment.interpolate(Fragment.lit("select [order_item_id], [order_id], [product_id], [quantity], [price]\nfrom [order_items]\n")).query(OrderItemsRow._rowParser.all()).runUnchecked(c)
+  override fun selectAll(c: ConnectionRead): List<OrderItemsRow> = Fragment.concat(Fragment.of("select [order_item_id], [order_id], [product_id], [quantity], [price]\nfrom [order_items]\n")).query(OrderItemsRow.rowCodec.all()).run(c)
 
   override fun selectById(
     orderItemId: OrderItemsId,
-    c: Connection
-  ): OrderItemsRow? = Fragment.interpolate(Fragment.lit("select [order_item_id], [order_id], [product_id], [quantity], [price]\nfrom [order_items]\nwhere [order_item_id] = "), Fragment.encode(OrderItemsId.sqlServerType, orderItemId), Fragment.lit("")).query(OrderItemsRow._rowParser.first()).runUnchecked(c)
+    c: ConnectionRead
+  ): OrderItemsRow? = Fragment.concat(Fragment.of("select [order_item_id], [order_id], [product_id], [quantity], [price]\nfrom [order_items]\nwhere [order_item_id] = "), Fragment.encode(OrderItemsId.sqlServerType, orderItemId), Fragment.of("")).query(OrderItemsRow.rowCodec.first()).run(c)
 
   override fun selectByIds(
-    orderItemIds: Array<OrderItemsId>,
-    c: Connection
+    orderItemIds: List<OrderItemsId>,
+    c: ConnectionRead
   ): List<OrderItemsRow> {
     val fragments: ArrayList<Fragment> = ArrayList()
     for (id in orderItemIds) { fragments.add(Fragment.encode(OrderItemsId.sqlServerType, id)) }
-    return Fragment.interpolate(Fragment.lit("select [order_item_id], [order_id], [product_id], [quantity], [price] from [order_items] where [order_item_id] in ("), Fragment.comma(fragments.toMutableList()), Fragment.lit(")")).query(OrderItemsRow._rowParser.all()).runUnchecked(c)
+    return Fragment.concat(Fragment.of("select [order_item_id], [order_id], [product_id], [quantity], [price] from [order_items] where [order_item_id] in ("), Fragment.comma(fragments.toMutableList()), Fragment.of(")")).query(OrderItemsRow.rowCodec.all()).run(c)
   }
 
   override fun selectByIdsTracked(
-    orderItemIds: Array<OrderItemsId>,
-    c: Connection
+    orderItemIds: List<OrderItemsId>,
+    c: ConnectionRead
   ): Map<OrderItemsId, OrderItemsRow> {
     val ret: MutableMap<OrderItemsId, OrderItemsRow> = mutableMapOf<OrderItemsId, OrderItemsRow>()
     selectByIds(orderItemIds, c).forEach({ row -> ret.put(row.orderItemId, row) })
     return ret.toMap()
   }
 
-  override fun update(): UpdateBuilder<OrderItemsFields, OrderItemsRow> = UpdateBuilder.of("[order_items]", OrderItemsFields.structure, OrderItemsRow._rowParser, Dialect.SQLSERVER)
+  override fun update(): UpdateBuilder<OrderItemsFields, OrderItemsRow> = UpdateBuilder.of("[order_items]", OrderItemsFields.structure, OrderItemsRow.rowCodec, Dialect.SQLSERVER)
 
   override fun update(
     row: OrderItemsRow,
     c: Connection
-  ): Boolean {
+  ): kotlin.Boolean {
     val orderItemId: OrderItemsId = row.orderItemId
-    return Fragment.interpolate(Fragment.lit("update [order_items]\nset [order_id] = "), Fragment.encode(OrdersId.sqlServerType, row.orderId), Fragment.lit(",\n[product_id] = "), Fragment.encode(ProductsId.sqlServerType, row.productId), Fragment.lit(",\n[quantity] = "), Fragment.encode(KotlinDbTypes.SqlServerTypes.int_, row.quantity), Fragment.lit(",\n[price] = "), Fragment.encode(KotlinDbTypes.SqlServerTypes.money, row.price), Fragment.lit("\nwhere [order_item_id] = "), Fragment.encode(OrderItemsId.sqlServerType, orderItemId), Fragment.lit("")).update().runUnchecked(c) > 0
+    return Fragment.concat(Fragment.of("update [order_items]\nset [order_id] = "), Fragment.encode(OrdersId.sqlServerType, row.orderId), Fragment.of(",\n[product_id] = "), Fragment.encode(ProductsId.sqlServerType, row.productId), Fragment.of(",\n[quantity] = "), Fragment.encode(SqlServerTypes.int_, row.quantity), Fragment.of(",\n[price] = "), Fragment.encode(SqlServerTypes.money, row.price), Fragment.of("\nwhere [order_item_id] = "), Fragment.encode(OrderItemsId.sqlServerType, orderItemId), Fragment.of("")).update().run(c) > 0
   }
 
   override fun upsert(
     unsaved: OrderItemsRow,
     c: Connection
-  ): OrderItemsRow = Fragment.interpolate(Fragment.lit("MERGE INTO [order_items] AS target\nUSING (VALUES ("), Fragment.encode(OrderItemsId.sqlServerType, unsaved.orderItemId), Fragment.lit(", "), Fragment.encode(OrdersId.sqlServerType, unsaved.orderId), Fragment.lit(", "), Fragment.encode(ProductsId.sqlServerType, unsaved.productId), Fragment.lit(", "), Fragment.encode(KotlinDbTypes.SqlServerTypes.int_, unsaved.quantity), Fragment.lit(", "), Fragment.encode(KotlinDbTypes.SqlServerTypes.money, unsaved.price), Fragment.lit(")) AS source([order_item_id], [order_id], [product_id], [quantity], [price])\nON target.[order_item_id] = source.[order_item_id]\nWHEN MATCHED THEN UPDATE SET [order_id] = source.[order_id],\n[product_id] = source.[product_id],\n[quantity] = source.[quantity],\n[price] = source.[price]\nWHEN NOT MATCHED THEN INSERT ([order_item_id], [order_id], [product_id], [quantity], [price]) VALUES ("), Fragment.encode(OrderItemsId.sqlServerType, unsaved.orderItemId), Fragment.lit(", "), Fragment.encode(OrdersId.sqlServerType, unsaved.orderId), Fragment.lit(", "), Fragment.encode(ProductsId.sqlServerType, unsaved.productId), Fragment.lit(", "), Fragment.encode(KotlinDbTypes.SqlServerTypes.int_, unsaved.quantity), Fragment.lit(", "), Fragment.encode(KotlinDbTypes.SqlServerTypes.money, unsaved.price), Fragment.lit(")\nOUTPUT INSERTED.[order_item_id], INSERTED.[order_id], INSERTED.[product_id], INSERTED.[quantity], INSERTED.[price];"))
-    .updateReturning(OrderItemsRow._rowParser.exactlyOne())
-    .runUnchecked(c)
+  ): OrderItemsRow = Fragment.concat(Fragment.of("MERGE INTO [order_items] AS target\nUSING (VALUES ("), Fragment.encode(OrderItemsId.sqlServerType, unsaved.orderItemId), Fragment.of(", "), Fragment.encode(OrdersId.sqlServerType, unsaved.orderId), Fragment.of(", "), Fragment.encode(ProductsId.sqlServerType, unsaved.productId), Fragment.of(", "), Fragment.encode(SqlServerTypes.int_, unsaved.quantity), Fragment.of(", "), Fragment.encode(SqlServerTypes.money, unsaved.price), Fragment.of(")) AS source([order_item_id], [order_id], [product_id], [quantity], [price])\nON target.[order_item_id] = source.[order_item_id]\nWHEN MATCHED THEN UPDATE SET [order_id] = source.[order_id],\n[product_id] = source.[product_id],\n[quantity] = source.[quantity],\n[price] = source.[price]\nWHEN NOT MATCHED THEN INSERT ([order_item_id], [order_id], [product_id], [quantity], [price]) VALUES ("), Fragment.encode(OrderItemsId.sqlServerType, unsaved.orderItemId), Fragment.of(", "), Fragment.encode(OrdersId.sqlServerType, unsaved.orderId), Fragment.of(", "), Fragment.encode(ProductsId.sqlServerType, unsaved.productId), Fragment.of(", "), Fragment.encode(SqlServerTypes.int_, unsaved.quantity), Fragment.of(", "), Fragment.encode(SqlServerTypes.money, unsaved.price), Fragment.of(")\nOUTPUT INSERTED.[order_item_id], INSERTED.[order_id], INSERTED.[product_id], INSERTED.[quantity], INSERTED.[price];"))
+    .updateReturning(OrderItemsRow.rowCodec.exactlyOne())
+    .run(c)
 
   override fun upsertBatch(
     unsaved: Iterator<OrderItemsRow>,
     c: Connection
-  ): List<OrderItemsRow> = Fragment.interpolate(Fragment.lit("MERGE INTO [order_items] AS target\nUSING (VALUES (?, ?, ?, ?, ?)) AS source([order_item_id], [order_id], [product_id], [quantity], [price])\nON target.[order_item_id] = source.[order_item_id]\nWHEN MATCHED THEN UPDATE SET [order_id] = source.[order_id],\n[product_id] = source.[product_id],\n[quantity] = source.[quantity],\n[price] = source.[price]\nWHEN NOT MATCHED THEN INSERT ([order_item_id], [order_id], [product_id], [quantity], [price]) VALUES (?, ?, ?, ?, ?)\nOUTPUT INSERTED.[order_item_id], INSERTED.[order_id], INSERTED.[product_id], INSERTED.[quantity], INSERTED.[price];"))
-    .updateReturningEach(OrderItemsRow._rowParser, unsaved)
-  .runUnchecked(c)
+  ): List<OrderItemsRow> = Fragment.concat(Fragment.of("MERGE INTO [order_items] AS target\nUSING (VALUES (?, ?, ?, ?, ?)) AS source([order_item_id], [order_id], [product_id], [quantity], [price])\nON target.[order_item_id] = source.[order_item_id]\nWHEN MATCHED THEN UPDATE SET [order_id] = source.[order_id],\n[product_id] = source.[product_id],\n[quantity] = source.[quantity],\n[price] = source.[price]\nWHEN NOT MATCHED THEN INSERT ([order_item_id], [order_id], [product_id], [quantity], [price]) VALUES (?, ?, ?, ?, ?)\nOUTPUT INSERTED.[order_item_id], INSERTED.[order_id], INSERTED.[product_id], INSERTED.[quantity], INSERTED.[price];"))
+    .updateReturningEach(OrderItemsRow.rowCodec, unsaved)
+  .run(c)
 }

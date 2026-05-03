@@ -1,6 +1,6 @@
 package testdb
 
-import dev.typr.foundations.scala.Tuples
+import dev.typr.dslsc.Tuples
 import org.junit.Assert.*
 import org.junit.{Ignore, Test}
 import testdb.products.*
@@ -12,8 +12,7 @@ class TupleInTest {
 
   @Test
   def tupleInWithMultipleTuples(): Unit = {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       val _ = productsRepo.insert(ProductsRowUnsaved("Widget", BigDecimal("19.99"), None))
       val _ = productsRepo.insert(ProductsRowUnsaved("Gadget", BigDecimal("29.99"), None))
       val _ = productsRepo.insert(ProductsRowUnsaved("Widget", BigDecimal("39.99"), None))
@@ -31,8 +30,7 @@ class TupleInTest {
 
   @Test
   def tupleInWithSingleTuple(): Unit = {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       val _ = productsRepo.insert(ProductsRowUnsaved("SingleItem", BigDecimal("99.99"), None))
       val _ = productsRepo.insert(ProductsRowUnsaved("OtherItem", BigDecimal("88.88"), None))
 
@@ -55,8 +53,7 @@ class TupleInTest {
 
   @Test
   def tupleInWithEmptyList(): Unit = {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       val _ = productsRepo.insert(ProductsRowUnsaved("TestProduct", BigDecimal("50.00"), None))
 
       val result = productsRepo.select
@@ -69,8 +66,7 @@ class TupleInTest {
 
   @Test
   def tupleInCombinedWithOtherConditions(): Unit = {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       val _ = productsRepo.insert(ProductsRowUnsaved("Alpha", BigDecimal("10.00"), Some("First product")))
       val _ = productsRepo.insert(ProductsRowUnsaved("Beta", BigDecimal("20.00"), Some("Second product")))
       val _ = productsRepo.insert(ProductsRowUnsaved("Gamma", BigDecimal("10.00"), None))
@@ -98,8 +94,7 @@ class TupleInTest {
 
   @Test
   def tupleInWithNonExistentTuples(): Unit = {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       val _ = productsRepo.insert(ProductsRowUnsaved("Existing", BigDecimal("100.00"), None))
 
       val result = productsRepo.select
@@ -125,8 +120,7 @@ class TupleInTest {
 
   @Test
   def tupleInSubqueryBasic(): Unit = {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       val _ = productsRepo.insert(ProductsRowUnsaved("SubqCheap1", BigDecimal("10.00"), None))
       val _ = productsRepo.insert(ProductsRowUnsaved("SubqCheap2", BigDecimal("20.00"), None))
       val _ = productsRepo.insert(ProductsRowUnsaved("SubqExpensive", BigDecimal("500.00"), None))
@@ -152,8 +146,7 @@ class TupleInTest {
 
   @Test
   def tupleInSubqueryWithNoMatches(): Unit = {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       val _ = productsRepo.insert(ProductsRowUnsaved("Prod1", BigDecimal("100.00"), None))
       val _ = productsRepo.insert(ProductsRowUnsaved("Prod2", BigDecimal("200.00"), None))
 
@@ -176,9 +169,7 @@ class TupleInTest {
 
   @Test
   def tupleInSubqueryCombinedWithOtherConditions(): Unit = {
-    withConnection { c =>
-      given java.sql.Connection = c
-
+    withConnection {
       val _ = productsRepo.insert(ProductsRowUnsaved("CombItemA", BigDecimal("50.00"), Some("Has desc")))
       val _ = productsRepo.insert(ProductsRowUnsaved("CombItemB", BigDecimal("60.00"), None))
       val _ = productsRepo.insert(ProductsRowUnsaved("CombItemC", BigDecimal("70.00"), Some("Also has")))
@@ -207,8 +198,7 @@ class TupleInTest {
 
   @Test
   def tupleInWithNullableColumn(): Unit = {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       // Create products - some with description (nullable), some without
       val _ = productsRepo.insert(ProductsRowUnsaved("NullDescProd1", BigDecimal("100.00"), None))
       val _ = productsRepo.insert(ProductsRowUnsaved("NullDescProd2", BigDecimal("200.00"), None))
@@ -237,8 +227,7 @@ class TupleInTest {
   @Ignore("Nested tuple IN not yet supported")
   @Test
   def nestedTupleIn(): Unit = {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       val _ = productsRepo.insert(ProductsRowUnsaved("NestProd1", BigDecimal("100.00"), Some("Desc1")))
       val _ = productsRepo.insert(ProductsRowUnsaved("NestProd2", BigDecimal("200.00"), Some("Desc2")))
       val _ = productsRepo.insert(ProductsRowUnsaved("NestProd3", BigDecimal("300.00"), Some("Desc3")))
@@ -283,8 +272,7 @@ class TupleInTest {
   @Ignore("Nested tuple read not yet supported")
   @Test
   def readNestedTupleFromDatabase(): Unit = {
-    withConnection { c =>
-      given java.sql.Connection = c
+    withConnection {
       // Insert test data
       val p1 = productsRepo.insert(ProductsRowUnsaved("ReadProd1", BigDecimal("100.00"), Some("Desc1")))
       val _ = productsRepo.insert(ProductsRowUnsaved("ReadProd2", BigDecimal("200.00"), Some("Desc2")))
