@@ -85,8 +85,8 @@ const config = {
         respectPrefersColorScheme: true,
       },
       announcementBar: {
-        id: 'under_development',
-        content: '🚧 <strong>Under Development</strong> — This site and product are launching early 2026.',
+        id: 'closed_beta',
+        content: '🚧 <strong>Closed Beta</strong> — Typr is in closed beta with public release in early 2026. <a href="/typr/getting-started/" style="color:inherit;text-decoration:underline">Request a seat →</a>',
         backgroundColor: '#0c1a2b',
         textColor: '#f4f0e6',
         isCloseable: false,

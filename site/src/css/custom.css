@@ -1120,3 +1120,22 @@ article header h1 {
 [data-theme="dark"] main {
   background: var(--typr-paper);
 }
+
+/* =============================================================================
+   Mobile navbar — keep the hamburger and dark-mode toggle reachable.
+   The default Docusaurus rules hide both the toggle (.colorModeToggle) and
+   any custom !important from earlier rules can swallow the hamburger.
+   ============================================================================= */
+@media (max-width: 996px) {
+  .navbar__toggle {
+    display: inline-flex !important;
+    color: var(--typr-ink) !important;
+  }
+  /* Surface the color-mode toggle in the navbar on mobile too — Docusaurus
+     hides it by default expecting the slide-out menu to carry it, but the
+     direct toggle is friendlier. The class is hashed by CSS modules so we
+     match by attribute prefix to stay stable across Docusaurus rebuilds. */
+  .navbar__items--right [class*="colorModeToggle"] {
+    display: inline-flex !important;
+  }
+}
