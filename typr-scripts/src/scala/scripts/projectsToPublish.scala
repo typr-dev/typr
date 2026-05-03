@@ -7,13 +7,13 @@ object projectsToPublish {
   def include(crossName: model.CrossProjectName): Boolean =
     crossName.name.value match {
       // CLI app
-      case "typr"              => true
+      case "typr" => true
 
       // typr's upstream deps — needed so the published POM resolves
-      case "typr-codegen"      => true
-      case "typr-dsl"          => true
-      case "typr-dsl-scala"    => true
-      case "typr-dsl-kotlin"   => true
+      case "typr-codegen"    => true
+      case "typr-dsl"        => true
+      case "typr-dsl-scala"  => true
+      case "typr-dsl-kotlin" => true
 
       // legacy DSL integrations (still published for backwards-compat consumers)
       case "typr-dsl-anorm"    => true
@@ -25,6 +25,6 @@ object projectsToPublish {
       case "typr-runtime-doobie"   => true
       case "typr-runtime-zio-jdbc" => true
 
-      case _                   => false
+      case _ => false
     }
 }
