@@ -1021,3 +1021,102 @@ article header h1 {
 
 /* Make sure the editorial overrides win over the legacy purple animations */
 .button { animation: none !important; }
+
+/* =============================================================================
+   Dark-mode contrast fixes — navbar + sidebar were inheriting low-contrast
+   defaults from the legacy purple theme. Force the editorial palette.
+   ============================================================================= */
+
+/* Navbar — force the cream/ink scheme regardless of theme */
+.navbar,
+[data-theme="dark"] .navbar {
+  background: var(--typr-paper) !important;
+  border-bottom: 1px solid var(--typr-hairline) !important;
+  box-shadow: none !important;
+}
+[data-theme="dark"] .navbar__title,
+[data-theme="dark"] .navbar__brand {
+  color: var(--typr-ink) !important;
+}
+[data-theme="dark"] .navbar__link {
+  color: var(--typr-ink) !important;
+}
+[data-theme="dark"] .navbar__link:hover {
+  color: var(--typr-vermillion) !important;
+}
+
+/* Sidebar / docs left column — explicit colors so menu items are readable */
+.theme-doc-sidebar-container,
+[data-theme="dark"] .theme-doc-sidebar-container {
+  background: var(--typr-paper) !important;
+  border-right: 1px solid var(--typr-hairline) !important;
+}
+
+.menu__link {
+  color: var(--typr-ink-soft) !important;
+}
+[data-theme="dark"] .menu__link {
+  color: var(--typr-ink) !important;
+}
+
+.menu__link:hover {
+  color: var(--typr-ink) !important;
+  background: var(--ifm-menu-color-background-hover) !important;
+}
+[data-theme="dark"] .menu__link:hover {
+  color: var(--typr-vermillion) !important;
+}
+
+.menu__link--active,
+[data-theme="dark"] .menu__link--active {
+  color: var(--typr-vermillion) !important;
+  background: var(--ifm-menu-color-background-active) !important;
+  font-weight: 500;
+}
+
+/* Category labels (collapsible parents) — brighter in dark mode */
+.theme-doc-sidebar-item-category > .menu__list-item-collapsible > .menu__link,
+[data-theme="dark"] .theme-doc-sidebar-item-category > .menu__list-item-collapsible > .menu__link {
+  color: var(--typr-sub-ink) !important;
+  font-weight: 500;
+}
+[data-theme="dark"] .theme-doc-sidebar-item-category > .menu__list-item-collapsible > .menu__link {
+  /* sub-ink already lifts in dark mode but force-cream-ish for category visibility */
+  color: #b3bdd0 !important;
+}
+
+.menu__caret,
+[data-theme="dark"] .menu__caret {
+  color: var(--typr-sub-ink) !important;
+}
+.menu__caret:hover,
+[data-theme="dark"] .menu__caret:hover {
+  background: var(--ifm-menu-color-background-hover) !important;
+  color: var(--typr-vermillion) !important;
+}
+
+/* TOC right rail */
+[data-theme="dark"] .table-of-contents__link {
+  color: var(--typr-ink-soft) !important;
+}
+[data-theme="dark"] .table-of-contents__link:hover,
+[data-theme="dark"] .table-of-contents__link--active {
+  color: var(--typr-vermillion) !important;
+}
+
+/* Headings inside docs — keep cream in dark mode */
+[data-theme="dark"] .markdown h1,
+[data-theme="dark"] .markdown h2,
+[data-theme="dark"] .markdown h3,
+[data-theme="dark"] .markdown h4,
+[data-theme="dark"] .markdown h5,
+[data-theme="dark"] .markdown h6,
+[data-theme="dark"] article header h1 {
+  color: var(--typr-ink) !important;
+}
+
+/* Page main area bg in dark mode */
+[data-theme="dark"] .main-wrapper,
+[data-theme="dark"] main {
+  background: var(--typr-paper);
+}
