@@ -1,1 +1,0 @@
-"use strict";(self.webpackChunksite=self.webpackChunksite||[]).push([[7472],{5513:e=>{e.exports=JSON.parse('{"title":"Recent posts","items":[{"title":"The compilation cost of implicits","permalink":"/blog/the-cost-of-implicits","unlisted":false},{"title":"Hello, ZIO","permalink":"/blog/hello-zio","unlisted":false}]}')}}]);
