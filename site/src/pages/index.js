@@ -286,9 +286,38 @@ function ManifestoSection() {
           </div>
 
           <BlueprintDiagram />
+          <BlueprintDiagramMobile />
         </div>
       </div>
     </section>
+  );
+}
+
+function BlueprintDiagramMobile() {
+  const stations = [
+    { tag: "A", name: "postgres",       policy: "anchor"   },
+    { tag: "B", name: "mariadb",        policy: "superset" },
+    { tag: "C", name: "openapi",        policy: "exact"    },
+    { tag: "D", name: "kafka / avro",   policy: "subset"   },
+  ];
+  return (
+    <div className={styles.diagramMobile}>
+      <p className={styles.diagramMobileHeading}>One domain type, four boundaries</p>
+      <ul className={styles.diagramMobileList}>
+        <li className={styles.diagramMobileItem}>
+          <span className={styles.diagramMobileTag}>·</span>
+          <span className={styles.diagramMobileName}>Customer (domain)</span>
+          <span className={styles.diagramMobilePolicy}>canonical</span>
+        </li>
+        {stations.map((s) => (
+          <li key={s.tag} className={styles.diagramMobileItem}>
+            <span className={styles.diagramMobileTag}>{s.tag}</span>
+            <span className={styles.diagramMobileName}>{s.name}</span>
+            <span className={styles.diagramMobilePolicy}>{s.policy}</span>
+          </li>
+        ))}
+      </ul>
+    </div>
   );
 }
 

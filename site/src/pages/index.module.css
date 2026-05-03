@@ -41,6 +41,7 @@
   font-feature-settings: 'ss01', 'ss02', 'cv01';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
 
   /* Hand‑placed paper grain so it reads as printed, not pixel‑perfect */
   background-image:
@@ -528,6 +529,63 @@
   background-size: 4px 4px;
 }
 .diagramScroll .diagram { display: block; min-width: 980px; border: none; background: transparent; }
+
+/* On phones the diagram becomes a horizontal-scroll trap and the text alone
+   carries the section. Hide it; the mobile fallback below keeps the beat. */
+@media (max-width: 700px) {
+  .diagramFigure { display: none; }
+  .diagramMobile {
+    display: block;
+    grid-column: 1 / -1;
+    margin-top: 1.5rem;
+    border: 1px solid var(--hairline);
+    background: var(--paper-warm);
+    padding: 1.25rem 1rem;
+  }
+}
+.diagramMobile { display: none; }
+.diagramMobileHeading {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--vermillion);
+  margin: 0 0 0.75rem 0;
+}
+.diagramMobileList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.6rem;
+}
+.diagramMobileItem {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 0.75rem;
+  align-items: baseline;
+  padding: 0.55rem 0;
+  border-top: 1px solid var(--hairline);
+}
+.diagramMobileItem:first-child { border-top: none; }
+.diagramMobileTag {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  color: var(--vermillion);
+  font-weight: 700;
+}
+.diagramMobileName {
+  font-family: var(--serif);
+  font-size: 1.05rem;
+  color: var(--ink);
+}
+.diagramMobilePolicy {
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  color: var(--sub-ink);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+}
 
 .diagramCaption {
   margin-top: 0.85rem;
