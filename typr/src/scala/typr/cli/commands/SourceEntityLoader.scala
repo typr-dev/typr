@@ -94,7 +94,7 @@ object SourceEntityLoader {
       quiet: Boolean
   ): Either[String, LoadedSource] = {
     ConfigParser.parseSource(sourceJson) match {
-      case Left(err) => Left(err)
+      case Left(err)     => Left(err)
       case Right(parsed) =>
         parsed match {
           case ParsedSource.Database(dbConfig) =>

@@ -43,7 +43,7 @@ object OverriddenType {
     } else {
       WellKnownPrimitive.fromName(typeStr) match {
         case Some(primitive) => Right(Primitive(primitive))
-        case None =>
+        case None            =>
           val validNames = WellKnownPrimitive.all.flatMap { p =>
             // Get the canonical names for error message
             p match {
@@ -83,8 +83,8 @@ object ParsedName {
       else (name, None)
 
     val (dbName, overriddenType) = shortened.split(":").toList match {
-      case Nil         => sys.error("shouldn't happen (tm)")
-      case name :: Nil => (db.ColName(name), None)
+      case Nil                 => sys.error("shouldn't happen (tm)")
+      case name :: Nil         => (db.ColName(name), None)
       case name :: tpeStr :: _ =>
         OverriddenType.parse(tpeStr) match {
           case Right(ot) => (db.ColName(name), Some(ot))

@@ -34,7 +34,7 @@ data class InventoryCheckSqlRow(
   @field:JsonProperty("quantity_on_hand") val quantityOnHand: Int,
   /** Points to [testdb.inventory.InventoryRow.quantityReserved] */
   @field:JsonProperty("quantity_reserved") val quantityReserved: Int,
-  /** Points to [testdb.inventory.InventoryRow.quantityOnHand] */
+  /** Points to [testdb.inventory.InventoryRow.quantityReserved] */
   val available: Int,
   /** Points to [testdb.inventory.InventoryRow.reorderPoint] */
   @field:JsonProperty("reorder_point") val reorderPoint: Int,

@@ -212,15 +212,44 @@ object Generate {
       sourceFilter: Option[String],
       quiet: Boolean,
       debug: Boolean
+  ): IO[ExitCode] = run(configPath, sourceFilter, quiet, debug, TypoLogger.Console, _ => ())
+
+  /** Overload accepting an explicit [[TypoLogger]] — used by the TUI shell so it can capture structured log entries instead of letting them stream to stdout (which would corrupt the alternate-screen
+    * buffer). The 4-arg overload above keeps the CLI call site short and preserves its console-logging behaviour.
+    */
+  def run(
+      configPath: String,
+      sourceFilter: Option[String],
+      quiet: Boolean,
+      debug: Boolean,
+      typoLogger: TypoLogger
+  ): IO[ExitCode] = run(configPath, sourceFilter, quiet, debug, typoLogger, _ => ())
+
+  /** Overload that also hands the caller a reference to the [[ProgressTracker]] once it's constructed. The TUI uses this to render a live per-output status table by polling tracker state each render
+    * — no log-line parsing.
+    */
+  def run(
+      configPath: String,
+      sourceFilter: Option[String],
+      quiet: Boolean,
+      debug: Boolean,
+      typoLogger: TypoLogger,
+      onTrackerReady: ProgressTracker => Unit
   ): IO[ExitCode] = {
     val result = for {
-      _ <- IO.unlessA(quiet)(IO.println(s"Reading config from: $configPath"))
+      // Closed-beta expiry warning — surfaces in CI logs so users see the countdown well before
+      // the build refuses. Quiet mode suppresses everything; the warn-on-expired hard refusal
+      // lives in typr.cli.Main so it can short-circuit before any IO sets up.
+      _ <- IO.unlessA(quiet || !typr.cli.beta.BetaGate.isInWarningWindow())(
+        IO(typoLogger.warn(typr.cli.beta.BetaGate.warningLine()))
+      )
+      _ <- IO.unlessA(quiet)(IO(typoLogger.info(s"Reading config from: $configPath")))
 
       yamlContent <- IO(Files.readString(Paths.get(configPath)))
       substituted <- IO.fromEither(EnvSubstitution.substitute(yamlContent).left.map(new Exception(_)))
 
       config <- IO.fromEither(ConfigParser.parse(substituted).left.map(new Exception(_)))
-      _ <- IO.whenA(debug)(IO.println(s"Parsed config with ${config.boundaries.map(_.size).getOrElse(0)} boundaries, ${config.outputs.map(_.size).getOrElse(0)} outputs"))
+      _ <- IO.whenA(debug)(IO(typoLogger.info(s"Parsed config with ${config.boundaries.map(_.size).getOrElse(0)} boundaries, ${config.outputs.map(_.size).getOrElse(0)} outputs")))
 
       parsedBoundaries <- config.boundaries
         .getOrElse(Map.empty)
@@ -256,31 +285,30 @@ object Generate {
       buildDir = Path.of(System.getProperty("user.dir"))
       outputNames = filtered.keys.toList.sorted
       tracker = new ProgressTracker(outputNames)
+      _ <- IO(onTrackerReady(tracker))
 
-      typoLogger = TypoLogger.Console
       externalTools = ExternalTools.init(typoLogger, ExternalToolsConfig.default)
       results <- runWithoutTui(filtered, parsedBoundaries, config.types, buildDir, typoLogger, externalTools, tracker)
 
       _ <- IO.unlessA(quiet)(IO {
         val (successful, failed, skipped) = tracker.summary
         val elapsed = tracker.elapsedSeconds
-        println()
-        println(s"Summary: $successful succeeded, $failed failed, $skipped skipped (${f"$elapsed%.1f"}s)")
+        typoLogger.info(s"Summary: $successful succeeded, $failed failed, $skipped skipped (${f"$elapsed%.1f"}s)")
         tracker.failedEntries.foreach { case (name, err) =>
-          println(s"  ✗ $name: $err")
+          typoLogger.warn(s"  ✗ $name: $err")
         }
       })
 
       errors = results.collect { case Left(e) => e }
       successCount = results.count(_.isRight)
 
-      _ <- IO.unlessA(quiet)(IO.println(s"\nGeneration complete: $successCount/${results.size} outputs succeeded"))
+      _ <- IO.unlessA(quiet)(IO(typoLogger.info(s"Generation complete: $successCount/${results.size} outputs succeeded")))
 
     } yield if (errors.isEmpty) ExitCode.Success else ExitCode.Error
 
     result.handleErrorWith { e =>
-      IO.println(s"Error: ${e.getMessage}") *>
-        IO.whenA(debug)(IO.println(e.getStackTrace.mkString("\n"))) *>
+      IO(typoLogger.warn(s"Error: ${e.getMessage}")) *>
+        IO.whenA(debug)(IO(typoLogger.warn(e.getStackTrace.mkString("\n")))) *>
         IO.pure(ExitCode.Error)
     }
   }
@@ -505,7 +533,7 @@ object Generate {
       Right(totalFiles)
     } match {
       case Success(result) => result
-      case Failure(e) =>
+      case Failure(e)      =>
         val errorMsg = Option(e.getMessage).getOrElse(e.getClass.getSimpleName)
         tracker.update(outputName, OutputStatus.Failed(errorMsg))
         Left(s"$outputName: $errorMsg")
@@ -1125,7 +1153,7 @@ object Generate {
       written
     } match {
       case Success(files) => Right(files)
-      case Failure(e) =>
+      case Failure(e)     =>
         val errorMsg = Option(e.getMessage).getOrElse(e.getClass.getSimpleName)
         tracker.update(outputName, OutputStatus.Failed(errorMsg))
         Left(s"$outputName: $errorMsg")

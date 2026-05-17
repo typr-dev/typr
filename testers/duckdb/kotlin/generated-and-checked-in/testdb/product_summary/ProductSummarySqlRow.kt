@@ -26,7 +26,7 @@ data class ProductSummarySqlRow(
   @field:JsonProperty("order_count") val orderCount: kotlin.Long,
   /** Points to [testdb.order_items.OrderItemsRow.quantity] */
   @field:JsonProperty("total_quantity") val totalQuantity: kotlin.Long?,
-  /** Points to [testdb.order_items.OrderItemsRow.quantity] */
+  /** Points to [testdb.order_items.OrderItemsRow.unitPrice] */
   @field:JsonProperty("total_revenue") val totalRevenue: BigDecimal?
 ) : Tuple7<ProductsId, kotlin.String, kotlin.String, BigDecimal, kotlin.Long, kotlin.Long?, BigDecimal?> {
   override fun _1(): ProductsId = productId

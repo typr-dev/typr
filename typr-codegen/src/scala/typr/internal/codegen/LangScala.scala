@@ -5,7 +5,7 @@ import typr.jvm.Code.TreeOps
 import typr.jvm.Type
 
 case class LangScala(dialect: Dialect, typeSupport: TypeSupport, dsl: DslQualifiedNames) extends Lang {
-  override val `;` : jvm.Code = code""
+  override val `;`: jvm.Code = code""
 
   // Type system types - Scala always uses Scala's type system
   override val nothingType: jvm.Type = TypesScala.Nothing
@@ -74,7 +74,7 @@ case class LangScala(dialect: Dialect, typeSupport: TypeSupport, dsl: DslQualifi
   override def renderTree(tree: jvm.Tree, ctx: Ctx): jvm.Code =
     tree match {
       case jvm.IfExpr(cond, thenp, elsep) => code"(if ($cond) $thenp else $elsep)"
-      case jvm.If(branches, elseBody) =>
+      case jvm.If(branches, elseBody)     =>
         val ifParts = branches.zipWithIndex.map { case (jvm.If.Branch(cond, body), idx) =>
           val keyword = if (idx == 0) "if" else "else if"
           code"""|$keyword ($cond) {
@@ -104,7 +104,7 @@ case class LangScala(dialect: Dialect, typeSupport: TypeSupport, dsl: DslQualifi
       case jvm.ConstructorMethodRef(tpe) => code"$tpe.apply"
       case jvm.ClassOf(tpe)              => code"classOf[$tpe]"
       case jvm.JavaClassOf(tpe)          => code"classOf[$tpe]" // Same as ClassOf for Scala
-      case jvm.Call(target, argGroups) =>
+      case jvm.Call(target, argGroups)   =>
         val renderedGroups = argGroups.map { group =>
           val argsStr = group.args.map(_.value).mkCode(", ")
           if (group.isImplicit) code"(using $argsStr)" else code"($argsStr)"
@@ -133,29 +133,29 @@ case class LangScala(dialect: Dialect, typeSupport: TypeSupport, dsl: DslQualifi
           .replace("\r", "\\r")
           .replace("\t", "\\t")
         Quote + escaped + Quote
-      case jvm.Summon(tpe) => code"implicitly[$tpe]"
+      case jvm.Summon(tpe)                    => code"implicitly[$tpe]"
       case jvm.Type.Abstract(value, variance) =>
         variance match {
           case jvm.Variance.Invariant     => value.code
           case jvm.Variance.Covariant     => code"+$value"
           case jvm.Variance.Contravariant => code"-$value"
         }
-      case jvm.Type.ArrayOf(value)                    => code"Array[$value]"
-      case jvm.Type.KotlinNullable(underlying)        => renderTree(underlying, ctx) // Scala doesn't have Kotlin's T? syntax, render underlying type
-      case jvm.Type.Commented(underlying, comment)    => code"$comment $underlying"
-      case jvm.Type.Annotated(underlying, annotation) => code"$underlying @$annotation"
-      case jvm.Type.Function0(ret)                    => code"=> $ret"
-      case jvm.Type.Function1(t1, ret)                => code"$t1 => $ret"
-      case jvm.Type.Function2(t1, t2, ret)            => code"($t1, $t2) => $ret"
-      case jvm.Type.Qualified(value)                  => value.code
-      case jvm.Type.TApply(underlying, targs)         => code"$underlying[${targs.map(t => renderTree(t, ctx)).mkCode(", ")}]"
-      case jvm.Type.UserDefined(underlying)           => code"/* user-picked */ $underlying"
-      case jvm.Type.Void                              => code"Unit"
-      case jvm.Type.Wildcard                          => code"?"
-      case jvm.Type.Primitive(name)                   => javaPrimitiveToScala(name)
-      case p: jvm.Param[jvm.Type]                     => renderParam(p, false)
-      case jvm.RuntimeInterpolation(value)            => code"$${$value"
-      case jvm.Import(_, _)                           => jvm.Code.Empty // Import node just triggers import, no code output
+      case jvm.Type.ArrayOf(value)                              => code"Array[$value]"
+      case jvm.Type.KotlinNullable(underlying)                  => renderTree(underlying, ctx) // Scala doesn't have Kotlin's T? syntax, render underlying type
+      case jvm.Type.Commented(underlying, comment)              => code"$comment $underlying"
+      case jvm.Type.Annotated(underlying, annotation)           => code"$underlying @$annotation"
+      case jvm.Type.Function0(ret)                              => code"=> $ret"
+      case jvm.Type.Function1(t1, ret)                          => code"$t1 => $ret"
+      case jvm.Type.Function2(t1, t2, ret)                      => code"($t1, $t2) => $ret"
+      case jvm.Type.Qualified(value)                            => value.code
+      case jvm.Type.TApply(underlying, targs)                   => code"$underlying[${targs.map(t => renderTree(t, ctx)).mkCode(", ")}]"
+      case jvm.Type.UserDefined(underlying)                     => code"/* user-picked */ $underlying"
+      case jvm.Type.Void                                        => code"Unit"
+      case jvm.Type.Wildcard                                    => code"?"
+      case jvm.Type.Primitive(name)                             => javaPrimitiveToScala(name)
+      case p: jvm.Param[jvm.Type]                               => renderParam(p, false)
+      case jvm.RuntimeInterpolation(value)                      => code"$${$value"
+      case jvm.Import(_, _)                                     => jvm.Code.Empty // Import node just triggers import, no code output
       case jvm.TypeSwitch(value, cases, nullCase, _, unchecked) =>
         val nullCaseCode = nullCase.map(body => code"case null => $body").toList
         val typeCases = cases.map { case jvm.TypeSwitch.Case(pat, ident, body) => code"case $ident: $pat => $body" }
@@ -214,8 +214,8 @@ case class LangScala(dialect: Dialect, typeSupport: TypeSupport, dsl: DslQualifi
         val typeArgStr = if (typeArgs.isEmpty) jvm.Code.Empty else code"[${typeArgs.map(t => renderTree(t, ctx)).mkCode(", ")}]"
         val argStr = if (args.isEmpty) code"()" else code"(${args.map(a => renderTree(a, ctx)).mkCode(", ")})"
         code"$target.$methodName$typeArgStr$argStr"
-      case jvm.Return(expr) => code"return $expr"
-      case jvm.Throw(expr)  => code"throw $expr"
+      case jvm.Return(expr)         => code"return $expr"
+      case jvm.Throw(expr)          => code"throw $expr"
       case jvm.Lambda(params, body) =>
         val paramsCode = params match {
           case Nil                                    => code"() => "
@@ -288,7 +288,7 @@ case class LangScala(dialect: Dialect, typeSupport: TypeSupport, dsl: DslQualifi
         ) ++ code": $tpe"
 
         body match {
-          case jvm.Body.Abstract => signature
+          case jvm.Body.Abstract   => signature
           case jvm.Body.Expr(expr) =>
             val rendered = expr.render(this)
             if (rendered.lines.length == 1)
@@ -387,7 +387,7 @@ case class LangScala(dialect: Dialect, typeSupport: TypeSupport, dsl: DslQualifi
             case nonEmpty => Some(nonEmpty.map(x => code" with $x").mkCode(" "))
           },
           sum.members match {
-            case Nil => None
+            case Nil      => None
             case nonEmpty =>
               Some(
                 code"""| {
@@ -396,7 +396,7 @@ case class LangScala(dialect: Dialect, typeSupport: TypeSupport, dsl: DslQualifi
               )
           },
           sum.staticMembers.sortBy(_.name).map(m => renderTree(m, ctx)) ++ sum.flattenedSubtypes.sortBy(_.name.name).map(t => renderTree(t, ctx)) match {
-            case Nil => None
+            case Nil      => None
             case nonEmpty =>
               Some(code"""|
                           |
@@ -443,7 +443,7 @@ case class LangScala(dialect: Dialect, typeSupport: TypeSupport, dsl: DslQualifi
             case nonEmpty => Some(nonEmpty.map(x => code" with $x").mkCode(" "))
           },
           cls.members match {
-            case Nil => None
+            case Nil      => None
             case nonEmpty =>
               Some(
                 code"""| {
@@ -454,7 +454,7 @@ case class LangScala(dialect: Dialect, typeSupport: TypeSupport, dsl: DslQualifi
           cls.staticMembers
             .sortBy(_.name)
             .map(m => renderTree(m, ctx)) match {
-            case Nil => None
+            case Nil      => None
             case nonEmpty =>
               Some(code"""|
                           |
@@ -502,7 +502,7 @@ case class LangScala(dialect: Dialect, typeSupport: TypeSupport, dsl: DslQualifi
             case nonEmpty => Some(nonEmpty.map(x => code" with $x").mkCode(" "))
           },
           cls.members match {
-            case Nil => None
+            case Nil      => None
             case nonEmpty =>
               Some(
                 code"""| {
@@ -513,7 +513,7 @@ case class LangScala(dialect: Dialect, typeSupport: TypeSupport, dsl: DslQualifi
           cls.staticMembers
             .sortBy(_.name)
             .map(m => renderTree(m, ctx)) match {
-            case Nil => None
+            case Nil      => None
             case nonEmpty =>
               Some(code"""|
                           |
@@ -602,7 +602,7 @@ case class LangScala(dialect: Dialect, typeSupport: TypeSupport, dsl: DslQualifi
   }
 
   private def renderAnnotationArgs(args: List[jvm.Annotation.Arg]): jvm.Code = args match {
-    case Nil => jvm.Code.Empty
+    case Nil  => jvm.Code.Empty
     case args =>
       val rendered = args
         .map {
@@ -667,7 +667,7 @@ case class LangScala(dialect: Dialect, typeSupport: TypeSupport, dsl: DslQualifi
 
   def renderComments(comments: jvm.Comments): Option[jvm.Code] = {
     comments.lines match {
-      case Nil => None
+      case Nil          => None
       case title :: Nil =>
         Some(code"""/** $title */
 """)
@@ -681,7 +681,7 @@ case class LangScala(dialect: Dialect, typeSupport: TypeSupport, dsl: DslQualifi
 
   def withBody(init: jvm.Code, body: List[jvm.Code]) = {
     body match {
-      case Nil => init
+      case Nil  => init
       case body =>
         val renderedBody = body.mkCode("\n").render(this)
         if (renderedBody.lines.length == 1)

@@ -2,7 +2,6 @@ package typr.grpc.codegen
 
 import typr.grpc._
 import typr.{jvm, Lang, Naming, Scope}
-import typr.jvm.Code.{CodeOps, TreeOps}
 
 /** Generates jvm.File for Protobuf oneof types.
   *

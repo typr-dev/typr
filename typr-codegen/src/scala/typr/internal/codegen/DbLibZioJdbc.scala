@@ -451,7 +451,7 @@ class DbLibZioJdbc(pkg: jvm.QIdent, inlineImplicits: Boolean, dslEnabled: Boolea
         val writeableColumnsNotId = writeableColumnsWithId.toList.filterNot(c => id.cols.exists(_.name == c.name))
 
         val conflictAction = writeableColumnsNotId match {
-          case Nil => code"do nothing"
+          case Nil      => code"do nothing"
           case nonEmpty =>
             code"""|do update set
                    |  ${nonEmpty.map { c => code"${c.dbName.code} = EXCLUDED.${c.dbName.code}" }.mkCode(",\n")}""".stripMargin
@@ -537,7 +537,7 @@ class DbLibZioJdbc(pkg: jvm.QIdent, inlineImplicits: Boolean, dslEnabled: Boolea
           val renderedWithCasts: jvm.Code =
             cols.toList.flatMap(c => sqlCast.fromPg(c.dbCol.tpe)) match {
               case Nil => renderedScript.code
-              case _ =>
+              case _   =>
                 val row = jvm.Ident("row")
 
                 code"""|with $row as (

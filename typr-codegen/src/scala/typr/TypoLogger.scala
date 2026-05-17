@@ -16,8 +16,8 @@ trait TypoLogger {
 
 object TypoLogger {
   object Console extends TypoLogger {
-    override def warn(str: String): Unit = System.err.println(s"typo: $str")
-    override def info(str: String): Unit = System.out.println(s"typo: $str")
+    override def warn(str: String): Unit = System.err.println(s"typr: $str")
+    override def info(str: String): Unit = System.out.println(s"typr: $str")
   }
 
   object Noop extends TypoLogger {

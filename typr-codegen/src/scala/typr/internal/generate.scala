@@ -95,7 +95,14 @@ object generate {
         case DbLibName.Anorm =>
           new DbLibAnorm(pkg, publicOptions.inlineImplicits, default, publicOptions.enableStreamingInserts, requireScalaWithLegacyDsl("anorm"))
         case DbLibName.Doobie =>
-          new DbLibDoobie(pkg, publicOptions.inlineImplicits, default, publicOptions.enableStreamingInserts, publicOptions.fixVerySlowImplicit, requireScalaWithLegacyDsl("doobie"))
+          new DbLibDoobie(
+            pkg,
+            publicOptions.inlineImplicits,
+            default,
+            publicOptions.enableStreamingInserts,
+            publicOptions.fixVerySlowImplicit,
+            requireScalaWithLegacyDsl("doobie")
+          )
         case DbLibName.Typo =>
           new DbLibFoundations(language, default, publicOptions.enableStreamingInserts, metaDb.dbType.adapter(needsTimestampCasts = false), naming)
         case DbLibName.ZioJdbc =>
@@ -197,7 +204,7 @@ object generate {
           computedSqlFiles.flatMap(x => FilesSqlFile(language, x, naming, options).all)
 
         val relationFilesByName = computedRelations.flatMap {
-          case viewComputed: ComputedView => FilesView(language, viewComputed, options).all.map(x => (viewComputed.view.name, x))
+          case viewComputed: ComputedView   => FilesView(language, viewComputed, options).all.map(x => (viewComputed.view.name, x))
           case tableComputed: ComputedTable =>
             val fkAnalysis = FkAnalysis(computedRelationsByName, tableComputed, options.lang)
             FilesTable(language, tableComputed, fkAnalysis, options, domainsByName).all.map(x => (tableComputed.dbTable.name, x))
@@ -332,8 +339,7 @@ object generate {
 
         val keptMostFiles: List[jvm.File] = {
           val keptRelations: immutable.Iterable[jvm.File] =
-            if (options.keepDependencies) relationFilesByName.map { case (_, f) => f }
-            else relationFilesByName.collect { case (name, f) if selector.include(name) => f }
+            if (options.keepDependencies) relationFilesByName.map { case (_, f) => f } else relationFilesByName.collect { case (name, f) if selector.include(name) => f }
 
           // pgCompositeTypeFiles are entry points only for DbLibFoundations (which has PgStruct support)
           // For other dbLibs (like Anorm used by generate-sources), they're not included

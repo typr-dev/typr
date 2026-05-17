@@ -83,7 +83,7 @@ object NullabilityFromExplain {
   def fromPlan(hasPlans: HasPlans): NullableColumns = {
     def go(plan: Plan): NullableColumns =
       plan match {
-        case Plan(_, _, None, _) => NullableColumns(plan, Nil)
+        case Plan(_, _, None, _)                                             => NullableColumns(plan, Nil)
         case Plan(_, Some(joinType), Some(outputs), Some(List(left, right))) =>
           val leftPlan = go(left)
           val rightPlan = go(right)

@@ -13,7 +13,7 @@ object EnvSubstitution {
         val varName = m.group(1)
         sys.env.get(varName) match {
           case Some(value) => Matcher.quoteReplacement(value)
-          case None =>
+          case None        =>
             errors = s"Environment variable not set: $varName" :: errors
             m.matched
         }

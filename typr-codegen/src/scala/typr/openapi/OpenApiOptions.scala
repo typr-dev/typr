@@ -1,7 +1,7 @@
 package typr.openapi
 
 import typr.{jvm, TypeDefinitions}
-import typr.effects.{EffectType, EffectTypeOps}
+import typr.effects.EffectType
 import typr.openapi.codegen.{JacksonSupport, JsonLibSupport}
 
 /** Configuration options for OpenAPI code generation */

@@ -3,7 +3,6 @@ package typr.grpc.codegen
 import typr.effects.EffectTypeOps
 import typr.grpc.{GrpcOptions, RpcPattern}
 import typr.grpc.computed.{ComputedGrpcMethod, ComputedGrpcService}
-import typr.internal.codegen._
 import typr.jvm.Code.{CodeOps, TreeOps, TypeOps}
 import typr.{jvm, Lang, Scope}
 

@@ -4,7 +4,7 @@ import typr.grpc.codegen._
 import typr.grpc.computed.ComputedGrpcService
 import typr.grpc.parser.ProtobufParser
 import typr.internal.codegen._
-import typr.jvm.Code.{CodeOps, TreeOps}
+import typr.jvm.Code.TreeOps
 import typr.{jvm, Lang, Naming, Scope}
 
 /** Main entry point for gRPC/Protobuf code generation */

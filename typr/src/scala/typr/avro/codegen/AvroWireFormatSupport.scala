@@ -2,7 +2,7 @@ package typr.avro.codegen
 
 import typr.avro._
 import typr.jvm
-import typr.jvm.Code.{CodeOps, TreeOps, TypeOps}
+import typr.jvm.Code.{CodeOps, TypeOps}
 import typr.Lang
 import typr.internal.codegen.{LangScala, LangKotlin}
 

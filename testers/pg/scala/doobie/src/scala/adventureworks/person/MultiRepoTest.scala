@@ -61,7 +61,7 @@ case class PersonWithAddressesRepo(
       currentAttachedAddresses <- currentAddressesWithAddresstype.traverse { case (addresstypeId, address) =>
         oldAttachedAddresses.find(x => x.addressid == address.addressid && x.addresstypeid == addresstypeId) match {
           case Some(bea) => bea.pure[ConnectionIO]
-          case None =>
+          case None      =>
             businessentityAddressRepo.insert(
               BusinessentityaddressRowUnsaved(pa.person.businessentityid, address.addressid, addresstypeId)
             )

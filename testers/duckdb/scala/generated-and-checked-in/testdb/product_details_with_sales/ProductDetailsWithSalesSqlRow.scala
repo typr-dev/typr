@@ -29,7 +29,7 @@ case class ProductDetailsWithSalesSqlRow(
   @JsonProperty("times_ordered") timesOrdered: Option[Long],
   /** Points to [[testdb.order_items.OrderItemsRow.quantity]] */
   @JsonProperty("total_quantity_sold") totalQuantitySold: Option[Long],
-  /** Points to [[testdb.order_items.OrderItemsRow.quantity]] */
+  /** Points to [[testdb.order_items.OrderItemsRow.unitPrice]] */
   @JsonProperty("total_revenue") totalRevenue: Option[Double],
   /** Points to [[testdb.order_items.OrderItemsRow.orderId]] */
   popularity: Option[String]

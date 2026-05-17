@@ -94,7 +94,7 @@ case class PgTypeMapperDb(enums: List[db.StringEnum], domains: List[db.Domain], 
       case "vector"                            => db.PgType.Vector
       case "bit"                               => db.PgType.Bit(characterMaximumLength)
       case "varbit"                            => db.PgType.Varbit(characterMaximumLength)
-      case ArrayName(underlying) =>
+      case ArrayName(underlying)               =>
         db.PgType.Array(dbTypeFrom(underlying, characterMaximumLength)(logWarning))
       case typeName =>
         enumsByName

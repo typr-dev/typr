@@ -31,7 +31,7 @@ public record ProductDetailsWithSalesSqlRow(
   @JsonProperty("times_ordered") Optional<Long> timesOrdered,
   /** Points to {@link testdb.order_items.OrderItemsRow#quantity()} */
   @JsonProperty("total_quantity_sold") Optional<Long> totalQuantitySold,
-  /** Points to {@link testdb.order_items.OrderItemsRow#quantity()} */
+  /** Points to {@link testdb.order_items.OrderItemsRow#unitPrice()} */
   @JsonProperty("total_revenue") Optional<Double> totalRevenue,
   /** Points to {@link testdb.order_items.OrderItemsRow#orderId()} */
   Optional<String> popularity
@@ -71,7 +71,7 @@ public record ProductDetailsWithSalesSqlRow(
     return new ProductDetailsWithSalesSqlRow(productId, sku, name, price, metadata, timesOrdered, totalQuantitySold, totalRevenue, popularity);
   }
 
-  /** Points to {@link testdb.order_items.OrderItemsRow#quantity()} */
+  /** Points to {@link testdb.order_items.OrderItemsRow#unitPrice()} */
   public ProductDetailsWithSalesSqlRow withTotalRevenue(Optional<Double> totalRevenue) {
     return new ProductDetailsWithSalesSqlRow(productId, sku, name, price, metadata, timesOrdered, totalQuantitySold, totalRevenue, popularity);
   }

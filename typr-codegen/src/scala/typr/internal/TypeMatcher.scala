@@ -388,7 +388,7 @@ object TypeMatcher {
     */
   private def extractAnnotations(comment: Option[String]): List[String] =
     comment match {
-      case None => Nil
+      case None       => Nil
       case Some(text) =>
         val pattern = """@(\w+)(?:\(([^)]*)\))?""".r
         pattern

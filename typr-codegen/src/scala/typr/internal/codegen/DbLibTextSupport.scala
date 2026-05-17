@@ -22,17 +22,17 @@ class DbLibTextSupport(pkg: jvm.QIdent, inlineImplicits: Boolean, externalText: 
     if (!inlineImplicits) Text.of(tpe).code
     else
       jvm.Type.base(tpe) match {
-        case TypesScala.BigDecimal                                          => code"$Text.bigDecimalInstance"
-        case TypesScala.Boolean                                             => code"$Text.booleanInstance"
-        case TypesScala.Double                                              => code"$Text.doubleInstance"
-        case TypesScala.Float                                               => code"$Text.floatInstance"
-        case TypesScala.Int                                                 => code"$Text.intInstance"
-        case TypesScala.Long                                                => code"$Text.longInstance"
-        case TypesJava.String                                               => code"$Text.stringInstance"
-        case jvm.Type.ArrayOf(TypesScala.Byte)                              => code"$Text.byteArrayInstance"
-        case lang.Optional(targ)                                            => code"$Text.option(${dialect.usingCall}${lookupTextFor(targ)})"
-        case jvm.Type.TApply(default.Defaulted, List(targ))                 => code"${default.Defaulted}.$textName(${dialect.usingCall}${lookupTextFor(targ)})"
-        case x: jvm.Type.Qualified if x.value.idents.startsWith(pkg.idents) => code"$tpe.$textName"
+        case TypesScala.BigDecimal                                                                  => code"$Text.bigDecimalInstance"
+        case TypesScala.Boolean                                                                     => code"$Text.booleanInstance"
+        case TypesScala.Double                                                                      => code"$Text.doubleInstance"
+        case TypesScala.Float                                                                       => code"$Text.floatInstance"
+        case TypesScala.Int                                                                         => code"$Text.intInstance"
+        case TypesScala.Long                                                                        => code"$Text.longInstance"
+        case TypesJava.String                                                                       => code"$Text.stringInstance"
+        case jvm.Type.ArrayOf(TypesScala.Byte)                                                      => code"$Text.byteArrayInstance"
+        case lang.Optional(targ)                                                                    => code"$Text.option(${dialect.usingCall}${lookupTextFor(targ)})"
+        case jvm.Type.TApply(default.Defaulted, List(targ))                                         => code"${default.Defaulted}.$textName(${dialect.usingCall}${lookupTextFor(targ)})"
+        case x: jvm.Type.Qualified if x.value.idents.startsWith(pkg.idents)                         => code"$tpe.$textName"
         case jvm.Type.ArrayOf(targ: jvm.Type.Qualified) if targ.value.idents.startsWith(pkg.idents) =>
           val summoner = if (dialect == Dialect.Scala2XSource3) "implicitly" else "summon"
           code"$Text.iterableInstance[${TypesScala.Array}, $targ](${dialect.usingCall}${lookupTextFor(targ)}, $summoner)"

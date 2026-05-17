@@ -30,7 +30,7 @@ class SqlCast(needsTimestampCasts: Boolean) {
       // DuckDB types - handle similar to PostgreSQL
       case db.DuckDbType.Enum(name, _)                                           => Some(SqlCastValue(name))
       case db.DuckDbType.Boolean | db.DuckDbType.Text | db.DuckDbType.VarChar(_) => None
-      case _: db.DuckDbType =>
+      case _: db.DuckDbType                                                      =>
         udtName.map {
           case ArrayName(x) => SqlCastValue(x + "[]")
           case other        => SqlCastValue(other)
@@ -40,7 +40,7 @@ class SqlCast(needsTimestampCasts: Boolean) {
       // PostgreSQL types
       case db.PgType.EnumRef(enm)                                    => Some(SqlCastValue(enm.name.value))
       case db.PgType.Boolean | db.PgType.Text | db.PgType.VarChar(_) => None
-      case _: db.PgType =>
+      case _: db.PgType                                              =>
         udtName.map {
           case ArrayName(x) => SqlCastValue(x + "[]")
           case other        => SqlCastValue(other)
@@ -60,9 +60,9 @@ class SqlCast(needsTimestampCasts: Boolean) {
         Some(SqlCastValue("text"))
       case db.PgType.Array(db.Unknown(_)) | db.PgType.Array(db.PgType.DomainRef(_, _, db.Unknown(_))) =>
         Some(SqlCastValue("text[]"))
-      case _: db.MariaType     => None
-      case _: db.DuckDbType    => None // DuckDB doesn't need special casts for reading
-      case _: db.SqlServerType => None // SQL Server doesn't need special casts for reading
+      case _: db.MariaType                       => None
+      case _: db.DuckDbType                      => None // DuckDB doesn't need special casts for reading
+      case _: db.SqlServerType                   => None // SQL Server doesn't need special casts for reading
       case db.PgType.DomainRef(_, _, underlying) =>
         fromPg(underlying)
       case db.PgType.PGmoney =>

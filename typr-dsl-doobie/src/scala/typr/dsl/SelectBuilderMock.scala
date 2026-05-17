@@ -36,12 +36,13 @@ final case class SelectBuilderMock[Fields, Row](
       for {
         lefts <- this.toList
         rights <- otherMock.toList
-      } yield for {
-        left <- lefts
-        right <- rights
-        newRow = (left, right)
-        if newStructure.untypedEval(pred(newStructure.fields), newRow).getOrElse(false)
-      } yield newRow
+      } yield
+        for {
+          left <- lefts
+          right <- rights
+          newRow = (left, right)
+          if newStructure.untypedEval(pred(newStructure.fields), newRow).getOrElse(false)
+        } yield newRow
 
     SelectBuilderMock[Fields ~ Fields2, Row ~ Row2](newStructure, newRows, SelectParams.empty)
   }

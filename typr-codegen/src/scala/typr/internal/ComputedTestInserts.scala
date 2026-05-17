@@ -61,7 +61,7 @@ object ComputedTestInserts {
                 go(x.underlying, x.col.dbCol.tpe, None).map(default => jvm.New(x.tpe, List(jvm.Arg.Pos(default))).code)
               case x: IdComputed.UnaryInherited => go(x.underlying, x.col.dbCol.tpe, None)
               case x: IdComputed.UnaryNoIdType  => go(x.underlying, x.col.dbCol.tpe, None)
-              case x: IdComputed.UnaryOpenEnum =>
+              case x: IdComputed.UnaryOpenEnum  =>
                 go(x.underlying, x.col.dbCol.tpe, None).map(default => code"${x.tpe}.apply($default)")
               case _: IdComputed.UnaryUserSpecified => None
             }
@@ -161,7 +161,7 @@ object ComputedTestInserts {
           case TypesScala.Char => Some(lang.Random.nextPrintableChar(r))
           case lang.Byte       => Some(lang.toByte(lang.Random.nextIntBounded(r, lang.maxValue(lang.Byte))))
           case lang.Short      => Some(lang.toShort(lang.Random.nextIntBounded(r, lang.maxValue(lang.Short))))
-          case lang.Int =>
+          case lang.Int        =>
             dbType match {
               case db.PgType.Int2                 => Some(lang.Random.nextIntBounded(r, lang.maxValue(lang.Short)))
               case db.MariaType.MediumInt         => Some(lang.Random.nextIntBounded(r, code"8388607"))
@@ -174,10 +174,10 @@ object ComputedTestInserts {
           case lang.BigDecimal => Some(lang.bigDecimalFromDouble(lang.Random.nextDouble(r)))
           case TypesJava.UUID  => Some(lang.Random.randomUUID(r))
           // Raw Java date/time types (used by DbLib.Typo)
-          case TypesJava.LocalDate     => Some(defaultLocalDate)
-          case TypesJava.LocalTime     => Some(defaultLocalTime)
-          case TypesJava.LocalDateTime => Some(defaultLocalDateTime)
-          case TypesJava.OffsetTime    => Some(code"$defaultLocalTime.atOffset($defaultZoneOffset)")
+          case TypesJava.LocalDate      => Some(defaultLocalDate)
+          case TypesJava.LocalTime      => Some(defaultLocalTime)
+          case TypesJava.LocalDateTime  => Some(defaultLocalDateTime)
+          case TypesJava.OffsetTime     => Some(code"$defaultLocalTime.atOffset($defaultZoneOffset)")
           case TypesJava.OffsetDateTime =>
             Some(code"${TypesJava.OffsetDateTime}.of($defaultLocalDateTime, $defaultZoneOffset)")
           case TypesJava.Instant =>

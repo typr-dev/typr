@@ -75,7 +75,7 @@ object minimize {
             case jvm.Call(target, argGroups) =>
               go(target)
               argGroups.foreach(group => group.args.foreach(goTree))
-            case jvm.Ident(_) => ()
+            case jvm.Ident(_)  => ()
             case x: jvm.QIdent =>
               if (!b(x)) {
                 b += x
@@ -128,7 +128,7 @@ object minimize {
             case jvm.Param(_, _, _, tpe, maybeCode) =>
               goTree(tpe)
               maybeCode.foreach(go)
-            case jvm.StrLit(_) => ()
+            case jvm.StrLit(_)                  => ()
             case jvm.LocalVar(name, tpe, value) =>
               goTree(name)
               tpe.foreach(goTree)

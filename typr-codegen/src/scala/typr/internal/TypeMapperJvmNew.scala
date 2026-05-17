@@ -122,7 +122,7 @@ case class TypeMapperJvmNew(
           case db.PgType.Array(elementType) => lang.ListType.tpe.of(baseType(elementType))
           case db.PgType.Boolean            => lang.Boolean
           case db.PgType.Bytea              => lang.ByteArray
-          case db.PgType.Bpchar(maybeN) =>
+          case db.PgType.Bpchar(maybeN)     =>
             maybeN match {
               case Some(n) if n != 2147483647 => lang.String.withComment(s"bpchar, max $n chars")
               case _                          => lang.String.withComment(s"bpchar")
@@ -180,7 +180,7 @@ case class TypeMapperJvmNew(
           case db.PgType.TimestampTz           => TypesJava.Instant
           case db.PgType.UUID                  => TypesJava.UUID
           case db.PgType.Xml                   => TypesJava.runtime.Xml
-          case db.PgType.VarChar(maybeN) =>
+          case db.PgType.VarChar(maybeN)       =>
             maybeN match {
               case Some(n) if n != 2147483647 => lang.String.withComment(s"max $n chars")
               case _                          => lang.String
@@ -227,7 +227,7 @@ case class TypeMapperJvmNew(
           case db.MariaType.Timestamp(_)      => TypesJava.LocalDateTime
           case db.MariaType.Year              => TypesJava.Year
           case db.MariaType.Enum(_)           => lang.String // MariaDB inline ENUMs are stored as strings
-          case db.MariaType.Set(values) =>
+          case db.MariaType.Set(values)       =>
             mariaSetLookup.get(values.sorted) match {
               case Some(setType) => setType.tpe
               case None          => TypesJava.maria.MariaSet
@@ -247,39 +247,39 @@ case class TypeMapperJvmNew(
         }
       case x: db.DuckDbType =>
         x match {
-          case db.DuckDbType.TinyInt         => lang.Byte
-          case db.DuckDbType.SmallInt        => lang.Short
-          case db.DuckDbType.Integer         => lang.Int
-          case db.DuckDbType.BigInt          => lang.Long
-          case db.DuckDbType.HugeInt         => TypesJava.BigInteger
-          case db.DuckDbType.UTinyInt        => TypesJava.unsigned.Uint1
-          case db.DuckDbType.USmallInt       => TypesJava.unsigned.Uint2
-          case db.DuckDbType.UInteger        => TypesJava.unsigned.Uint4
-          case db.DuckDbType.UBigInt         => TypesJava.unsigned.Uint8
-          case db.DuckDbType.UHugeInt        => TypesJava.BigInteger
-          case db.DuckDbType.Float           => lang.Float
-          case db.DuckDbType.Double          => lang.Double
-          case db.DuckDbType.Decimal(_, _)   => lang.BigDecimal
-          case db.DuckDbType.Boolean         => lang.Boolean
-          case db.DuckDbType.VarChar(_)      => lang.String
-          case db.DuckDbType.Char(_)         => lang.String
-          case db.DuckDbType.Text            => lang.String
-          case db.DuckDbType.Blob            => lang.ByteArrayType
-          case db.DuckDbType.Bit(_)          => lang.ByteArrayType
-          case db.DuckDbType.Date            => TypesJava.LocalDate
-          case db.DuckDbType.Time            => TypesJava.LocalTime
-          case db.DuckDbType.Timestamp       => TypesJava.LocalDateTime
-          case db.DuckDbType.TimestampTz     => TypesJava.Instant
-          case db.DuckDbType.TimestampS      => TypesJava.LocalDateTime
-          case db.DuckDbType.TimestampMS     => TypesJava.LocalDateTime
-          case db.DuckDbType.TimestampNS     => TypesJava.LocalDateTime
-          case db.DuckDbType.TimeTz          => TypesJava.OffsetTime
-          case db.DuckDbType.Interval        => TypesJava.Duration
-          case db.DuckDbType.UUID            => TypesJava.UUID
-          case db.DuckDbType.Json            => TypesJava.runtime.Json
-          case db.DuckDbType.Enum(name, _)   => jvm.Type.Qualified(naming.enumName(db.RelationName(None, name)))
-          case db.DuckDbType.ListType(_)     => lang.String.withComment("LIST type - mapped to String")
-          case db.DuckDbType.ArrayType(_, _) => lang.String.withComment("ARRAY type - mapped to String")
+          case db.DuckDbType.TinyInt                     => lang.Byte
+          case db.DuckDbType.SmallInt                    => lang.Short
+          case db.DuckDbType.Integer                     => lang.Int
+          case db.DuckDbType.BigInt                      => lang.Long
+          case db.DuckDbType.HugeInt                     => TypesJava.BigInteger
+          case db.DuckDbType.UTinyInt                    => TypesJava.unsigned.Uint1
+          case db.DuckDbType.USmallInt                   => TypesJava.unsigned.Uint2
+          case db.DuckDbType.UInteger                    => TypesJava.unsigned.Uint4
+          case db.DuckDbType.UBigInt                     => TypesJava.unsigned.Uint8
+          case db.DuckDbType.UHugeInt                    => TypesJava.BigInteger
+          case db.DuckDbType.Float                       => lang.Float
+          case db.DuckDbType.Double                      => lang.Double
+          case db.DuckDbType.Decimal(_, _)               => lang.BigDecimal
+          case db.DuckDbType.Boolean                     => lang.Boolean
+          case db.DuckDbType.VarChar(_)                  => lang.String
+          case db.DuckDbType.Char(_)                     => lang.String
+          case db.DuckDbType.Text                        => lang.String
+          case db.DuckDbType.Blob                        => lang.ByteArrayType
+          case db.DuckDbType.Bit(_)                      => lang.ByteArrayType
+          case db.DuckDbType.Date                        => TypesJava.LocalDate
+          case db.DuckDbType.Time                        => TypesJava.LocalTime
+          case db.DuckDbType.Timestamp                   => TypesJava.LocalDateTime
+          case db.DuckDbType.TimestampTz                 => TypesJava.Instant
+          case db.DuckDbType.TimestampS                  => TypesJava.LocalDateTime
+          case db.DuckDbType.TimestampMS                 => TypesJava.LocalDateTime
+          case db.DuckDbType.TimestampNS                 => TypesJava.LocalDateTime
+          case db.DuckDbType.TimeTz                      => TypesJava.OffsetTime
+          case db.DuckDbType.Interval                    => TypesJava.Duration
+          case db.DuckDbType.UUID                        => TypesJava.UUID
+          case db.DuckDbType.Json                        => TypesJava.runtime.Json
+          case db.DuckDbType.Enum(name, _)               => jvm.Type.Qualified(naming.enumName(db.RelationName(None, name)))
+          case db.DuckDbType.ListType(_)                 => lang.String.withComment("LIST type - mapped to String")
+          case db.DuckDbType.ArrayType(_, _)             => lang.String.withComment("ARRAY type - mapped to String")
           case db.DuckDbType.MapType(keyType, valueType) =>
             lang.MapOps.tpe.of(baseType(keyType), baseType(valueType))
           case s: db.DuckDbType.StructType =>

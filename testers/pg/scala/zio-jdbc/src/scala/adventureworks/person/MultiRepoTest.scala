@@ -60,7 +60,7 @@ case class PersonWithAddressesRepo(
       currentAttachedAddresses <- currentAddressesWithAddresstype.forEach { case (addresstypeId, address) =>
         oldAttachedAddresses.find(x => x.addressid == address.addressid && x.addresstypeid == addresstypeId) match {
           case Some(bea) => ZIO.succeed(bea)
-          case None =>
+          case None      =>
             businessentityAddressRepo
               .insert(
                 BusinessentityaddressRowUnsaved(pa.person.businessentityid, address.addressid, addresstypeId)

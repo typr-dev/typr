@@ -16,7 +16,7 @@ case class TypeMapperJvmOld(lang: Lang, typeOverride: TypeOverride, nullabilityO
           case db.PgType.Array(elementType) => jvm.Type.ArrayOf(baseType(elementType))
           case db.PgType.Boolean            => lang.Boolean
           case db.PgType.Bytea              => customTypes.TypoBytea.typoType
-          case db.PgType.Bpchar(maybeN) =>
+          case db.PgType.Bpchar(maybeN)     =>
             maybeN match {
               case Some(n) if n > 0 && n != 2147483647 => lang.String.withComment(s"bpchar, max $n chars")
               case _                                   => lang.String.withComment(s"bpchar")
@@ -74,7 +74,7 @@ case class TypeMapperJvmOld(lang: Lang, typeOverride: TypeOverride, nullabilityO
           case db.PgType.TimestampTz           => customTypes.TypoInstant.typoType
           case db.PgType.UUID                  => customTypes.TypoUUID.typoType
           case db.PgType.Xml                   => customTypes.TypoXml.typoType
-          case db.PgType.VarChar(maybeN) =>
+          case db.PgType.VarChar(maybeN)       =>
             maybeN match {
               case Some(n) if n > 0 && n != 2147483647 => lang.String.withComment(s"max $n chars")
               case _                                   => lang.String

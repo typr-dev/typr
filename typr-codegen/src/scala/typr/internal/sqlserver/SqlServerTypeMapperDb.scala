@@ -172,7 +172,7 @@ case class SqlServerTypeMapperDb(domains: List[db.Domain]) extends TypeMapperDb 
         db.SqlServerType.Time(datetimePrecision.map(_.toInt))
       case "datetime"      => db.SqlServerType.DateTime
       case "smalldatetime" => db.SqlServerType.SmallDateTime
-      case "datetime2" =>
+      case "datetime2"     =>
         db.SqlServerType.DateTime2(datetimePrecision.map(_.toInt))
       case "datetimeoffset" =>
         db.SqlServerType.DateTimeOffset(datetimePrecision.map(_.toInt))

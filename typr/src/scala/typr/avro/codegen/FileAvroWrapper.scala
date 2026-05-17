@@ -1,9 +1,9 @@
 package typr.avro.codegen
 
 import typr.avro.ComputedAvroWrapper
-import typr.internal.codegen.{CodeInterpolator, toCode}
+import typr.internal.codegen.CodeInterpolator
 import typr.jvm
-import typr.jvm.Code.{CodeOps, TreeOps}
+import typr.jvm.Code.TreeOps
 import typr.openapi.codegen.JsonLibSupport
 import typr.{Lang, Scope}
 

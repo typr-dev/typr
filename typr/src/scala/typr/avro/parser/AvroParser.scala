@@ -18,7 +18,7 @@ object AvroParser {
       case s: java.lang.String       => s""""${escapeJsonString(s)}""""
       case n: java.lang.Number       => n.toString
       case b: java.lang.Boolean      => b.toString
-      case m: java.util.Map[_, _] =>
+      case m: java.util.Map[_, _]    =>
         val entries = m.asScala.map { case (k, v) => s""""$k": ${defaultValueToJson(v.asInstanceOf[AnyRef])}""" }
         s"{${entries.mkString(", ")}}"
       case l: java.util.List[_] =>
@@ -86,7 +86,7 @@ object AvroParser {
 
         resolutionResults.collectFirst { case Left(e) => e } match {
           case Some(error) => Left(error)
-          case None =>
+          case None        =>
             val resolved = resolutionResults.collect { case Right(r) => r }
             val resolvedContents = resolved.map { case (file, json, _) => file -> json }.toMap
             val dependencies = resolved.map { case (file, _, deps) => file -> deps }.toMap
@@ -336,7 +336,7 @@ object AvroParser {
     schema.getType match {
       case Schema.Type.NULL    => AvroType.Null
       case Schema.Type.BOOLEAN => AvroType.Boolean
-      case Schema.Type.INT =>
+      case Schema.Type.INT     =>
         logicalType match {
           case Some("date")        => AvroType.Date
           case Some("time-millis") => AvroType.TimeMillis
@@ -356,7 +356,7 @@ object AvroParser {
         }
       case Schema.Type.FLOAT  => AvroType.Float
       case Schema.Type.DOUBLE => AvroType.Double
-      case Schema.Type.BYTES =>
+      case Schema.Type.BYTES  =>
         logicalType match {
           case Some("decimal") =>
             val precision = schema.getObjectProp("precision").asInstanceOf[java.lang.Integer].intValue()
