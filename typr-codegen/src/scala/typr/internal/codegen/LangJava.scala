@@ -6,7 +6,7 @@ import typr.jvm.Code.TreeOps
 import typr.jvm.Type
 
 case object LangJava extends Lang {
-  override val `;` : jvm.Code = code";"
+  override val `;`: jvm.Code = code";"
   override val dsl: DslQualifiedNames = DslQualifiedNames.Java
 
   override val typeSupport: TypeSupport = TypeSupportJava
@@ -177,7 +177,7 @@ case object LangJava extends Lang {
         code"$tpe.$typeArgStr${jvm.Ident("of")}(${args.map(a => renderTree(a, ctx)).mkCode(", ")})"
       case jvm.Param(anns, cs, name, tpe, _) => code"${renderComments(cs).getOrElse(jvm.Code.Empty)}${renderAnnotationsInline(anns)}$tpe $name"
       case jvm.QIdent(value)                 => value.map(i => renderTree(i, ctx)).mkCode(".")
-      case jvm.StrLit(str) =>
+      case jvm.StrLit(str)                   =>
         val escaped = str
           .replace("\\", "\\\\")
           .replace("\"", "\\\"")
@@ -205,7 +205,7 @@ case object LangJava extends Lang {
       case jvm.Type.Primitive(name)                        => name
       case jvm.RuntimeInterpolation(value)                 => value
       case jvm.Import(_, _)                                => jvm.Code.Empty // Import node just triggers import, no code output
-      case jvm.IfExpr(pred, thenp, elsep) =>
+      case jvm.IfExpr(pred, thenp, elsep)                  =>
         code"""|($pred
                |  ? $thenp
                |  : $elsep)""".stripMargin
@@ -395,7 +395,10 @@ case object LangJava extends Lang {
             val body = jvm.New(target, cls.params.map { p => jvm.Arg.Pos(p.name) })
             // Move param comment to method level, clear param comment
             val paramWithoutComment = param.copy(annotations = Nil, comments = jvm.Comments.Empty)
-            renderTree(jvm.Method(Nil, param.comments, Nil, name, List(paramWithoutComment), Nil, clsType, Nil, jvm.Body.Expr(body.code), isOverride = false, isDefault = false), memberCtx)
+            renderTree(
+              jvm.Method(Nil, param.comments, Nil, name, List(paramWithoutComment), Nil, clsType, Nil, jvm.Body.Expr(body.code), isOverride = false, isDefault = false),
+              memberCtx
+            )
           }
 
         // For wrapper types with a single value field, generate toString() that returns just the value
@@ -654,7 +657,7 @@ case object LangJava extends Lang {
     params match {
       case Nil                       => code"()"
       case List(one) if !hasComments => code"(${renderTree(one, ctx)})"
-      case more =>
+      case more                      =>
         code"""|(
                |  ${more.init.map(p => code"${renderTree(p, ctx)},").mkCode("\n")}
                |  ${more.lastOption.map(p => code"${renderTree(p, ctx)}").getOrElse(jvm.Code.Empty)}
@@ -682,7 +685,7 @@ case object LangJava extends Lang {
 
   def renderComments(comments: jvm.Comments): Option[jvm.Code] = {
     comments.lines match {
-      case Nil => None
+      case Nil          => None
       case title :: Nil =>
         Some(code"""/** $title */\n""")
       case title :: rest =>
@@ -696,7 +699,7 @@ case object LangJava extends Lang {
     val argsCode = ann.args match {
       case Nil                                        => code""
       case List(jvm.Annotation.Arg.Positional(value)) => code"($value)"
-      case args =>
+      case args                                       =>
         val rendered = args
           .map {
             case jvm.Annotation.Arg.Named(name, value) => code"$name = $value"

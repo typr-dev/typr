@@ -4,7 +4,6 @@ import io.circe.Json
 import io.circe.yaml.v12.parser
 import typr.config.generated.AvroBoundary
 import typr.config.generated.DatabaseBoundary
-import typr.config.generated.DatabaseBoundary
 import typr.config.generated.DuckdbBoundary
 import typr.config.generated.GrpcBoundary
 import typr.config.generated.JsonschemaBoundary

@@ -5,10 +5,8 @@ import typr.effects.EffectTypeOps
 import typr.internal.codegen.LangScala
 import typr.openapi.codegen.{
   ApiCodegen,
-  CirceSupport,
   FrameworkSupport,
   Http4sSupport,
-  JacksonSupport,
   JaxRsSupport,
   JdkHttpClientSupport,
   Jsr380ValidationSupport,

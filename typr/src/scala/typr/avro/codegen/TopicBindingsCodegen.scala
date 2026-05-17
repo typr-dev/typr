@@ -1,10 +1,8 @@
 package typr.avro.codegen
 
 import typr.avro._
-import typr.jvm.Code.{CodeOps, TreeOps, TypeOps}
+import typr.jvm.Code.TreeOps
 import typr.{jvm, Lang, Naming, Scope}
-
-import scala.collection.mutable
 
 /** Generates type-safe topic binding constants.
   *

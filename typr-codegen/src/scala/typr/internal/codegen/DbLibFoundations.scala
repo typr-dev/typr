@@ -1201,7 +1201,7 @@ class DbLibFoundations(
         } else {
           // PostgreSQL-specific conflict action syntax
           val conflictAction = writeableColumnsWithId.toList.filterNot(c => id.cols.exists(_.name == c.name)) match {
-            case Nil => code"do nothing"
+            case Nil      => code"do nothing"
             case nonEmpty =>
               code"""|do update set
                      |  ${nonEmpty.map { c => code"${quotedColName(c)} = EXCLUDED.${quotedColName(c)}" }.mkCode(",\n")}""".stripMargin
@@ -1399,7 +1399,7 @@ class DbLibFoundations(
           val renderedWithCasts: jvm.Code =
             cols.toList.flatMap(c => adapter.readCast(c.dbCol.tpe)) match {
               case Nil => renderedScript.code
-              case _ =>
+              case _   =>
                 val row = jvm.Ident("row")
 
                 code"""|with $row as (

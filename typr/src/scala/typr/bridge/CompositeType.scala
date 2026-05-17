@@ -181,7 +181,7 @@ object AlignmentStatus {
     val warnings = List.newBuilder[String]
 
     results.foreach {
-      case FieldAlignmentResult.Aligned(_, _, true) =>
+      case FieldAlignmentResult.Aligned(_, _, true)  =>
       case FieldAlignmentResult.Aligned(c, s, false) =>
         warnings += s"Field '$c' aligned to '$s' but types may differ"
 

@@ -201,7 +201,13 @@ case class JsonLibPlay(pkg: jvm.QIdent, default: ComputedDefault, inlineImplicit
   def wrapperTypeInstances(wrapperType: jvm.Type.Qualified, fieldName: jvm.Ident, underlying: jvm.Type): JsonLib.Instances =
     JsonLib.Instances.fromGivens(
       List(
-        jvm.Given(tparams = Nil, name = readsName, implicitParams = Nil, tpe = Reads.of(wrapperType), body = code"${lookupReadsFor(underlying)}.map(${wrapperType.value.name}.apply)"),
+        jvm.Given(
+          tparams = Nil,
+          name = readsName,
+          implicitParams = Nil,
+          tpe = Reads.of(wrapperType),
+          body = code"${lookupReadsFor(underlying)}.map(${wrapperType.value.name}.apply)"
+        ),
         jvm.Given(tparams = Nil, name = writesName, implicitParams = Nil, tpe = Writes.of(wrapperType), body = code"${lookupWritesFor(underlying)}.contramap(_.$fieldName)")
       )
     )

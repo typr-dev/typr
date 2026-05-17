@@ -67,7 +67,7 @@ class PersonWithAddressesRepo(
       val key = AddressIdAddresstypeIdKey(address.addressid, addresstypeId)
       oldAttachedAddresses.get(key) match {
         case Some(existing) => existing
-        case None =>
+        case None           =>
           val newRow = BusinessentityaddressRowUnsaved(
             pa.person.businessentityid,
             address.addressid,

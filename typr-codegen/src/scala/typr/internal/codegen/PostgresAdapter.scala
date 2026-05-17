@@ -40,7 +40,7 @@ class PostgresAdapter(needsTimestampCasts: Boolean) extends DbAdapter {
           case db.Unknown(sqlType)                                       => Some(SqlCastValue(sqlType))
           case db.PgType.EnumRef(enm)                                    => Some(SqlCastValue(enm.name.value))
           case db.PgType.Boolean | db.PgType.Text | db.PgType.VarChar(_) => None
-          case _: db.PgType =>
+          case _: db.PgType                                              =>
             udtName.map {
               case ArrayName(x) => SqlCastValue(x + "[]")
               case other        => SqlCastValue(other)

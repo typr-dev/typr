@@ -2,7 +2,7 @@ package typr.avro.codegen
 
 import typr.avro._
 import typr.{jvm, Lang, Naming, Scope}
-import typr.jvm.Code.{CodeOps, TreeOps, TypeOps}
+import typr.jvm.Code.TreeOps
 import typr.internal.codegen._
 
 /** Generates versioned record types and type aliases for schema evolution.

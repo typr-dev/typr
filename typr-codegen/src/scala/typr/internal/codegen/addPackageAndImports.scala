@@ -91,8 +91,8 @@ object addPackageAndImports {
         val importFn = if (isStatic) staticImport else typeImport
         val _ = importFn(imp) // Register the import, discard shortened version
         jvm.Import(imp, isStatic) // Return unchanged
-      case jvm.IgnoreResult(expr) => jvm.IgnoreResult(expr.mapTrees(shortenNames(_, typeImport, staticImport)))
-      case jvm.NotNull(expr)      => jvm.NotNull(expr.mapTrees(shortenNames(_, typeImport, staticImport)))
+      case jvm.IgnoreResult(expr)         => jvm.IgnoreResult(expr.mapTrees(shortenNames(_, typeImport, staticImport)))
+      case jvm.NotNull(expr)              => jvm.NotNull(expr.mapTrees(shortenNames(_, typeImport, staticImport)))
       case jvm.IfExpr(pred, thenp, elsep) =>
         jvm.IfExpr(
           pred.mapTrees(t => shortenNames(t, typeImport, staticImport)),
@@ -128,7 +128,7 @@ object addPackageAndImports {
       case jvm.JavaClassOf(tpe)          => jvm.JavaClassOf(shortenNamesType(tpe, typeImport))
       case adt: jvm.Adt                  => shortenNamesAdt(adt, typeImport, staticImport)
       case cls: jvm.Class                => shortenNamesClass(cls, typeImport, staticImport)
-      case jvm.Call(target, argGroups) =>
+      case jvm.Call(target, argGroups)   =>
         jvm.Call(
           target.mapTrees(t => shortenNames(t, typeImport, staticImport)),
           argGroups.map(group =>
@@ -138,19 +138,19 @@ object addPackageAndImports {
             )
           )
         )
-      case jvm.Apply0(ref)       => jvm.Apply0(shortenNamesParam(ref, typeImport, staticImport).narrow)
-      case jvm.Apply1(ref, arg1) => jvm.Apply1(shortenNamesParam(ref, typeImport, staticImport).narrow, arg1.mapTrees(t => shortenNames(t, typeImport, staticImport)))
+      case jvm.Apply0(ref)             => jvm.Apply0(shortenNamesParam(ref, typeImport, staticImport).narrow)
+      case jvm.Apply1(ref, arg1)       => jvm.Apply1(shortenNamesParam(ref, typeImport, staticImport).narrow, arg1.mapTrees(t => shortenNames(t, typeImport, staticImport)))
       case jvm.Apply2(ref, arg1, arg2) =>
         jvm.Apply2(
           shortenNamesParam(ref, typeImport, staticImport).narrow,
           arg1.mapTrees(t => shortenNames(t, typeImport, staticImport)),
           arg2.mapTrees(t => shortenNames(t, typeImport, staticImport))
         )
-      case jvm.Select(target, name)       => jvm.Select(target.mapTrees(t => shortenNames(t, typeImport, staticImport)), name)
-      case jvm.ArrayIndex(target, num)    => jvm.ArrayIndex(target.mapTrees(t => shortenNames(t, typeImport, staticImport)), num)
-      case jvm.ApplyNullary(target, name) => jvm.ApplyNullary(target.mapTrees(t => shortenNames(t, typeImport, staticImport)), name)
-      case jvm.Arg.Named(name, value)     => jvm.Arg.Named(name, value.mapTrees(t => shortenNames(t, typeImport, staticImport)))
-      case jvm.Arg.Pos(value)             => jvm.Arg.Pos(value.mapTrees(t => shortenNames(t, typeImport, staticImport)))
+      case jvm.Select(target, name)                                  => jvm.Select(target.mapTrees(t => shortenNames(t, typeImport, staticImport)), name)
+      case jvm.ArrayIndex(target, num)                               => jvm.ArrayIndex(target.mapTrees(t => shortenNames(t, typeImport, staticImport)), num)
+      case jvm.ApplyNullary(target, name)                            => jvm.ApplyNullary(target.mapTrees(t => shortenNames(t, typeImport, staticImport)), name)
+      case jvm.Arg.Named(name, value)                                => jvm.Arg.Named(name, value.mapTrees(t => shortenNames(t, typeImport, staticImport)))
+      case jvm.Arg.Pos(value)                                        => jvm.Arg.Pos(value.mapTrees(t => shortenNames(t, typeImport, staticImport)))
       case jvm.Enum(anns, comments, tpe, values, members, instances) =>
         jvm.Enum(
           anns,
@@ -177,7 +177,7 @@ object addPackageAndImports {
           implementsInterface.map(shortenNamesType(_, typeImport)),
           members.map(shortenNamesClassMember(_, typeImport, staticImport))
         )
-      case jvm.InferredTargs(target) => jvm.InferredTargs(target.mapTrees(t => shortenNames(t, typeImport, staticImport)))
+      case jvm.InferredTargs(target)                                 => jvm.InferredTargs(target.mapTrees(t => shortenNames(t, typeImport, staticImport)))
       case jvm.GenericMethodCall(target, methodName, typeArgs, args) =>
         jvm.GenericMethodCall(
           target.mapTrees(t => shortenNames(t, typeImport, staticImport)),
@@ -185,8 +185,8 @@ object addPackageAndImports {
           typeArgs.map(shortenNamesType(_, typeImport)),
           args.map(shortenNamesArg(_, typeImport, staticImport))
         )
-      case jvm.Return(expr) => jvm.Return(expr.mapTrees(t => shortenNames(t, typeImport, staticImport)))
-      case jvm.Throw(expr)  => jvm.Throw(expr.mapTrees(t => shortenNames(t, typeImport, staticImport)))
+      case jvm.Return(expr)         => jvm.Return(expr.mapTrees(t => shortenNames(t, typeImport, staticImport)))
+      case jvm.Throw(expr)          => jvm.Throw(expr.mapTrees(t => shortenNames(t, typeImport, staticImport)))
       case jvm.Lambda(params, body) =>
         val newParams = params.map(p => jvm.LambdaParam(p.name, p.tpe.map(shortenNamesType(_, typeImport))))
         jvm.Lambda(newParams, shortenNamesBody(body, typeImport, staticImport))
@@ -196,9 +196,9 @@ object addPackageAndImports {
         jvm.SamLambda(newSamType, newLambda)
       case jvm.Cast(targetType, expr) =>
         jvm.Cast(shortenNamesType(targetType, typeImport), expr.mapTrees(t => shortenNames(t, typeImport, staticImport)))
-      case jvm.ByName(body)                 => jvm.ByName(shortenNamesBody(body, typeImport, staticImport))
-      case jvm.FieldGetterRef(rowType, fld) => jvm.FieldGetterRef(shortenNamesType(rowType, typeImport), fld)
-      case jvm.SelfNullary(name)            => jvm.SelfNullary(name)
+      case jvm.ByName(body)                          => jvm.ByName(shortenNamesBody(body, typeImport, staticImport))
+      case jvm.FieldGetterRef(rowType, fld)          => jvm.FieldGetterRef(shortenNamesType(rowType, typeImport), fld)
+      case jvm.SelfNullary(name)                     => jvm.SelfNullary(name)
       case jvm.TypedFactoryCall(tpe, typeArgs, args) =>
         jvm.TypedFactoryCall(shortenNamesType(tpe, typeImport), typeArgs.map(shortenNamesType(_, typeImport)), args.map(shortenNamesArg(_, typeImport, staticImport)))
       case jvm.StringInterpolate(i, prefix, content) => jvm.StringInterpolate(shortenNamesType(i, staticImport), prefix, content.mapTrees(t => shortenNames(t, typeImport, staticImport)))
@@ -210,7 +210,7 @@ object addPackageAndImports {
       case x: jvm.QIdent                             => x
       case x: jvm.StrLit                             => x
       case x: jvm.Summon                             => jvm.Summon(shortenNamesType(x.tpe, typeImport))
-      case jvm.LocalVar(name, tpe, value) =>
+      case jvm.LocalVar(name, tpe, value)            =>
         jvm.LocalVar(name, tpe.map(shortenNamesType(_, typeImport)), value.mapTrees(t => shortenNames(t, typeImport, staticImport)))
       case jvm.MutableVar(name, tpe, value) =>
         jvm.MutableVar(name, tpe.map(shortenNamesType(_, typeImport)), value.mapTrees(t => shortenNames(t, typeImport, staticImport)))

@@ -6,7 +6,7 @@ import typr.jvm.Type
 import typr.jvm.Code.TreeOps
 
 case class LangKotlin(typeSupport: TypeSupport) extends Lang {
-  override val `;` : jvm.Code = jvm.Code.Empty // Kotlin doesn't need semicolons
+  override val `;`: jvm.Code = jvm.Code.Empty // Kotlin doesn't need semicolons
   override val dsl: DslQualifiedNames = DslQualifiedNames.Kotlin
 
   // Type system types - Kotlin uses Kotlin's type system
@@ -240,7 +240,7 @@ case class LangKotlin(typeSupport: TypeSupport) extends Lang {
       case jvm.IgnoreResult(expr)        => expr
       case jvm.NotNull(expr)             => code"$expr!!"
       case jvm.ConstructorMethodRef(tpe) => code"::$tpe"
-      case jvm.ClassOf(tpe) =>
+      case jvm.ClassOf(tpe)              =>
         def stripTypeParams(t: jvm.Type): jvm.Type = t match {
           case jvm.Type.TApply(underlying, _) => stripTypeParams(underlying)
           case other                          => other
@@ -334,12 +334,12 @@ case class LangKotlin(typeSupport: TypeSupport) extends Lang {
       case jvm.Cast(targetType, expr) =>
         // Kotlin cast: expr as Type
         code"($expr as $targetType)"
-      case jvm.FieldGetterRef(rowType, field) => code"$rowType::$field"
+      case jvm.FieldGetterRef(rowType, field)   => code"$rowType::$field"
       case jvm.Param(_, cs, name, tpe, default) =>
         val defaultCode = default.map(d => code" = $d").getOrElse(jvm.Code.Empty)
         code"${renderComments(cs).getOrElse(jvm.Code.Empty)}$name: $tpe$defaultCode"
       case jvm.QIdent(value) => value.map(i => renderTree(i, ctx)).mkCode(".")
-      case jvm.StrLit(str) =>
+      case jvm.StrLit(str)   =>
         val escaped = str
           .replace("\\", "\\\\")
           .replace("\"", "\\\"")
@@ -347,7 +347,7 @@ case class LangKotlin(typeSupport: TypeSupport) extends Lang {
           .replace("\r", "\\r")
           .replace("\t", "\\t")
         Quote + escaped + Quote
-      case jvm.Summon(_) => sys.error("kotlin doesn't support `summon`")
+      case jvm.Summon(_)                      => sys.error("kotlin doesn't support `summon`")
       case jvm.Type.Abstract(value, variance) =>
         variance match {
           case jvm.Variance.Invariant     => value.code
@@ -383,7 +383,7 @@ case class LangKotlin(typeSupport: TypeSupport) extends Lang {
       case jvm.Type.UserDefined(underlying)   => code"/* user-picked */ $underlying"
       case jvm.Type.Void                      => code"Unit"
       case jvm.Type.Wildcard                  => code"*"
-      case jvm.Type.Primitive(name) =>
+      case jvm.Type.Primitive(name)           =>
         name match {
           case "int"     => "kotlin.Int"
           case "long"    => "kotlin.Long"
@@ -397,7 +397,7 @@ case class LangKotlin(typeSupport: TypeSupport) extends Lang {
         }
       case jvm.RuntimeInterpolation(value) => value
       case jvm.Import(_, _)                => jvm.Code.Empty // Import node just triggers import, no code output
-      case jvm.IfExpr(pred, thenp, elsep) =>
+      case jvm.IfExpr(pred, thenp, elsep)  =>
         code"(if ($pred) $thenp else $elsep)"
       case jvm.TypeSwitch(value, cases, nullCase, defaultCase, _) =>
         // Use `when (val __r = value)` to bind value once and avoid double evaluation
@@ -771,11 +771,11 @@ case class LangKotlin(typeSupport: TypeSupport) extends Lang {
         // Interfaces don't need () when extending other interfaces
         val isInterface = cls.classType == jvm.ClassType.Interface
         val extendsAndImplements: Option[jvm.Code] = (cls.`extends`, cls.implements) match {
-          case (None, Nil) => None
+          case (None, Nil)      => None
           case (Some(ext), Nil) =>
             if (isInterface) Some(code" : $ext")
             else Some(code" : $ext()")
-          case (None, impls) => Some(code" : " ++ impls.map(x => code"$x").mkCode(", "))
+          case (None, impls)      => Some(code" : " ++ impls.map(x => code"$x").mkCode(", "))
           case (Some(ext), impls) =>
             if (isInterface) Some(code" : $ext, " ++ impls.map(x => code"$x").mkCode(", "))
             else Some(code" : $ext(), " ++ impls.map(x => code"$x").mkCode(", "))
@@ -876,7 +876,7 @@ case class LangKotlin(typeSupport: TypeSupport) extends Lang {
     withVal match {
       case Nil       => code"()"
       case List(one) => code"($one)"
-      case more =>
+      case more      =>
         code"""|(
                |  ${more.init.map(p => code"$p,").mkCode("\n")}
                |  ${more.lastOption.getOrElse(jvm.Code.Empty)}
@@ -902,7 +902,7 @@ case class LangKotlin(typeSupport: TypeSupport) extends Lang {
 
   def renderComments(comments: jvm.Comments): Option[jvm.Code] = {
     comments.lines match {
-      case Nil => None
+      case Nil          => None
       case title :: Nil =>
         Some(code"""/** $title */\n""")
       case title :: rest =>
@@ -929,7 +929,7 @@ case class LangKotlin(typeSupport: TypeSupport) extends Lang {
   private def renderAnnotationArgs(args: List[jvm.Annotation.Arg]): jvm.Code = args match {
     case Nil                                        => jvm.Code.Empty
     case List(jvm.Annotation.Arg.Positional(value)) => code"(${renderAnnotationValue(value)})"
-    case args =>
+    case args                                       =>
       val rendered = args
         .map {
           case jvm.Annotation.Arg.Named(name, value) => code"$name = ${renderAnnotationValue(value)}"

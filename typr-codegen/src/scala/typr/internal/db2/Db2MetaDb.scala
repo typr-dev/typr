@@ -279,7 +279,7 @@ object Db2MetaDb {
 
     def filter(schemaMode: SchemaMode): Input = {
       schemaMode match {
-        case SchemaMode.MultiSchema => this
+        case SchemaMode.MultiSchema                => this
         case SchemaMode.SingleSchema(wantedSchema) =>
           def keep(os: Option[String]): Boolean = os.contains(wantedSchema)
           def keepStr(s: String): Boolean = s == wantedSchema

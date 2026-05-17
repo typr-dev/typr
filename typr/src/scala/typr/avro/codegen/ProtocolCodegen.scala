@@ -2,8 +2,6 @@ package typr.avro.codegen
 
 import typr.avro._
 import typr.effects.EffectTypeOps
-import typr.internal.codegen._
-import typr.jvm.Code.TypeOps
 import typr.{jvm, Lang, Naming, Scope}
 
 /** Generates typed service interfaces from Avro protocols (.avpr files) */

@@ -13,7 +13,7 @@ object ComputedRowUnsaved {
     val categorizedColumns: NonEmptyList[CategorizedColumn] =
       cols.map {
         case col if col.dbCol.maybeGenerated.exists(_.ALWAYS) => AlwaysGeneratedCol(col)
-        case col if col.dbCol.isDefaulted =>
+        case col if col.dbCol.isDefaulted                     =>
           val wrappedType = jvm.Type.TApply(default.Defaulted, List(col.tpe))
           DefaultedCol(
             col = col.copy(typoType = col.typoType.withJvmType(wrappedType)),

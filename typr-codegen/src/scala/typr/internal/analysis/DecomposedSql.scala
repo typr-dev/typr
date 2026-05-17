@@ -12,7 +12,7 @@ case class DecomposedSql(frags: List[DecomposedSql.Fragment]) {
     var paramNum = 0
     frags.collect {
       case DecomposedSql.SqlText(text) => text
-      case _: DecomposedSql.Param =>
+      case _: DecomposedSql.Param      =>
         val rendered = f(paramNum)
         paramNum += 1
         rendered
@@ -24,7 +24,7 @@ case class DecomposedSql(frags: List[DecomposedSql.Fragment]) {
     frags
       .collect {
         case DecomposedSql.SqlText(text) => jvm.Code.Str(text)
-        case _: DecomposedSql.Param =>
+        case _: DecomposedSql.Param      =>
           val rendered = f(paramNum)
           paramNum += 1
           rendered

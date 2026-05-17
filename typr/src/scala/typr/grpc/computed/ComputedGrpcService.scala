@@ -1,6 +1,6 @@
 package typr.grpc.computed
 
-import typr.grpc.{GrpcOptions, ProtoService, ProtoType}
+import typr.grpc.{ProtoService, ProtoType}
 import typr.grpc.codegen.{GrpcFramework, ProtobufTypeMapper}
 import typr.{jvm, Lang, Naming}
 

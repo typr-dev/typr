@@ -7,7 +7,6 @@ import typr.cli.config.*
 import java.nio.file.*
 import java.nio.file.StandardWatchEventKinds.*
 import scala.jdk.CollectionConverters.*
-import scala.concurrent.duration.DurationInt
 
 object Watch {
   def run(configPath: String, sourceFilter: Option[String]): IO[ExitCode] = {
@@ -131,8 +130,6 @@ object Watch {
                 println("Regenerating...")
 
                 try {
-                  import scala.concurrent.Await
-                  import scala.concurrent.duration.Duration
                   import cats.effect.unsafe.implicits.global
 
                   Generate.run(configPath, sourceFilter, quiet = true, debug = false).unsafeRunSync()

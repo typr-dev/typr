@@ -478,7 +478,7 @@ class ApiCodegen(
         case "4xx"     => code"${statusCodeIdent.code} >= 400 && ${statusCodeIdent.code} < 500"
         case "5xx"     => code"${statusCodeIdent.code} >= 500 && ${statusCodeIdent.code} < 600"
         case "default" => code"true"
-        case s =>
+        case s         =>
           val statusInt = scala.util.Try(s.toInt).getOrElse(500)
           code"${statusCodeIdent.code} == $statusInt"
       }
@@ -663,7 +663,7 @@ class ApiCodegen(
         case "4xx"     => code"${statusCodeIdent.code} >= 400 && ${statusCodeIdent.code} < 500"
         case "5xx"     => code"${statusCodeIdent.code} >= 500 && ${statusCodeIdent.code} < 600"
         case "default" => code"true"
-        case s =>
+        case s         =>
           val statusInt = scala.util.Try(s.toInt).getOrElse(500)
           code"${statusCodeIdent.code} == $statusInt"
       }
@@ -814,7 +814,7 @@ class ApiCodegen(
         case "4xx"     => code"${statusCodeIdent.code} >= 400 && ${statusCodeIdent.code} < 500"
         case "5xx"     => code"${statusCodeIdent.code} >= 500 && ${statusCodeIdent.code} < 600"
         case "default" => code"true"
-        case s =>
+        case s         =>
           val statusInt = scala.util.Try(s.toInt).getOrElse(500)
           code"${statusCodeIdent.code} == $statusInt"
       }
@@ -1687,7 +1687,7 @@ $ifElseCode"""
         case "4xx"     => code"${statusCodeIdent.code} >= 400 && ${statusCodeIdent.code} < 500"
         case "5xx"     => code"${statusCodeIdent.code} >= 500 && ${statusCodeIdent.code} < 600"
         case "default" => code"true" // default case matches everything
-        case s =>
+        case s         =>
           val statusInt = scala.util.Try(s.toInt).getOrElse(500)
           code"${statusCodeIdent.code} == $statusInt"
       }
@@ -1869,7 +1869,7 @@ $ifElseCode"""
         case "4xx"     => code"$statusCodeExpr >= 400 && $statusCodeExpr < 500"
         case "5xx"     => code"$statusCodeExpr >= 500 && $statusCodeExpr < 600"
         case "default" => code"true" // default case matches everything
-        case s =>
+        case s         =>
           val statusInt = scala.util.Try(s.toInt).getOrElse(500)
           code"$statusCodeExpr == $statusInt"
       }

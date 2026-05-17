@@ -69,7 +69,7 @@ object ExternalTools {
   def withDb2Dialect(logger: TypoLogger, tools: ExternalTools): ExternalTools = synchronized {
     tools.sqlglotDb2 match {
       case Some(_) => tools // Already downloaded
-      case None =>
+      case None    =>
         logger.info("Ensuring sqlglot-db2-dialect is available...")
 
         if (!Files.exists(tools.config.downloadsDir)) {

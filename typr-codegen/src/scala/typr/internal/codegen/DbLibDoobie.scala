@@ -358,7 +358,7 @@ class DbLibDoobie(pkg: jvm.QIdent, inlineImplicits: Boolean, default: ComputedDe
         val writeableColumnsNotId = writeableColumnsWithId.toList.filterNot(c => id.cols.exists(_.name == c.name))
 
         val conflictAction = writeableColumnsNotId match {
-          case Nil => code"do nothing"
+          case Nil      => code"do nothing"
           case nonEmpty =>
             code"""|do update set
                    |  ${nonEmpty.map { c => code"${c.dbName.code} = EXCLUDED.${c.dbName.code}" }.mkCode(",\n")}""".stripMargin
@@ -386,7 +386,7 @@ class DbLibDoobie(pkg: jvm.QIdent, inlineImplicits: Boolean, default: ComputedDe
         val writeableColumnsNotId = writeableColumnsWithId.toList.filterNot(c => id.cols.exists(_.name == c.name))
 
         val conflictAction = writeableColumnsNotId match {
-          case Nil => code"do nothing"
+          case Nil      => code"do nothing"
           case nonEmpty =>
             code"""|do update set
                    |  ${nonEmpty.map { c => code"${c.dbName.code} = EXCLUDED.${c.dbName.code}" }.mkCode(",\n")}""".stripMargin
@@ -468,7 +468,7 @@ class DbLibDoobie(pkg: jvm.QIdent, inlineImplicits: Boolean, default: ComputedDe
           val renderedWithCasts: jvm.Code =
             cols.toList.flatMap(c => sqlCast.fromPg(c.dbCol.tpe)) match {
               case Nil => renderedScript.code
-              case _ =>
+              case _   =>
                 val row = jvm.Ident("row")
 
                 code"""|with $row as (
@@ -740,14 +740,14 @@ class DbLibDoobie(pkg: jvm.QIdent, inlineImplicits: Boolean, default: ComputedDe
     if (!inlineImplicits) Get.of(tpe).code
     else
       jvm.Type.base(tpe) match {
-        case TypesScala.BigDecimal => code"$Meta.ScalaBigDecimalMeta.get"
-        case TypesScala.Boolean    => code"$Meta.BooleanMeta.get"
-        case TypesScala.Byte       => code"$Meta.ByteMeta.get"
-        case TypesScala.Double     => code"$Meta.DoubleMeta.get"
-        case TypesScala.Float      => code"$Meta.FloatMeta.get"
-        case TypesScala.Int        => code"$Meta.IntMeta.get"
-        case TypesScala.Long       => code"$Meta.LongMeta.get"
-        case TypesJava.String      => code"$Meta.StringMeta.get"
+        case TypesScala.BigDecimal             => code"$Meta.ScalaBigDecimalMeta.get"
+        case TypesScala.Boolean                => code"$Meta.BooleanMeta.get"
+        case TypesScala.Byte                   => code"$Meta.ByteMeta.get"
+        case TypesScala.Double                 => code"$Meta.DoubleMeta.get"
+        case TypesScala.Float                  => code"$Meta.FloatMeta.get"
+        case TypesScala.Int                    => code"$Meta.IntMeta.get"
+        case TypesScala.Long                   => code"$Meta.LongMeta.get"
+        case TypesJava.String                  => code"$Meta.StringMeta.get"
         case jvm.Type.ArrayOf(TypesScala.Byte) =>
           code"$Meta.ByteArrayMeta.get"
         case x: jvm.Type.Qualified if x.value.idents.startsWith(pkg.idents) =>
@@ -765,14 +765,14 @@ class DbLibDoobie(pkg: jvm.QIdent, inlineImplicits: Boolean, default: ComputedDe
     if (!inlineImplicits) Put.of(tpe).code
     else
       jvm.Type.base(tpe) match {
-        case TypesScala.BigDecimal => code"$Meta.ScalaBigDecimalMeta.put"
-        case TypesScala.Boolean    => code"$Meta.BooleanMeta.put"
-        case TypesScala.Byte       => code"$Meta.ByteMeta.put"
-        case TypesScala.Double     => code"$Meta.DoubleMeta.put"
-        case TypesScala.Float      => code"$Meta.FloatMeta.put"
-        case TypesScala.Int        => code"$Meta.IntMeta.put"
-        case TypesScala.Long       => code"$Meta.LongMeta.put"
-        case TypesJava.String      => code"$Meta.StringMeta.put"
+        case TypesScala.BigDecimal             => code"$Meta.ScalaBigDecimalMeta.put"
+        case TypesScala.Boolean                => code"$Meta.BooleanMeta.put"
+        case TypesScala.Byte                   => code"$Meta.ByteMeta.put"
+        case TypesScala.Double                 => code"$Meta.DoubleMeta.put"
+        case TypesScala.Float                  => code"$Meta.FloatMeta.put"
+        case TypesScala.Int                    => code"$Meta.IntMeta.put"
+        case TypesScala.Long                   => code"$Meta.LongMeta.put"
+        case TypesJava.String                  => code"$Meta.StringMeta.put"
         case jvm.Type.ArrayOf(TypesScala.Byte) =>
           code"$Meta.ByteArrayMeta.put"
         case x: jvm.Type.Qualified if x.value.idents.startsWith(pkg.idents) =>

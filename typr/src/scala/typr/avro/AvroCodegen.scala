@@ -4,7 +4,7 @@ import typr.avro.codegen._
 import typr.avro.parser.{AvroParseError, AvroParser, ProtocolParser, SchemaRegistryClient}
 import typr.internal.codegen.FilePreciseType
 import typr.openapi.codegen.{JsonLibSupport, NoJsonLibSupport}
-import typr.{jvm, Lang, Naming, Scope}
+import typr.{jvm, Lang, Naming}
 
 /** Main entry point for Avro/Kafka code generation */
 object AvroCodegen {

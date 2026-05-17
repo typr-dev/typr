@@ -306,7 +306,7 @@ object ApiExtractor {
   private def responseStatusCodeOrder(statusCode: String): Int = {
     scala.util.Try(statusCode.toInt).toOption match {
       case Some(c) => c
-      case None =>
+      case None    =>
         statusCode.toLowerCase match {
           case "default" => 1000
           case "2xx"     => 200
@@ -323,7 +323,7 @@ object ApiExtractor {
       case "2xx"     => ResponseStatus.Success2XX
       case "4xx"     => ResponseStatus.ClientError4XX
       case "5xx"     => ResponseStatus.ServerError5XX
-      case s =>
+      case s         =>
         scala.util.Try(s.toInt).toOption match {
           case Some(c) => ResponseStatus.Specific(c)
           case None    => ResponseStatus.Default

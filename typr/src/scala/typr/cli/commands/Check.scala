@@ -8,7 +8,7 @@ import typr.bridge.api.BridgeApiImpl
 import typr.bridge.model.*
 import typr.cli.config.*
 import typr.config.generated.{BridgeType, DomainGenerateOptions, DomainType, FieldSpecObject, FieldSpecString}
-import typr.config.generated.{AlignedSource as ConfigAlignedSource, FieldOverrideEnum, FieldOverrideObject}
+import typr.config.generated.{FieldOverrideEnum, FieldOverrideObject}
 import typr.config.generated.{FieldOverride as ConfigFieldOverride}
 
 import java.nio.file.Files
@@ -198,13 +198,13 @@ object Check {
             case "custom" =>
               val kind = obj.merge_from match {
                 case Some(fields) => CustomKind.MergeFrom(fields)
-                case None =>
+                case None         =>
                   obj.split_from match {
                     case Some(field) => CustomKind.SplitFrom(field)
-                    case None =>
+                    case None        =>
                       obj.computed_from match {
                         case Some(fields) => CustomKind.ComputedFrom(fields)
-                        case None =>
+                        case None         =>
                           CustomKind.Enrichment(obj.enrichment)
                       }
                   }

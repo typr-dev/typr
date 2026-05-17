@@ -146,8 +146,8 @@ case class Db2TypeMapperDb(
         db.DB2Type.Blob
 
       // Date/Time types
-      case "DATE" => db.DB2Type.Date
-      case "TIME" => db.DB2Type.Time
+      case "DATE"      => db.DB2Type.Date
+      case "TIME"      => db.DB2Type.Time
       case "TIMESTAMP" =>
         db.DB2Type.Timestamp(scale) // Scale is fractional seconds precision
 

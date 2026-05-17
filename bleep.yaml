@@ -1,5 +1,5 @@
 $schema: https://raw.githubusercontent.com/oyvindberg/bleep/master/schema.json
-$version: 1.0.0-M3
+$version: 1.0.0-M10
 resolvers:
 - https://packages.confluent.io/maven/
 jvm:
@@ -7,6 +7,7 @@ jvm:
 projects:
   typr-dsl:
     dependencies: dev.typr.foundations:foundations-jdbc:1.0.0-RC6
+    extends: template-publishable
     java:
       options: --release 24 -proc:none
     platform:
@@ -22,7 +23,9 @@ projects:
     - configuration: provided
       module: org.postgresql:postgresql:42.7.3
     dependsOn: typr-dsl
-    extends: template-kotlin
+    extends:
+    - template-kotlin
+    - template-publishable
     kotlin:
       options: -Xnested-type-aliases
     sourcegen:
@@ -36,7 +39,9 @@ projects:
     - configuration: provided
       module: org.postgresql:postgresql:42.7.3
     dependsOn: typr-dsl
-    extends: template-scala-3
+    extends:
+    - template-scala-3
+    - template-publishable
     sourcegen:
     - project: typr-scripts-sourcegen
       main: scripts.GeneratedRowParsers
@@ -895,7 +900,9 @@ projects:
     - org.typelevel::cats-effect:3.5.7
     dependsOn:
     - typr-codegen
-    extends: template-scala-3
+    extends:
+    - template-scala-3
+    - template-publishable
     platform:
       name: jvm
       mainClass: typr.cli.Main
@@ -924,7 +931,9 @@ projects:
     - org.postgresql:postgresql:42.7.3
     - org.slf4j:slf4j-nop:2.0.13
     dependsOn: typr-dsl-scala
-    extends: template-scala-3
+    extends:
+    - template-scala-3
+    - template-publishable
     platform:
       mainClass: com.foo.App
     scala:
@@ -934,34 +943,46 @@ projects:
     - ./generated-and-checked-in-jsonschema
   typr-dsl-anorm:
     dependsOn: typr-runtime-anorm
-    extends: template-cross
+    extends:
+    - template-cross
+    - template-publishable
     sources: ../typr-dsl-shared
   typr-dsl-doobie:
     dependsOn: typr-runtime-doobie
-    extends: template-cross
+    extends:
+    - template-cross
+    - template-publishable
     sources: ../typr-dsl-shared
   typr-dsl-zio-jdbc:
     dependsOn: typr-runtime-zio-jdbc
-    extends: template-cross
+    extends:
+    - template-cross
+    - template-publishable
     sources: ../typr-dsl-shared
   typr-runtime-anorm:
     dependencies:
     - dev.typr.foundations:foundations-jdbc:1.0.0-RC6
     - org.playframework.anorm::anorm:2.7.0
-    extends: template-cross
+    extends:
+    - template-cross
+    - template-publishable
   typr-runtime-doobie:
     dependencies:
     - dev.typr.foundations:foundations-jdbc:1.0.0-RC6
     - org.tpolecat::doobie-postgres:1.0.0-RC9
-    extends: template-cross
+    extends:
+    - template-cross
+    - template-publishable
   typr-runtime-zio-jdbc:
     dependencies:
     - dev.typr.foundations:foundations-jdbc:1.0.0-RC6
     - dev.zio::zio-jdbc:0.1.2
-    extends: template-cross
+    extends:
+    - template-cross
+    - template-publishable
   typr-scripts:
     dependencies:
-    - build.bleep::bleep-plugin-ci-release:${BLEEP_VERSION}
+    - build.bleep::bleep-core:${BLEEP_VERSION}
     - com.ibm.db2:jcc:11.5.9.0
     dependsOn: typr-codegen
     extends: template-scala-3
@@ -980,12 +1001,6 @@ scripts:
     project: typr-scripts
   generate-sources:
     main: scripts.GeneratedSources
-    project: typr-scripts
-  my-publish-local:
-    main: scripts.PublishLocal
-    project: typr-scripts
-  publish:
-    main: scripts.Publish
     project: typr-scripts
 templates:
   template-common:
@@ -1010,8 +1025,22 @@ templates:
   template-scala-3:
     extends: template-common
     scala:
-      options: -release 24 -source 3.4
+      options: -release 24 -source 3.4 -no-indent
       version: 3.8.3
+  template-publishable:
+    publish:
+      groupId: dev.typr
+      sonatypeProfileName: com.olvind
+      description: Typed postgres boilerplate generation
+      url: https://github.com/oyvindberg/typr/
+      developers:
+      - id: oyvindberg
+        name: Øyvind Raddum Berg
+        url: https://github.com/oyvindberg
+      licenses:
+      - name: MIT
+        url: http://opensource.org/licenses/MIT
+        distribution: repo
   template-kotlin:
     kotlin:
       version: 2.3.0

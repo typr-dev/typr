@@ -1,0 +1,12 @@
+{
+  "typr": {
+    "repositories": ["central"],
+    "dependencies": ["dev.typr:typr_3:latest.release"],
+    "mainClass": "typr.cli.Main",
+    "javaOptions": ["-XX:+UseG1GC"],
+    "properties": {
+      "name": "typr",
+      "description": "Type-safe code generator for JVM — databases, OpenAPI, Avro, gRPC"
+    }
+  }
+}

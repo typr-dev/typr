@@ -218,7 +218,7 @@ case class FilesTable(lang: Lang, table: ComputedTable, fkAnalysis: FkAnalysis, 
         // shortcut for id files wrapping a domain
         val maybeFromString: Option[jvm.Method] =
           x.openEnum match {
-            case OpenEnum.Text(_) => None
+            case OpenEnum.Text(_)                                        => None
             case OpenEnum.TextDomain(db.PgType.DomainRef(name, _, _), _) =>
               domainsByName.get(name).map { domain =>
                 val name = domain.underlying.constraintDefinition match {

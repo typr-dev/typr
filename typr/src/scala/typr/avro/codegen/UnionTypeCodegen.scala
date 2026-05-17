@@ -1,7 +1,7 @@
 package typr.avro.codegen
 
 import typr.avro._
-import typr.jvm.Code.{CodeOps, TreeOps, TypeOps}
+import typr.jvm.Code.{TreeOps, TypeOps}
 import typr.{jvm, Lang, Naming, Scope, TypesJava}
 import typr.internal.codegen._
 

@@ -1,6 +1,5 @@
 package typr.cli.config
 
-import io.circe.Encoder
 import typr.*
 import typr.avro.*
 import typr.cli.util.PatternMatcher
@@ -321,7 +320,7 @@ object ConfigToOptions {
   private def toLang(s: String, dialect: String, dsl: String, useNativeTypes: Boolean): Either[String, Lang] = s.toLowerCase match {
     case "java"   => Right(LangJava)
     case "kotlin" => Right(LangKotlin(TypeSupportKotlin))
-    case "scala" =>
+    case "scala"  =>
       val scalaDialect = dialect.toLowerCase match {
         case "scala2" | "scala2.13" => Dialect.Scala2XSource3
         case "scala3" | "scala3.3"  => Dialect.Scala3
@@ -464,7 +463,7 @@ object ConfigToOptions {
     overrides match {
       case None                     => TypeOverride.Empty
       case Some(map) if map.isEmpty => TypeOverride.Empty
-      case Some(map) =>
+      case Some(map)                =>
         TypeOverride.relation {
           case (relation, col) if map.contains(s"$relation.$col") =>
             map(s"$relation.$col")
@@ -473,7 +472,7 @@ object ConfigToOptions {
 
   private def convertDbMatch(db: Option[typr.config.generated.DbMatch]): typr.DbMatch =
     db match {
-      case None => typr.DbMatch.Empty
+      case None    => typr.DbMatch.Empty
       case Some(m) =>
         typr.DbMatch(
           database = stringOrArrayToList(m.source),
@@ -492,7 +491,7 @@ object ConfigToOptions {
 
   private def convertModelMatch(model: Option[typr.config.generated.ModelMatch]): typr.ModelMatch =
     model match {
-      case None => typr.ModelMatch.Empty
+      case None    => typr.ModelMatch.Empty
       case Some(m) =>
         typr.ModelMatch(
           spec = stringOrArrayToList(m.source),
@@ -508,7 +507,7 @@ object ConfigToOptions {
 
   private def convertApiMatch(api: Option[typr.config.generated.ApiMatch]): typr.ApiMatch =
     api match {
-      case None => typr.ApiMatch.Empty
+      case None    => typr.ApiMatch.Empty
       case Some(m) =>
         typr.ApiMatch(
           location = m.location.getOrElse(Nil).flatMap(locationFromString),

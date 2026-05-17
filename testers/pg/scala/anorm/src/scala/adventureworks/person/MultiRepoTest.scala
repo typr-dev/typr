@@ -51,7 +51,7 @@ class PersonWithAddressesRepo(
       pa.addresses.map { case (addressTypeName, wanted) =>
         oldStoredAddressTypes.get(addressTypeName) match {
           case Some(addresstypeId) => (addresstypeId, wanted)
-          case None =>
+          case None                =>
             val inserted = addresstypeRepo.insert(AddresstypeRowUnsaved(name = addressTypeName))
             (inserted.addresstypeid, wanted)
         }
@@ -69,7 +69,7 @@ class PersonWithAddressesRepo(
     oldAttachedAddresses.foreach { case (_, ba) =>
       currentAddressesByType.get(ba.addresstypeid) match {
         case Some(address) if address.addressid == ba.addressid =>
-        case _ =>
+        case _                                                  =>
           businessentityAddressRepo.deleteById(ba.compositeId)
       }
     }
@@ -77,7 +77,7 @@ class PersonWithAddressesRepo(
     currentAddressesByType.map { case (addresstypeId, address) =>
       oldAttachedAddresses.get((address.addressid, addresstypeId)) match {
         case Some(bea) => bea
-        case None =>
+        case None      =>
           val newRow = BusinessentityaddressRowUnsaved(pa.person.businessentityid, address.addressid, addresstypeId)
           businessentityAddressRepo.insert(newRow)
       }

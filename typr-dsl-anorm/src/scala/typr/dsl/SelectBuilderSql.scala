@@ -175,6 +175,7 @@ object SelectBuilderSql {
         rowParser = (i: Int) =>
           for {
             r1 <- leftInstance.rowParser(i)
+
             /** note, `RowParser` has a `?` combinator, but it doesn't work. fails with exception instead of [[anorm.Error]] */
             r2 <- RowParser[Option[Row2]] { row =>
               try rightInstance.rowParser(i + leftInstance.columns.size)(row).map(Some.apply)

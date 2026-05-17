@@ -15,7 +15,7 @@ object OrderByOrSeek {
 
     val maybeSeekPredicate: Option[SqlExpr[Boolean]] =
       seeks match {
-        case Nil => None
+        case Nil      => None
         case nonEmpty =>
           val seekOrderBys: List[SortOrder[?]] =
             nonEmpty.map { case seek: Seek[Fields, _] @unchecked /* for 2.13*/ => seek.f(fields) }

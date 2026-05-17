@@ -38,7 +38,7 @@ object PatternMatcher {
 
   def fromFeatureMatcherWithDefault(matcher: Option[FeatureMatcher], default: Selector): Selector =
     matcher match {
-      case None => default
+      case None                          => default
       case Some(m: FeatureMatcherString) =>
         if (m.value == "all") Selector.All
         else patternToSelector(m.value)
@@ -46,12 +46,12 @@ object PatternMatcher {
         toSelector(m.value)
       case Some(m: FeatureMatcherObject) =>
         val includeSelector = m.include match {
-          case None => Selector.All
+          case None       => Selector.All
           case Some(json) =>
             json.asString match {
               case Some("all")   => Selector.All
               case Some(pattern) => patternToSelector(pattern)
-              case None =>
+              case None          =>
                 json.asArray.map(_.flatMap(_.asString).toList) match {
                   case Some(patterns) => toSelector(patterns)
                   case None           => Selector.All
@@ -70,7 +70,7 @@ object PatternMatcher {
 
   def fromMatcherValue(matcher: Option[MatcherValue]): Selector =
     matcher match {
-      case None => Selector.All
+      case None                        => Selector.All
       case Some(m: MatcherValueString) =>
         if (m.value == "all") Selector.All
         else patternToSelector(m.value)
@@ -78,12 +78,12 @@ object PatternMatcher {
         toSelector(m.value)
       case Some(m: MatcherValueObject) =>
         val includeSelector = m.include match {
-          case None => Selector.All
+          case None       => Selector.All
           case Some(json) =>
             json.asString match {
               case Some("all")   => Selector.All
               case Some(pattern) => patternToSelector(pattern)
-              case None =>
+              case None          =>
                 json.asArray.map(_.flatMap(_.asString).toList) match {
                   case Some(patterns) => toSelector(patterns)
                   case None           => Selector.All

@@ -72,7 +72,7 @@ object NonEmptyList {
   def fromList[T](ts: List[T]): Option[NonEmptyList[T]] =
     ts match {
       case head :: tail => Some(NonEmptyList(head, tail))
-      case Nil =>
+      case Nil          =>
         None
     }
 }

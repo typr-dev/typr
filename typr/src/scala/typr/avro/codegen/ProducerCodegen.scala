@@ -1,8 +1,8 @@
 package typr.avro.codegen
 
 import typr.avro._
-import typr.effects.{EffectType, EffectTypeOps}
-import typr.jvm.Code.{CodeOps, TreeOps, TypeOps}
+import typr.effects.EffectTypeOps
+import typr.jvm.Code.{CodeOps, TreeOps}
 import typr.internal.codegen._
 import typr.{jvm, Lang, Naming, Scope}
 

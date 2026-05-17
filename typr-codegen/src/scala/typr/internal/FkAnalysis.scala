@@ -52,8 +52,8 @@ object FkAnalysis {
     lazy val exprForColumn: Map[jvm.Ident, jvm.Code] =
       exprsForColumn.map { case (colName, exprs) =>
         exprs match {
-          case Nil        => sys.error("unexpected")
-          case List(expr) => (colName, expr)
+          case Nil           => sys.error("unexpected")
+          case List(expr)    => (colName, expr)
           case expr :: exprs =>
             val requires = exprs.map(e => code"""require($expr == $e, "${expr.render(lang).lines.mkString("\n")} != ${e.render(lang).lines.mkString("\n")}")""")
             val finalExpr = code"""|{

@@ -30,7 +30,7 @@ object findTypeFromFk {
     all.distinctByCompat { e => jvm.Type.base(e.merge) } match {
       case Nil      => None
       case e :: Nil => Some(e.merge)
-      case all =>
+      case all      =>
         val fromSelf = all.collectFirst { case Left(tpe) => tpe }
         val fromOthers = all.collectFirst { case Right(tpe) => tpe }
         val renderedTypes = all.map { e => lang.renderTree(e.merge, lang.Ctx.Empty) }

@@ -84,7 +84,7 @@ object ComputedBridgeCompositeType {
       case "uuid"                           => TypesJava.UUID
       case "bytearray" | "bytes" | "byte[]" => jvm.Type.ArrayOf(lang.Byte)
       case "json"                           => jvm.Type.Qualified("com.fasterxml.jackson.databind.JsonNode")
-      case other =>
+      case other                            =>
         if (other.contains(".")) {
           jvm.Type.Qualified(other)
         } else {

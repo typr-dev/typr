@@ -162,13 +162,12 @@ object ProtocolParser {
   private def convertMessage(name: String, message: AnyRef): AvroMessage = {
     // Protocol.Message is a nested Java class, access via reflection-like duck typing
     val protoMessage = message.asInstanceOf[{
-        def getRequest(): Schema
-        def getResponse(): Schema
-        def getErrors(): Schema
-        def getDoc(): String
-        def isOneWay(): Boolean
-      }
-    ]
+      def getRequest(): Schema
+      def getResponse(): Schema
+      def getErrors(): Schema
+      def getDoc(): String
+      def isOneWay(): Boolean
+    }]
 
     val request = protoMessage.getRequest().getFields.asScala.toList.map(convertField)
     val response = convertType(protoMessage.getResponse())
@@ -197,7 +196,7 @@ object ProtocolParser {
     schema.getType match {
       case Schema.Type.NULL    => AvroType.Null
       case Schema.Type.BOOLEAN => AvroType.Boolean
-      case Schema.Type.INT =>
+      case Schema.Type.INT     =>
         logicalType match {
           case Some("date")        => AvroType.Date
           case Some("time-millis") => AvroType.TimeMillis
@@ -217,7 +216,7 @@ object ProtocolParser {
         }
       case Schema.Type.FLOAT  => AvroType.Float
       case Schema.Type.DOUBLE => AvroType.Double
-      case Schema.Type.BYTES =>
+      case Schema.Type.BYTES  =>
         logicalType match {
           case Some("decimal") =>
             val precision = schema.getObjectProp("precision").asInstanceOf[java.lang.Integer].intValue()
@@ -269,7 +268,7 @@ object ProtocolParser {
       case s: java.lang.String       => s""""${escapeJsonString(s)}""""
       case n: java.lang.Number       => n.toString
       case b: java.lang.Boolean      => b.toString
-      case m: java.util.Map[_, _] =>
+      case m: java.util.Map[_, _]    =>
         val entries = m.asScala.map { case (k, v) => s""""$k": ${defaultValueToJson(v.asInstanceOf[AnyRef])}""" }
         s"{${entries.mkString(", ")}}"
       case l: java.util.List[_] =>

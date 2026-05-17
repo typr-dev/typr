@@ -50,7 +50,7 @@ object generateFromDb {
 
     Await.result(combined, Duration.Inf) match {
       case Right(generated) => generated
-      case Left(error) =>
+      case Left(error)      =>
         error match {
           case internal.generate.GenerateError.IncompatibleTypes(errors) =>
             errors.foreach(options.logger.warn)

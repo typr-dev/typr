@@ -30,7 +30,7 @@ data class ProductDetailsWithSalesSqlRow(
   @field:JsonProperty("times_ordered") val timesOrdered: kotlin.Long?,
   /** Points to [testdb.order_items.OrderItemsRow.quantity] */
   @field:JsonProperty("total_quantity_sold") val totalQuantitySold: kotlin.Long?,
-  /** Points to [testdb.order_items.OrderItemsRow.quantity] */
+  /** Points to [testdb.order_items.OrderItemsRow.unitPrice] */
   @field:JsonProperty("total_revenue") val totalRevenue: kotlin.Double?,
   /** Points to [testdb.order_items.OrderItemsRow.orderId] */
   val popularity: kotlin.String?

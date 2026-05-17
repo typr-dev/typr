@@ -92,7 +92,7 @@ object SchemaRegistryClient {
       if (fetchAllVersions) {
         // Fetch all versions for this subject
         fetchAllVersionsForSubject(client, baseUrl, subject) match {
-          case Left(error) => List(Left(error))
+          case Left(error)             => List(Left(error))
           case Right(versionedSchemas) =>
             versionedSchemas.map { vs =>
               parseSchemaJsonWithVersion(vs.schemaJson, topicName, directoryGroup, schemaRole, Some(vs.version))
