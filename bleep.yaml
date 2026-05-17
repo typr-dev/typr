@@ -898,6 +898,13 @@ projects:
     - io.circe::circe-generic:0.14.10
     - io.circe::circe-yaml-v12:1.15.0
     - org.typelevel::cats-effect:3.5.7
+    - com.olvind.jatatui:crossterm:0.30.0
+    - com.olvind.jatatui:jatatui-core:0.30.0
+    - com.olvind.jatatui:jatatui-widgets:0.30.0
+    - com.olvind.jatatui:jatatui-crossterm:0.30.0
+    - com.olvind.jatatui:jatatui-react:0.30.0
+    - com.olvind.jatatui:jatatui-components:0.30.0
+    - com.lihaoyi::cask:0.9.5
     dependsOn:
     - typr-codegen
     extends:
