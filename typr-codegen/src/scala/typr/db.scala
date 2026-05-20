@@ -402,8 +402,48 @@ object db {
     case class DistinctType(name: RelationName, sourceType: Type) extends DB2Type
   }
 
+  sealed trait SqliteType extends Type
+  object SqliteType {
+    // INTEGER affinity
+    case object Integer extends SqliteType // generic INTEGER, Long
+    case object BigInt extends SqliteType
+    case object Int extends SqliteType // 32-bit alias
+    case object SmallInt extends SqliteType
+    case object TinyInt extends SqliteType
+    case object Boolean extends SqliteType // stored as 0/1 INTEGER
+
+    // REAL affinity
+    case object Real extends SqliteType
+    case object Double extends SqliteType
+    case object Float extends SqliteType
+
+    // NUMERIC affinity
+    case class Decimal(precision: Option[Int], scale: Option[Int]) extends SqliteType
+
+    // TEXT affinity
+    case object Text extends SqliteType
+    case class VarChar(length: Option[Int]) extends SqliteType
+    case class Char(length: Option[Int]) extends SqliteType
+    case object Clob extends SqliteType
+
+    // BLOB affinity
+    case object Blob extends SqliteType
+    case object Binary extends SqliteType
+    case object VarBinary extends SqliteType
+
+    // Date/time (ISO-8601 text by default in xerial / SqliteTypes)
+    case object Date extends SqliteType
+    case object Time extends SqliteType
+    case object Timestamp extends SqliteType
+    case object Instant extends SqliteType
+
+    // Convenience types
+    case object Uuid extends SqliteType
+    case object Json extends SqliteType
+  }
+
   // Shared/unknown type - extends PgType, MariaType, and OracleType for pattern matching
-  case class Unknown(sqlType: String) extends PgType with MariaType with DuckDbType with OracleType with SqlServerType with DB2Type
+  case class Unknown(sqlType: String) extends PgType with MariaType with DuckDbType with OracleType with SqlServerType with DB2Type with SqliteType
 
   case class Domain(name: RelationName, tpe: Type, originalType: String, isNotNull: Nullability, hasDefault: Boolean, constraintDefinition: Option[String])
   case class StringEnum(name: RelationName, values: NonEmptyList[String])

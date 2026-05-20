@@ -18,6 +18,7 @@ Typr provides full support for array and list types across databases that suppor
 | Oracle | VARRAY, Nested Table | Via collection types |
 | SQL Server | - | No array support |
 | DB2 | - | No array support |
+| SQLite | - | No array support |
 
 ## PostgreSQL Arrays
 

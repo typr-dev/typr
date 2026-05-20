@@ -2,7 +2,7 @@
  * StackContext - Global state for database and language selection
  *
  * This context provides:
- * - Selected database (postgres, mariadb, duckdb, oracle, sqlserver)
+ * - Selected database (postgres, mariadb, duckdb, oracle, sqlserver, db2, sqlite)
  * - Selected language (java, kotlin, scala)
  * - Persistence to localStorage
  * - Helper functions for checking availability

@@ -235,7 +235,7 @@ function HeroSection() {
               </div>
               <div className={styles.heroSpecRow}>
                 <dt>Boundaries</dt>
-                <dd>PostgreSQL · MariaDB · Oracle · SQL Server · DuckDB · DB2 · OpenAPI · Avro/Kafka · gRPC</dd>
+                <dd>PostgreSQL · MariaDB · Oracle · SQL Server · DuckDB · DB2 · SQLite · OpenAPI · Avro/Kafka · gRPC</dd>
               </div>
               <div className={styles.heroSpecRow}>
                 <dt>Method</dt>
@@ -854,8 +854,8 @@ function BoundariesSection() {
       n: "01",
       title: "Databases",
       tagline: "Schemas in. Repos out.",
-      desc: "Six engines: PostgreSQL, MariaDB, Oracle, SQL Server, DuckDB, DB2. Row types, ID types, repositories, type‑safe DSL queries. Full DDL fidelity — composite types, arrays, enums, domains, defaults.",
-      tags: ["6 engines", "DDL fidelity", "Type‑safe DSL"],
+      desc: "Seven engines: PostgreSQL, MariaDB, Oracle, SQL Server, DuckDB, DB2, SQLite. Row types, ID types, repositories, type‑safe DSL queries. Full DDL fidelity — composite types, arrays, enums, domains, defaults.",
+      tags: ["7 engines", "DDL fidelity", "Type‑safe DSL"],
       to: "/typr/boundaries/databases/",
     },
     {
@@ -988,7 +988,7 @@ function StackSection() {
     {
       title: "Boundaries",
       items: [
-        "PostgreSQL", "MariaDB", "Oracle", "SQL Server", "DuckDB", "DB2",
+        "PostgreSQL", "MariaDB", "Oracle", "SQL Server", "DuckDB", "DB2", "SQLite",
         "OpenAPI", "Kafka / Avro",
       ],
       soon: ["gRPC / Protobuf", "GraphQL"],

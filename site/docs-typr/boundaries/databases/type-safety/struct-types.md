@@ -18,6 +18,7 @@ A **struct type** (or composite type) combines multiple fields into a single str
 | SQL Server | **Table Types** | For table-valued parameters only |
 | MariaDB/MySQL | None | No composite type support |
 | DB2 | None | No composite type support |
+| SQLite | None | No composite type support |
 
 ## PostgreSQL Composite Types
 
@@ -76,7 +77,7 @@ Typr generates a record type for each distinct struct:
 
 ## Databases Without Struct Support
 
-MariaDB/MySQL, SQL Server (outside of table types), and DB2 don't support composite types. Alternatives:
+MariaDB/MySQL, SQL Server (outside of table types), DB2, and SQLite don't support composite types. Alternatives:
 - Use separate columns
 - Store as JSON
 - Use multiple related tables

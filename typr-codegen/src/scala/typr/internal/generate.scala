@@ -60,6 +60,7 @@ object generate {
       case DbType.Oracle     => "oracle"
       case DbType.SqlServer  => "sqlserver"
       case DbType.DB2        => "db2"
+      case DbType.SQLite     => "sqlite"
     }
 
     val scanResult = TypeMatcher.scanTables(
@@ -272,6 +273,9 @@ object generate {
                   case db.DB2Type.Timestamp(Some(fsp)) if fsp > 0                         => Some(PreciseConstraint.LocalDateTimeN(fsp, dbCol.tpe))
                   case db.DB2Type.Binary(Some(n))                                         => Some(PreciseConstraint.BinaryN(n, dbCol.tpe))
                   case db.DB2Type.VarBinary(Some(n))                                      => Some(PreciseConstraint.BinaryN(n, dbCol.tpe))
+                  case db.SqliteType.VarChar(Some(n))                                     => Some(PreciseConstraint.StringN(n, dbCol.tpe))
+                  case db.SqliteType.Char(Some(n))                                        => Some(PreciseConstraint.PaddedStringN(n, dbCol.tpe))
+                  case db.SqliteType.Decimal(Some(p), Some(s))                            => Some(PreciseConstraint.DecimalN(p, s, dbCol.tpe))
                   case _                                                                  => None
                 }
             }.toSet

@@ -103,6 +103,12 @@ case class TypeMapperJvmNew(
         Some(jvm.Type.Qualified(naming.preciseBinaryNName(n)))
       case db.DB2Type.VarBinary(Some(n)) =>
         Some(jvm.Type.Qualified(naming.preciseBinaryNName(n)))
+      case db.SqliteType.VarChar(Some(n)) =>
+        Some(jvm.Type.Qualified(naming.preciseStringNName(n)))
+      case db.SqliteType.Char(Some(n)) =>
+        Some(jvm.Type.Qualified(naming.precisePaddedStringNName(n)))
+      case db.SqliteType.Decimal(Some(precision), Some(scale)) =>
+        Some(jvm.Type.Qualified(naming.preciseDecimalNName(precision, scale)))
       case _ =>
         None
     }
@@ -396,6 +402,33 @@ case class TypeMapperJvmNew(
           case db.DB2Type.RowId                 => lang.String.withComment("ROWID")
           case db.DB2Type.DistinctType(name, _) => jvm.Type.Qualified(naming.domainName(name))
           case db.Unknown(_)                    => TypesJava.runtime.Unknown
+        }
+      case x: db.SqliteType =>
+        x match {
+          case db.SqliteType.Integer       => lang.Long
+          case db.SqliteType.BigInt        => lang.Long
+          case db.SqliteType.Int           => lang.Int
+          case db.SqliteType.SmallInt      => lang.Short
+          case db.SqliteType.TinyInt       => lang.Byte
+          case db.SqliteType.Boolean       => lang.Boolean
+          case db.SqliteType.Real          => lang.Double
+          case db.SqliteType.Double        => lang.Double
+          case db.SqliteType.Float         => lang.Float
+          case db.SqliteType.Decimal(_, _) => lang.BigDecimal
+          case db.SqliteType.Text          => lang.String
+          case db.SqliteType.VarChar(_)    => lang.String
+          case db.SqliteType.Char(_)       => lang.String
+          case db.SqliteType.Clob          => lang.String
+          case db.SqliteType.Blob          => lang.ByteArrayType
+          case db.SqliteType.Binary        => lang.ByteArrayType
+          case db.SqliteType.VarBinary     => lang.ByteArrayType
+          case db.SqliteType.Date          => TypesJava.LocalDate
+          case db.SqliteType.Time          => TypesJava.LocalTime
+          case db.SqliteType.Timestamp     => TypesJava.LocalDateTime
+          case db.SqliteType.Instant       => TypesJava.Instant
+          case db.SqliteType.Uuid          => TypesJava.UUID
+          case db.SqliteType.Json          => TypesJava.runtime.Json
+          case db.Unknown(_)               => TypesJava.runtime.Unknown
         }
     }
   }

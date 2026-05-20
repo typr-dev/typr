@@ -48,11 +48,11 @@ object SchemaPicker {
 
       val routed: List[(String, Json, Routing)] = sources.map { case (name, json) =>
         val r = ConfigParser.parseSource(json) match {
-          case Right(_: ParsedSource.Database | _: ParsedSource.DuckDb)    => Routing.DbBrowser
-          case Right(_: ParsedSource.OpenApi | _: ParsedSource.JsonSchema) => Routing.SpecBrowser
-          case Right(_: ParsedSource.Avro)                                 => Routing.AvroBrowser
-          case Right(_: ParsedSource.Grpc)                                 => Routing.ProtoBrowser
-          case Left(_)                                                     => Routing.Unsupported
+          case Right(_: ParsedSource.Database | _: ParsedSource.DuckDb | _: ParsedSource.Sqlite) => Routing.DbBrowser
+          case Right(_: ParsedSource.OpenApi | _: ParsedSource.JsonSchema)                       => Routing.SpecBrowser
+          case Right(_: ParsedSource.Avro)                                                       => Routing.AvroBrowser
+          case Right(_: ParsedSource.Grpc)                                                       => Routing.ProtoBrowser
+          case Left(_)                                                                           => Routing.Unsupported
         }
         (name, json, r)
       }
@@ -217,8 +217,8 @@ object SchemaPicker {
   private def connectionLabel(json: Json): String = {
     val c = json.hcursor
     kindOf(json) match {
-      case "duckdb" => c.get[String]("path").getOrElse(":memory:")
-      case _        =>
+      case "duckdb" | "sqlite" => c.get[String]("path").getOrElse(":memory:")
+      case _                   =>
         val host = c.get[String]("host").getOrElse("")
         val port = c.get[Long]("port").map(_.toString).getOrElse("")
         val db = c.get[String]("database").getOrElse("")

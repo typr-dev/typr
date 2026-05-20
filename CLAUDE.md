@@ -15,10 +15,14 @@ Typr is a database code generator that creates type-safe JVM code from database 
 - **DuckDB** - embedded analytical database
 - **SQL Server** - T-SQL specific features
 - **Oracle** - including OBJECT and MULTISET types
+- **DB2** - including distinct types
+- **SQLite** - embedded, type-affinity model with foundations SqliteTypes aliases
+
+When adding a new dialect, follow [`.claude/add-a-dialect.md`](.claude/add-a-dialect.md) — a touch-point checklist distilled from the SQLite work.
 
 ## Foundations JDBC
 
-`foundations-jdbc` is a standalone JDBC wrapper library with perfect type modeling for all supported databases. See `site/docs-jdbc/` for full documentation.
+`foundations-jdbc` is a standalone JDBC wrapper library with perfect type modeling for all supported databases. It lives in its own repository (`dev.typr.foundations:foundations-jdbc`, currently RC6) — typr depends on it as a Maven artifact, not as a submodule. Its docs ship from that repo, not from this one.
 
 ## Build System
 
@@ -143,6 +147,7 @@ All databases use `sql-init/{database}/` for schema initialization, mounted to `
 - **SQL Server**: `sql-init/sqlserver/` - Custom entrypoint `00-entrypoint.sh` starts server and runs SQL
 - **DB2**: `sql-init/db2/` - Shell script `00-run-sql.sh` runs SQL files
 - **DuckDB**: `sql-init/duckdb/` - Loaded by generation script (embedded database, no docker)
+- **SQLite**: `sql-init/sqlite/` - Loaded by generation script (embedded database, no docker)
 
 ### Ensuring Databases Are Up to Date
 
@@ -296,6 +301,8 @@ typr/                              # Main code generator
 │       ├── mariadb/               # MariaDB adapter
 │       ├── oracle/                # Oracle adapter
 │       ├── duckdb/                # DuckDB adapter
+│       ├── db2/                   # DB2 adapter
+│       ├── sqlite/                # SQLite adapter
 │       └── sqlserver/             # SQL Server adapter
 │   └── openapi/                   # OpenAPI code generation
 
@@ -308,6 +315,8 @@ testers/                           # Integration test projects
 ├── duckdb/                        # DuckDB testers (java, kotlin, scala)
 ├── oracle/                        # Oracle testers (java, kotlin, scala)
 ├── sqlserver/                     # SQL Server testers (java, kotlin, scala)
+├── db2/                           # DB2 testers (java, kotlin, scala)
+├── sqlite/                        # SQLite testers (java, kotlin, scala)
 └── openapi/                       # OpenAPI framework testers
     ├── java/                      # JAX-RS, Spring, Quarkus
     ├── kotlin/                    # JAX-RS, Spring, Quarkus
@@ -332,14 +341,18 @@ sql-init/                          # Schema files (mounted to Docker)
 ├── mariadb/                       # MariaDB schemas
 ├── oracle/                        # Oracle schemas
 ├── sqlserver/                     # SQL Server schemas
-└── duckdb/                        # DuckDB schemas (loaded by script)
+├── duckdb/                        # DuckDB schemas (loaded by script)
+├── db2/                           # DB2 schemas
+└── sqlite/                        # SQLite schemas (loaded by script)
 
 sql-scripts/                       # SQL query files for code generation
 ├── postgres/                      # PostgreSQL SQL queries
 ├── mariadb/                       # MariaDB SQL queries
 ├── sqlserver/                     # SQL Server SQL queries
 ├── oracle/                        # Oracle SQL queries
-└── duckdb/                        # DuckDB SQL queries
+├── duckdb/                        # DuckDB SQL queries
+├── db2/                           # DB2 SQL queries
+└── sqlite/                        # SQLite SQL queries
 
 typr-internal-sql/                 # Internal SQL for Typr codegen
 ```

@@ -479,7 +479,7 @@ class DbLibFoundations(
             )
         }
 
-      case DbType.SqlServer | DbType.DB2 =>
+      case DbType.SqlServer | DbType.DB2 | DbType.SQLite =>
         // SQL Server and DB2 don't support arrays, use same approach as MariaDB with IN clause
         id match {
           case x: IdComputed.Unary =>
@@ -740,7 +740,7 @@ class DbLibFoundations(
             )
         }
 
-      case DbType.SqlServer | DbType.DB2 =>
+      case DbType.SqlServer | DbType.DB2 | DbType.SQLite =>
         // SQL Server and DB2 don't support arrays, use same approach as MariaDB with IN clause
         id match {
           case x: IdComputed.Unary =>

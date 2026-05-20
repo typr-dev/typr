@@ -17,6 +17,8 @@ Typr generates type-safe enum types from your database schema. Support varies by
 | MariaDB/MySQL | - | `ENUM('a','b')` column type | Table-based |
 | Oracle | - | - | Table-based |
 | SQL Server | - | - | Table-based |
+| DB2 | - | - | Table-based |
+| SQLite | - | - | Table-based (use `CHECK (col IN ('a','b'))`) |
 
 ## Native Enums (PostgreSQL, DuckDB)
 
@@ -51,9 +53,9 @@ CREATE TABLE customer_order (
 
 Since inline enums don't have a schema-level name, Typr maps them to `String`. The allowed values are still enforced by the database, but there's no compile-time type checking.
 
-## No Native Enums (Oracle, SQL Server, DB2)
+## No Native Enums (Oracle, SQL Server, DB2, SQLite)
 
-Oracle, SQL Server, and DB2 do not have native enum types. Common alternatives:
+Oracle, SQL Server, DB2, and SQLite do not have native enum types. Common alternatives:
 
 - **CHECK constraints** on string columns (validated by database, mapped to String)
 - **Lookup tables** with foreign key constraints (see [Open Enums](/typr/boundaries/databases/type-safety/open-enums))

@@ -12,7 +12,7 @@ Typr generates type-safe code from your database schemas and OpenAPI specificati
 
 | Boundary | What it does |
 |----------|--------------|
-| [Databases](/typr/boundaries/databases/) | Generate type-safe database access from PostgreSQL, MariaDB, Oracle, SQL Server, DuckDB, DB2 |
+| [Databases](/typr/boundaries/databases/) | Generate type-safe database access from PostgreSQL, MariaDB, Oracle, SQL Server, DuckDB, DB2, SQLite |
 | [REST APIs](/typr/boundaries/apis/) | Generate type-safe servers and clients from OpenAPI specs |
 | [Unified Types](/typr/unified-types/) | Share types across all your boundaries |
 
@@ -21,7 +21,7 @@ Typr generates type-safe code from your database schemas and OpenAPI specificati
 | Category | Supported |
 |----------|-----------|
 | **Languages** | Java 17+, Kotlin, Scala 2.13/3.x |
-| **Databases** | PostgreSQL, MariaDB/MySQL, Oracle, SQL Server, DuckDB, DB2 |
+| **Databases** | PostgreSQL, MariaDB/MySQL, Oracle, SQL Server, DuckDB, DB2, SQLite |
 | **API Frameworks** | Spring Boot, JAX-RS, Quarkus, Http4s |
 | **JSON Libraries** | Jackson, Circe, Play JSON, ZIO JSON |
 

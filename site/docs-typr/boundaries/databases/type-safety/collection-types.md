@@ -18,6 +18,7 @@ Some databases support collection types for storing multiple values in a single 
 | SQL Server | Table-valued parameters | Procedure parameters only |
 | MariaDB/MySQL | JSON arrays | No native arrays |
 | DB2 | - | No native collections |
+| SQLite | - | No native collections |
 
 ## PostgreSQL Arrays
 
@@ -97,7 +98,7 @@ Currently mapped to String for flexibility. Native Map support is planned.
 
 ## Databases Without Collection Support
 
-MariaDB/MySQL, SQL Server (outside of table types), and DB2 don't have native array types. Alternatives:
+MariaDB/MySQL, SQL Server (outside of table types), DB2, and SQLite don't have native array types. Alternatives:
 - **JSON arrays** - Flexible but less type-safe
 - **Junction tables** - For many-to-many relationships
 - **Table-valued parameters** (SQL Server) - For procedure parameters

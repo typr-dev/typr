@@ -128,6 +128,23 @@ sources:
     schemas: [DB2ADMIN]
 ```
 
+### SQLite
+
+```yaml
+sources:
+  sqlite:
+    type: sqlite
+    path: ./data/app.db          # File-backed
+
+    # For in-memory database
+    # path: :memory:
+
+    # Optional: load schema from a SQL file on connect (useful for :memory:)
+    schema_sql: sql-init/sqlite/00-schema.sql
+```
+
+SQLite has no schemas in the SQL-standard sense — typr generates everything under a single namespace. The xerial sqlite-jdbc driver is bundled in the typr CLI.
+
 ### OpenAPI
 
 ```yaml

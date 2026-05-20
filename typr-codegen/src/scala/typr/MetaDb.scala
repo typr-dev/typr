@@ -6,6 +6,7 @@ import typr.internal.external.ExternalTools
 import typr.internal.mariadb.{MariaMetaDb, MariaTypeMapperDb}
 import typr.internal.oracle.{OracleMetaDb, OracleTypeMapperDb}
 import typr.internal.pg.{PgMetaDb, PgTypeMapperDb}
+import typr.internal.sqlite.{SqliteMetaDb, SqliteTypeMapperDb}
 import typr.internal.sqlserver.{SqlServerMetaDb, SqlServerTypeMapperDb}
 import typr.internal.{Lazy, TypeMapperDb}
 
@@ -44,6 +45,7 @@ case class MetaDb(
     case DbType.Oracle     => OracleTypeMapperDb(oracleObjectTypes, oracleCollectionTypes)
     case DbType.SqlServer  => SqlServerTypeMapperDb(domains)
     case DbType.DB2        => Db2TypeMapperDb()
+    case DbType.SQLite     => SqliteTypeMapperDb()
   }
 }
 
@@ -140,6 +142,7 @@ object MetaDb {
       case DbType.Oracle     => OracleMetaDb.fromDb(logger, ds, viewSelector, schemaMode)
       case DbType.SqlServer  => SqlServerMetaDb.fromDb(logger, ds, viewSelector, schemaMode)
       case DbType.DB2        => Db2MetaDb.fromDb(logger, ds, viewSelector, schemaMode)
+      case DbType.SQLite     => SqliteMetaDb.fromDb(logger, ds, viewSelector, schemaMode)
     }
 
   /** Load metadata from PostgreSQL-specific input (for backwards compatibility) */

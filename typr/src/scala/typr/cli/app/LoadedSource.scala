@@ -34,7 +34,7 @@ object LoadedSource {
   def load(name: String, json: Json, buildDir: Path): Either[String, LoadedSource] = {
     given ExecutionContext = ExecutionContext.global
     ConfigParser.parseSource(json).flatMap {
-      case _: ParsedSource.Database | _: ParsedSource.DuckDb =>
+      case _: ParsedSource.Database | _: ParsedSource.DuckDb | _: ParsedSource.Sqlite =>
         // MetaDbFetch.fetch can throw (Hikari connect, Python install, await). Wrap once.
         try Right(Db(MetaDbFetch.fetch(name, json, TypoLogger.Noop)))
         catch case e: Throwable => Left(Option(e.getMessage).getOrElse(e.toString))

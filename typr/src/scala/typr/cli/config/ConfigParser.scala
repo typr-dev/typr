@@ -5,6 +5,7 @@ import io.circe.yaml.v12.parser
 import typr.config.generated.AvroBoundary
 import typr.config.generated.DatabaseBoundary
 import typr.config.generated.DuckdbBoundary
+import typr.config.generated.SqliteBoundary
 import typr.config.generated.GrpcBoundary
 import typr.config.generated.JsonschemaBoundary
 import typr.config.generated.OpenapiBoundary
@@ -24,6 +25,8 @@ object ConfigParser {
         json.as[DatabaseBoundary].map(ParsedSource.Database.apply).left.map(e => s"Failed to parse database source: ${e.getMessage}")
       case Some("duckdb") =>
         json.as[DuckdbBoundary].map(ParsedSource.DuckDb.apply).left.map(e => s"Failed to parse DuckDB source: ${e.getMessage}")
+      case Some("sqlite") =>
+        json.as[SqliteBoundary].map(ParsedSource.Sqlite.apply).left.map(e => s"Failed to parse SQLite source: ${e.getMessage}")
       case Some("openapi") =>
         json.as[OpenapiBoundary].map(ParsedSource.OpenApi.apply).left.map(e => s"Failed to parse OpenAPI source: ${e.getMessage}")
       case Some("jsonschema") =>
@@ -44,6 +47,8 @@ object ConfigParser {
         json.as[DatabaseBoundary].map(ParsedBoundary.Database.apply).left.map(e => s"Failed to parse database boundary: ${e.getMessage}")
       case Some("duckdb") =>
         json.as[DuckdbBoundary].map(ParsedBoundary.DuckDb.apply).left.map(e => s"Failed to parse DuckDB boundary: ${e.getMessage}")
+      case Some("sqlite") =>
+        json.as[SqliteBoundary].map(ParsedBoundary.Sqlite.apply).left.map(e => s"Failed to parse SQLite boundary: ${e.getMessage}")
       case Some("openapi") =>
         json.as[OpenapiBoundary].map(ParsedBoundary.OpenApi.apply).left.map(e => s"Failed to parse OpenAPI boundary: ${e.getMessage}")
       case Some("jsonschema") =>
@@ -69,6 +74,9 @@ object ParsedBoundary {
   case class DuckDb(config: DuckdbBoundary) extends ParsedBoundary {
     def boundaryType: String = "duckdb"
   }
+  case class Sqlite(config: SqliteBoundary) extends ParsedBoundary {
+    def boundaryType: String = "sqlite"
+  }
   case class OpenApi(config: OpenapiBoundary) extends ParsedBoundary {
     def boundaryType: String = "openapi"
   }
@@ -93,6 +101,9 @@ object ParsedSource {
   }
   case class DuckDb(config: DuckdbBoundary) extends ParsedSource {
     def sourceType: String = "duckdb"
+  }
+  case class Sqlite(config: SqliteBoundary) extends ParsedSource {
+    def sourceType: String = "sqlite"
   }
   case class OpenApi(config: OpenapiBoundary) extends ParsedSource {
     def sourceType: String = "openapi"

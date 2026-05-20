@@ -783,6 +783,89 @@ public interface Dialect {
       };
 
   /**
+   * SQLite dialect — uses double quotes for identifiers, CAST() for casts, and the {@code IS} /
+   * {@code IS NOT} operators for null-safe comparisons. SQLite has no schemas and only one
+   * namespace per database.
+   */
+  Dialect SQLITE =
+      new Dialect() {
+        @Override
+        public DbType<Long> bigint() {
+          return dev.typr.foundations.SqliteTypes.bigint;
+        }
+
+        @Override
+        public String quoteIdent(String name) {
+          return "\"" + name + "\"";
+        }
+
+        @Override
+        public String escapeIdent(String name) {
+          return name.replace("\"", "\"\"");
+        }
+
+        @Override
+        public Fragment typeCast(Fragment value, String typeName) {
+          if (typeName == null || typeName.isEmpty()) {
+            return value;
+          }
+          return Fragment.of("CAST(").append(value).append(Fragment.of(" AS " + typeName + ")"));
+        }
+
+        @Override
+        public String columnRef(String alias, String quotedColumn) {
+          return alias + "." + quotedColumn;
+        }
+
+        @Override
+        public Fragment nullSafeEquals(Fragment left, Fragment right) {
+          // SQLite: a IS b — the IS operator does null-safe comparison.
+          return Fragment.of("(")
+              .append(left)
+              .append(Fragment.of(" IS "))
+              .append(right)
+              .append(Fragment.of(")"));
+        }
+
+        @Override
+        public Fragment nullSafeNotEquals(Fragment left, Fragment right) {
+          return Fragment.of("(")
+              .append(left)
+              .append(Fragment.of(" IS NOT "))
+              .append(right)
+              .append(Fragment.of(")"));
+        }
+
+        @Override
+        public boolean supportsTupleIn() {
+          // Native (a,b) IN ((1,2)) is supported since SQLite 3.7.11 (2012).
+          return true;
+        }
+
+        @Override
+        public Fragment appendPaginationClauses(
+            Fragment subquery,
+            String alias,
+            boolean queryIsAlreadyOrdered,
+            java.util.Optional<Integer> limit,
+            java.util.Optional<Integer> offset,
+            java.util.List<? extends SqlExpr.FieldLike<?, ?>> fields) {
+
+          // SQLite requires LIMIT before OFFSET: `LIMIT n OFFSET m`. The default base order
+          // (OFFSET then LIMIT, inherited from the postgres-ish dialect) is a syntax error.
+          if (limit.isPresent()) {
+            subquery = subquery.append(Fragment.of(" " + limitClause(limit.get())));
+          }
+          if (offset.isPresent()) {
+            subquery = subquery.append(Fragment.of(" " + offsetClause(offset.get())));
+          }
+          return subquery;
+        }
+
+        // SQLite uses default column-by-column for tuples (no native tuple IS).
+      };
+
+  /**
    * DB2 dialect - uses double quotes for identifiers, CAST() for casts, and FETCH FIRST for limits.
    */
   Dialect DB2 =

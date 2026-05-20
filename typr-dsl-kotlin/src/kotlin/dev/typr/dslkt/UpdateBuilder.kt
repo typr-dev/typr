@@ -57,8 +57,8 @@ class UpdateBuilder<Fields, Row> internal constructor(
      * Add a WHERE clause to the update.
      * Consecutive calls will be combined with AND.
      */
-    fun where(predicate: (Fields) -> SqlExpr<Boolean>): UpdateBuilder<Fields, Row> {
-        return UpdateBuilder(javaBuilder.where { fields -> predicate(fields).underlying })
+    fun where(predicate: SqlExprExtensions.(Fields) -> SqlExpr<Boolean>): UpdateBuilder<Fields, Row> {
+        return UpdateBuilder(javaBuilder.where { fields -> SqlExprExtensionsInstance.predicate(fields).underlying })
     }
 
     /**

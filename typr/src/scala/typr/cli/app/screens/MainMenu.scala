@@ -32,7 +32,7 @@ object MainMenu {
   )
 
   private val items: List[Item] = List(
-    Item(Action.Sources, "◈", "Sources", "Database Connections", "Postgres, MariaDB, Oracle, SQL Server, DuckDB", "where typr reads schemas from"),
+    Item(Action.Sources, "◈", "Sources", "Database Connections", "Postgres, MariaDB, Oracle, SQL Server, DuckDB, SQLite", "where typr reads schemas from"),
     Item(Action.Schemas, "◇", "Schema Browser", "Explore Database", "Tables, columns, types, and relationships", "see what's there before you generate"),
     Item(Action.Outputs, "▣", "Outputs", "Code Targets", "Scala, Java, or Kotlin code generation", "languages, libraries, output paths"),
     Item(

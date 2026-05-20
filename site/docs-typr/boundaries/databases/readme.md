@@ -22,7 +22,7 @@ The compiler checks your application code. But at the database boundary, you're 
 
 Typr DB treats your database schema as the source of truth:
 
-1. **Read your schema** from PostgreSQL, MariaDB, Oracle, SQL Server, DuckDB, or DB2
+1. **Read your schema** from PostgreSQL, MariaDB, Oracle, SQL Server, DuckDB, DB2, or SQLite
 2. **Generate typed code** for every table, view, and relationship
 3. **Enforce at compile time** that all database access uses the correct types
 
@@ -57,6 +57,7 @@ When you change a column, rename a table, or modify a relationship—the compile
 | SQL Server | Full support |
 | DuckDB | Full support |
 | IBM DB2 | Full support |
+| SQLite | Full support |
 
 ## Supported Languages
 

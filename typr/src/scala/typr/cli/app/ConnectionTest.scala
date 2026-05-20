@@ -4,7 +4,7 @@ import com.zaxxer.hikari.HikariDataSource
 import io.circe.Json
 import typr.TypoDataSource
 import typr.cli.config.{ConfigParser, ParsedSource}
-import typr.config.generated.{DatabaseBoundary, DuckdbBoundary}
+import typr.config.generated.{DatabaseBoundary, DuckdbBoundary, SqliteBoundary}
 
 /** Synchronous "does this source actually connect / parse?" probe. Returns `Left(message)` on failure, `Right(message)` with a short success line on success (e.g. database product / version).
   * Designed to be invoked from a daemon thread; never throws.
@@ -13,9 +13,10 @@ object ConnectionTest {
 
   def run(sourceJson: Json): Either[String, String] =
     ConfigParser.parseSource(sourceJson) match {
-      case Right(ParsedSource.Database(db)) => tryDatabase(db)
-      case Right(ParsedSource.DuckDb(duck)) => tryDuckDb(duck)
-      case Right(other)                     =>
+      case Right(ParsedSource.Database(db))   => tryDatabase(db)
+      case Right(ParsedSource.DuckDb(duck))   => tryDuckDb(duck)
+      case Right(ParsedSource.Sqlite(sqlite)) => trySqlite(sqlite)
+      case Right(other)                       =>
         Left(s"${other.sourceType} sources don't support connection testing — try the browser screen to validate the spec/schema.")
       case Left(err) => Left(err)
     }
@@ -55,6 +56,12 @@ object ConnectionTest {
     finally close(d)
   }
 
+  private def trySqlite(sqlite: SqliteBoundary): Either[String, String] = {
+    val d = TypoDataSource.hikariSqlite(sqlite.path)
+    try probe(d, "sqlite")
+    finally close(d)
+  }
+
   private def probe(ds: TypoDataSource, fallbackLabel: String): Either[String, String] =
     try {
       val conn = ds.ds.getConnection
@@ -80,7 +87,7 @@ object ConnectionTest {
   /** Whether the test button should be offered for a given source — only db/duckdb sources today. */
   def isTestable(json: Json): Boolean =
     ConfigParser.parseSource(json).toOption.exists {
-      case _: ParsedSource.Database | _: ParsedSource.DuckDb => true
-      case _                                                 => false
+      case _: ParsedSource.Database | _: ParsedSource.DuckDb | _: ParsedSource.Sqlite => true
+      case _                                                                          => false
     }
 }

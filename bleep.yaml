@@ -149,6 +149,42 @@ projects:
     sources:
     - ./generated-and-checked-in
     - ./src/scala
+  testers/sqlite/java:
+    dependencies:
+    - com.fasterxml.jackson.core:jackson-annotations:2.17.2
+    - com.fasterxml.jackson.core:jackson-databind:2.17.2
+    - com.fasterxml.jackson.datatype:jackson-datatype-jdk8:2.17.2
+    - com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.17.2
+    - com.github.sbt:junit-interface:0.13.3
+    - junit:junit:4.13.2
+    - org.xerial:sqlite-jdbc:3.46.1.3
+    dependsOn: typr-dsl
+    isTestProject: true
+    java:
+      options: -proc:none
+    platform:
+      name: jvm
+    sources:
+    - ./generated-and-checked-in
+    - ./src/java
+  testers/sqlite/kotlin:
+    dependencies: org.xerial:sqlite-jdbc:3.46.1.3
+    extends: template-kotlin-db-tester
+  testers/sqlite/scala:
+    dependencies:
+    - com.fasterxml.jackson.core:jackson-annotations:2.17.2
+    - com.fasterxml.jackson.core:jackson-databind:2.17.2
+    - com.fasterxml.jackson.datatype:jackson-datatype-jdk8:2.17.2
+    - com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.17.2
+    - com.github.sbt:junit-interface:0.13.3
+    - junit:junit:4.13.2
+    - org.xerial:sqlite-jdbc:3.46.1.3
+    dependsOn: typr-dsl-scala
+    extends: template-scala-3
+    isTestProject: true
+    sources:
+    - ./generated-and-checked-in
+    - ./src/scala
   testers/duckdb/java:
     dependencies:
     - com.fasterxml.jackson.core:jackson-annotations:2.17.2
@@ -937,6 +973,7 @@ projects:
     - org.playframework.anorm::anorm:2.7.0
     - org.postgresql:postgresql:42.7.3
     - org.slf4j:slf4j-nop:2.0.13
+    - org.xerial:sqlite-jdbc:3.46.1.3
     dependsOn: typr-dsl-scala
     extends:
     - template-scala-3
