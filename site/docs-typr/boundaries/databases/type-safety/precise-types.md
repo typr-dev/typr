@@ -169,6 +169,8 @@ Precise Types work across all supported databases:
 | SQL Server | `StringN` | `PaddedStringN` | `DecimalN` | `LocalTimeN` | `LocalDateTimeN` / `OffsetDateTimeN` |
 | Oracle | `StringN` | `PaddedStringN` | `DecimalN` | - | `InstantN` |
 | DuckDB | `StringN` | - | `DecimalN` | `LocalTimeN` | `InstantN` |
+| DB2 | `StringN` | `PaddedStringN` | `DecimalN` | - | `LocalDateTimeN` |
+| SQLite | `StringN` | `PaddedStringN` | `DecimalN` | - | - |
 
 ## Language Support
 

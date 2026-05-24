@@ -3,7 +3,7 @@ package typr.cli.app
 import com.zaxxer.hikari.HikariDataSource
 import io.circe.Json
 import typr.cli.config.{ConfigParser, ConfigToOptions, ParsedSource}
-import typr.config.generated.{DatabaseBoundary, DuckdbBoundary}
+import typr.config.generated.{DatabaseBoundary, DuckdbBoundary, SqliteBoundary}
 import typr.TypoDataSource
 import typr.internal.external.{ExternalTools, ExternalToolsConfig}
 import typr.{MetaDb, TypoLogger}
@@ -22,9 +22,10 @@ object MetaDbFetch {
       .fold(
         err => throw new Exception(s"parse source config: $err"),
         {
-          case ParsedSource.Database(db) => fetchDatabase(name, db, logger)
-          case ParsedSource.DuckDb(duck) => fetchDuckDb(name, duck, logger)
-          case _                         => throw new Exception("not a database / duckdb source")
+          case ParsedSource.Database(db)   => fetchDatabase(name, db, logger)
+          case ParsedSource.DuckDb(duck)   => fetchDuckDb(name, duck, logger)
+          case ParsedSource.Sqlite(sqlite) => fetchSqlite(name, sqlite, logger)
+          case _                           => throw new Exception("not a database / duckdb / sqlite source")
         }
       )
 
@@ -64,6 +65,35 @@ object MetaDbFetch {
         try {
           val stmt = conn.createStatement()
           stmt.execute(java.nio.file.Files.readString(java.nio.file.Paths.get(sqlPath)))
+          stmt.close()
+        } finally conn.close()
+      }
+      val externalTools = ExternalTools.init(logger, ExternalToolsConfig.default)
+      Await.result(
+        MetaDb.fromDb(logger, ds, sourceConfig.selector, sourceConfig.schemaMode, externalTools),
+        Duration.Inf
+      )
+    } finally close(ds)
+  }
+
+  private def fetchSqlite(name: String, sqliteConfig: SqliteBoundary, logger: TypoLogger)(implicit
+      ec: ExecutionContext
+  ): MetaDb = {
+    val sourceConfig = ConfigToOptions
+      .convertSqliteSource(name, sqliteConfig)
+      .fold(
+        err => throw new Exception(s"convert source config: $err"),
+        identity
+      )
+    val ds = TypoDataSource.hikariSqlite(sqliteConfig.path)
+    try {
+      sqliteConfig.schema_sql.foreach { sqlPath =>
+        val conn = ds.ds.getConnection
+        try {
+          val stmt = conn.createStatement()
+          val sql = java.nio.file.Files.readString(java.nio.file.Paths.get(sqlPath))
+          // Run statements one at a time — xerial driver doesn't multi-execute.
+          sql.split(";").map(_.trim).filter(_.nonEmpty).foreach(stmt.execute)
           stmt.close()
         } finally conn.close()
       }

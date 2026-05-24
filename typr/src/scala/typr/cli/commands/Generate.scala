@@ -9,6 +9,7 @@ import typr.cli.config.*
 import typr.config.generated.AvroBoundary
 import typr.config.generated.DatabaseBoundary
 import typr.config.generated.DuckdbBoundary
+import typr.config.generated.SqliteBoundary
 import typr.config.generated.GrpcBoundary
 import typr.config.generated.OpenapiBoundary
 import typr.db
@@ -361,6 +362,14 @@ object Generate {
               case Left(error) =>
                 onBoundaryStep(boundaryName, s"Failed: $error")
             }
+          case ParsedBoundary.Sqlite(sqliteConfig) =>
+            fetchSqliteBoundary(boundaryName, sqliteConfig, buildDir, typoLogger, externalTools, step => onBoundaryStep(boundaryName, step)) match {
+              case Right(fetched) =>
+                fetchedBoundaries.put(boundaryName, fetched)
+                onBoundaryStep(boundaryName, "Done")
+              case Left(error) =>
+                onBoundaryStep(boundaryName, s"Failed: $error")
+            }
           case ParsedBoundary.OpenApi(_) =>
             onBoundaryStep(boundaryName, "Done")
           case ParsedBoundary.JsonSchema(_) =>
@@ -506,6 +515,11 @@ object Generate {
             }
           case ParsedBoundary.DuckDb(duckConfig) =>
             generateDuckDbForOutput(outputName, boundaryName, duckConfig, effectiveOutputConfig, buildDir, typoLogger, externalTools, tracker, skipSqlScripts = isMultiSource) match {
+              case Right(files) => totalFiles += files
+              case Left(error)  => throw new Exception(error)
+            }
+          case ParsedBoundary.Sqlite(sqliteConfig) =>
+            generateSqliteForOutput(outputName, boundaryName, sqliteConfig, effectiveOutputConfig, buildDir, typoLogger, externalTools, tracker, skipSqlScripts = isMultiSource) match {
               case Right(files) => totalFiles += files
               case Left(error)  => throw new Exception(error)
             }
@@ -702,6 +716,121 @@ object Generate {
 
       _ = dataSource.ds.asInstanceOf[com.zaxxer.hikari.HikariDataSource].close()
     } yield written
+  }
+
+  private def generateSqliteForOutput(
+      outputName: String,
+      boundaryName: String,
+      sqliteConfig: SqliteBoundary,
+      outputConfig: ConfigToOptions.OutputConfig,
+      buildDir: Path,
+      typoLogger: TypoLogger,
+      externalTools: ExternalTools,
+      tracker: ProgressTracker,
+      skipSqlScripts: Boolean
+  ): Either[String, Int] = {
+    for {
+      boundaryConfig <- ConfigToOptions.convertSqliteBoundary(boundaryName, sqliteConfig)
+      dataSource = TypoDataSource.hikariSqlite(sqliteConfig.path)
+
+      _ = boundaryConfig.schemaSqlPath.foreach { schemaPath =>
+        tracker.update(outputName, OutputStatus.Processing(boundaryName, "Loading schema..."))
+        val fullPath = buildDir.resolve(schemaPath)
+        Await.result(
+          dataSource.run { conn =>
+            val schemaSql = Files.readString(fullPath)
+            val stmt = conn.createStatement()
+            executeBatch(stmt, schemaSql)
+            stmt.close()
+          },
+          Duration.Inf
+        )
+      }
+
+      _ = tracker.update(outputName, OutputStatus.Processing(boundaryName, "Fetching metadata..."))
+
+      metadb = Await.result(
+        MetaDb.fromDb(typoLogger, dataSource, boundaryConfig.selector, boundaryConfig.schemaMode, externalTools),
+        Duration.Inf
+      )
+
+      _ = if (!skipSqlScripts) tracker.update(outputName, OutputStatus.Processing(boundaryName, "Reading SQL scripts..."))
+
+      sqlScripts =
+        if (skipSqlScripts) Nil
+        else
+          boundaryConfig.sqlScriptsPath match {
+            case Some(path) =>
+              val scriptsPath = buildDir.resolve(path)
+              Await.result(SqlFileReader(typoLogger, scriptsPath, dataSource, externalTools), Duration.Inf)
+            case None => Nil
+          }
+
+      stats = BoundaryStats(
+        tables = metadb.relations.values.count(_.forceGet.isInstanceOf[db.Table]),
+        views = metadb.relations.values.count(_.forceGet.isInstanceOf[db.View]),
+        enums = metadb.enums.size,
+        domains = metadb.domains.size,
+        sqlScripts = sqlScripts.size
+      )
+      _ = tracker.setBoundaryStats(outputName, boundaryName, stats)
+
+      _ = tracker.update(outputName, OutputStatus.Processing(boundaryName, s"Generating (${stats.summary})..."))
+
+      mergedOptions = mergeBoundaryIntoOptions(outputConfig.options, boundaryConfig)
+      targetSources = buildDir.resolve(outputConfig.path)
+
+      newFiles = generate
+        .orThrow(
+          mergedOptions,
+          metadb,
+          ProjectGraph("", targetSources, None, boundaryConfig.selector, sqlScripts, Nil),
+          Map.empty
+        )
+        .head
+
+      _ = tracker.update(outputName, OutputStatus.Processing(boundaryName, "Writing files..."))
+
+      syncResults = newFiles.overwriteFolder(softWrite = FileSync.SoftWrite.Yes(Set.empty))
+
+      written = syncResults.count { case (_, s) => s == FileSync.Synced.New || s == FileSync.Synced.Changed }
+      unchanged = syncResults.count { case (_, s) => s == FileSync.Synced.Unchanged }
+      deleted = syncResults.count { case (_, s) => s == FileSync.Synced.Deleted }
+
+      _ = tracker.addFileStats(outputName, written, unchanged, deleted)
+
+      _ = dataSource.ds.asInstanceOf[com.zaxxer.hikari.HikariDataSource].close()
+    } yield written
+  }
+
+  /** SQLite's JDBC driver cannot execute multi-statement strings via a single execute() call. Split on `;` boundaries and run each non-empty statement. We keep this simple — strip line comments and
+    * split on `;` outside of single-quoted strings.
+    */
+  private def executeBatch(stmt: java.sql.Statement, sql: String): Unit = {
+    val builder = new StringBuilder
+    var inString = false
+    var i = 0
+    while (i < sql.length) {
+      val c = sql.charAt(i)
+      // Strip line comments `-- ...` when outside a string literal
+      if (!inString && c == '-' && i + 1 < sql.length && sql.charAt(i + 1) == '-') {
+        while (i < sql.length && sql.charAt(i) != '\n') i += 1
+      } else if (c == '\'') {
+        builder.append(c)
+        inString = !inString
+        i += 1
+      } else if (c == ';' && !inString) {
+        val piece = builder.toString.trim
+        if (piece.nonEmpty) stmt.execute(piece)
+        builder.clear()
+        i += 1
+      } else {
+        builder.append(c)
+        i += 1
+      }
+    }
+    val tail = builder.toString.trim
+    if (tail.nonEmpty) stmt.execute(tail)
   }
 
   private def mergeBoundaryIntoOptions(outputOptions: Options, boundaryConfig: ConfigToOptions.BoundaryConfig): Options = {
@@ -1108,6 +1237,58 @@ object Generate {
     } yield FetchedBoundary(boundaryName, metadb, dataSource, boundaryConfig, stats, Map.empty, sqlScripts)
   }
 
+  def fetchSqliteBoundary(
+      boundaryName: String,
+      sqliteConfig: SqliteBoundary,
+      buildDir: Path,
+      typoLogger: TypoLogger,
+      externalTools: ExternalTools,
+      onStep: String => Unit
+  ): Either[String, FetchedBoundary] = {
+    for {
+      boundaryConfig <- ConfigToOptions.convertSqliteBoundary(boundaryName, sqliteConfig)
+      dataSource = TypoDataSource.hikariSqlite(sqliteConfig.path)
+
+      _ = boundaryConfig.schemaSqlPath.foreach { schemaPath =>
+        onStep("Loading schema...")
+        val fullPath = buildDir.resolve(schemaPath)
+        Await.result(
+          dataSource.run { conn =>
+            val schemaSql = Files.readString(fullPath)
+            val stmt = conn.createStatement()
+            executeBatch(stmt, schemaSql)
+            stmt.close()
+          },
+          Duration.Inf
+        )
+      }
+
+      _ = onStep("Fetching metadata...")
+
+      metadb = Await.result(
+        MetaDb.fromDb(typoLogger, dataSource, boundaryConfig.selector, boundaryConfig.schemaMode, externalTools),
+        Duration.Inf
+      )
+
+      _ = onStep("Reading SQL scripts...")
+
+      sqlScripts = boundaryConfig.sqlScriptsPath match {
+        case Some(path) =>
+          val scriptsPath = buildDir.resolve(path)
+          Await.result(SqlFileReader(typoLogger, scriptsPath, dataSource, externalTools), Duration.Inf)
+        case None => Nil
+      }
+
+      stats = BoundaryStats(
+        tables = metadb.relations.values.count(_.forceGet.isInstanceOf[db.Table]),
+        views = metadb.relations.values.count(_.forceGet.isInstanceOf[db.View]),
+        enums = metadb.enums.size,
+        domains = metadb.domains.size,
+        sqlScripts = sqlScripts.size
+      )
+    } yield FetchedBoundary(boundaryName, metadb, dataSource, boundaryConfig, stats, Map.empty, sqlScripts)
+  }
+
   def generateWithCachedBoundary(
       outputName: String,
       outputConfig: ConfigToOptions.OutputConfig,
@@ -1182,6 +1363,16 @@ object Generate {
       onStep: String => Unit
   ): Either[String, FetchedBoundary] =
     fetchDuckDbBoundary(sourceName, duckConfig, buildDir, typoLogger, externalTools, onStep)
+
+  def fetchSqliteSource(
+      sourceName: String,
+      sqliteConfig: SqliteBoundary,
+      buildDir: Path,
+      typoLogger: TypoLogger,
+      externalTools: ExternalTools,
+      onStep: String => Unit
+  ): Either[String, FetchedBoundary] =
+    fetchSqliteBoundary(sourceName, sqliteConfig, buildDir, typoLogger, externalTools, onStep)
 
   def generateWithCachedSource(
       outputName: String,

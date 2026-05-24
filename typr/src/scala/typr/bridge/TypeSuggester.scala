@@ -175,6 +175,22 @@ object TypeSuggester {
       case typr.db.DuckDbType.UUID =>
         "uuid"
 
+      // SQLite types
+      case _: typr.db.SqliteType.VarChar | _: typr.db.SqliteType.Char | typr.db.SqliteType.Text | typr.db.SqliteType.Clob =>
+        "text"
+      case typr.db.SqliteType.Integer | typr.db.SqliteType.BigInt | typr.db.SqliteType.Int | typr.db.SqliteType.SmallInt | typr.db.SqliteType.TinyInt =>
+        "integer"
+      case typr.db.SqliteType.Real | typr.db.SqliteType.Double | typr.db.SqliteType.Float | _: typr.db.SqliteType.Decimal =>
+        "numeric"
+      case typr.db.SqliteType.Boolean =>
+        "boolean"
+      case typr.db.SqliteType.Date | typr.db.SqliteType.Time | typr.db.SqliteType.Timestamp | typr.db.SqliteType.Instant =>
+        "temporal"
+      case typr.db.SqliteType.Uuid =>
+        "uuid"
+      case typr.db.SqliteType.Json =>
+        "json"
+
       // Default: use type name as its own class
       case other =>
         getTypeName(other)

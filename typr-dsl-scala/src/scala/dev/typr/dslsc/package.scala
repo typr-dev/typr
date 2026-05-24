@@ -113,5 +113,6 @@ package object dslsc {
     val ORACLE: dev.typr.dsl.Dialect = dev.typr.dsl.Dialect.ORACLE
     val SQLSERVER: dev.typr.dsl.Dialect = dev.typr.dsl.Dialect.SQLSERVER
     val DB2: dev.typr.dsl.Dialect = dev.typr.dsl.Dialect.DB2
+    val SQLITE: dev.typr.dsl.Dialect = dev.typr.dsl.Dialect.SQLITE
   }
 }

@@ -37,7 +37,8 @@ object GeneratedShowcase {
           DbType.DuckDB,
           DbType.Oracle,
           DbType.SqlServer,
-          DbType.DB2
+          DbType.DB2,
+          DbType.SQLite
         )
 
         dbTypes.foreach { dbType =>
@@ -48,6 +49,7 @@ object GeneratedShowcase {
             case DbType.Oracle     => "oracle"
             case DbType.SqlServer  => "sqlserver"
             case DbType.DB2        => "db2"
+            case DbType.SQLite     => "sqlite"
           }
 
           try {
@@ -63,57 +65,8 @@ object GeneratedShowcase {
           }
         }
 
-        formatJavaFiles(logger)
-
         logger.warn("Showcase code generation complete!")
       }
-
-  /** Format Java files with google-java-format via coursier */
-  def formatJavaFiles(logger: ryddig.Logger): Unit = {
-    import coursier.cache.FileCache
-    import coursier.util.{Artifact, Task}
-    import scala.concurrent.{Await, ExecutionContext}
-    import scala.concurrent.duration.Duration
-
-    try {
-      logger.warn("Formatting Java files with google-java-format...")
-      val javaFiles = java.nio.file.Files
-        .walk(buildDir.resolve("site/showcase-generated"))
-        .filter(p => p.toString.endsWith(".java"))
-        .toArray
-        .map(_.toString)
-        .toSeq
-
-      if (javaFiles.nonEmpty) {
-        val version = "1.25.2"
-        val ec: ExecutionContext = ExecutionContext.global
-        val fileCache = FileCache[Task]()
-        val artifact = Artifact(s"https://github.com/google/google-java-format/releases/download/v$version/google-java-format-$version-all-deps.jar")
-        val jar = Await.result(fileCache.file(artifact).run.value(ec), Duration.Inf) match {
-          case Left(err)   => throw new Exception(s"Failed to fetch google-java-format: $err")
-          case Right(file) => file.toPath
-        }
-
-        val jvmFlags = List(
-          "--add-exports=jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED",
-          "--add-exports=jdk.compiler/com.sun.tools.javac.code=ALL-UNNAMED",
-          "--add-exports=jdk.compiler/com.sun.tools.javac.file=ALL-UNNAMED",
-          "--add-exports=jdk.compiler/com.sun.tools.javac.parser=ALL-UNNAMED",
-          "--add-exports=jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED",
-          "--add-exports=jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED"
-        )
-        val cmd = Seq("java") ++ jvmFlags ++ Seq("-jar", jar.toString, "--replace") ++ javaFiles
-        import scala.sys.process._
-        val result = cmd.!
-        if (result == 0) {
-          logger.warn(s"  Formatted ${javaFiles.size} Java files")
-        }
-      }
-    } catch {
-      case e: Exception =>
-        logger.error(s"Failed to format Java files: ${e.getMessage}")
-    }
-  }
 
   /** Build a MetaDb directly from ShowcaseSchema definitions. No database connection required. */
   def buildMetaDb(dbType: DbType): MetaDb = {

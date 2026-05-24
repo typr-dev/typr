@@ -207,6 +207,7 @@ object SourceList {
 
   private def sourceIcon(json: Json): String = sourceKind(json) match {
     case "duckdb"  => "◆"
+    case "sqlite"  => "◆"
     case "openapi" => "✦"
     case "jdbc"    => "◈"
     case _         => "◇"
@@ -215,7 +216,7 @@ object SourceList {
   private def sourceDetails(json: Json): String = {
     val c = json.hcursor
     sourceKind(json) match {
-      case "duckdb" =>
+      case "duckdb" | "sqlite" =>
         c.get[String]("path").getOrElse(":memory:")
       case "openapi" =>
         c.get[String]("spec")

@@ -102,6 +102,15 @@ sources:
     path: ./data/analytics.duckdb
 ```
 
+#### SQLite
+
+```yaml
+sources:
+  sqlite:
+    type: sqlite
+    path: ./data/app.db    # or :memory:
+```
+
 #### OpenAPI
 
 ```yaml

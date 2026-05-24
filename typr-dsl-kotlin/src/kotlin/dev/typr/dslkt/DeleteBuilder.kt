@@ -18,8 +18,8 @@ class DeleteBuilder<Fields, Row> internal constructor(
      * Add a WHERE clause to the delete.
      * Consecutive calls will be combined with AND.
      */
-    fun where(predicate: (Fields) -> SqlExpr<Boolean>): DeleteBuilder<Fields, Row> {
-        return DeleteBuilder(javaBuilder.where { fields -> predicate(fields).underlying })
+    fun where(predicate: SqlExprExtensions.(Fields) -> SqlExpr<Boolean>): DeleteBuilder<Fields, Row> {
+        return DeleteBuilder(javaBuilder.where { fields -> SqlExprExtensionsInstance.predicate(fields).underlying })
     }
 
     /**

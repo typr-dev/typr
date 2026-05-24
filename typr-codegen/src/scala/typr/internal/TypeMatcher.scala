@@ -341,6 +341,31 @@ object TypeMatcher {
     case db.DB2Type.RowId                 => "rowid"
     case db.DB2Type.DistinctType(name, _) => name.value
 
+    // SQLite types
+    case db.SqliteType.Integer       => "integer"
+    case db.SqliteType.BigInt        => "bigint"
+    case db.SqliteType.Int           => "int"
+    case db.SqliteType.SmallInt      => "smallint"
+    case db.SqliteType.TinyInt       => "tinyint"
+    case db.SqliteType.Boolean       => "boolean"
+    case db.SqliteType.Real          => "real"
+    case db.SqliteType.Double        => "double"
+    case db.SqliteType.Float         => "float"
+    case db.SqliteType.Decimal(_, _) => "decimal"
+    case db.SqliteType.Text          => "text"
+    case db.SqliteType.VarChar(_)    => "varchar"
+    case db.SqliteType.Char(_)       => "char"
+    case db.SqliteType.Clob          => "clob"
+    case db.SqliteType.Blob          => "blob"
+    case db.SqliteType.Binary        => "binary"
+    case db.SqliteType.VarBinary     => "varbinary"
+    case db.SqliteType.Date          => "date"
+    case db.SqliteType.Time          => "time"
+    case db.SqliteType.Timestamp     => "timestamp"
+    case db.SqliteType.Instant       => "timestamp"
+    case db.SqliteType.Uuid          => "uuid"
+    case db.SqliteType.Json          => "json"
+
     // Unknown
     case db.Unknown(sqlType) => sqlType
   }

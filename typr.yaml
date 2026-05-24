@@ -207,6 +207,19 @@ boundaries:
         db:
           column: email
     type: duckdb
+  sqlite:
+    schema_sql: sql-init/sqlite/00-schema.sql
+    selectors:
+      precision_types:
+      - precision_types
+      - precision_types_null
+    sql_scripts: sql-scripts/sqlite
+    path: ':memory:'
+    types:
+      Email:
+        db:
+          column: email
+    type: sqlite
   db2:
     username: db2inst1
     password: password
@@ -694,6 +707,42 @@ outputs:
     package: com.example.grpc
     path: testers/grpc/java/generated-and-checked-in
     sources: grpc-services
+  sqlite-java:
+    path: testers/sqlite/java/generated-and-checked-in
+    package: testdb
+    json: jackson
+    sources: sqlite
+    language: java
+    db_lib: foundations
+    matchers:
+      mock_repos: all
+      primary_key_types: all
+      test_inserts: all
+  sqlite-kotlin:
+    path: testers/sqlite/kotlin/generated-and-checked-in
+    package: testdb
+    json: jackson
+    sources: sqlite
+    language: kotlin
+    db_lib: foundations
+    matchers:
+      mock_repos: all
+      primary_key_types: all
+      test_inserts: all
+  sqlite-scala:
+    path: testers/sqlite/scala/generated-and-checked-in
+    package: testdb
+    json: jackson
+    sources: sqlite
+    language: scala
+    db_lib: foundations
+    scala:
+      dialect: scala3
+      dsl: scala
+    matchers:
+      mock_repos: all
+      primary_key_types: all
+      test_inserts: all
 types:
   Customer:
     fields:

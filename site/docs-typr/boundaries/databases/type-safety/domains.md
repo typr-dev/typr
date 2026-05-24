@@ -37,6 +37,7 @@ transferFunds(toAccountId, fromAccountId, amount);
 | DuckDB | - | No domain support, use bimap |
 | MariaDB | - | No domain support, use bimap |
 | DB2 | - | No domain support, use bimap |
+| SQLite | - | No domain support, use bimap |
 
 ## PostgreSQL Domains
 
@@ -80,7 +81,7 @@ Typr generates the same wrapper types as for PostgreSQL domains.
 
 ## Databases Without Domain Support
 
-For Oracle, DuckDB, MariaDB, and DB2, use `bimap` to create wrapper types manually:
+For Oracle, DuckDB, MariaDB, DB2, and SQLite, use `bimap` to create wrapper types manually:
 
 ```java
 public record AccountId(Long value) {}
@@ -100,6 +101,10 @@ OracleType<AccountId> accountIdType =
 // DuckDB
 DuckDbType<AccountId> accountIdType =
     DuckDbTypes.bigint.bimap(AccountId::new, AccountId::value);
+
+// SQLite
+SqliteType<AccountId> accountIdType =
+    SqliteTypes.integer.bimap(AccountId::new, AccountId::value);
 ```
 
 ## Benefits

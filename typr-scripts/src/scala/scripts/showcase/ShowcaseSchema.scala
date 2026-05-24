@@ -695,6 +695,11 @@ object ShowcaseSchema {
           col("resume", db.DB2Type.Clob, notNull = false),
           col("photo", db.DB2Type.Blob, notNull = false)
         )
+      case DbType.SQLite =>
+        // SQLite has no native arrays/structs/maps/json/binary columns beyond BLOB,
+        // and no domain/distinct-type system. Showcase keeps the SQLite employee
+        // to just the base columns.
+        Nil
     }
 
     Table(
@@ -833,6 +838,13 @@ object ShowcaseSchema {
           col("thumbnail", db.DB2Type.Blob, notNull = false),
           col("xml_data", db.DB2Type.Xml, notNull = false)
         )
+      case DbType.SQLite =>
+        List(
+          col("description_long", db.SqliteType.Text, notNull = false),
+          col("thumbnail", db.SqliteType.Blob, notNull = false),
+          col("attributes", db.SqliteType.Json, notNull = false),
+          col("product_uid", db.SqliteType.Uuid, notNull = false)
+        )
     }
 
     Table(
@@ -915,6 +927,13 @@ object ShowcaseSchema {
           col("avatar", db.DB2Type.Blob, notNull = false),
           col("notes", db.DB2Type.Clob, notNull = false)
         )
+      case DbType.SQLite =>
+        List(
+          col("preferences", db.SqliteType.Json, notNull = false),
+          col("avatar", db.SqliteType.Blob, notNull = false),
+          col("customer_uid", db.SqliteType.Uuid, notNull = false),
+          col("notes", db.SqliteType.Text, notNull = false)
+        )
     }
 
     Table(
@@ -979,6 +998,10 @@ object ShowcaseSchema {
       case DbType.DB2 =>
         List(
           col("notes", db.DB2Type.Clob, notNull = false)
+        )
+      case DbType.SQLite =>
+        List(
+          col("notes", db.SqliteType.Text, notNull = false)
         )
     }
 
@@ -1075,6 +1098,13 @@ object ShowcaseSchema {
           col("notes_extended", db.DB2Type.Clob, notNull = false),
           col("receipt_data", db.DB2Type.Blob, notNull = false),
           col("xml_invoice", db.DB2Type.Xml, notNull = false)
+        )
+      case DbType.SQLite =>
+        List(
+          col("order_uid", db.SqliteType.Uuid, notNull = false),
+          col("metadata", db.SqliteType.Json, notNull = false),
+          col("notes_extended", db.SqliteType.Text, notNull = false),
+          col("receipt_data", db.SqliteType.Blob, notNull = false)
         )
     }
 
@@ -1216,6 +1246,13 @@ object ShowcaseSchema {
           col("description_long", db.DB2Type.Clob, notNull = false),
           col("attachments", db.DB2Type.Blob, notNull = false),
           col("xml_plan", db.DB2Type.Xml, notNull = false)
+        )
+      case DbType.SQLite =>
+        List(
+          col("project_uid", db.SqliteType.Uuid, notNull = false),
+          col("metadata", db.SqliteType.Json, notNull = false),
+          col("description_long", db.SqliteType.Text, notNull = false),
+          col("attachments", db.SqliteType.Blob, notNull = false)
         )
     }
 
@@ -1442,6 +1479,7 @@ object ShowcaseSchema {
     case DbType.Oracle     => db.OracleType.Varchar2(maxLength)
     case DbType.SqlServer  => db.SqlServerType.NVarChar(maxLength)
     case DbType.DB2        => db.DB2Type.VarChar(maxLength)
+    case DbType.SQLite     => db.SqliteType.VarChar(maxLength)
   }
 
   private def intType(dbType: DbType): db.Type = dbType match {
@@ -1451,6 +1489,7 @@ object ShowcaseSchema {
     case DbType.Oracle     => db.OracleType.Number(Some(10), Some(0))
     case DbType.SqlServer  => db.SqlServerType.Int
     case DbType.DB2        => db.DB2Type.Integer
+    case DbType.SQLite     => db.SqliteType.Int
   }
 
   private def boolType(dbType: DbType): db.Type = dbType match {
@@ -1460,6 +1499,7 @@ object ShowcaseSchema {
     case DbType.Oracle     => db.OracleType.Number(Some(1), Some(0))
     case DbType.SqlServer  => db.SqlServerType.Bit
     case DbType.DB2        => db.DB2Type.Boolean
+    case DbType.SQLite     => db.SqliteType.Boolean
   }
 
   private def decimalType(dbType: DbType, precision: Int, scale: Int): db.Type = dbType match {
@@ -1469,6 +1509,7 @@ object ShowcaseSchema {
     case DbType.Oracle     => db.OracleType.Number(Some(precision), Some(scale))
     case DbType.SqlServer  => db.SqlServerType.Decimal(Some(precision), Some(scale))
     case DbType.DB2        => db.DB2Type.Decimal(Some(precision), Some(scale))
+    case DbType.SQLite     => db.SqliteType.Decimal(Some(precision), Some(scale))
   }
 
   private def dateType(dbType: DbType): db.Type = dbType match {
@@ -1478,6 +1519,7 @@ object ShowcaseSchema {
     case DbType.Oracle     => db.OracleType.Date
     case DbType.SqlServer  => db.SqlServerType.Date
     case DbType.DB2        => db.DB2Type.Date
+    case DbType.SQLite     => db.SqliteType.Date
   }
 
   private def timestampType(dbType: DbType): db.Type = dbType match {
@@ -1487,6 +1529,7 @@ object ShowcaseSchema {
     case DbType.Oracle     => db.OracleType.Timestamp(None)
     case DbType.SqlServer  => db.SqlServerType.DateTime2(None)
     case DbType.DB2        => db.DB2Type.Timestamp(None)
+    case DbType.SQLite     => db.SqliteType.Timestamp
   }
 
   private def bigintType(dbType: DbType): db.Type = dbType match {
@@ -1496,6 +1539,7 @@ object ShowcaseSchema {
     case DbType.Oracle     => db.OracleType.Number(Some(19), Some(0))
     case DbType.SqlServer  => db.SqlServerType.BigInt
     case DbType.DB2        => db.DB2Type.BigInt
+    case DbType.SQLite     => db.SqliteType.BigInt
   }
 
   // ═══════════════════════════════════════════════════════════════════════════

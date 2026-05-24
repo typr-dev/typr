@@ -76,6 +76,8 @@ object InstanceRequirements {
       Some(DbType.SqlServer)
     else if (lower.contains("db2"))
       Some(DbType.DB2)
+    else if (lower.contains("sqlite"))
+      Some(DbType.SQLite)
     else
       None
   }
@@ -88,5 +90,6 @@ object InstanceRequirements {
     case DbType.Oracle     => "oracleType"
     case DbType.SqlServer  => "sqlServerType"
     case DbType.DB2        => "db2Type"
+    case DbType.SQLite     => "sqliteType"
   }
 }

@@ -80,6 +80,28 @@ object ConfigToOptions {
     )
   }
 
+  def convertSqliteBoundary(name: String, sqliteConfig: SqliteBoundary): Either[String, BoundaryConfig] = {
+    val selector = buildSelectorFromBoundary(sqliteConfig.selectors, None)
+    val typeDefinitions = buildTypeDefinitions(sqliteConfig.types)
+    val openEnumsSelector = PatternMatcher.fromFeatureMatcherDefaultNone(sqliteConfig.selectors.flatMap(_.open_enums))
+    val precisionTypesSelector = PatternMatcher.fromFeatureMatcherDefaultNone(sqliteConfig.selectors.flatMap(_.precision_types))
+
+    Right(
+      BoundaryConfig(
+        name = name,
+        boundaryType = "sqlite",
+        schemaMode = SchemaMode.SingleSchema("main"),
+        selector = selector,
+        sqlScriptsPath = sqliteConfig.sql_scripts,
+        schemaSqlPath = sqliteConfig.schema_sql,
+        typeDefinitions = typeDefinitions,
+        typeOverride = TypeOverride.Empty,
+        openEnumsSelector = openEnumsSelector,
+        precisionTypesSelector = precisionTypesSelector
+      )
+    )
+  }
+
   def convertAvroBoundary(
       name: String,
       config: AvroBoundary,
@@ -542,4 +564,7 @@ object ConfigToOptions {
 
   def convertDuckDbSource(name: String, duckConfig: DuckdbBoundary): Either[String, BoundaryConfig] =
     convertDuckDbBoundary(name, duckConfig)
+
+  def convertSqliteSource(name: String, sqliteConfig: SqliteBoundary): Either[String, BoundaryConfig] =
+    convertSqliteBoundary(name, sqliteConfig)
 }

@@ -153,6 +153,9 @@ object ComputedTestInserts {
                   case db.DB2Type.VarChar(Some(maxLength)) => maxLength
                   // DuckDB
                   case db.DuckDbType.VarChar(Some(maxLength)) => maxLength
+                  // SQLite
+                  case db.SqliteType.VarChar(Some(maxLength)) => maxLength
+                  case db.SqliteType.Char(Some(maxLength))    => maxLength
                 }
                 .getOrElse(20)
                 .min(20)

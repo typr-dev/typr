@@ -66,6 +66,17 @@ DuckDB has modern date/time handling:
 - Microsecond precision
 - No timezone conversion issues
 
+### SQLite
+
+SQLite has no native date/time storage class — values are stored as ISO-8601 TEXT (the xerial driver default). Typr generates `LocalDate` / `LocalTime` / `LocalDateTime` / `Instant` codecs that parse and produce the ISO-8601 format, matching the SqliteTypes catalogue.
+
+- `DATE` → `LocalDate` (ISO-8601 date)
+- `TIME` → `LocalTime`
+- `DATETIME` / `TIMESTAMP` → `LocalDateTime`
+- `TIMESTAMP` (with `Z` suffix) → `Instant`
+
+Other SQLite date storage modes (INTEGER unix epoch, REAL Julian day) are configurable via `SqliteConfig.dateClass(...)` but require custom codecs — they don't round-trip through the default Typr codegen.
+
 ### Oracle
 
 Oracle uses different type names:

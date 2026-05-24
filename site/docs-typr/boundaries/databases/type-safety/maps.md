@@ -16,6 +16,7 @@ Map types store key-value pairs within a single column. Support varies by databa
 | Oracle | - | No map support |
 | SQL Server | - | No map support |
 | DB2 | - | No map support |
+| SQLite | - | No map support |
 
 ## PostgreSQL hstore
 

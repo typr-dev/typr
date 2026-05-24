@@ -16,6 +16,7 @@ object SourceForm {
   /** Which fields are surfaced for which kind. Order is render order. */
   val fieldsByKind: Map[String, List[Field]] = Map(
     "duckdb" -> List(Field("path", "path")),
+    "sqlite" -> List(Field("path", "path")),
     "openapi" -> List(Field("spec", "spec path")),
     "jsonschema" -> List(Field("spec", "spec path")),
     "oracle" -> List(

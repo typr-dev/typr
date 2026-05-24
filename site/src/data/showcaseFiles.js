@@ -61,7 +61,7 @@ const LANG_EXTENSIONS = {
   scala: '.scala',
 };
 
-export const DATABASES = ['postgres', 'mariadb', 'duckdb', 'oracle', 'sqlserver', 'db2'];
+export const DATABASES = ['postgres', 'mariadb', 'duckdb', 'oracle', 'sqlserver', 'db2', 'sqlite'];
 export const LANGUAGES = ['java', 'kotlin', 'scala'];
 
 export const DATABASE_LABELS = {
@@ -71,6 +71,7 @@ export const DATABASE_LABELS = {
   oracle: 'Oracle',
   sqlserver: 'SQL Server',
   db2: 'DB2',
+  sqlite: 'SQLite',
 };
 
 export const LANGUAGE_LABELS = {

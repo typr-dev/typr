@@ -8,6 +8,7 @@ import typr.internal.duckdb.DuckDbSqlFileMetadata
 import typr.internal.oracle.OracleSqlFileMetadata
 import typr.internal.sqlserver.SqlServerSqlFileMetadata
 import typr.internal.db2.Db2SqlFileMetadata
+import typr.internal.sqlite.SqliteSqlFileMetadata
 
 import java.nio.file.Path
 import scala.concurrent.{ExecutionContext, Future}
@@ -28,6 +29,8 @@ object SqlFileReader {
         SqlServerSqlFileMetadata(logger, scriptsPath, ds, externalTools)
       case DbType.DB2 =>
         Db2SqlFileMetadata(logger, scriptsPath, ds, externalTools)
+      case DbType.SQLite =>
+        SqliteSqlFileMetadata(logger, scriptsPath, ds, externalTools)
     }
   }
 }

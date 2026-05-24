@@ -8,6 +8,7 @@ import dev.typr.foundations.connect.OracleConfig
 import dev.typr.foundations.connect.PgConfig
 import dev.typr.foundations.connect.SqlServerConfig
 import dev.typr.foundations.connect.SqlServerEncrypt
+import dev.typr.foundations.connect.SqliteConfig
 import dev.typr.foundations.hikari.HikariDataSourceFactory
 
 import java.sql.Connection
@@ -73,6 +74,25 @@ object TypoDataSource {
     TypoDataSource(pooled.unwrap(), DbType.DB2)
   }
 
+  /** Create an in-memory SQLite TypoDataSource (xerial driver, ISO-8601 dates). */
+  def hikariSqliteInMemory(): TypoDataSource = {
+    val config = SqliteConfig.inMemory().build()
+    val pooled = HikariDataSourceFactory.create(config)
+    TypoDataSource(pooled.unwrap(), DbType.SQLite)
+  }
+
+  /** Create a file-backed SQLite TypoDataSource. */
+  def hikariSqliteFile(path: String): TypoDataSource = {
+    val config = SqliteConfig.builder(path).build()
+    val pooled = HikariDataSourceFactory.create(config)
+    TypoDataSource(pooled.unwrap(), DbType.SQLite)
+  }
+
+  /** Create a SQLite TypoDataSource from a path (":memory:" for in-memory, otherwise file-backed). */
+  def hikariSqlite(path: String): TypoDataSource =
+    if (path == ":memory:") hikariSqliteInMemory()
+    else hikariSqliteFile(path)
+
   /** Create a TypoDataSource with auto-detection of database type */
   def hikari(ds: DataSource): TypoDataSource = {
     val conn = ds.getConnection
@@ -85,6 +105,7 @@ object TypoDataSource {
         case DatabaseKind.ORACLE     => DbType.Oracle
         case DatabaseKind.SQLSERVER  => DbType.SqlServer
         case DatabaseKind.DB2        => DbType.DB2
+        case DatabaseKind.SQLITE     => DbType.SQLite
       }
       TypoDataSource(ds, dbType)
     } finally conn.close()

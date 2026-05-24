@@ -13,7 +13,7 @@ Typr isn't the first tool to generate code from database schemas. Here's an hone
 |---------|------|------|---------|-----------|
 | **Approach** | Schema-first codegen | Schema-first codegen | Code-first DSL | Code-first ORM |
 | **Languages** | Java, Kotlin, Scala | Java (Kotlin via Java) | Kotlin | Java, Kotlin |
-| **Databases** | 6 (Pg, Maria, Oracle, SQL Server, DuckDB, DB2) | 30+ | 6 | Most |
+| **Databases** | 7 (Pg, Maria, Oracle, SQL Server, DuckDB, DB2, SQLite) | 30+ | 6 | Most |
 | **ID types** | Generated distinct types | No | No | No |
 | **SQL files** | First-class, typed | Via plain SQL | No | Via native queries |
 | **API generation** | Yes (OpenAPI) | No | No | No |
@@ -107,7 +107,7 @@ Typr isn't the first tool to generate code from database schemas. Here's an hone
 | Aspect | sqlc | Typr |
 |--------|------|------|
 | **Language** | Go | Java, Kotlin, Scala |
-| **Databases** | PostgreSQL, MySQL, SQLite | 6 including Oracle, SQL Server, DB2 |
+| **Databases** | PostgreSQL, MySQL, SQLite | 7 including Oracle, SQL Server, DB2, SQLite |
 | **Repository generation** | No | Yes (CRUD for every table) |
 | **ID types** | No | Yes |
 | **DSL** | No | Yes |
@@ -131,7 +131,7 @@ Typr isn't the first tool to generate code from database schemas. Here's an hone
 | Aspect | pgtyped | Typr |
 |--------|---------|------|
 | **Language** | TypeScript | Java, Kotlin, Scala |
-| **Databases** | PostgreSQL only | 6 databases |
+| **Databases** | PostgreSQL only | 7 databases |
 | **Repository generation** | No | Yes |
 | **ID types** | No | Yes |
 

@@ -95,6 +95,8 @@ object TypeCompatibilityChecker {
       CompatibilityClass("String")
     case db.DB2Type.VarChar(_) | db.DB2Type.Char(_) | db.DB2Type.Clob | db.DB2Type.Long | db.DB2Type.Graphic(_) | db.DB2Type.VarGraphic(_) | db.DB2Type.DbClob | db.DB2Type.LongVarGraphic =>
       CompatibilityClass("String")
+    case db.SqliteType.Text | db.SqliteType.VarChar(_) | db.SqliteType.Char(_) | db.SqliteType.Clob =>
+      CompatibilityClass("String")
 
     // Boolean types
     case db.PgType.Boolean     => CompatibilityClass("Boolean")
@@ -103,6 +105,7 @@ object TypeCompatibilityChecker {
     case db.OracleType.Boolean => CompatibilityClass("Boolean")
     case db.SqlServerType.Bit  => CompatibilityClass("Boolean")
     case db.DB2Type.Boolean    => CompatibilityClass("Boolean")
+    case db.SqliteType.Boolean => CompatibilityClass("Boolean")
 
     // 32-bit integer types
     case db.PgType.Int4        => CompatibilityClass("Int")
@@ -110,6 +113,7 @@ object TypeCompatibilityChecker {
     case db.DuckDbType.Integer => CompatibilityClass("Int")
     case db.SqlServerType.Int  => CompatibilityClass("Int")
     case db.DB2Type.Integer    => CompatibilityClass("Int")
+    case db.SqliteType.Int     => CompatibilityClass("Int")
 
     // 64-bit integer types
     case db.PgType.Int8                                             => CompatibilityClass("Long")
@@ -117,6 +121,7 @@ object TypeCompatibilityChecker {
     case db.DuckDbType.BigInt                                       => CompatibilityClass("Long")
     case db.SqlServerType.BigInt                                    => CompatibilityClass("Long")
     case db.DB2Type.BigInt                                          => CompatibilityClass("Long")
+    case db.SqliteType.Integer | db.SqliteType.BigInt               => CompatibilityClass("Long")
     case db.OracleType.Number(Some(p), Some(0)) if p > 9 && p <= 18 => CompatibilityClass("Long")
 
     // 16-bit integer types
@@ -125,6 +130,8 @@ object TypeCompatibilityChecker {
     case db.DuckDbType.SmallInt    => CompatibilityClass("Short")
     case db.SqlServerType.SmallInt => CompatibilityClass("Short")
     case db.DB2Type.SmallInt       => CompatibilityClass("Short")
+    case db.SqliteType.SmallInt    => CompatibilityClass("Short")
+    case db.SqliteType.TinyInt     => CompatibilityClass("Byte")
 
     // Single-precision float
     case db.PgType.Float4          => CompatibilityClass("Float")
@@ -132,6 +139,7 @@ object TypeCompatibilityChecker {
     case db.DuckDbType.Float       => CompatibilityClass("Float")
     case db.SqlServerType.Real     => CompatibilityClass("Float")
     case db.DB2Type.Real           => CompatibilityClass("Float")
+    case db.SqliteType.Float       => CompatibilityClass("Float")
     case db.OracleType.BinaryFloat => CompatibilityClass("Float")
 
     // Double-precision float
@@ -140,6 +148,8 @@ object TypeCompatibilityChecker {
     case db.DuckDbType.Double       => CompatibilityClass("Double")
     case db.SqlServerType.Float     => CompatibilityClass("Double")
     case db.DB2Type.Double          => CompatibilityClass("Double")
+    case db.SqliteType.Real         => CompatibilityClass("Double")
+    case db.SqliteType.Double       => CompatibilityClass("Double")
     case db.OracleType.BinaryDouble => CompatibilityClass("Double")
 
     // Decimal/Numeric types -> BigDecimal
@@ -150,6 +160,7 @@ object TypeCompatibilityChecker {
     case db.OracleType.Float(_)                                                                                                 => CompatibilityClass("BigDecimal")
     case db.SqlServerType.Decimal(_, _) | db.SqlServerType.Numeric(_, _) | db.SqlServerType.Money | db.SqlServerType.SmallMoney => CompatibilityClass("BigDecimal")
     case db.DB2Type.Decimal(_, _) | db.DB2Type.DecFloat(_)                                                                      => CompatibilityClass("BigDecimal")
+    case db.SqliteType.Decimal(_, _)                                                                                            => CompatibilityClass("BigDecimal")
 
     // Date types
     case db.PgType.Date        => CompatibilityClass("LocalDate")
@@ -158,6 +169,7 @@ object TypeCompatibilityChecker {
     case db.OracleType.Date    => CompatibilityClass("LocalDate")
     case db.SqlServerType.Date => CompatibilityClass("LocalDate")
     case db.DB2Type.Date       => CompatibilityClass("LocalDate")
+    case db.SqliteType.Date    => CompatibilityClass("LocalDate")
 
     // Time types
     case db.PgType.Time           => CompatibilityClass("LocalTime")
@@ -165,6 +177,7 @@ object TypeCompatibilityChecker {
     case db.DuckDbType.Time       => CompatibilityClass("LocalTime")
     case db.SqlServerType.Time(_) => CompatibilityClass("LocalTime")
     case db.DB2Type.Time          => CompatibilityClass("LocalTime")
+    case db.SqliteType.Time       => CompatibilityClass("LocalTime")
 
     // Timestamp with timezone
     case db.PgType.TimestampTz                  => CompatibilityClass("Instant")
@@ -180,11 +193,14 @@ object TypeCompatibilityChecker {
     case db.OracleType.TimestampWithLocalTimeZone(_)                                                => CompatibilityClass("Instant")
     case db.SqlServerType.DateTime | db.SqlServerType.DateTime2(_) | db.SqlServerType.SmallDateTime => CompatibilityClass("LocalDateTime")
     case db.DB2Type.Timestamp(_)                                                                    => CompatibilityClass("LocalDateTime")
+    case db.SqliteType.Timestamp                                                                    => CompatibilityClass("LocalDateTime")
+    case db.SqliteType.Instant                                                                      => CompatibilityClass("Instant")
 
     // UUID
     case db.PgType.UUID                    => CompatibilityClass("UUID")
     case db.DuckDbType.UUID                => CompatibilityClass("UUID")
     case db.SqlServerType.UniqueIdentifier => CompatibilityClass("UUID")
+    case db.SqliteType.Uuid                => CompatibilityClass("UUID")
 
     // Binary types
     case db.PgType.Bytea                                                                                                                                  => CompatibilityClass("ByteArray")
@@ -193,6 +209,7 @@ object TypeCompatibilityChecker {
     case db.OracleType.Blob | db.OracleType.Raw(_) | db.OracleType.LongRaw                                                                                => CompatibilityClass("ByteArray")
     case db.SqlServerType.Binary(_) | db.SqlServerType.VarBinary(_) | db.SqlServerType.Image                                                              => CompatibilityClass("ByteArray")
     case db.DB2Type.Blob | db.DB2Type.Binary(_) | db.DB2Type.VarBinary(_)                                                                                 => CompatibilityClass("ByteArray")
+    case db.SqliteType.Blob | db.SqliteType.Binary | db.SqliteType.VarBinary                                                                              => CompatibilityClass("ByteArray")
 
     // JSON types
     case db.PgType.Json | db.PgType.Jsonb => CompatibilityClass("Json")
@@ -200,6 +217,7 @@ object TypeCompatibilityChecker {
     case db.DuckDbType.Json               => CompatibilityClass("Json")
     case db.OracleType.Json               => CompatibilityClass("Json")
     case db.SqlServerType.Json            => CompatibilityClass("Json")
+    case db.SqliteType.Json               => CompatibilityClass("Json")
 
     // Array types - compatible if element types are compatible
     case db.PgType.Array(inner)            => CompatibilityClass(s"Array[${compatibilityClass(inner).description}]")

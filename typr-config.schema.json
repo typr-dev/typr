@@ -405,7 +405,7 @@
       "properties": {
         "type": {
           "type": "string",
-          "enum": ["postgresql", "mariadb", "mysql", "sqlserver", "oracle", "duckdb", "db2", "openapi", "jsonschema", "avro", "grpc"]
+          "enum": ["postgresql", "mariadb", "mysql", "sqlserver", "oracle", "duckdb", "db2", "sqlite", "openapi", "jsonschema", "avro", "grpc"]
         }
       },
       "allOf": [
@@ -423,6 +423,14 @@
           },
           "then": {
             "$ref": "#/$defs/duckdbBoundary"
+          }
+        },
+        {
+          "if": {
+            "properties": { "type": { "const": "sqlite" } }
+          },
+          "then": {
+            "$ref": "#/$defs/sqliteBoundary"
           }
         },
         {
@@ -535,6 +543,36 @@
         "path": {
           "type": "string",
           "description": "Path to DuckDB file or :memory:"
+        },
+        "schema_sql": {
+          "type": "string",
+          "description": "Path to schema SQL file to execute on startup"
+        },
+        "sql_scripts": {
+          "type": "string",
+          "description": "Path to SQL scripts directory"
+        },
+        "selectors": {
+          "$ref": "#/$defs/boundarySelectors",
+          "description": "Boundary-level selectors for tables, schemas, etc."
+        },
+        "types": {
+          "type": "object",
+          "description": "Boundary-level type definitions",
+          "additionalProperties": {
+            "$ref": "#/$defs/fieldType"
+          }
+        }
+      }
+    },
+    "sqliteBoundary": {
+      "type": "object",
+      "required": ["path"],
+      "properties": {
+        "type": { "type": "string" },
+        "path": {
+          "type": "string",
+          "description": "Path to SQLite file or :memory: for in-memory"
         },
         "schema_sql": {
           "type": "string",
